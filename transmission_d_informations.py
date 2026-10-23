@@ -129,8 +129,11 @@ def afficher_atelier_historique_telecom(verrouille=False):
         {"id": "t_hist_3", "q": "En quelle année Samuel Morse a-t-il réalisé la première démonstration publique de son télégraphe électrique ?", "options": ["1837", "1792", "1914"], "rep": "1837"},
         {"id": "t_hist_4", "q": "Quel composant physique a permis de s'affranchir de la visibilité directe entre les stations ?", "options": ["Le fil conducteur électrique en cuivre (puis de fer)", "La lentille de télescope à fort grossissement", "La bobine d'induction Tesla"], "rep": "Le fil conducteur électrique en cuivre (puis de fer)"},
         {"id": "t_hist_5", "q": "Comment le télégraphe de Morse transcrit-il les messages à distance ?", "options": ["Par l'émission d'impulsions électriques courtes et longues (points et traits)", "Par la projection d'ombres chinoises sur un écran blanc", "Par la voix convertie en vibrations magnétiques"], "rep": "Par l'émission d'impulsions électriques courtes et longues (points et traits)"},
-        {"id": "t_hist_6", "q": "Quelle pièce mécanique le télégraphiste manipule-t-il manuellement pour envoyer le signal ?", "options": ["Le manipulateur (ou clé télégraphique)", "Le sémaphore de toiture", "Le cadran rotatif"], "rep": "Le manipulateur (ou clé télégraphique)"},
-        {"id": "t_hist_7", "q": "Quel élément à l'arrivée traduit l'impulsion électrique en un clic mécanique audible ou un tracé d'encre ?", "options": ["L'électroaimant (récepteur)", "La pile Volta", "Le miroir parabolique"], "rep": "L'électroaimant (récepteur)"}
+        {"id": "t_hist_6", "q": "Quelle pièce mécanique le télégraphiste manipule-t-it manuellement pour envoyer le signal ?", "options": ["Le manipulateur (ou clé télégraphique)", "Le sémaphore de toiture", "Le cadran rotatif"], "rep": "Le manipulateur (ou clé télégraphique)"},
+        {"id": "t_hist_7", "q": "Quel élément à l'arrivée traduit l'impulsion électrique en un clic mécanique audible ou un tracé d'encre ?", "options": ["L'électroaimant (récepteur)", "La pile Volta", "Le miroir parabolique"], "rep": "L'électroaimant (récepteur)"},
+        {"id": "t_hist_8", "q": "Quelle célèbre ligne de télégraphe optique Chappe fut la première inaugurée en 1794 ?", "options": ["Paris - Lille", "Paris - Marseille", "Lyon - Strasbourg"], "rep": "Paris - Lille"},
+        {"id": "t_hist_9", "q": "Quelle était approximativement la vitesse de transmission d'un signal d'une tour à l'autre chez Chappe ?", "options": ["Quelques secondes", "Plusieurs heures", "Une journée entière"], "rep": "Quelques secondes"},
+        {"id": "t_hist_10", "q": "Quelle invention majeure succèdera directement au télégraphe électrique à la fin du XIXe siècle ?", "options": ["Le téléphone de Bell", "La fibre optique", "Le réseau satellite"], "rep": "Le téléphone de Bell"}
     ]
 
     if "ordre_quiz_tab1_telecom_aleatoire" not in st.session_state:
@@ -144,13 +147,16 @@ def afficher_atelier_historique_telecom(verrouille=False):
         ("4. Samuel Morse a remplacé les signaux visuels par des impulsions ..........", ["Choisir...", "électriques", "lumineuses"], "électriques", "telecom1_t4"),
         ("5. Le code Morse repose sur l'association de points et de ..........", ["Choisir...", "traits", "lettres"], "traits", "telecom1_t5"),
         ("6. L'opérateur utilise un .......... pour ouvrir et fermer le circuit.", ["Choisir...", "manipulateur", "clapet"], "manipulateur", "telecom1_t6"),
-        ("7. À la réception, un .......... attire une armature pour créer le clic audible.", ["Choisir...", "électroaimant", "ressort"], "électroaimant", "telecom1_t7")
+        ("7. À la réception, un .......... attire une armature pour créer le clic audible.", ["Choisir...", "électroaimant", "ressort"], "électroaimant", "telecom1_t7"),
+        ("8. La toute première ligne du télégraphe optique reliait Paris à la ville de ..........", ["Choisir...", "Lille", "Lyon"], "Lille", "telecom1_t8"),
+        ("9. Le temps de passage du signal visuel entre deux stations Chappe prenait quelques ..........", ["Choisir...", "secondes", "minutes"], "secondes", "telecom1_t9"),
+        ("10. À la fin du XIXe siècle, les signaux codés laisseront la place à la voix avec le ..........", ["Choisir...", "téléphone", "satellite"], "téléphone", "telecom1_t10")
     ]
 
     col_quiz, col_trous = st.columns(2)
     
     with col_quiz:
-        st.markdown("##### Quiz Technique (7 questions - 10 pts)")
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
         if "ordre_quiz_tab1_telecom_aleatoire" in st.session_state:
             if "inc_local_tel1" not in st.session_state: st.session_state.inc_local_tel1 = 0
             st.session_state.inc_local_tel1 += 1
@@ -170,7 +176,6 @@ def afficher_atelier_historique_telecom(verrouille=False):
                 c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
                 with c_txt: st.write(enonce)
                 with c_sel: st.selectbox("", choix, key=f"trous_tel1_{cle}_inst_{idx}", disabled=verrouille, label_visibility="collapsed")
-
 
 with tab0:
     st.subheader("Identification de l'élève")
@@ -438,7 +443,11 @@ with tab1:
     
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 1")
-    case_certif_tel1 = st.checkbox("Je certifie avoir complété les questions de l'Atelier 1.", key="check_certif_tel1_final", disabled=verrou_at1)
+    case_certif_tel1 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier 1.", 
+        key="check_certif_tel1_final", 
+        disabled=verrou_at1
+    )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_tel1_official", use_container_width=True, disabled=verrou_at1):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
@@ -446,16 +455,20 @@ with tab1:
         elif not case_certif_tel1: 
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Note du Quiz
+            # A. Correction du Quiz Technique (10 questions -> 10 pts)
             score_q1 = 0.0
             if "ordre_quiz_tab1_telecom_aleatoire" in st.session_state:
-                for idx, q_item in enumerate(st.session_state.ordre_quiz_tab1_telecom_aleatoire, 1):
-                    inc = st.session_state.get("inc_local_tel1", 1)
-                saisie = st.session_state.get(f"quiz_tel1_{q_item['id']}_inst_{inc}_{idx}", "Choisir...")
-                if str(saisie).strip() == str(q_item["rep"]).strip(): 
-                    score_q1 += 1.4285
+                for q_item in st.session_state.ordre_quiz_tab1_telecom_aleatoire:
+                    saisie = "Choisir..."
+                    prefixe_cherche = f"quiz_tel1_{q_item['id']}_"
+                    for k_session in st.session_state.keys():
+                        if k_session.startswith(prefixe_cherche):
+                            saisie = st.session_state[k_session]
+                            break
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q1 += 1.0
 
-            # B. Correction de la Synthèse (Texte à trous)
+            # B. Correction de la Synthèse par texte à trous (10 trous -> 10 pts)
             score_t1 = 0.0
             if "champs_telecom1_clean" in st.session_state:
                 for idx, ligne in enumerate(st.session_state.champs_telecom1_clean, 1):
@@ -463,12 +476,12 @@ with tab1:
                     attendu = ligne[2]
                     saisie_t = st.session_state.get(f"trous_tel1_{cle}_inst_{idx}", "Choisir...")
                     if str(saisie_t).strip() == str(attendu).strip(): 
-                        score_t1 += 1.4285
+                        score_t1 += 1.0
 
-            # Normalisation et arrondi des notes sur 10 points
-            st.session_state.score_suite1_tel_p1 = round(min(10.0, float(score_q1)), 1)
-            st.session_state.score_suite1_tel_p2 = round(min(10.0, float(score_t1)), 1)
-            st.session_state.score_final_suite1_telecom = round(float(st.session_state.score_suite1_tel_p1 + st.session_state.score_suite1_tel_p2), 1)
+            # Sauvegarde des résultats en session
+            st.session_state.score_suite1_tel_p1 = round(float(score_q1), 1)
+            st.session_state.score_suite1_tel_p2 = round(float(score_t1), 1)
+            st.session_state.score_final_suite1_telecom = round(float(score_q1 + score_t1), 1)
             st.session_state.suite_verrouille_tab1_telecom = True
             st.rerun()
 
@@ -489,10 +502,10 @@ with tab1:
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Historique - {n_eleve}</title>
+            <title>Rapport Historique Telecom - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #0f172a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
@@ -525,10 +538,15 @@ with tab1:
                 </thead>
                 <tbody>
         """
+
         if "ordre_quiz_tab1_telecom_aleatoire" in st.session_state:
-            inc = st.session_state.get("inc_local_tel1", 1)
             for num, q_item in enumerate(st.session_state.ordre_quiz_tab1_telecom_aleatoire, 1):
-                saisie = st.session_state.get(f"quiz_tel1_{q_item['id']}_inst_{inc}_{num}", "Choisir...")
+                saisie = "Choisir..."
+                prefixe_cherche = f"quiz_tel1_{q_item['id']}_"
+                for k_session in st.session_state.keys():
+                    if k_session.startswith(prefixe_cherche):
+                        saisie = st.session_state[k_session]
+                        break
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
@@ -572,7 +590,6 @@ with tab1:
             mime="text/html",
             use_container_width=True
         )
-
 
 
 
