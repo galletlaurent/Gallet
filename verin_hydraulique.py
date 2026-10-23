@@ -1046,6 +1046,10 @@ with tab3:
         st.pyplot(fig_v)
         plt.close(fig_v)
 
+            # --- MACHINE D'ÉTATS ET STABILISATION DU CHRONOMÈTRE REAL-TIME ---
+        # Course maximale réelle du vérin = 250 mm
+        longueur_sortie_mm = st.session_state.pos_vse_hyd * 250.0
+
         # --- MACHINE D'ÉTATS ET STABILISATION DU CHRONOMÈTRE REAL-TIME ---
         if st.session_state.vse_mouvement != "ARRET":
             st.session_state.temps_course_vse = time.time() - st.session_state.temps_debut_vse
@@ -1056,17 +1060,25 @@ with tab3:
                     st.session_state.vse_mouvement = "ARRET"
                     
             elif st.session_state.vse_mouvement == "RENTREE":
-                # La rentrée sous l'effet du poids est freinée par l'évacuation de l'huile
                 st.session_state.pos_vse_hyd = max(0.0, st.session_state.pos_vse_hyd - (pas_course * 1.2))
                 if st.session_state.pos_vse_hyd <= 0.0:
                     st.session_state.vse_mouvement = "ARRET"
 
-            st.metric(label="Chronomètre dynamique de course", value=f"{st.session_state.temps_course_vse:.2f} s", delta=f"Course : {st.session_state.pos_vse_hyd * 100:.0f} %")
+            # Affichage simultané du temps, du pourcentage et des millimètres sortis
+            c_met1, c_met2 = st.columns(2)
+            with c_met1:
+                st.metric(label="Chronomètre dynamique de course", value=f"{st.session_state.temps_course_vse:.2f} s", delta=f"Course : {st.session_state.pos_vse_hyd * 100:.0f} %")
+            with c_met2:
+                st.metric(label="Longueur de sortie de la tige", value=f"{longueur_sortie_mm:.1f} mm", delta="En déplacement")
             
             time.sleep(0.04)
             st.rerun()
         else:
-            st.metric(label="Temps de course mesuré (Dernier essai)", value=f"{st.session_state.temps_course_vse:.2f} s", delta=f"Tige immobile à {st.session_state.pos_vse_hyd * 100:.0f} %")
+            c_met1, c_met2 = st.columns(2)
+            with c_met1:
+                st.metric(label="Temps de course mesuré (Dernier essai)", value=f"{st.session_state.temps_course_vse:.2f} s", delta=f"Tige immobile à {st.session_state.pos_vse_hyd * 100:.0f} %")
+            with c_met2:
+                st.metric(label="Longueur de sortie de la tige", value=f"{longueur_sortie_mm:.1f} mm", delta="Position verrouillée", delta_color="off")
 
     with col_vse_bd:
         st.write("**La BD humoristique textuelle : La panne de muscles**")
