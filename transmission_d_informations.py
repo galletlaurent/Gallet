@@ -2143,13 +2143,13 @@ with tab6:
             try: st.image("Arthur_C_Clarke.jpg", caption="Arthur C. Clarke", width= 300) # Réutilisation ou témoin
             except Exception: st.warning("Fichier d'illustration indisponible.")
         with col_g62:   
-            try: st.image("orbite_geostationnaire.jpg", caption="Orbite", width= 400) # Réutilisation ou témoin
+            try: st.image("orbite_geostationnaire.jpg", caption="Orbite", width= 300) # Réutilisation ou témoin
             except Exception: st.warning("Fichier d'illustration indisponible.")            
     with col_im_6:     
-        try: st.image("telstar_1.jpg", caption="Telstar 1 (1962)", width=400)
+        try: st.image("telstar_1.jpg", caption="Telstar 1 (1962)", width=300)
         except Exception: st.warning("Fichier d'illustration indisponible.")
     with col_dessin_6:     
-        try: st.image("antenne.jpg", caption="Parabole Pleumeur-Bodou", width=400)
+        try: st.image("antenne.jpg", caption="Parabole Pleumeur-Bodou", width=300)
         except Exception: st.warning("Fichier d'illustration indisponible.")
 
     # --- LABORATOIRE INTERACTIF : FAISCEAU ET ANGLE DE LA PARABOLE ---
