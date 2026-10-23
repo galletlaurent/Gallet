@@ -102,8 +102,8 @@ onglets = st.tabs([
     "Le vérin simple effet",
     "Le vérin double effet",
     "Vérins rotatifs et autres actionneurs",
-    "Application 1 ",
-    "Application 2 "
+    "Application 1 : presse de compactage industrielle ",
+    "Application 2 : Camion-grue "
 
 ])
 
@@ -115,6 +115,172 @@ tab4 = onglets[4]
 tab5 = onglets[5] 
 tab6 = onglets[6] 
 tab7 = onglets[7] 
+
+
+
+def afficher_atelier_application2(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 7 (Application 2 - Camion-Grue) sur deux colonnes."""
+    import random
+
+    questions_sources_ap2 = [
+        {"id": "h_ap2_1", "q": "Quel type de machine utilise des béquilles et des vérins hydrauliques pour lever des blocs de béton ?", "options": ["Une grue de chantier (ou camion-grue)", "Un tapis de tri", "Une vis sans fin"], "rep": "Une grue de chantier (ou camion-grue)"},
+        {"id": "h_ap2_2", "q": "Que se passe-t-il si un tuyau hydraulique se brise sous la charge ?", "options": ["Le vérin s'effondre instantanément s'il n'y a pas de clapet anti-retour de sécurité", "Le vérin monte au plafond", "L'huile se transforme en glace"], "rep": "Le vérin s'effondre instantanément s'il n'y a pas de clapet anti-retour de sécurité"},
+        {"id": "h_ap2_3", "q": "Quel composant mécanique interdit le retour de l'huile et bloque le vérin en position même en cas de panne ?", "options": ["Un clapet anti-retour piloté", "Un silencieux poreux", "Un manomètre"], "rep": "Un clapet anti-retour piloté"},
+        {"id": "h_ap2_4", "q": "Comment contrôle-t-on finement la vitesse de levage de la flèche de la grue ?", "options": ["En étranglant le débit d'huile à l'aide d'un étrangleur réglable", "En modifiant la viscosité de l'huile", "En changeant la taille du crochet"], "rep": "En étranglant le débit d'huile à l'aide d'un étrangleur réglable"},
+        {"id": "h_ap2_5", "q": "Quelle pièce métallique transmet directement l'effort mécanique à la structure articulée ?", "options": ["La tige du vérin", "Le carter de pompe", "La bague de filtration"], "rep": "La tige du vérin"},
+        {"id": "h_ap2_6", "q": "Pourquoi l'hydraulique est-elle préférée à la pneumatique sur un engin de chantier lourds ?", "options": ["Car l'incompressibilité de l'huile garantit un mouvement rigide, ultra-précis et sans à-coups élastiques", "Car l'huile est moins chère que l'air", "Car elle ne fait aucun bruit"], "rep": "Car l'incompressibilité de l'huile garantit un mouvement rigide, ultra-précis et sans à-coups élastiques"},
+        {"id": "h_ap2_7", "q": "Le manomètre de la grue indique une pression de 200 bars. Cela correspond environ à :", "options": ["Une pression très élevée d'environ 20 millions de pascals", "La pression d'un pneu de vélo", "La pression atmosphérique normale"], "rep": "Une pression très élevée d'environ 20 millions de pascals"},
+        {"id": "h_ap2_8", "q": "Quel phénomène destructeur se produit si des bulles d'air s'infiltrent et explosent dans la pompe ?", "options": ["La cavitation", "La décantation", "La solidification"], "rep": "La cavitation"},
+        {"id": "h_ap2_9", "q": "Quel organne permet à l'opérateur de commander manuellement le mouvement depuis sa cabine ?", "options": ["Le manipulateur (ou joystick relié aux distributeurs)", "Le bouchon de remplissage", "Le niveau optique"], "rep": "Le manipulateur (ou joystick relié aux distributeurs)"},
+        {"id": "h_ap2_10", "q": "L'ensemble des canalisations rigides et flexibles qui transportent l'huile forment le réseau de :", "options": ["Distribution et transmission", "Conversion d'énergie pure", "Stockage thermique"], "rep": "Distribution et transmission"}
+    ]
+
+    if "ordre_quiz_tab7_hydro_aleatoire" not in st.session_state:
+        random.shuffle(questions_sources_ap2)
+        st.session_state.ordre_quiz_tab7_hydro_aleatoire = questions_sources_ap2
+
+    st.session_state.champs_hydro7_clean = [
+        ("1. Le camion-grue de chantier déploie des forces énormes pour lever le ..........", ["Choisir...", "béton", "carton"], "béton", "hydro7_t1"),
+        ("2. Bloquer solidement le vérin en charge utilise un clapet anti-..........", ["Choisir...", "retour", "fuite"], "retour", "hydro7_t2"),
+        ("3. Ajuster la vitesse de levage nécessite de réguler le .......... d'huile.", ["Choisir...", "débit", "volume"], "débit", "hydro7_t3"),
+        ("4. L'incompressibilité du fluide évite les rebonds et les à-.......... dangereux.", ["Choisir...", "coups", "vides"], "coups", "hydro7_t4"),
+        ("5. La pression de service atteint couramment des valeurs de 200 ..........", ["Choisir...", "bars", "pascals"], "bars", "hydro7_t5"),
+        ("6. L'usure des composants provoquée par des bulles implosant est la ..........", ["Choisir...", "cavitation", "décantation"], "cavitation", "hydro7_t6"),
+        ("7. Piloter le déploiement depuis la cabine s'appuie sur le .......... de commande.", ["Choisir...", "manipulateur", "manomètre"], "manipulateur", "hydro7_t7"),
+        ("8. Le transport du fluide sous pression utilise des tuyaux .......... renforcés.", ["Choisir...", "flexibles", "plastiques"], "flexibles", "hydro7_t8"),
+        ("9. Le fluide utilisé est une huile minérale spéciale pour circuit ..........", ["Choisir...", "hydraulique", "pneumatique"], "hydraulique", "hydro7_t9"),
+        ("10. Ce protocole clôture l'analyse des actionneurs de transmission de ..........", ["Choisir...", "puissance", "chaleur"], "puissance", "hydro7_t10")
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        if "ordre_quiz_tab7_hydro_aleatoire" in st.session_state:
+            for idx, q_data in enumerate(st.session_state.ordre_quiz_tab7_hydro_aleatoire, 1):
+                st.write(f"**{idx}.** {q_data['q']}")
+                cle_select = f"hydro_at7_final_g_{q_data['id']}"
+                opts_affichees = ["Choisir..."] + q_data["options"]
+                st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 7 (Texte à trous - 10 cases - 10 pts)")
+        if "champs_hydro7_clean" in st.session_state:
+            for ligne in st.session_state.champs_hydro7_clean:
+                # Découpage strict du tuple pour un affichage propre sans texte vert
+                enonce = ligne[0]
+                choix = ligne[1]
+                cle = ligne[-1]
+                
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: 
+                    st.write(enonce)
+                with c_sel: 
+                    st.selectbox("", choix, key=f"{cle}_hydro7_clean", disabled=verrouille, label_visibility="collapsed")
+                    
+
+def afficher_atelier_application1(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 6 (Application 1 - Compacteur) sur deux colonnes."""
+    import random
+
+    questions_sources_ap1 = [
+        {"id": "h_ap1_1", "q": "Pourquoi utilise-t-on de l'huile hydraulique sous haute pression dans une presse de compactage ?", "options": ["Pour développer des forces colossales invisibles à l'œil nu", "Pour laver la ferraille", "Pour refroidir le moteur électrique"], "rep": "Pour développer des forces colossales invisibles à l'œil nu"},
+        {"id": "h_ap1_2", "q": "Quel organe transforme l'énergie mécanique du moteur en puissance hydraulique (débit d'huile) ?", "options": ["La pompe hydraulique", "Le vérin", "Le réservoir"], "rep": "La pompe hydraulique"},
+        {"id": "h_ap1_3", "q": "Quel appareil limite la pression maximale dans le circuit pour éviter l'explosion des tuyaux ?", "options": ["Le limiteur de pression (clapet de décharge)", "Le régleur de débit", "Le filtre"], "rep": "Le limiteur de pression (clapet de décharge)"},
+        {"id": "h_ap1_4", "q": "Que fait le fluide lorsque le distributeur 4/2 bistable commute sa position ?", "options": ["Il inverse son sens de circulation vers le vérin", "Il s'évapore dans l'atmosphère", "Il se transforme en solide"], "rep": "Il inverse son sens de circulation vers le vérin"},
+        {"id": "h_ap1_5", "q": "Quelle unité exprime la haute pression de service dans ces installations ?", "options": ["Le bar (ou mégapascal)", "Le newton", "Le litre par minute"], "rep": "Le bar (ou mégapascal)"},
+        {"id": "h_ap1_6", "q": "Où retourne l'huile qui s'échappe de la chambre avant lors de la sortie du vérin ?", "options": ["Au réservoir (bac à huile)", "Dans la cabine", "Dans la nature"], "rep": "Au réservoir (bac à huile)"},
+        {"id": "h_ap1_7", "q": "Si le diamètre du piston est doublé à pression constante, qu'advient-il de la force de compactage ?", "options": ["Elle est multipliée par quatre", "Elle reste identique", "Elle est divisée par deux"], "rep": "Elle est multipliée par quatre"},
+        {"id": "h_ap1_8", "q": "Quel composant filtre les micro-particules métalliques pour protéger la pompe hydraulique ?", "options": ["Le filtre de retour", "Le manomètre", "La valve de vidange"], "rep": "Le filtre de retour"},
+        {"id": "h_ap1_9", "q": "En hydraulique industrielle, l'huile est considérée comme un fluide :", "options": ["Incompressible (son volume ne varie pas sous la pression)", "Extrêmement compressible", "Gazeux"], "rep": "Incompressible (son volume ne varie pas sous la pression)"},
+        {"id": "h_ap1_10", "q": "L'effort exercé par la tige dépend de la formule de la poussée :", "options": ["Force = Pression x Surface", "Force = Pression / Surface", "Force = Débit x Temps"], "rep": "Force = Pression x Surface"}
+    ]
+
+    if "ordre_quiz_tab6_hydro_aleatoire" not in st.session_state:
+        random.shuffle(questions_sources_ap1)
+        st.session_state.ordre_quiz_tab6_hydro_aleatoire = questions_sources_ap1
+
+    st.session_state.champs_hydro6_clean = [
+        ("1. La presse industrielle utilise un fluide liquide sous haute ..........", ["Choisir...", "pression", "vitesse"], "pression", "hydro6_t1"),
+        ("2. Générer le débit d'huile requis est le rôle de la .......... mécanique.", ["Choisir...", "pompe", "soupape"], "pompe", "hydro6_t2"),
+        ("3. Protéger les conduites contre les surcharges exige un .......... de pression.", ["Choisir...", "limiteur", "régleur"], "limiteur", "hydro6_t3"),
+        ("4. L'actionneur linéaire qui écrase la ferraille est un .......... double effet.", ["Choisir...", "vérin", "moteur"], "vérin", "hydro6_t4"),
+        ("5. L'aiguillage de l'huile s'appuie sur un distributeur de type ..........", ["Choisir...", "4/2", "3/2"], "4/2", "hydro6_t5"),
+        ("6. L'huile de retour inutilisée est stockée dans le .......... central.", ["Choisir...", "réservoir", "piston"], "réservoir", "hydro6_t6"),
+        ("7. Contrairement à l'air, l'huile est un fluide .......... en pratique.", ["Choisir...", "incompressible", "gazeux"], "incompressible", "hydro6_t7"),
+        ("8. La force de compactage dépend de la pression et de la .......... du piston.", ["Choisir...", "surface", "longueur"], "surface", "hydro6_t8"),
+        ("9. Retenir les impuretés abrasives est assuré par le .......... à huile.", ["Choisir...", "filtre", "bouchon"], "filtre", "hydro6_t9"),
+        ("10. Ce montage industriel réalise une application de puissance ..........", ["Choisir...", "hydraulique", "pneumatique"], "hydraulique", "hydro6_t10")
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab6_hydro_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"hydro_at6_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 6 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_hydro6_clean:
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: st.write(enonce)
+            with c_sel: st.selectbox("", choix, key=f"{cle}_hydro6_clean", disabled=verrouille, label_visibility="collapsed")
+
+
+
+def afficher_atelier_actionneurs_rotatifs(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 5 (Actionneurs rotatifs) sur deux colonnes."""
+    import random
+
+    questions_sources = [
+        {"id": "h_rot_1", "q": "Quelle est la fonction principale d'un vérin rotatif hydraulique ?", "options": ["Convertir l'énergie de pression en un mouvement de rotation angulaire limité", "Convertir le fluide en rotation continue infinie", "Augmenter la température de l'huile"], "rep": "Convertir l'énergie de pression en un mouvement de rotation angulaire limité"},
+        {"id": "h_rot_2", "q": "Comment le mécanisme interne à pignon-crémaillère transforme-t-il le mouvement ?", "options": ["Le déplacement linéaire du piston pousse la crémaillère qui fait pivoter le pignon central", "L'huile fait tourner des hélices", "Le piston vibre pour faire tourner l'axe"], "rep": "Le déplacement linéaire du piston pousse la crémaillère qui fait pivoter le pignon central"},
+        {"id": "h_rot_3", "q": "Quelle est l'amplitude de rotation standard la plus courante pour un vérin rotatif à crémaillère ?", "options": ["90 à 180 degrés (Un quart ou un demi-tour)", "3600 degrés sans limite", "Strictement 5 degrés maximum"], "rep": "90 à 180 degrés (Un quart ou un demi-tour)"},
+        {"id": "h_rot_4", "q": "Quelle unité normalisée exprime le couple de torsion développé par un actionneur rotatif ?", "options": ["Le Newton-mètre (N.m)", "Le Mégapascal", "Le Litre par minute"], "rep": "Le Newton-mètre (N.m)"},
+        {"id": "h_rot_5", "q": "À pression égale, comment augmenter le couple de torsion d'un vérin rotatif ?", "options": ["En augmentant le diamètre du piston ou le rayon primitif du pignon", "En réduisant le débit de la pompe", "En utilisant une huile plus noire"], "rep": "En augmentant le diamètre du piston ou le rayon primitif du pignon"},
+        {"id": "h_rot_6", "q": "Quel type d'actionneur hydraulique utilise-t-on si l'on a besoin d'une rotation continue infinie (ex: treuil de navire) ?", "options": ["Un moteur hydraulique", "Un vérin double effet standard", "Un vérin rotatif à palettes"], "rep": "Un moteur hydraulique"},
+        {"id": "h_rot_7", "q": "Comment représente-t-on graphiquement la fonction rotative limitée sur un symbole ISO 1219 ?", "options": ["Par un cercle contenant une flèche en arc de cercle à double sens", "Par un triangle noir pointant vers le bas", "Par un carré muni d'un ressort zigzag"], "rep": "Par un cercle contenant une flèche en arc de cercle à double sens"}
+    ]
+
+    if "ordre_quiz_tab5_hydro_aleatoire" not in st.session_state:
+        random.shuffle(questions_sources)
+        st.session_state.ordre_quiz_tab5_hydro_aleatoire = questions_sources
+
+    st.session_state.champs_hydro5_clean = [
+        ("1. Le vérin rotatif transforme l'énergie fluide en mouvement de .......... limité.", ["Choisir...", "rotation", "translation"], "rotation", "hydro5_t1"),
+        ("2. La transformation mécanique s'appuie sur un système à pignon et ..........", ["Choisir...", "crémaillère", "bielle"], "crémaillère", "hydro5_t2"),
+        ("3. L'effort de torsion de l'axe de sortie constitue le .......... mécanique.", ["Choisir...", "couple", "débit"], "couple", "hydro5_t3"),
+        ("4. Le couple industriel développé s'exprime en ..........-mètres.", ["Choisir...", "Newton", "Pascal"], "Newton", "hydro5_t4"),
+        ("5. Les angles de pivotement standard atteignent couramment .......... degrés.", ["Choisir...", "180", "3600"], "180", "hydro5_t5"),
+        ("6. Générer une rotation continue infinie requiert l'usage d'un .......... hydraulique.", ["Choisir...", "moteur", "bloqueur"], "moteur", "hydro5_t6"),
+        ("7. Les actionneurs rotatifs à pistons opposés possèdent .......... orifices actifs.", ["Choisir...", "deux", "quatre"], "deux", "hydro5_t7"),
+        ("8. Le symbole ISO normalisé de cet actionneur est un .......... avec flèche courbe.", ["Choisir...", "cercle", "losange"], "cercle", "hydro5_t8"),
+        ("9. Comme les vérins linéaires, l'huile assure une parfaite rigidité sans ..........", ["Choisir...", "jeu", "bruit"], "jeu", "hydro5_t9"),
+        ("10. Ce module achève l'étude technologique des .......... de puissance.", ["Choisir...", "actionneurs", "filtres"], "actionneurs", "hydro5_t10")
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab5_hydro_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"hydro_at5_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 5 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_hydro5_clean:
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: st.write(enonce)
+            with c_sel: st.selectbox("", choix, key=f"{cle}_hydro5_clean", disabled=verrouille, label_visibility="collapsed")
+
+
 
 
 def afficher_atelier_verin_double_effet_hydraulique(verrouille=False):
@@ -1684,4 +1850,975 @@ with tab4:
             mime="text/html",
             use_container_width=True
         )
+
+
+with tab5:
+    st.header("Vérins rotatifs et autres actionneurs")
+    
+    # --- SECTION COURS : LES ACTIONNEURS ROTATIFS ---
+    st.subheader("Le principe de la transformation de mouvement à crémaillère")
+    st.write(
+        "Certaines applications industrielles exigent un mouvement de rotation mais sur un angle limité, "
+        "avec un couple de torsion extrêmement élevé (par exemple pour faire pivoter le bras d'une pelleteuse, "
+        "retourner une charrue agricole ou manipuler des vannes de gros diamètre).\n\n"
+        "Pour y parvenir, on utilise un **vérin rotatif hydraulique**. Son fonctionnement interne repose sur un mécanisme "
+        "à pignon-crémaillère : le corps de la machine abrite un vérin double effet linéaire dont la tige est taillée "
+        "avec des crans (la crémaillère). Lorsque l'huile pousse le piston, la crémaillère translate et engrène un "
+        "**pignon central**. Ce pignon transforme instantanément la force linéaire en un couple de rotation rigide "
+        "et ultra-précis, généralement sur une plage de **0 à 180 degrés**."
+    )
+    
+    st.divider()
+    
+    # --- MODULE INTERACTIF : CHRONOMÈTRE MULTI-HUILE ET ROTATION ---
+    st.subheader("Banc d'essai cinématique : Viscosité et rotation angulaire")
+    st.write(
+        "Sélectionnez le fluide technique de spécialité. Pilotez le distributeur pour mesurer "
+        "le temps nécessaire au pivotement complet de l'axe."
+    )
+    
+    # Choix de l'application et de l'huile dédiée
+    huile_rot = st.selectbox(
+        "Sélectionner l'application et le type de fluide (Actionneur Rotatif) :",
+        options=[
+            "Automobile - Direction assistée de camion (Huile fluide ISO VG 32 - Rotation rapide)",
+            "Engins de TP - Tourelle de mini-pelle (Huile standard ISO VG 46 - Rotation nominale)",
+            "Agriculture - Relevage d'outil de tracteur (Huile épaisse ISO VG 68 - Rotation lente)"
+        ],
+        key="select_huile_rot_application"
+    )
+    
+    # Paramétrage dynamique de la vitesse selon l'engin choisi
+    if "Automobile" in huile_rot:
+        pas_base_rot = 0.06
+        course_max_degres = 180.0
+    elif "Engins de TP" in huile_rot:
+        pas_base_rot = 0.035
+        course_max_degres = 180.0
+    else:
+        pas_base_rot = 0.018
+        course_max_degres = 180.0
+
+    # Initialisation des états du vérin rotatif en session (0.0 à 1.0)
+    if "pos_rot_hyd" not in st.session_state:
+        st.session_state.pos_rot_hyd = 0.0
+    if "rot_mouvement" not in st.session_state:
+        st.session_state.rot_mouvement = "ARRET"
+    if "temps_debut_rot" not in st.session_state:
+        st.session_state.temps_debut_rot = 0.0
+    if "temps_course_rot" not in st.session_state:
+        st.session_state.temps_course_rot = 0.0
+
+    # Blocage automatique des boutons pendant le déplacement
+    rot_bloque = (st.session_state.rot_mouvement != "ARRET")
+
+    col_rot_graph, col_rot_bd = st.columns([0.55, 0.45])
+    
+    with col_rot_graph:
+        c_btn_r1, c_btn_r2 = st.columns(2)
+        with c_btn_r1:
+            if st.button("ALIMENTER EN A (ROTATION HORAIRE)", key="btn_out_rot_real", use_container_width=True, disabled=rot_bloque or st.session_state.pos_rot_hyd >= 1.0):
+                st.session_state.rot_mouvement = "HORAIRE"
+                st.session_state.temps_debut_rot = time.time()
+                st.rerun()
+        with c_btn_r2:
+            if st.button("ALIMENTER EN B (ROTATION ANTI-HORAIRE)", key="btn_in_rot_real", use_container_width=True, disabled=rot_bloque or st.session_state.pos_rot_hyd <= 0.0):
+                st.session_state.rot_mouvement = "ANTI_HORAIRE"
+                st.session_state.temps_debut_rot = time.time()
+                st.rerun()
+
+        # =============================================================================
+        # 1. GRAPHIQUE SUPÉRIEUR : ANIMATION DE LA VUE EN COUPE MECHANICAL RÉALISTE
+        # =============================================================================
+        import matplotlib.pyplot as plt
+        import matplotlib.patches as patches
+
+        fig_rot, ax_rot = plt.subplots(figsize=(6, 3.2), facecolor="white")
+        ax_rot.set_facecolor("white")
+        
+        # Corps fixe de la chambre rectiligne (x=0.5 à x=3.5, placé en bas à y=1.0)
+        ax_rot.add_patch(patches.Rectangle((0.5, 0.6), 3.0, 0.8, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
+        
+        # Les deux orifices d'alimentation A et B
+        ax_rot.plot([0.8, 0.8], [0.2, 0.6], color="#334155", linewidth=2.5, zorder=2)
+        ax_rot.text(0.8, 0.02, "Orifice A", weight="bold", ha="center", fontsize=9)
+        ax_rot.plot([3.2, 3.1], [0.2, 0.6], color="#334155", linewidth=2.5, zorder=2)
+        ax_rot.text(3.2, 0.02, "Orifice B", weight="bold", ha="center", fontsize=9)
+        
+        # Calcul de la translation de la crémaillère interne (Course max de 2.0 unités)
+        translation_crem = st.session_state.pos_rot_hyd * 2.0
+        x_piston_rot = 0.6 + translation_crem
+        
+        # Couleur du fluide selon l'orifice sous pression active
+        color_fluide_a = "#b91c1c" if st.session_state.rot_mouvement == "HORAIRE" else ("#0284c7" if st.session_state.rot_mouvement == "ANTI_HORAIRE" else "#eab308")
+        color_fluide_b = "#0284c7" if st.session_state.rot_mouvement == "HORAIRE" else ("#b91c1c" if st.session_state.rot_mouvement == "ANTI_HORAIRE" else "#eab308")
+        
+        if x_piston_rot > 0.62:
+            ax_rot.add_patch(patches.Rectangle((0.52, 0.63), x_piston_rot - 0.52, 0.74, facecolor=color_fluide_a, alpha=0.5, zorder=1))
+        if x_piston_rot + 0.3 < 3.48:
+            ax_rot.add_patch(patches.Rectangle((x_piston_rot + 0.3, 0.63), 3.48 - (x_piston_rot + 0.3), 0.74, facecolor=color_fluide_b, alpha=0.5, zorder=1))
+            
+        # Piston coulissant (Largeur 0.3, hauteur 0.74)
+        ax_rot.add_patch(patches.Rectangle((x_piston_rot, 0.63), 0.3, 0.74, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
+        
+        # LA CRÉMAILLÈRE RIGIDE DE LONGUEUR FIXE (Largeur 2.0) : Elle coulisse horizontalement
+        # On dessine des crans sur sa face supérieure pour matérialiser la denture
+        ax_rot.add_patch(patches.Rectangle((x_piston_rot + 0.3, 1.0), 2.0, 0.3, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
+        for cr in range(8):
+            ax_rot.plot([x_piston_rot + 0.4 + cr*0.24, x_piston_rot + 0.5 + cr*0.24], [1.3, 1.3], color="black", linewidth=2, zorder=3)
+            
+        # PIGNON CENTRAL TOURNANT FIXE (Axe centré à x=2.0, y=1.9, Rayon=0.5)
+        # On trace un repère (rayon) pour bien visualiser la rotation angulaire synchrone
+        angle_actuel_deg = st.session_state.pos_rot_hyd * 180.0
+        angle_rad_rot = np.radians(angle_actuel_deg)
+        x_repere_pignon = 2.0 + 0.45 * np.sin(angle_rad_rot)
+        y_repere_pignon = 1.9 - 0.45 * np.cos(angle_rad_rot)
+        
+        ax_rot.add_patch(patches.Circle((2.0, 1.9), 0.5, facecolor="#64748b", edgecolor="black", linewidth=2, zorder=2))
+        ax_rot.add_patch(patches.Circle((2.0, 1.9), 0.12, facecolor="#1e293b", zorder=3))
+        # Ligne de repère de rotation
+        ax_rot.plot([2.0, x_repere_pignon], [1.9, y_repere_pignon], color="white", linewidth=3, zorder=4)
+        
+        ax_rot.set_xlim(0, 5)
+        ax_rot.set_ylim(0, 3)
+        ax_rot.axis("off")
+        st.pyplot(fig_rot)
+        plt.close(fig_rot)
+
+        # =============================================================================
+        # 2. GRAPHIQUE INFÉRIEUR : SCHÉMA NORMALISÉ ISO ROTATIF DESSINÉ EN DESSOUS
+        # =============================================================================
+        st.write("**Schéma normalisé d'implantation industrielle (Norme ISO 1219) :**")
+        fig_symb_rot, ax_symb_rot = plt.subplots(figsize=(6, 1.2), facecolor="white")
+        ax_symb_rot.set_facecolor("white")
+        
+        # Enveloppe circulaire normalisée de l'actionneur rotatif
+        ax_symb_rot.add_patch(patches.Circle((2.5, 0.75), 0.45, facecolor="none", edgecolor="black", linewidth=2))
+        # Les deux orifices d'arrivée inférieurs du symbole
+        ax_symb_rot.plot([2.2, 2.2], [0.0, 0.32], color="black", linewidth=2)
+        ax_symb_rot.plot([2.8, 2.8], [0.0, 0.32], color="black", linewidth=2)
+        
+        # Flèche courbe interne normalisée pivotante (double sens)
+        # On ajuste l'orientation de l'arc selon la position courante
+        arc_angle_base = -45 + (st.session_state.pos_rot_hyd * 90)
+        ax_symb_rot.add_patch(patches.Arc((2.5, 0.75), 0.6, 0.6, angle=0, theta1=arc_angle_base, theta2=arc_angle_base + 90, color="black", linewidth=2))
+        
+        # Triangle noir indicateur de puissance hydraulique interne
+        ax_symb_rot.add_patch(patches.RegularPolygon((2.5, 0.95), numVertices=3, radius=0.08, orientation=np.radians(180), facecolor="black", edgecolor="black"))
+        
+        ax_symb_rot.set_xlim(0, 5)
+        ax_symb_rot.set_ylim(-0.1, 1.4)
+        ax_symb_rot.axis("off")
+        st.pyplot(fig_symb_rot)
+        plt.close(fig_symb_rot)
+
+    with col_rot_bd:
+        st.write("**La BD humoristique textuelle : Le bras fort du robot**")
+        st.info(
+            "**Case 1 :** Une grosse pince robotique industrielle attend devant la ligne d'assemblage : 'Je dois pivoter de cent quatre-vingts degrés exacts pour attraper ce carter moteur !'.\n\n"
+            "**Case 2 :** Le distributeur s'ouvre. L'huile sous pression s'engouffre dans l'orifice A. Le piston rectiligne se déplace en poussant sa tige-crémaillère dentée : 'Glissement en cours ! Les dents s'engrènent !'.\n\n"
+            "**Case 3 :** À chaque cran qui avance, le pignon central tourne sur son axe fixe de manière rigide : 'Un quart de tour... Un demi-tour... Le guidage est parfait !'. La ligne blanche de repère vire au sommet.\n\n"
+            "**Case 4 :** Le pignon s'arrête pile à 180 degrés face à la cible. La pince se referme hermétiquement. Les molécules d'huile se stabilisent : 'Aucun jeu mécanique, aucune élasticité, la transformation de mouvement a réussi !'."
+        )
+
+    # --- REFRESH CINÉMATIQUE ET COMPTEUR TEMPS RÉEL ---
+    angle_deplacement_deg = st.session_state.pos_rot_hyd * course_max_degres
+
+    if st.session_state.rot_mouvement != "ARRET":
+        st.session_state.temps_course_rot = time.time() - st.session_state.temps_debut_rot
+        
+        if st.session_state.rot_mouvement == "HORAIRE":
+            st.session_state.pos_rot_hyd = min(1.0, st.session_state.pos_rot_hyd + pas_base_rot)
+            if st.session_state.pos_rot_hyd >= 1.0:
+                st.session_state.rot_mouvement = "ARRET"
+                
+        elif st.session_state.rot_mouvement == "ANTI_HORAIRE":
+            st.session_state.pos_rot_hyd = max(0.0, st.session_state.pos_rot_hyd - pas_base_rot)
+            if st.session_state.pos_rot_hyd <= 0.0:
+                st.session_state.rot_mouvement = "ARRET"
+
+        c_met_r1, c_met_r2 = st.columns(2)
+        with c_met_r1:
+            st.metric(label="Chronomètre dynamique Rotatif", value=f"{st.session_state.temps_course_rot:.2f} s", delta=f"Pivotement : {st.session_state.pos_rot_hyd * 100:.0f} %")
+        with c_met_r2:
+            st.metric(label="Angle de rotation de l'axe", value=f"{angle_deplacement_deg:.1f} °", delta="En rotation")
+        
+        time.sleep(0.04)
+        st.rerun()
+    else:
+        c_met_r1, c_met_r2 = st.columns(2)
+        with c_met_r1:
+            st.metric(label="Temps de course mesuré (Dernier essai)", value=f"{st.session_state.temps_course_rot:.2f} s", delta=f"Axe immobile à {st.session_state.pos_rot_hyd * 100:.0f} %")
+        with c_met_r2:
+            st.metric(label="Angle de rotation de l'axe", value=f"{angle_deplacement_deg:.1f} °", delta="Position verrouillée", delta_color="off")
+        
+    st.divider()
+    
+    # --- ZONE DES EXERCICES DE L'ATELIER 5 ---
+    afficher_atelier_actionneurs_rotatifs(verrouille=rot_bloque)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 5")
+    case_certif_stat5 = st.checkbox("Je certifie avoir complété les questions de l'Atelier 5.", key="check_certif_hydro5_final_net", disabled=rot_bloque)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_suite5_hydro_official", use_container_width=True, disabled=rot_bloque):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat5: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q5 = 0.0
+            if "ordre_quiz_tab5_hydro_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab5_hydro_aleatoire:
+                    saisie = st.session_state.get(f"hydro_at5_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): score_q5 += 1.0
+
+            score_t5 = 0.0
+            if "champs_hydro5_clean" in st.session_state:
+                for ligne in st.session_state.champs_hydro5_clean:
+                    cle = ligne[-1]
+                    attendu = ligne[2]
+                    if st.session_state.get(f"{cle}_hydro5_clean", "Choisir...") == attendu: score_t5 += 1.0
+
+            st.session_state.score_suite5_hydro_p1 = round(float(score_q5), 1)
+            st.session_state.score_suite5_hydro_p2 = round(float(score_t5), 1)
+            st.session_state.score_final_suite5_hydro = round(float(score_q5 + score_t5), 1)
+            st.session_state.suite_verrouille_tab5_hydro = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML SCELLÉ ---
+    if st.session_state.get("suite_verrouille_tab5_hydro", False):
+        scr1_t5 = st.session_state.get("score_suite5_hydro_p1", 0.0)
+        scr2_t5 = st.session_state.get("score_suite5_hydro_p2", 0.0)
+        tot_s_t5 = st.session_state.get("score_final_suite5_hydro", 0.0)
+        timestamp_suite5 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER ACTIONNEURS ROTATIFS SCELLÉ | Note de session : {tot_s_t5:.1f} / 20")
+
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+        html_export_hydro5 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Actionneurs Rotatifs - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #047857; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #047857; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation Hydraulique</h1>
+                <p>Atelier 5 : Transformation cinématique pignon-crémaillère, couple de torsion et symbolisation ISO rotative</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite5}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t5:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #047857;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t5:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t5:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 5 : <strong>{tot_s_t5:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+        if "ordre_quiz_tab5_hydro_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab5_hydro_aleatoire, 1):
+                saisie = st.session_state.get(f"hydro_at5_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_hydro5 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_hydro5 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+        if "champs_hydro5_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_hydro5_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"{cle_variable}_hydro5_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_hydro5 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_hydro5 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_hydro5 = preparer_nom_fichier("Rapport_Actionneurs_Rotatifs").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 5 (.html)",
+            data=html_export_hydro5,
+            file_name=nom_fichier_html_hydro5,
+            mime="text/html",
+            use_container_width=True
+        )
+
+
+with tab6:
+    st.header("Application 1 : Presse de compactage industrielle")
+    
+    st.subheader("Mise en situation et cahier des charges")
+    st.write(
+        "Dans un centre de recyclage de métaux, une presse hydraulique verticale doit broyer et compacter "
+        "des carrosseries de voitures pour en faire des cubes de ferraille denses. "
+        "Pour écraser l'acier, le système requiert un effort de poussée supérieur à **500 000 Newtons**.\n\n"
+        "L'installation comprend une motopompe mécanique qui aspire l'huile du réservoir et l'envoie sous une "
+        "pression de **250 bars** vers un distributeur 4/2. Le fluide incompressible pénètre dans la grande chambre "
+        "du vérin de compactage. Un limiteur de pression taré sécurise le circuit contre l'éclatement."
+    )
+    
+    st.divider()
+    
+    # --- INITIALISATION DES VARIABLES DE SESSION POUR L'APPLICATION 1 ---
+    if "pos_ap1_hyd" not in st.session_state:
+        st.session_state.pos_ap1_hyd = 0.0
+    if "ap1_mouvement" not in st.session_state:
+        st.session_state.ap1_mouvement = "ARRET"
+    if "temps_debut_ap1" not in st.session_state:
+        st.session_state.temps_debut_ap1 = 0.0
+    if "temps_course_ap1" not in st.session_state:
+        st.session_state.temps_course_ap1 = 0.0
+
+    ap1_bloque = (st.session_state.ap1_mouvement != "ARRET")
+
+    col_ap1_graph, col_ap1_bd = st.columns([0.55, 0.45])
+    
+    with col_ap1_graph:
+        c_btn_ap1_1, c_btn_ap1_2 = st.columns(2)
+        with c_btn_ap1_1:
+            if st.button("ALIMENTER LA PRESSE (COMPACTAGE)", key="btn_run_ap1_out", use_container_width=True, disabled=ap1_bloque or st.session_state.pos_ap1_hyd >= 1.0):
+                st.session_state.ap1_mouvement = "SORTIE"
+                st.session_state.temps_debut_ap1 = time.time()
+                st.rerun()
+        with c_btn_ap1_2:
+            if st.button("RELEVER LE COMPACTEUR", key="btn_run_ap1_in", use_container_width=True, disabled=ap1_bloque or st.session_state.pos_ap1_hyd <= 0.0):
+                st.session_state.ap1_mouvement = "RENTREE"
+                st.session_state.temps_debut_ap1 = time.time()
+                st.rerun()
+
+        # =============================================================================
+        # 1. GRAPHIQUE SUPÉRIEUR : ANIMATION DE LA VUE EN COUPE MECHANICAL RÉALISTE
+        # =============================================================================
+        import matplotlib.pyplot as plt
+        import matplotlib.patches as patches
+
+        fig_ap1, ax_ap1 = plt.subplots(figsize=(6, 3.2), facecolor="white")
+        ax_ap1.set_facecolor("white")
+        
+        # Structure externe fixe de la presse (Rectangle vertical entre y=0.5 et y=3.0)
+        ax_ap1.add_patch(patches.Rectangle((1.5, 0.5), 2.5, 2.3, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
+        # Guidage bas scellé (Flasque avant fixe à y=1.0)
+        ax_ap1.plot([1.5, 4.0], [1.0, 1.0], color="#334155", linewidth=3, zorder=2)
+        
+        # Deux orifices fixes (Orifice supérieur A à y=2.6, Orifice inférieur B à y=1.2)
+        ax_ap1.plot([1.0, 1.5], [2.6, 2.6], color="#334155", linewidth=2.5, zorder=2)
+        ax_ap1.text(0.8, 2.6, "Orifice A", weight="bold", ha="center", fontsize=9)
+        ax_ap1.plot([1.0, 1.5], [1.2, 1.2], color="#334155", linewidth=2.5, zorder=2)
+        ax_ap1.text(0.8, 1.2, "Orifice B", weight="bold", ha="center", fontsize=9)
+        
+        # Calcul du déplacement du piston vertical (Course max de 1.4 unités graphiques vers le bas)
+        course_pixels_ap1 = st.session_state.pos_ap1_hyd * 1.4
+        y_piston_ap1 = 2.4 - course_pixels_ap1
+        
+        # Détermination de la couleur de l'huile selon le mouvement de compactage
+        if st.session_state.ap1_mouvement == "SORTIE":
+            color_ch_sup = "#b91c1c" # Rouge (Haute Pression active)
+            color_ch_inf = "#0284c7" # Bleu (Retour réservoir)
+        elif st.session_state.ap1_mouvement == "RENTREE":
+            color_ch_sup = "#0284c7" # Bleu (Retour réservoir)
+            color_ch_inf = "#b91c1c" # Rouge (Haute Pression active)
+        else:
+            color_ch_sup = "#eab308" # Ambre au repos
+            color_ch_inf = "#eab308" # Ambre au repos
+            
+        # Remplissage des deux chambres étanches
+        if y_piston_ap1 < 2.4:
+            ax_ap1.add_patch(patches.Rectangle((1.52, y_piston_ap1 + 0.3), 2.46, 2.78 - (y_piston_ap1 + 0.3), facecolor=color_ch_sup, alpha=0.5, zorder=1))
+        if y_piston_ap1 > 1.02:
+            ax_ap1.add_patch(patches.Rectangle((1.52, 1.02), 2.46, y_piston_ap1 - 1.02, facecolor=color_ch_inf, alpha=0.5, zorder=1))
+            
+        # Piston intérieur mobile (Hauteur fixe 0.3, largeur 2.46)
+        ax_ap1.add_patch(patches.Rectangle((1.52, y_piston_ap1), 2.46, 0.3, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
+        
+        # Tige d'acier de longueur strictement fixe (2.2 unités) qui coulisse verticalement vers le bas
+        longueur_tige_ap1 = 2.2
+        ax_ap1.add_patch(patches.Rectangle((2.4, y_piston_ap1 - longueur_tige_ap1), 0.7, longueur_tige_ap1, facecolor="#94a3b8", edgecolor="#334155", linewidth=1.5, zorder=2))
+        
+        # Objet écrasé / Carrosserie au fond de la presse
+        hauteur_voiture = 0.6 * (1.0 - (st.session_state.pos_ap1_hyd * 0.6))
+        ax_ap1.add_patch(patches.Rectangle((2.0, 0.0), 1.5, hauteur_voiture, facecolor="#7f1d1d", edgecolor="black", zorder=3))
+        
+        # Flèche vectorielle d'effort lors de l'écrasement
+        if st.session_state.ap1_mouvement == "SORTIE":
+            ax_ap1.arrow(2.75, y_piston_ap1 - 0.2, 0, -0.5, head_width=0.15, head_length=0.12, fc="#b91c1c", ec="#b91c1c", linewidth=3, length_includes_head=True, zorder=4)
+            
+        ax_ap1.set_xlim(0, 5)
+        ax_ap1.set_ylim(-0.2, 3.2)
+        ax_ap1.axis("off")
+        st.pyplot(fig_ap1)
+        plt.close(fig_ap1)
+
+        # =============================================================================
+        # 2. GRAPHIQUE INFÉRIEUR : SCHÉMA NORMALISÉ ISO DESSINÉ EN DESSOUS
+        # =============================================================================
+        st.write("**Schéma normalisé d'implantation industrielle (Norme ISO 1219) :**")
+        fig_symb_ap1, ax_symb_ap1 = plt.subplots(figsize=(6, 1.2), facecolor="white")
+        ax_symb_ap1.set_facecolor("white")
+        
+        # Enveloppe extérieure carrée ISO du double effet
+        ax_symb_ap1.plot([1.5, 4.5, 4.5, 1.5, 1.5], [0.3, 0.3, 1.3, 1.3, 0.3], color="black", linewidth=2)
+        # Raccordement des deux orifices
+        ax_symb_ap1.plot([1.8, 1.8], [0.0, 0.3], color="black", linewidth=2)
+        ax_symb_ap1.plot([4.2, 4.2], [0.0, 0.3], color="black", linewidth=2)
+        
+        # Déplacement couplé du piston et de la tige
+        x_p_symb_ap1 = 1.7 + (st.session_state.pos_ap1_hyd * 2.3)
+        ax_symb_ap1.plot([x_p_symb_ap1, x_p_symb_ap1], [0.3, 1.3], color="black", linewidth=2.5) # Piston
+        ax_symb_ap1.plot([x_p_symb_ap1, 5.5], [0.8, 0.8], color="black", linewidth=2.5)          # Tige
+        
+        ax_symb_ap1.set_xlim(0, 8.5)
+        ax_symb_ap1.set_ylim(-0.2, 1.5)
+        ax_symb_ap1.axis("off")
+        st.pyplot(fig_symb_ap1)
+        plt.close(fig_symb_ap1)
+
+    with col_ap1_bd:
+        st.write("**La BD humoristique textuelle : La vengeance de la carrosserie**")
+        st.info(
+            "**Case 1 :** Une vieille voiture rouillée arrive sur le tapis roulant en tremblant : 'Je suis trop jeune pour finir en boîte de conserve !'.\n\n"
+            "**Case 2 :** La pompe hydraulique s'allume dans un grondement lourd : 'Vromm !'. Les molécules d'huile s'entassent dans le tuyau, serrées comme des sardines : 'Poussez les gars, on ne cédera pas d'un millimètre !'.\n\n"
+            "**Case 3 :** Le piston descend avec une force titanesque. La voiture s'écrase dans un énorme bruit de métal tordu : 'Crac ! CHRONCH !'. Les molécules d'huile rigides sourient : 'L'incompressibilité, c'est notre super-pouvoir !'.\n\n"
+            "**Case 4 :** La carrosserie ressort transformée en un petit cube de métal parfait et compact. Le technicien l'observe en hochant la tête : 'Archimède et Pascal font vraiment du bon boulot en maintenance !'."
+        )
+
+    # --- SÉQUENCE CHRONOMÉTRIQUE DE COMPACTAGE INDUSTRIEL ---
+    # Course maximale réelle de compactage = 500 mm
+    longueur_sortie_mm_ap1 = st.session_state.pos_ap1_hyd * 500.0
+
+    if st.session_state.ap1_mouvement != "ARRET":
+        st.session_state.temps_course_ap1 = time.time() - st.session_state.temps_debut_ap1
+        
+        if st.session_state.ap1_mouvement == "SORTIE":
+            st.session_state.pos_ap1_hyd = min(1.0, st.session_state.pos_ap1_hyd + 0.04)
+            if st.session_state.pos_ap1_hyd >= 1.0:
+                st.session_state.ap1_mouvement = "ARRET"
+        elif st.session_state.ap1_mouvement == "RENTREE":
+            st.session_state.pos_ap1_hyd = max(0.0, st.session_state.pos_ap1_hyd - 0.065) # Rentrée plus rapide
+            if st.session_state.pos_ap1_hyd <= 0.0:
+                st.session_state.ap1_mouvement = "ARRET"
+
+        c_met_ap1, c_met_ap2 = st.columns(2)
+        with c_met_ap1:
+            st.metric(label="Chronomètre dynamique Compacteur", value=f"{st.session_state.temps_course_ap1:.2f} s", delta=f"Descente : {st.session_state.pos_ap1_hyd * 100:.0f} %")
+        with c_met_ap2:
+            st.metric(label="Extension de la tige", value=f"{longueur_sortie_mm_ap1:.1f} mm", delta="En déplacement")
+        
+        time.sleep(0.04)
+        st.rerun()
+    else:
+        c_met_ap1, c_met_ap2 = st.columns(2)
+        with c_met_ap1:
+            st.metric(label="Temps de course mesuré (Dernier essai)", value=f"{st.session_state.temps_course_ap1:.2f} s", delta=f"Presse immobile à {st.session_state.pos_ap1_hyd * 100:.0f} %")
+        with c_met_ap2:
+            st.metric(label="Extension de la tige", value=f"{longueur_sortie_mm_ap1:.1f} mm", delta="Position verrouillée", delta_color="off")
+        
+    st.divider()
+    
+    # --- ZONE DES EXERCICES DE L'ATELIER 6 ---
+    afficher_atelier_application1(verrouille=ap1_bloque)
+    
+    if "suite_verrouille_tab6_hydro" not in st.session_state:
+        st.session_state.suite_verrouille_tab6_hydro = False
+    verrou_at6 = st.session_state.suite_verrouille_tab6_hydro
+
+    # Affichage du module d'exercices sur deux colonnes de l'Atelier 6
+    afficher_atelier_application1(verrouille=verrou_at6)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 6")
+    case_certif_stat6 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier 6.", 
+        key="check_certif_hydro6_final_net", 
+        disabled=verrou_at6
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 6", key="btn_export_suite6_hydro_official", use_container_width=True, disabled=verrou_at6):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat6: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # A. Correction du Quiz Technique (Max 10 points)
+            score_q6 = 0.0
+            if "ordre_quiz_tab6_hydro_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab6_hydro_aleatoire:
+                    saisie = st.session_state.get(f"hydro_at6_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q6 += 1.0
+
+            # B. Correction de la Synthèse par texte à trous (Max 10 points)
+            score_t6 = 0.0
+            if "champs_hydro6_clean" in st.session_state:
+                for ligne in st.session_state.champs_hydro6_clean:
+                    cle = ligne[-1]
+                    attendu = ligne[2]  # Extraction stricte du mot attendu à l'index 2
+                    saisie_t = st.session_state.get(f"{cle}_hydro6_clean", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu).strip(): 
+                        score_t6 += 1.0
+
+            # Sauvegarde des résultats en session
+            st.session_state.score_suite6_hydro_p1 = round(float(score_q6), 1)
+            st.session_state.score_suite6_hydro_p2 = round(float(score_t6), 1)
+            st.session_state.score_final_suite6_hydro = round(float(score_q6 + score_t6), 1)
+            st.session_state.suite_verrouille_tab6_hydro = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML SCELLÉ DE L'ATELIER 6 ---
+    if st.session_state.get("suite_verrouille_tab6_hydro", False):
+        scr1_t6 = st.session_state.get("score_suite6_hydro_p1", 0.0)
+        scr2_t6 = st.session_state.get("score_suite6_hydro_p2", 0.0)
+        tot_s_t6 = st.session_state.get("score_final_suite6_hydro", 0.0)
+        timestamp_suite6 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER 6 SCELLÉ | Note de session : {tot_s_t6:.1f} / 20")
+
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+        html_export_hydro6 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Presse Compactage - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e293b; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #1e293b; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation Hydraulique</h1>
+                <p>Atelier 6 : Analyse d'une presse de compactage et puissance des fluides incompressibles</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite6}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t6:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e293b;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t6:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t6:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 6 : <strong>{tot_s_t6:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab6_hydro_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab6_hydro_aleatoire, 1):
+                saisie = st.session_state.get(f"hydro_at6_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_hydro6 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_hydro6 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_hydro6_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_hydro6_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"{cle_variable}_hydro6_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_hydro6 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_hydro6 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_hydro6 = preparer_nom_fichier("Rapport_Presse_Compactage").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 6 (.html)",
+            data=html_export_hydro6,
+            file_name=nom_fichier_html_hydro6,
+            mime="text/html",
+            use_container_width=True
+        )
+
+
+
+with tab7:
+    st.header("Application 2 : Système de levage de camion-grue")
+    
+    st.subheader("Mise en situation et cahier des charges")
+    st.write(
+        "Sur un chantier de bâtiment, un camion-grue doit décharger des blocs de fondation en béton lourds. "
+        "Le déploiement de la flèche télescopique articulée exige un maintien en position irréprochable. "
+        "Tout glissement ou affaissement de la tige sous charge provoquerait la chute mortelle du bloc.\n\n"
+        "Pour éliminer ce risque, le circuit hydraulique intègre un **clapet anti-retour piloté** directement "
+        "vissé sur le nez du vérin. Même si un tuyau flexible d'alimentation se déchire accidentellement sous "
+        "une pression de **200 bars**, le clapet se verrouille instantanément, emprisonnant l'huile dans la chambre "
+        "et clouant le bras articulé en position de sécurité absolue."
+    )
+    
+    st.divider()
+    
+    # --- INITIALISATION DES VARIABLES DE SESSION POUR L'APPLICATION 2 ---
+    if "pos_ap2_hyd" not in st.session_state:
+        st.session_state.pos_ap2_hyd = 0.0
+    if "ap2_mouvement" not in st.session_state:
+        st.session_state.ap2_mouvement = "ARRET"
+    if "temps_debut_ap2" not in st.session_state:
+        st.session_state.temps_debut_ap2 = 0.0
+    if "temps_course_ap2" not in st.session_state:
+        st.session_state.temps_course_ap2 = 0.0
+
+    ap2_bloque = (st.session_state.ap2_mouvement != "ARRET")
+
+    col_ap2_graph, col_ap2_bd = st.columns([0.55, 0.45])
+    
+    with col_ap2_graph:
+        c_btn_ap2_1, c_btn_ap2_2 = st.columns(2)
+        with c_btn_ap2_1:
+            if st.button("ALIMENTER LA FLÈCHE (LEVAGE)", key="btn_run_ap2_out", use_container_width=True, disabled=ap2_bloque or st.session_state.pos_ap2_hyd >= 1.0):
+                st.session_state.ap2_mouvement = "SORTIE"
+                st.session_state.temps_debut_ap2 = time.time()
+                st.rerun()
+        with c_btn_ap2_2:
+            if st.button("REVENIR AU REPOS (DESCENTE)", key="btn_run_ap2_in", use_container_width=True, disabled=ap2_bloque or st.session_state.pos_ap2_hyd <= 0.0):
+                st.session_state.ap2_mouvement = "RENTREE"
+                st.session_state.temps_debut_ap2 = time.time()
+                st.rerun()
+
+        # =============================================================================
+        # 1. GRAPHIQUE SUPÉRIEUR : ANIMATION DE LA VUE EN COUPE DU SYSTÈME RÉEL
+        # =============================================================================
+        import matplotlib.pyplot as plt
+        import matplotlib.patches as patches
+
+        fig_ap2, ax_ap2 = plt.subplots(figsize=(6, 3.2), facecolor="white")
+        ax_ap2.set_facecolor("white")
+        
+        # Dessin du châssis fixe du camion-grue
+        ax_ap2.add_patch(patches.Rectangle((0.5, 0.5), 1.5, 0.6, facecolor="#475569"))
+        ax_ap2.add_patch(patches.Circle((0.8, 0.3), 0.2, facecolor="black"))
+        ax_ap2.add_patch(patches.Circle((1.7, 0.3), 0.2, facecolor="black"))
+        
+        # Calcul cinématique de l'inclinaison angulaire selon la course (0.0 à 1.0)
+        angle_grue = 15.0 + (st.session_state.pos_ap2_hyd * 40.0)
+        rad_grue = np.radians(angle_grue)
+        x_bout_bras = 1.8 + 2.6 * np.cos(rad_grue)
+        y_bout_bras = 1.0 + 2.6 * np.sin(rad_grue)
+        
+        # Dessin de la flèche télescopique
+        ax_ap2.plot([1.8, x_bout_bras], [1.0, y_bout_bras], color="#eab308", linewidth=6, zorder=3)
+        
+        # Liaison mécanique du vérin hydraulique double effet de levage
+        x_p_corps = 1.2 + (x_bout_bras - 1.2) * 0.35
+        y_p_corps = 0.6 + (y_bout_bras - 0.6) * 0.35
+        ax_ap2.plot([1.3, x_p_corps], [0.6, y_p_corps], color="#1d4ed8", linewidth=4, zorder=2) # Corps
+        ax_ap2.plot([x_p_corps, x_bout_bras - 0.5], [y_p_corps, y_bout_bras - 0.2], color="#cbd5e1", linewidth=2, zorder=2) # Tige fixe qui glisse
+        
+        # Élingue de suspension et charge de béton suspendue au crochet
+        ax_ap2.plot([x_bout_bras, x_bout_bras], [y_bout_bras, y_bout_bras - 0.6], color="black", linewidth=1.2)
+        ax_ap2.add_patch(patches.Rectangle((x_bout_bras - 0.2, y_bout_bras - 1.0), 0.4, 0.4, facecolor="#94a3b8", edgecolor="black", zorder=4))
+        
+        ax_ap2.set_xlim(0, 5)
+        ax_ap2.set_ylim(-0.2, 3.2)
+        ax_ap2.axis("off")
+        st.pyplot(fig_ap2)
+        plt.close(fig_ap2)
+
+        # =============================================================================
+        # 2. GRAPHIQUE INFÉRIEUR : SCHÉMA NORMALISÉ ISO DESSINÉ EN DESSOUS
+        # =============================================================================
+        st.write("**Schéma normalisé d'implantation industrielle (Norme ISO 1219) :**")
+        fig_symb_ap2, ax_symb_ap2 = plt.subplots(figsize=(6, 1.2), facecolor="white")
+        ax_symb_ap2.set_facecolor("white")
+        
+        # Enveloppe extérieure carrée ISO du double effet
+        ax_symb_ap2.plot([1.5, 4.5, 4.5, 1.5, 1.5], [0.3, 0.3, 1.3, 1.3, 0.3], color="black", linewidth=2)
+        # Raccordements d'alimentation fixes
+        ax_symb_ap2.plot([1.8, 1.8], [0.0, 0.3], color="black", linewidth=2)
+        ax_symb_ap2.plot([4.2, 4.2], [0.0, 0.3], color="black", linewidth=2)
+        
+        # Déplacement couplé du piston et de la tige sur le symbole ISO
+        x_p_symb_ap2 = 1.7 + (st.session_state.pos_ap2_hyd * 2.3)
+        ax_symb_ap2.plot([x_p_symb_ap2, x_p_symb_ap2], [0.3, 1.3], color="black", linewidth=2.5) # Piston
+        ax_symb_ap2.plot([x_p_symb_ap2, 5.5], [0.8, 0.8], color="black", linewidth=2.5)          # Tige
+        
+        ax_symb_ap2.set_xlim(0, 8.5)
+        ax_symb_ap2.set_ylim(-0.2, 1.5)
+        ax_symb_ap2.axis("off")
+        st.pyplot(fig_symb_ap2)
+        plt.close(fig_symb_ap2)
+
+    with col_ap2_bd:
+        st.write("**La BD humoristique textuelle : Le cauchemar du contremaître**")
+        st.info(
+            "**Case 1 :** Un camion-grue déploie son bras télescopique au-dessus de la cabine de chantier : 'Attention dessous, je déplace un bloc de dix tonnes !'.\n\n"
+            "**Case 2 :** Soudain, un grincement strident retentit. Le flexible haute pression frotte contre un angle vif et se déchire dans une immense gerbe d'huile ambrée : 'Pschhh !'. Le contremaître au sol lève les bras au ciel, paniqué.\n\n"
+            "**Case 3 :** Au niveau du vérin, le petit clapet anti-retour de sécurité se referme instantanément comme une trappe de château-fort : 'Clac !'. Il bloque les molécules d'huile à double tour : 'Personne ne sort ! Tout le monde reste au poste !'.\n\n"
+            "**Case 4 :** Le bras de la grue reste parfaitement immobile et figé en l'air, sauvant les structures. Le chauffeur descend de sa cabine en soupirant de soulagement : 'Heureusement que le clapet de blocage hydrostatique a fait son travail mécanique !'."
+        )
+
+    # --- SÉQUENCE CHRONOMÉTRIQUE DE LEVAGE PROFESSIONNEL ---
+    # Course maximale réelle de levage = 600 mm
+    longueur_sortie_mm_ap2 = st.session_state.pos_ap2_hyd * 600.0
+
+    if st.session_state.ap2_mouvement != "ARRET":
+        st.session_state.temps_course_ap2 = time.time() - st.session_state.temps_debut_ap2
+        
+        if st.session_state.ap2_mouvement == "SORTIE":
+            st.session_state.pos_ap2_hyd = min(1.0, st.session_state.pos_ap2_hyd + pas_base)
+            if st.session_state.pos_ap2_hyd >= 1.0:
+                st.session_state.ap2_mouvement = "ARRET"
+        elif st.session_state.ap2_mouvement == "RENTREE":
+            st.session_state.pos_ap2_hyd = max(0.0, st.session_state.pos_ap2_hyd - (pas_base * 1.65)) # Rentrée asymétrique rapide
+            if st.session_state.pos_ap2_hyd <= 0.0:
+                st.session_state.ap2_mouvement = "ARRET"
+
+        c_met_ap1, c_met_ap2 = st.columns(2)
+        with c_met_ap1:
+            st.metric(label="Chronomètre dynamique Flèche", value=f"{st.session_state.temps_course_ap2:.2f} s", delta=f"Levage : {st.session_state.pos_ap2_hyd * 100:.0f} %")
+        with c_met_ap2:
+            st.metric(label="Extension de la tige", value=f"{longueur_sortie_mm_ap2:.1f} mm", delta="En déplacement")
+        
+        time.sleep(0.04)
+        st.rerun()
+    else:
+        c_met_ap1, c_met_ap2 = st.columns(2)
+        with c_met_ap1:
+            st.metric(label="Temps de course mesuré (Dernier essai)", value=f"{st.session_state.temps_course_ap2:.2f} s", delta=f"Flèche immobile à {st.session_state.pos_ap2_hyd * 100:.0f} %")
+        with c_met_ap2:
+            st.metric(label="Extension de la tige", value=f"{longueur_sortie_mm_ap2:.1f} mm", delta="Position de sécurité active", delta_color="off")
+
+    st.divider()
+
+    # --- ZONE DES EXERCICES DE L'ATELIER 7 ---
+     afficher_atelier_application2(verrouille=ap2_bloque)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 7")
+    case_certif_stat7 = st.checkbox("Je certifie avoir complété les questions de l'Atelier 7.", key="check_certif_hydro7_final_net", disabled=ap2_bloque)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 7", key="btn_export_suite7_hydro_official", use_container_width=True, disabled=ap2_bloque):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat7: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # A. Correction du Quiz Technique (Max 10 points)
+            score_q7 = 0.0
+            if "ordre_quiz_tab7_hydro_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab7_hydro_aleatoire:
+                    saisie = st.session_state.get(f"hydro_at7_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q7 += 1.0
+
+            # B. Correction du Texte à trous (Max 10 points)
+            score_t7 = 0.0
+            if "champs_hydro7_clean" in st.session_state:
+                for ligne in st.session_state.champs_hydro7_clean:
+                    cle = ligne[-1]
+                    attendu = ligne[2]
+                    saisie_t = st.session_state.get(f"{cle}_hydro7_clean", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu).strip(): 
+                        score_t7 += 1.0
+
+            # Sauvegarde des résultats et verrouillage de la session
+            st.session_state.score_suite7_hydro_p1 = round(float(score_q7), 1)
+            st.session_state.score_suite7_hydro_p2 = round(float(score_t7), 1)
+            st.session_state.score_final_suite7_hydro = round(float(score_q7 + score_t7), 1)
+            st.session_state.suite_verrouille_tab7_hydro = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML SCÉLLÉ DE L'ATELIER 7 ---
+    if st.session_state.get("suite_verrouille_tab7_hydro", False):
+        scr1_t7 = st.session_state.get("score_suite7_hydro_p1", 0.0)
+        scr2_t7 = st.session_state.get("score_suite7_hydro_p2", 0.0)
+        tot_s_t7 = st.session_state.get("score_final_suite7_hydro", 0.0)
+        timestamp_suite7 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER 7 SCELLÉ | Note de session : {tot_s_t7:.1f} / 20")
+
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+        html_export_hydro7 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Camion-Grue - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #1e3a8a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation Hydraulique</h1>
+                <p>Atelier 7 : Analyse des circuits de levage lourds et sécurité active par clapet piloté</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite7}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t7:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t7:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t7:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 7 : <strong>{tot_s_t7:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab7_hydro_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab7_hydro_aleatoire, 1):
+                saisie = st.session_state.get(f"hydro_at7_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_hydro7 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_hydro7 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE D'ATELIER (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_hydro7_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_hydro7_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"{cle_variable}_hydro7_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_hydro7 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_hydro7 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_hydro7 = preparer_nom_fichier("Rapport_Camion_Grue").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 7 (.html)",
+            data=html_export_hydro7,
+            file_name=nom_fichier_html_hydro7,
+            mime="text/html",
+            use_container_width=True
+        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
