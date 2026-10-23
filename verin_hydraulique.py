@@ -122,7 +122,62 @@ tab7 = onglets[7]
 
 
 
+def afficher_atelier_distributeurs_hydrauliques(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 2 (Les distributeurs) sur deux colonnes."""
+    import random
 
+    questions_sources = [
+        {"id": "h_dist_1", "q": "Quelle est la fonction principale d'un distributeur dans un circuit hydraulique de puissance ?", "options": ["Distribuer (aiguiller l'huile sous pression)", "Convertir l'énergie en force", "Filtrer les impuretés du fluide"], "rep": "Distribuer (aiguiller l'huile sous pression)"},
+        {"id": "h_dist_2", "q": "Que signifie la désignation d'un distributeur normalisé de type '4/3' ?", "options": ["4 orifices et 3 positions de fonctionnement", "4 bars de pression et 3 L/min de débit", "4 pistons reliés à 3 réservoirs"], "rep": "4 orifices et 3 positions de fonctionnement"},
+        {"id": "h_dist_3", "q": "À quoi sert spécifiquement la position centrale (neutre) d'un distributeur 4/3 à centre fermé ?", "options": ["À bloquer instantanément le vérin en coupant la circulation d'huile", "À purger l'huile vers l'extérieur", "À augmenter la vitesse de la pompe"], "rep": "À bloquer instantanément le vérin en coupant la circulation d'huile"},
+        {"id": "h_dist_4", "q": "Comment appelle-t-on la pièce cylindrique rectiligne interne qui coulisse pour ouvrir ou fermer les voies ?", "options": ["Le tiroir", "Le clapet de décharge", "La membrane"], "rep": "Le tiroir"},
+        {"id": "h_dist_5", "q": "Par quelle lettre normalisée ISO désigne-t-on l'orifice d'entrée relié à la pompe de pression ?", "options": ["P (Pression)", "T (Tank / Réservoir)", "A (Utilisation)"], "rep": "P (Pression)"},
+        {"id": "h_dist_6", "q": "Par quelle lettre normalisée ISO désigne-t-on l'orifice de retour relié au réservoir d'huile ?", "options": ["T (Tank)", "P (Pression)", "B (Utilisation)"], "rep": "T (Tank)"},
+        {"id": "h_dist_7", "q": "Sur un schéma normalisé, comment modélise-t-on un orifice obturé (voie fermée) ?", "options": ["Par un symbole en forme de T", "Par une flèche oblique", "Par un cercle barré"], "rep": "Par un symbole en forme de T"},
+        {"id": "h_dist_8", "q": "Quel type de commande utilise un signal électrique (bobine) pour déplacer mécaniquement le tiroir ?", "options": ["Une commande par électrovanne (solénoïde)", "Une commande par levier manuel", "Une commande par pédale"], "rep": "Une commande par électrovanne (solénoïde)"},
+        {"id": "h_dist_9", "q": "Pourquoi les distributeurs hydrauliques de forte puissance possèdent-ils souvent un drainage externe ?", "options": ["Pour évacuer les fuites internes d'huile vers le réservoir sans bloquer le tiroir", "Pour refroidir la bobine", "Pour ajouter de l'huile neuve"], "rep": "Pour évacuer les fuites internes d'huile vers le réservoir sans bloquer le tiroir"},
+        {"id": "h_dist_10", "q": "Dans quelle case d'un schéma normalisé à 3 positions raccorde-t-on les tuyaux de l'installation ?", "options": ["Dans la case centrale (position de repos)", "Dans la case de gauche", "Dans la case de droite"], "rep": "Dans la case centrale (position de repos)"}
+    ]
+
+    if "ordre_quiz_tab2_hydro_aleatoire" not in st.session_state:
+        random.shuffle(questions_sources)
+        st.session_state.ordre_quiz_tab2_hydro_aleatoire = questions_sources
+
+    st.session_state.champs_hydro2_clean = [
+        ("1. Le distributeur assure la fonction de .......... de l'énergie fluide.", ["Choisir...", "distribution", "conversion"], "distribution", "hydro2_t1"),
+        ("2. Le premier chiffre d'un symbole normalisé indique le nombre d'..........", ["Choisir...", "orifices", "positions"], "orifices", "hydro2_t2"),
+        ("3. Le second chiffre d'un symbole indique le nombre de .......... de fonctionnement.", ["Choisir...", "positions", "voies"], "positions", "hydro2_t3"),
+        ("4. La pièce interne mobile qui coulisse pour orienter les flux est le ..........", ["Choisir...", "tiroir", "clapet"], "tiroir", "hydro2_t4"),
+        ("5. L'orifice P est directement raccordé à la ligne de .......... de la pompe.", ["Choisir...", "pression", "réservoir"], "pression", "hydro2_t5"),
+        ("6. L'huile usagée retourne au réservoir à travers l'orifice ..........", ["Choisir...", "T", "A"], "T", "hydro2_t6"),
+        ("7. Un distributeur 4/3 possède rigoureusement .......... positions distinctes.", ["Choisir...", "trois", "deux"], "3", "hydro2_t7"),
+        ("8. Le centre fermé permet d'immobiliser et de .......... l'actionneur.", ["Choisir...", "bloquer", "accélérer"], "bloquer", "hydro2_t8"),
+        ("9. Une commande électrique s'appuie sur l'excitation d'un ..........", ["Choisir...", "solénoïde", "manomètre"], "solénoïde", "hydro2_t9"),
+        ("10. Les flèches internes indiquent le sens de circulation du ..........", ["Choisir...", "fluide", "ressort"], "fluide", "hydro2_t10")
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab2_hydro_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"hydro_at2_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 2 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_hydro2_clean:
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_hydro2_clean", disabled=verrouille, label_visibility="collapsed")
 
 def afficher_atelier_historique_hydraulique(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 1 (Historique) sur deux colonnes."""
@@ -511,7 +566,271 @@ with tab1:
         )
 
 
+with tab2:
+    st.header("Les distributeurs hydrauliques")
+    
+    # --- SECTION COURS : LES PRINCIPES DE LA DISTRIBUTION ---
+    st.subheader("Rôle et architecture des pré-actionneurs hydrauliques")
+    st.write(
+        "Dans un circuit hydraulique industrielle de puissance, le distributeur fait office d'aiguilleur. "
+        "Il reçoit l'huile sous haute pression en provenance directe de la pompe et l'oriente vers les canalisations "
+        "utiles pour commander les actionneurs (vérins ou moteurs), tout en organisant le retour de l'huile viciée "
+        "vers le réservoir central (bac).\n\n"
+        "L'architecture interne repose sur un **tiroir métallique** rectifié au micron près qui coulisse à l'intérieur "
+        "du corps de l'appareil. En se déplaçant, les collets du tiroir viennent masquer ou ouvrir les canaux internes. "
+        "L'étanchéité reposant sur le film d'huile entre le tiroir et le corps, un léger débit de fuite interne existe "
+        "toujours à haute pression, ce qui nécessite parfois un canal de drainage externe pour éviter le blocage mécanique."
+    )
+    
+    st.divider()
+    
+    st.subheader("Lecture des symboles ISO normalisés : Le standard 4/3")
+    st.write(
+        "L'hydraulique utilise massivement des distributeurs à **3 positions (comme le 4/3)** pour permettre le blocage ou "
+        "la mise en roue libre des mécanismes lourds. Sa codification s'énonce ainsi :\n"
+        "* **Le premier chiffre (4) :** Indique le nombre d'orifices (P pour la Pression de la pompe, T pour le Tank/Réservoir, "
+        "A et B pour les conduites reliées aux chambres de l'actionneur).\n"
+        "* **Le second chiffre (3) :** Indique le nombre de cases carrées juxtaposées, modélisant les 3 configurations de flux possibles.\n\n"
+        "Par convention internationale, les raccordements des canalisations extérieures sont toujours dessinés graphiquement "
+        "sur la case centrale représentant la position de **repos / neutre**."
+    )
+    
+    st.divider()
+    
+    # --- LAB INTERACTIF : SCHÉMA DYNAMIQUE DU TIROIR COMMUTABLE ---
+    st.subheader("Simulateur graphique d'aiguillage de fluide")
+    st.write(
+        "Sélectionnez la position du distributeur 4/3 à l'aide des boutons ci-dessous. "
+        "Le graphique Matplotlib redessinera instantanément la position du tiroir interne et colorera les flux d'huile active."
+    )
+    
+    # Boutons radio horizontaux pour le choix de la position
+    pos_choisie = st.radio(
+        "Sélectionner l'état de la commande :",
+        options=["Position de gauche (Voie croisée)", "Position centrale (Repos - Centre fermé)", "Position de droite (Voie droite)"],
+        index=1,
+        key="radio_pos_dist_h2",
+        horizontal=True
+    )
+    
+    col_dist_graph, col_dist_bd = st.columns([0.55, 0.45])
+    
+    with col_dist_graph:
+        import matplotlib.pyplot as plt
+        import matplotlib.patches as patches
+        
+        fig_ds, ax_ds = plt.subplots(figsize=(5, 3.8), facecolor="white")
+        ax_ds.set_facecolor("white")
+        
+        # Dessin du corps externe du distributeur (Rectangle fixe gris)
+        ax_ds.add_patch(patches.Rectangle((1.0, 1.0), 3.0, 1.2, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=1))
+        
+        # Orifices fixes inférieurs (P et T) et supérieurs (A et B)
+        ax_ds.plot([1.5, 1.5], [0.5, 1.0], color="#1e293b", linewidth=2.5, zorder=2) # P
+        ax_ds.text(1.5, 0.2, "P", weight="bold", ha="center")
+        ax_ds.plot([3.5, 3.5], [0.5, 1.0], color="#1e293b", linewidth=2.5, zorder=2) # T
+        ax_ds.text(3.5, 0.2, "T", weight="bold", ha="center")
+        
+        ax_ds.plot([1.8, 1.8], [2.2, 2.7], color="#1e293b", linewidth=2.5, zorder=2) # A
+        ax_ds.text(1.8, 2.9, "A", weight="bold", ha="center")
+        ax_ds.plot([3.2, 3.2], [2.2, 2.7], color="#1e293b", linewidth=2.5, zorder=2) # B
+        ax_ds.text(3.2, 2.9, "B", weight="bold", ha="center")
+        
+        # Détermination du décalage X du tiroir mobile selon la position
+        if "gauche" in pos_choisie:
+            dx_tiroir = -0.4
+            annotation_etat = "Alimentation de B / Échappement de A"
+        elif "droite" in pos_choisie:
+            dx_tiroir = 0.4
+            annotation_etat = "Alimentation de A / Échappement de B"
+        else:
+            dx_tiroir = 0.0
+            annotation_etat = "Centre fermé : Toutes les voies obturées"
+            
+        # Dessin du tiroir coulissant interne (Rectangle bleu marine + collets de fermeture)
+        x_tiroir_base = 1.2 + dx_tiroir
+        ax_ds.add_patch(patches.Rectangle((x_tiroir_base, 1.3), 2.6, 0.6, facecolor="#334155", edgecolor="#0f172a", linewidth=1.5, zorder=3))
+        # Collets (zones épaisses bloquant les orifices)
+        ax_ds.add_patch(patches.Rectangle((x_tiroir_base + 0.4, 1.1), 0.4, 1.0, facecolor="#1e293b", zorder=3))
+        ax_ds.add_patch(patches.Rectangle((x_tiroir_base + 1.8, 1.1), 0.4, 1.0, facecolor="#1e293b", zorder=3))
+        
+        # Coloration des flux de fluide à l'intérieur des conduits selon la position active
+        # Couleur Haute Pression = Jaune ambré (#eab308), Couleur Basse Pression / Retour = Bleu azur (#0284c7)
+        if "gauche" in pos_choisie:
+            # P vers B (croisé) et A vers T
+            ax_ds.plot([1.5, 3.2], [1.0, 2.2], color="#eab308", linewidth=4, zorder=2) # P -> B (HP)
+            ax_ds.plot([1.8, 3.5], [2.2, 1.0], color="#0284c7", linewidth=4, zorder=2) # A -> T (Retour)
+        elif "droite" in pos_choisie:
+            # P vers A (droit) et B vers T
+            ax_ds.plot([1.5, 1.8], [1.0, 2.2], color="#eab308", linewidth=4, zorder=2) # P -> A (HP)
+            ax_ds.plot([3.2, 3.5], [2.2, 1.0], color="#0284c7", linewidth=4, zorder=2) # B -> T (Retour)
+        else:
+            # Centre fermé : pas de liaison interne, la ligne P reste bloquée au seuil
+            ax_ds.plot([1.5, 1.5], [1.0, 1.1], color="#eab308", linewidth=4, zorder=2)
+            
+        ax_ds.set_xlim(0, 5)
+        ax_ds.set_ylim(0, 3.5)
+        ax_ds.axis("off")
+        st.pyplot(fig_ds)
+        st.caption(f"État hydrostatique : {annotation_etat}")
 
+    with col_dist_bd:
+        st.write("**La BD humoristique textuelle : Le carrefour des vannes**")
+        st.info(
+            "**Case 1 :** Un groupe de molécules d'huile arrive à toute vitesse dans un tuyau, poussé par la pompe : "
+            "'On arrive en ville à 200 bars, ouvrez la route !'. Elles tombent sur une barrière grise fermée.\n\n"
+            "**Case 2 :** Un petit aiguilleur en casquette (le solénoïde électrique) appuie sur un bouton. "
+            "Le gros tiroir métallique interne glisse latéralement dans un bruit de friction métallique : 'Schliiiit !'.\n\n"
+            "**Case 3 :** Les canaux s'alignent. Les molécules d'huile s'engouffrent en ligne droite vers l'orifice A : "
+            "'Voie dégagée ! Tout le monde fonce dans la chambre arrière du vérin pour soulever la grue !'.\n\n"
+            "**Case 4 :** Soudain, l'automate coupe le courant. Le gros ressort de rappel repousse le tiroir au centre. "
+            "Les molécules se retrouvent instantanément bloquées dans une impasse étanche : "
+            "'Fin du voyage ! Centre fermé ! Tout le monde s'arrête sur place et maintient la charge en l'air !'."
+        )
+        
+    st.divider()
+
+    # --- SECTION LOGIQUE : ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 2 ---
+    if "suite_verrouille_tab2_hydro" not in st.session_state:
+        st.session_state.suite_verrouille_tab2_hydro = False
+    verrou_at2 = st.session_state.suite_verrouille_tab2_hydro
+
+    # Affichage du module de questions spécifique aux distributeurs hydrauliques
+    afficher_atelier_distributeurs_hydrauliques(verrouille=verrou_at2)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 2")
+    
+    case_certif_stat2 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier 2.",
+        key="check_certif_hydro2_final_net",
+        disabled=verrou_at2,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_suite2_hydro_official", use_container_width=True, disabled=verrou_at2):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat2: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q2 = 0.0
+            if "ordre_quiz_tab2_hydro_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab2_hydro_aleatoire:
+                    saisie = st.session_state.get(f"hydro_at2_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): score_q2 += 1.0
+
+            score_t2 = 0.0
+            if "champs_hydro2_clean" in st.session_state:
+                for ligne in st.session_state.champs_hydro2_clean:
+                    cle = ligne[-1]
+                    attendu = ligne[2]
+                    if st.session_state.get(f"{cle}_hydro2_clean", "Choisir...") == attendu: score_t2 += 1.0
+
+            st.session_state.score_suite2_hydro_p1 = round(float(score_q2), 1)
+            st.session_state.score_suite2_hydro_p2 = round(float(score_t2), 1)
+            st.session_state.score_final_suite2_hydro = round(float(score_q2 + score_t2), 1)
+            st.session_state.suite_verrouille_tab2_hydro = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML POUR L'ONGLET 2 ---
+    if st.session_state.get("suite_verrouille_tab2_hydro", False):
+        scr1_t2 = st.session_state.get("score_suite2_hydro_p1", 0.0)
+        scr2_t2 = st.session_state.get("score_suite2_hydro_p2", 0.0)
+        tot_s_t2 = st.session_state.get("score_final_suite2_hydro", 0.0)
+        timestamp_suite2 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER DISTRIBUTEURS SCELLÉ | Note de session : {tot_s_t2:.1f} / 20")
+
+        html_export_hydro2 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Distributeurs Hydrauliques - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #1e3a8a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation Hydraulique</h1>
+                <p>Atelier 2 : Organes de distribution, tiroirs micrométriques et symbolisation ISO 4/3</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite2}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t2:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t2:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 2 : <strong>{tot_s_t2:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 1. Extraction et injection des lignes de correction du Quiz technique
+        if "ordre_quiz_tab2_hydro_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab2_hydro_aleatoire, 1):
+                saisie = st.session_state.get(f"hydro_at2_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_hydro2 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        # 2. Clôture du premier tableau et transition vers la synthèse à trous
+        html_export_hydro2 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # 3. Extraction et injection des lignes de correction du texte à trous
+        if "champs_hydro2_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_hydro2_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"{cle_variable}_hydro2_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_hydro2 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        # 4. Fermeture définitive du document HTML de l'Atelier 2
+        html_export_hydro2 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_hydro2 = preparer_nom_fichier("Rapport_Distributeurs_Hydrauliques").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 2 (.html)",
+            data=html_export_hydro2,
+            file_name=nom_fichier_html_hydro2,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
