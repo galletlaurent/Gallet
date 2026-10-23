@@ -693,17 +693,17 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
 
     with col_t:
         st.markdown("##### Synthèse Technique Métier (Texte à trous)")
-        for ligne_trou in cas["trous"]:
-            # Découpage strict des 4 éléments du tuple pour éliminer tout résidu
+        for idx, ligne_trou in enumerate(cas["trous"], 1):
             enonce_propre = ligne_trou[0]
             options_brutes = ligne_trou[1]
             cle_trou = ligne_trou[-1]
             
-            # Sécurité : On s'assure que options_propre est une liste propre de chaînes
-            if isinstance(options_brutes, tuple):
-                options_propre = list(options_brutes)
-            else:
-                options_propre = list(options_brutes) if hasattr(options_brutes, "__iter__") and not isinstance(options_brutes, str) else ["Choisir...", str(options_brutes)]
+            # Sécurité de conversion en liste pour les options
+            options_propre = list(options_brutes) if isinstance(options_brutes, (list, tuple)) else ["Choisir...", str(options_brutes)]
+            
+            # Création d'un identifiant de chaîne unique basé sur la longueur du texte pour forcer l'unicité
+            hash_securite = len(str(enonce_propre))
+            cle_unique_selectbox = f"select_trou_{cas['id_cas']}_{cle_trou}_{idx}_{hash_securite}"
             
             c_enon, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_enon:
@@ -712,7 +712,7 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
                 st.selectbox(
                     "", 
                     options_propre, 
-                    key=f"met_trou_ans_{cas['id_cas']}_{cle_trou}", 
+                    key=cle_unique_selectbox, 
                     disabled=verrouille, 
                     label_visibility="collapsed"
                 )
@@ -1566,15 +1566,20 @@ with tab4:
             score_t4 = 0.0
             if "trous" in cas_actif:
                 for idx, ligne_trou in enumerate(cas_actif["trous"], 1):
+                    enonce_propre = ligne_trou[0]
                     cle_trou = ligne_trou[-1]
                     attendu_texte = ligne_trou[2]
                     
-                    # Récupération sécurisée basée sur la clé exacte du selectbox
-                    saisie_texte = st.session_state.get(f"met_trou_ans_{cas_actif['id_cas']}_{cle_trou}", "Choisir...")
+                    # Reconstitution de la clé unique absolue
+                    hash_securite = len(str(enonce_propre))
+                    cle_unique_lecture = f"select_trou_{cas_actif['id_cas']}_{cle_trou}_{idx}_{hash_securite}"
+                    
+                    # Récupération sécurisée du choix de l'élève
+                    saisie_texte = st.session_state.get(cle_unique_lecture, "Choisir...")
                     if str(saisie_texte).strip() == str(attendu_texte).strip():
                         score_t4 += 1.0
 
-            # --- CALCUL DU SCORE FINAL DE L'ATELIER 4 ---
+            # --- CALCUL DU SCORE FINAL ET VERROUILLAGE ---
             st.session_state.score_suite4_arch_p1 = round(float(score_q4), 1)
             st.session_state.score_suite4_arch_p2 = round(float(score_t4), 1)
             st.session_state.score_final_suite4_arch = round(float(score_q4 + score_t4), 1)
