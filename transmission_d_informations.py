@@ -1857,9 +1857,9 @@ with tab5:
     # --- BANDE DESSINÉE / CARICATURE TEXTUELLE ET ILLUSTRATION ---
     col_graph_f, im_t_f = st.columns(2)
     
-    with col_graph_s:
-    st.write("**La BD humoristique textuelle : La lumière domestiquée**")
-    st.info(
+    with col_graph_f:
+        st.write("**La BD humoristique textuelle : La lumière domestiquée**")
+        st.info(
             "**Case 1 (Caricature de John Tyndall) :** Tyndall éclaire un seau d'eau percé dans le noir. L'eau coule et la lumière "
             "suit la courbure du jet pour éclairer le sol : 'Regardez ! J'ai appris à la lumière à tourner les coins !'. "
             "Les spectateurs applaudissent devant ce filet d'eau lumineux.\n\n"
