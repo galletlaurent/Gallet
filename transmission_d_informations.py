@@ -119,6 +119,70 @@ tab7 = onglets[7]
 tab8 = onglets[8] 
 tab9 = onglets[9]
 
+
+def afficher_atelier_bluetooth(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'Atelier 8 sur deux colonnes étanches."""
+    import random
+
+    questions_sources_bt = [
+        {"id": "t_blue_1", "q": "D'où provient historiquement le nom commercial et le logo du Bluetooth ?", "options": ["D'un roi viking nommé Harald à la dent bleue", "D'une marque de chewing-gum", "Du nom du chien de l'inventeur"], "rep": "D'un roi viking nommé Harald à la dent bleue"},
+        {"id": "t_blue_2", "q": "Quel consortium industriel gère et valide le développement des normes Bluetooth ?", "options": ["Le Bluetooth SIG (Special Interest Group)", "L'IEEE international", "L'alliance GSM"], "rep": "Le Bluetooth SIG (Special Interest Group)"},
+        {"id": "t_blue_3", "q": "Quelle est la bande de fréquence industrielle mondiale utilisée par la technologie Bluetooth ?", "options": ["2,4 GHz (bande ISM)", "5 GHz", "88 MHz"], "rep": "2,4 GHz (bande ISM)"},
+        {"id": "t_blue_4", "q": "Quelle est la portée théorique maximale d'une connexion Bluetooth de Classe 2 standard ?", "options": ["Environ 10 mètres", "Plus de 5 kilomètres", "Moins de 30 centimètres"], "rep": "Environ 10 mètres"},
+        {"id": "t_blue_5", "q": "Comment appelle-t-on la phase initiale obligatoire de liaison et d'authentification entre deux appareils ?", "options": ["L'appairage (ou pairing)", "Le handover cellulaire", "La réfraction totale"], "rep": "L'appairage (ou pairing)"},
+        {"id": "t_blue_6", "q": "Quelle évolution du Bluetooth (à partir de la v4.0) permet de connecter des capteurs médicaux ou des montres en consommant très peu d'énergie ?", "options": ["Le Bluetooth Low Energy (BLE)", "Le Bluetooth AM", "Le mode Multiplexé synchrone"], "rep": "Le Bluetooth Low Energy (BLE)"},
+        {"id": "t_blue_7", "q": "Quel indicateur de puissance en dBm permet de mesurer la qualité de réception du signal reçu ?", "options": ["Le RSSI", "Le SSID", "L'adresse IP"], "rep": "Le RSSI"},
+        {"id": "t_blue_8", "q": "Comment appelle-t-on le mini-réseau sans fil formé instantanément par un maître et ses esclaves ?", "options": ["Un piconet", "Une constellation", "Une cellule hexagonale"], "rep": "Un piconet"},
+        {"id": "t_blue_9", "q": "Quelle technique de sécurité permet d'éviter les interférences en changeant de fréquence 1600 fois par seconde ?", "options": ["L'étalement de spectre par saut de fréquence (FHSS)", "La modulation d'amplitude fixe", "Le codage binaire direct"], "rep": "L'étalement de spectre par saut de fréquence (FHSS)"},
+        {"id": "t_blue_10", "q": "Quel profil Bluetooth standardisé assure le transfert des flux audio de haute qualité vers un casque ?", "options": ["Le profil A2DP", "Le profil FTP", "Le profil RJ45"], "rep": "Le profil A2DP"}
+    ]
+
+    if "ordre_quiz_tab8_telecom_aleatoire" not in st.session_state:
+        random.shuffle(questions_sources_bt)
+        st.session_state.ordre_quiz_tab8_telecom_aleatoire = questions_sources_bt
+
+    st.session_state.champs_telecom8_clean = [
+        ("1. Le nom Bluetooth rend hommage au roi viking Harald aux dents ..........", ["Choisir...", "bleues", "vertes"], "bleues", "telecom8_t1"),
+        ("2. La normalisation et l'évolution de la technologie dépendent du groupement ..........", ["Choisir...", "SIG", "MIMO"], "SIG", "telecom8_t2"),
+        ("3. Le signal s'appuie sur des micro-ondes libres d'usage sur la bande des .......... GHz.", ["Choisir...", "2,4", "5"], "2,4", "telecom8_t3"),
+        ("4. Relier deux équipements nécessite d'abord de réaliser leur ..........", ["Choisir...", "appairage", "handover"], "appairage", "telecom8_t4"),
+        ("5. La puissance instantanée du lien radio se mesure à l'aide de l'indicateur ..........", ["Choisir...", "RSSI", "SSID"], "RSSI", "telecom8_t5"),
+        ("6. Pour les montres connectées, le protocole basse consommation se nomme le ..........", ["Choisir...", "BLE", "WPA3"], "BLE", "telecom8_t6"),
+        ("7. Le réseau local restreint créé entre un maître et ses périphériques est un ..........", ["Choisir...", "piconet", "cœur"], "piconet", "telecom8_t7"),
+        ("8. Le saut de fréquence permanent s'appelle la technique de transmission ..........", ["Choisir...", "FHSS", "CAN"], "FHSS", "telecom8_t8"),
+        ("9. Transmettre la musique en stéréo vers des écouteurs s'appuie sur le profil ..........", ["Choisir...", "A2DP", "SIM"], "A2DP", "telecom8_t9"),
+        ("10. Cette technologie sans fil cible des applications de très courte ..........", ["Choisir...", "portée", "vitesse"], "portée", "telecom8_t10")
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        if "ordre_quiz_tab8_telecom_aleatoire" in st.session_state:
+            if "inc_local_tel8" not in st.session_state: st.session_state.inc_local_tel8 = 0
+            st.session_state.inc_local_tel8 += 1
+            
+            for idx, q_data in enumerate(st.session_state.ordre_quiz_tab8_telecom_aleatoire, 1):
+                st.write(f"**{idx}.** {q_data['q']}")
+                cle_select = f"quiz_tel8_{q_data['id']}_inst_{st.session_state.inc_local_tel8}_{idx}"
+                st.selectbox("", options=["Choisir..."] + q_data["options"], key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 8 (Texte à trous - 10 pts)")
+        if "champs_telecom8_clean" in st.session_state:
+            instance_id = st.session_state.get("inc_local_tel8", 1)
+            for idx, ligne in enumerate(st.session_state.champs_telecom8_clean, 1):
+                enonce = ligne[0]
+                choix = ligne[1]
+                cle = ligne[-1]
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: st.write(enonce)
+                with c_sel:
+                    cle_dynamique_trou = f"trous_tel8_{cle}_inst_{instance_id}_{idx}"
+                    st.selectbox("", choix, key=cle_dynamique_trou, disabled=verrouille, label_visibility="collapsed")
+
+
+
 def afficher_atelier_wifi(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'Atelier 7 sur deux colonnes étanches."""
     import random
@@ -2721,11 +2785,11 @@ with tab7:
             <title>Rapport Wi-Fi - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #16a34a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                th {{ background-color: #16a34a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
@@ -2807,10 +2871,289 @@ with tab7:
         )
 
 
+with tab8:
+    st.header("Le Réseau Personnel Sans Fil : Le Bluetooth")
+    
+    # --- DÉCLARATION DU VERROU ET SÉCURITÉ DE L'ATELIER 8 ---
+    if "suite_verrouille_tab8_telecom" not in st.session_state:
+        st.session_state.suite_verrouille_tab8_telecom = False
+    verrou_at8 = st.session_state.suite_verrouille_tab8_telecom
 
+    if "inc_local_tel8" not in st.session_state:
+        st.session_state.inc_local_tel8 = 0
 
+    # --- HISTORIQUE ET TECHNIQUE : HARALD BLATAND ET LE SÉCURISATION ---
+    st.subheader("L'unification des périphériques : De l'histoire scandinave aux ondes ISM")
+    st.write(
+        "**L'Invention :** En 1994, les ingénieurs de la firme suédoise Ericsson cherchent une solution sans fil pour remplacer "
+        "les câbles reliant les ordinateurs aux périphériques. En hommage au roi viking **Harald Blåtand** (« à la dent bleue ») "
+        "qui avait unifié les tribus scandinaves au Xe siècle, ils baptisent cette technologie **Bluetooth** car elle a pour vocation "
+        "d'unifier tous les appareils de communication électroniques environnants. Son logo officiel est la superposition directe "
+        "des runes vikings de ses initiales (H et B).\n\n"
+        "**Fonctionnement extrêmement détaillé :** Le Bluetooth opère dans la bande de fréquences industrielles, scientifiques et médicales "
+        "**(ISM) à 2,4 GHz**. Conçu pour créer des réseaux personnels microscopiques à très courte portée appelés **piconets**, il autorise "
+        "la connexion d'un équipement maître (ex: un smartphone) avec un maximum de 7 équipements esclaves (ex: des écouteurs).\n"
+        "Pour éviter de saturer la bande hertzienne et résister au piratage, le Bluetooth s'appuie sur la technologie **FHSS** : "
+        "le signal change de canal radio de façon aléatoire **1600 fois par seconde** sur 79 canaux distincts. "
+        "La qualité de la liaison est surveillée en continu par l'indicateur **RSSI** (exprimé en dBm). Plus l'appareil s'éloigne, "
+        "plus la puissance chute, entraînant une coupure automatique dès que le seuil de sensibilité est franchi."
+    )
 
+    st.divider()
 
+    # --- LABORATOIRE INTERACTIF : APPAIRAGE ET COUPLAGE RSSI ---
+    st.subheader("Laboratoire de métrologie WPAN : Portée et indicateur RSSI")
+    st.write(
+        "Modifiez le curseur pour simuler l'éloignement du smartphone par rapport à son périphérique récepteur. "
+        "Sélectionnez le type d'appareil esclave pour observer la variation en temps réel de la puissance RSSI (dBm) et l'état d'appairage."
+    )
+
+    # Paramètres interactifs
+    type_peripherique = st.selectbox("Sélectionner l'appareil esclave à connecter :", options=["Écouteurs stéréo sans fil (Profil Audio A2DP)", "Montre connectée Fitness (Profil Basse Énergie BLE)", "Enceinte nomade de salon (Profil Audio Fort Débit)"], key="select_periph_bt")
+    distance_bt_m = st.slider("Ajuster la distance séparant les deux appareils (mètres) :", min_value=0.5, max_value=15.0, value=3.0, step=0.5, key="slide_dist_bt")
+
+    # Calcul rigoureux du signal RSSI d'école (dBm décroissant)
+    # Puissance initiale à 0.5m = -40 dBm, atténuation logarithmique liée à la distance
+    rssi_calcule = -40.0 - (20.0 * np.log10(distance_bt_m))
+    rssi_calcule = round(max(-100.0, rssi_calcule), 1)
+
+    # Rendu graphique Matplotlib de la liaison Bluetooth
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+    import numpy as np
+
+    fig_bt, ax_bt = plt.subplots(figsize=(6.8, 3.2), facecolor="white")
+    ax_bt.set_facecolor("white")
+    
+    # Sol fixe d'expérimentation
+    ax_bt.plot([0.0, 8.0], [0.2, 0.2], color="#0f172a", linewidth=2.5)
+    
+    # 1. Dessin de l'appareil MAÎTRE fixe à gauche (Smartphone à x=1.0, y=0.8)
+    ax_bt.add_patch(patches.Rectangle((0.8, 0.5), 0.4, 0.7, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=3))
+    ax_bt.add_patch(patches.Rectangle((0.84, 0.56), 0.32, 0.58, facecolor="#38bdf8", zorder=4)) # Écran
+    # Logo Bluetooth runique bleu sur l'écran
+    ax_bt.plot([1.0, 1.0], [0.75, 0.95], color="blue", linewidth=1.5, zorder=5)
+    ax_bt.plot([1.0, 1.08, 0.92, 1.0, 1.08, 0.92], [0.95, 0.9, 0.8, 0.75, 0.85, 0.9], color="blue", linewidth=1.5, zorder=5)
+    ax_bt.text(1.0, 1.35, "Smartphone\n(Maître)", fontsize=8, color="#0f172a", weight="bold", ha="center")
+    
+    # 2. Dessin de l'appareil ESCLAVE mobile à droite (x dépendant du curseur de distance)
+    # Mise à l'échelle graphique de la distance : 15 mètres max = coordonnée x=6.0
+    x_esclave = 1.2 + (distance_bt_m / 15.0) * 4.8
+    
+    if "Écouteurs" in type_peripherique:
+        ax_bt.add_patch(patches.Circle((x_esclave - 0.1, 0.8), 0.08, facecolor="#475569", zorder=3))
+        ax_bt.add_patch(patches.Circle((x_esclave + 0.1, 0.8), 0.08, facecolor="#475569", zorder=3))
+        ax_bt.plot([x_esclave - 0.1, x_esclave + 0.1], [0.85, 0.85], color="#475569", linewidth=2, zorder=3)
+        nom_txt = "Écouteurs"
+    elif "Montre" in type_peripherique:
+        ax_bt.add_patch(patches.Rectangle((x_esclave - 0.1, 0.7), 0.2, 0.2, facecolor="#10b981", zorder=3)) # Cadran
+        ax_bt.plot([x_esclave, x_esclave], [0.5, 1.1], color="#334155", linewidth=4, zorder=2) # Bracelet
+        nom_txt = "Montre BLE"
+    else:
+        ax_bt.add_patch(patches.Rectangle((x_esclave - 0.15, 0.4), 0.3, 0.6, facecolor="#ca8a04", zorder=3)) # Enceinte
+        ax_bt.add_patch(patches.Circle((x_esclave, 0.6), 0.1, facecolor="black", zorder=4)) # Haut-parleur
+        nom_txt = "Enceinte"
+        
+    ax_bt.text(x_esclave, 1.35, f"{nom_txt}\n(Esclave)", fontsize=8, color="#0f172a", weight="bold", ha="center")
+
+    # 3. DÉTERMINATION DYNAMIQUE DE L'ÉTAT DU PICONET
+    if distance_bt_m <= 10.0:
+        # Appairage actif : Ondes de couplage représentées en bleu continu
+        color_bt_link = "#2563eb"
+        style_bt_link = "-"
+        ax_bt.plot([1.2, x_esclave - 0.15], [0.85, 0.85], color="#2563eb", linewidth=2, linestyle=":", zorder=1)
+        # Petits arcs d'ondes de couplage
+        ax_bt.add_patch(patches.Arc(((1.2 + x_esclave)/2, 0.85), 0.4, 0.4, angle=0, theta1=0, theta2=360, color="#2563eb", linewidth=1.2))
+        msg_bt_status = f"APPAIRAGE EN COURS | Force du champ RSSI : {rssi_calcule} dBm. Statut : Connecté."
+        type_box_bt = "success"
+    else:
+        # Distance excessive : Rupture de lien, ondes coupées rouges
+        color_bt_link = "#ef4444"
+        style_bt_link = ":"
+        msg_bt_status = f"LIAISON IMPOSSIBLE | RSSI critique : {rssi_calcule} dBm (Limite de sensibilité de -85 dBm franchie). Périphérique déconnecté."
+        type_box_bt = "error"
+
+    # Habillage final
+    ax_bt.set_xlim(0, 7.0)
+    ax_bt.set_ylim(0, 1.8)
+    ax_bt.axis("off")
+    st.pyplot(fig_bt)
+    plt.close(fig_bt)
+    
+    # Affichage de la boîte de statut
+    if type_box_bt == "success":
+        st.success(msg_bt_status)
+    else:
+        st.error(msg_bt_status)
+
+    st.divider()
+
+    # --- BANDE DESSINÉE / CARICATURE TEXTUELLE ---
+    st.write("**La BD humoristique textuelle : L'alliance des runes et de la dent bleue**")
+    st.info(
+        "**Case 1 (Caricature du Roi Harald) :** Le roi viking Harald Blåtand, une énorme chope de bière à la main, "
+        "saute sur la table de banquet : 'Moi, Harald, j'ai unifié le Danemark et la Norvège sous une seule bannière !'. "
+        "Un conseiller remarque : 'Majesté, vous avez une dent gâtée toute bleue au fond de la bouche...'.\n\n"
+        "**Case 2 (Le casse-tête des fils d'Ericsson) :** Mille ans plus tard, un ingénieur suédois s'emmêle les pieds "
+        "dans les lourds câbles noirs reliant sa souris, son clavier et son casque à sa tour d'ordinateur : "
+        "'Il faut unifier tout ça par les ondes libres ! Créons le protocole Harald-Dent-Bleue !'.\n\n"
+        "**Case 3 (L'énigme du code secret) :** Un utilisateur tente d'appairer ses écouteurs en tapant un code PIN erroné. "
+        "Le smartphone rejette la liaison : 'Code incorrect !'. L'utilisateur s'énerve : 'Mais connecte-toi, "
+        "je suis à vingt centimètres !'. Les ondes sautent joyeusement d'un canal à l'autre pour trouver la bonne clé.\n\n"
+        "**Case 4 (La barrière des dix mètres) :** L'étudiant s'éloigne de son enceinte de salon en musique pour aller "
+        "chercher un verre d'eau. Au dixième mètre, le son commence à saccader : 'Crrr... Bzzz...'. "
+        "Le signal RSSI s'effondre au fond du canapé, et la dent bleue lâche prise, plongeant la pièce dans le silence."
+    )
+
+    st.divider()
+
+    # --- ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 8 ---
+    afficher_atelier_bluetooth(verrouille=verrou_at8)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 8")
+    case_certif_tel8 = st.checkbox("Je certifie avoir complété les questions de l'Atelier 8.", key="check_certif_tel8_final", disabled=verrou_at8)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 8", key="btn_export_tel8_official", use_container_width=True, disabled=verrou_at8):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_tel8: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # A. Correction du Quiz Technique
+            score_q8 = 0.0
+            if "ordre_quiz_tab8_telecom_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab8_telecom_aleatoire:
+                    saisie = "Choisir..."
+                    prefixe_cherche = f"quiz_tel8_{q_item['id']}_"
+                    for k_session in st.session_state.keys():
+                        if k_session.startswith(prefixe_cherche):
+                            saisie = st.session_state[k_session]
+                            break
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q8 += 1.0
+
+            # B. Correction de la Synthèse par texte à trous (10 trous -> 10 pts)
+            score_t8 = 0.0
+            if "champs_telecom8_clean" in st.session_state:
+                for idx, ligne in enumerate(st.session_state.champs_telecom8_clean, 1):
+                    cle = ligne[-1]
+                    attendu = ligne
+                    saisie_t = st.session_state.get(f"trous_tel8_{cle}_inst_{idx}", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu).strip(): 
+                        score_t8 += 1.0
+
+            # Sauvegarde des résultats et verrouillage officiel de l'Atelier 8
+            st.session_state.score_suite8_tel_p1 = round(float(score_q8), 1)
+            st.session_state.score_suite8_tel_p2 = round(float(score_t8), 1)
+            st.session_state.score_final_suite8_telecom = round(float(score_q8 + score_t8), 1)
+            st.session_state.suite_verrouille_tab8_telecom = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML SCELLÉ DE L'ATELIER 8 ---
+    if st.session_state.get("suite_verrouille_tab8_telecom", False):
+        scr1_tel8 = st.session_state.get("score_suite8_tel_p1", 0.0)
+        scr2_tel8 = st.session_state.get("score_suite8_tel_p2", 0.0)
+        tot_s_tel8 = st.session_state.get("score_final_suite8_telecom", 0.0)
+        timestamp_tel8 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER 8 BLUETOOTH SCELLÉ | Note de session : {tot_s_tel8:.1f} / 20")
+
+        n_eleve = st.session_state.get("nom_var", "ELEVE").upper()
+        p_eleve = st.session_state.get("prenom_var", "PRENOM").upper()
+        c_eleve = st.session_state.get("classe_var", "GROUPE").upper()
+
+        html_export_tel8 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Bluetooth - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation Télécommunications</h1>
+                <p>Atelier 8 : Protocoles WPAN, réseaux piconets et modulation FHSS par sauts de fréquence</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_tel8}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_tel8:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_tel8:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_tel8:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 8 : <strong>{tot_s_tel8:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+        if "ordre_quiz_tab8_telecom_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab8_telecom_aleatoire, 1):
+                saisie = "Choisir..."
+                prefixe_cherche = f"quiz_tel8_{q_item['id']}_"
+                for k_session in st.session_state.keys():
+                    if k_session.startswith(prefixe_cherche):
+                        saisie = st.session_state[k_session]
+                        break
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_tel8 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tel8 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_telecom8_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_telecom8_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"trous_tel8_{cle_variable}_inst_{num}", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_tel8 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_tel8 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_tel8 = preparer_nom_fichier("Rapport_Bluetooth").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 8 (.html)",
+            data=html_export_tel8,
+            file_name=nom_fichier_html_tel8,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
