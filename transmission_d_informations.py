@@ -122,6 +122,68 @@ tab9 = onglets[9]
 tab10 = onglets[10]
 
 
+def afficher_atelier_brouilleurs(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'Atelier 10 sur deux colonnes étanches."""
+    import random
+
+    questions_sources_br = [
+        {"id": "t_br_1", "q": "Quel est le principe physique fondamental utilisé par un brouilleur d'onde ?", "options": ["Saturer une bande de fréquence avec un bruit radio plus puissant que le signal légitime", "Couper physiquement les câbles de cuivre", "Créer un vide d'air absolu autour de l'appareil"], "rep": "Saturer une bande de fréquence avec un bruit radio plus puissant que le signal légitime"},
+        {"id": "t_br_2", "q": "Comment appelle-t-on le rapport entre la puissance du signal utile et celle du bruit parasite ?", "options": ["Le rapport Signal sur Bruit (SNR)", "L'indicateur SSID", "L'indice de réfraction totale"], "rep": "Le rapport Signal sur Bruit (SNR)"},
+        {"id": "t_br_3", "q": "Quel est l'effet d'un brouillage sur le récepteur (smartphone ou box) ?", "options": ["Le récepteur ne parvient plus à décoder les données utiles au milieu du bruit", "Le récepteur double sa vitesse de téléchargement", "Le récepteur change de couleur de coque"], "rep": "Le récepteur ne parvient plus à décoder les données utiles au milieu du bruit"},
+        {"id": "t_br_4", "q": "En France, quelle est la règle juridique générale concernant la détention et l'usage de brouilleurs par des particuliers ?", "options": ["Ils sont strictement interdits par la loi", "Ils sont autorisés uniquement dans les chambres", "Ils sont obligatoires dans les écoles"], "rep": "Ils sont strictement interdits par la loi"},
+        {"id": "t_br_5", "q": "Quel type d'organisme public ou étatique est légalement autorisé à utiliser des brouilleurs (ex: en prison ou lors d'opérations) ?", "options": ["Les forces de sécurité, l'administration pénitentiaire ou l'armée", "Les cinémas de quartier", "Les syndics de copropriété"], "rep": "Les forces de sécurité, l'administration pénitentiaire ou l'armée"},
+        {"id": "t_br_6", "q": "Comment réagit un signal Wi-Fi ou Bluetooth face à un brouilleur opérant sur la fréquence de 2,4 GHz ?", "options": ["La liaison se dégrade immédiatement jusqu'à la déconnexion", "La liaison passe sur un câble invisible", "La portée augmente de dix mètres"], "rep": "La liaison se dégrade immédiatement jusqu'à la déconnexion"},
+        {"id": "t_br_7", "q": "Quelle technique de brouillage consiste à saturer spécifiquement un seul canal précis ?", "options": ["Le brouillage ciblé (ou sélectif)", "Le brouillage de barrage large", "Le saut de fréquence"], "rep": "Le brouillage ciblé (ou sélectif)"},
+        {"id": "t_br_8", "q": "Quelle technique consiste à émettre un bruit blanc sur un très large spectre de fréquences simultanément ?", "options": ["Le brouillage de barrage", "Le chiffrement WPA3", "L'appairage BLE"], "rep": "Le brouillage de barrage"},
+        {"id": "t_br_9", "q": "Outre les communications, quel système de positionnement par satellites peut être neutralisé par un brouilleur ?", "options": ["Le GPS", "La fibre optique", "Le télégraphe de Chappe"], "rep": "Le GPS"},
+        {"id": "t_br_10", "q": "Quel phénomène naturel similaire à un brouillage peut perturber les satellites lors de fortes activités solaires ?", "options": ["Les tempêtes magnétiques solaires", "La foudre de plaine", "Les courants de Foucault"], "rep": "Les tempêtes magnétiques solaires"}
+    ]
+
+    if "ordre_quiz_tab10_telecom_aleatoire" not in st.session_state:
+        random.shuffle(questions_sources_br)
+        st.session_state.ordre_quiz_tab10_telecom_aleatoire = questions_sources_br
+
+    st.session_state.champs_telecom10_clean = [
+        ("1. Un brouilleur neutralise les récepteurs en émettant un .......... radio parasite.", ["Choisir...", "bruit", "courant"], "bruit", "telecom10_t1"),
+        ("2. Cette agression hertzienne vise à saturer une .......... de fréquence précise.", ["Choisir...", "bande", "antenne"], "bande", "telecom10_t2"),
+        ("3. La qualité de liaison s'effondre lorsque le rapport signal sur .......... (SNR) devient trop bas.", ["Choisir...", "bruit", "vide"], "bruit", "telecom10_t3"),
+        ("4. Incapable d'isoler les bits utiles au milieu des parasites, l'appareil subit une ..........", ["Choisir...", "déconnexion", "accélération"], "déconnexion", "telecom10_t4"),
+        ("5. Bloquer simultanément le GSM, le Wi-Fi et le GPS nécessite un brouillage de ..........", ["Choisir...", "barrage", "canal"], "barrage", "telecom10_t5"),
+        ("6. Pour un particulier, l'usage de ces équipements est strictement .......... par la loi.", ["Choisir...", "interdit", "recommandé"], "interdit", "telecom10_t6"),
+        ("7. L'administration .......... utilise légalement ces systèmes pour bloquer les téléphones clandestins.", ["Choisir...", "pénitentiaire", "scolaire"], "pénitentiaire", "telecom10_t7"),
+        ("8. Le saut de fréquence (FHSS) historique permettait justement de .......... le brouillage.", ["Choisir...", "contourner", "amplifier"], "contourner", "telecom10_t8"),
+        ("9. Une perturbation hertzienne naturelle peut être provoquée par un orage ..........", ["Choisir...", "magnétique", "acoustique"], "magnétique", "telecom10_t9"),
+        ("10. Ce type d'équipement réalise une application de contre-mesure ..........", ["Choisir...", "électronique", "optique"], "électronique", "telecom10_t10")
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        if "ordre_quiz_tab10_telecom_aleatoire" in st.session_state:
+            if "inc_local_tel10" not in st.session_state: st.session_state.inc_local_tel10 = 0
+            st.session_state.inc_local_tel10 += 1
+            
+            for idx, q_data in enumerate(st.session_state.ordre_quiz_tab10_telecom_aleatoire, 1):
+                st.write(f"**{idx}.** {q_data['q']}")
+                cle_select = f"quiz_tel10_{q_data['id']}_inst_{st.session_state.inc_local_tel10}_{idx}"
+                st.selectbox("", options=["Choisir..."] + q_data["options"], key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 10 (Texte à trous - 10 pts)")
+        if "champs_telecom10_clean" in st.session_state:
+            instance_id = st.session_state.get("inc_local_tel10", 1)
+            for idx, ligne in enumerate(st.session_state.champs_telecom10_clean, 1):
+                enonce = ligne[0]
+                choix = ligne[1]
+                cle = ligne[-1]
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: st.write(enonce)
+                with c_sel:
+                    cle_dynamique_trou = f"trous_tel10_{cle}_inst_{instance_id}_{idx}"
+                    st.selectbox("", choix, key=cle_dynamique_trou, disabled=verrouille, label_visibility="collapsed")
+
+
 def afficher_atelier_infrarouge(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'Atelier 9 sur deux colonnes étanches."""
     import random
@@ -3509,9 +3571,270 @@ with tab9:
             use_container_width=True
         )
 
+with tab10:
+    st.header("Les Brouilleurs d'Onde : Guerre Électronique et Cadre Légal")
+    
+    # --- DÉCLARATION DU VERROU ET SÉCURITÉ DE L'ATELIER 10 ---
+    if "suite_verrouille_tab10_telecom" not in st.session_state:
+        st.session_state.suite_verrouille_tab10_telecom = False
+    verrou_at10 = st.session_state.suite_verrouille_tab10_telecom
 
+    if "inc_local_tel10" not in st.session_state:
+        st.session_state.inc_local_tel10 = 0
 
+    # --- LE COURS TECHNIQUE ET CONTEXTE ---
+    st.subheader("La saturation du spectre : Le principe du bruit blanc")
+    st.write(
+        "**Le Principe :** Un brouilleur d'ondes (ou jammer) est un émetteur de radiofréquences conçu pour perturber ou bloquer "
+        "les communications entre un émetteur légitime et son récepteur. Contrairement à une idée reçue, il ne coupe pas le signal d'origine, "
+        "il fait pire : il inonde l'espace aérien d'un bruit radioélectrique de forte puissance sur la même bande de fréquences.\n\n"
+        "**Fonctionnement extrêmement détaillé :** Pour comprendre ce phénomène, on utilise le concept de **Rapport Signal sur Bruit (SNR)**. "
+        "Pour décoder une information numérique (les bits), un récepteur (comme un smartphone) doit recevoir un signal utile nettement plus "
+        "fort que le bruit de fond ambiant. Lorsque le brouilleur s'active, il génère un signal parasite continu (souvent modulé de façon aléatoire). "
+        "Le récepteur capte un flot d'ondes chaotiques : son rapport SNR s'effondre en dessous du seuil critique. "
+        "Bien qu'interconnecté à l'antenne-relais ou à la box, l'appareil est incapable de distinguer les données des parasites. C'est l'équivalent "
+        "d'essayer de tenir une conversation chuchotée au milieu d'un concert de rock métallurgique.\n\n"
+        "**Le Cadre Juridique :** En France, la réglementation encadre strictement ces dispositifs. "
+        "La vente, la détention et l'utilisation de brouilleurs par un particulier sont **strictement interdites** et passibles de lourdes sanctions "
+        "(amendes et emprisonnement). Seuls l'État, l'armée, et les ministères de la Justice (pour neutraliser les portables introduits en prison) ou de l'Intérieur "
+        "disposent de dérogations légales pour l'ordre public ou la sécurité nationale."
+    )
 
+    st.divider()
+
+    # --- LABORATOIRE INTERACTIF : SATURATION HERTZIENNE ---
+    st.subheader("Laboratoire de guerre électronique : Saturation de spectre et calcul du SNR")
+    st.write(
+        "Activez l'interrupteur du brouilleur d'ondes et modifiez sa puissance de sortie. "
+        "Observez l'effondrement immédiat de l'onde sinusoïdale légitime et la coupure réseau sur le smartphone."
+    )
+
+    # Commandes du simulateur
+    brouilleur_actif = st.checkbox("Activer l'émetteur de brouillage parasite", value=False, key="check_brouilleur")
+    puissance_brouilleur_w = st.slider("Puissance d'émission du bruit blanc (Watts) :", min_value=1, max_value=50, value=10, step=1, disabled=not brouilleur_actif)
+
+    # Rendu graphique Matplotlib de la perturbation
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+    import numpy as np
+
+    fig_br, ax_br = plt.subplots(figsize=(6.5, 3.2), facecolor="white")
+    ax_br.set_facecolor("white")
+    
+    # Sol et structures fixes
+    ax_br.plot([0.0, 7.0], [0.2, 0.2], color="black", linewidth=2.5)
+    
+    # Émetteur légitime (Antenne-relais à gauche x=1.0)
+    ax_br.plot([1.0, 1.0], [0.2, 1.8], color="#475569", linewidth=3)
+    ax_br.add_patch(patches.Circle((1.0, 1.8), 0.05, facecolor="green"))
+    ax_br.text(1.0, 2.0, "Antenne\nLégitime", fontsize=8, color="#1e293b", weight="bold", ha="center")
+    
+    # Récepteur (Smartphone au centre x=3.5, y=0.6)
+    ax_br.add_patch(patches.Rectangle((3.3, 0.3), 0.4, 0.7, facecolor="#1e293b", zorder=3))
+    color_ecran = "#38bdf8"
+    
+    # Brouilleur d'ondes (Pylône d'agression à droite x=6.0, y=0.2)
+    ax_br.plot([6.0, 6.0], [0.2, 1.5], color="#ef4444" if brouilleur_actif else "#cbd5e1", linewidth=2.5)
+    ax_br.add_patch(patches.RegularPolygon((6.0, 1.5), numVertices=3, radius=0.1, facecolor="#ef4444" if brouilleur_actif else "#cbd5e1"))
+    ax_br.text(6.0, 1.75, "Brouilleur\n(Contre-mesure)", fontsize=8, color="#ef4444" if brouilleur_actif else "#64748b", weight="bold", ha="center")
+
+    if not brouilleur_actif:
+        # Signal propre et stable (Ondes bleues régulières vers le mobile)
+        for r_leg in [0.6, 1.2, 1.9, 2.4]:
+            ax_br.add_patch(patches.Arc((1.0, 1.8), r_leg*2, r_leg*2, angle=-45, theta1=-45, theta2=45, color="#3b82f6", linewidth=1.5, linestyle="-"))
+        msg_br_info = "Spectre hertzien nominal. Rapport SNR à +22 dB. Communication numérique fluide, débit optimal."
+    else:
+        # Brouilleur en action : Injection d'un bruit blanc chaotique rouge écrasant
+        color_ecran = "#64748b" # Écran éteint par déconnexion
+        for r_par in np.linspace(0.4, 2.5, 4):
+            ax_br.add_patch(patches.Arc((6.0, 1.5), r_par*2, r_par*2, angle=135, theta1=-60, theta2=60, color="#ef4444", linewidth=2.0, linestyle="--"))
+            
+        snr_chute = 22.0 - (puissance_brouilleur_w * 0.8)
+        if snr_chute > 3.0:
+            msg_br_info = f"Perturbation détectée. Rapport SNR dégradé à {snr_chute:.1f} dB. Ralentissement des flux de paquets binaires."
+            color_ecran = "#f97316" # Écran orange dégradé
+        else:
+            msg_br_info = f"Rupture totale ! Rapport SNR négatif ({snr_chute:.1f} dB). Le récepteur ne distingue plus les bits. Échec réseau."
+
+    # Rendu de la dalle du smartphone
+    ax_br.add_patch(patches.Rectangle((3.34, 0.36), 0.32, 0.58, facecolor=color_ecran, zorder=4))
+
+    ax_br.set_xlim(0, 7.0)
+    ax_br.set_ylim(0, 2.4)
+    ax_br.axis("off")
+    st.pyplot(fig_br)
+    plt.close(fig_br)
+    
+    if not brouilleur_actif: st.success(msg_br_info)
+    else: st.error(msg_br_info)
+
+    st.divider()
+
+    # --- CARICATURE / BD HUMORISTIQUE TEXTUELLE ---
+    st.write("**La BD humoristique textuelle : Le silence des ondes**")
+    st.info(
+        "**Case 1 (L'amphithéâtre bavard) :** Un professeur désespéré tente de faire son cours sur l'histoire des technologies face à un groupe "
+        "d'étudiants dont les smartphones vibrent et clignotent sous les notifications de vidéos et de messages : "
+        "'S'il vous plaît ! Écoutez-moi !'. Les téléphones crient en chœur : 'Bliiin ! Dring ! Clic !'.\n\n"
+        "**Case 2 (Le plan secret) :** Le professeur, un sourire aux lèvres, sort de sa sacoche une petite boîte noire "
+        "munie de quatre antennes en fer : 'Puisque la voix de la science ne passe plus, activons le barrage d'électrons !'. "
+        "Il presse l'interrupteur.\n\n"
+        "**Case 3 (Le chaos silencieux) :** Instantanément, le brouilleur inonde l'amphithéâtre de micro-ondes parasites invisibles. "
+        "Les smartphones des élèves affichent tous une croix rouge sur l'antenne : 'Réseau indisponible... Recherche...'. "
+        "Les étudiants s'agitent en levant leur boîtier en l'air : 'Plus de réseau ! Plus de Wi-Fi ! On est coupés du monde !'.\n\n"
+        "**Case 4 (Le retour à la réalité) :** Un inspecteur officiel des fréquences enfonce la porte de la pièce "
+        "avec un récepteur hertzien de contrôle à la main : 'Halte là ! Émettre un bruit blanc de blocage sans licence est un délit ! "
+        "C'est une lourde amende réglementaire !'. Le professeur éteint la boîte en soupirant : 'C'était pourtant le plus beau silence de ma carrière'."
+    )
+
+    st.divider()
+
+    # --- ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 10 ---
+    afficher_atelier_brouilleurs(verrouille=verrou_at10)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 10")
+    case_certif_tel10 = st.checkbox("Je certifie avoir complété les questions de l'Atelier 10.", key="check_certif_tel10_final", disabled=verrou_at10)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 10", key="btn_export_tel10_official", use_container_width=True, disabled=verrou_at10):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_tel10: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # A. Correction du Quiz Technique
+            score_q10 = 0.0
+            if "ordre_quiz_tab10_telecom_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab10_telecom_aleatoire:
+                    saisie = "Choisir..."
+                    prefixe_cherche = f"quiz_tel10_{q_item['id']}_"
+                    for k_session in st.session_state.keys():
+                        if k_session.startswith(prefixe_cherche):
+                            saisie = st.session_state[k_session]
+                            break
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q10 += 1.0
+
+            # B. Correction de la Synthèse
+            score_t10 = 0.0
+            if "champs_telecom10_clean" in st.session_state:
+                for idx, ligne in enumerate(st.session_state.champs_telecom10_clean, 1):
+                    cle = ligne[-1]
+                    attendu = ligne[2]
+                    saisie_t = st.session_state.get(f"trous_tel10_{cle}_inst_{idx}", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu).strip(): 
+                        score_t10 += 1.0
+
+            st.session_state.score_suite10_tel_p1 = round(float(score_q10), 1)
+            st.session_state.score_suite10_tel_p2 = round(float(score_t10), 1)
+            st.session_state.score_final_suite10_telecom = round(float(score_q10 + score_t10), 1)
+            st.session_state.suite_verrouille_tab10_telecom = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML SCELLÉ DE L'ATELIER 10 ---
+    if st.session_state.get("suite_verrouille_tab10_telecom", False):
+        scr1_tel10 = st.session_state.get("score_suite10_tel_p1", 0.0)
+        scr2_tel10 = st.session_state.get("score_suite10_tel_p2", 0.0)
+        tot_s_tel10 = st.session_state.get("score_final_suite10_telecom", 0.0)
+        timestamp_tel10 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER 10 BROUILLEURS D'ONDE SCELLÉ | Note de session : {tot_s_tel10:.1f} / 20")
+
+        n_eleve = st.session_state.get("nom_var", "ELEVE").upper()
+        p_eleve = st.session_state.get("prenom_var", "PRENOM").upper()
+        c_eleve = st.session_state.get("classe_var", "GROUPE").upper()
+
+        html_export_tel10 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Brouilleurs d'onde - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #ef4444; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #ef4444; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation Télécommunications</h1>
+                <p>Atelier 10 : Guerre électronique, contre-mesures, spectre de barrage et rapport SNR</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_tel10}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_tel10:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #ef4444;">
+                Note obtenue au Quiz Technique : <strong>{scr1_tel10:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_tel10:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 10 : <strong>{tot_s_tel10:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+        if "ordre_quiz_tab10_telecom_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab10_telecom_aleatoire, 1):
+                saisie = "Choisir..."
+                prefixe_cherche = f"quiz_tel10_{q_item['id']}_"
+                for k_session in st.session_state.keys():
+                    if k_session.startswith(prefixe_cherche):
+                        saisie = st.session_state[k_session]
+                        break
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_tel10 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tel10 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_telecom10_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_telecom10_clean, 1):
+                enonce_texte = ligne
+                attendu_texte = ligne
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"trous_tel10_{cle_variable}_inst_{num}", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_tel10 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_tel10 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_tel10 = preparer_nom_fichier("Rapport_Brouilleurs").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 10 (.html)",
+            data=html_export_tel10,
+            file_name=nom_fichier_html_tel10,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
