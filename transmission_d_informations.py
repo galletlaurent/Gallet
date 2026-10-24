@@ -2892,7 +2892,7 @@ with tab7:
     st.divider()
     col71, col72 = st.columns(2)
 
-    with co71: 
+    with col71: 
     # --- BANDE DESSINÉE / CARICATURE TEXTUELLE ---
         st.write("**La BD humoristique textuelle : Le coup de génie d'Hedy**")
         st.info(
@@ -2909,8 +2909,8 @@ with tab7:
             "ou passe en 2,4 GHz !'."
         )
 
-    with co71:
-        try: st.image("porte_bluetooth.jpg", caption="portée théorique")
+    with col72:
+        try: st.image("caricature_wifi.jpg", caption="WIFI")
         except Exception: st.warning("Fichier d'illustration indisponible.")
 
 
