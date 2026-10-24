@@ -2263,7 +2263,7 @@ with tab5:
 
     with im_t_f:
         try:
-            st.image("caricature_fibre.jpg", caption="Fabrication et raccordement de la fibre de verre", width=180)
+            st.image("caricature_fibre.jpg", caption="Fabrication et raccordement de la fibre de verre")
         except Exception:
             st.warning("Illustration en cours de chargement ou fichier 'caricature_fibre.jpg' absent du serveur.")
 
