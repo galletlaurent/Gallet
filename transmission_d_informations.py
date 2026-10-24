@@ -170,17 +170,20 @@ def afficher_atelier_wifi(verrouille=False):
         st.markdown("##### Synthèse de l'Atelier 7 (Texte à trous - 10 pts)")
         if "champs_telecom7_clean" in st.session_state:
             instance_id = st.session_state.get("inc_local_tel7", 1)
+            
             for idx, ligne in enumerate(st.session_state.champs_telecom7_clean, 1):
-                enonce = ligne
-                choix = ligne
-                cle = ligne[-1]
+                # Correction de l'indexation pour nettoyer l'affichage des phrases
+                enonce = ligne[0]  # Extrait uniquement la phrase de cours épurée
+                choix = ligne[1]   # Extrait uniquement la liste des mots sélectionnables
+                cle = ligne[-1]    # Extrait la clé technique de session
+                
                 c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-                with c_txt: st.write(enonce)
+                with c_txt: 
+                    st.write(enonce)
                 with c_sel:
+                    # Clé dynamique unique pour éviter les collisions de selectbox
                     cle_dynamique_trou = f"trous_tel7_{cle}_inst_{instance_id}_{idx}"
                     st.selectbox("", choix, key=cle_dynamique_trou, disabled=verrouille, label_visibility="collapsed")
-
-
 def afficher_atelier_satellite(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'Atelier 6 sur deux colonnes étanches."""
     import random
