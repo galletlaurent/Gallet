@@ -2890,23 +2890,32 @@ with tab7:
 
    
     st.divider()
+    col71, col72 = st.columns(2)
 
+    with co71: 
     # --- BANDE DESSINÉE / CARICATURE TEXTUELLE ---
-    st.write("**La BD humoristique textuelle : Le coup de génie d'Hedy**")
-    st.info(
-        "**Case 1 (Caricature d'Hedy Lamarr) :** Hedy Lamarr, en robe de soirée hollywoodienne scintillante, dessine des plans "
-        "techniques complexes sur un coin de table basse : 'Si on fait sauter les fréquences radio d'une note à l'autre "
-        "comme sur un piano mécanique, les navires de guerre ennemis ne pourront jamais intercepter nos commandes !'.\n\n"
-        "**Case 2 (Les militaires perplexes) :** Des généraux de l'armée en uniforme regardent le brevet en haussant les sourcils : "
-        "'Une actrice de cinéma qui veut guider des torpilles avec des rouleaux de piano en carton ? Renvoyez-la sur ses plateaux de tournage !'. "
-        "Le brevet est classé secret défense.\n\n"
-        "**Case 3 (Le calvaire du salon moderne) :** Cinquante ans plus tard, un utilisateur en sueur agite son smartphone au milieu de son salon "
-        "portant un gros canapé : 'Mais pourquoi ma vidéo coupe dès que je vais dans la cuisine ?! Ma box est juste de l'autre côté !'.\n\n"
-        "**Case 4 (La dure loi du béton) :** Les molécules du mur en béton armé rigolent en se tenant les bras : "
-        "'Désolé le smartphone, mais tes ondes courtes à 5 GHz ne passeront pas à travers nous ! On absorbe tout ! Rapproche ta Box "
-        "ou passe en 2,4 GHz !'."
-    )
+        st.write("**La BD humoristique textuelle : Le coup de génie d'Hedy**")
+        st.info(
+            "**Case 1 (Caricature d'Hedy Lamarr) :** Hedy Lamarr, en robe de soirée hollywoodienne scintillante, dessine des plans "
+            "techniques complexes sur un coin de table basse : 'Si on fait sauter les fréquences radio d'une note à l'autre "
+            "comme sur un piano mécanique, les navires de guerre ennemis ne pourront jamais intercepter nos commandes !'.\n\n"
+            "**Case 2 (Les militaires perplexes) :** Des généraux de l'armée en uniforme regardent le brevet en haussant les sourcils : "
+            "'Une actrice de cinéma qui veut guider des torpilles avec des rouleaux de piano en carton ? Renvoyez-la sur ses plateaux de tournage !'. "
+            "Le brevet est classé secret défense.\n\n"
+            "**Case 3 (Le calvaire du salon moderne) :** Cinquante ans plus tard, un utilisateur en sueur agite son smartphone au milieu de son salon "
+            "portant un gros canapé : 'Mais pourquoi ma vidéo coupe dès que je vais dans la cuisine ?! Ma box est juste de l'autre côté !'.\n\n"
+            "**Case 4 (La dure loi du béton) :** Les molécules du mur en béton armé rigolent en se tenant les bras : "
+            "'Désolé le smartphone, mais tes ondes courtes à 5 GHz ne passeront pas à travers nous ! On absorbe tout ! Rapproche ta Box "
+            "ou passe en 2,4 GHz !'."
+        )
 
+    with co71:
+        try: st.image("porte_bluetooth.jpg", caption="portée théorique")
+        except Exception: st.warning("Fichier d'illustration indisponible.")
+
+
+
+        
     st.divider()
 
     # --- ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 7 ---
@@ -3470,8 +3479,9 @@ with tab9:
     if ir_actif: st.success(msg_ir_status)
     else: st.error(msg_ir_status)
 
+
     st.divider()
-    st.divider()
+    
     col9a1, col9a2 = st.columns(2)
 
     with col9a1:    # --- BANDE DESSINÉE / CARICATURE TEXTUELLE ---
@@ -3491,7 +3501,7 @@ with tab9:
             "il faudra d'abord me donner des croquettes ou lever le bras !'."
         )
     with col9a2:
-        try: st.image("caric_temperature.jpg", caption="température en fonction de la couleur", width= 500) # Réutilisation ou témoin
+        try: st.image("caric_temperature.jpg", caption="température en fonction de la couleur") # Réutilisation ou témoin
         except Exception: st.warning("Fichier d'illustration indisponible.")
 
         
@@ -3747,24 +3757,30 @@ with tab10:
     else: st.error(msg_br_info)
 
     st.divider()
+    col101, col102= st.columns(2)
 
+    with col101: 
     # --- CARICATURE / BD HUMORISTIQUE TEXTUELLE ---
-    st.write("**La BD humoristique textuelle : Le silence des ondes**")
-    st.info(
-        "**Case 1 (L'amphithéâtre bavard) :** Un professeur désespéré tente de faire son cours sur l'histoire des technologies face à un groupe "
-        "d'étudiants dont les smartphones vibrent et clignotent sous les notifications de vidéos et de messages : "
-        "'S'il vous plaît ! Écoutez-moi !'. Les téléphones crient en chœur : 'Bliiin ! Dring ! Clic !'.\n\n"
-        "**Case 2 (Le plan secret) :** Le professeur, un sourire aux lèvres, sort de sa sacoche une petite boîte noire "
-        "munie de quatre antennes en fer : 'Puisque la voix de la science ne passe plus, activons le barrage d'électrons !'. "
-        "Il presse l'interrupteur.\n\n"
-        "**Case 3 (Le chaos silencieux) :** Instantanément, le brouilleur inonde l'amphithéâtre de micro-ondes parasites invisibles. "
-        "Les smartphones des élèves affichent tous une croix rouge sur l'antenne : 'Réseau indisponible... Recherche...'. "
-        "Les étudiants s'agitent en levant leur boîtier en l'air : 'Plus de réseau ! Plus de Wi-Fi ! On est coupés du monde !'.\n\n"
-        "**Case 4 (Le retour à la réalité) :** Un inspecteur officiel des fréquences enfonce la porte de la pièce "
-        "avec un récepteur hertzien de contrôle à la main : 'Halte là ! Émettre un bruit blanc de blocage sans licence est un délit ! "
-        "C'est une lourde amende réglementaire !'. Le professeur éteint la boîte en soupirant : 'C'était pourtant le plus beau silence de ma carrière'."
-    )
-
+        st.write("**La BD humoristique textuelle : Le silence des ondes**")
+        st.info(
+            "**Case 1 (L'amphithéâtre bavard) :** Un professeur désespéré tente de faire son cours sur l'histoire des technologies face à un groupe "
+            "d'étudiants dont les smartphones vibrent et clignotent sous les notifications de vidéos et de messages : "
+            "'S'il vous plaît ! Écoutez-moi !'. Les téléphones crient en chœur : 'Bliiin ! Dring ! Clic !'.\n\n"
+            "**Case 2 (Le plan secret) :** Le professeur, un sourire aux lèvres, sort de sa sacoche une petite boîte noire "
+            "munie de quatre antennes en fer : 'Puisque la voix de la science ne passe plus, activons le barrage d'électrons !'. "
+            "Il presse l'interrupteur.\n\n"
+            "**Case 3 (Le chaos silencieux) :** Instantanément, le brouilleur inonde l'amphithéâtre de micro-ondes parasites invisibles. "
+            "Les smartphones des élèves affichent tous une croix rouge sur l'antenne : 'Réseau indisponible... Recherche...'. "
+            "Les étudiants s'agitent en levant leur boîtier en l'air : 'Plus de réseau ! Plus de Wi-Fi ! On est coupés du monde !'.\n\n"
+            "**Case 4 (Le retour à la réalité) :** Un inspecteur officiel des fréquences enfonce la porte de la pièce "
+            "avec un récepteur hertzien de contrôle à la main : 'Halte là ! Émettre un bruit blanc de blocage sans licence est un délit ! "
+            "C'est une lourde amende réglementaire !'. Le professeur éteint la boîte en soupirant : 'C'était pourtant le plus beau silence de ma carrière'."
+        )
+        
+    with col102:
+        try: st.image("carac_ondes.jpg", caption="Le silence des ondes") # Réutilisation ou témoin
+        except Exception: st.warning("Fichier d'illustration indisponible.")
+        
     st.divider()
 
     # --- ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 10 ---
