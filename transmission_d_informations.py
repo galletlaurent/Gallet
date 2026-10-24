@@ -2439,7 +2439,7 @@ with tab7:
     # --- HISTORIQUE ET CAHIER DES CHARGES : HEDY LAMARR ET LE 802.11 ---
 
     try: st.image("Hedy_Lamarr.jpg", caption="Hedy Lamarr", width= 250) # Réutilisation ou témoin
-        except Exception: st.warning("Fichier d'illustration indisponible.")
+    except Exception: st.warning("Fichier d'illustration indisponible.")
         
     st.subheader("Du secret militaire au grand débit : L'héritage d'Hedy Lamarr")
     st.write(
