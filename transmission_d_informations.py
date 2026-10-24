@@ -2459,77 +2459,177 @@ with tab7:
     st.divider()
 
     # --- LABORATOIRE INTERACTIF : ATTÉNUATION ET OBSTACLES ---
-    st.subheader("Laboratoire de métrologie d'atténuation hertzienne : L'impact des cloisons")
+    st.subheader("Laboratoire de métrologie d'atténuation hertzienne avancée")
     st.write(
-        "Modifiez le curseur pour déplacer la box Wi-Fi de la maison. "
-        "Sélectionnez le type d'obstacle pour analyser en temps réel la perte de puissance (atténuation) de l'onde et l'effondrement du débit en Mbps."
+        "Modifiez les curseurs pour configurer l'environnement architectural de test. "
+        "Déplacez la borne Wi-Fi à l'intérieur de son local technique fermé et déplacez le smartphone "
+        "à l'extérieur pour analyser l'atténuation du signal ($dB$) et la vitesse de transfert brute ($Mbps$)."
     )
 
-    # Curseurs interactifs
-    pos_box_x = st.slider("Positionner la box Wi-Fi le long de la pièce (mètres) :", min_value=0.5, max_value=2.5, value=1.5, step=0.1, key="slide_pos_box")
-    type_cloison = st.selectbox("Sélectionner la nature du mur intermédiaire :", options=["Cloison fine en placo (Atténuation faible)", "Mur épais en briques (Atténuation moyenne)", "Mur porteur en béton armé (Atténuation totale)"], key="select_mur_wifi")
+    # 1. PARAMÉTRAGE INTERACTIF ET COUPLAGE SUR TROIS COLONNES
+    c_phys1, c_param2, c_phys3 = st.columns([0.3, 0.4, 0.3])
+    
+    with c_phys1:
+        pos_box_x = st.slider("Position de la borne Wi-Fi (m) :", min_value=0.2, max_value=2.2, value=1.2, step=0.1, key="slide_box_v3_final")
+        pos_smart_x = st.slider("Position du Smartphone externe (m) :", min_value=3.2, max_value=6.2, value=4.8, step=0.1, key="slide_smart_v3_final")
+    
+    with c_param2:
+        materiau_cloison = st.selectbox(
+            "Sélectionner le matériau de la cloison intermédiaire :",
+            options=[
+                "Vitrage simple en PVC (Diélectrique mince)",
+                "Double vitrage renforcé (Verre + Gaz Argon)",
+                "Cloison alvéolaire en placo / plâtre",
+                "Panneau de bois massif / Chêne",
+                "Mur en briques creuses de terre cuite",
+                "Mur porteur en béton de structure",
+                "Béton armé avec ferraillage croisé (Cage de Faraday)",
+                "Plaque d'aluminium pur (Feuille miroir)",
+                "Blindage en acier de forte nuance"
+            ],
+            key="select_materiau_wifi_v3"
+        )
+        
+    with c_phys3:
+        epaisseur_cm = st.slider("Choisir l'épaisseur de la cloison (cm) :", min_value=1, max_value=50, value=15, step=1, key="slide_epaisseur_wifi_v3")
 
-    # Rendu graphique Matplotlib de la propagation Wi-Fi
+    # 2. CONFIGURATION DES COEFFICIENTS D'ABSORPTION ET DE RÉFLEXION ÉLECTROMAGNÉTIQUE
+    if "PVC" in materiau_cloison:
+        att_par_cm, color_mur, texture_type = 0.08, "#38bdf8", "uni"
+        debit_max, nom_loi = 600, "Réfraction fluide à travers un polymère diélectrique."
+    elif "Double vitrage" in materiau_cloison:
+        att_par_cm, color_mur, texture_type = 0.25, "#7dd3fc", "double"
+        debit_max, nom_loi = 540, "Double réflexion vitreuse avec atténuation par le gaz interne."
+    elif "placo" in materiau_cloison:
+        att_par_cm, color_mur, texture_type = 0.35, "#e2e8f0", "uni"
+        debit_max, nom_loi = 500, "Faible perte par absorption diélectrique sèche dans le plâtre."
+    elif "bois" in materiau_cloison:
+        att_par_cm, color_mur, texture_type = 0.60, "#b45309", "bois"
+        debit_max, nom_loi = 450, "Pertes moyennes causées par l'humidité naturelle des fibres de cellulose."
+    elif "briques" in materiau_cloison:
+        att_par_cm, color_mur, texture_type = 0.95, "#f97316", "brique"
+        debit_max, nom_loi = 380, "Multi-réflexions et piégeage de l'onde dans les alvéoles d'argile."
+    elif "béton de structure" in materiau_cloison:
+        att_par_cm, color_mur, texture_type = 2.10, "#94a3b8", "uni"
+        debit_max, nom_loi = 120, "Forte atténuation par conduction ohmique dans le ciment hydraté."
+    elif "Béton armé" in materiau_cloison:
+        att_par_cm, color_mur, texture_type = 3.20, "#475569", "ferraille"
+        debit_max, nom_loi = 45, "Absorption sévère de l'eau liée doublée d'une diffraction par la maille d'acier."
+    elif "aluminium" in materiau_cloison:
+        att_par_cm, color_mur, texture_type = 8.50, "#cbd5e1", "miroir"
+        debit_max, nom_loi = 2, "Réflexion quasi-totale des ondes de surface par courants de Foucault."
+    else: # Acier blindé
+        att_par_cm, color_mur, texture_type = 15.0, "#0f172a", "acier"
+        debit_max, nom_loi = 0, "Atténuation exponentielle instantanée par effet de peau métallique."
+
+    # Calcul mathématique rigoureux de l'affaiblissement global (Beer-Lambert cumulé)
+    attenu_totale_db = round(float(att_par_cm * epaisseur_cm), 1)
+    
+    # Établissement de la puissance résiduelle du signal (Correction syntaxe)
+    if attenu_totale_db < 8.0:
+        debit_base, color_onde_ext, style_line, statut_wifi = debit_max, "#22c55e", "-", "Excellent"
+    elif attenu_totale_db < 22.0:
+        debit_base, color_onde_ext, style_line, statut_wifi = debit_max * 0.55, "#eab308", "-", "Atténué (Moyen)"
+    elif attenu_totale_db < 40.0:
+        debit_base, color_onde_ext, style_line, statut_wifi = debit_max * 0.15, "#f97316", "--", "Très Faible"
+    else:
+        debit_base, color_onde_ext, style_line, statut_wifi = 0.0, "#ef4444", ":", "Hors de portée (Coupé)"
+
+    # Intégration de l'atténuation géométrique en espace libre liée à la position du smartphone
+    distance_totale_m = pos_smart_x - pos_box_x
+    debit_final_mbps = max(0, int(debit_base * (1.0 - (distance_totale_m / 6.5) * 0.45)))
+
+    # 3. MOTEUR VECTORIEL INTERACTIF (MATPLOTLIB)
     import matplotlib.pyplot as plt
     import matplotlib.patches as patches
     import numpy as np
 
-    fig_wf, ax_wf = plt.subplots(figsize=(6.5, 3.2), facecolor="white")
+    fig_wf, ax_wf = plt.subplots(figsize=(7, 3.8), facecolor="white")
     ax_wf.set_facecolor("white")
     
-    # 1. Structure fixe de la maison
-    # Tracé du mur intermédiaire à x=3.0
-    if "placo" in type_cloison:
-        color_mur, width_mur, alpha_onde = "#cbd5e1", 4, 0.7
-        debit_max = 450
-    elif "briques" in type_cloison:
-        color_mur, width_mur, alpha_onde = "#f97316", 8, 0.3
-        debit_max = 150
-    else: # Béton armé
-        color_mur, width_mur, alpha_onde = "#475569", 14, 0.02
-        debit_max = 5
-        
-    ax_wf.plot([3.0, 3.0], [0.1, 2.5], color=color_mur, linewidth=width_mur, zorder=2)
-    ax_wf.text(3.0, 2.7, "Mur", fontsize=9, color="#1e293b", weight="bold", ha="center")
+    # Sol et plafond de la structure immobilière
+    ax_wf.plot([0.0, 6.8], [0.1, 0.1], color="#0f172a", linewidth=3, zorder=2)
+    ax_wf.plot([0.0, 6.8], [3.1, 3.1], color="#0f172a", linewidth=1.5, zorder=2)
     
-    # Sol fixe
-    ax_wf.plot([0.0, 6.0], [0.1, 0.1], color="black", linewidth=2)
+    # A. LOCAL ÉMETTEUR FERMÉ (Cube de confinement étanche à gauche de x=0.1 à x=2.5)
+    ax_wf.plot([0.1, 0.1], [0.1, 3.1], color="#475569", linewidth=4, zorder=2) # Mur du fond
+    ax_wf.plot([0.1, 2.5], [2.7, 2.7], color="#475569", linewidth=4, zorder=2) # Plafond technique interne
+    ax_wf.text(1.3, 2.85, "Local Émetteur (Clos)", fontsize=8, color="#475569", weight="bold", ha="center")
     
-    # Dessin de la Box Wi-Fi émettrice à gauche (x variable de 0.5 à 2.5)
-    ax_wf.add_patch(patches.Rectangle((pos_box_x - 0.15, 0.1), 0.3, 0.4, facecolor="#1e293b", zorder=3))
-    ax_wf.plot([pos_box_x, pos_box_x], [0.5, 0.75], color="black", linewidth=1.5, zorder=3) # Antenne box
-    ax_wf.add_patch(patches.Circle((pos_box_x, 0.75), 0.03, facecolor="green"))
+    # B. APPAREIL ÉMETTEUR (Borne Wi-Fi active posée au sol à y=0.1)
+    ax_wf.add_patch(patches.Rectangle((pos_box_x - 0.12, 0.1), 0.24, 0.4, facecolor="#0f172a", edgecolor="black", zorder=5))
+    ax_wf.plot([pos_box_x, pos_box_x], [0.5, 0.85], color="black", linewidth=2, zorder=5) # Antenne omnidirectionnelle
+    ax_wf.add_patch(patches.Circle((pos_box_x, 0.85), 0.03, facecolor="#22c55e", zorder=6)) # Diode de synchronisation
     
-    # Dessin de l'ordinateur portable récepteur à droite (fixe à x=5.0)
-    ax_wf.plot([4.8, 5.4], [0.1, 0.1], color="#475569", linewidth=4, zorder=3) # Base PC
-    ax_wf.add_patch(patches.Rectangle((4.9, 0.12), 0.4, 0.35, facecolor="#94a3b8")) # Écran PC
-    ax_wf.add_patch(patches.Rectangle((4.95, 0.16), 0.3, 0.23, facecolor="#38bdf8")) # Dalle allumée
-    
-    # 2. TRACÉ DES ONDES CIRCULAIRES DYNAMIQUES
-    # Ondes fortes avant le mur (gauche)
-    ax_wf.add_patch(patches.Arc((pos_box_x, 0.75), 0.5, 0.5, angle=0, theta1=-45, theta2=135, color="#3b82f6", linewidth=1.5))
-    ax_wf.add_patch(patches.Arc((pos_box_x, 0.75), 1.0, 1.0, angle=0, theta1=-45, theta2=135, color="#3b82f6", linewidth=1.5))
-    
-    # Ondes après la traversée du mur (droite) à destination de l'ordinateur
-    distance_box_mur = 3.0 - pos_box_x
-    # Calcul empirique de l'affaiblissement géométrique inversement proportionnel à la distance
-    debit_calculé = int(debit_max * (1.0 - (distance_box_mur / 3.0) * 0.4))
-    
-    if debit_calculé > 10:
-        ax_wf.add_patch(patches.Arc((pos_box_x, 0.75), 3.0, 3.0, angle=0, theta1=-30, theta2=45, color="#22c55e", linewidth=1.5, alpha=alpha_onde))
-        ax_wf.add_patch(patches.Arc((pos_box_x, 0.75), 4.5, 4.5, angle=0, theta1=-30, theta2=45, color="#22c55e", linewidth=1.5, alpha=alpha_onde))
-        lbl_wf_info = f"Signal capté. Débit réseau mesuré à l'arrivée sur l'ordinateur : {debit_calculé} Mbps. Connexion stable."
-    else:
-        lbl_wf_info = "Signal trop affaibli ! Débit réseau nul (0 Mbps). Échec d'authentification ou déconnexion."
+    # Ondes circulaires intérieures (Zone verte libre de champ)
+    for r_int in [0.4, 0.8, 1.2, 1.7]:
+        ax_wf.add_patch(patches.Arc((pos_box_x, 0.85), r_int*2, r_int*2, angle=0, theta1=-90, theta2=90, color="#3b82f6", linewidth=1.2, alpha=0.4, zorder=1))
 
-    ax_wf.set_xlim(0, 6.0)
-    ax_wf.set_ylim(0, 3.0)
+    # C. CLOISON AVEC ÉPAISSEUR GÉOMÉTRIQUE RÉELLE ET TEXTURE (Centrée sur x=2.5)
+    # Calibrage graphique : 50 cm d'épaisseur réelle = 0.5 unité graphique sur l'axe X
+    largeur_mur_graphique = (epaisseur_cm / 50.0) * 0.5
+    x_gauche_mur = 2.5 - (largeur_mur_graphique / 2.0)
+    
+    ax_wf.add_patch(patches.Rectangle((x_gauche_mur, 0.1), largeur_mur_graphique, 2.6, facecolor=color_mur, edgecolor="black", linewidth=1.2, zorder=3))
+    ax_wf.text(2.5, 2.85, f"Cloison\n{epaisseur_cm} cm", fontsize=8, color="#0f172a", weight="bold", ha="center")
+    
+    # Injection des textures internes réalistes
+    if texture_type == "ferraille" and largeur_mur_graphique > 0.04:
+        # Treillis métallique croisé anti-ondes
+        for y_mesh in np.linspace(0.25, 2.45, 6):
+            ax_wf.plot([x_gauche_mur, x_gauche_mur + largeur_mur_graphique], [y_mesh, y_mesh], color="#0f172a", linewidth=1.2, zorder=4)
+        ax_wf.plot([2.5, 2.5], [0.1, 2.6], color="#0f172a", linewidth=1.2, zorder=4)
+    elif texture_type == "double":
+        # Ligne d'air isolante interne du double vitrage
+        ax_wf.plot([2.5, 2.5], [0.1, 2.6], color="white", linewidth=1.5, zorder=4)
+    elif texture_type == "brique":
+        # Lignes d'alvéoles de l'argile cuite
+        for x_b in np.linspace(x_gauche_mur + 0.02, x_gauche_mur + largeur_mur_graphique - 0.02, 3):
+            ax_wf.plot([x_b, x_b], [0.1, 2.6], color="#c2410c", linewidth=0.8, linestyle=":", zorder=4)
+
+    # D. ZONE EXTÉRIEURE DE RÉCEPTION ET SMARTPHONE MOBILE (À droite de la cloison)
+    ax_wf.add_patch(patches.Rectangle((2.5 + (largeur_mur_graphique/2.0), 0.1), 4.2 - (largeur_mur_graphique/2.0), 2.6, facecolor="#f8fafc", zorder=1))
+    ax_wf.text(4.8, 2.85, "Espace Extérieur Libre", fontsize=8, color="#475569", weight="bold", ha="center")
+    
+    # Dessin ultra-réaliste du Smartphone mobile de l'élève (Rectangle vertical à x=pos_smart_x, y=0.85)
+    y_smart = 0.85
+    ax_wf.add_patch(patches.Rectangle((pos_smart_x - 0.12, y_smart - 0.22), 0.24, 0.44, facecolor="#1e293b", edgecolor="black", linewidth=1.5, zorder=5)) # Châssis métallique
+    # Écran LCD rétroéclairé s'allumant si un signal passe
+    color_ecran_pc = "#38bdf8" if debit_final_mbps > 0 else "#64748b"
+    ax_wf.add_patch(patches.Rectangle((pos_smart_x - 0.09, y_smart - 0.17), 0.18, 0.34, facecolor=color_ecran_pc, zorder=5))
+    # Encoche ou haut-parleur haut
+    ax_wf.plot([pos_smart_x - 0.03, pos_smart_x + 0.03], [y_smart + 0.19, y_smart + 0.19], color="white", linewidth=1.5, zorder=6)
+    ax_wf.text(pos_smart_x, y_smart - 0.4, f"Smartphone\n(x = {pos_smart_x:.1f} m)", fontsize=7, color="#0f172a", weight="bold", ha="center")
+
+    # E. RENDU CINÉMATIQUE DU FAISCEAU D'ONDES ATTÉNUÉ
+    if debit_final_mbps > 0:
+        # Tracé des arcs d'ondes atténués se propageant et enveloppant le smartphone
+        rayon_vers_smart = pos_smart_x - pos_box_x
+        ax_wf.add_patch(patches.Arc((pos_box_x, 0.85), rayon_vers_smart * 2, rayon_vers_smart * 2, angle=0, theta1=-35, theta2=35, color=color_onde_ext, linewidth=2.0, linestyle=style_line, zorder=2))
+        ax_wf.add_patch(patches.Arc((pos_box_x, 0.85), (rayon_vers_smart + 0.5) * 2, (rayon_vers_smart + 0.5) * 2, angle=0, theta1=-35, theta2=35, color=color_onde_ext, linewidth=1.5, linestyle=style_line, zorder=2))
+        msg_resultat = f"LIAISON ÉTABLIE (Statut : {statut_wifi}) | Atténuation de la cloison : -{attenu_totale_db:.1f} dB. Débit reçu par le smartphone : {debit_final_mbps} Mbps."
+        type_box_streamlit = "success"
+    else:
+        ax_wf.arrow(2.3, 1.2, -0.4, 0.3, head_width=0.08, head_length=0.08, fc="#ef4444", ec="#ef4444", linewidth=2.5, zorder=5)
+        msg_resultat = f"RUPTURE DE FLUX SPÉCIFIQUEMENT LIÉE À L'ISOLATION | Perte critique : -{attenu_totale_db:.1f} dB (Seuil d'extinction de -40 dB franchi). Débit capté : 0 Mbps."
+        type_box_streamlit = "error"
+
+    # Habillage de la figure Matplotlib
+    ax_wf.set_xlim(0, 6.8)
+    ax_wf.set_ylim(-0.2, 3.3)
     ax_wf.axis("off")
+    
+    # Rendu à l'écran et fermeture de l'objet graphique
     st.pyplot(fig_wf)
     plt.close(fig_wf)
     
-    st.info(lbl_wf_info)
+    # 4. EXPERTISES PHYSICO-CHIMIQUES DES FLUX SOUS L'ÉCRAN
+    if type_box_streamlit == "success":
+        st.success(f"**Données du banc d'essai RF :** {msg_resultat} \n\n*Analyse comportementale :* {nom_loi}")
+    else:
+        st.error(f"**Données du banc d'essai RF :** {msg_resultat} \n\n*Analyse comportementale :* {nom_loi}")
 
+   
     st.divider()
 
     # --- BANDE DESSINÉE / CARICATURE TEXTUELLE ---
