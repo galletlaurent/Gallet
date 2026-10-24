@@ -3188,23 +3188,29 @@ with tab8:
         st.error(msg_bt_status)
 
     st.divider()
+    col81, col82 = st.columns(2)
 
+    with col81:     
     # --- BANDE DESSINÉE / CARICATURE TEXTUELLE ---
-    st.write("**La BD humoristique textuelle : L'alliance des runes et de la dent bleue**")
-    st.info(
-        "**Case 1 (Caricature du Roi Harald) :** Le roi viking Harald Blåtand, une énorme chope de bière à la main, "
-        "saute sur la table de banquet : 'Moi, Harald, j'ai unifié le Danemark et la Norvège sous une seule bannière !'. "
-        "Un conseiller remarque : 'Majesté, vous avez une dent gâtée toute bleue au fond de la bouche...'.\n\n"
-        "**Case 2 (Le casse-tête des fils d'Ericsson) :** Mille ans plus tard, un ingénieur suédois s'emmêle les pieds "
-        "dans les lourds câbles noirs reliant sa souris, son clavier et son casque à sa tour d'ordinateur : "
-        "'Il faut unifier tout ça par les ondes libres ! Créons le protocole Harald-Dent-Bleue !'.\n\n"
-        "**Case 3 (L'énigme du code secret) :** Un utilisateur tente d'appairer ses écouteurs en tapant un code PIN erroné. "
-        "Le smartphone rejette la liaison : 'Code incorrect !'. L'utilisateur s'énerve : 'Mais connecte-toi, "
-        "je suis à vingt centimètres !'. Les ondes sautent joyeusement d'un canal à l'autre pour trouver la bonne clé.\n\n"
-        "**Case 4 (La barrière des dix mètres) :** L'étudiant s'éloigne de son enceinte de salon en musique pour aller "
-        "chercher un verre d'eau. Au dixième mètre, le son commence à saccader : 'Crrr... Bzzz...'. "
-        "Le signal RSSI s'effondre au fond du canapé, et la dent bleue lâche prise, plongeant la pièce dans le silence."
-    )
+        st.write("**La BD humoristique textuelle : L'alliance des runes et de la dent bleue**")
+        st.info(
+            "**Case 1 (Caricature du Roi Harald) :** Le roi viking Harald Blåtand, une énorme chope de bière à la main, "
+            "saute sur la table de banquet : 'Moi, Harald, j'ai unifié le Danemark et la Norvège sous une seule bannière !'. "
+            "Un conseiller remarque : 'Majesté, vous avez une dent gâtée toute bleue au fond de la bouche...'.\n\n"
+            "**Case 2 (Le casse-tête des fils d'Ericsson) :** Mille ans plus tard, un ingénieur suédois s'emmêle les pieds "
+            "dans les lourds câbles noirs reliant sa souris, son clavier et son casque à sa tour d'ordinateur : "
+            "'Il faut unifier tout ça par les ondes libres ! Créons le protocole Harald-Dent-Bleue !'.\n\n"
+            "**Case 3 (L'énigme du code secret) :** Un utilisateur tente d'appairer ses écouteurs en tapant un code PIN erroné. "
+            "Le smartphone rejette la liaison : 'Code incorrect !'. L'utilisateur s'énerve : 'Mais connecte-toi, "
+            "je suis à vingt centimètres !'. Les ondes sautent joyeusement d'un canal à l'autre pour trouver la bonne clé.\n\n"
+            "**Case 4 (La barrière des dix mètres) :** L'étudiant s'éloigne de son enceinte de salon en musique pour aller "
+            "chercher un verre d'eau. Au dixième mètre, le son commence à saccader : 'Crrr... Bzzz...'. "
+            "Le signal RSSI s'effondre au fond du canapé, et la dent bleue lâche prise, plongeant la pièce dans le silence."
+        )
+    with col82:       
+        try: st.image("bd_humourharald.jpg", caption="origine de la dent bleue", width= 500) # Réutilisation ou témoin
+        except Exception: st.warning("Fichier d'illustration indisponible.")
+
 
     st.divider()
 
