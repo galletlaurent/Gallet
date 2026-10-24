@@ -3208,7 +3208,7 @@ with tab8:
             "Le signal RSSI s'effondre au fond du canapé, et la dent bleue lâche prise, plongeant la pièce dans le silence."
         )
     with col82:       
-        try: st.image("bd_humourharald.jpg", caption="origine de la dent bleue", width= 500) # Réutilisation ou témoin
+        try: st.image("bd_humourharald.jpg", caption="origine de la dent bleue") # Réutilisation ou témoin
         except Exception: st.warning("Fichier d'illustration indisponible.")
 
 
