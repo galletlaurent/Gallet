@@ -119,7 +119,66 @@ tab7 = onglets[7]
 tab8 = onglets[8] 
 tab9 = onglets[9]
 
+def afficher_atelier_wifi(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'Atelier 7 sur deux colonnes étanches."""
+    import random
 
+    questions_sources_wf = [
+        {"id": "t_wifi_1", "q": "Quelle célèbre actrice et inventrice a co-breveté le principe du saut de fréquence, base du Wi-Fi moderne ?", "options": ["Hedy Lamarr", "Marie Curie", "Ada Lovelace"], "rep": "Hedy Lamarr"},
+        {"id": "t_wifi_2", "q": "Que signifie littéralement l'acronyme commercial Wi-Fi ?", "options": ["Wireless Fidelity", "Wave Frequency Interconnection", "Wired Filter Induction"], "rep": "Wireless Fidelity"},
+        {"id": "t_wifi_3", "q": "Quelles sont les deux bandes de fréquences principales utilisées par les normes Wi-Fi standards (ex: 802.11) ?", "options": ["2,4 GHz et 5 GHz", "87 MHz et 108 MHz", "900 MHz et 1800 MHz"], "rep": "2,4 GHz et 5 GHz"},
+        {"id": "t_wifi_4", "q": "Quel est l'impact physique d'un mur en béton armé sur le signal Wi-Fi d'une habitation ?", "options": ["Il atténue fortement le signal en absorbant l'énergie des ondes", "Il amplifie la portée du signal", "Il transforme les ondes en lumière visible"], "rep": "Il atténue fortement le signal en absorbant l'énergie des ondes"},
+        {"id": "t_wifi_5", "q": "Quelle est l'unité normalisée utilisée pour exprimer le débit binaire brut d'une connexion Wi-Fi ?", "options": ["Le Mégabit par seconde (Mbps)", "Le Hertz (Hz)", "Le Mètre (m)"], "rep": "Le Mégabit par seconde (Mbps)"},
+        {"id": "t_wifi_6", "q": "Comment appelle-t-on l'identifiant textuel public unique (nom du réseau) diffusé par une borne Wi-Fi ?", "options": ["Le SSID", "L'adresse IP", "Le code PIN"], "rep": "Le SSID"},
+        {"id": "t_wifi_7", "q": "Quel protocole de chiffrement actuel assure la sécurité de la clé de sécurité Wi-Fi (génération 3) ?", "options": ["WPA3", "WEP historique", "GSM"],"rep": "WPA3"},
+        {"id": "t_skip_8", "q": "Quelle technologie multi-antennes (MIMO) permet à une box Wi-Fi de communiquer avec plusieurs appareils en même temps ?", "options": ["Multiple-Input Multiple-Output", "Modulation Inter-Modulaire Optimisée", "Monocanal Indépendant Multi-Ondes"], "rep": "Multiple-Input Multiple-Output"},
+        {"id": "t_wifi_9", "q": "Par rapport à une bande de 2,4 GHz, quel est le comportement de la bande de 5 GHz ?", "options": ["Elle offre un débit plus élevé mais possède une portée plus faible et traverse moins bien les murs", "Elle traverse mieux les murs épais", "Elle consomme dix fois moins d'énergie"], "rep": "Elle offre un débit plus élevé mais possède une portée plus faible et traverse moins bien les murs"},
+        {"id": "t_wifi_10", "q": "Quel appareil réseau central gère la diffusion du Wi-Fi et l'aiguillage des paquets de la maison vers la fibre ?", "options": ["Le routeur (ou Box Internet)", "Le commutateur Strowger", "Le transpondeur"], "rep": "Le routeur (ou Box Internet)"}
+    ]
+
+    if "ordre_quiz_tab7_telecom_aleatoire" not in st.session_state:
+        random.shuffle(questions_sources_wf)
+        st.session_state.ordre_quiz_tab7_telecom_aleatoire = questions_sources_wf
+
+    st.session_state.champs_telecom7_clean = [
+        ("1. Le principe du saut de fréquence fut co-inventé par la star hollywoodienne Hedy ..........", ["Choisir...", "Lamarr", "Kao"], "Lamarr", "telecom7_t1"),
+        ("2. L'acronyme grand public Wi-Fi désigne la fidélité sans ..........", ["Choisir...", "fil", "limite"], "fil", "telecom7_t2"),
+        ("3. Les normes de transmission associées dépendent du comité international ..........", ["Choisir...", "802.11", "GSM"], "802.11", "telecom7_t3"),
+        ("4. Une borne Wi-Fi émet des ondes de hautes fréquences mesurées en ..........", ["Choisir...", "Gigahertz", "Mégahertz"], "Gigahertz", "telecom7_t4"),
+        ("5. Le nom textuel du réseau visible affiché sur l'écran est le ..........", ["Choisir...", "SSID", "IP"], "SSID", "telecom7_t5"),
+        ("6. Traverser des cloisons lourdes en briques provoque une .......... du signal hertzien.", ["Choisir...", "atténuation", "amplification"], "atténuation", "telecom7_t6"),
+        ("7. La bande de 5 GHz offre un meilleur .......... de données que la bande 2,4 GHz.", ["Choisir...", "débit", "filtrage"], "débit", "telecom7_t7"),
+        ("8. Protéger la clé d'accès domestique contre le piratage s'appuie sur le protocole ..........", ["Choisir...", "WPA3", "WEP"], "WPA3", "telecom7_t8"),
+        ("9. Exploiter plusieurs antennes simultanément pour doper le signal réalise le ..........", ["Choisir...", "MIMO", "CAN"], "MIMO", "telecom7_t9"),
+        ("10. La vitesse de transfert brute instantanée s'exprime en .......... par seconde (Mbps).", ["Choisir...", "Mégabits", "Mètres"], "Mégabits", "telecom7_t10")
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        if "ordre_quiz_tab7_telecom_aleatoire" in st.session_state:
+            if "inc_local_tel7" not in st.session_state: st.session_state.inc_local_tel7 = 0
+            st.session_state.inc_local_tel7 += 1
+            
+            for idx, q_data in enumerate(st.session_state.ordre_quiz_tab7_telecom_aleatoire, 1):
+                st.write(f"**{idx}.** {q_data['q']}")
+                cle_select = f"quiz_tel7_{q_data['id']}_inst_{st.session_state.inc_local_tel7}_{idx}"
+                st.selectbox("", options=["Choisir..."] + q_data["options"], key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 7 (Texte à trous - 10 pts)")
+        if "champs_telecom7_clean" in st.session_state:
+            instance_id = st.session_state.get("inc_local_tel7", 1)
+            for idx, ligne in enumerate(st.session_state.champs_telecom7_clean, 1):
+                enonce = ligne
+                choix = ligne
+                cle = ligne[-1]
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: st.write(enonce)
+                with c_sel:
+                    cle_dynamique_trou = f"trous_tel7_{cle}_inst_{instance_id}_{idx}"
+                    st.selectbox("", choix, key=cle_dynamique_trou, disabled=verrouille, label_visibility="collapsed")
 
 
 def afficher_atelier_satellite(verrouille=False):
@@ -1432,6 +1491,7 @@ with tab3:
             <meta charset="utf-8">
             <title>Rapport Téléphone Fixe - {n_eleve}</title>
             <style>
+            <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
@@ -2278,11 +2338,11 @@ with tab6:
             <title>Rapport Reseau Satellite - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #475569; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                th {{ background-color: #475569; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
@@ -2365,10 +2425,279 @@ with tab6:
 
 
 
+with tab7:
+    st.header("Le Réseau Sans Fil Local : Le Wi-Fi")
+    
+    # --- DÉCLARATION DU VERROU ET SÉCURITÉ DE L'ATELIER 7 ---
+    if "suite_verrouille_tab7_telecom" not in st.session_state:
+        st.session_state.suite_verrouille_tab7_telecom = False
+    verrou_at7 = st.session_state.suite_verrouille_tab7_telecom
 
+    if "inc_local_tel7" not in st.session_state:
+        st.session_state.inc_local_tel7 = 0
 
+    # --- HISTORIQUE ET CAHIER DES CHARGES : HEDY LAMARR ET LE 802.11 ---
+    st.subheader("Du secret militaire au grand débit : L'héritage d'Hedy Lamarr")
+    st.write(
+        "**L'Invention :** Pendant la Seconde Guerre mondiale, la célèbre actrice hollywoodienne et inventrice **Hedy Lamarr**, "
+        "révoltée par les torpilles alliées détournées par les signaux radio allemands, conçoit un système "
+        "révolutionnaire de **commutation de fréquences** (étalement de spectre par saut de fréquence) [INDEX]. "
+        "En synchronisant l'émetteur et le récepteur sur des changements constants de canaux, le signal devenait impossible à brouiller. "
+        "Ce principe militaire secret est aujourd'hui le fondement technologique absolu du Wi-Fi, du Bluetooth et du GPS [INDEX].\n\n"
+        "**Fonctionnement extrêmement détaillé :** Le Wi-Fi (norme internationale IEEE **802.11**) permet de déployer un réseau local "
+        "haut débit sans fil dans un rayon de quelques dizaines de mètres. Il utilise des ondes radio de type **hyperfréquences** "
+        "réparties sur deux bandes spectrales complémentaires :\n"
+        "* **La bande des 2,4 GHz :** Plus ancienne, elle offre une excellente portée et traverse mieux les obstacles, mais son débit "
+        "est plus faible et elle souffre des interférences des micro-ondes ou des appareils voisins.\n"
+        "* **La bande des 5 GHz :** Plus moderne, elle offre des débits binaires colossaux (plusieurs centaines de **Mbps**), "
+        "mais sa longueur d'onde très courte absorbe l'énergie au moindre obstacle : sa portée est réduite et elle est fortement atténuée par les cloisons.\n\n"
+        "L'onde se propage en ligne droite. Lorsqu'elle rencontre un mur en béton armé, une partie de son énergie est réfléchie, "
+        "mais une immense partie est absorbée par les structures métalliques et l'humidité du matériau, provoquant une chute "
+        "brutale de la puissance du signal et du débit utile de réception."
+    )
 
+    st.divider()
 
+    # --- LABORATOIRE INTERACTIF : ATTÉNUATION ET OBSTACLES ---
+    st.subheader("Laboratoire de métrologie d'atténuation hertzienne : L'impact des cloisons")
+    st.write(
+        "Modifiez le curseur pour déplacer la box Wi-Fi de la maison. "
+        "Sélectionnez le type d'obstacle pour analyser en temps réel la perte de puissance (atténuation) de l'onde et l'effondrement du débit en Mbps."
+    )
+
+    # Curseurs interactifs
+    pos_box_x = st.slider("Positionner la box Wi-Fi le long de la pièce (mètres) :", min_value=0.5, max_value=2.5, value=1.5, step=0.1, key="slide_pos_box")
+    type_cloison = st.selectbox("Sélectionner la nature du mur intermédiaire :", options=["Cloison fine en placo (Atténuation faible)", "Mur épais en briques (Atténuation moyenne)", "Mur porteur en béton armé (Atténuation totale)"], key="select_mur_wifi")
+
+    # Rendu graphique Matplotlib de la propagation Wi-Fi
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+    import numpy as np
+
+    fig_wf, ax_wf = plt.subplots(figsize=(6.5, 3.2), facecolor="white")
+    ax_wf.set_facecolor("white")
+    
+    # 1. Structure fixe de la maison
+    # Tracé du mur intermédiaire à x=3.0
+    if "placo" in type_cloison:
+        color_mur, width_mur, alpha_onde = "#cbd5e1", 4, 0.7
+        debit_max = 450
+    elif "briques" in type_cloison:
+        color_mur, width_mur, alpha_onde = "#f97316", 8, 0.3
+        debit_max = 150
+    else: # Béton armé
+        color_mur, width_mur, alpha_onde = "#475569", 14, 0.02
+        debit_max = 5
+        
+    ax_wf.plot([3.0, 3.0], [0.1, 2.5], color=color_mur, linewidth=width_mur, zorder=2)
+    ax_wf.text(3.0, 2.7, "Mur", fontsize=9, color="#1e293b", weight="bold", ha="center")
+    
+    # Sol fixe
+    ax_wf.plot([0.0, 6.0], [0.1, 0.1], color="black", linewidth=2)
+    
+    # Dessin de la Box Wi-Fi émettrice à gauche (x variable de 0.5 à 2.5)
+    ax_wf.add_patch(patches.Rectangle((pos_box_x - 0.15, 0.1), 0.3, 0.4, facecolor="#1e293b", zorder=3))
+    ax_wf.plot([pos_box_x, pos_box_x], [0.5, 0.75], color="black", linewidth=1.5, zorder=3) # Antenne box
+    ax_wf.add_patch(patches.Circle((pos_box_x, 0.75), 0.03, facecolor="green"))
+    
+    # Dessin de l'ordinateur portable récepteur à droite (fixe à x=5.0)
+    ax_wf.plot([4.8, 5.4], [0.1, 0.1], color="#475569", linewidth=4, zorder=3) # Base PC
+    ax_wf.add_patch(patches.Rectangle((4.9, 0.12), 0.4, 0.35, facecolor="#94a3b8")) # Écran PC
+    ax_wf.add_patch(patches.Rectangle((4.95, 0.16), 0.3, 0.23, facecolor="#38bdf8")) # Dalle allumée
+    
+    # 2. TRACÉ DES ONDES CIRCULAIRES DYNAMIQUES
+    # Ondes fortes avant le mur (gauche)
+    ax_wf.add_patch(patches.Arc((pos_box_x, 0.75), 0.5, 0.5, angle=0, theta1=-45, theta2=135, color="#3b82f6", linewidth=1.5))
+    ax_wf.add_patch(patches.Arc((pos_box_x, 0.75), 1.0, 1.0, angle=0, theta1=-45, theta2=135, color="#3b82f6", linewidth=1.5))
+    
+    # Ondes après la traversée du mur (droite) à destination de l'ordinateur
+    distance_box_mur = 3.0 - pos_box_x
+    # Calcul empirique de l'affaiblissement géométrique inversement proportionnel à la distance
+    debit_calculé = int(debit_max * (1.0 - (distance_box_mur / 3.0) * 0.4))
+    
+    if debit_calculé > 10:
+        ax_wf.add_patch(patches.Arc((pos_box_x, 0.75), 3.0, 3.0, angle=0, theta1=-30, theta2=45, color="#22c55e", linewidth=1.5, alpha=alpha_onde))
+        ax_wf.add_patch(patches.Arc((pos_box_x, 0.75), 4.5, 4.5, angle=0, theta1=-30, theta2=45, color="#22c55e", linewidth=1.5, alpha=alpha_onde))
+        lbl_wf_info = f"Signal capté. Débit réseau mesuré à l'arrivée sur l'ordinateur : {debit_calculé} Mbps. Connexion stable."
+    else:
+        lbl_wf_info = "Signal trop affaibli ! Débit réseau nul (0 Mbps). Échec d'authentification ou déconnexion."
+
+    ax_wf.set_xlim(0, 6.0)
+    ax_wf.set_ylim(0, 3.0)
+    ax_wf.axis("off")
+    st.pyplot(fig_wf)
+    plt.close(fig_wf)
+    
+    st.info(lbl_wf_info)
+
+    st.divider()
+
+    # --- BANDE DESSINÉE / CARICATURE TEXTUELLE ---
+    st.write("**La BD humoristique textuelle : Le coup de génie d'Hedy**")
+    st.info(
+        "**Case 1 (Caricature d'Hedy Lamarr) :** Hedy Lamarr, en robe de soirée hollywoodienne scintillante, dessine des plans "
+        "techniques complexes sur un coin de table basse : 'Si on fait sauter les fréquences radio d'une note à l'autre "
+        "comme sur un piano mécanique, les navires de guerre ennemis ne pourront jamais intercepter nos commandes !'.\n\n"
+        "**Case 2 (Les militaires perplexes) :** Des généraux de l'armée en uniforme regardent le brevet en haussant les sourcils : "
+        "'Une actrice de cinéma qui veut guider des torpilles avec des rouleaux de piano en carton ? Renvoyez-la sur ses plateaux de tournage !'. "
+        "Le brevet est classé secret défense.\n\n"
+        "**Case 3 (Le calvaire du salon moderne) :** Cinquante ans plus tard, un utilisateur en sueur agite son smartphone au milieu de son salon "
+        "portant un gros canapé : 'Mais pourquoi ma vidéo coupe dès que je vais dans la cuisine ?! Ma box est juste de l'autre côté !'.\n\n"
+        "**Case 4 (La dure loi du béton) :** Les molécules du mur en béton armé rigolent en se tenant les bras : "
+        "'Désolé le smartphone, mais tes ondes courtes à 5 GHz ne passeront pas à travers nous ! On absorbe tout ! Rapproche ta Box "
+        "ou passe en 2,4 GHz !'."
+    )
+
+    st.divider()
+
+    # --- ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 7 ---
+    afficher_atelier_wifi(verrouille=verrou_at7)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 7")
+    case_certif_tel7 = st.checkbox("Je certifie avoir complété les questions de l'Atelier 7.", key="check_certif_tel7_final", disabled=verrou_at7)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 7", key="btn_export_tel7_official", use_container_width=True, disabled=verrou_at7):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_tel7: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # A. Correction du Quiz Technique
+            score_q7 = 0.0
+            if "ordre_quiz_tab7_telecom_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab7_telecom_aleatoire:
+                    saisie = "Choisir..."
+                    prefixe_cherche = f"quiz_tel7_{q_item['id']}_"
+                    for k_session in st.session_state.keys():
+                        if k_session.startswith(prefixe_cherche):
+                            saisie = st.session_state[k_session]
+                            break
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q7 += 1.0
+
+            # B. Correction de la Synthèse
+            score_t7 = 0.0
+            if "champs_telecom7_clean" in st.session_state:
+                for idx, ligne in enumerate(st.session_state.champs_telecom7_clean, 1):
+                    cle = ligne[-1]
+                    attendu = ligne
+                    saisie_t = st.session_state.get(f"trous_tel7_{cle}_inst_{idx}", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu).strip(): 
+                        score_t7 += 1.0
+
+            st.session_state.score_suite7_tel_p1 = round(float(score_q7), 1)
+            st.session_state.score_suite7_tel_p2 = round(float(score_t7), 1)
+
+            # Calcul et enregistrement de la note globale de l'Atelier 7 sur 20 points
+            st.session_state.score_final_suite7_telecom = round(float(score_q7 + score_t7), 1)
+            st.session_state.suite_verrouille_tab7_telecom = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML SCELLÉ DE L'ATELIER 7 ---
+    if st.session_state.get("suite_verrouille_tab7_telecom", False):
+        scr1_tel7 = st.session_state.get("score_suite7_tel_p1", 0.0)
+        scr2_tel7 = st.session_state.get("score_suite7_tel_p2", 0.0)
+        tot_s_tel7 = st.session_state.get("score_final_suite7_telecom", 0.0)
+        timestamp_tel7 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER 7 WI-FI SCELLÉ | Note de session : {tot_s_tel7:.1f} / 20")
+
+        n_eleve = st.session_state.get("nom_var", "ELEVE").upper()
+        p_eleve = st.session_state.get("prenom_var", "PRENOM").upper()
+        c_eleve = st.session_state.get("classe_var", "GROUPE").upper()
+
+        html_export_tel7 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Wi-Fi - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #16a34a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #16a34a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation Télécommunications</h1>
+                <p>Atelier 7 : Analyse des liaisons Wi-Fi locales, bandes spectrales et atténuation des cloisons</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_tel7}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_tel7:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #16a34a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_tel7:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_tel7:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 7 : <strong>{tot_s_tel7:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+        if "ordre_quiz_tab7_telecom_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab7_telecom_aleatoire, 1):
+                saisie = "Choisir..."
+                prefixe_cherche = f"quiz_tel7_{q_item['id']}_"
+                for k_session in st.session_state.keys():
+                    if k_session.startswith(prefixe_cherche):
+                        saisie = st.session_state[k_session]
+                        break
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_tel7 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tel7 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_telecom7_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_telecom7_clean, 1):
+                enonce_texte = ligne
+                attendu_texte = ligne
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"trous_tel7_{cle_variable}_inst_{num}", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_tel7 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_tel7 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_tel7 = preparer_nom_fichier("Rapport_Wifi").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 7 (.html)",
+            data=html_export_tel7,
+            file_name=nom_fichier_html_tel7,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
