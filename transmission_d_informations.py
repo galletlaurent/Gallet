@@ -3245,7 +3245,7 @@ with tab9:
     col_g9, col_im_9 = st.columns(2)
 
     with col_g9:     
-        try: st.image("William_Herschel .jpg", caption="William Herschel", width=400)
+        try: st.image("William_Herschel .jpg", caption="William Herschel", width=250)
         except Exception: st.warning("Fichier d'illustration indisponible.")
     with col_im_9:       
         try: st.image("ir_temperature.jpg", caption="température en fonction de la couleur", width= 500) # Réutilisation ou témoin
