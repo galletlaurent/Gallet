@@ -2885,13 +2885,13 @@ with tab8:
     col_g8, col_im_8, col_dessin_8 = st.columns(3)
 
     with col_g8:     
-        try: st.image("caricature_roi_bluetooth.jpg", caption="Harald Gormsson, dit Harald à la Dent bleue", width=300)
+        try: st.image("caricature_roi_bluetooth.jpg", caption="Harald Gormsson, dit Harald à la Dent bleue", width=500)
         except Exception: st.warning("Fichier d'illustration indisponible.")
     with col_im_8:       
-        try: st.image("blutho.jpg", caption="origine du symbole", width= 300) # Réutilisation ou témoin
+        try: st.image("blutho.jpg", caption="origine du symbole", width= 500) # Réutilisation ou témoin
         except Exception: st.warning("Fichier d'illustration indisponible.")
     with col_dessin_8:
-        try: st.image("porte_bluetooth.jpg", caption="portée théorique", width= 250) # Réutilisation ou témoin
+        try: st.image("porte_bluetooth.jpg", caption="portée théorique", width= 500) # Réutilisation ou témoin
         except Exception: st.warning("Fichier d'illustration indisponible.")
 
 
