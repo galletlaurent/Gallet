@@ -2437,13 +2437,17 @@ with tab7:
         st.session_state.inc_local_tel7 = 0
 
     # --- HISTORIQUE ET CAHIER DES CHARGES : HEDY LAMARR ET LE 802.11 ---
+
+    try: st.image("Hedy_Lamarr.jpg", caption="Hedy Lamarr", width= 250) # Réutilisation ou témoin
+        except Exception: st.warning("Fichier d'illustration indisponible.")
+        
     st.subheader("Du secret militaire au grand débit : L'héritage d'Hedy Lamarr")
     st.write(
         "**L'Invention :** Pendant la Seconde Guerre mondiale, la célèbre actrice hollywoodienne et inventrice **Hedy Lamarr**, "
         "révoltée par les torpilles alliées détournées par les signaux radio allemands, conçoit un système "
-        "révolutionnaire de **commutation de fréquences** (étalement de spectre par saut de fréquence) [INDEX]. "
+        "révolutionnaire de **commutation de fréquences** (étalement de spectre par saut de fréquence) . "
         "En synchronisant l'émetteur et le récepteur sur des changements constants de canaux, le signal devenait impossible à brouiller. "
-        "Ce principe militaire secret est aujourd'hui le fondement technologique absolu du Wi-Fi, du Bluetooth et du GPS [INDEX].\n\n"
+        "Ce principe militaire secret est aujourd'hui le fondement technologique absolu du Wi-Fi, du Bluetooth et du GPS .\n\n"
         "**Fonctionnement extrêmement détaillé :** Le Wi-Fi (norme internationale IEEE **802.11**) permet de déployer un réseau local "
         "haut débit sans fil dans un rayon de quelques dizaines de mètres. Il utilise des ondes radio de type **hyperfréquences** "
         "réparties sur deux bandes spectrales complémentaires :\n"
