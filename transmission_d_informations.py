@@ -3471,24 +3471,30 @@ with tab9:
     else: st.error(msg_ir_status)
 
     st.divider()
+    st.divider()
+    col9a1, col9a2 = st.columns(2)
 
-    # --- BANDE DESSINÉE / CARICATURE TEXTUELLE ---
-    st.write("**La BD humoristique textuelle : Herschel et le rayon de l'ombre**")
-    st.info(
-        "**Case 1 (Caricature de William Herschel) :** Herschel fait passer la lumière du Soleil à travers un prisme en verre. "
-        "Un arc-en-ciel magnifique se projette sur sa table de labo. Il pose des thermomètres sur le violet, le vert, le rouge... "
-        "Et un dernier thermomètre tout à droite dans le noir complet ! 'Voyons si le néant est froid !'.\n\n"
-        "**Case 2 (La surprise thermique) :** Herschel regarde le thermomètre posé dans le noir absolu. Le mercure grimpe en flèche, "
-        "dépassant toutes les autres couleurs : 'Par tous les saints ! Ça chauffe un max là où on ne voit rien ! "
-        "Il y a une lumière secrète sous le rouge !'.\n\n"
-        "**Case 3 (La guerre de la télécommande) :** Deux siècles plus tard, un père de famille est affalé dans son canapé, "
-        "pointant frénétiquement sa télécommande vers la télévision : 'Mais change de chaîne sacrée machine !'. "
-        "Devant la TV, le gros chat de la famille s'est assis bien confortablement, bloquant la lucide réceptrice.\n\n"
-        "**Case 4 (La dure loi de l'optique) :** Le chat regarde son maître d'un air dédaigneux : 'Tu peux cliquer tant que tu veux "
-        "sur ton plastique humain, mais mes poils absorbent tous tes photons infrarouges ! Si tu veux zapper, "
-        "il faudra d'abord me donner des croquettes ou lever le bras !'."
-    )
+    with col9a1:    # --- BANDE DESSINÉE / CARICATURE TEXTUELLE ---
+        st.write("**La BD humoristique textuelle : Herschel et le rayon de l'ombre**")
+        st.info(
+            "**Case 1 (Caricature de William Herschel) :** Herschel fait passer la lumière du Soleil à travers un prisme en verre. "
+            "Un arc-en-ciel magnifique se projette sur sa table de labo. Il pose des thermomètres sur le violet, le vert, le rouge... "
+            "Et un dernier thermomètre tout à droite dans le noir complet ! 'Voyons si le néant est froid !'.\n\n"
+            "**Case 2 (La surprise thermique) :** Herschel regarde le thermomètre posé dans le noir absolu. Le mercure grimpe en flèche, "
+            "dépassant toutes les autres couleurs : 'Par tous les saints ! Ça chauffe un max là où on ne voit rien ! "
+            "Il y a une lumière secrète sous le rouge !'.\n\n"
+            "**Case 3 (La guerre de la télécommande) :** Deux siècles plus tard, un père de famille est affalé dans son canapé, "
+            "pointant frénétiquement sa télécommande vers la télévision : 'Mais change de chaîne sacrée machine !'. "
+            "Devant la TV, le gros chat de la famille s'est assis bien confortablement, bloquant la lucide réceptrice.\n\n"
+            "**Case 4 (La dure loi de l'optique) :** Le chat regarde son maître d'un air dédaigneux : 'Tu peux cliquer tant que tu veux "
+            "sur ton plastique humain, mais mes poils absorbent tous tes photons infrarouges ! Si tu veux zapper, "
+            "il faudra d'abord me donner des croquettes ou lever le bras !'."
+        )
+    with col9a2:
+        try: st.image("caric_temperature.jpg", caption="température en fonction de la couleur", width= 500) # Réutilisation ou témoin
+        except Exception: st.warning("Fichier d'illustration indisponible.")
 
+        
     st.divider()
 
     # --- ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 9 ---
