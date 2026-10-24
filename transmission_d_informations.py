@@ -106,7 +106,8 @@ onglets = st.tabs([
     "Le WIFI",
     "Le bluetooth",
     "L'infra rouge",    
-    "Les brouilleurs d'onde"
+    "Les brouilleurs d'onde",
+    "Du Téléphone au Téléphone"    
 ])
 
 tab0 = onglets[0]
@@ -120,6 +121,68 @@ tab7 = onglets[7]
 tab8 = onglets[8]
 tab9 = onglets[9]
 tab10 = onglets[10]
+tab11 = onglets[11]
+
+def afficher_atelier_synthese_reseau(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'Atelier 11 (Synthèse Réseau) sur deux colonnes étanches."""
+    import random
+
+    questions_sources_syn = [
+        {"id": "t_syn_1", "q": "Par quel composant matériel la voix humaine est-elle convertie en données binaires (0 et 1) ?", "options": ["Le Convertisseur Analogique-Numérique (CAN)", "L'antenne fouet", "La carte SIM"], "rep": "Le Convertisseur Analogique-Numérique (CAN)"},
+        {"id": "t_syn_2", "q": "Quelle affirmation est vraie concernant la communication entre deux smartphones proches ?", "options": ["Ils ne communiquent jamais en direct et transitent obligatoirement par des antennes et de la fibre", "Ils s'envoient les données directement par liaison infrarouge", "Ils passent par un fil de cuivre invisible"], "rep": "Ils ne communiquent jamais en direct et transitent obligatoirement par des antennes et de la fibre"},
+        {"id": "t_syn_3", "q": "Quel type d'ondes physiques assure le transport du signal dans l'air entre le téléphone et le pylône ?", "options": ["Les ondes radio hyperfréquences (micro-ondes)", "Les ondes sonores acoustiques", "Les faisceaux laser ultraviolets"], "rep": "Les ondes radio hyperfréquences (micro-ondes)"},
+        {"id": "t_syn_4", "q": "Quel milieu physique transporte le signal sous terre entre les antennes-relais à l'échelle nationale ?", "options": ["Les câbles de fibre optique", "Les lignes électriques de haute tension", "Les tuyaux d'air comprimé"], "rep": "Les câbles de fibre optique"},
+        {"id": "t_syn_5", "q": "Quel est l'organe central de l'opérateur chargé de localiser le récepteur sur la planète et d'aiguiller l'appel ?", "options": ["Le Cœur de Réseau", "La boussole magnétique", "Le transpondeur satellite"], "rep": "Le Cœur de Réseau"},
+        {"id": "t_syn_6", "q": "Comment appelle-t-on le saut hertzien reliant l'antenne-relais locale vers le smartphone de l'utilisateur ?", "options": ["La liaison descendante (Downlink)", "La liaison montante (Uplink)", "Le saut de fréquence"], "rep": "La liaison descendante (Downlink)"},
+        {"id": "t_syn_7", "q": "Quelle pièce du smartphone récepteur reconvertit les données numériques en signal électrique pour le haut-parleur ?", "options": ["Le Convertisseur Numérique-Analogique (CNA)", "La carte SD d'extension", "La batterie Li-ion"], "rep": "Le Convertisseur Numérique-Analogique (CNA)"},
+        {"id": "t_syn_8", "q": "Quel est le principal point fort de la technologie 5G par rapport à la 4G pour l'industrie ?", "options": ["Une latence ultra-basse atteignant 1 milliseconde", "Une portée augmentée à 100 kilomètres", "L'utilisation de fils de cuivre plus épais"], "rep": "Une latence ultra-basse atteignant 1 milliseconde"},
+        {"id": "t_syn_9", "q": "Dans la fibre optique souterraine, sous quelle forme physique l'information se déplace-t-elle ?", "options": ["Sous forme d'impulsions lumineuses (photons)", "Sous forme d'électrons libres", "Sous forme de vibrations sonores"], "rep": "Sous forme d'impulsions lumineuses (photons)"},
+        {"id": "t_syn_10", "q": "Quelle unité standard exprime le retard ou temps de réponse d'un paquet sur le réseau ?", "options": ["La latence en millisecondes (ms)", "Le débit en Mbps", "La fréquence en Gigahertz"], "rep": "La latence en millisecondes (ms)"}
+    ]
+
+    if "ordre_quiz_tab11_telecom_aleatoire" not in st.session_state:
+        random.shuffle(questions_sources_syn)
+        st.session_state.ordre_quiz_tab11_telecom_aleatoire = questions_sources_syn
+
+    st.session_state.champs_telecom11_clean = [
+        ("1. Capturer la voix exige d'abord de la convertir en données .......... numériques.", ["Choisir...", "binaires", "analogiques"], "binaires", "telecom11_t1"),
+        ("2. Les données sont injectées dans l'air via des ondes radio ..........", ["Choisir...", "hyperfréquences", "sonores"], "hyperfréquences", "telecom11_t2"),
+        ("3. Le trajet aérien ascendant du smartphone au pylône est la liaison ..........", ["Choisir...", "montante", "descendante"], "montante", "telecom11_t3"),
+        ("4. Sous le sol, le signal transite à la vitesse de la lumière dans la ..........", ["Choisir...", "fibre", "brique"], "fibre", "telecom11_t4"),
+        ("5. Identifier l'antenne où se trouve le destinataire est le rôle du .......... de réseau.", ["Choisir...", "Cœur", "Répéteur"], "Cœur", "telecom11_t5"),
+        ("6. Le signal repart du pylône d'arrivée vers le destinataire en liaison ..........", ["Choisir...", "descendante", "montante"], "descendante", "telecom11_t6"),
+        ("7. Les bits reçus sont reconvertis en électricité par le convertisseur ..........", ["Choisir...", "CNA", "CAN"], "CNA", "telecom11_t7"),
+        ("8. Le courant fait vibrer le haut-parleur pour recréer l'onde .......... audible.", ["Choisir...", "sonore", "hertzienne"], "sonore", "telecom11_t8"),
+        ("9. Par rapport à la 4G, la 5G divise par trente le temps de ..........", ["Choisir...", "latence", "calcul"], "latence", "telecom11_t9"),
+        ("10. Ce grand réseau maillé planétaire assure l'interconnexion en quelques ..........", ["Choisir...", "millisecondes", "heures"], "millisecondes", "telecom11_t10")
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique Final (10 questions - 10 pts)")
+        if "ordre_quiz_tab11_telecom_aleatoire" in st.session_state:
+            if "inc_local_tel11" not in st.session_state: st.session_state.inc_local_tel11 = 0
+            st.session_state.inc_local_tel11 += 1
+            
+            for idx, q_data in enumerate(st.session_state.ordre_quiz_tab11_telecom_aleatoire, 1):
+                st.write(f"**{idx}.** {q_data['q']}")
+                cle_select = f"quiz_tel11_{q_data['id']}_inst_{st.session_state.inc_local_tel11}_{idx}"
+                st.selectbox("", options=["Choisir..."] + q_data["options"], key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse Finale (Texte à trous - 10 pts)")
+        if "champs_telecom11_clean" in st.session_state:
+            instance_id = st.session_state.get("inc_local_tel11", 1)
+            for idx, ligne in enumerate(st.session_state.champs_telecom11_clean, 1):
+                enonce = ligne[0]
+                choix = ligne[1]
+                cle = ligne[-1]
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: st.write(enonce)
+                with c_sel:
+                    cle_dynamique_trou = f"trous_tel11_{cle}_inst_{instance_id}_{idx}"
+                    st.selectbox("", choix, key=cle_dynamique_trou, disabled=verrouille, label_visibility="collapsed")
 
 
 def afficher_atelier_brouilleurs(verrouille=False):
@@ -373,6 +436,7 @@ def afficher_atelier_wifi(verrouille=False):
                     # Clé dynamique unique pour éviter les collisions de selectbox
                     cle_dynamique_trou = f"trous_tel7_{cle}_inst_{instance_id}_{idx}"
                     st.selectbox("", choix, key=cle_dynamique_trou, disabled=verrouille, label_visibility="collapsed")
+
 def afficher_atelier_satellite(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'Atelier 6 sur deux colonnes étanches."""
     import random
@@ -1682,7 +1746,6 @@ with tab3:
         <head>
             <meta charset="utf-8">
             <title>Rapport Téléphone Fixe - {n_eleve}</title>
-            <style>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
@@ -3582,6 +3645,9 @@ with tab10:
     if "inc_local_tel10" not in st.session_state:
         st.session_state.inc_local_tel10 = 0
 
+    try: st.image("brouilleur.jpg", caption="Brouilleurs d'ondes", width= 350) # Réutilisation ou témoin
+    except Exception: st.warning("Fichier d'illustration indisponible.")
+
     # --- LE COURS TECHNIQUE ET CONTEXTE ---
     st.subheader("La saturation du spectre : Le principe du bruit blanc")
     st.write(
@@ -3751,11 +3817,11 @@ with tab10:
             <title>Rapport Brouilleurs d'onde - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #ef4444; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                th {{ background-color: #ef4444; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
@@ -3836,8 +3902,291 @@ with tab10:
             use_container_width=True
         )
 
+with tab11:
+    st.header("Synthèse Globale : Le Voyage Complet de l'Onde")
+    
+    # --- SÉCURITÉ DE L'ONGLET 11 ---
+    if "suite_verrouille_tab11_telecom" not in st.session_state:
+        st.session_state.suite_verrouille_tab11_telecom = False
+    verrou_at11 = st.session_state.suite_verrouille_tab11_telecom
+
+    if "inc_local_tel11" not in st.session_state:
+        st.session_state.inc_local_tel11 = 0
+
+    st.subheader("La cinématique d'un appel : De l'antenne locale au cœur de réseau")
+    st.write(
+        "Votre voix effectue un voyage mixte : elle commence par un saut hertzien dans l'air, "
+        "voyage sous terre dans des câbles de fibre optique, puis ressort par une antenne-relais à l'autre bout du réseau."
+    )
+
+    st.divider()
+
+    # --- SIMULATEUR INTERACTIF DE TRAJET DE L'ONDE ---
+    st.subheader("Banc de métrologie cellulaire : Acheminement du signal")
+    
+    generation_choisie = st.selectbox(
+        "Sélectionner la génération de réseau mobile à tester :",
+        options=["Réseau 3G (Fréquences basses - Débit limité)", "Réseau 4G (Haut Débit - Usage standard)", "Réseau 5G (Hyperfréquences - Latence ultra-basse)"],
+        key="select_generation_reseau_final"
+    )
+    
+    etape_signal = st.slider(
+        "Suivre le parcours du signal (étape par étape) :", 
+        min_value=1, max_value=5, value=1, key="slide_etape_reseau_final",
+        help="1: Émission Tél A / 2: Liaison Montante / 3: Transit Fibre / 4: Liaison Descendante / 5: Réception Tél B"
+    )
+
+    # Étalonnage des variables physiques selon la génération
+    if "3G" in generation_choisie:
+        f_nom, debit_txt, latence_txt, color_onde = "2.1 GHz", "2 Mbps", "100 ms", "#eab308"
+    elif "4G" in generation_choisie:
+        f_nom, debit_txt, latence_txt, color_onde = "2.6 GHz", "150 Mbps", "30 ms", "#3b82f6"
+    else:
+        f_nom, debit_txt, latence_txt, color_onde = "3.5 GHz", "1 Gbps", "1 ms", "#22c55e"
+
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+    import numpy as np
+
+    fig_cel, ax_cel = plt.subplots(figsize=(7.2, 3.8), facecolor="white")
+    ax_cel.set_facecolor("white")
+    
+    # Ligne de sol terrestre
+    ax_cel.plot([0.0, 8.0], [0.5, 0.5], color="#1e293b", linewidth=2.5)
+    
+    # Équipements fixes
+    ax_cel.add_patch(patches.Rectangle((0.4, 0.52), 0.2, 0.4, facecolor="#0f172a", zorder=3))
+    ax_cel.add_patch(patches.Rectangle((0.44, 0.56), 0.12, 0.32, facecolor="#38bdf8", zorder=4))
+    ax_cel.text(0.5, 1.0, "Téléphone A\n(Émetteur)", fontsize=7, weight="bold", ha="center")
+    
+    ax_cel.add_patch(patches.Rectangle((7.4, 0.52), 0.2, 0.4, facecolor="#0f172a", zorder=3))
+    ax_cel.add_patch(patches.Rectangle((7.44, 0.56), 0.12, 0.32, facecolor="#38bdf8", zorder=4))
+    ax_cel.text(7.5, 1.0, "Téléphone B\n(Récepteur)", fontsize=7, weight="bold", ha="center")
+    
+    ax_cel.plot([2.0, 2.0], [0.5, 2.2], color="#475569", linewidth=2, zorder=2)
+    ax_cel.add_patch(patches.RegularPolygon((2.0, 2.2), numVertices=3, radius=0.15, facecolor="#475569"))
+    ax_cel.text(2.0, 2.45, "Antenne-Relais A", fontsize=7, weight="bold", ha="center")
+    
+    ax_cel.plot([6.0, 6.0], [0.5, 2.2], color="#475569", linewidth=2, zorder=2)
+    ax_cel.add_patch(patches.RegularPolygon((6.0, 2.2), numVertices=3, radius=0.15, facecolor="#475569"))
+    ax_cel.text(6.0, 2.45, "Antenne-Relais B", fontsize=7, weight="bold", ha="center")
+    
+    ax_cel.plot([2.0, 6.0], [0.1, 0.1], color="#cbd5e1", linewidth=4, linestyle="--", zorder=1)
+    ax_cel.text(4.0, 0.2, "Fibre Optique Souterraine", color="#64748b", fontsize=7, ha="center")
+
+    # Logique animée du signal
+    if etape_signal == 1:
+        ax_cel.add_patch(patches.Circle((0.5, 0.72), 0.05, facecolor="#ef4444", zorder=5))
+        msg_etape = "Étape 1 : Le processeur du Téléphone A numérise votre voix."
+    elif etape_signal == 2:
+        ax_cel.plot([0.5, 2.0], [0.72, 2.2], color=color_onde, linewidth=2.5, linestyle=":", zorder=3)
+        ax_cel.add_patch(patches.Circle((2.0, 2.2), 0.06, facecolor="#ef4444", zorder=5))
+        msg_etape = f"Étape 2 (Liaison Montante) : Voyage des ondes radio ({f_nom}) vers l'antenne-relais A."
+    elif etape_signal == 3:
+        ax_cel.plot([2.0, 6.0], [0.1, 0.1], color="#ef4444", linewidth=4, zorder=2)
+        msg_etape = "Étape 3 (Cœur de Réseau) : Les photons filent dans la fibre optique sous terre."
+    elif etape_signal == 4:
+        ax_cel.plot([6.0, 7.5], [2.2, 0.72], color=color_onde, linewidth=2.5, linestyle=":", zorder=3)
+        ax_cel.add_patch(patches.Circle((6.0, 2.2), 0.06, facecolor="#ef4444", zorder=5))
+        msg_etape = "Étape 4 (Liaison Descendante) : L'antenne-relais B réémet le flux hertzien vers le destinataire."
+    else:
+        ax_cel.add_patch(patches.Circle((7.5, 0.72), 0.07, facecolor="#22c55e", zorder=5))
+        ax_cel.add_patch(patches.Arc((7.5, 0.72), 0.3, 0.3, angle=0, theta1=0, theta2=360, color="#22c55e", linewidth=1.5))
+        msg_etape = "Étape 5 : Le Téléphone B reçoit l'onde et restitue le signal audio."
+
+    ax_cel.set_xlim(0, 8.0)
+    ax_cel.set_ylim(-0.2, 2.8)
+    ax_cel.axis("off")
+    st.pyplot(fig_cel)
+    plt.close(fig_cel)
+    
+    st.info(msg_etape)
+    st.markdown(f"""
+    * Fréquence nominale : **{f_nom}**
+    * Vitesse de transfert : **{debit_txt}**
+    * Temps de réponse : **{latence_txt}**
+    """)
+
+    st.divider()
+
+    # --- ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 11 ---
+    afficher_atelier_synthese_reseau(verrouille=verrou_at11)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier Final")
+    case_certif_tel11 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier 11.", 
+        key="check_certif_tel11_final_real", 
+        disabled=verrou_at11
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 11", key="btn_export_tel11_official_real", use_container_width=True, disabled=verrou_at11):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_tel11: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # A. Correction du Quiz Technique (10 questions -> 10 pts)
+            score_q11 = 0.0
+            if "ordre_quiz_tab11_telecom_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab11_telecom_aleatoire:
+                    saisie = "Choisir..."
+                    prefixe_cherche = f"quiz_tel11_{q_item['id']}_"
+                    for k_session in st.session_state.keys():
+                        if k_session.startswith(prefixe_cherche):
+                            saisie = st.session_state[k_session]
+                            break
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q11 += 1.0
+
+            # B. Correction de la Synthèse par texte à trous (10 trous -> 10 pts)
+            score_t11 = 0.0
+            if "champs_telecom11_clean" in st.session_state:
+                for idx, ligne in enumerate(st.session_state.champs_telecom11_clean, 1):
+                    cle = ligne[-1]
+                    attendu = ligne
+                    saisie_t = st.session_state.get(f"trous_tel11_{cle}_inst_{idx}", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu).strip(): 
+                        score_t11 += 1.0
+
+            st.session_state.score_suite11_tel_p1 = round(float(score_q11), 1)
+            st.session_state.score_suite11_tel_p2 = round(float(score_t11), 1)
+            st.session_state.score_final_suite11_telecom = round(float(score_q11 + score_t11), 1)
+            st.session_state.suite_verrouille_tab11_telecom = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML SCELLÉ DE L'ATELIER 11 ---
+    if st.session_state.get("suite_verrouille_tab11_telecom", False):
+        scr1_tel11 = st.session_state.get("score_suite11_tel_p1", 0.0)
+        scr2_tel11 = st.session_state.get("score_suite11_tel_p2", 0.0)
+        tot_s_tel11 = st.session_state.get("score_final_suite11_telecom", 0.0)
+        timestamp_tel11 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER 11 COMPILÉ SCELLÉ | Note de session : {tot_s_tel11:.1f} / 20")
+
+        n_eleve = st.session_state.get("nom_var", "ELEVE").upper()
+        p_eleve = st.session_state.get("prenom_var", "PRENOM").upper()
+        c_eleve = st.session_state.get("classe_var", "GROUPE").upper()
+
+        html_export_tel11 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Synthèse Réseau - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #0f172a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation Télécommunications</h1>
+                <p>Atelier 11 : Synthèse globale de l'acheminement des flux de données</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_tel11}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_tel11:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_tel11:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_tel11:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 11 : <strong>{tot_s_tel11:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+        if "ordre_quiz_tab11_telecom_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab11_telecom_aleatoire, 1):
+                saisie = "Choisir..."
+                prefixe_cherche = f"quiz_tel11_{q_item['id']}_"
+                for k_session in st.session_state.keys():
+                    if k_session.startswith(prefixe_cherche):
+                        saisie = st.session_state[k_session]
+                        break
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_tel11 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tel11 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_telecom11_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_telecom11_clean, 1):
+                enonce_texte = ligne
+                attendu_texte = ligne
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"trous_tel11_{cle_variable}_inst_{num}", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_tel11 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_tel11 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_tel11 = preparer_nom_fichier("Rapport_Synthese_Reseau").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 11 (.html)",
+            data=html_export_tel11,
+            file_name=nom_fichier_html_tel11,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
 
 
                     
