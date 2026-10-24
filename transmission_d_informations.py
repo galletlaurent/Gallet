@@ -105,6 +105,7 @@ onglets = st.tabs([
     "Le réseau satellite",
     "Le WIFI",
     "Le bluetooth",
+    "L'infra rouge",    
     "Les brouilleurs d'onde"
 ])
 
@@ -116,9 +117,71 @@ tab4 = onglets[4]
 tab5 = onglets[5] 
 tab6 = onglets[6] 
 tab7 = onglets[7] 
-tab8 = onglets[8] 
+tab8 = onglets[8]
 tab9 = onglets[9]
+tab10 = onglets[10]
 
+
+def afficher_atelier_infrarouge(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'Atelier 9 sur deux colonnes étanches."""
+    import random
+
+    questions_sources_ir = [
+        {"id": "t_ir_1", "q": "Quel astronome et physicien a découvert les rayons infrarouges en l'an 1800 ?", "options": ["William Herschel", "Heinrich Hertz", "Guglielmo Marconi"], "rep": "William Herschel"},
+        {"id": "t_ir_2", "q": "Quelle est la nature physique du rayonnement infrarouge utilisé dans les télécommunications ?", "options": ["Une onde lumineuse invisible dont la longueur d'onde est plus longue que le rouge", "Une onde radio hyperfréquence", "Un flux d'électrons circulant dans un fil"], "rep": "Une onde lumineuse invisible dont la longueur d'onde est plus longue que le rouge"},
+        {"id": "t_ir_3", "q": "Quelle est la contrainte la plus sévère d'une liaison infrarouge domestique (ex: télécommande) ?", "options": ["Elle exige une ligne de visée directe et ne traverse aucun obstacle opaque", "Elle provoque des interférences avec les box Wi-Fi", "Elle ne fonctionne qu'à plus de 50 mètres"], "rep": "Elle exige une ligne de visée directe et ne traverse aucun obstacle opaque"},
+        {"id": "t_ir_4", "q": "Quel composant d'émission standard équipe l'extrémité d'une télécommande de télévision ?", "options": ["Une diode LED infrarouge", "Une antenne-relais miniature", "Un microphone à pastille de carbone"], "rep": "Une diode LED infrarouge"},
+        {"id": "t_ir_5", "q": "Quel composant de réception capte et décode les flashs lumineux de la télécommande sur le téléviseur ?", "options": ["Une photodiode (ou phototranscepteur)", "Un haut-parleur électromagnétique", "Un miroir parabolique"], "rep": "Une photodiode (ou phototranscepteur)"},
+        {"id": "t_ir_6", "q": "Comment la télécommande transmet-elle un ordre spécifique (ex: changer de chaîne) ?", "options": ["En émettant une série rapide de flashs lumineux codés en binaire (0 et 1)", "En faisant varier la couleur de la lumière", "En augmentant la chaleur du faisceau"], "rep": "En émettant une série rapide de flashs lumineux codés en binaire (0 et 1)"},
+        {"id": "t_ir_7", "q": "Quel type d'ondes du spectre électromagnétique se situe juste en dessous de l'infrarouge en termes de fréquence ?", "options": ["Les micro-ondes / ondes radio", "Les rayons X", "Les ultraviolets"], "rep": "Les micro-ondes / ondes radio"},
+        {"id": "t_ir_8", "q": "Quel capteur du quotidien utilise le rayonnement infrarouge passif pour détecter la chaleur des corps ?", "options": ["Le détecteur de mouvement des systèmes d'alarme", "Le manomètre de pression", "La carte SIM"], "rep": "Le détecteur de mouvement des systèmes d'alarme"},
+        {"id": "t_ir_9", "q": "Pourquoi l'infrarouge a-t-il été abandonné pour le transfert de fichiers entre téléphones portables ?", "options": ["Parce que le Bluetooth offre des débits plus élevés et n'impose pas de coller les téléphones face à face", "Parce que l'infrarouge est devenu payant", "Parce que le fil de cuivre est plus rapide"], "rep": "Parce que le Bluetooth offre des débits plus élevés et n'impose pas de coller les téléphones face à face"},
+        {"id": "t_ir_10", "q": "Quel phénomène thermique est intrinsèquement lié au rayonnement infrarouge ?", "options": ["L'émission de chaleur (rayonnement thermique)", "La condensation de l'eau", "La création d'un champ magnétique"], "rep": "L'émission de chaleur (rayonnement thermique)"}
+    ]
+
+    if "ordre_quiz_tab9_telecom_aleatoire" not in st.session_state:
+        random.shuffle(questions_sources_ir)
+        st.session_state.ordre_quiz_tab9_telecom_aleatoire = questions_sources_ir
+
+    st.session_state.champs_telecom9_clean = [
+        ("1. Les rayons infrarouges furent mis en évidence par le scientifique William ..........", ["Choisir...", "Herschel", "Tyndall"], "Herschel", "telecom9_t1"),
+        ("2. Ce signal n'est pas une onde radio mais un rayonnement .......... invisible.", ["Choisir...", "lumineux", "acoustique"], "lumineux", "telecom9_t2"),
+        ("3. Les ondes infrarouges transportent naturellement l'énergie sous forme de ..........", ["Choisir...", "chaleur", "courant"], "chaleur", "telecom9_t3"),
+        ("4. Une télécommande transmet ses ordres via une diode de type ..........", ["Choisir...", "LED", "triode"], "LED", "telecom9_t4"),
+        ("5. À l'arrivée, le signal optique est intercepté par une .......... réceptrice.", ["Choisir...", "photodiode", "antenne"], "photodiode", "telecom9_t5"),
+        ("6. Coder l'information s'appuie sur la succession de .......... lumineux rapides.", ["Choisir...", "flashs", "sauts"], "flashs", "telecom9_t6"),
+        ("7. Ce mode de couplage exige une ligne de visée .......... entre les boîtiers.", ["Choisir...", "directe", "ondulée"], "directe", "telecom9_t7"),
+        ("8. Le faisceau photonique est instantanément .......... par le moindre corps opaque.", ["Choisir...", "bloqué", "amplifié"], "bloqué", "telecom9_t8"),
+        ("9. L'infrarouge équipe l'immense majorité des .......... de nos salons.", ["Choisir...", "télécommandes", "routeurs"], "télécommandes", "telecom9_t9"),
+        ("10. Pour l'échange de fichiers mobiles, cette liaison fut supplantée par le ..........", ["Choisir...", "Bluetooth", "Télégraphe"], "Bluetooth", "telecom9_t10")
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        if "ordre_quiz_tab9_telecom_aleatoire" in st.session_state:
+            if "inc_local_tel9" not in st.session_state: st.session_state.inc_local_tel9 = 0
+            st.session_state.inc_local_tel9 += 1
+            
+            for idx, q_data in enumerate(st.session_state.ordre_quiz_tab9_telecom_aleatoire, 1):
+                st.write(f"**{idx}.** {q_data['q']}")
+                cle_select = f"quiz_tel9_{q_data['id']}_inst_{st.session_state.inc_local_tel9}_{idx}"
+                st.selectbox("", options=["Choisir..."] + q_data["options"], key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 9 (Texte à trous - 10 pts)")
+        if "champs_telecom9_clean" in st.session_state:
+            instance_id = st.session_state.get("inc_local_tel9", 1)
+            for idx, ligne in enumerate(st.session_state.champs_telecom9_clean, 1):
+                enonce = ligne[0]
+                choix = ligne[1]
+                cle = ligne[-1]
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: st.write(enonce)
+                with c_sel:
+                    cle_dynamique_trou = f"trous_tel9_{cle}_inst_{instance_id}_{idx}"
+                    st.selectbox("", choix, key=cle_dynamique_trou, disabled=verrouille, label_visibility="collapsed")
 
 def afficher_atelier_bluetooth(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'Atelier 8 sur deux colonnes étanches."""
@@ -3168,9 +3231,274 @@ with tab8:
             use_container_width=True
         )
 
+with tab9:
+    st.header("L'Infrarouge : La Communication Optique à Courte Portée")
+    
+    # --- SÉCURITÉ DE L'ONGLET 9 ---
+    if "suite_verrouille_tab9_telecom" not in st.session_state:
+        st.session_state.suite_verrouille_tab9_telecom = False
+    verrou_at9 = st.session_state.suite_verrouille_tab9_telecom
 
+    if "inc_local_tel9" not in st.session_state:
+        st.session_state.inc_local_tel9 = 0
 
+    # --- LE COURS SUR L'INFRAROUGE ---
+    st.subheader("La lumière invisible : William Herschel et le spectre thermique")
+    st.write(
+        "**L'Histoire :** En 1800, l'astronome britannique **William Herschel** souhaite mesurer la chaleur apportée par "
+        "chaque couleur de la lumière du Soleil. En faisant passer les rayons à travers un prisme en verre, il place des thermomètres "
+        "sur chaque couleur. Par curiosité, il en pose un juste après la couleur rouge, là où il n'y a plus aucune lumière visible. "
+        "À sa grande surprise, ce thermomètre affiche la température la plus élevée ! Il vient de découvrir un rayonnement invisible "
+        "qu'il nomme 'rayons calorifiques' : les **infrarouges**.\n\n"
+        "**Fonctionnement extrêmement détaillé :** L'infrarouge est une onde électromagnétique dont la longueur d'onde "
+        "est supérieure à celle de la lumière visible, s'étendant juste au-delà du rouge. Dans les applications grand public "
+        "comme les télécommandes, on utilise des **impulsions de lumière infrarouge** :\n"
+        "1. **L'émetteur (La Diode LED) :** Lorsque vous pressez une touche, le microcontrôleur convertit l'ordre en une suite de données "
+        "binaires. Une diode émettrice LED traduit ces 0 et ces 1 en une série de flashs de lumière invisible ultra-rapides, "
+        "généralement modulés à une fréquence de 38 kHz pour éviter les interférences avec la lumière ambiante.\n"
+        "2. **Le récepteur (La Photodiode) :** Sur le téléviseur, un capteur photoélectrique reçoit ces flashs de photons, "
+        "les reconvertit en un signal électrique binaire, puis exécute l'action demandée (changement de volume, extinction).\n\n"
+        "La contrainte physique de cette technologie est absolue : la lumière voyage en ligne droite. Il faut un **alignement optique direct** "
+        "parfait. Le moindre corps opaque (une main, un livre, un animal passant dans la pièce) absorbe ou réfléchit le faisceau, "
+        "interrompant instantanément le transfert de données."
+    )
 
+    st.divider()
+
+    # --- LABORATOIRE INTERACTIF : LIGNE DE VISÉE IR ---
+    st.subheader("Laboratoire d'optique géométrique : Alignement et masquage du faisceau")
+    st.write(
+        "Modifiez le curseur de distance pour éloigner la télécommande du téléviseur. "
+        "Activez l'insertion de l'obstacle opaque pour analyser le blocage immédiat du flux de photons infrarouges."
+    )
+
+    # Paramètres cinématiques
+    dist_ir_m = st.slider("Ajuster la distance entre la télécommande et la télévision (mètres) :", min_value=0.5, max_value=8.0, value=3.5, step=0.5, key="slide_dist_ir")
+    obstacle_ir = st.radio("Placer un obstacle opaque au milieu du salon :", options=["Axe optique libre (Ligne de visée directe)", "Obstacle inséré (Une main ou un livre coupe le faisceau)"], index=0, horizontal=True)
+
+    # Rendu graphique vectoriel Matplotlib
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+    import numpy as np
+
+    fig_ir, ax_ir = plt.subplots(figsize=(6.8, 2.6), facecolor="white")
+    ax_ir.set_facecolor("white")
+    
+    # Sol du salon
+    ax_ir.plot([0.0, 7.0], [0.1, 0.1], color="#0f172a", linewidth=2.5)
+    
+    # Dessin de la Télécommande fixe à gauche (x=0.8, y=0.8)
+    ax_ir.add_patch(patches.Rectangle((0.5, 0.5), 0.5, 0.4, facecolor="#1e293b", edgecolor="black", zorder=3)) # Boîtier
+    ax_ir.add_patch(patches.Circle((1.0, 0.7), 0.05, facecolor="#94a3b8", zorder=4)) # Diode émettrice LED
+    ax_ir.text(0.75, 1.05, "Télécommande", fontsize=8, color="#0f172a", weight="bold", ha="center")
+    
+    # Calcul de l'emplacement du téléviseur mobile à droite sur l'échelle graphique
+    x_tv = 1.4 + (dist_ir_m / 8.0) * 4.8
+    ax_ir.add_patch(patches.Rectangle((x_tv, 0.3), 0.15, 0.8, facecolor="#334155", zorder=3)) # Écran TV profil
+    ax_ir.add_patch(patches.Rectangle((x_tv - 0.04, 0.6), 0.04, 0.15, facecolor="#38bdf8", zorder=4)) # Lentille réceptrice
+    ax_ir.text(x_tv, 1.25, "Téléviseur", fontsize=8, color="#0f172a", weight="bold", ha="center")
+
+    # Placement de l'obstacle géométrique au centre du faisceau
+    x_milieu_ir = (1.0 + x_tv) / 2.0
+    if "inséré" in obstacle_ir:
+        ax_ir.add_patch(patches.Rectangle((x_milieu_ir - 0.08, 0.2), 0.16, 1.1, facecolor="#ef4444", edgecolor="black", zorder=4))
+        ax_ir.text(x_milieu_ir, 1.4, "Obstacle Opaque", fontsize=8, color="#ef4444", weight="bold", ha="center")
+
+    # Analyse cinématique des photons
+    if "libre" in obstacle_ir:
+        # Faisceau vert continu unissant la LED à la lentille
+        ax_ir.plot([1.0, x_tv - 0.04], [0.7, 0.7], color="#10b981", linewidth=3, solid_capstyle="round", zorder=2)
+        # Petits éclairs de transmission
+        ax_ir.plot([x_tv - 0.04, x_tv - 0.04], [0.6, 0.75], color="#10b981", linewidth=1.5)
+        msg_ir_status = "LIAISON OPTIQUE ACTIVE | Ligne de visée directe respectée. Les paquets de flashs binaires atteignent le récepteur."
+        ir_actif = True
+    else:
+        # Le faisceau bute contre l'obstacle et s'éteint
+        ax_ir.plot([1.0, x_milieu_ir - 0.08], [0.7, 0.7], color="#ef4444", linewidth=3, solid_capstyle="round", zorder=2)
+        msg_ir_status = "COUPURE PHYSIQUE ÉTABLIE | La lumière ne contourne pas l'obstacle. Zéro photon reçu par la photodiode."
+        ir_actif = False
+
+    # Diode témoin d'état sur la TV
+    ax_ir.add_patch(patches.Circle((x_tv + 0.07, 0.4), 0.04, facecolor="#22c55e" if ir_actif else "#64748b", zorder=5))
+
+    ax_ir.set_xlim(0, 7.0)
+    ax_ir.set_ylim(0, 1.8)
+    ax_ir.axis("off")
+    st.pyplot(fig_ir)
+    plt.close(fig_ir)
+    
+    if ir_actif: st.success(msg_ir_status)
+    else: st.error(msg_ir_status)
+
+    st.divider()
+
+    # --- BANDE DESSINÉE / CARICATURE TEXTUELLE ---
+    st.write("**La BD humoristique textuelle : Herschel et le rayon de l'ombre**")
+    st.info(
+        "**Case 1 (Caricature de William Herschel) :** Herschel fait passer la lumière du Soleil à travers un prisme en verre. "
+        "Un arc-en-ciel magnifique se projette sur sa table de labo. Il pose des thermomètres sur le violet, le vert, le rouge... "
+        "Et un dernier thermomètre tout à droite dans le noir complet ! 'Voyons si le néant est froid !'.\n\n"
+        "**Case 2 (La surprise thermique) :** Herschel regarde le thermomètre posé dans le noir absolu. Le mercure grimpe en flèche, "
+        "dépassant toutes les autres couleurs : 'Par tous les saints ! Ça chauffe un max là où on ne voit rien ! "
+        "Il y a une lumière secrète sous le rouge !'.\n\n"
+        "**Case 3 (La guerre de la télécommande) :** Deux siècles plus tard, un père de famille est affalé dans son canapé, "
+        "pointant frénétiquement sa télécommande vers la télévision : 'Mais change de chaîne sacrée machine !'. "
+        "Devant la TV, le gros chat de la famille s'est assis bien confortablement, bloquant la lucide réceptrice.\n\n"
+        "**Case 4 (La dure loi de l'optique) :** Le chat regarde son maître d'un air dédaigneux : 'Tu peux cliquer tant que tu veux "
+        "sur ton plastique humain, mais mes poils absorbent tous tes photons infrarouges ! Si tu veux zapper, "
+        "il faudra d'abord me donner des croquettes ou lever le bras !'."
+    )
+
+    st.divider()
+
+    # --- ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 9 ---
+    afficher_atelier_infrarouge(verrouille=verrou_at9)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 9")
+    case_certif_tel9 = st.checkbox("Je certifie avoir complété les questions de l'Atelier 9.", key="check_certif_tel9_final", disabled=verrou_at9)
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 9", key="btn_export_tel9_official", use_container_width=True, disabled=verrou_at9):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_tel9: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # A. Correction du Quiz Technique (10 questions -> 10 pts)
+            score_q9 = 0.0
+            if "ordre_quiz_tab9_telecom_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab9_telecom_aleatoire:
+                    saisie = "Choisir..."
+                    prefixe_cherche = f"quiz_tel9_{q_item['id']}_"
+                    for k_session in st.session_state.keys():
+                        if k_session.startswith(prefixe_cherche):
+                            saisie = st.session_state[k_session]
+                            break
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q9 += 1.0
+
+            # B. Correction de la Synthèse (10 trous -> 10 pts)
+            score_t9 = 0.0
+            if "champs_telecom9_clean" in st.session_state:
+                for idx, ligne in enumerate(st.session_state.champs_telecom9_clean, 1):
+                    cle = ligne[-1]
+                    attendu = ligne[2]
+                    saisie_t = st.session_state.get(f"trous_tel9_{cle}_inst_{idx}", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu).strip(): 
+                        score_t9 += 1.0
+
+            # Enregistrement des notes
+            st.session_state.score_suite9_tel_p1 = round(float(score_q9), 1)
+            st.session_state.score_suite9_tel_p2 = round(float(score_t9), 1)
+            # Calcul et enregistrement de la note globale de l'Atelier 9 sur 20 points
+            st.session_state.score_final_suite9_telecom = round(float(score_q9 + score_t9), 1)
+            st.session_state.suite_verrouille_tab9_telecom = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML SCELLÉ DE L'ATELIER 9 ---
+    if st.session_state.get("suite_verrouille_tab9_telecom", False):
+        scr1_tel9 = st.session_state.get("score_suite9_tel_p1", 0.0)
+        scr2_tel9 = st.session_state.get("score_suite9_tel_p2", 0.0)
+        tot_s_tel9 = st.session_state.get("score_final_suite9_telecom", 0.0)
+        timestamp_tel9 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER 9 INFRAROUGE SCELLÉ | Note de session : {tot_s_tel9:.1f} / 20")
+
+        n_eleve = st.session_state.get("nom_var", "ELEVE").upper()
+        p_eleve = st.session_state.get("prenom_var", "PRENOM").upper()
+        c_eleve = st.session_state.get("classe_var", "GROUPE").upper()
+
+        html_export_tel9 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Infrarouge - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #06b6d4; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #06b6d4; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation Télécommunications</h1>
+                <p>Atelier 9 : Optique des ondes invisibles, spectre thermique d'Herschel et diodes LED émettrices</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_tel9}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_tel9:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #06b6d4;">
+                Note obtenue au Quiz Technique : <strong>{scr1_tel9:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_tel9:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 9 : <strong>{tot_s_tel9:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+        if "ordre_quiz_tab9_telecom_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab9_telecom_aleatoire, 1):
+                saisie = "Choisir..."
+                prefixe_cherche = f"quiz_tel9_{q_item['id']}_"
+                for k_session in st.session_state.keys():
+                    if k_session.startswith(prefixe_cherche):
+                        saisie = st.session_state[k_session]
+                        break
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_tel9 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tel9 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_telecom9_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_telecom9_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"trous_tel9_{cle_variable}_inst_{num}", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_tel9 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_tel9 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_tel9 = preparer_nom_fichier("Rapport_Infrarouge").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 9 (.html)",
+            data=html_export_tel9,
+            file_name=nom_fichier_html_tel9,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
