@@ -2218,60 +2218,48 @@ with tab5:
     st.write("---")
     verrou_v5 = st.session_state.get("v_verrouille_tab5", False)
 
-    # 1. Récupération ultra-sécurisée des données de l'énoncé de l'Atelier 5
-    c_diss_cible = float(st.session_state.get("syn_cm_diss_cible", 5.0))
-    vol_fiole_diss = float(st.session_state.get("syn_v_fiole_diss", 100.0))
-    c_mere_hasard = float(st.session_state.get("syn_cm_mere_hasard", 20.0))
-    vol_fille_hasard = float(st.session_state.get("syn_v_fille_ml_hasard", 100.0))
-    fact_hasard = float(st.session_state.get("syn_facteur_hasard", 5.0))
+    # 1. Calcul des valeurs attendues théoriques pour l'Atelier 5
+    m_diss_attendue = round(float(cm_diss_cible * (v_fiole_diss / 1000.0)), 3)
+    v_mere_attendue = round(float(v_fille_ml_hasard / facteur_hasard), 2)
+    cm_fille_attendue = round(float(cm_mere_hasard / facteur_hasard), 2)
 
-    # Calcul dynamique local et sécurisé des valeurs théoriques attendues
-    m_diss_attendue = round(float(c_diss_cible * (vol_fiole_diss / 1000.0)), 3)
-    v_mere_attendue = round(float(vol_fille_hasard / fact_hasard), 2)
-    cm_fille_attendue = round(float(c_mere_hasard / fact_hasard), 2)
-
-    # 2. Appel propre de la fonction de synthèse de l'Atelier 5
+    # 2. Appel de la fonction de synthèse de l'Atelier 5
     dict_reponses_eleve_syn, dict_trous_v5 = afficher_questions_synthese_laboratoire(
-        prod_nom=st.session_state.get("syn_prod_nom", "Sulfate de cuivre"), 
-        cm_mere=c_mere_hasard, 
-        v_fille_choisi=vol_fille_hasard, 
-        facteur_choisi=fact_hasard, 
+        prod_nom=prod_actif['nom'], 
+        cm_mere=cm_mere_hasard, 
+        v_fille_choisi=v_fille_ml_hasard, 
+        facteur_choisi=facteur_hasard, 
         m_diss_attendue=m_diss_attendue, 
         v_mere_attendue=v_mere_attendue, 
         verrouille=verrou_v5
     )
     
-    # 3. Case à cocher réglementaire de fin d'atelier
     case_certif_ex = st.checkbox(
         "Je certifie avoir complete les questions de l'Atelier 5.", 
         key="check_certif_ex_official", 
         disabled=verrou_v5
     )
 
-    # --- ACTION DU BOUTON DE VALIDATION DE L'ATELIER 5 (VERSION FINALE ULTRA-SÉCURISÉE) ---
+    # --- ACTION DU BOUTON DE VALIDATION DE L'ATELIER 5 ---
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_ex_official", use_column_width=True, disabled=verrou_v5):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
-            st.error("Action refusée : Saisissez votre identity dans l'onglet 'Identification'.")
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_ex: 
             st.error("Action refusée : Cochez la case de certification.")
+        elif "Choisir..." in [saisie_verre_diss, saisie_verre_mere, saisie_verre_fille]:
+            st.error("Action refusée : Veuillez sélectionner la verrerie pour l'ensemble des questions.")
         else:
-            # Récupération sécurisée des saisies de l'élève depuis l'état de session Streamlit
-            s_m_diss = float(st.session_state.get("syn_in_m_diss", 0.0))
-            s_verre_diss = st.session_state.get("syn_in_verre_diss", "Choisir...")
-            s_cm_fille = float(st.session_state.get("syn_in_cm_fille", 0.0))
-            s_verre_mere = st.session_state.get("syn_in_verre_mere", "Choisir...")
-            s_verre_fille = st.session_state.get("syn_in_verre_fille", "Choisir...")
-            s_v_mere = float(st.session_state.get("syn_in_v_mere", 0.0))
+            # 1. Correction de la manipulation de Dissolution (5 points)
+            v_m_diss_lbl = "CORRECT" if abs(saisie_m_diss - m_diss_attendue) <= 0.005 else "INCORRECT"
+            v_v_diss_lbl = "CORRECT" if saisie_verre_diss == "Fiole jaugée" else "INCORRECT"
+            
+            # 2. Correction de la manipulation de Dilution (5 points)
+            v_cm_fille_lbl = "CORRECT" if abs(saisie_cm_fille - cm_fille_attendue) <= 0.1 else "INCORRECT"
+            v_v_mere_lbl = "CORRECT" if saisie_verre_mere == "Pipette jaugée" else "INCORRECT"
+            v_v_fille_lbl = "CORRECT" if saisie_verre_fille == "Fiole jaugée" else "INCORRECT"
+            v_v_mere_vol_lbl = "CORRECT" if abs(saisie_v_mere - v_mere_attendue) <= 0.1 else "INCORRECT"
 
-            # Calcul des labels de justesse pratique
-            v_m_diss_lbl = "CORRECT" if abs(s_m_diss - m_diss_attendue) <= 0.005 else "INCORRECT"
-            v_v_diss_lbl = "CORRECT" if s_verre_diss == "Fiole jaugée" else "INCORRECT"
-            v_cm_fille_lbl = "CORRECT" if abs(s_cm_fille - cm_fille_attendue) <= 0.1 else "INCORRECT"
-            v_v_mere_lbl = "CORRECT" if s_verre_mere == "Pipette jaugée" else "INCORRECT"
-            v_v_fille_lbl = "CORRECT" if s_verre_fille == "Fiole jaugée" else "INCORRECT"
-            v_v_mere_vol_lbl = "CORRECT" if abs(s_v_mere - v_mere_attendue) <= 0.1 else "INCORRECT"
-
-            # 4. Correction du Quiz de synthèse (5 points)
+            # 3. Correction du Quiz (5 points)
             score_q5 = 0.0
             if "ordre_quiz_tab5" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_tab5:
@@ -2279,7 +2267,7 @@ with tab5:
                     if str(rep_el).strip() == str(q_item["rep"]).strip():
                         score_q5 += 0.5
 
-            # 5. Correction de la Synthèse de cours à trous (5 points)
+            # 4. Correction de la Synthèse à trous (5 points)
             score_t5 = sum([
                 st.session_state.get("syn_t_t1_t5") == "Dissolution",
                 st.session_state.get("syn_t_t2_t5") == "Dilution",
@@ -2293,11 +2281,11 @@ with tab5:
                 st.session_state.get("syn_t_t10_t5") == "Pasteur"
             ]) * 0.5
 
-            # Somme des barèmes pratiques réglementaires
+            # Somme des points pratiques
             pts_m_diss = (2.5 if v_m_diss_lbl == "CORRECT" else 0.0) + (2.5 if v_v_diss_lbl == "CORRECT" else 0.0)
             pts_m_dil = (1.25 if v_cm_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_lbl == "CORRECT" else 0.0) + (1.25 if v_v_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_vol_lbl == "CORRECT" else 0.0)
 
-            # Enregistrement scellé des métriques dans la session globale
+            # Enregistrement scellé des métriques
             st.session_state.score_ex_final = round(float(pts_m_diss + pts_m_dil + score_q5 + score_t5), 1)
             st.session_state.v_m_diss_lbl = v_m_diss_lbl
             st.session_state.v_v_diss_lbl = v_v_diss_lbl
@@ -2331,7 +2319,6 @@ with tab5:
 
         st.success(f"ATELIER ÉVALUATION FINALE SCELLÉ | Note de session : {tot_s_ex:.1f} / 20")
         
-        # Pré-calcul textuel des sous-totaux pour l'insertion HTML
         note_diss_txt = f"{((2.5 if v_m_diss_lbl == 'CORRECT' else 0.0) + (2.5 if v_v_diss_lbl == 'CORRECT' else 0.0)):.1f} / 5.0"
         note_dil_txt = f"{((1.25 if v_cm_fille_lbl == 'CORRECT' else 0.0) + (1.25 if v_v_mere_lbl == 'CORRECT' else 0.0) + (1.25 if v_v_fille_lbl == 'CORRECT' else 0.0) + (1.25 if v_v_mere_vol_lbl == 'CORRECT' else 0.0)):.2f} / 5.0"
 
@@ -2367,7 +2354,7 @@ with tab5:
                 <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_ex}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_ex:.1f}</span> / 20</div>
             </div>
-
+            
             <div class="sub-title">Recapitulatif des Notes Generees</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f766e; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
                 - Evaluation de la manipulation Partie A (Dissolution) : <strong>{note_diss_txt}</strong><br>
@@ -2396,9 +2383,6 @@ with tab5:
             mime="text/html",
             use_column_width=True
         )
-
-
-
 
 
 
