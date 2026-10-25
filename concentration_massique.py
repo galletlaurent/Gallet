@@ -2002,9 +2002,9 @@ with tab4:
         dict_reponses_eleve_dil = afficher_questions_dilution(
             c_mere, 
             c_fille, 
-            v_fiole=v_fille_ml,      # On lie v_fille_ml au paramètre v_fiole de la fonction
-            v_mere=v_mere_ml,        # On lie v_mere_ml au paramètre v_mere de la fonction
-            facteur_f=facteur_f, 
+            v_fille_ml, 
+            v_mere_ml, 
+            facteur_f, 
             verrouille=verrou_v4
         )
                 # Ligne 2237 sécurisée : verrou_v4 existe désormais obligatoirement en mémoire
