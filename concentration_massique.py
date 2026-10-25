@@ -2256,7 +2256,11 @@ with tab5:
                 st.session_state.get("syn_t_t10") == "Pasteur"
             ]) * 0.5
 
-            st.session_state.score_ex_final = round(float(v_m_diss_lbl == "CORRECT" and 2.5 or 0.0) + (2.5 if v_v_diss_lbl == "CORRECT" else 0.0) + (1.25 if v_cm_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_lbl == "CORRECT" else 0.0) + (1.25 if v_v_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_vol_lbl == "CORRECT" else 0.0) + score_q5 + score_t5, 1)
+            # Calculs intermédiaires sécurisés des notes
+            pts_manip_diss = (2.5 if v_m_diss_lbl == "CORRECT" else 0.0) + (2.5 if v_v_diss_lbl == "CORRECT" else 0.0)
+            pts_manip_dil = (1.25 if v_cm_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_lbl == "CORRECT" else 0.0) + (1.25 if v_v_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_vol_lbl == "CORRECT" else 0.0)
+
+            st.session_state.score_ex_final = round(float(pts_manip_diss + pts_manip_dil + score_q5 + score_t5), 1)
             st.session_state.v_m_diss_lbl = v_m_diss_lbl
             st.session_state.v_v_diss_lbl = v_v_diss_lbl
             st.session_state.v_cm_fille_lbl = v_cm_fille_lbl
@@ -2289,7 +2293,11 @@ with tab5:
 
         st.success(f"ATELIER ÉVALUATION FINALE SCELLÉ | Note de session : {tot_s_ex:.1f} / 20")
         
-        # Pré-calcul des classes CSS pour éviter de casser les accolades f-string
+        # Pré-calcul des sous-notes textuelles à afficher dans le HTML
+        note_diss_txt = f"{((2.5 if v_m_diss_lbl == 'CORRECT' else 0.0) + (2.5 if v_v_diss_lbl == 'CORRECT' else 0.0)):.1f} / 5.0"
+        note_dil_txt = f"{((1.25 if v_cm_fille_lbl == 'CORRECT' else 0.0) + (1.25 if v_v_mere_lbl == 'CORRECT' else 0.0) + (1.25 if v_v_fille_lbl == 'CORRECT' else 0.0) + (1.25 if v_v_mere_vol_lbl == 'CORRECT' else 0.0)):.2f} / 5.0"
+
+        # Pré-calcul des classes CSS pour éliminer définitivement les conflits de accolades f-string
         c_m_diss = "status-correct" if v_m_diss_lbl == "CORRECT" else "status-incorrect"
         c_v_diss = "status-correct" if v_v_diss_lbl == "CORRECT" else "status-incorrect"
         c_cm_fille = "status-correct" if v_cm_fille_lbl == "CORRECT" else "status-incorrect"
@@ -2325,8 +2333,8 @@ with tab5:
             
             <div class="sub-title">Recapitulatif des Notes Generees</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f766e; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-                - Evaluation de la manipulation Partie A (Dissolution) : <strong>{((2.5 if v_m_diss_lbl == "CORRECT" else 0.0) + (2.5 if v_v_diss_lbl == "CORRECT" else 0.0)):.1f} / 5.0</strong><br>
-                - Evaluation de la manipulation Partie B (Dilution) : <strong>{((1.25 if v_cm_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_lbl == "CORRECT" else 0.0) + (1.25 if v_v_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_vol_lbl == "CORRECT" else 0.0)):.2f} / 5.0</strong><br>
+                - Evaluation de la manipulation Partie A (Dissolution) : <strong>{note_diss_txt}</strong><br>
+                - Evaluation de la manipulation Partie B (Dilution) : <strong>{note_dil_txt}</strong><br>
                 - Note obtenue au Questionnaire Theorique (Quiz) : <strong>{scr_q5:.1f} / 5.0</strong><br>
                 - Note obtenue a la Synthese de Cours (Texte a trous) : <strong>{scr_t5:.1f} / 5.0</strong>
             </p>
@@ -2344,7 +2352,6 @@ with tab5:
         </body>
         </html>"""
         
-        # Création du bouton de téléchargement natif
         st.download_button(
             label="TELECHARGER LE RAPPORT OFFICIEL HTML",
             data=html_export_ex,
@@ -2352,3 +2359,27 @@ with tab5:
             mime="text/html",
             use_column_width=True
         )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
