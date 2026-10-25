@@ -2219,8 +2219,6 @@ with tab5:
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_ex_official", use_column_width=True, disabled=verrou_v5):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif "Choisir..." in [saisie_verre_diss, saisie_verre_mere, saisie_verre_fille]:
-            st.error("Action refusee : Veuillez sélectionner la verrerie pour l'ensemble des questions.")
         else:
             # 1. Correction de la manipulation de Dissolution (5 points)
             v_m_diss_lbl = "CORRECT" if abs(saisie_m_diss - m_diss_attendue) <= 0.005 else "INCORRECT"
