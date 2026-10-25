@@ -2218,7 +2218,11 @@ with tab5:
     st.write("---")
     verrou_v5 = st.session_state.get("v_verrouille_tab5", False)
 
-    # 1. Appel propre de la fonction de synthèse avec déballage complet des deux variables de retour
+    # CORRECTION : Déclaration explicite et calcul des valeurs attendues théoriques pour l'Atelier 5
+    m_diss_attendue = round(float(cm_diss_cible * (v_fiole_diss / 1000.0)), 3)
+    v_mere_attendue = round(float(v_fille_ml_hasard / facteur_hasard), 2)
+
+    # Appel propre de la fonction de synthèse avec les variables définies
     dict_reponses_eleve_syn, dict_trous_v5 = afficher_questions_synthese_laboratoire(
         prod_nom=prod_actif['nom'], 
         cm_mere=cm_mere_hasard, 
@@ -2228,7 +2232,6 @@ with tab5:
         v_mere_attendue=v_mere_attendue, 
         verrouille=verrou_v5
     )
-    
     # 2. Case à cocher réglementaire de fin d'atelier
     case_certif_ex = st.checkbox(
         "Je certifie avoir complete les questions de l'Atelier 5.", 
