@@ -2230,7 +2230,15 @@ with tab5:
 
     # L'appel à afficher_questions_synthese_laboratoire doit être présent juste au-dessus
     st.write("---")
-
+        dict_reponses_eleve_syn = afficher_questions_synthese_laboratoire(
+            prod_nom="Sulfate de cuivre", 
+            cm_mere=20.0, 
+            v_fille_choisi=100.0, 
+            facteur_choisi=5.0, 
+            m_diss_attendue=2.000, 
+            v_mere_attendue=20.0, 
+            verrouille=verrou_v5
+        )
     case_certif_ex = st.checkbox(
         "Je certifie avoir complete les questions de l'Atelier 5.", 
         key="check_certif_ex_official", 
