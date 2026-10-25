@@ -2215,11 +2215,11 @@ with tab5:
         disabled=verrou_v5
     )
 
-    # CORRECTION : Utilisation de use_column_width pour la compatibilité Streamlit Python 3.7
+    # --- ACTION DU BOUTON DE VALIDATION DE L'ATELIER 5 ---
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_ex_official", use_column_width=True, disabled=verrou_v5):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif not case_certif_ex: # CORRECTION : Alignement du nom de la variable de la case à cocher
+        elif not case_certif_ex: 
             st.error("Action refusée : Cochez la case de certification.")
         elif "Choisir..." in [saisie_verre_diss, saisie_verre_mere, saisie_verre_fille]:
             st.error("Action refusee : Veuillez sélectionner la verrerie pour l'ensemble des questions.")
@@ -2232,7 +2232,7 @@ with tab5:
             v_cm_fille_lbl = "CORRECT" if abs(saisie_cm_fille - cm_fille_attendue) <= 0.1 else "INCORRECT"
             v_v_mere_lbl = "CORRECT" if saisie_verre_mere == "Pipette jaugée" else "INCORRECT"
             v_v_fille_lbl = "CORRECT" if saisie_verre_fille == "Fiole jaugée" else "INCORRECT"
-            v_v_mere_vol_lbl = "CORRECT" if abs(saisie_v_mere - v_mere_attendue) <= 0.1 else "INCORRECT" # Ajusté sur v_mere_attendue
+            v_v_mere_vol_lbl = "CORRECT" if abs(saisie_v_mere - v_mere_attendue) <= 0.1 else "INCORRECT"
 
             # 3. Correction du Quiz (5 points)
             score_q5 = 0.0
@@ -2256,11 +2256,7 @@ with tab5:
                 st.session_state.get("syn_t_t10") == "Pasteur"
             ]) * 0.5
 
-            # Calcul des points des manipulations
-            pts_diss = (2.5 if v_m_diss_lbl == "CORRECT" else 0.0) + (2.5 if v_v_diss_lbl == "CORRECT" else 0.0)
-            pts_dil = (1.25 if v_cm_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_lbl == "CORRECT" else 0.0) + (1.25 if v_v_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_vol_lbl == "CORRECT" else 0.0)
-            
-            st.session_state.score_ex_final = round(float(pts_diss + pts_dil + score_q5 + score_t5), 1)
+            st.session_state.score_ex_final = round(float(v_m_diss_lbl == "CORRECT" and 2.5 or 0.0) + (2.5 if v_v_diss_lbl == "CORRECT" else 0.0) + (1.25 if v_cm_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_lbl == "CORRECT" else 0.0) + (1.25 if v_v_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_vol_lbl == "CORRECT" else 0.0) + score_q5 + score_t5, 1)
             st.session_state.v_m_diss_lbl = v_m_diss_lbl
             st.session_state.v_v_diss_lbl = v_v_diss_lbl
             st.session_state.v_cm_fille_lbl = v_cm_fille_lbl
@@ -2270,8 +2266,9 @@ with tab5:
             st.session_state.score_q5_save = round(float(score_q5), 1)
             st.session_state.score_t5_save = round(float(score_t5), 1)
             st.session_state.v_verrouille_tab5 = True
-            st.experimental_rerun() # CORRECTION : Commande de rafraîchissement rétro-compatible
+            st.experimental_rerun()
 
+    # --- ZONE DE GÉNÉRATION ET D'AFFICHAGE DU RAPPORT SCELLÉ ---
     if st.session_state.get("v_verrouille_tab5", False):
         tot_s_ex = st.session_state.get("score_ex_final", 0.0)
         v_m_diss_lbl = st.session_state.get("v_m_diss_lbl", "INCORRECT")
@@ -2292,15 +2289,14 @@ with tab5:
 
         st.success(f"ATELIER ÉVALUATION FINALE SCELLÉ | Note de session : {tot_s_ex:.1f} / 20")
         
-        # COMPLETION DU CODE : Reconstruction propre et fermeture complète de la page HTML
-        cls_m_diss = "status-correct" if v_m_diss_lbl == "CORRECT" else "status-incorrect"
-        cls_v_diss = "status-correct" if v_v_diss_lbl == "CORRECT" else "status-incorrect"
-        cls_cm_fille = "status-correct" if v_cm_fille_lbl == "CORRECT" else "status-incorrect"
-        cls_v_mere = "status-correct" if v_v_mere_lbl == "CORRECT" else "status-incorrect"
-        cls_v_fille = "status-correct" if v_v_fille_lbl == "CORRECT" else "status-incorrect"
-        cls_v_mere_vol = "status-correct" if v_v_mere_vol_lbl == "CORRECT" else "status-incorrect"
+        # Pré-calcul des classes CSS pour éviter de casser les accolades f-string
+        c_m_diss = "status-correct" if v_m_diss_lbl == "CORRECT" else "status-incorrect"
+        c_v_diss = "status-correct" if v_v_diss_lbl == "CORRECT" else "status-incorrect"
+        c_cm_fille = "status-correct" if v_cm_fille_lbl == "CORRECT" else "status-incorrect"
+        c_v_mere = "status-correct" if v_v_mere_lbl == "CORRECT" else "status-incorrect"
+        c_v_fille = "status-correct" if v_v_fille_lbl == "CORRECT" else "status-incorrect"
+        c_v_mere_vol = "status-correct" if v_v_mere_vol_lbl == "CORRECT" else "status-incorrect"
 
-            # 2. Construction de la page de rapport HTML
         html_export_ex = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -2329,8 +2325,8 @@ with tab5:
             
             <div class="sub-title">Recapitulatif des Notes Generees</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f766e; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-                - Evaluation de la manipulation Partie A (Dissolution) : <strong>{(2.5 if v_m_diss_lbl == "CORRECT" else 0.0) + (2.5 if v_v_diss_lbl == "CORRECT" else 0.0):.1f} / 5.0</strong><br>
-                - Evaluation de la manipulation Partie B (Dilution) : <strong>{(1.25 if v_cm_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_lbl == "CORRECT" else 0.0) + (1.25 if v_v_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_vol_lbl == "CORRECT" else 0.0):.2f} / 5.0</strong><br>
+                - Evaluation de la manipulation Partie A (Dissolution) : <strong>{((2.5 if v_m_diss_lbl == "CORRECT" else 0.0) + (2.5 if v_v_diss_lbl == "CORRECT" else 0.0)):.1f} / 5.0</strong><br>
+                - Evaluation de la manipulation Partie B (Dilution) : <strong>{((1.25 if v_cm_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_lbl == "CORRECT" else 0.0) + (1.25 if v_v_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_vol_lbl == "CORRECT" else 0.0)):.2f} / 5.0</strong><br>
                 - Note obtenue au Questionnaire Theorique (Quiz) : <strong>{scr_q5:.1f} / 5.0</strong><br>
                 - Note obtenue a la Synthese de Cours (Texte a trous) : <strong>{scr_t5:.1f} / 5.0</strong>
             </p>
@@ -2338,17 +2334,17 @@ with tab5:
             <div class="sub-title">Details des Validations Pratiques</div>
             <table>
                 <tr><th>Etape de l'Evaluation Pratique</th><th>Statut Gagne</th></tr>
-                <tr><td>Mesure de la masse pesée à la spatule (Partie A)</td><td class="{cls_m_diss}">{v_m_diss_lbl}</td></tr>
-                <tr><td>Choix de la verrerie pour la dissolution solide (Partie A)</td><td class="{cls_v_diss}">{v_v_diss_lbl}</td></tr>
-                <tr><td>Calcul de la concentration massique fille obtenue (Partie B)</td><td class="{cls_cm_fille}">{v_cm_fille_lbl}</td></tr>
-                <tr><td>Choix de l'instrument de prelevement de la solution mere (Partie B)</td><td class="{cls_v_mere}">{v_v_mere_lbl}</td></tr>
-                <tr><td>Choix du contenant de preparation pour la solution fille (Partie B)</td><td class="{cls_v_fille}">{v_v_fille_lbl}</td></tr>
-                <tr><td>Calcul du volume de solution mere a prelever (Partie B)</td><td class="{cls_v_mere_vol}">{v_v_mere_vol_lbl}</td></tr>
+                <tr><td>Mesure de la masse pesée à la spatule (Partie A)</td><td class="{c_m_diss}">{v_m_diss_lbl}</td></tr>
+                <tr><td>Choix de la verrerie pour la dissolution solide (Partie A)</td><td class="{c_v_diss}">{v_v_diss_lbl}</td></tr>
+                <tr><td>Calcul de la concentration massique fille obtenue (Partie B)</td><td class="{c_cm_fille}">{v_cm_fille_lbl}</td></tr>
+                <tr><td>Choix de l'instrument de prelevement de la solution mere (Partie B)</td><td class="{c_v_mere}">{v_v_mere_lbl}</td></tr>
+                <tr><td>Choix du contenant de preparation pour la solution fille (Partie B)</td><td class="{c_v_fille}">{v_v_fille_lbl}</td></tr>
+                <tr><td>Calcul du volume de solution mere a prelever (Partie B)</td><td class="{c_v_mere_vol}">{v_v_mere_vol_lbl}</td></tr>
             </table>
         </body>
         </html>"""
         
-        # 3. Création du bouton de téléchargement natif
+        # Création du bouton de téléchargement natif
         st.download_button(
             label="TELECHARGER LE RAPPORT OFFICIEL HTML",
             data=html_export_ex,
@@ -2356,4 +2352,3 @@ with tab5:
             mime="text/html",
             use_column_width=True
         )
-                    
