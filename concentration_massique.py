@@ -1476,7 +1476,7 @@ with tab2:
 
     # L'appel à afficher_questions_concentration_massique doit être présent juste au-dessus
     st.write("---")
-dict_reponses_eleve = afficher_questions_concentration_massique(m_exercice, v_exercice, cm_exercice, verrouille=verrou_v2)
+    dict_reponses_eleve = afficher_questions_concentration_massique(m_exercice, v_exercice, cm_exercice, verrouille=verrou_v2)
     case_certif_cm = st.checkbox(
         "Je certifie avoir complete les questions de l'Atelier 2.", 
         key="check_certif_cm_official", 
