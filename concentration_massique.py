@@ -2222,16 +2222,6 @@ with tab5:
         elif not case_certif_ex_official: 
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # 1. Correction de la manipulation de Dissolution (5 points)
-            v_m_diss_lbl = "CORRECT" if abs(saisie_m_diss - m_diss_attendue) <= 0.005 else "INCORRECT"
-            v_v_diss_lbl = "CORRECT" if saisie_verre_diss == "Fiole jaugée" else "INCORRECT"
-            
-            # 2. Correction de la manipulation de Dilution (5 points)
-            v_cm_fille_lbl = "CORRECT" if abs(saisie_cm_fille - cm_fille_attendue) <= 0.1 else "INCORRECT"
-            v_v_mere_lbl = "CORRECT" if saisie_verre_mere == "Pipette jaugée" else "INCORRECT"
-            v_v_fille_lbl = "CORRECT" if saisie_verre_fille == "Fiole jaugée" else "INCORRECT"
-            v_v_mere_vol_lbl = "CORRECT" if abs(saisie_v_mere - v_mere_attendue) <= 0.1 else "INCORRECT"
-
             # 3. Correction du Quiz (5 points)
             score_q5 = 0.0
             if "ordre_quiz_tab5" in st.session_state:
