@@ -2332,6 +2332,7 @@ with tab5:
 
         st.success(f"ATELIER ÉVALUATION FINALE SCELLÉ | Note globale : {tot_general:.1f} / 20")
         
+        # PRE-CALCULS DES CLASSES CSS AVANT L'EXPORT HTML (Pour éviter le crash de syntaxe)
         c_m_diss = "status-correct" if v_m_diss_lbl == "CORRECT" else "status-incorrect"
         c_v_diss = "status-correct" if v_v_diss_lbl == "CORRECT" else "status-incorrect"
         c_cm_fille = "status-correct" if v_cm_fille_lbl == "CORRECT" else "status-incorrect"
