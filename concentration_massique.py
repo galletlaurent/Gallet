@@ -2219,9 +2219,18 @@ with tab5:
     verrou_v5 = st.session_state.get("v_verrouille_tab5", False)
 
     # 1. Calcul automatique des valeurs attendues théoriques exactes (Atelier 5)
-    m_diss_attendue = round(float(cm_diss_cible * (v_fiole_diss / 1000.0)), 3)
-    cm_fille_attendue = round(float(cm_mere_hasard / facteur_hasard), 2)
-    v_mere_attendue = round(float(v_fille_ml_hasard / facteur_hasard), 2)
+    # 1. Récupération ultra-sécurisée des données de l'énoncé de l'Atelier 5 depuis la session
+    c_diss_cible = float(st.session_state.get("syn_cm_diss_cible", 5.0))
+    vol_fiole_diss = float(st.session_state.get("syn_v_fiole_diss", 100.0))
+    c_mere_hasard = float(st.session_state.get("syn_cm_mere_hasard", 20.0))
+    vol_fille_hasard = float(st.session_state.get("syn_v_fille_ml_hasard", 100.0))
+    fact_hasard = float(st.session_state.get("syn_facteur_hasard", 5.0))
+    p_nom_actif = st.session_state.get("syn_prod_nom", "Sulfate de cuivre")
+
+    # Calcul dynamique local des valeurs théoriques de référence
+    m_diss_attendue = round(float(c_diss_cible * (vol_fiole_diss / 1000.0)), 3)
+    v_mere_attendue = round(float(vol_fille_hasard / fact_hasard), 2)
+    cm_fille_attendue = round(float(c_mere_hasard / fact_hasard), 2)
 
     # 2. Déploiement des questionnaires (Quiz & Synthèse à trous)
     dict_reponses_eleve_syn, dict_trous_v5 = afficher_questions_synthese_laboratoire(
@@ -2246,30 +2255,28 @@ with tab5:
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_ex: 
             st.error("Action refusée : Cochez la case de certification.")
-        elif "Choisir..." in [saisie_verre_diss, saisie_verre_mere, saisie_verre_fille]:
-            st.error("Action refusée : Veuillez sélectionner la verrerie pour l'ensemble des questions.")
         else:
+            # Récupération sécurisée des entrées de l'étudiant via le session_state
+            s_m_diss = float(st.session_state.get("syn_in_m_diss", 0.0))
+            s_verre_diss = st.session_state.get("syn_in_verre_diss", "Choisir...")
+            s_cm_fille = float(st.session_state.get("syn_in_cm_fille", 0.0))
+            s_verre_mere = st.session_state.get("syn_in_verre_mere", "Choisir...")
+            s_verre_fille = st.session_state.get("syn_in_verre_fille", "Choisir...")
+            s_v_mere = float(st.session_state.get("syn_in_v_mere", 0.0))
+
             # --- CORRECTION DE LA PARTIE A (DISSOLUTION : /5 PTS) ---
-            v_m_diss_lbl = "CORRECT" if abs(saisie_m_diss - m_diss_attendue) <= 0.005 else "INCORRECT"
-            v_v_diss_lbl = "CORRECT" if saisie_verre_diss == "Fiole jaugée" else "INCORRECT"
-            
-            score_partie_a = 0.0
-            if v_m_diss_lbl == "CORRECT": score_partie_a += 2.5
-            if v_v_diss_lbl == "CORRECT": score_partie_a += 2.5
+            v_m_diss_lbl = "CORRECT" if abs(s_m_diss - m_diss_attendue) <= 0.005 else "INCORRECT"
+            v_v_diss_lbl = "CORRECT" if s_verre_diss == "Fiole jaugée" else "INCORRECT"
+            score_partie_a = (2.5 if v_m_diss_lbl == "CORRECT" else 0.0) + (2.5 if v_v_diss_lbl == "CORRECT" else 0.0)
 
             # --- CORRECTION DE LA PARTIE B (DILUTION : /5 PTS) ---
-            v_cm_fille_lbl = "CORRECT" if abs(saisie_cm_fille - cm_fille_attendue) <= 0.1 else "INCORRECT"
-            v_v_mere_lbl = "CORRECT" if saisie_verre_mere == "Pipette jaugée" else "INCORRECT"
-            v_v_fille_lbl = "CORRECT" if saisie_verre_fille == "Fiole jaugée" else "INCORRECT"
-            v_v_mere_vol_lbl = "CORRECT" if abs(saisie_v_mere - v_mere_attendue) <= 0.1 else "INCORRECT"
-            
-            score_partie_b = 0.0
-            if v_cm_fille_lbl == "CORRECT": score_partie_b += 1.25
-            if v_v_mere_lbl == "CORRECT": score_partie_b += 1.25
-            if v_v_fille_lbl == "CORRECT": score_partie_b += 1.25
-            if v_v_mere_vol_lbl == "CORRECT": score_partie_b += 1.25
+            v_cm_fille_lbl = "CORRECT" if abs(s_cm_fille - cm_fille_attendue) <= 0.1 else "INCORRECT"
+            v_v_mere_lbl = "CORRECT" if s_verre_mere == "Pipette jaugée" else "INCORRECT"
+            v_v_fille_lbl = "CORRECT" if s_verre_fille == "Fiole jaugée" else "INCORRECT"
+            v_v_mere_vol_lbl = "CORRECT" if abs(s_v_mere - v_mere_attendue) <= 0.1 else "INCORRECT"
+            score_partie_b = (1.25 if v_cm_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_lbl == "CORRECT" else 0.0) + (1.25 if v_v_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_vol_lbl == "CORRECT" else 0.0)
 
-            # --- CORRECTION DU QUIZ THÉORIQUE (/5 PTS) ---
+            # --- CORRECTION DU QUIZ METHODOLOGIQUE (/5 PTS) ---
             score_quiz = 0.0
             if "ordre_quiz_tab5" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_tab5:
