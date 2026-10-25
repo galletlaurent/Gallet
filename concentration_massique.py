@@ -160,70 +160,70 @@ tab3 = onglets[3]
 tab4 = onglets[4]
 tab5 = onglets[5]
 
-def afficher_questions_synthese_laboratoire(prod_nom, cm_mere, v_fille_choisi, facteur_choisi, m_diss_attendue, v_fiole_diss, cm_diss_cible, verrouille=False):
+def afficher_questions_synthese_laboratoire(prod_nom, cm_mere, v_fille_choisi, facteur_choisi, m_diss_attendue, v_mere_attendue, verrouille=False):
     import streamlit as st
     import random
-    
+
     if "ordre_quiz_tab5" not in st.session_state:
         base_quiz_tab5 = [
             {
                 "id": "syn_1",
-                "q": f"Pour l'étape de pesée de la dissolution, quelle masse de solide devez-vous mesurer pour obtenir une concentration de {cm_diss_cible:.1f} g/L dans {v_fiole_diss:.0f} mL ?",
-                "options": [f"{m_diss_attendue:.3f} g", f"{m_diss_attendue * 1000:.1f} g", f"{m_diss_attendue / 10:.3f} g"],
+                "q": "Pour l'étape de pesée de la dissolution, quelle masse de solide devez-vous mesurer ?",
+                "options": [f"{m_diss_attendue:.3f} g", f"{m_diss_attendue * 1000.0:.1f} g", f"{m_diss_attendue / 10.0:.3f} g"],
                 "rep": f"{m_diss_attendue:.3f} g"
             },
             {
                 "id": "syn_2",
-                "q": "Dans le protocole de dissolution, quel est le rôle crucial du rinçage quantitatif à la pissette d'eau distillée ?",
-                "options": ["Garantir le transfert de la totalité du soluté solide pesé sans perte de matière", "Nettoyer l'entonnoir pour le ranger proprement", "Diluer le solide avant de l'introduire dans le col"],
+                "q": "Dans le protocole de dissolution, quel est le rôle crucial du rinçage quantitatif ?",
+                "options": ["Garantir le transfert de la totalité du soluté solide pesé sans perte de matière", "Nettoyer l'entonnoir", "Remplir la fiole plus vite"],
                 "rep": "Garantir le transfert de la totalité du soluté solide pesé sans perte de matière"
             },
             {
                 "id": "syn_3",
-                "q": "Pour la partie dissolution, quel récipient jaugé de précision devez-vous employer pour réaliser la solution ?",
+                "q": "Pour la partie dissolution, quel récipient jaugé de précision devez-vous employer ?",
                 "options": ["La fiole jaugée", "L'éprouvette graduée", "Le bécher gradué"],
                 "rep": "La fiole jaugée"
             },
             {
                 "id": "syn_4",
-                "q": "Pour la partie dilution, quel instrument de précision permet de prélever le volume de solution mère sans erreur ?",
+                "q": "Pour la partie dilution, quel instrument de précision permet de prélever le volume ?",
                 "options": ["La pipette jaugée", "La pipette Pasteur", "L'éprouvette graduée"],
                 "rep": "La pipette jaugée"
             },
             {
                 "id": "syn_5",
-                "q": f"Dans votre exercice de dilution, la solution mère commerciale de {prod_nom} est à {cm_mere:.1f} g/L. Si vous la diluez {facteur_choisi:.0f} fois, quelle sera la concentration de votre solution fille ?",
-                "options": [f"{cm_mere / facteur_choisi:.2f} g/L", f"{(cm_mere / facteur_choisi) * 10:.2f} g/L", f"{(cm_mere / facteur_choisi) / 10:.2f} g/L"],
+                "q": f"Dans votre exercice de dilution, la solution mère commerciale de {prod_nom} est :",
+                "options": [f"{cm_mere / facteur_choisi:.2f} g/L", f"{(cm_mere / facteur_choisi) * 10.0:.2f} g/L", f"{cm_mere:.2f} g/L"],
                 "rep": f"{cm_mere / facteur_choisi:.2f} g/L"
             },
             {
                 "id": "syn_6",
-                "q": f"Pour préparer un volume final de solution fille de {v_fille_choisi:.0f} mL avec votre facteur de dilution de {facteur_choisi:.0f}x, quel volume de solution mère faut-il prélever ?",
-                "options": [f"{v_fille_choisi / facteur_choisi:.2f} mL", f"{(v_fille_choisi / facteur_choisi) * 10:.1f} mL", f"{(v_fille_choisi / facteur_choisi) / 10:.3f} mL"],
-                "rep": f"{v_fille_choisi / facteur_choisi:.2f} mL"
+                "q": f"Pour préparer un volume final de solution fille de {v_fille_choisi:.0f} mL avec votre facteur F, quel volume $V_m$ devez-vous prélever ?",
+                "options": [f"{v_mere_attendue:.1f} mL", f"{v_mere_attendue * 10.0:.1f} mL", f"{v_mere_attendue / 10.0:.1f} mL"],
+                "rep": f"{v_mere_attendue:.1f} mL"
             },
             {
                 "id": "syn_7",
-                "q": "À quel moment précis doit-on boucher et retourner la fiole jaugée pour homogénéiser définitivement le mélange ?",
-                "options": ["Une fois que le liquide a été complété goutte à goutte jusqu'au trait de jauge", "Dès l'introduction de la solution mère au fond du récipient", "Lorsque la fiole est remplie aux deux tiers environ avant l'ajustement"],
+                "q": "À quel moment précis doit-on boucher et retourner la fiole jaugée pour homogénéiser ?",
+                "options": ["Une fois que le liquide a été complété goutte à goutte jusqu'au trait de jauge", "Au début du remplissage"],
                 "rep": "Une fois que le liquide a été complété goutte à goutte jusqu'au trait de jauge"
             },
             {
                 "id": "syn_8",
-                "q": "Comment doit-on positionner son regard par rapport au trait de jauge pour éviter l'erreur de parallaxe ?",
-                "options": ["Strictement horizontal et aligné en face du trait de jauge", "Légèrement au-dessus pour observer la courbure", "Légèrement en dessous pour voir le col"],
+                "q": "Comment doit-on positionner son regard par rapport au trait de jauge pour éviter l'erreur de lecture ?",
+                "options": ["Strictement horizontal et aligné en face du trait de jauge", "Légèrement au-dessus"],
                 "rep": "Strictement horizontal et aligné en face du trait de jauge"
             },
             {
                 "id": "syn_9",
-                "q": "Quelle partie de la surface incurvée du liquide (ménisque) doit effleurer la ligne de graduation gravée sur le col ?",
-                "options": ["La base inférieure du ménisque", "La bordure supérieure externe", "Le milieu exact de la courbure"],
+                "q": "Quelle partie de la surface incurvée du liquide (ménisque) doit effleurer la ligne de jauge ?",
+                "options": ["La base inférieure du ménisque", "La bordure supérieure externe", "Le milieu du ménisque"],
                 "rep": "La base inférieure du ménisque"
             },
             {
                 "id": "syn_10",
-                "q": "Si vous dépassez accidentellement le trait de jauge en ajoutant l'eau distillée, quelle est l'action corrective ?",
-                "options": ["La solution est gâchée car trop diluée, il faut impérativement recommencer la manipulation", "Il suffit de retirer l'excès d'eau à l'aide d'une pipette Pasteur", "Le volume reste acceptable car l'erreur est minime"],
+                "q": "Si vous dépassez accidentellement le trait de jauge en ajoutant l'eau distillée, quelle est la conséquence ?",
+                "options": ["La solution est gâchée car trop diluée, il faut impérativement recommencer la manipulation", "Ce n'est pas grave"],
                 "rep": "La solution est gâchée car trop diluée, il faut impérativement recommencer la manipulation"
             }
         ]
@@ -252,45 +252,46 @@ def afficher_questions_synthese_laboratoire(prod_nom, cm_mere, v_fille_choisi, f
         st.markdown("##### Synthèse de cours à trous : Dissolution & Dilution (10 trous - 10 pts)")
         dict_trous_5 = {}
         
-        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        # CORRECTION : Retrait complet de vertical_alignment sur toutes les sous-colonnes
+        c1, c2 = st.columns([0.70, 0.30])
         with c1: st.write("1. La préparation d'une solution à partir d'un composé solide s'appelle la")
-        with c2: dict_trous_5["t1"] = st.selectbox("", ["Choisir...", "Dissolution", "Dilution", "Pesee"], key="syn_t_t1", disabled=verrouille, label_visibility="collapsed")
+        with c2: dict_trous_5["t1"] = st.selectbox("", ["Choisir...", "Dissolution", "Dilution", "Pesee"], key="syn_t_t1_t5", disabled=verrouille, label_visibility="collapsed")
         
-        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        c3, c4 = st.columns([0.70, 0.30])
         with c3: st.write("2. La préparation consistant à rajouter du solvant dans une solution concentrée est la")
-        with c4: dict_trous_5["t2"] = st.selectbox("", ["Choisir...", "Dilution", "Dissolution", "Fusion"], key="syn_t_t2", disabled=verrouille, label_visibility="collapsed")
+        with c4: dict_trous_5["t2"] = st.selectbox("", ["Choisir...", "Dilution", "Dissolution", "Fusion"], key="syn_t_t2_t5", disabled=verrouille, label_visibility="collapsed")
         
-        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        c5, c6 = st.columns([0.70, 0.30])
         with c5: st.write("3. Pour prélever la poudre solide de son flacon sans contamination, on utilise une")
-        with c6: dict_trous_5["t3"] = st.selectbox("", ["Choisir...", "Spatule", "Pipette", "Coupelle"], key="syn_t_t3", disabled=verrouille, label_visibility="collapsed")
+        with c6: dict_trous_5["t3"] = st.selectbox("", ["Choisir...", "Spatule", "Pipette", "Coupelle"], key="syn_t_t3_t5", disabled=verrouille, label_visibility="collapsed")
         
-        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        c7, c8 = st.columns([0.70, 0.30])
         with c7: st.write("4. L'accessoire de sécurité indispensable placé sur la pipette pour aspirer est la")
-        with c8: dict_trous_5["t4"] = st.selectbox("", ["Choisir...", "Propipette", "Pissette", "Balance"], key="syn_t_t4", disabled=verrouille, label_visibility="collapsed")
+        with c8: dict_trous_5["t4"] = st.selectbox("", ["Choisir...", "Propipette", "Pissette", "Balance"], key="syn_t_t4_t5", disabled=verrouille, label_visibility="collapsed")
         
-        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        c9, c10 = st.columns([0.70, 0.30])
         with c9: st.write("5. Le liquide à ajouter pour compléter les fioles de préparation est l'eau")
-        with c10: dict_trous_5["t5"] = st.selectbox("", ["Choisir...", "Distillee", "Robinet", "Minerale"], key="syn_t_t5", disabled=verrouille, label_visibility="collapsed")
+        with c10: dict_trous_5["t5"] = st.selectbox("", ["Choisir...", "Distillee", "Robinet", "Minerale"], key="syn_t_t5_t5", disabled=verrouille, label_visibility="collapsed")
 
-        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        c11, c12 = st.columns([0.70, 0.30])
         with c11: st.write("6. La solution initiale très concentrée utilisée au début d'une dilution est la solution")
-        with c12: dict_trous_5["t6"] = st.selectbox("", ["Choisir...", "Mere", "Fille", "Pure"], key="syn_t_t6", disabled=verrouille, label_visibility="collapsed")
+        with c12: dict_trous_5["t6"] = st.selectbox("", ["Choisir...", "Mere", "Fille", "Pure"], key="syn_t_t6_t5", disabled=verrouille, label_visibility="collapsed")
 
-        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        c13, c14 = st.columns([0.70, 0.30])
         with c13: st.write("7. La solution finale moins concentrée obtenue à la fin de la dilution est la solution")
-        with c14: dict_trous_5["t7"] = st.selectbox("", ["Choisir...", "Fille", "Mere", "Saturee"], key="syn_t_t7", disabled=verrouille, label_visibility="collapsed")
+        with c14: dict_trous_5["t7"] = st.selectbox("", ["Choisir...", "Fille", "Mere", "Saturee"], key="syn_t_t7_t5", disabled=verrouille, label_visibility="collapsed")
 
-        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        c15, c16 = st.columns([0.70, 0.30])
         with c15: st.write("8. Lors de l'ajout d'eau distillée, la masse totale du soluté dissous se")
-        with c16: dict_trous_5["t8"] = st.selectbox("", ["Choisir...", "Conserve", "Détruit", "Divise"], key="syn_t_t8", disabled=verrouille, label_visibility="collapsed")
+        with c16: dict_trous_5["t8"] = st.selectbox("", ["Choisir...", "Conserve", "Détruit", "Divise"], key="syn_t_t8_t5", disabled=verrouille, label_visibility="collapsed")
 
-        c17, r18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        c17, r18 = st.columns([0.70, 0.30])
         with c17: st.write("9. La ligne horizontale gravée de repère de volume sur la fiole est le trait de")
-        with r18: dict_trous_5["t9"] = st.selectbox("", ["Choisir...", "Jauge", "Graduation", "Niveau"], key="syn_t_t9", disabled=verrouille, label_visibility="collapsed")
+        with r18: dict_trous_5["t9"] = st.selectbox("", ["Choisir...", "Jauge", "Graduation", "Niveau"], key="syn_t_t9_t5", disabled=verrouille, label_visibility="collapsed")
 
-        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c19: st.write("10. Pour ajuster le niveau avec une extrême minutie goutte à goutte, on utilise une pipette")
-        with c20: dict_trous_5["t10"] = st.selectbox("", ["Choisir...", "Pasteur", "Jaugee", "Graduee"], key="syn_t_t10", disabled=verrouille, label_visibility="collapsed")
+        c19, c20 = st.columns([0.70, 0.30])
+        with c19: st.write("10. Pour ajuster le niveau avec une extrême minutie goute à goutte, on utilise une pipette")
+        with c20: dict_trous_5["t10"] = st.selectbox("", ["Choisir...", "Pasteur", "Jaugee", "Graduee"], key="syn_t_t10_t5", disabled=verrouille, label_visibility="collapsed")
 
     return dict_rep_q5, dict_trous_5
 
