@@ -2000,11 +2000,11 @@ with tab4:
         # DÉCLARATION IMPÉRATIVE DES VARIABLES DE CONTRÔLE DE L'ATELIER 4
         verrou_v4 = st.session_state.get("v_verrouille_tab4", False)
         dict_reponses_eleve_dil = afficher_questions_dilution(
-            C_mere, 
-            C_fille, 
-            V_fille, 
-            V_mere, 
-            F, 
+            c_mere, 
+            c_fille, 
+            v_fiole=v_fille_ml,      # On lie v_fille_ml au paramètre v_fiole de la fonction
+            v_mere=v_mere_ml,        # On lie v_mere_ml au paramètre v_mere de la fonction
+            facteur_f=facteur_f, 
             verrouille=verrou_v4
         )
                 # Ligne 2237 sécurisée : verrou_v4 existe désormais obligatoirement en mémoire
