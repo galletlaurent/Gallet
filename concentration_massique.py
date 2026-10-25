@@ -2228,8 +2228,7 @@ with tab5:
     st.write("---")
     verrou_v5 = st.session_state.get("v_verrouille_tab5", False)
 
-    # L'appel à afficher_questions_synthese_laboratoire doit être présent juste au-dessus
-    st.write("---")
+    # L'appel à la fonction avec des valeurs adaptées pour l'exercice de synthèse
     dict_reponses_eleve_syn = afficher_questions_synthese_laboratoire(
         prod_nom="Sulfate de cuivre", 
         cm_mere=20.0, 
