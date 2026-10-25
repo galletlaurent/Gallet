@@ -2301,59 +2301,59 @@ with tab5:
         cls_v_mere_vol = "status-correct" if v_v_mere_vol_lbl == "CORRECT" else "status-incorrect"
 
             # 2. Construction de la page de rapport HTML
-            html_export_ex = f"""<!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="utf-8">
-                <title>Rapport Evaluation Finale - {n_eleve}</title>
-                <style>
-                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                    table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-                </style>
-            </head>
-            <body>
-                <div class="header-box">
-                    <h1>Rapport de Bilan de Laboratoire</h1>
-                    <p>Atelier 5 : Synthese complete - Dissolution et Dilution</p>
-                    <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                    <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_ex}</p>
-                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_ex:.1f}</span> / 20</div>
-                </div>
-                
-                <div class="sub-title">Recapitulatif des Notes Generees</div>
-                <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f766e; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-                    - Evaluation de la manipulation Partie A (Dissolution) : <strong>{(2.5 if v_m_diss_lbl == "CORRECT" else 0.0) + (2.5 if v_v_diss_lbl == "CORRECT" else 0.0):.1f} / 5.0</strong><br>
-                    - Evaluation de la manipulation Partie B (Dilution) : <strong>{(1.25 if v_cm_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_lbl == "CORRECT" else 0.0) + (1.25 if v_v_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_vol_lbl == "CORRECT" else 0.0):.2f} / 5.0</strong><br>
-                    - Note obtenue au Questionnaire Theorique (Quiz) : <strong>{scr_q5:.1f} / 5.0</strong><br>
-                    - Note obtenue a la Synthese de Cours (Texte a trous) : <strong>{scr_t5:.1f} / 5.0</strong>
-                </p>
-                
-                <div class="sub-title">Details des Validations Pratiques</div>
-                <table>
-                    <tr><th>Etape de l'Evaluation Pratique</th><th>Statut Gagne</th></tr>
-                    <tr><td>Mesure de la masse pesée à la spatule (Partie A)</td><td class="{cls_m_diss}">{v_m_diss_lbl}</td></tr>
-                    <tr><td>Choix de la verrerie pour la dissolution solide (Partie A)</td><td class="{cls_v_diss}">{v_v_diss_lbl}</td></tr>
-                    <tr><td>Calcul de la concentration massique fille obtenue (Partie B)</td><td class="{cls_cm_fille}">{v_cm_fille_lbl}</td></tr>
-                    <tr><td>Choix de l'instrument de prelevement de la solution mere (Partie B)</td><td class="{cls_v_mere}">{v_v_mere_lbl}</td></tr>
-                    <tr><td>Choix du contenant de preparation pour la solution fille (Partie B)</td><td class="{cls_v_fille}">{v_v_fille_lbl}</td></tr>
-                    <tr><td>Calcul du volume de solution mere a prelever (Partie B)</td><td class="{cls_v_mere_vol}">{v_v_mere_vol_lbl}</td></tr>
-                </table>
-            </body>
-            </html>"""
+        html_export_ex = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Evaluation Finale - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport de Bilan de Laboratoire</h1>
+                <p>Atelier 5 : Synthese complete - Dissolution et Dilution</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_ex}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_ex:.1f}</span> / 20</div>
+            </div>
             
-            # 3. Création du bouton de téléchargement natif
-            st.download_button(
-                label="TELECHARGER LE RAPPORT OFFICIEL HTML",
-                data=html_export_ex,
-                file_name=f"Rapport_Atelier5_{n_eleve}_{p_eleve}.html",
-                mime="text/html",
-                use_column_width=True
-            )
-                        
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f766e; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                - Evaluation de la manipulation Partie A (Dissolution) : <strong>{(2.5 if v_m_diss_lbl == "CORRECT" else 0.0) + (2.5 if v_v_diss_lbl == "CORRECT" else 0.0):.1f} / 5.0</strong><br>
+                - Evaluation de la manipulation Partie B (Dilution) : <strong>{(1.25 if v_cm_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_lbl == "CORRECT" else 0.0) + (1.25 if v_v_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_vol_lbl == "CORRECT" else 0.0):.2f} / 5.0</strong><br>
+                - Note obtenue au Questionnaire Theorique (Quiz) : <strong>{scr_q5:.1f} / 5.0</strong><br>
+                - Note obtenue a la Synthese de Cours (Texte a trous) : <strong>{scr_t5:.1f} / 5.0</strong>
+            </p>
+            
+            <div class="sub-title">Details des Validations Pratiques</div>
+            <table>
+                <tr><th>Etape de l'Evaluation Pratique</th><th>Statut Gagne</th></tr>
+                <tr><td>Mesure de la masse pesée à la spatule (Partie A)</td><td class="{cls_m_diss}">{v_m_diss_lbl}</td></tr>
+                <tr><td>Choix de la verrerie pour la dissolution solide (Partie A)</td><td class="{cls_v_diss}">{v_v_diss_lbl}</td></tr>
+                <tr><td>Calcul de la concentration massique fille obtenue (Partie B)</td><td class="{cls_cm_fille}">{v_cm_fille_lbl}</td></tr>
+                <tr><td>Choix de l'instrument de prelevement de la solution mere (Partie B)</td><td class="{cls_v_mere}">{v_v_mere_lbl}</td></tr>
+                <tr><td>Choix du contenant de preparation pour la solution fille (Partie B)</td><td class="{cls_v_fille}">{v_v_fille_lbl}</td></tr>
+                <tr><td>Calcul du volume de solution mere a prelever (Partie B)</td><td class="{cls_v_mere_vol}">{v_v_mere_vol_lbl}</td></tr>
+            </table>
+        </body>
+        </html>"""
+        
+        # 3. Création du bouton de téléchargement natif
+        st.download_button(
+            label="TELECHARGER LE RAPPORT OFFICIEL HTML",
+            data=html_export_ex,
+            file_name=f"Rapport_Atelier5_{n_eleve}_{p_eleve}.html",
+            mime="text/html",
+            use_column_width=True
+        )
+                    
