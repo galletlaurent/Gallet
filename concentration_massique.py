@@ -2197,8 +2197,11 @@ with tab5:
         saisie_verre_fille = st.selectbox("Dans quel récipient jaugé final prépare-t-on la solution fille ?", ["Choisir...", "Fiole jaugée", "Erlenmeyer", "Éprouvette graduée"], key="syn_in_verre_fille")
 
     st.write("---")
+    
+    # 1. Déclaration sécurisée de l'état de verrouillage
     verrou_v5 = st.session_state.get("v_verrouille_tab5", False)
-    # L'appel à la fonction avec des valeurs adaptées pour l'exercice de synthèse
+
+    # 2. Appel du questionnaire de synthèse
     dict_reponses_eleve_syn = afficher_questions_synthese_laboratoire(
         prod_nom="Sulfate de cuivre", 
         cm_mere=20.0, 
@@ -2208,28 +2211,43 @@ with tab5:
         v_mere_attendue=20.0, 
         verrouille=verrou_v5
     )
-    case_certif_ex_official = st.checkbox(
+    
+    # 3. Case à cocher réglementaire de fin d'atelier
+    case_certif_ex = st.checkbox(
         "Je certifie avoir complete les questions de l'Atelier 5.", 
         key="check_certif_ex_official", 
         disabled=verrou_v5
     )
+
+    # --- ACTION DU BOUTON DE VALIDATION DE L'ATELIER 5 ---
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_ex_official", use_column_width=True, disabled=verrou_v5):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif not case_certif_ex: # CORRECTION : Utilisation du bon nom de variable créé par la case à cocher
+        elif not case_certif_ex: 
             st.error("Action refusée : Cochez la case de certification.")
-        elif "Choisir..." in [saisie_verre_diss, saisie_verre_mere, saisie_verre_fille]: # CORRECTION : Sécurité anti-sélection vide
-            st.error("Action refusée : Veuillez sélectionner la verrerie pour l'ensemble des questions.")
         else:
+            # Récupération sécurisée des saisies élèves pour parer tout défaut de déclaration locale
+            s_m_diss = float(st.session_state.get("saisie_m_diss", 0.0))
+            m_attendue = 2.000
+            
+            s_verre_diss = st.session_state.get("saisie_verre_diss", "Choisir...")
+            s_cm_fille = float(st.session_state.get("saisie_cm_fille", 0.0))
+            cm_fille_att = 4.0
+            
+            s_verre_mere = st.session_state.get("saisie_verre_mere", "Choisir...")
+            s_verre_fille = st.session_state.get("saisie_verre_fille", "Choisir...")
+            s_v_mere = float(st.session_state.get("saisie_v_mere", 0.0))
+            v_mere_att = 20.0
+
             # 1. Correction de la manipulation de Dissolution (5 points)
-            v_m_diss_lbl = "CORRECT" if abs(saisie_m_diss - m_diss_attendue) <= 0.005 else "INCORRECT"
-            v_v_diss_lbl = "CORRECT" if saisie_verre_diss == "Fiole jaugée" else "INCORRECT"
+            v_m_diss_lbl = "CORRECT" if abs(s_m_diss - m_attendue) <= 0.005 else "INCORRECT"
+            v_v_diss_lbl = "CORRECT" if s_verre_diss == "Fiole jaugée" else "INCORRECT"
             
             # 2. Correction de la manipulation de Dilution (5 points)
-            v_cm_fille_lbl = "CORRECT" if abs(saisie_cm_fille - cm_fille_attendue) <= 0.1 else "INCORRECT"
-            v_v_mere_lbl = "CORRECT" if saisie_verre_mere == "Pipette jaugée" else "INCORRECT"
-            v_v_fille_lbl = "CORRECT" if saisie_verre_fille == "Fiole jaugée" else "INCORRECT"
-            v_v_mere_vol_lbl = "CORRECT" if abs(saisie_v_mere - v_mere_attendue) <= 0.1 else "INCORRECT"
+            v_cm_fille_lbl = "CORRECT" if abs(s_cm_fille - cm_fille_att) <= 0.1 else "INCORRECT"
+            v_v_mere_lbl = "CORRECT" if s_verre_mere == "Pipette jaugée" else "INCORRECT"
+            v_v_fille_lbl = "CORRECT" if s_verre_fille == "Fiole jaugée" else "INCORRECT"
+            v_v_mere_vol_lbl = "CORRECT" if abs(s_v_mere - v_mere_att) <= 0.1 else "INCORRECT"
 
             # 3. Correction du Quiz (5 points)
             score_q5 = 0.0
@@ -2253,11 +2271,11 @@ with tab5:
                 st.session_state.get("syn_t_t10") == "Pasteur"
             ]) * 0.5
 
-            # Calculs intermédiaires sécurisés des notes
-            pts_manip_diss = (2.5 if v_m_diss_lbl == "CORRECT" else 0.0) + (2.5 if v_v_diss_lbl == "CORRECT" else 0.0)
-            pts_manip_dil = (1.25 if v_cm_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_lbl == "CORRECT" else 0.0) + (1.25 if v_v_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_vol_lbl == "CORRECT" else 0.0)
+            # Calculs finaux
+            pts_m_diss = (2.5 if v_m_diss_lbl == "CORRECT" else 0.0) + (2.5 if v_v_diss_lbl == "CORRECT" else 0.0)
+            pts_m_dil = (1.25 if v_cm_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_lbl == "CORRECT" else 0.0) + (1.25 if v_v_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_vol_lbl == "CORRECT" else 0.0)
 
-            st.session_state.score_ex_final = round(float(pts_manip_diss + pts_manip_dil + score_q5 + score_t5), 1)
+            st.session_state.score_ex_final = round(float(pts_m_diss + pts_m_dil + score_q5 + score_t5), 1)
             st.session_state.v_m_diss_lbl = v_m_diss_lbl
             st.session_state.v_v_diss_lbl = v_v_diss_lbl
             st.session_state.v_cm_fille_lbl = v_cm_fille_lbl
@@ -2269,22 +2287,53 @@ with tab5:
             st.session_state.v_verrouille_tab5 = True
             st.experimental_rerun()
 
+    # --- ZONE DE GÉNÉRATION ET D'AFFICHAGE DU RAPPORT SCELLÉ ---
+    if st.session_state.get("v_verrouille_tab5", False):
+        tot_s_ex = st.session_state.get("score_ex_final", 0.0)
+        v_m_diss_lbl = st.session_state.get("v_m_diss_lbl", "INCORRECT")
+        v_v_diss_lbl = st.session_state.get("v_v_diss_lbl", "INCORRECT")
+        v_cm_fille_lbl = st.session_state.get("v_cm_fille_lbl", "INCORRECT")
+        v_v_mere_lbl = st.session_state.get("v_v_mere_lbl", "INCORRECT")
+        v_v_fille_lbl = st.session_state.get("v_v_fille_lbl", "INCORRECT")
+        v_v_mere_vol_lbl = st.session_state.get("v_v_mere_vol_lbl", "INCORRECT")
+        scr_q5 = st.session_state.get("score_q5_save", 0.0)
+        scr_t5 = st.session_state.get("score_t5_save", 0.0)
+
+        p_eleve = str(st.session_state.get("id_prenom", "INCONNU")).upper()
+        n_eleve = str(st.session_state.get("id_nom", "INCONNU")).upper()
+        c_eleve = str(st.session_state.get("id_classe", "INCONNU")).upper()
+
+        from datetime import datetime
+        timestamp_ex = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER ÉVALUATION FINALE SCELLÉ | Note de session : {tot_s_ex:.1f} / 20")
+        
+        note_diss_txt = f"{((2.5 if v_m_diss_lbl == 'CORRECT' else 0.0) + (2.5 if v_v_diss_lbl == 'CORRECT' else 0.0)):.1f} / 5.0"
+        note_dil_txt = f"{((1.25 if v_cm_fille_lbl == 'CORRECT' else 0.0) + (1.25 if v_v_mere_lbl == 'CORRECT' else 0.0) + (1.25 if v_v_fille_lbl == 'CORRECT' else 0.0) + (1.25 if v_v_mere_vol_lbl == 'CORRECT' else 0.0)):.2f} / 5.0"
+
+        c_m_diss = "status-correct" if v_m_diss_lbl == "CORRECT" else "status-incorrect"
+        c_v_diss = "status-correct" if v_v_diss_lbl == "CORRECT" else "status-incorrect"
+        c_cm_fille = "status-correct" if v_cm_fille_lbl == "CORRECT" else "status-incorrect"
+        c_v_mere = "status-correct" if v_v_mere_lbl == "CORRECT" else "status-incorrect"
+        c_v_fille = "status-correct" if v_v_fille_lbl == "CORRECT" else "status-incorrect"
+        c_v_mere_vol = "status-correct" if v_v_mere_vol_lbl == "CORRECT" else "status-incorrect"
+
         html_export_ex = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
             <title>Rapport Evaluation Finale - {n_eleve}</title>
-                 <style>
-                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                    table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-                </style>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
         </head>
         <body>
             <div class="header-box">
@@ -2323,12 +2372,6 @@ with tab5:
             mime="text/html",
             use_column_width=True
         )
-
-
-
-
-
-
 
 
 
