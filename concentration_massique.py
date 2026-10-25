@@ -20,6 +20,7 @@ import numpy as np
 import plotly.graph_objects as go
 import pandas as pd
 import streamlit.components.v1 as components
+from PIL import Image
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
@@ -40,6 +41,25 @@ if "verrouille" not in st.session_state:
     st.session_state.verrouille = False
     
 import random
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+# 2. Fonction sécurisée pour charger et ouvrir physiquement vos images
+def charger_image(nom_fichier):
+    # Remplacez "image tableau electrique" par le nom EXACT de votre dossier d'images sur Windows
+    chemin = os.path.join(BASE_DIR, "image concentration massique", nom_fichier)
+
+    if os.path.exists(chemin):
+        try:
+            # On force l'ouverture en mémoire avec PIL pour le serveur de l'exécutable
+            return Image.open(chemin)
+        except Exception:
+            return None
+    else:
+        return None
+
+
 
 # Initialisation de la banque de données anti-triche de 25 produits différents
 if "banque_produits" not in st.session_state:
