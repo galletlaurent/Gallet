@@ -2197,12 +2197,10 @@ with tab5:
         saisie_verre_fille = st.selectbox("Dans quel récipient jaugé final prépare-t-on la solution fille ?", ["Choisir...", "Fiole jaugée", "Erlenmeyer", "Éprouvette graduée"], key="syn_in_verre_fille")
 
     st.write("---")
-    
-    # 1. Déclaration sécurisée de l'état de verrouillage
     verrou_v5 = st.session_state.get("v_verrouille_tab5", False)
 
-    # 2. Appel du questionnaire de synthèse
-    dict_reponses_eleve_syn = afficher_questions_synthese_laboratoire(
+    # 1. Appel propre de la fonction de synthèse
+    dict_reponses_eleve_syn, dict_trous_v5 = afficher_questions_synthese_laboratoire(
         prod_nom="Sulfate de cuivre", 
         cm_mere=20.0, 
         v_fille_choisi=100.0, 
@@ -2212,38 +2210,35 @@ with tab5:
         verrouille=verrou_v5
     )
     
-    # 3. Case à cocher réglementaire de fin d'atelier
+    # 2. Case à cocher réglementaire de fin d'atelier
     case_certif_ex = st.checkbox(
         "Je certifie avoir complete les questions de l'Atelier 5.", 
-        key="check_certif_ex", 
+        key="check_certif_ex_official", 
         disabled=verrou_v5
     )
 
-    # --- ACTION DU BOUTON DE VALIDATION DE L'ATELIER 5 ---
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_ex", use_column_width=True, disabled=verrou_v5):
+    # --- ACTION DU BOUTON DE VALIDATION DE L'ATELIER 5 (VERSION SÉCURISÉE) ---
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_ex_official", use_column_width=True, disabled=verrou_v5):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_ex: 
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Récupération sécurisée des saisies élèves pour parer tout défaut de déclaration locale
+            # Récupération ultra-sécurisée des variables expérimentales
             s_m_diss = float(st.session_state.get("saisie_m_diss", 0.0))
-            m_attendue = 2.000
-            
             s_verre_diss = st.session_state.get("saisie_verre_diss", "Choisir...")
             s_cm_fille = float(st.session_state.get("saisie_cm_fille", 0.0))
-            cm_fille_att = 4.0
-            
             s_verre_mere = st.session_state.get("saisie_verre_mere", "Choisir...")
             s_verre_fille = st.session_state.get("saisie_verre_fille", "Choisir...")
             s_v_mere = float(st.session_state.get("saisie_v_mere", 0.0))
+
+            m_attendue = 2.000
+            cm_fille_att = 4.0
             v_mere_att = 20.0
 
-            # 1. Correction de la manipulation de Dissolution (5 points)
+            # Calcul des labels de justesse
             v_m_diss_lbl = "CORRECT" if abs(s_m_diss - m_attendue) <= 0.005 else "INCORRECT"
             v_v_diss_lbl = "CORRECT" if s_verre_diss == "Fiole jaugée" else "INCORRECT"
-            
-            # 2. Correction de la manipulation de Dilution (5 points)
             v_cm_fille_lbl = "CORRECT" if abs(s_cm_fille - cm_fille_att) <= 0.1 else "INCORRECT"
             v_v_mere_lbl = "CORRECT" if s_verre_mere == "Pipette jaugée" else "INCORRECT"
             v_v_fille_lbl = "CORRECT" if s_verre_fille == "Fiole jaugée" else "INCORRECT"
@@ -2257,24 +2252,25 @@ with tab5:
                     if str(rep_el).strip() == str(q_item["rep"]).strip():
                         score_q5 += 0.5
 
-            # 4. Correction de la Synthèse à trous (5 points)
+            # 4. Correction de la Synthèse à trous (5 points) - CORRECTION DES CLÉS EN _t5
             score_t5 = sum([
-                st.session_state.get("syn_t_t1") == "Dissolution",
-                st.session_state.get("syn_t_t2") == "Dilution",
-                st.session_state.get("syn_t_t3") == "Spatule",
-                st.session_state.get("syn_t_t4") == "Propipette",
-                st.session_state.get("syn_t_t5") == "Distillee",
-                st.session_state.get("syn_t_t6") == "Mere",
-                st.session_state.get("syn_t_t7") == "Fille",
-                st.session_state.get("syn_t_t8") == "Conserve",
-                st.session_state.get("syn_t_t9") == "Jauge",
-                st.session_state.get("syn_t_t10") == "Pasteur"
+                st.session_state.get("syn_t_t1_t5") == "Dissolution",
+                st.session_state.get("syn_t_t2_t5") == "Dilution",
+                st.session_state.get("syn_t_t3_t5") == "Spatule",
+                st.session_state.get("syn_t_t4_t5") == "Propipette",
+                st.session_state.get("syn_t_t5_t5") == "Distillee",
+                st.session_state.get("syn_t_t6_t5") == "Mere",
+                st.session_state.get("syn_t_t7_t5") == "Fille",
+                st.session_state.get("syn_t_t8_t5") == "Conserve",
+                st.session_state.get("syn_t_t9_t5") == "Jauge",
+                st.session_state.get("syn_t_t10_t5") == "Pasteur"
             ]) * 0.5
 
-            # Calculs finaux
+            # Somme des points
             pts_m_diss = (2.5 if v_m_diss_lbl == "CORRECT" else 0.0) + (2.5 if v_v_diss_lbl == "CORRECT" else 0.0)
             pts_m_dil = (1.25 if v_cm_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_lbl == "CORRECT" else 0.0) + (1.25 if v_v_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_vol_lbl == "CORRECT" else 0.0)
 
+            # Enregistrement global
             st.session_state.score_ex_final = round(float(pts_m_diss + pts_m_dil + score_q5 + score_t5), 1)
             st.session_state.v_m_diss_lbl = v_m_diss_lbl
             st.session_state.v_v_diss_lbl = v_v_diss_lbl
