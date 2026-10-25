@@ -2197,7 +2197,7 @@ with tab5:
         saisie_verre_fille = st.selectbox("Dans quel récipient jaugé final prépare-t-on la solution fille ?", ["Choisir...", "Fiole jaugée", "Erlenmeyer", "Éprouvette graduée"], key="syn_in_verre_fille")
 
     st.write("---")
-
+    verrou_v5 = st.session_state.get("v_verrouille_tab5", False)
     # L'appel à la fonction avec des valeurs adaptées pour l'exercice de synthèse
     dict_reponses_eleve_syn = afficher_questions_synthese_laboratoire(
         prod_nom="Sulfate de cuivre", 
@@ -2213,13 +2213,13 @@ with tab5:
         key="check_certif_ex_official", 
         disabled=verrou_v5
     )
-
-    # --- ACTION DU BOUTON DE VALIDATION DE L'ATELIER 5 ---
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_ex_official", use_column_width=True, disabled=verrou_v5):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif not case_certif_ex_official: 
+        elif not case_certif_ex: # CORRECTION : Utilisation du bon nom de variable créé par la case à cocher
             st.error("Action refusée : Cochez la case de certification.")
+        elif "Choisir..." in [saisie_verre_diss, saisie_verre_mere, saisie_verre_fille]: # CORRECTION : Sécurité anti-sélection vide
+            st.error("Action refusée : Veuillez sélectionner la verrerie pour l'ensemble des questions.")
         else:
             # 1. Correction de la manipulation de Dissolution (5 points)
             v_m_diss_lbl = "CORRECT" if abs(saisie_m_diss - m_diss_attendue) <= 0.005 else "INCORRECT"
@@ -2268,39 +2268,6 @@ with tab5:
             st.session_state.score_t5_save = round(float(score_t5), 1)
             st.session_state.v_verrouille_tab5 = True
             st.experimental_rerun()
-
-    # --- ZONE DE GÉNÉRATION ET D'AFFICHAGE DU RAPPORT SCELLÉ ---
-    if st.session_state.get("v_verrouille_tab5", False):
-        tot_s_ex = st.session_state.get("score_ex_final", 0.0)
-        v_m_diss_lbl = st.session_state.get("v_m_diss_lbl", "INCORRECT")
-        v_v_diss_lbl = st.session_state.get("v_v_diss_lbl", "INCORRECT")
-        v_cm_fille_lbl = st.session_state.get("v_cm_fille_lbl", "INCORRECT")
-        v_v_mere_lbl = st.session_state.get("v_v_mere_lbl", "INCORRECT")
-        v_v_fille_lbl = st.session_state.get("v_v_fille_lbl", "INCORRECT")
-        v_v_mere_vol_lbl = st.session_state.get("v_v_mere_vol_lbl", "INCORRECT")
-        scr_q5 = st.session_state.get("score_q5_save", 0.0)
-        scr_t5 = st.session_state.get("score_t5_save", 0.0)
-
-        p_eleve = str(st.session_state.get("id_prenom", "INCONNU")).upper()
-        n_eleve = str(st.session_state.get("id_nom", "INCONNU")).upper()
-        c_eleve = str(st.session_state.get("id_classe", "INCONNU")).upper()
-
-        from datetime import datetime
-        timestamp_ex = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
-
-        st.success(f"ATELIER ÉVALUATION FINALE SCELLÉ | Note de session : {tot_s_ex:.1f} / 20")
-        
-        # Pré-calcul des sous-notes textuelles à afficher dans le HTML
-        note_diss_txt = f"{((2.5 if v_m_diss_lbl == 'CORRECT' else 0.0) + (2.5 if v_v_diss_lbl == 'CORRECT' else 0.0)):.1f} / 5.0"
-        note_dil_txt = f"{((1.25 if v_cm_fille_lbl == 'CORRECT' else 0.0) + (1.25 if v_v_mere_lbl == 'CORRECT' else 0.0) + (1.25 if v_v_fille_lbl == 'CORRECT' else 0.0) + (1.25 if v_v_mere_vol_lbl == 'CORRECT' else 0.0)):.2f} / 5.0"
-
-        # Pré-calcul des classes CSS pour éliminer définitivement les conflits de accolades f-string
-        c_m_diss = "status-correct" if v_m_diss_lbl == "CORRECT" else "status-incorrect"
-        c_v_diss = "status-correct" if v_v_diss_lbl == "CORRECT" else "status-incorrect"
-        c_cm_fille = "status-correct" if v_cm_fille_lbl == "CORRECT" else "status-incorrect"
-        c_v_mere = "status-correct" if v_v_mere_lbl == "CORRECT" else "status-incorrect"
-        c_v_fille = "status-correct" if v_v_fille_lbl == "CORRECT" else "status-incorrect"
-        c_v_mere_vol = "status-correct" if v_v_mere_vol_lbl == "CORRECT" else "status-incorrect"
 
         html_export_ex = f"""<!DOCTYPE html>
         <html>
