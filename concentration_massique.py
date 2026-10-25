@@ -1716,7 +1716,7 @@ with tab3:
 
     # L'appel à afficher_questions_dissolution doit être présent juste au-dessus
     st.write("---")
-
+    dict_reponses_eleve_ds = afficher_questions_dissolution(masse_calculee_ds, v_fiole_ml_ds, cm_cible_ds, verrouille=verrou_v3)
     case_certif_ds = st.checkbox(
         "Je certifie avoir complete les questions de l'Atelier 3.", 
         key="check_certif_ds_official", 
