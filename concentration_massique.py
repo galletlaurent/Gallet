@@ -2147,9 +2147,11 @@ with tab5:
     col_p1, col_p2 = st.columns([0.4, 0.6])
     with col_p1:
         st.caption("Flacon de solution mère assigné :")
-        try:
-            st.image(prod_actif["img"], caption=f"Flacon de {prod_actif['nom']}", width=250)
-        except Exception:
+        # CORRECTION : Intégration de charger_image avec PIL pour l'exécutable
+        img_flacon = charger_image(prod_actif["img"])
+        if img_flacon:
+            st.image(img_flacon, caption=f"Flacon de {prod_actif['nom']}", width=250)
+        else:
             st.warning("Visuel indisponible. Fiez-vous aux caractéristiques de l'étiquette.")
             
     with col_p2:
@@ -2174,18 +2176,15 @@ with tab5:
     with col_a1:
         saisie_m_diss = st.number_input("Quelle masse m de solide devez-vous peser sur la balance (en g) ?", min_value=0.0, step=0.001, format="%.3f", key="syn_in_m_diss")
     with col_a2:
-        saisie_verre_diss = st.selectbox("Dans quelle verrerie de précision devez-offset cette dissolution ?", ["Choisir...", "Fiole jaugée", "Éprouvette graduée", "Bécher gradué"], key="syn_in_verre_diss")
+        saisie_verre_diss = st.selectbox("Dans quelle verrerie de précision devez-vous effectuer cette dissolution ?", ["Choisir...", "Fiole jaugée", "Éprouvette graduée", "Bécher gradué"], key="syn_in_verre_diss")
 
     st.write("---")
 
     # PARTIE B : DILUTION
     st.subheader("Partie B : Protocole expérimental de Dilution")
-    
     st.markdown(f"En utilisant le flacon commercial de solution mère donné au début du sujet ({cm_mere_hasard:.1f} g/L), vous devez maintenant préparer une solution fille moins concentrée.")
     
-    # Isolation propre de la formule mathématique en LaTeX
     st.latex(rf"V_{{\text{{fille}}}} = {v_fille_ml_hasard:.0f}\text{{ mL}}")
-    
     st.markdown(f"Le protocole stipule que cette solution doit être exactement **{facteur_hasard:.0f} fois moins concentrée** (facteur de dilution F = {facteur_hasard:.0f}x).")
     
     col_b1, col_b2 = st.columns(2)
@@ -2199,14 +2198,14 @@ with tab5:
     st.write("---")
     verrou_v5 = st.session_state.get("v_verrouille_tab5", False)
 
-    # 1. Appel propre de la fonction de synthèse
+    # 1. Appel propre de la fonction de synthèse avec déballage complet des deux variables de retour
     dict_reponses_eleve_syn, dict_trous_v5 = afficher_questions_synthese_laboratoire(
-        prod_nom="Sulfate de cuivre", 
-        cm_mere=20.0, 
-        v_fille_choisi=100.0, 
-        facteur_choisi=5.0, 
-        m_diss_attendue=2.000, 
-        v_mere_attendue=20.0, 
+        prod_nom=prod_actif['nom'], 
+        cm_mere=cm_mere_hasard, 
+        v_fille_choisi=v_fille_ml_hasard, 
+        facteur_choisi=facteur_hasard, 
+        m_diss_attendue=m_diss_attendue, 
+        v_mere_attendue=v_mere_attendue, 
         verrouille=verrou_v5
     )
     
@@ -2217,32 +2216,33 @@ with tab5:
         disabled=verrou_v5
     )
 
-    # --- ACTION DU BOUTON DE VALIDATION DE L'ATELIER 5 (VERSION SÉCURISÉE) ---
+    # --- ACTION DU BOUTON DE VALIDATION DE L'ATELIER 5 ---
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_ex_official", use_column_width=True, disabled=verrou_v5):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_ex: 
             st.error("Action refusée : Cochez la case de certification.")
+        elif "Choisir..." in [st.session_state.get("syn_in_verre_diss"), st.session_state.get("syn_in_verre_mere"), st.session_state.get("syn_in_verre_fille")]:
+            st.error("Action refusée : Veuillez sélectionner le matériel de verrerie pour l'ensemble des questions.")
         else:
-            # Récupération ultra-sécurisée des variables expérimentales
-            s_m_diss = float(st.session_state.get("saisie_m_diss", 0.0))
-            s_verre_diss = st.session_state.get("saisie_verre_diss", "Choisir...")
-            s_cm_fille = float(st.session_state.get("saisie_cm_fille", 0.0))
-            s_verre_mere = st.session_state.get("saisie_verre_mere", "Choisir...")
-            s_verre_fille = st.session_state.get("saisie_verre_fille", "Choisir...")
-            s_v_mere = float(st.session_state.get("saisie_v_mere", 0.0))
+            # CORRECTION : Récupération des données via les vraies clés définies dans vos widgets (syn_in_...)
+            s_m_diss = float(st.session_state.get("syn_in_m_diss", 0.0))
+            s_verre_diss = st.session_state.get("syn_in_verre_diss", "Choisir...")
+            s_cm_fille = float(st.session_state.get("syn_in_cm_fille", 0.0))
+            s_verre_mere = st.session_state.get("syn_in_verre_mere", "Choisir...")
+            s_verre_fille = st.session_state.get("syn_in_verre_fille", "Choisir...")
+            s_v_mere = float(st.session_state.get("syn_in_v_mere", 0.0))
 
-            m_attendue = 2.000
-            cm_fille_att = 4.0
-            v_mere_att = 20.0
-
-            # Calcul des labels de justesse
-            v_m_diss_lbl = "CORRECT" if abs(s_m_diss - m_attendue) <= 0.005 else "INCORRECT"
+            # Correction dynamique Partie A (Dissolution)
+            v_m_diss_lbl = "CORRECT" if abs(s_m_diss - m_diss_attendue) <= 0.005 else "INCORRECT"
             v_v_diss_lbl = "CORRECT" if s_verre_diss == "Fiole jaugée" else "INCORRECT"
-            v_cm_fille_lbl = "CORRECT" if abs(s_cm_fille - cm_fille_att) <= 0.1 else "INCORRECT"
+            
+            # Correction dynamique Partie B (Dilution)
+            cm_fille_attendue = cm_mere_hasard / facteur_hasard
+            v_cm_fille_lbl = "CORRECT" if abs(s_cm_fille - cm_fille_attendue) <= 0.1 else "INCORRECT"
             v_v_mere_lbl = "CORRECT" if s_verre_mere == "Pipette jaugée" else "INCORRECT"
             v_v_fille_lbl = "CORRECT" if s_verre_fille == "Fiole jaugée" else "INCORRECT"
-            v_v_mere_vol_lbl = "CORRECT" if abs(s_v_mere - v_mere_att) <= 0.1 else "INCORRECT"
+            v_v_mere_vol_lbl = "CORRECT" if abs(s_v_mere - v_mere_attendue) <= 0.1 else "INCORRECT"
 
             # 3. Correction du Quiz (5 points)
             score_q5 = 0.0
@@ -2252,7 +2252,7 @@ with tab5:
                     if str(rep_el).strip() == str(q_item["rep"]).strip():
                         score_q5 += 0.5
 
-            # 4. Correction de la Synthèse à trous (5 points) - CORRECTION DES CLÉS EN _t5
+            # 4. Correction de la Synthèse à trous (5 points)
             score_t5 = sum([
                 st.session_state.get("syn_t_t1_t5") == "Dissolution",
                 st.session_state.get("syn_t_t2_t5") == "Dilution",
@@ -2266,11 +2266,11 @@ with tab5:
                 st.session_state.get("syn_t_t10_t5") == "Pasteur"
             ]) * 0.5
 
-            # Somme des points
+            # Calculs finaux des points pratiques
             pts_m_diss = (2.5 if v_m_diss_lbl == "CORRECT" else 0.0) + (2.5 if v_v_diss_lbl == "CORRECT" else 0.0)
             pts_m_dil = (1.25 if v_cm_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_lbl == "CORRECT" else 0.0) + (1.25 if v_v_fille_lbl == "CORRECT" else 0.0) + (1.25 if v_v_mere_vol_lbl == "CORRECT" else 0.0)
 
-            # Enregistrement global
+            # Enregistrement en session state
             st.session_state.score_ex_final = round(float(pts_m_diss + pts_m_dil + score_q5 + score_t5), 1)
             st.session_state.v_m_diss_lbl = v_m_diss_lbl
             st.session_state.v_v_diss_lbl = v_v_diss_lbl
@@ -2281,7 +2281,8 @@ with tab5:
             st.session_state.score_q5_save = round(float(score_q5), 1)
             st.session_state.score_t5_save = round(float(score_t5), 1)
             st.session_state.v_verrouille_tab5 = True
-            st.experimental_rerun()
+            st.experimental_rerun() # CORRECTION : Commande rétro-compatible pour finaliser l'action du bouton
+
 
     # --- ZONE DE GÉNÉRATION ET D'AFFICHAGE DU RAPPORT SCELLÉ ---
     if st.session_state.get("v_verrouille_tab5", False):
