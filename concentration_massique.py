@@ -2215,12 +2215,12 @@ with tab5:
     # 3. Case à cocher réglementaire de fin d'atelier
     case_certif_ex = st.checkbox(
         "Je certifie avoir complete les questions de l'Atelier 5.", 
-        key="check_certif_ex_official", 
+        key="check_certif_ex", 
         disabled=verrou_v5
     )
 
     # --- ACTION DU BOUTON DE VALIDATION DE L'ATELIER 5 ---
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_ex_official", use_column_width=True, disabled=verrou_v5):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_ex", use_column_width=True, disabled=verrou_v5):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_ex: 
