@@ -1174,19 +1174,10 @@ with tab1:
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_mv_official", use_container_width=True, disabled=verrou_v1):
-        st.session_state.id_nom = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
-        st.session_state.id_prenom = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
-        st.session_state.id_classe = st.session_state.get("id_classe") or st.session_state.get("classe_var") or "INCONNU"
-        
-        p_validation = str(st.session_state.id_prenom).upper()
-        n_validation = str(st.session_state.id_nom).upper()
-
-        if n_validation == "INCONNU" or p_validation == "INCONNU":
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_mv:
-            st.error("Action refusee : Cochez la case de certification.")
-        elif not pesee_reussie:
-            st.error("Action refusee : Vous devez réussir l'équilibre de la balance avant de pouvoir soumettre vos réponses.")
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_mv: 
+            st.error("Action refusée : Cochez la case de certification.")
         else:
             # 1. Correction du Quiz (10 points)
             score_q1 = 0.0
@@ -1485,17 +1476,10 @@ with tab2:
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_cm_official", use_container_width=True, disabled=verrou_v2):
-        st.session_state.id_nom = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
-        st.session_state.id_prenom = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
-        st.session_state.id_classe = st.session_state.get("id_classe") or st.session_state.get("classe_var") or "INCONNU"
-        
-        p_validation = str(st.session_state.id_prenom).upper()
-        n_validation = str(st.session_state.id_nom).upper()
-
-        if n_validation == "INCONNU" or p_validation == "INCONNU":
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_cm:
-            st.error("Action refusee : Cochez la case de certification.")
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_cm_official: 
+            st.error("Action refusée : Cochez la case de certification.")
         else:
             # 1. Correction du Quiz (10 points)
             score_q2 = 0.0
@@ -1725,17 +1709,10 @@ with tab3:
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_ds_official", use_container_width=True, disabled=verrou_v3):
-        st.session_state.id_nom = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
-        st.session_state.id_prenom = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
-        st.session_state.id_classe = st.session_state.get("id_classe") or st.session_state.get("classe_var") or "INCONNU"
-        
-        p_validation = str(st.session_state.id_prenom).upper()
-        n_validation = str(st.session_state.id_nom).upper()
-
-        if n_validation == "INCONNU" or p_validation == "INCONNU":
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_ds:
-            st.error("Action refusee : Cochez la case de certification.")
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_ds: 
+            st.error("Action refusée : Cochez la case de certification.")
         else:
             # 1. Correction du Quiz (10 points)
             score_q3 = 0.0
@@ -2018,18 +1995,11 @@ with tab4:
         st.write("---")
 
         if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_dil_official", use_container_width=True, disabled=verrou_v4):
-            st.session_state.id_nom = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
-            st.session_state.id_prenom = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
-            st.session_state.id_classe = st.session_state.get("id_classe") or st.session_state.get("classe_var") or "INCONNU"
-            
-            p_validation = str(st.session_state.id_prenom).upper()
-            n_validation = str(st.session_state.id_nom).upper()
-
-            if n_validation == "INCONNU" or p_validation == "INCONNU":
-                st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-            elif not case_certif_dil:
-                st.error("Action refusee : Cochez la case de certification.")
-            else:
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_dil_official: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
                 # 1. Correction du Quiz (10 points)
                 score_q4 = 0.0
                 if "ordre_quiz_dil" in st.session_state:
@@ -2076,7 +2046,7 @@ with tab4:
             <head>
                 <meta charset="utf-8">
                 <title>Rapport Dilution - {n_eleve}</title>
-            <style>
+             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
@@ -2246,18 +2216,10 @@ with tab5:
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_ex_official", use_container_width=True, disabled=verrou_v5):
-        # Synchronisation de l'identité Nom, Prénom, Classe
-        st.session_state.id_nom = st.session_state.get("id_nom") or st.session_state.get("nom_var") or "INCONNU"
-        st.session_state.id_prenom = st.session_state.get("id_prenom") or st.session_state.get("prenom_var") or "INCONNU"
-        st.session_state.id_classe = st.session_state.get("id_classe") or st.session_state.get("classe_var") or "INCONNU"
-        
-        p_validation = str(st.session_state.id_prenom).upper()
-        n_validation = str(st.session_state.id_nom).upper()
-
-        if n_validation == "INCONNU" or p_validation == "INCONNU":
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_ex:
-            st.error("Action refusee : Cochez la case de certification.")
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_ex_official: 
+            st.error("Action refusée : Cochez la case de certification.")
         elif "Choisir..." in [saisie_verre_diss, saisie_verre_mere, saisie_verre_fille]:
             st.error("Action refusee : Veuillez sélectionner la verrerie pour l'ensemble des questions.")
         else:
