@@ -2293,12 +2293,12 @@ with tab5:
         st.success(f"ATELIER ÉVALUATION FINALE SCELLÉ | Note de session : {tot_s_ex:.1f} / 20")
         
         # COMPLETION DU CODE : Reconstruction propre et fermeture complète de la page HTML
-            cls_m_diss = "status-correct" if v_m_diss_lbl == "CORRECT" else "status-incorrect"
-            cls_v_diss = "status-correct" if v_v_diss_lbl == "CORRECT" else "status-incorrect"
-            cls_cm_fille = "status-correct" if v_cm_fille_lbl == "CORRECT" else "status-incorrect"
-            cls_v_mere = "status-correct" if v_v_mere_lbl == "CORRECT" else "status-incorrect"
-            cls_v_fille = "status-correct" if v_v_fille_lbl == "CORRECT" else "status-incorrect"
-            cls_v_mere_vol = "status-correct" if v_v_mere_vol_lbl == "CORRECT" else "status-incorrect"
+        cls_m_diss = "status-correct" if v_m_diss_lbl == "CORRECT" else "status-incorrect"
+        cls_v_diss = "status-correct" if v_v_diss_lbl == "CORRECT" else "status-incorrect"
+        cls_cm_fille = "status-correct" if v_cm_fille_lbl == "CORRECT" else "status-incorrect"
+        cls_v_mere = "status-correct" if v_v_mere_lbl == "CORRECT" else "status-incorrect"
+        cls_v_fille = "status-correct" if v_v_fille_lbl == "CORRECT" else "status-incorrect"
+        cls_v_mere_vol = "status-correct" if v_v_mere_vol_lbl == "CORRECT" else "status-incorrect"
 
             # 2. Construction de la page de rapport HTML
             html_export_ex = f"""<!DOCTYPE html>
