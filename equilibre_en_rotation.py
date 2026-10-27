@@ -3,7 +3,7 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="Application dosage du vinaigre",
+    page_title="Application équilibre en rotation",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -23,7 +23,7 @@ import streamlit.components.v1 as components
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
-st.title("Application dosage du javel")
+st.title("Application équilibre en rotation")
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
@@ -1521,7 +1521,41 @@ with tab4:
             st.info("Emplacement pour l'image : application_grue.jpg")
 
     st.divider()
+    col_app_12, col_app_22 = st.columns(2)
 
+    with col_app_12:
+        st.markdown("**Fonctionnement de la flèche et de la contre-flèche :**")
+        st.write("**La caricature humoristique : L'équilibre de la grue à tour**")
+        
+        # Bloc d'information bleu contenant l'intégralité du texte des 4 cases
+        st.info(
+            "**Case 1 : Le piège de la distance (Passé) :** Un jeune grutier veut déplacer une petite palette de briques, "
+            "mais il l'envoie tout au bout de la flèche, très loin du mât central. À cause du bras de levier immense, "
+            "la grue bascule complètement vers l'avant et ses fondations décollent du sol.\n\n"
+            "**Case 2 : La réaction disproportionnée (Passé) :** Pour compenser, l'apprenti court à l'arrière sur la contre-flèche "
+            "et y empile une montagne absurde de blocs de béton. Dès qu'il lâche les briques à l'avant, la grue bascule "
+            "violemment dans l'autre sens et s'écrase vers l'arrière.\n\n"
+            "**Case 3 : Le système D (La fausse bonne idée) :** Totalement dépassé, il décide d'attacher d'immenses cordes élastiques "
+            "depuis le sommet du mât jusqu'aux camions et aux structures du chantier aux alentours. La grue ressemble à "
+            "une toile d'araignée géante et tout le chantier se retrouve tordu.\n\n"
+            "**Case 4 : La leçon de physique (Aujourd'hui) :** Un vieil ingénieur blasé arrive avec une règle et une calculatrice. "
+            "Il ramène calmement la charge près du mât et ajuste la quantité exacte de contrepoids. La grue redevient "
+            "parfaitement droite sous les yeux ébahis de l'apprenti."
+        )
+
+    with col_app_22:
+        # Nom du fichier image généré juste au-dessus
+        nom_image = "image_B2Vson.png"
+        
+        # Vérification de la présence du fichier (gère le fichier d'origine ou votre renommage)
+        if os.path.exists(nom_image):
+            st.image(nom_image, caption="L'équilibre de la grue à tour", use_container_width=True)
+        elif os.path.exists("caricature_grue.jpg"):
+            st.image("caricature_grue.jpg", caption="L'équilibre de la grue à tour", use_container_width=True)
+        else:
+            st.info(f"Emplacement pour l'image :caricature_grue.jpg")
+
+    st.divider()
     st.subheader("2. Étude de cas B : Le contrôle du serrage industriel (Clé dynamométrique)")
     st.write(
         "En maintenance mécanique, l'assemblage de pièces maîtresses exige un effort de serrage parfaitement calibré. "
@@ -1540,6 +1574,32 @@ with tab4:
         )
     with col_app_4:
         if os.path.exists("application_cle.jpg"):
+            st.image("application_cle.jpg", caption="Contrôle du couple de serrage à l'aide d'une clé graduée", use_container_width=True)
+        else:
+            st.info("Emplacement pour l'image : application_cle.jpg")
+            
+    col_app_32, col_app_42 = st.columns(2)
+
+    with col_app_32:
+        st.markdown("**Le fonctionnement de la clé dynamométrique :**")
+        st.write("**La caricature humoristique : Le serrage précis (ou pas !)**")
+        
+        st.info(
+            "**Case 1 : L'ambition et la théorie (Passé) :** Notre ingénieur, plein d'entrain, rêve d'un serrage parfait à 150 N.m pour ce boulon colossal. Malheureusement, son outil standard s'avère bien trop court pour surmonter la résistance mécanique.\n\n"
+            "**Case 2 : L'effort désespéré (Passé) :** Sans bras de levier suffisant, c'est l'impasse. Il s'épuise et donne tout ce qu'il a en grimpant sur un escabeau pour sauter sur une rallonge de fortune en tuyau, qui finit par plier sous son poids.\n\n"
+            "**Case 3 : La solution de génie (Années 1950) :** Illumination ! Plus le bras est long, plus le moment est grand. Il décide d'improviser une clé gigantesque dotée d'un manche de 5 mètres de long pour minimiser son effort physique.\n\n"
+            "**Case 4 : Le résultat précis (Aujourd'hui) :** Le couple cible est atteint de manière dévastatrice. Le bras de levier démesuré multiplie tellement sa force qu'il casse net le boulon en morceaux, sous le signal sonore ironique de l'outil."
+        )
+    with col_app_42:
+        # Nom du fichier image généré précédemment pour ce cas précis
+        nom_image_cle = "image_a3xqiX.png"
+        
+        # Vérification et affichage de la caricature graphique correspondante
+        if os.path.exists(nom_image_cle):
+            st.image(nom_image_cle, caption="Contrôle du couple de serrage à l'aide d'une clé graduée", use_container_width=True)
+        elif os.path.exists("caricature_cle.jpg"):
+            st.image("caricature_cle.jpg", caption="Contrôle du couple de serrage à l'aide d'une clé graduée", use_container_width=True)
+        elif os.path.exists("application_cle.jpg"):
             st.image("application_cle.jpg", caption="Contrôle du couple de serrage à l'aide d'une clé graduée", use_container_width=True)
         else:
             st.info("Emplacement pour l'image : application_cle.jpg")
