@@ -1774,7 +1774,170 @@ with tab4:
         )
 
 
+with tab5:
+    st.header("Exemple 1 : Analyse avancée d'une clé dynamométrique d'atelier")
+    
+    col_ex1_txt, col_ex1_img = st.columns([0.55, 0.45])
+    
+    with col_ex1_txt:
+        st.subheader("Mise en situation et Énoncé")
+        st.write(
+            "Sur une ligne d'assemblage aéronautique, un technicien doit serrer les écrous de fixation d'un "
+            "moteur au couple nominal strict de **M_cible = 120 N.m**. L'opérateur utilise une clé "
+            "dynamométrique dont le manche mesure **L = 60 cm**. Il applique une force perpendiculaire F "
+            "à l'extrémité de l'outil."
+        )
+        
+        st.markdown(
+            """
+            **Problématique technique :** 
+            Le constructeur tolère un écart de serrage de plus ou moins 5% au maximum. Le technicien effectue un 
+            effort maximal mesuré à **F = 210 N**. Sa manipulation respecte-t-elle les tolérances de sécurité ?
+            """
+        )
+        
+        st.divider()
+        st.subheader("Fiche de travail de l'élève")
+        
+        # Étape 1 : Conversion et Identification
+        st.markdown("**Étape 1 : Analyse géométrique**")
+        ex1_d = st.number_input("Convertir la longueur du manche (bras de levier) en mètres :", min_value=0.0, max_value=5.0, value=0.0, step=0.01, key="comp_ex1_d")
+        
+        # Étape 2 : Calcul mathématique du moment réel
+        st.markdown("**Étape 2 : Détermination du moment appliqué**")
+        ex1_m_reel = st.number_input("Calculer le moment réel exercé par le technicien (en N.m) :", min_value=0.0, max_value=500.0, value=0.0, step=0.1, key="comp_ex1_m")
+        
+        # Étape 3 : Justification textuelle pour l'examen
+        st.markdown("**Étape 3 : Analyse des tolérances**")
+        st.write("Le moment minimal toléré est de 114 N.m et le maximum est de 126 N.m (120 N.m +/- 5%).")
+        ex1_analyse = st.text_area("Rédigez votre conclusion mécanique (Le serrage est-il conforme ou non ? Pourquoi ?) :", key="comp_ex1_txt")
+        
+        # Étape 4 : Verdict final à cocher
+        st.markdown("**Étape 4 : Décision finale d'atelier**")
+        ex1_verdict = st.radio("En tant que chef d'atelier, quelle est votre décision ?", ["Choisir...", "Serrage conforme, l'appareil peut être libéré", "Serrage non conforme, risque de rupture ou desserrage"], key="comp_ex1_radio")
 
+        # Système de validation et correction dynamique du bloc examen
+        if st.button("VÉRIFIER MES RÉPONSES DE L'EXEMPLE 1", key="btn_check_ex1", use_container_width=True):
+            erreur_detectee = False
+            
+            if abs(ex1_d - 0.60) > 0.001:
+                st.error("Étape 1 incorrecte : Revoyez la conversion de 60 cm en mètres (divisez par 100).")
+                erreur_detectee = True
+            
+            if abs(ex1_m_reel - 126.0) > 0.1:
+                st.error("Étape 2 incorrecte : Appliquez la formule M = F x d avec F = 210 N et votre distance en mètres.")
+                erreur_detectee = True
+                
+            if ex1_verdict != "Serrage non conforme, risque de rupture ou desserrage":
+                st.error("Étape 4 incorrecte : Le moment obtenu (126 N.m) est à la limite haute. Si l'opérateur tire un milligramme de plus, la pièce casse.")
+                erreur_detectee = True
+                
+            if not erreur_detectee and len(ex1_analyse.strip()) > 10:
+                st.success("Félicitations ! Votre analyse de l'Exemple 1 est parfaitement juste et validée.")
+            elif len(ex1_analyse.strip()) <= 10:
+                st.warning("Calculs justes, mais votre justification écrite de l'Étape 3 est trop courte pour obtenir les points d'examen.")
+
+    with col_ex1_img:
+        st.subheader("Représentation technique")
+        if os.path.exists("exemple_mecanique_1.jpg"):
+            st.image("exemple_mecanique_1.jpg", caption="Clé dynamométrique d'atelier en charge", use_container_width=True)
+        else:
+            # Génération d'un schéma d'attente vectoriel si l'image n'est pas fournie
+            fig_ex1, ax_ex1 = plt.subplots(figsize=(5, 3))
+            ax_ex1.plot([0, 3], [0, 0], color="grey", lw=12) # Corps de la clé
+            ax_ex1.plot([0, 0.4], [0, 0], color="black", lw=20) # Tête de la clé
+            ax_ex1.annotate('', xy=(3, -1.5), xytext=(3, 0), arrowprops=dict(facecolor='blue', width=3, headwidth=10))
+            ax_ex1.text(3.2, -1.0, "Force F = 210 N", color="blue", weight="bold")
+            ax_ex1.text(1.2, 0.3, "Distance L = 0,60 m", color="black")
+            ax_ex1.set_xlim(-0.5, 5)
+            ax_ex1.set_ylim(-2, 1)
+            ax_ex1.axis('off')
+            st.pyplot(fig_ex1)
+
+
+with tab6:
+    st.header("Exemple 2 : Équilibre d'un système de levage lourd (Grue portuaire)")
+    
+    col_ex2_txt, col_ex2_img = st.columns([0.55, 0.45])
+    
+    with col_ex2_txt:
+        st.subheader("Mise en situation et Énoncé")
+        st.write(
+            "Une grue portuaire pivotant autour d'un mât vertical fixe doit décharger un conteneur maritime "
+            "de masse m = 4 tonnes. Le centre de gravité de ce conteneur se situe à une distance "
+            "**d1 = 12 mètres** de l'axe de rotation."
+        )
+        
+        st.markdown(
+            """
+            **Données de l'étude thermique et mécanique :**
+            *   Intensité de la pesanteur terrestre : g = 9,81 N/kg
+            *   Masse du contrepoids fixe situé à droite de la flèche : M2 = 6 000 kg
+            """
+        )
+        
+        st.divider()
+        st.subheader("Fiche de travail de l'élève")
+        
+        # Étape 1 : Calcul du Poids (Force 1)
+        st.markdown("**Étape 1 : Calcul de l'action de la charge (Poids P1)**")
+        ex2_p1 = st.number_input("Calculer l'intensité du poids du conteneur en Newtons (P = m x g) :", min_value=0.0, max_value=100000.0, value=0.0, step=10.0, key="comp_ex2_p1")
+        
+        # Étape 2 : Calcul du Poids du Contrepoids (Force 2)
+        st.markdown("**Étape 2 : Calcul de l'action du contrepoids (Poids P2)**")
+        ex2_p2 = st.number_input("Calculer l'intensité du poids du contrepoids en Newtons :", min_value=0.0, max_value=100000.0, value=0.0, step=10.0, key="comp_ex2_p2")
+        
+        # Étape 3 : Application du Théorème des Moments
+        st.markdown("**Étape 3 : Détermination de la position d'équilibre**")
+        ex2_d2 = st.number_input("Déterminer la distance d2 (en m) pour obtenir l'équilibre parfait de la flèche :", min_value=0.0, max_value=50.0, value=0.0, step=0.01, key="comp_ex2_d2")
+        
+        # Étape 4 : Saisie textuelle de la méthode
+        st.markdown("**Étape 4 : Note méthodologique**")
+        ex2_methode = st.text_area("Expliquez brièvement l'équation littérale que vous avez utilisée pour isoler d2 :", key="comp_ex2_txt")
+
+        # Système de validation et correction dynamique du bloc examen
+        if st.button("VÉRIFIER MES RÉPONSES DE L'EXEMPLE 2", key="btn_check_ex2", use_container_width=True):
+            erreur_detectee_ex2 = False
+            
+            # 4000 kg * 9.81 = 39240 N
+            if abs(ex2_p1 - 39240.0) > 1.0:
+                st.error("Étape 1 incorrecte : Attention, convertissez la masse en kg (4 tonnes = 4 000 kg) avant de multiplier par g.")
+                erreur_detectee_ex2 = True
+            
+            # 6000 kg * 9.81 = 58860 N
+            if abs(ex2_p2 - 58860.0) > 1.0:
+                st.error("Étape 2 incorrecte : Multipliez la masse de 6 000 kg par g = 9,81 N/kg.")
+                erreur_detectee_ex2 = True
+                
+            # d2 = (39240 * 12) / 58860 = 8.0 m
+            if abs(ex2_d2 - 8.00) > 0.01:
+                st.error("Étape 3 incorrecte : La distance d2 calculée est fausse. Utilisez le théorème : P1 x d1 = P2 x d2.")
+                erreur_detectee_ex2 = True
+                
+            if not erreur_detectee_ex2 and len(ex2_methode.strip()) > 10:
+                st.success("Parfait ! Toutes vos étapes de calcul de mécanique portuaire sont validées.")
+            elif len(ex2_methode.strip()) <= 10:
+                st.warning("Calculs exacts, mais complétez la note de l'Étape 4 pour finaliser la validation du CCF.")
+
+    with col_ex2_img:
+        st.subheader("Représentation technique")
+        if os.path.exists("exemple_mecanique_2.jpg"):
+            st.image("exemple_mecanique_2.jpg", caption="Modélisation des charges de la grue portuaire", use_container_width=True)
+        else:
+            # Schéma vectoriel d'attente
+            fig_ex2, ax_ex2 = plt.subplots(figsize=(5, 3))
+            ax_ex2.plot([-3, 5], [0, 0], color="orange", lw=8) # La flèche
+            ax_ex2.plot([0, 0], [0, -2], color="black", lw=12) # Le pylône
+            # Charge gauche
+            ax_ex2.annotate('', xy=(-2.5, -1.2), xytext=(-2.5, 0), arrowprops=dict(facecolor='red', width=2, headwidth=8))
+            ax_ex2.text(-3.0, -1.6, "P1 (4t)", color="red", weight="bold")
+            # Contrepoids droite
+            ax_ex2.annotate('', xy=(4.0, -1.2), xytext=(4.0, 0), arrowprops=dict(facecolor='green', width=2, headwidth=8))
+            ax_ex2.text(3.5, -1.6, "P2 (6t)", color="green", weight="bold")
+            ax_ex2.set_xlim(-4, 6)
+            ax_ex2.set_ylim(-2.5, 1)
+            ax_ex2.axis('off')
+            st.pyplot(fig_ex2)
 
 
 
