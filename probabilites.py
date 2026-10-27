@@ -3218,17 +3218,17 @@ with tab4:
 
 
 with tab5:
-    st.header("Atelier 5 : Esperance Mathematqiue & Variance")
-    
-    # =========================================================================
-    # RAPPEL DE COURS PRÉCIS (FORMAT LATEX)
-    # =========================================================================
-    with st.info(""):
-        st.markdown("**Rappel des Formules du Cours :**")
-        st.markdown("- **Somme des probabilités :** $\sum p_i = p_1 + p_2 + p_3 = 1$")
-        st.markdown("- **Espérance Mathématique (Valeur moyenne) :** $E(X) = \sum x_i \cdot p_i = x_1p_1 + x_2p_2 + x_3p_3$")
-        st.markdown("- **Variance (Indicateur de dispersion) :** $V(X) = \sum (x_i)^2 \cdot p_i - [E(X)]^2$")
+    st.title("Atelier 5 : Espérance Mathématique & Variance")
 
+    with st.info("Rappel des Formules du Cours"):
+        st.markdown("**1. Somme des probabilités :**")
+        st.latex(r"\sum_{i=1}^{3} p_i = p_1 + p_2 + p_3 = 1")
+        
+        st.markdown("**2. Espérance Mathématique (Valeur moyenne) :**")
+        st.latex(r"E(X) = \sum_{i=1}^{3} x_i \cdot p_i = x_1p_1 + x_2p_2 + x_3p_3")
+        
+        st.markdown("**3. Variance (Indicateur de dispersion) :**")
+        st.latex(r"V(X) = \sum_{i=1}^{3} (x_i)^2 \cdot p_i - [E(X)]^2")
     if "at5_verrouille" not in st.session_state:
         st.session_state.at5_verrouille = False
     if "at5_afficher_correction" not in st.session_state:
