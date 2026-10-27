@@ -862,7 +862,7 @@ with tab1:
      # =========================================================================
     # LOGIQUE DE COUPLAGE DES CONFIGURATIONS DE NOTATION DYNAMIQUES (FORCES)
     # =========================================================================
-    verrou_forces_1 = st.session_state.get("forces_verrouille_tab1", False)
+
 
     # Appel de la fonction de questionnaire pour les Généralités sur les forces
     res_q1, res_t1 = afficher_questions_forces_dynamiques(verrouille=verrou_forces_1)
@@ -880,6 +880,8 @@ with tab1:
         disabled=verrou_forces_1
     )
 
+    verrou_forces_1 = st.session_state.get("forces_verrouille_tab1", False)
+    
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ÉVALUATION DES FORCES", key="btn_export_forces1_official_net", use_container_width=True, disabled=verrou_forces_1):
         if not st.session_state.get("identifie", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
