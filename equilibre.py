@@ -979,50 +979,65 @@ with tab2:
     st.subheader("2. Exemples d'application")
     
     col1, col2 = st.columns(2)
-    
+
     with col1:
-        # Description : Grue mobile avec ses stabilisateurs deployes au maximum
-        st.image("grue_stabilite.jpg", caption="Exemple 1 : Engin de chantier mecanique")
+        # Verification de la presence du fichier geometrique ou basculement textuel
+        if os.path.exists("grue_stabilite.jpg"):
+            st.image("grue_stabilite.jpg", caption="Exemple 1 : Engin de chantier mecanique")
+        else:
+            st.info("Illustration : Vue d'une grue mobile de levage avec ses quatre stabilisateurs hydrauliques deployes au maximum sur le sol.")
+            
         st.write("""
-        **Analyse de l'image :** Les verins hydrauliques (stabilisateurs) ecartent les points de contact avec 
+        **Analyse de la stabilite :** Les verins hydrauliques (stabilisateurs) ecartent les points de contact avec 
         le sol bien au-dela des roues du camion. Cela agrandit la base de sustentation pour eviter le basculement 
         lors du levage de charges lourdes reculees.
         """)
         
     with col2:
-        # Description : Athlete en position de garde (judo ou boxe), pieds ecartes et genoux flechis
-        st.image("athlete_posture.jpg", caption="Exemple 2 : Biomecanique humaine")
+        # Verification de la presence du fichier biomecanique ou basculement textuel
+        if os.path.exists("athlete_posture.jpg"):
+            st.image("athlete_posture.jpg", caption="Exemple 2 : Biomecanique humaine")
+        else:
+            st.info("Illustration : Posture basse d'un athlete en position de garde, les appuis ecartes au-dela de la largeur des epaules.")
+            
         st.write("""
-        **Analyse de l'image :** L'athlete augmente sa stabilite en ecartant les pieds (agrandissement de la 
+        **Analyse de la stabilite :** L'athlete augmente sa stabilite en ecartant les pieds (agrandissement de la 
         base de sustentation) et en flechissant les jambes (abaissement du centre de gravite G). Cette configuration 
         demande une force exterieure beaucoup plus elevee pour provoquer un basculement.
         """)
 
     # Section 3 : Caricature pedagogique en 4 images
-    st.subheader("3. Caricature de la stabilite (Sequence en 4 etapes)")
-    
-    c1, c2, c3, c4 = st.columns(4)
-    
-    with c1:
-        # Description caricature 1 : Personnage debout bien droit, les pieds joints. Le vecteur G est vert et tombe entre les pieds.
-        st.image("caricature_etape1.jpg", caption="Etape 1 : Posture initiale")
-        st.write("Le personnage est immobile. La ligne de gravite tombe au centre des pieds joints. L'equilibre est assure mais precaire.")
+    st.subheader("Caricature de la stabilite (Sequence en 4 etapes)")
 
-    with c2:
-        # Description caricature 2 : Le personnage pousse un meuble lourd, son corps se penche vers l'avant. Son vecteur G se deplace vers la limite des orteils.
-        st.image("caricature_etape2.jpg", caption="Etape 2 : Deplacement de G")
-        st.write("En poussant une charge, le corps s'incline. Le centre de gravite se déplace vers l'avant, frolant la limite de la base.")
+    # Separation en deux colonnes : 60% pour le texte en bleu, 40% pour l'image unique
+    col_texte, col_image = st.columns([0.6, 0.4])
 
-    with c3:
-        # Description caricature 3 : Le meuble cede brusquement. Le personnage bascule vers l'avant, la ligne rouge de G tombe dans le vide devant les pieds. Ses bras s'agitent.
-        st.image("caricature_etape3.jpg", caption="Etape 3 : Perte d'equilibre")
-        st.write("La projection de G sort de la base de sustentation. Le poids genere un moment de rotation : la chute est amorcee.")
+    with col_texte:
+        # Utilisation de st.info pour afficher l'ensemble du texte dans un encadre bleu
+        st.info("""
+        ### Analyse de la stabilite et du basculement
+        
+        **Etape 1 : Posture initiale**
+        Le personnage est immobile. La ligne de gravite tombe au centre des pieds joints. L'equilibre est assure mais precaire.
+        
+        **Etape 2 : Deplacement de G**
+        En poussant une charge, le corps s'incline. Le centre de gravite se deplace vers l'avant, frolant la limite de la base.
+        
+        **Etape 3 : Perte d'equilibre**
+        La projection de G sort de la base de sustentation. Le poids genere un moment de rotation : la chute est amorcee.
+        
+        **Etape 4 : Retablissement**
+        Le personnage avance un pied. Cette action cree instantanement une nouvelle base de sustentation plus large, englobant a nouveau la ligne de gravite.
+        """)
 
-    with c4:
-        # Description caricature 4 : Le personnage a avance un pied pour bloquer sa chute. Une nouvelle ligne verte montre que le pied avance a cree une nouvelle base plus grande.
-        st.image("caricature_etape4.jpg", caption="Etape 4 : Retablissement")
-        st.write("Le personnage avance un pied. Cette action cree instantanement une nouvelle base de sustentation plus large, englobant a nouveau la ligne de gravite.")
-
+    with col_image:
+        # Remplacer "caricature_base_sustentation.jpg" par le nom exact de votre fichier image unique
+        nom_image_caricature = "caricature_base_sustentation.jpg"
+        
+        if os.path.exists(nom_image_caricature):
+            st.image(nom_image_caricature, caption="Sequence complete du basculement", use_container_width=True)
+        else:
+            st.warning(f"L'image {nom_image_caricature} est manquante sur le serveur
     st.write("---")        
     if "suite_verrouille_tab2" not in st.session_state:
         st.session_state.suite_verrouille_tab2 = False
