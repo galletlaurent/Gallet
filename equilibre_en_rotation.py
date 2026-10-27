@@ -199,6 +199,194 @@ tab4 = onglets[4]
 tab5 = onglets[5]
 tab6 = onglets[6]
 
+
+def afficher_questions_moments_dynamiques(verrouille=False):
+    import streamlit as st
+    import random
+    
+    if "ordre_quiz3_moments" not in st.session_state:
+        base_quiz3_moments = [
+            {"id": "q3_1", "q": "Le moment d'une force mesure l'efficacité de cette force à provoquer :", "type": "menu", "options": ["Une rotation", "Une translation", "Une déformation élastique"], "rep": "Une rotation"},
+            {"id": "q3_2", "q": "Quelle est l'unité officielle du moment d'une force ?", "type": "menu", "options": ["Newton-mètre (N.m)", "Newton (N)", "Mètre par seconde (m/s)"], "rep": "Newton-mètre (N.m)"},
+            {"id": "q3_3", "q": "Dans la formule du moment, que représente la grandeur notée 'd' ?", "type": "menu", "options": ["Le bras de levier", "Le diamètre de l'objet", "La distance parcourue"], "rep": "Le bras de levier"},
+            {"id": "q3_4", "q": "Le bras de levier correspond à la distance mesurée de façon :", "type": "menu", "options": ["Perpendiculaire à la droite d'action", "Parallèle à la force", "Oblique par rapport à l'axe"], "rep": "Perpendiculaire à la droite d'action"},
+            {"id": "q3_5", "q": "Si le bras de levier double et que la force reste identique, le moment :", "type": "menu", "options": ["Double", "Est divisé par deux", "Reste inchangé"], "rep": "Double"},
+            {"id": "q3_6", "q": "Si la droite d'action d'une force est parallèle à l'axe de rotation, son moment est :", "type": "menu", "options": ["Nul", "Maximal", "Négatif"], "rep": "Nul"},
+            {"id": "q3_7", "q": "Pour dessiner un bras de levier sur un schéma, on repère l'angle droit entre l'axe et :", "type": "menu", "options": ["La droite d'action de la force", "Le vecteur vitesse", "Le point d'application uniquement"], "rep": "La droite d'action de la force"},
+            {"id": "q3_8", "q": "L'expression algébrique exacte du théorème des moments à l'équilibre est :", "type": "menu", "options": ["Somme des moments = 0", "Force x distance = 0", "Somme des forces = 0"], "rep": "Somme des moments = 0"},
+            {"id": "q3_9", "q": "Une force de 50 N appliquée avec un bras de levier de 2 m génère un moment de :", "type": "menu", "options": ["100 N.m", "25 N.m", "10 N.m"], "rep": "100 N.m"},
+            {"id": "q3_10", "q": "Pour dévisser un écrou grippé plus facilement, il est préférable de :", "type": "menu", "options": ["Rallonger le manche du outil", "Raccourcir le manche du outil", "Changer le point d'application vers l'axe"], "rep": "Rallonger le manche du outil"}
+        ]
+        copie_base = list(base_quiz3_moments)
+        random.shuffle(copie_base)
+        st.session_state.ordre_quiz3_moments = copie_base
+
+    col_double_quiz_m3, col_double_trous_m3 = st.columns(2)
+
+    with col_double_quiz_m3:
+        st.markdown("##### Quiz sur le calcul des moments (10 questions - 10 pts)")
+        dict_reponses_quiz = {}
+        
+        for idx, q_data in enumerate(st.session_state.ordre_quiz3_moments, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"moments_cl_g_{q_data['id']}"
+            
+            cle_shuff_opts = f"opts_shuff_moments_{q_data['id']}"
+            if cle_shuff_opts not in st.session_state:
+                opts_copie = list(q_data["options"])
+                random.shuffle(opts_copie)
+                st.session_state[cle_shuff_opts] = ["Choisir..."] + opts_copie
+                
+            val_p = st.session_state.get(cle_select, "Choisir...")
+            sel_idx = st.session_state[cle_shuff_opts].index(val_p) if val_p in st.session_state[cle_shuff_opts] else 0
+            
+            dict_reponses_quiz[q_data["id"]] = st.selectbox(
+                "", st.session_state[cle_shuff_opts], 
+                index=sel_idx, key=cle_select, 
+                disabled=verrouille, label_visibility="collapsed"
+            )
+
+    with col_double_trous_m3:
+        st.markdown("##### Synthèse mathématique du théorème (10 trous - 10 pts)")
+        dict_trous = {}
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. Le moment d'une force par rapport à un axe est le produit de la force par le")
+        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "Bras de levier", "Rayon", "Vecteur"], key="mom_t1_s3", disabled=verrouille, label_visibility="collapsed")
+        
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. Ce bras de levier correspond à la distance la plus courte, mesurée de façon")
+        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "Perpendiculaire", "Parallèle", "Horizontale"], key="mom_t2_s3", disabled=verrouille, label_visibility="collapsed")
+        
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. entre l'axe de rotation Delta et la ligne d'action du vecteur")
+        with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "Force", "Moment", "Poids"], key="mom_t3_s3", disabled=verrouille, label_visibility="collapsed")
+        
+        c47, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c47: st.write("4. L'unité de mesure combinée s'écrit sous la forme mathématique du")
+        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "Newton-mètre", "Newton par mètre", "Joule"], key="mom_t4_s3", disabled=verrouille, label_visibility="collapsed")
+        
+        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9: st.write("5. Si la droite d'action d'une force coupe directement l'axe, la distance est")
+        with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", "Nulle", "Maximale", "Inconnue"], key="mom_t5_s3", disabled=verrouille, label_visibility="collapsed")
+        
+        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c11: st.write("6. Dans ce cas spécifique, l'action mécanique ne produit aucun effet de")
+        with c12: dict_trous["t6"] = st.selectbox("", ["Choisir...", "Rotation", "Translation", "Glissement"], key="mom_t6_s3", disabled=verrouille, label_visibility="collapsed")
+        
+        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c13: st.write("7. À l'équilibre, la somme des moments qui font tourner dans le sens")
+        with c14: dict_trous["t7"] = st.selectbox("", ["Choisir...", "Horloger", "Horaire", "Trigonométrique"], key="mom_t7_s3", disabled=verrouille, label_visibility="collapsed")
+        
+        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c15: st.write("8. compense les moments opposés. On affecte un signe moins aux rotations du sens")
+        with c16: dict_trous["t8"] = st.selectbox("", ["Choisir...", "Horaire", "Anti-horaire", "Direct"], key="mom_t8_s3", disabled=verrouille, label_visibility="collapsed")
+        
+        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c17: st.write("9. La somme algébrique totale de ces grandeurs est représentée par le symbole")
+        with c18: dict_trous["t9"] = st.selectbox("", ["Choisir...", "Sigma", "Delta", "Alpha"], key="mom_t9_s3", disabled=verrouille, label_visibility="collapsed")
+        
+        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c19: st.write("10. L'application pratique directe de cette loi se retrouve dans l'utilisation des")
+        with c20: dict_trous["t10"] = st.selectbox("", ["Choisir...", "Leviers", "Poulies", "Rampes"], key="mom_t10_s3", disabled=verrouille, label_visibility="collapsed")
+
+    return dict_reponses_quiz, dict_trous
+
+
+def afficher_questions_rotation_dynamiques(verrouille=False):
+    import streamlit as st
+    import random
+    
+    if "ordre_quiz2_rotation" not in st.session_state:
+        base_quiz2_rotation = [
+            {"id": "q2_1", "q": "Un objet est en rotation s'il tourne autour d'une ligne fixe appelée :", "type": "menu", "options": ["Axe de rotation Delta", "Centre de gravité", "Vecteur force"], "rep": "Axe de rotation Delta"},
+            {"id": "q2_2", "q": "Quelle grandeur physique mesure l'aptitude d'une force à faire tourner un système ?", "type": "menu", "options": ["Le moment de la force", "L'intensité de la force", "La masse du système"], "rep": "Le moment de la force"},
+            {"id": "q2_3", "q": "Si un solide ne tourne pas et reste immobile, on dit qu'il est en :", "type": "menu", "options": ["Équilibre en rotation", "Mouvement circulaire", "Translation rectiligne"], "rep": "Équilibre en rotation"},
+            {"id": "q2_4", "q": "Par convention, le sens des aiguilles d'une montre est généralement considéré comme :", "type": "menu", "options": ["Négatif", "Positif", "Nul"], "rep": "Négatif"},
+            {"id": "q2_5", "q": "Le sens inverse des aiguilles d'une montre est appelé sens :", "type": "menu", "options": ["Trigonométrique ou positif", "Horaire ou négatif", "Neutre"], "rep": "Trigonométrique ou positif"},
+            {"id": "q2_6", "q": "Pour obtenir l'équilibre de rotation, la somme algébrique des moments doit être :", "type": "menu", "options": ["Nulle", "Supérieure à 1", "Infinie"], "rep": "Nulle"},
+            {"id": "q2_7", "q": "Quel symbole mathématique est utilisé pour représenter la somme des moments ?", "type": "menu", "options": ["Sigma (S)", "Delta (D)", "Pi (P)"], "rep": "Sigma (S)"},
+            {"id": "q2_8", "q": "Si deux forces opposées créent des effets de rotation qui se compensent, le solide :", "type": "menu", "options": ["Reste immobile", "Tourne de plus en plus vite", "Se déforme"], "rep": "Reste immobile"},
+            {"id": "q2_9", "q": "Un solide pivotant autour d'un axe fixe possède combien de degrés de liberté en rotation ?", "type": "menu", "options": ["Un seul", "Deux", "Trois"], "rep": "Un seul"},
+            {"id": "q2_10", "q": "L'expression mathématique de la condition d'équilibre en rotation est :", "type": "menu", "options": ["Sum M = 0", "Sum F = 0", "M = F x d"], "rep": "Sum M = 0"}
+        ]
+        copie_base = list(base_quiz2_rotation)
+        random.shuffle(copie_base)
+        st.session_state.ordre_quiz2_rotation = copie_base
+
+    col_double_quiz_r2, col_double_trous_r2 = st.columns(2)
+
+    with col_double_quiz_r2:
+        st.markdown("##### Quiz sur les conditions de rotation (10 questions - 10 pts)")
+        dict_reponses_quiz = {}
+        
+        for idx, q_data in enumerate(st.session_state.ordre_quiz2_rotation, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"rotation_cl_g_{q_data['id']}"
+            
+            cle_shuff_opts = f"opts_shuff_rotation_{q_data['id']}"
+            if cle_shuff_opts not in st.session_state:
+                opts_copie = list(q_data["options"])
+                random.shuffle(opts_copie)
+                st.session_state[cle_shuff_opts] = ["Choisir..."] + opts_copie
+                
+            val_p = st.session_state.get(cle_select, "Choisir...")
+            sel_idx = st.session_state[cle_shuff_opts].index(val_p) if val_p in st.session_state[cle_shuff_opts] else 0
+            
+            dict_reponses_quiz[q_data["id"]] = st.selectbox(
+                "", st.session_state[cle_shuff_opts], 
+                index=sel_idx, key=cle_select, 
+                disabled=verrouille, label_visibility="collapsed"
+            )
+
+    with col_double_trous_r2:
+        st.markdown("##### Synthèse sur l'équilibre (10 trous - 10 pts)")
+        dict_trous = {}
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. Un solide mobile autour d'un axe fixe est en")
+        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "Équilibre", "Mouvement", "Tension"], key="rot_t1_s2", disabled=verrouille, label_visibility="collapsed")
+        
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. si la somme algébrique des forces ne provoque aucun changement et que la somme des")
+        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "Moments", "Masses", "Vecteurs"], key="rot_t2_s2", disabled=verrouille, label_visibility="collapsed")
+        
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. de toutes les forces appliquées est nulle. Le choix du sens de rotation")
+        with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "Positif", "Nul", "Identique"], key="rot_t3_s2", disabled=verrouille, label_visibility="collapsed")
+        
+        c47, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c47: st.write("4. est défini de manière arbitraire. Les forces agissant dans ce sens ont un moment")
+        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "Positif", "Négatif", "Nul"], key="rot_t4_s2", disabled=verrouille, label_visibility="collapsed")
+        
+        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9: st.write("5. tandis que les forces agissant dans le sens opposé possèdent un moment")
+        with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", "Négatif", "Positif", "Inconnu"], key="rot_t5_s2", disabled=verrouille, label_visibility="collapsed")
+        
+        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c11: st.write("6. L'axe autour duquel s'effectue le pivotement est noté par la lettre grecque")
+        with c12: dict_trous["t6"] = st.selectbox("", ["Choisir...", "Delta", "Sigma", "Omega"], key="rot_t6_s2", disabled=verrouille, label_visibility="collapsed")
+        
+        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c13: st.write("7. Une force dont la ligne d'action est parallèle à cet axe engendre un moment")
+        with c14: dict_trous["t7"] = st.selectbox("", ["Choisir...", "Nul", "Maximum", "Variable"], key="rot_t7_s2", disabled=verrouille, label_visibility="collapsed")
+        
+        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c15: st.write("8. Une action mécanique qui coupe l'axe de rotation ne peut pas faire")
+        with c16: dict_trous["t8"] = st.selectbox("", ["Choisir...", "Tourner", "Glisser", "Accélérer"], key="rot_t8_s2", disabled=verrouille, label_visibility="collapsed")
+        
+        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c17: st.write("9. L'état d'immobilité empêche le système de subir une modification de sa vitesse")
+        with c18: dict_trous["t9"] = st.selectbox("", ["Choisir...", "Angulaire", "Linéaire", "Initiale"], key="rot_t9_s2", disabled=verrouille, label_visibility="collapsed")
+        
+        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c19: st.write("10. Cette loi physique fondamentale régit le fonctionnement de tous les types de")
+        with c20: dict_trous["t10"] = st.selectbox("", ["Choisir...", "Leviers", "Moteurs", "Pistons"], key="rot_t10_s2", disabled=verrouille, label_visibility="collapsed")
+
+    return dict_reponses_quiz, dict_trous
+
+
+
 def afficher_questions_forces_dynamiques(verrouille=False):
     import random
     
@@ -596,6 +784,467 @@ with tab1:
             mime="text/html",
             use_container_width=True
         )
+
+
+with tab2:
+    st.header("Équilibre en rotation")
+    
+    st.subheader("1. Définition de la rotation autour d'un axe fixe")
+    st.write(
+        "Un solide est en mouvement de rotation autour d'un axe fixe Delta si tous ses points "
+        "décrivent des trajectoires circulaires centrées sur cet axe. Lorsque le solide ne bouge pas, "
+        "malgré les forces qui s'exercent sur lui, il est dit en équilibre de rotation."
+    )
+    
+    st.subheader("2. Notion de sens de rotation et convention")
+    st.write(
+        "Pour étudier l'effet des forces sur un objet pivotant, il est obligatoire de choisir un sens "
+        "de rotation considéré comme positif. Par convention :"
+    )
+    st.markdown(
+        """
+        *   **Le sens positif (ou trigonométrique)** : Sens inverse des aiguilles d'une montre.
+        *   **Le sens négatif (ou horaire)** : Sens des aiguilles d'une montre.
+        """
+    )
+    st.write(
+        "Une force qui tend à faire tourner le système dans le sens positif aura un effet positif, "
+        "tandis qu'une force qui tend à le faire tourner dans le sens inverse aura un effet négatif."
+    )
+
+    st.subheader("3. Condition d'équilibre d'un système en rotation")
+    st.write(
+        "Pour qu'un objet soumis à un axe fixe reste en parfait équilibre de rotation, il faut que les "
+        "actions qui le font tourner dans un sens compensent exactement celles qui le font tourner dans l'autre. "
+        "La somme algébrique des effets de rotation de toutes les forces appliquées doit donc être égale à zéro."
+    )
+
+    # --- LOGIQUE DE COUPLAGE ET VALIDATION DE L'ONGLET 2 ---
+    st.divider()
+    st.subheader("4. Évaluation sur l'équilibre en rotation")
+    
+    verrou_rotation_2 = st.session_state.get("rotation_verrouille_tab2", False)
+    res_q2, res_t2 = afficher_questions_rotation_dynamiques(verrouille=verrou_rotation_2)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_rotation2 = st.checkbox(
+        "Je certifie avoir complété les questions de l'évaluation sur l'équilibre en rotation.", 
+        key="check_certif_rotation2_official", 
+        disabled=verrou_rotation_2
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ÉVALUATION DE LA ROTATION", key="btn_export_rotation2_official_net", use_container_width=True, disabled=verrou_rotation_2):
+        if not st.session_state.get("identifie", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_rotation2:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q2 = 0.0
+            if "ordre_quiz2_rotation" in st.session_state:
+                for q_item in st.session_state.ordre_quiz2_rotation:
+                    reponse_eleve = st.session_state.get(f"rotation_cl_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q2 += 1.0
+
+            score_t2 = sum([
+                st.session_state.get("rot_t1_s2") == "Équilibre",
+                st.session_state.get("rot_t2_s2") == "Moments",
+                st.session_state.get("rot_t3_s2") == "Positif",
+                st.session_state.get("rot_t4_s2") == "Positif",
+                st.session_state.get("rot_t5_s2") == "Négatif",
+                st.session_state.get("rot_t6_s2") == "Delta",
+                st.session_state.get("rot_t7_s2") == "Nul",
+                st.session_state.get("rot_t8_s2") == "Tourner",
+                st.session_state.get("rot_t9_s2") == "Angulaire",
+                st.session_state.get("rot_t10_s2") == "Leviers"
+            ])
+
+            st.session_state.score_rotation2_p1 = round(float(score_q2), 1)
+            st.session_state.score_rotation2_p2 = round(float(score_t2), 1)
+            st.session_state.score_final_rotation2 = round(float(score_q2 + score_t2), 1)
+            st.session_state.rotation_verrouille_tab2 = True
+            st.rerun()
+
+    if st.session_state.get("rotation_verrouille_tab2", False):
+        scr1 = st.session_state.get("score_rotation2_p1", 0.0)
+        scr2 = st.session_state.get("score_rotation2_p2", 0.0)
+        tot_s = st.session_state.get("score_final_rotation2", 0.0)
+
+        timestamp_rotation2 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"SECTION ROTATION SCELLÉE | Note de session : {tot_s:.1f} / 20")
+
+        html_export_rotation2 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Équilibre en rotation - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Évaluation : Lois fondamentales de l'équilibre en rotation autour d'un axe fixe</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_rotation2}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des notes générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                &bull; Note obtenue au Quiz sur les conditions de rotation : <strong>{scr1:.1f} / 10</strong><br>
+                &bull; Note obtenue à la Synthèse sur l'équilibre : <strong>{scr2:.1f} / 10</strong><br>
+                &bull; Note Totale de la section : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">Correction détaillée du Quiz (ordre d'affichage de la session)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz2_rotation" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz2_rotation, 1):
+                saisie = st.session_state.get(f"rotation_cl_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_rotation2 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_rotation2 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">Correction détaillée des trous de synthèse</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Énoncé de cours</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous2 = [
+            "1. Un solide mobile autour d'un axe fixe est en",
+            "2. si la somme algébrique des forces ne provoque aucun changement et que la somme des",
+            "3. de toutes les forces appliquées est nulle. Le choix du sens de rotation",
+            "4. est défini de manière arbitraire. Les forces agissant dans ce sens ont un moment",
+            "5. tandis que les forces agissant dans le sens opposé possèdent un moment",
+            "6. L'axe autour duquel s'effectue le pivotement est noté par la lettre grecque",
+            "7. Une force dont la ligne d'action est parallèle à cet axe engendre un moment",
+            "8. Une action mécanique qui coupe l'axe de rotation ne peut pas faire",
+            "9. L'état d'immobilité empêche le système de subir une modification de sa vitesse",
+            "10. Cette loi physique fondamentale régit le fonctionnement de tous les types de"
+        ]
+        attendus_trous2 = ["Équilibre", "Moments", "Positif", "Positif", "Négatif", "Delta", "Nul", "Tourner", "Angulaire", "Leviers"]
+        cles_trous2 = ["rot_t1_s2", "rot_t2_s2", "rot_t3_s2", "rot_t4_s2", "rot_t5_s2", "rot_t6_s2", "rot_t7_s2", "rot_t8_s2", "rot_t9_s2", "rot_t10_s2"]
+
+        for idx, (phrase, attendu, cle) in enumerate(zip(phrases_trous2, attendus_trous2, cles_trous2), 1):
+            saisie_t = st.session_state.get(cle, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_rotation2 += f"<tr><td>{idx}</td><td>{phrase} ...</td><td>{saisie_t}</td><td>{attendu}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_rotation2 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        nom_fichier_html2 = preparer_nom_fichier("rapport_rotation") + ".html"
+        st.download_button(
+            label="Télécharger le fichier de rapport officiel de l'Atelier 2 (HTML)",
+            data=html_export_rotation2,
+            file_name=nom_fichier_html2,
+            mime="text/html",
+            use_container_width=True
+        )
+
+
+with tab3:
+    st.header("Théorème des moments")
+    
+    if not st.session_state.identifie:
+        st.warning("Veuillez d'abord valider votre identité dans l'onglet 'Identification'.")
+    else:
+        st.subheader("1. Rappel de cours sur le moment d'une force")
+        st.markdown("Formule fondamentale : $M_{\\Delta}(\\vec{F}) = F \\times d$")
+        st.write(
+            "Le moment est exprimé en Newton-mètre (N.m). L'intensité de la force F est en Newtons (N) "
+            "et la distance d, représentant le bras de levier, est impérativement convertie en mètres (m)."
+        )
+        
+        st.subheader("2. Laboratoire virtuel d'expérimentation")
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.subheader("Configuration des actions")
+            f1 = st.slider("Force gauche (F1 en N)", 10, 200, 100, step=10)
+            d1 = st.slider("Bras de levier gauche (d1 en m)", 0.5, 4.0, 2.0, step=0.1)
+            
+            st.divider()
+            
+            f2 = st.slider("Force droite (F2 en N)", 10, 200, 50, step=10)
+            d2_cible = round((f1 * d1) / f2, 2)
+            
+            st.info(f"Objectif : Pour obtenir l'équilibre parfait, la distance théorique d2 doit être de {d2_cible} m.")
+            d2_user = st.slider("Ajustez votre position réelle (d2 en m)", 0.5, 4.0, 3.5, step=0.1)
+
+        with col2:
+            st.subheader("Schéma de la situation")
+            
+            fig, ax = plt.subplots(figsize=(6, 4))
+            ax.plot([-4.5, 4.5], [0, 0], color="brown", lw=6)
+            ax.plot([0, -0.3, 0.3, 0], [0, -0.5, -0.5, 0], color="black", lw=3)
+            ax.text(-0.3, -0.9, "Axe D", fontsize=10, weight='bold')
+
+            # Force GAUCHE
+            ax.annotate('', xy=(-d1, -1), xytext=(-d1, 0), arrowprops=dict(facecolor='red', width=3, headwidth=10))
+            ax.text(-d1 - 0.5, -1.3, f"F1: {f1}N", color='red', weight='bold')
+            ax.text(-d1/2, 0.2, f"{d1}m", color='red')
+
+            # Force DROITE
+            ax.annotate('', xy=(d2_user, -1), xytext=(d2_user, 0), arrowprops=dict(facecolor='green', width=3, headwidth=10))
+            ax.text(d2_user - 0.2, -1.3, f"F2: {f2}N", color='green', weight='bold')
+            ax.text(d2_user/2, 0.2, f"{d2_user}m", color='green')
+
+            ax.set_xlim(-5, 5)
+            ax.set_ylim(-2, 1)
+            ax.axis('off')
+            
+            mom_gauche = f1 * d1
+            mom_droite = f2 * d2_user
+            
+            if abs(mom_gauche - mom_droite) < 1.0:
+                ax.title.set_text("PARFAIT ÉQUILIBRE !")
+                ax.title.set_color("green")
+                st.success("Bravo ! L'équilibre des moments est respecté.")
+            elif mom_gauche > mom_droite:
+                ax.title.set_text("BASCULE A GAUCHE")
+                ax.title.set_color("red")
+                st.error("Le moment à gauche est supérieur. Augmentez d2 ou diminuez d1.")
+            else:
+                ax.title.set_text("BASCULE A DROITE")
+                ax.title.set_color("red")
+                st.error("Le moment à droite est supérieur. Rapprochez la force F2.")
+
+            st.pyplot(fig)
+            
+            nom_image = preparer_nom_fichier("theoreme_moments") + ".jpg"
+            plt.savefig("temp_schema.jpg", format="jpg", dpi=150, bbox_inches='tight')
+            with open("temp_schema.jpg", "rb") as file:
+                st.download_button(label="Télécharger le schéma (JPG)", data=file, file_name=nom_image, mime="image/jpeg")
+
+        # --- LOGIQUE DE COUPLAGE ET VALIDATION DE L'ONGLET 3 ---
+        st.divider()
+        st.subheader("3. Évaluation sur le théorème des moments")
+        
+        verrou_moments_3 = st.session_state.get("moments_verrouille_tab3", False)
+        res_q3, res_t3 = afficher_questions_moments_dynamiques(verrouille=verrou_moments_3)
+
+        st.write("---")
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+        case_certif_moments3 = st.checkbox(
+            "Je certifie avoir complété les questions de l'évaluation sur le théorème des moments.", 
+            key="check_certif_moments3_official", 
+            disabled=verrou_moments_3
+        )
+
+        if st.button("VALIDER ET EXPORTER LE BILAN DU THÉORÈME DES MOMENTS", key="btn_export_moments3_official_net", use_container_width=True, disabled=verrou_moments_3):
+            if not st.session_state.get("identifie", False):
+                st.error("Action refusée : Saisissez votre identity dans l'onglet 'Identification'.")
+            elif not case_certif_moments3:
+                st.error("Action refusée : Cochez la case de certification.")
+            else:
+                score_q3 = 0.0
+                if "ordre_quiz3_moments" in st.session_state:
+                    for q_item in st.session_state.ordre_quiz3_moments:
+                        reponse_eleve = st.session_state.get(f"moments_cl_g_{q_item['id']}", "Choisir...")
+                        if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                            score_q3 += 1.0
+
+                score_t3 = sum([
+                    st.session_state.get("mom_t1_s3") == "Bras de levier",
+                    st.session_state.get("mom_t2_s3") == "Perpendiculaire",
+                    st.session_state.get("mom_t3_s3") == "Force",
+                    st.session_state.get("mom_t4_s3") == "Newton-mètre",
+                    st.session_state.get("mom_t5_s3") == "Nulle",
+                    st.session_state.get("mom_t6_s3") == "Rotation",
+                    st.session_state.get("mom_t7_s3") == "Trigonométrique",
+                    st.session_state.get("mom_t8_s3") == "Horaire",
+                    st.session_state.get("mom_t9_s3") == "Sigma",
+                    st.session_state.get("mom_t10_s3") == "Leviers"
+                ])
+
+                st.session_state.score_moments3_p1 = round(float(score_q3), 1)
+                st.session_state.score_moments3_p2 = round(float(score_t3), 1)
+                st.session_state.score_final_moments3 = round(float(score_q3 + score_t3), 1)
+                st.session_state.moments_verrouille_tab3 = True
+                st.rerun()
+
+        if st.session_state.get("moments_verrouille_tab3", False):
+            scr1 = st.session_state.get("score_moments3_p1", 0.0)
+            scr2 = st.session_state.get("score_moments3_p2", 0.0)
+            tot_s = st.session_state.get("score_final_moments3", 0.0)
+
+            timestamp_moments3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+            st.success(f"SECTION THÉORÈME DES MOMENTS SCELLÉE | Note de session : {tot_s:.1f} / 20")
+
+            html_export_moments3 = f"""<!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Rapport Théorème des moments - {n_eleve}</title>
+                <style>
+                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                    table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                </style>
+            </head>
+            <body>
+                <div class="header-box">
+                    <h1>Professeur Laurent GALLET</h1>
+                    <p>Évaluation : Modélisation des actions mécaniques et théorème des moments</p>
+                    <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                    <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_moments3}</p>
+                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+                </div>
+                
+                <div class="sub-title">Récapitulatif des notes générées</div>
+                <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                    &bull; Note obtenue au Quiz sur le calcul des moments : <strong>{scr1:.1f} / 10</strong><br>
+                    &bull; Note obtenue à la Synthèse mathématique : <strong>{scr2:.1f} / 10</strong><br>
+                    &bull; Note Totale de la section : <strong>{tot_s:.1f} / 20</strong>
+                </p>
+
+                <div class="sub-title">Correction détaillée du Quiz (ordre d'affichage de la session)</div>
+                <table>
+                    <thead>
+
+                    <tr>
+                        <th>N°</th>
+                        <th>Question Posée</th>
+                        <th>Saisie Élève</th>
+                        <th>Attendu Académique</th>
+                        <th>Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz3_moments" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz3_moments, 1):
+                saisie = st.session_state.get(f"moments_cl_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_moments3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_moments3 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">Correction détaillée des trous de synthèse</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>N°</th>
+                        <th>Énoncé de cours</th>
+                        <th>Saisie Élève</th>
+                        <th>Attendu Académique</th>
+                        <th>Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous3 = [
+            "1. Le moment d'une force par rapport à un axe est le produit de la force par le",
+            "2. Ce bras de levier correspond à la distance la plus courte, mesurée de façon",
+            "3. entre l'axe de rotation Delta et la ligne d'action du vecteur",
+            "4. L'unité de mesure combinée s'écrit sous la forme mathématique du",
+            "5. Si la droite d'action d'une force coupe directement l'axe, la distance est",
+            "6. Dans ce cas spécifique, l'action mécanique ne produit aucun effet de",
+            "7. À l'équilibre, la somme des moments qui font tourner dans le sens",
+            "8. compense les moments opposés. On affecte un signe moins aux rotations du sens",
+            "9. La somme algébrique totale de ces grandeurs est représentée par le symbole",
+            "10. L'application pratique directe de cette loi se retrouve dans l'utilisation des"
+        ]
+        attendus_trous3 = ["Bras de levier", "Perpendiculaire", "Force", "Newton-mètre", "Nulle", "Rotation", "Trigonométrique", "Horaire", "Sigma", "Leviers"]
+        cles_trous3 = ["mom_t1_s3", "mom_t2_s3", "mom_t3_s3", "mom_t4_s3", "mom_t5_s3", "mom_t6_s3", "mom_t7_s3", "mom_t8_s3", "mom_t9_s3", "mom_t10_s3"]
+
+        for idx, (phrase, attendu, cle) in enumerate(zip(phrases_trous3, attendus_trous3, cles_trous3), 1):
+            saisie_t = st.session_state.get(cle, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_moments3 += f"<tr><td>{idx}</td><td>{phrase} ...</td><td>{saisie_t}</td><td>{attendu}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_moments3 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        nom_fichier_html3 = preparer_nom_fichier("rapport_moments") + ".html"
+        st.download_button(
+            label="Télécharger le fichier de rapport officiel de l'Atelier 3 (HTML)",
+            data=html_export_moments3,
+            file_name=nom_fichier_html3,
+            mime="text/html",
+            use_container_width=True
+        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
