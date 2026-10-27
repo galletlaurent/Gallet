@@ -4119,23 +4119,46 @@ with tab6:
 
 
 with tab7:
-    st.header("Atelier 7 : Loi Binomiale (Repetition d'experiences)")
+    st.header("Atelier 7 : Loi Binomiale (Répétition d'expériences)")
     
     # =========================================================================
-    # RAPPEL DE COURS TECHNIQUE (FORMAT LATEX)
+    # RAPPEL DE COURS TECHNIQUE (STYLE INJECTÉ ET FORMAT LATEX FONCTIONNEL)
     # =========================================================================
+    # Injection du style CSS personnalisé (si non défini plus haut dans la page)
     st.markdown("""
-    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
-        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel des Formules de la Loi Binomiale B(n, p) :</p>
-        <ul>
-            <li><strong>Probabilite d'obtenir exactement k succes :</strong> $P(X = k) = \\binom{n}{k} \\cdot p^k \\cdot (1-p)^{n-k}$</li>
-            <li><strong>Coefficients binomiaux (Combinaisons) :</strong> $\\binom{n}{k} = \\frac{n!}{k!(n-k)!}$</li>
-            <li><strong>Esperance Mathematique (Nombre moyen de succes) :</strong> $E(X) = n \\cdot p$</li>
-            <li><strong>Variance et Ecart-type :</strong> $V(X) = n \\cdot p \\cdot (1-p)$ et $\\sigma(X) = \\sqrt{V(X)}$</li>
-        </ul>
+        <style>
+        .rappel-cours-box {
+            background-color: #f8fafc; 
+            border-left: 4px solid #1e3a8a; 
+            padding: 15px; 
+            border-radius: 4px; 
+            margin-bottom: 20px;
+        }
+        .rappel-cours-title {
+            font-weight: bold; 
+            color: #1e3a8a; 
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # Rendu de l'encadré avec le Markdown et le LaTeX interprétés
+    st.markdown("""
+    <div class="rappel-cours-box">
+        <p class="rappel-cours-title">Rappel des Formules de la Loi Binomiale $\mathcal{B}(n, p)$ :</p>
+
+- **Probabilité d'obtenir exactement $k$ succès :** $P(X = k) = \\binom{n}{k} \\cdot p^k \\cdot (1-p)^{n-k}$
+- **Coefficients binomiaux (Combinaisons) :** $\\binom{n}{k} = \\frac{n!}{k!(n-k)!}$
+- **Espérance Mathématique (Nombre moyen de succès) :** $E(X) = n \\cdot p$
+- **Variance et Écart-type :** $V(X) = n \\cdot p \\cdot (1-p)$ et $\\sigma(X) = \\sqrt{V(X)}$
+
     </div>
     """, unsafe_allow_html=True)
 
+    # =========================================================================
+    # INITIALISATION DU SESSION STATE ATELIER 7
+    # =========================================================================
     if "at7_verrouille" not in st.session_state:
         st.session_state.at7_verrouille = False
     if "at7_afficher_correction" not in st.session_state:
