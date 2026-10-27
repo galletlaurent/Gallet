@@ -978,16 +978,13 @@ with tab2:
 
 with tab3:
     st.header("Théorème des moments")
-    
-    if not st.session_state.identifie:
-        st.warning("Veuillez d'abord valider votre identité dans l'onglet 'Identification'.")
-    else:
-        st.subheader("1. Rappel de cours sur le moment d'une force")
-        st.markdown("Formule fondamentale : $M_{\\Delta}(\\vec{F}) = F \\times d$")
-        st.write(
-            "Le moment est exprimé en Newton-mètre (N.m). L'intensité de la force F est en Newtons (N) "
-            "et la distance d, représentant le bras de levier, est impérativement convertie en mètres (m)."
-        )
+
+    st.subheader("1. Rappel de cours sur le moment d'une force")
+    st.markdown("Formule fondamentale : $M_{\\Delta}(\\vec{F}) = F \\times d$")
+    st.write(
+        "Le moment est exprimé en Newton-mètre (N.m). L'intensité de la force F est en Newtons (N) "
+        "et la distance d, représentant le bras de levier, est impérativement convertie en mètres (m)."
+    )
         
         st.subheader("2. Laboratoire virtuel d'expérimentation")
         col1, col2 = st.columns(2)
