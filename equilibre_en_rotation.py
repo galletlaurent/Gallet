@@ -2212,6 +2212,13 @@ with tab6:
             st.session_state.ex2_verrouille_tab6 = True
             st.rerun()
     if st.session_state.get("ex2_verrouille_tab6", False):
+        # Récupération globale des variables nécessaires pour l'affichage du bloc scellé et du HTML
+        f1_user = st.session_state.get("ex2_f1_aleatoire", 12000)
+        d1_user = st.session_state.get("ex2_d1_aleatoire", 15)
+        f2_user = st.session_state.get("ex2_f2_aleatoire", 36000)
+        d2_user_attendu = round((f1_user * d1_user) / f2_user, 2)
+        m1_user = f1_user * d1_user
+
         scr1 = st.session_state.get("score_ex2_p1", 0.0)
         scr2 = st.session_state.get("score_ex2_p2", 0.0)
         tot_s = st.session_state.get("score_final_ex2", 0.0)
@@ -2312,4 +2319,3 @@ with tab6:
 
         nom_fichier_ex2 = preparer_nom_fichier("rapport_exemple2") + ".html"
         st.download_button(label="Télécharger le fichier de rapport officiel Exemple 2 (HTML)", data=html_export_ex2, file_name=nom_fichier_ex2, mime="text/html", use_container_width=True)
-
