@@ -1111,7 +1111,7 @@ with tab2:
     # --- LOGIQUE DE COUPLAGE ET VALIDATION DE L'ONGLET 2 ---
     st.divider()
     st.subheader("4. Évaluation sur l'équilibre en rotation")
-    
+
     verrou_rotation_2 = st.session_state.get("rotation_verrouille_tab2", False)
     res_q2, res_t2 = afficher_questions_rotation_dynamiques(verrouille=verrou_rotation_2)
 
@@ -1121,13 +1121,14 @@ with tab2:
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_rotation2 = st.checkbox(
-        "Je certifie avoir complété les questions de l'évaluation sur l'équilibre en rotation.", 
-        key="check_certif_rotation2_official", 
+        "Je certifie avoir complété les questions de l'évaluation sur l'équilibre en rotation.",
+        key="check_certif_rotation2_official",
         disabled=verrou_rotation_2
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ÉVALUATION DE LA ROTATION", key="btn_export_rotation2_official_net", use_container_width=True, disabled=verrou_rotation_2):
-        if not st.session_state.get("identifie", False):
+        # Correction de la clé de sécurité ici : verrouille au lieu de identifie
+        if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_rotation2:
             st.error("Action refusée : Cochez la case de certification.")
@@ -1467,7 +1468,7 @@ with tab3:
     # --- LOGIQUE DE COUPLAGE ET VALIDATION DE L'ONGLET 3 ---
     st.divider()
     st.subheader("3. Évaluation sur le théorème des moments")
-    
+
     verrou_moments_3 = st.session_state.get("moments_verrouille_tab3", False)
     res_q3, res_t3 = afficher_questions_moments_dynamiques(verrouille=verrou_moments_3)
 
@@ -1477,14 +1478,15 @@ with tab3:
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_moments3 = st.checkbox(
-        "Je certifie avoir complété les questions de l'évaluation sur le théorème des moments.", 
-        key="check_certif_moments3_official", 
+        "Je certifie avoir complété les questions de l'évaluation sur le théorème des moments.",
+        key="check_certif_moments3_official",
         disabled=verrou_moments_3
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DU THÉORÈME DES MOMENTS", key="btn_export_moments3_official_net", use_container_width=True, disabled=verrou_moments_3):
-        if not st.session_state.get("identifie", False):
-            st.error("Action refusée : Saisissez votre identity dans l'onglet 'Identification'.")
+        # Correction de la clé de sécurité ici : verrouille au lieu de identifie
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_moments3:
             st.error("Action refusée : Cochez la case de certification.")
         else:
@@ -1751,7 +1753,7 @@ with tab4:
     # --- LOGIQUE DE COUPLAGE ET VALIDATION DE L'ONGLET 4 ---
     st.divider()
     st.subheader("3. Évaluation sur les applications mécaniques")
-    
+
     verrou_apps_4 = st.session_state.get("apps_verrouille_tab4", False)
     res_q4, res_t4 = afficher_questions_applications_dynamiques(verrouille=verrou_apps_4)
 
@@ -1761,13 +1763,14 @@ with tab4:
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_apps4 = st.checkbox(
-        "Je certifie avoir complété les questions de l'évaluation sur les applications.", 
-        key="check_certif_apps4_official", 
+        "Je certifie avoir complété les questions de l'évaluation sur les applications.",
+        key="check_certif_apps4_official",
         disabled=verrou_apps_4
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DES APPLICATIONS EN MÉCANIQUE", key="btn_export_apps4_official_net", use_container_width=True, disabled=verrou_apps_4):
-        if not st.session_state.get("identifie", False):
+        # Correction de la clé de sécurité ici : verrouille au lieu de identifie
+        if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_apps4:
             st.error("Action refusée : Cochez la case de certification.")
@@ -1959,7 +1962,7 @@ with tab5:
 
     st.divider()
     st.subheader("Évaluation et exercices de l'Exemple 1")
-    
+
     verrou_ex1 = st.session_state.get("ex1_verrouille_tab5", False)
     res_q_ex1, res_t_ex1 = afficher_questions_exemple1_dynamiques(verrouille=verrou_ex1)
 
@@ -1969,18 +1972,19 @@ with tab5:
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_ex1 = st.checkbox(
-        "Je certifie avoir complété les questions de l'Atelier Exemple 1.", 
-        key="check_certif_ex1_official", 
+        "Je certifie avoir complété les questions de l'Atelier Exemple 1.",
+        key="check_certif_ex1_official",
         disabled=verrou_ex1
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'EXEMPLE 1", key="btn_export_ex1_official_net", use_container_width=True, disabled=verrou_ex1):
-        if not st.session_state.get("identifie", False):
+        # Correction de la clé de sécurité ici : verrouille au lieu de identifie
+        if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_ex1:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # 1. Correction du Quiz Technique (10 points)
+            # # 1. Correction du Quiz Technique (10 points)
             score_q1 = 0.0
             if "ordre_quiz_ex1" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_ex1:
@@ -1988,7 +1992,7 @@ with tab5:
                     if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
                         score_q1 += 1.0
 
-            # 2. Correction de la Synthèse d'atelier (10 points)
+            # # 2. Correction de la Synthèse d'atelier (10 points)
             score_t1 = sum([
                 st.session_state.get("ex1_t1_s5") == f"{d_m_attendu} m",
                 st.session_state.get("ex1_t2_s5") == "100",
@@ -2151,7 +2155,7 @@ with tab6:
 
     st.divider()
     st.subheader("Évaluation et exercices de l'Exemple 2")
-    
+
     verrou_ex2 = st.session_state.get("ex2_verrouille_tab6", False)
     res_q_ex2, res_t_ex2 = afficher_questions_exemple2_dynamiques(verrouille=verrou_ex2)
 
@@ -2161,18 +2165,19 @@ with tab6:
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_ex2 = st.checkbox(
-        "Je certifie avoir complété les questions de l'Atelier Exemple 2.", 
-        key="check_certif_ex2_official", 
+        "Je certifie avoir complété les questions de l'Atelier Exemple 2.",
+        key="check_certif_ex2_official",
         disabled=verrou_ex2
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'EXEMPLE 2", key="btn_export_ex2_official_net", use_container_width=True, disabled=verrou_ex2):
-        if not st.session_state.get("identifie", False):
+        # Correction de la clé de sécurité ici : verrouille au lieu de identifie
+        if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_ex2:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # 1. Correction du Quiz Technique (10 points)
+            # # 1. Correction du Quiz Technique (10 points)
             score_q2 = 0.0
             if "ordre_quiz_ex2" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_ex2:
@@ -2180,7 +2185,7 @@ with tab6:
                     if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
                         score_q2 += 1.0
 
-            # 2. Correction de la Synthèse mécanique (10 points)
+            # # 2. Correction de la Synthèse mécanique (10 points)
             score_t2 = sum([
                 st.session_state.get("ex2_t1_s6") == f"{m1_user} N.m",
                 st.session_state.get("ex2_t2_s6") == f"{m1_user} N.m",
