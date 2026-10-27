@@ -1056,19 +1056,19 @@ with tab2:
     st.header("Base de sustentation")
     
     # Section 1 : Théorie
-    st.subheader("1. Approche historique et theorique")
+    st.subheader("1. Approche historique et théorique")
     st.write("""
-    L'etude de la stabilite des corps remonte aux fondements de la statique geometrique. **Archimede de Syracuse** 
-    pose les premieres bases de la geometrie des centres de gravite dans son traite *De l'equilibre des figures planes*. 
-    Plus tard, au XVIIe siecle, **Giovanni Alfonso Borelli** formalise le fait que le maintien de la station debout 
-    exige que la projection verticale du centre de gravite tombe precisement entre les pieds.
+    L'étude de la stabilité des corps remonte aux fondements de la statique géométrique. **Archimède de Syracuse** 
+    pose les premières bases de la géométrie des centres de gravité dans son traité *De l'équilibre des figures planes*. 
+    Plus tard, au XVIIe siècle, **Giovanni Alfonso Borelli** formalise le fait que le maintien de la station debout 
+    exige que la projection verticale du centre de gravité tombe précisément entre les pieds.
     
-    ### Definition mecanique
-    La base de sustentation est la surface geometrique plane convexe minimale qui enveloppe l'ensemble des points 
+    ### Définition mécanique
+    La base de sustentation est la surface géométrique plane convexe minimale qui enveloppe l'ensemble des points 
     d'appui d'un corps avec le sol. 
     
-    Pour qu'un solide reste en equilibre statique, la droite d'action verticale de son poids (passant par le centre 
-    de gravite G) doit imperativement intersecter la surface de cette base de sustentation.
+    Pour qu'un solide reste en équilibre statique, la droite d'action verticale de son poids (passant par le centre 
+    de gravité G) doit impérativement intersecter la surface de cette base de sustentation.
     """)
     
     # Section 2 : Exemples en images (Fichiers JPG)
@@ -1077,36 +1077,35 @@ with tab2:
     col1, col2 = st.columns(2)
 
     with col1:
-        # Verification de la presence du fichier geometrique ou basculement textuel
+        # Vérification de la présence du fichier géométrique ou basculement textuel
         if os.path.exists("grue_stabilite.jpg"):
-            st.image("grue_stabilite.jpg", caption="Exemple 1 : Engin de chantier mecanique")
+            st.image("grue_stabilite.jpg", caption="Exemple 1 : Engin de chantier mécanique")
         else:
-            st.info("Illustration : Vue d'une grue mobile de levage avec ses quatre stabilisateurs hydrauliques deployes au maximum sur le sol.")
+            st.info("Illustration : Vue d'une grue mobile de levage avec ses quatre stabilisateurs hydrauliques déployés au maximum sur le sol.")
             
         st.write("""
-        **Analyse de la stabilite :** Les verins hydrauliques (stabilisateurs) ecartent les points de contact avec 
-        le sol bien au-dela des roues du camion. Cela agrandit la base de sustentation pour eviter le basculement 
-        lors du levage de charges lourdes reculees.
+        **Analyse de la stabilité :** Les vérins hydrauliques (stabilisateurs) écartent les points de contact avec 
+        le sol bien au-delà des roues du camion. Cela agrandit la base de sustentation pour éviter le basculement 
+        lors du levage de charges lourdes reculées.
         """)
-        
+
     with col2:
-        # Verification de la presence du fichier biomecanique ou basculement textuel
+        # Vérification de la présence du fichier biomécanique ou basculement textuel
         if os.path.exists("athlete_posture.jpg"):
-            st.image("athlete_posture.jpg", caption="Exemple 2 : Biomecanique humaine")
+            st.image("athlete_posture.jpg", caption="Exemple 2 : Biomécanique humaine")
         else:
-            st.info("Illustration : Posture basse d'un athlete en position de garde, les appuis ecartes au-dela de la largeur des epaules.")
+            st.info("Illustration : Posture basse d'un athlète en position de garde, les appuis écartés au-delà de la largeur des épaules.")
             
         st.write("""
-        **Analyse de la stabilite :** L'athlete augmente sa stabilite en ecartant les pieds (agrandissement de la 
-        base de sustentation) et en flechissant les jambes (abaissement du centre de gravite G). Cette configuration 
-        demande une force exterieure beaucoup plus elevee pour provoquer un basculement.
+        **Analyse de la stabilité :** L'athlète augmente sa stabilité en écartant les pieds (agrandissement de la 
+        base de sustentation) et en fléchissant les jambes (abaissement du centre de gravité G). Cette configuration 
+        demande une force extérieure beaucoup plus élevée pour provoquer un basculement.
         """)
+        # Section 3 : Caricature pedagogique en 4 images
+        st.subheader("Caricature de la stabilité (Séquence en 4 étapes)")
 
-    # Section 3 : Caricature pedagogique en 4 images
-    st.subheader("Caricature de la stabilité (Séquence en 4 étapes)")
-
-    # Séparation en deux colonnes : 60% pour le texte en bleu, 40% pour l'image unique
-    col_texte, col_image = st.columns([0.6, 0.4])
+        # Séparation en deux colonnes : 60% pour le texte en bleu, 40% pour l'image unique
+        col_texte, col_image = st.columns([0.6, 0.4])
 
     with col_texte:
         # Utilisation de st.info pour afficher l'ensemble du texte dans un encadré bleu avec les accents
@@ -1125,7 +1124,7 @@ with tab2:
         **Étape 4 : Rétablissement**
         Le personnage avance un pied. Cette action crée instantanément une nouvelle base de sustentation plus large, englobant à nouveau la ligne de gravité.
         """)
-
+        
     with col_image:
         # Remplacer "caricature_base_sustentation.jpg" par le nom exact de votre fichier image unique
         nom_image_caricature = "caricature_base_sustentation.jpg"
@@ -1291,7 +1290,7 @@ with tab3:
         La fixation murale glisse brusquement vers le haut le long d'un rail vertical. Les deux forces n'ont plus la même droite d'action commune. Cela crée un couple de forces qui engendre un mouvement de rotation du système.
         
         **Étape 4 : Déséquilibre et mouvement**
-        La corde se rompt définitivement. La force de reaction s'annule instantanément tandis que la force de traction interne provoque la chute du personnage vers l'arrière. La somme vectorielle n'est plus nulle.
+        La corde se rompt définitivement. La force de réaction s'annule instantanément tandis que la force de traction interne provoque la chute du personnage vers l'arrière. La somme vectorielle n'est plus nulle.
         """)
 
     with col_image:
