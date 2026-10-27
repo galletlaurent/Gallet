@@ -4542,22 +4542,45 @@ with tab7:
 
 
 with tab8:
-    st.header("Atelier 8 : Loi de Poisson (Evenements rares)")
+    st.header("Atelier 8 : Loi de Poisson (Événements rares)")
     
     # =========================================================================
-    # RAPPEL DE COURS TECHNIQUE (FORMAT LATEX)
+    # RAPPEL DE COURS TECHNIQUE (STYLE INJECTÉ ET FORMAT LATEX FONCTIONNEL)
     # =========================================================================
+    # Injection du style CSS personnalisé (si non défini plus haut dans la page)
     st.markdown("""
-    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
-        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel des Formules de la Loi de Poisson P(&lambda;) :</p>
-        <ul>
-            <li><strong>Probabilite d'obtenir exactement k evenements :</strong> $P(X = k) = \\frac{e^{-\\lambda} \\cdot \\lambda^k}{k!}$</li>
-            <li><strong>Esperance Mathematique (Nombre moyen d'evenements) :</strong> $E(X) = \\lambda$</li>
-            <li><strong>Variance et Ecart-type :</strong> $V(X) = \\lambda$ et $\\sigma(X) = \\sqrt{\\lambda}$</li>
-        </ul>
+        <style>
+        .rappel-cours-box {
+            background-color: #f8fafc; 
+            border-left: 4px solid #1e3a8a; 
+            padding: 15px; 
+            border-radius: 4px; 
+            margin-bottom: 20px;
+        }
+        .rappel-cours-title {
+            font-weight: bold; 
+            color: #1e3a8a; 
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # Rendu de l'encadré avec le Markdown et le LaTeX interprétés
+    st.markdown("""
+    <div class="rappel-cours-box">
+        <p class="rappel-cours-title">Rappel des Formules de la Loi de Poisson $\mathcal{P}(\lambda)$ :</p>
+
+- **Probabilité d'obtenir exactement $k$ événements :** $P(X = k) = \\frac{e^{-\\lambda} \\cdot \\lambda^k}{k!}$
+- **Espérance Mathématique (Nombre moyen d'événements) :** $E(X) = \\lambda$
+- **Variance et Écart-type :** $V(X) = \\lambda$ et $\\sigma(X) = \\sqrt{\\lambda}$
+
     </div>
     """, unsafe_allow_html=True)
 
+    # =========================================================================
+    # INITIALISATION DU SESSION STATE ATELIER 8
+    # =========================================================================
     if "at8_verrouille" not in st.session_state:
         st.session_state.at8_verrouille = False
     if "at8_afficher_correction" not in st.session_state:
