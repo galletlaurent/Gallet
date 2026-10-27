@@ -3248,9 +3248,9 @@ with tab5:
     <div class="rappel-cours-box">
         <p class="rappel-cours-title">Rappel des Formules du Cours :</p>
 
-- **Somme des probabilités :** $\sum p_i = p_1 + p_2 + p_3 = 1$
-- **Espérance Mathématique (Valeur moyenne) :** $E(X) = \sum x_i \cdot p_i = x_1p_1 + x_2p_2 + x_3p_3$
-- **Variance (Indicateur de dispersion) :** $V(X) = \sum (x_i)^2 \cdot p_i - [E(X)]^2$
+    - **Somme des probabilités :** $\sum p_i = p_1 + p_2 + p_3 = 1$
+    - **Espérance Mathématique (Valeur moyenne) :** $E(X) = \sum x_i \cdot p_i = x_1p_1 + x_2p_2 + x_3p_3$
+    - **Variance (Indicateur de dispersion) :** $V(X) = \sum (x_i)^2 \cdot p_i - [E(X)]^2$
 
     </div>
     """, unsafe_allow_html=True)
@@ -3708,10 +3708,10 @@ with tab6:
     <div class="rappel-cours-box">
         <p class="rappel-cours-title">Rappel des Formules de la Loi Exponentielle :</p>
 
-- **Fonction de densité :** $f(x) = \lambda e^{-\lambda x}$ pour $x \ge 0$
-- **Espérance Mathématique (Durée moyenne de vie) :** $E(X) = \\frac{1}{\\lambda}$
-- **Probabilité d'un intervalle $P(X \le t)$ :** $P(X \\le t) = 1 - e^{-\lambda t}$
-- **Probabilité de survie $P(X > t)$ :** $P(X > t) = e^{-\lambda t}$
+    - **Fonction de densité :** $f(x) = \lambda e^{-\lambda x}$ pour $x \ge 0$
+    - **Espérance Mathématique (Durée moyenne de vie) :** $E(X) = \\frac{1}{\\lambda}$
+    - **Probabilité d'un intervalle $P(X \le t)$ :** $P(X \\le t) = 1 - e^{-\lambda t}$
+    - **Probabilité de survie $P(X > t)$ :** $P(X > t) = e^{-\lambda t}$
 
     </div>
     """, unsafe_allow_html=True)
@@ -4974,13 +4974,13 @@ with tab9:
     """, unsafe_allow_html=True)
 
     # Rendu de l'encadré avec le Markdown et le LaTeX interprétés
-with st.container(border=True):
-    st.markdown("### Rappel des Formules de la Loi Normale $\mathcal{N}(\mu, \sigma^2)$ :")
-    
-    st.markdown("- **Fonction de densité (Courbe en cloche) :** $f(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}} e^{-\\frac{1}{2}\\left(\\frac{x-\\mu}{\\sigma}\\right)^2}$")
-    st.markdown("- **Espérance Mathématique (Moyenne théorique) :** $E(X) = \\mu$")
-    st.markdown("- **Variable centrée réduite :** $Z = \\frac{X - \\mu}{\\sigma}$ suit la loi normale standard $\mathcal{N}(0, 1)$")
-    st.markdown("- **Intervalles remarquables :** $P(\\mu - \\sigma \\le X \\le \\mu + \\sigma) \\approx 0{,}683$ $\\mid$ $P(\\mu - 2\\sigma \\le X \\le \\mu + 2\\sigma) \\approx 0{,}954$")
+    with st.container(border=True):
+        st.markdown("### Rappel des Formules de la Loi Normale $\mathcal{N}(\mu, \sigma^2)$ :")
+        
+        st.markdown("- **Fonction de densité (Courbe en cloche) :** $f(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}} e^{-\\frac{1}{2}\\left(\\frac{x-\\mu}{\\sigma}\\right)^2}$")
+        st.markdown("- **Espérance Mathématique (Moyenne théorique) :** $E(X) = \\mu$")
+        st.markdown("- **Variable centrée réduite :** $Z = \\frac{X - \\mu}{\\sigma}$ suit la loi normale standard $\mathcal{N}(0, 1)$")
+        st.markdown("- **Intervalles remarquables :** $P(\\mu - \\sigma \\le X \\le \\mu + \\sigma) \\approx 0{,}683$ $\\mid$ $P(\\mu - 2\\sigma \\le X \\le \\mu + 2\\sigma) \\approx 0{,}954$")
 
     # =========================================================================
     # INITIALISATION DU SESSION STATE ATELIER 9
