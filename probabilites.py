@@ -4972,17 +4972,13 @@ with tab9:
     """, unsafe_allow_html=True)
 
     # Rendu de l'encadré avec le Markdown et le LaTeX interprétés
-    st.markdown("""
-        <div class="rappel-cours-box">
-
-    ### Rappel des Formules de la Loi Normale $\mathcal{N}(\mu, \sigma^2)$ :
-- **Fonction de densité (Courbe en cloche) :** $f(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}} e^{-\\frac{1}{2}\\left(\\frac{x-\\mu}{\\sigma}\\right)^2}$
-- **Espérance Mathématique (Moyenne théorique) :** $E(X) = \\mu$
-- **Variable centrée réduite :** $Z = \\frac{X - \\mu}{\\sigma}$ suit la loi normale standard $\mathcal{N}(0, 1)$
-- **Intervalles remarquables :** $P(\\mu - \\sigma \\le X \\le \\mu + \\sigma) \\approx 0{,}683$ $\\mid$ $P(\\mu - 2\\sigma \\le X \\le \\mu + 2\\sigma) \\approx 0{,}954$
-
-    </div>
-    """, unsafe_allow_html=True)
+with st.container(border=True):
+    st.markdown("### Rappel des Formules de la Loi Normale $\mathcal{N}(\mu, \sigma^2)$ :")
+    
+    st.markdown("- **Fonction de densité (Courbe en cloche) :** $f(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}} e^{-\\frac{1}{2}\\left(\\frac{x-\\mu}{\\sigma}\\right)^2}$")
+    st.markdown("- **Espérance Mathématique (Moyenne théorique) :** $E(X) = \\mu$")
+    st.markdown("- **Variable centrée réduite :** $Z = \\frac{X - \\mu}{\\sigma}$ suit la loi normale standard $\mathcal{N}(0, 1)$")
+    st.markdown("- **Intervalles remarquables :** $P(\\mu - \\sigma \\le X \\le \\mu + \\sigma) \\approx 0{,}683$ $\\mid$ $P(\\mu - 2\\sigma \\le X \\le \\mu + 2\\sigma) \\approx 0{,}954$")
 
     # =========================================================================
     # INITIALISATION DU SESSION STATE ATELIER 9
