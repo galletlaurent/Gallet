@@ -922,163 +922,163 @@ with tab1:
        * Si le polygone reste ouvert, l'espace vide entre le point de départ et le point d'arrivée représente la **force résultante** (le déséquilibre).
     """)
 
-st.write("---")        
-if "suite_verrouille_tab1" not in st.session_state:
-    st.session_state.suite_verrouille_tab1 = False
-verrou_at1 = st.session_state.suite_verrouille_tab1
+    st.write("---")        
+    if "suite_verrouille_tab1" not in st.session_state:
+        st.session_state.suite_verrouille_tab1 = False
+    verrou_at1 = st.session_state.suite_verrouille_tab1
 
-afficher_atelier_decomposition_complet(verrouille=verrou_at1)
+    afficher_atelier_decomposition_complet(verrouille=verrou_at1)
 
-st.write("---")
-st.subheader("Synthèse et validation de l'Atelier 1")
-p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 1")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-case_certif_stat1 = st.checkbox(
-    "Je certifie avoir complété les questions de l'Atelier Décomposition.",
-    key="check_certif_generalites_final_net",
-    disabled=verrou_at1,
-)
-
-# --- 4. BLOC DE CORRECTION ET BOUTON VALIDER ---
-if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_suite1_official_net", use_container_width=True, disabled=verrou_at1):
-    if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
-        st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-    elif not case_certif_stat1: 
-        st.error("Action refusée : Cochez la case de certification.")
-    else:
-        score_q1 = 0.0
-        if "ordre_quiz_tab1_aleatoire" in st.session_state:
-            for q_item in st.session_state.ordre_quiz_tab1_aleatoire:
-                reponse_eleve = st.session_state.get(f"dec_at6_final_g_{q_item['id']}", "Choisir...")
-                if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
-                    score_q1 += 1.0
-
-        # Vérification des bonnes réponses du texte à trous adapté à la statique
-        score_t1 = sum(
-            [
-                st.session_state.get("dec_t1_final") == "orthogonales",
-                st.session_state.get("dec_t2_final") == "chevaucher",
-                st.session_state.get("dec_t3_final") == "cosinus",
-                st.session_state.get("dec_t4_final") == "sinus",
-                st.session_state.get("dec_t5_final") == "rectangle",
-                st.session_state.get("dec_t6_final") == "sens",
-                st.session_state.get("dec_t7_final") == "formules",
-                st.session_state.get("dec_t8_final") == "invariante",
-                st.session_state.get("dec_t9_final") == "verticale",
-                st.session_state.get("dec_t10_final") == "totale",
-            ]
-        )
-
-        st.session_state.score_suite1_p1 = round(float(score_q1), 1)
-        st.session_state.score_suite1_p2 = round(float(score_t1), 1)
-        st.session_state.score_final_suite1 = round(float(score_q1 + score_t1), 1)
-        st.session_state.suite_verrouille_tab1 = True
-        st.rerun()
-
-# --- COMPILATION DU DOCUMENT EXPORTABLE HTML TAB 1 ---
-if st.session_state.get("suite_verrouille_tab1", False):
-    scr1 = st.session_state.get("score_suite1_p1", 0.0)
-    scr2 = st.session_state.get("score_suite1_p2", 0.0)
-    tot_s = st.session_state.get("score_final_suite1", 0.0)
-
-    timestamp_suite1 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
-    st.success(f"ATELIER DÉCOMPOSITION SCELLÉ | Note de session : {tot_s:.1f} / 20")
-
-    html_export_suites = f"""<!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Rapport Décomposition - {n_eleve}</title>
-        <style>
-            body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-            .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-            .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-            .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-            table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-            th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-            td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-            .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-            .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-        </style>
-    </head>
-    <body>
-        <div class="header-box">
-            <h1>Rapport d'Évaluation de Mécanique - Statique</h1>
-            <p>Atelier 1 : Décomposition vectorielle des forces</p>
-            <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-            <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite1}</p>
-            <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
-        </div>
-        <div class="sub-title">Récapitulatif des Notes Générées</div>
-        <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-            Note obtenue au Quiz Décomposition : <strong>{scr1:.1f} / 10</strong><br>
-            Note obtenue à la Synthèse du cours : <strong>{scr2:.1f} / 10</strong><br>
-            Note Totale de l'Atelier 1 : <strong>{tot_s:.1f} / 20</strong>
-        </p>
-        
-        <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
-        <table>
-            <thead>
-                <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-            </thead>
-            <tbody>
-    """
-
-    if "ordre_quiz_tab1_aleatoire" in st.session_state:
-        for num, q_item in enumerate(st.session_state.ordre_quiz_tab1_aleatoire, 1):
-            saisie = st.session_state.get(f"dec_at6_final_g_{q_item['id']}", "Choisir...")
-            attendu = q_item["rep"]
-            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_suites += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-
-    html_export_suites += """
-            </tbody>
-        </table>
-
-        <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
-        <table>
-            <thead>
-                <tr><th>N° Énoncé</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-            </thead>
-            <tbody>
-    """
-
-    champs_trous_definition = [
-        ("1. Décomposer une force...", "dec_t1_final", "orthogonales"),
-        ("2. Les vecteurs associés...", "dec_t2_final", "chevaucher"),
-        ("3. La projection sur X...", "dec_t3_final", "cosinus"),
-        ("4. La projection sur Y...", "dec_t4_final", "sinus"),
-        ("5. Une composante horizontale...", "dec_t5_final", "rectangle"),
-        ("6. Trouver le signe...", "dec_t6_final", "sens"),
-        ("7. Diviser une force...", "dec_t7_final", "formules"),
-        ("8. L'intensité réelle...", "dec_t8_final", "invariante"),
-        ("9. Un vecteur oblique...", "dec_t9_final", "verticale"),
-        ("10. Combiner les sous-composantes...", "dec_t10_final", "totale")
-    ]
-
-    for label_t, key_t, attendu_t in champs_trous_definition:
-        saisie_t = st.session_state.get(key_t, "Choisir...")
-        v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
-        v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
-        html_export_suites += f"<tr><td>{label_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
-
-    html_export_suites += """
-            </tbody>
-        </table>
-    </body>
-    </html>
-    """
-    nom_fichier_html = preparer_nom_fichier("Rapport_Atelier_1").replace(".txt", ".html")
-    st.download_button(
-        label="Télécharger le rapport d'évaluation officiel de l'Atelier 1 (.html)",
-        data=html_export_suites,
-        file_name=nom_fichier_html,
-        mime="text/html",
-        use_container_width=True
+    case_certif_stat1 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Décomposition.",
+        key="check_certif_generalites_final_net",
+        disabled=verrou_at1,
     )
+
+    # --- 4. BLOC DE CORRECTION ET BOUTON VALIDER ---
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_suite1_official_net", use_container_width=True, disabled=verrou_at1):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat1: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q1 = 0.0
+            if "ordre_quiz_tab1_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab1_aleatoire:
+                    reponse_eleve = st.session_state.get(f"dec_at6_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q1 += 1.0
+
+            # Vérification des bonnes réponses du texte à trous adapté à la statique
+            score_t1 = sum(
+                [
+                    st.session_state.get("dec_t1_final") == "orthogonales",
+                    st.session_state.get("dec_t2_final") == "chevaucher",
+                    st.session_state.get("dec_t3_final") == "cosinus",
+                    st.session_state.get("dec_t4_final") == "sinus",
+                    st.session_state.get("dec_t5_final") == "rectangle",
+                    st.session_state.get("dec_t6_final") == "sens",
+                    st.session_state.get("dec_t7_final") == "formules",
+                    st.session_state.get("dec_t8_final") == "invariante",
+                    st.session_state.get("dec_t9_final") == "verticale",
+                    st.session_state.get("dec_t10_final") == "totale",
+                ]
+            )
+
+            st.session_state.score_suite1_p1 = round(float(score_q1), 1)
+            st.session_state.score_suite1_p2 = round(float(score_t1), 1)
+            st.session_state.score_final_suite1 = round(float(score_q1 + score_t1), 1)
+            st.session_state.suite_verrouille_tab1 = True
+            st.rerun()
+
+    # --- COMPILATION DU DOCUMENT EXPORTABLE HTML TAB 1 ---
+    if st.session_state.get("suite_verrouille_tab1", False):
+        scr1 = st.session_state.get("score_suite1_p1", 0.0)
+        scr2 = st.session_state.get("score_suite1_p2", 0.0)
+        tot_s = st.session_state.get("score_final_suite1", 0.0)
+
+        timestamp_suite1 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER DÉCOMPOSITION SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        html_export_suites = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Décomposition - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Mécanique - Statique</h1>
+                <p>Atelier 1 : Décomposition vectorielle des forces</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite1}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Décomposition : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse du cours : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 1 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab1_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab1_aleatoire, 1):
+                saisie = st.session_state.get(f"dec_at6_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_suites += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N° Énoncé</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        champs_trous_definition = [
+            ("1. Décomposer une force...", "dec_t1_final", "orthogonales"),
+            ("2. Les vecteurs associés...", "dec_t2_final", "chevaucher"),
+            ("3. La projection sur X...", "dec_t3_final", "cosinus"),
+            ("4. La projection sur Y...", "dec_t4_final", "sinus"),
+            ("5. Une composante horizontale...", "dec_t5_final", "rectangle"),
+            ("6. Trouver le signe...", "dec_t6_final", "sens"),
+            ("7. Diviser une force...", "dec_t7_final", "formules"),
+            ("8. L'intensité réelle...", "dec_t8_final", "invariante"),
+            ("9. Un vecteur oblique...", "dec_t9_final", "verticale"),
+            ("10. Combiner les sous-composantes...", "dec_t10_final", "totale")
+        ]
+
+        for label_t, key_t, attendu_t in champs_trous_definition:
+            saisie_t = st.session_state.get(key_t, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_suites += f"<tr><td>{label_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_suites += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html = preparer_nom_fichier("Rapport_Atelier_1").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 1 (.html)",
+            data=html_export_suites,
+            file_name=nom_fichier_html,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 with tab2:
@@ -1165,170 +1165,170 @@ with tab2:
 
 
 
-st.write("---")        
-if "suite_verrouille_tab2" not in st.session_state:
-    st.session_state.suite_verrouille_tab2 = False
-verrou_at2 = st.session_state.suite_verrouille_tab2
+    st.write("---")        
+    if "suite_verrouille_tab2" not in st.session_state:
+        st.session_state.suite_verrouille_tab2 = False
+    verrou_at2 = st.session_state.suite_verrouille_tab2
 
-# Insertion de la zone de questions/trous pour le tab 2
-afficher_atelier_base_sustentation_complet(verrouille=verrou_at2)
+    # Insertion de la zone de questions/trous pour le tab 2
+    afficher_atelier_base_sustentation_complet(verrouille=verrou_at2)
 
-st.write("---")
-st.subheader("Synthèse et validation de l'Atelier 2")
-p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 2")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-case_certif_stat2 = st.checkbox(
-    "Je certifie avoir complété les questions et réglé le système de base de sustentation.",
-    key="check_certif_tab2_final_net",
-    disabled=verrou_at2,
-)
-
-# --- BLOC DE CORRECTION ET BOUTON VALIDER ---
-if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_suite2_official_net", use_container_width=True, disabled=verrou_at2):
-    if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
-        st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-    elif not case_certif_stat2: 
-        st.error("Action refusée : Cochez la case de certification.")
-    else:
-        score_q2 = 0.0
-        if "ordre_quiz_tab2_aleatoire" in st.session_state:
-            for q_item in st.session_state.ordre_quiz_tab2_aleatoire:
-                reponse_eleve = st.session_state.get(f"sust_at6_final_g_{q_item['id']}", "Choisir...")
-                if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
-                    score_q2 += 1.0
-
-        # Vérification des bonnes réponses du texte à trous du tab 2
-        score_t2 = sum(
-            [
-                st.session_state.get("sust_t1_final") == "sustentation",
-                st.session_state.get("sust_t2_final") == "intérieur",
-                st.session_state.get("sust_t3_final") == "agrandissant",
-                st.session_state.get("sust_t4_final") == "équilibre",
-                st.session_state.get("sust_t5_final") == "basculement",
-                st.session_state.get("sust_t6_final") == "planes",
-                st.session_state.get("sust_t7_final") == "appuis",
-                st.session_state.get("sust_t8_final") == "gravité",
-                st.session_state.get("sust_t9_final") == "convexe",
-                st.session_state.get("sust_t10_final") == "rétablissement",
-            ]
-        )
-
-        st.session_state.score_suite2_p1 = round(float(score_q2), 1)
-        st.session_state.score_suite2_p2 = round(float(score_t2), 1)
-        st.session_state.score_final_suite2 = round(float(score_q2 + score_t2), 1)
-        st.session_state.suite_verrouille_tab2 = True
-        st.rerun()
-
-# --- COMPILATION DU DOCUMENT EXPORTABLE HTML TAB 2 ---
-if st.session_state.get("suite_verrouille_tab2", False):
-    scr1_2 = st.session_state.get("score_suite2_p1", 0.0)
-    scr2_2 = st.session_state.get("score_suite2_p2", 0.0)
-    tot_s2 = st.session_state.get("score_final_suite2", 0.0)
-    timestamp_suite2 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
-    
-    st.success(f"ATELIER 2 SCELLÉ | Note globale de l'Atelier : {tot_s2:.1f} / 20")
-    
-    html_export_tab2 = f"""<!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Rapport Base de Sustentation - {n_eleve}</title>
-        <style>
-            body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-            .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-            .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-            .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-            table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-            th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-            td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-            .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-            .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-        </style>
-    </head>
-    <body>
-        <div class="header-box">
-            <h1>Rapport d'Évaluation de Mécanique - Statique</h1>
-            <p>Atelier 2 : Stabilité et base de sustentation</p>
-            <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-            <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite2}</p>
-            <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s2:.1f}</span> / 20</div>
-        </div>
-        
-        <div class="sub-title">Récapitulatif des Notes Obtenues</div>
-        <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-            Note obtenue au Quiz Base de Sustentation : <strong>{scr1_2:.1f} / 10</strong><br>
-            Note obtenue à la Synthèse (Textes à trous) : <strong>{scr2_2:.1f} / 10</strong><br>
-            Note Totale de l'Atelier 2 : <strong>{tot_s2:.1f} / 20</strong>
-        </p>
-
-        <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE DE SESSION)</div>
-        <table>
-            <thead>
-                <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-            </thead>
-            <tbody>
-    """
-
-    if "ordre_quiz_tab2_aleatoire" in st.session_state:
-        for num, q_item in enumerate(st.session_state.ordre_quiz_tab2_aleatoire, 1):
-            saisie = st.session_state.get(f"sust_at6_final_g_{q_item['id']}", "Choisir...")
-            attendu = q_item["rep"]
-            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_tab2 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-
-    html_export_tab2 += """
-            </tbody>
-        </table>
-
-        <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
-        <table>
-            <thead>
-                <tr><th>N° Énoncé</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-            </thead>
-            <tbody>
-    """
-
-    champs_trous_sustentation = [
-        ("1. Le polygone géométrique reliant les appuis au sol...", "sust_t1_final", "sustentation"),
-        ("2. L'équilibre d'un solide exige que la projection de G...", "sust_t2_final", "intérieur"),
-        ("3. Écarter les pieds permet d'obtenir une stabilité accrue...", "sust_t3_final", "agrandissant"),
-        ("4. Une hauteur réduite du centre de gravité favorise...", "sust_t4_final", "équilibre"),
-        ("5. Lorsque le vecteur poids sort de la zone d'appui...", "sust_t5_final", "basculement"),
-        ("6. Archimède a posé les premières lois statiques...", "sust_t6_final", "planes"),
-        ("7. Pour une grue, l'usage de vérins élargit la géométrie...", "sust_t7_final", "appuis"),
-        ("8. Modifier sa posture corporelle entraîne un déplacement...", "sust_t8_final", "gravité"),
-        ("9. Le polygone minimal englobant tous les contacts...", "sust_t9_final", "convexe"),
-        ("10. Avancer rapidement un pied lors d'une chute permet le...", "sust_t10_final", "rétablissement")
-    ]
-
-    for label_t, key_t, attendu_t in champs_trous_sustentation:
-        saisie_t = st.session_state.get(key_t, "Choisir...")
-        v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
-        v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
-        html_export_tab2 += f"<tr><td>{label_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
-
-    html_export_tab2 += """
-            </tbody>
-        </table>
-    </body>
-    </html>
-    """
-    
-    try:
-        nom_fichier_html2 = preparer_nom_fichier("Rapport_Atelier_2").replace(".txt", ".html")
-    except NameError:
-        nom_fichier_html2 = f"Rapport_Atelier_2_{n_eleve}.html"
-
-    st.download_button(
-        label="Télécharger le rapport d'évaluation officiel de l'Atelier 2 (.html)",
-        data=html_export_tab2,
-        file_name=nom_fichier_html2,
-        mime="text/html",
-        use_container_width=True
+    case_certif_stat2 = st.checkbox(
+        "Je certifie avoir complété les questions et réglé le système de base de sustentation.",
+        key="check_certif_tab2_final_net",
+        disabled=verrou_at2,
     )
+
+    # --- BLOC DE CORRECTION ET BOUTON VALIDER ---
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_suite2_official_net", use_container_width=True, disabled=verrou_at2):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat2: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q2 = 0.0
+            if "ordre_quiz_tab2_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab2_aleatoire:
+                    reponse_eleve = st.session_state.get(f"sust_at6_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q2 += 1.0
+
+            # Vérification des bonnes réponses du texte à trous du tab 2
+            score_t2 = sum(
+                [
+                    st.session_state.get("sust_t1_final") == "sustentation",
+                    st.session_state.get("sust_t2_final") == "intérieur",
+                    st.session_state.get("sust_t3_final") == "agrandissant",
+                    st.session_state.get("sust_t4_final") == "équilibre",
+                    st.session_state.get("sust_t5_final") == "basculement",
+                    st.session_state.get("sust_t6_final") == "planes",
+                    st.session_state.get("sust_t7_final") == "appuis",
+                    st.session_state.get("sust_t8_final") == "gravité",
+                    st.session_state.get("sust_t9_final") == "convexe",
+                    st.session_state.get("sust_t10_final") == "rétablissement",
+                ]
+            )
+
+            st.session_state.score_suite2_p1 = round(float(score_q2), 1)
+            st.session_state.score_suite2_p2 = round(float(score_t2), 1)
+            st.session_state.score_final_suite2 = round(float(score_q2 + score_t2), 1)
+            st.session_state.suite_verrouille_tab2 = True
+            st.rerun()
+
+    # --- COMPILATION DU DOCUMENT EXPORTABLE HTML TAB 2 ---
+    if st.session_state.get("suite_verrouille_tab2", False):
+        scr1_2 = st.session_state.get("score_suite2_p1", 0.0)
+        scr2_2 = st.session_state.get("score_suite2_p2", 0.0)
+        tot_s2 = st.session_state.get("score_final_suite2", 0.0)
+        timestamp_suite2 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        
+        st.success(f"ATELIER 2 SCELLÉ | Note globale de l'Atelier : {tot_s2:.1f} / 20")
+        
+        html_export_tab2 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Base de Sustentation - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Mécanique - Statique</h1>
+                <p>Atelier 2 : Stabilité et base de sustentation</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite2}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s2:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Obtenues</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Base de Sustentation : <strong>{scr1_2:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse (Textes à trous) : <strong>{scr2_2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 2 : <strong>{tot_s2:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab2_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab2_aleatoire, 1):
+                saisie = st.session_state.get(f"sust_at6_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_tab2 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tab2 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N° Énoncé</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        champs_trous_sustentation = [
+            ("1. Le polygone géométrique reliant les appuis au sol...", "sust_t1_final", "sustentation"),
+            ("2. L'équilibre d'un solide exige que la projection de G...", "sust_t2_final", "intérieur"),
+            ("3. Écarter les pieds permet d'obtenir une stabilité accrue...", "sust_t3_final", "agrandissant"),
+            ("4. Une hauteur réduite du centre de gravité favorise...", "sust_t4_final", "équilibre"),
+            ("5. Lorsque le vecteur poids sort de la zone d'appui...", "sust_t5_final", "basculement"),
+            ("6. Archimède a posé les premières lois statiques...", "sust_t6_final", "planes"),
+            ("7. Pour une grue, l'usage de vérins élargit la géométrie...", "sust_t7_final", "appuis"),
+            ("8. Modifier sa posture corporelle entraîne un déplacement...", "sust_t8_final", "gravité"),
+            ("9. Le polygone minimal englobant tous les contacts...", "sust_t9_final", "convexe"),
+            ("10. Avancer rapidement un pied lors d'une chute permet le...", "sust_t10_final", "rétablissement")
+        ]
+
+        for label_t, key_t, attendu_t in champs_trous_sustentation:
+            saisie_t = st.session_state.get(key_t, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_tab2 += f"<tr><td>{label_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_tab2 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        try:
+            nom_fichier_html2 = preparer_nom_fichier("Rapport_Atelier_2").replace(".txt", ".html")
+        except NameError:
+            nom_fichier_html2 = f"Rapport_Atelier_2_{n_eleve}.html"
+
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 2 (.html)",
+            data=html_export_tab2,
+            file_name=nom_fichier_html2,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
@@ -1372,170 +1372,170 @@ with tab3:
     st.write("Deux forces s'équilibrent si elles ont la meme droite d'action, des normes egales et des sens opposes.")
     analyser_systeme_forces(nb_forces=2, suffixe_clef="2f", nom_onglet="Equilibre_2_forces")
 
-st.write("---")        
-if "suite_verrouille_tab3" not in st.session_state:
-    st.session_state.suite_verrouille_tab3 = False
-verrou_at3 = st.session_state.suite_verrouille_tab3
+    st.write("---")        
+    if "suite_verrouille_tab3" not in st.session_state:
+        st.session_state.suite_verrouille_tab3 = False
+    verrou_at3 = st.session_state.suite_verrouille_tab3
 
-# Insertion de la zone de questions/trous pour le tab 3
-afficher_atelier_deux_forces_complet(verrouille=verrou_at3)
+    # Insertion de la zone de questions/trous pour le tab 3
+    afficher_atelier_deux_forces_complet(verrouille=verrou_at3)
 
-st.write("---")
-st.subheader("Synthèse et validation de l'Atelier 3")
-p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 3")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-case_certif_stat3 = st.checkbox(
-    "Je certifie avoir complété les questions et réglé le système à deux forces.",
-    key="check_certif_tab3_final_net",
-    disabled=verrou_at3,
-)
-
-# --- BLOC DE CORRECTION ET BOUTON VALIDER ---
-if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_suite3_official_net", use_container_width=True, disabled=verrou_at3):
-    if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
-        st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-    elif not case_certif_stat3: 
-        st.error("Action refusée : Cochez la case de certification.")
-    else:
-        score_q3 = 0.0
-        if "ordre_quiz_tab3_aleatoire" in st.session_state:
-            for q_item in st.session_state.ordre_quiz_tab3_aleatoire:
-                reponse_eleve = st.session_state.get(f"2f_at_final_g_{q_item['id']}", "Choisir...")
-                if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
-                    score_q3 += 1.0
-
-        # Vérification des bonnes réponses du texte à trous du tab 3
-        score_t3 = sum(
-            [
-                st.session_state.get("2f_t1_final") == "action",
-                st.session_state.get("2f_t2_final") == "opposés",
-                st.session_state.get("2f_t3_final") == "égales",
-                st.session_state.get("2f_t4_final") == "zéro",
-                st.session_state.get("2f_t5_final") == "fermé",
-                st.session_state.get("2f_t6_final") == "déséquilibre",
-                st.session_state.get("2f_t7_final") == "poids",
-                st.session_state.get("2f_t8_final") == "opposées",
-                st.session_state.get("2f_t9_final") == "nulle",
-                st.session_state.get("2f_t10_final") == "différentes",
-            ]
-        )
-
-        st.session_state.score_suite3_p1 = round(float(score_q3), 1)
-        st.session_state.score_suite3_p2 = round(float(score_t3), 1)
-        st.session_state.score_final_suite3 = round(float(score_q3 + score_t3), 1)
-        st.session_state.suite_verrouille_tab3 = True
-        st.rerun()
-
-# --- COMPILATION DU DOCUMENT EXPORTABLE HTML TAB 3 ---
-if st.session_state.get("suite_verrouille_tab3", False):
-    scr1_3 = st.session_state.get("score_suite3_p1", 0.0)
-    scr2_3 = st.session_state.get("score_suite3_p2", 0.0)
-    tot_s3 = st.session_state.get("score_final_suite3", 0.0)
-    timestamp_suite3 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
-    
-    st.success(f"ATELIER 3 SCELLÉ | Note globale de l'Atelier : {tot_s3:.1f} / 20")
-    
-    html_export_tab3 = f"""<!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Rapport Équilibre 2 Forces - {n_eleve}</title>
-        <style>
-            body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-            .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-            .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-            .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-            table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-            th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-            td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-            .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-            .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-        </style>
-    </head>
-    <body>
-        <div class="header-box">
-            <h1>Rapport d'Évaluation de Mécanique - Statique</h1>
-            <p>Atelier 3 : Équilibre d'un solide soumis à deux forces</p>
-            <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-            <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite3}</p>
-            <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s3:.1f}</span> / 20</div>
-        </div>
-        
-        <div class="sub-title">Récapitulatif des Notes Obtenues</div>
-        <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-            Note obtenue au Quiz 2 Forces : <strong>{scr1_3:.1f} / 10</strong><br>
-            Note obtenue à la Synthèse (Textes à trous) : <strong>{scr2_3:.1f} / 10</strong><br>
-            Note Totale de l'Atelier 3 : <strong>{tot_s3:.1f} / 20</strong>
-        </p>
-
-        <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE DE SESSION)</div>
-        <table>
-            <thead>
-                <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-            </thead>
-            <tbody>
-    """
-
-    if "ordre_quiz_tab3_aleatoire" in st.session_state:
-        for num, q_item in enumerate(st.session_state.ordre_quiz_tab3_aleatoire, 1):
-            saisie = st.session_state.get(f"2f_at_final_g_{q_item['id']}", "Choisir...")
-            attendu = q_item["rep"]
-            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_tab3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-
-    html_export_tab3 += """
-            </tbody>
-        </table>
-
-        <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
-        <table>
-            <thead>
-                <tr><th>N° Énoncé</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-            </thead>
-            <tbody>
-    """
-
-    champs_trous_2forces = [
-        ("1. Deux forces en équilibre possèdent la même droite d'...", "2f_t1_final", "action"),
-        ("2. Les sens de ces deux vecteurs forces doivent être...", "2f_t2_final", "opposés"),
-        ("3. Leurs valeurs numériques ou normes doivent être...", "2f_t3_final", "égales"),
-        ("4. La résultante analytique R d'un système équilibré vaut...", "2f_t4_final", "zéro"),
-        ("5. Deux forces colinéaires opposées forment un polygone...", "2f_t5_final", "fermé"),
-        ("6. Modifier l'intensité de F1 sans changer F2 crée un...", "2f_t6_final", "déséquilibre"),
-        ("7. La tension du câble s'oppose exactement à l'effet du...", "2f_t7_final", "poids"),
-        ("8. Sur l'axe de projection, les valeurs algébriques sont...", "2f_t8_final", "opposées"),
-        ("9. L'absence de mouvement prouve que la somme vectorielle est...", "2f_t9_final", "nulle"),
-        ("10. Si le système glisse ou tombe, les deux forces sont...", "2f_t10_final", "différentes")
-    ]
-
-    for label_t, key_t, attendu_t in champs_trous_2forces:
-        saisie_t = st.session_state.get(key_t, "Choisir...")
-        v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
-        v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
-        html_export_tab3 += f"<tr><td>{label_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
-
-    html_export_tab3 += """
-            </tbody>
-        </table>
-    </body>
-    </html>
-    """
-    
-    try:
-        nom_fichier_html3 = preparer_nom_fichier("Rapport_Atelier_3").replace(".txt", ".html")
-    except NameError:
-        nom_fichier_html3 = f"Rapport_Atelier_3_{n_eleve}.html"
-
-    st.download_button(
-        label="Télécharger le rapport d'évaluation officiel de l'Atelier 3 (.html)",
-        data=html_export_tab3,
-        file_name=nom_fichier_html3,
-        mime="text/html",
-        use_container_width=True
+    case_certif_stat3 = st.checkbox(
+        "Je certifie avoir complété les questions et réglé le système à deux forces.",
+        key="check_certif_tab3_final_net",
+        disabled=verrou_at3,
     )
+
+    # --- BLOC DE CORRECTION ET BOUTON VALIDER ---
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_suite3_official_net", use_container_width=True, disabled=verrou_at3):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat3: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q3 = 0.0
+            if "ordre_quiz_tab3_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab3_aleatoire:
+                    reponse_eleve = st.session_state.get(f"2f_at_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q3 += 1.0
+
+            # Vérification des bonnes réponses du texte à trous du tab 3
+            score_t3 = sum(
+                [
+                    st.session_state.get("2f_t1_final") == "action",
+                    st.session_state.get("2f_t2_final") == "opposés",
+                    st.session_state.get("2f_t3_final") == "égales",
+                    st.session_state.get("2f_t4_final") == "zéro",
+                    st.session_state.get("2f_t5_final") == "fermé",
+                    st.session_state.get("2f_t6_final") == "déséquilibre",
+                    st.session_state.get("2f_t7_final") == "poids",
+                    st.session_state.get("2f_t8_final") == "opposées",
+                    st.session_state.get("2f_t9_final") == "nulle",
+                    st.session_state.get("2f_t10_final") == "différentes",
+                ]
+            )
+
+            st.session_state.score_suite3_p1 = round(float(score_q3), 1)
+            st.session_state.score_suite3_p2 = round(float(score_t3), 1)
+            st.session_state.score_final_suite3 = round(float(score_q3 + score_t3), 1)
+            st.session_state.suite_verrouille_tab3 = True
+            st.rerun()
+
+    # --- COMPILATION DU DOCUMENT EXPORTABLE HTML TAB 3 ---
+    if st.session_state.get("suite_verrouille_tab3", False):
+        scr1_3 = st.session_state.get("score_suite3_p1", 0.0)
+        scr2_3 = st.session_state.get("score_suite3_p2", 0.0)
+        tot_s3 = st.session_state.get("score_final_suite3", 0.0)
+        timestamp_suite3 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        
+        st.success(f"ATELIER 3 SCELLÉ | Note globale de l'Atelier : {tot_s3:.1f} / 20")
+        
+        html_export_tab3 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Équilibre 2 Forces - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Mécanique - Statique</h1>
+                <p>Atelier 3 : Équilibre d'un solide soumis à deux forces</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s3:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Obtenues</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz 2 Forces : <strong>{scr1_3:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse (Textes à trous) : <strong>{scr2_3:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 3 : <strong>{tot_s3:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab3_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab3_aleatoire, 1):
+                saisie = st.session_state.get(f"2f_at_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_tab3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tab3 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N° Énoncé</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        champs_trous_2forces = [
+            ("1. Deux forces en équilibre possèdent la même droite d'...", "2f_t1_final", "action"),
+            ("2. Les sens de ces deux vecteurs forces doivent être...", "2f_t2_final", "opposés"),
+            ("3. Leurs valeurs numériques ou normes doivent être...", "2f_t3_final", "égales"),
+            ("4. La résultante analytique R d'un système équilibré vaut...", "2f_t4_final", "zéro"),
+            ("5. Deux forces colinéaires opposées forment un polygone...", "2f_t5_final", "fermé"),
+            ("6. Modifier l'intensité de F1 sans changer F2 crée un...", "2f_t6_final", "déséquilibre"),
+            ("7. La tension du câble s'oppose exactement à l'effet du...", "2f_t7_final", "poids"),
+            ("8. Sur l'axe de projection, les valeurs algébriques sont...", "2f_t8_final", "opposées"),
+            ("9. L'absence de mouvement prouve que la somme vectorielle est...", "2f_t9_final", "nulle"),
+            ("10. Si le système glisse ou tombe, les deux forces sont...", "2f_t10_final", "différentes")
+        ]
+
+        for label_t, key_t, attendu_t in champs_trous_2forces:
+            saisie_t = st.session_state.get(key_t, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_tab3 += f"<tr><td>{label_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_tab3 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        try:
+            nom_fichier_html3 = preparer_nom_fichier("Rapport_Atelier_3").replace(".txt", ".html")
+        except NameError:
+            nom_fichier_html3 = f"Rapport_Atelier_3_{n_eleve}.html"
+
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 3 (.html)",
+            data=html_export_tab3,
+            file_name=nom_fichier_html3,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
@@ -1577,165 +1577,165 @@ with tab4:
     st.write("Pour 3 forces non paralleles en équilibre, leurs droites d'action sont obligatoirement concourantes (se coupent au meme point) et leur dynamique forme un triangle ferme.")
     analyser_systeme_forces(nb_forces=3, suffixe_clef="3f", nom_onglet="Equilibre_3_forces")
 
-st.write("---")        
-if "suite_verrouille_tab4" not in st.session_state:
-    st.session_state.suite_verrouille_tab4 = False
-verrou_at4 = st.session_state.suite_verrouille_tab4
+    st.write("---")        
+    if "suite_verrouille_tab4" not in st.session_state:
+        st.session_state.suite_verrouille_tab4 = False
+    verrou_at4 = st.session_state.suite_verrouille_tab4
 
-# Insertion de la zone de questions/trous pour le tab 4
-afficher_atelier_trois_forces_complet(verrouille=verrou_at4)
+    # Insertion de la zone de questions/trous pour le tab 4
+    afficher_atelier_trois_forces_complet(verrouille=verrou_at4)
 
-st.write("---")
-st.subheader("Synthèse et validation de l'Atelier 4")
-p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 4")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-case_certif_stat4 = st.checkbox(
-    "Je certifie avoir complété les questions et réglé le système à trois forces.",
-    key="check_certif_tab4_final_net",
-    disabled=verrou_at4,
-)
-
-# --- BLOC DE CORRECTION ET BOUTON VALIDER ---
-if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_suite4_official_net", use_container_width=True, disabled=verrou_at4):
-    if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
-        st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-    elif not case_certif_stat4: 
-        st.error("Action refusée : Cochez la case de certification.")
-    else:
-        score_q4 = 0.0
-        if "ordre_quiz_tab4_aleatoire" in st.session_state:
-            for q_item in st.session_state.ordre_quiz_tab4_aleatoire:
-                reponse_eleve = st.session_state.get(f"3f_at_final_g_{q_item['id']}", "Choisir...")
-                if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
-                    score_q4 += 1.0
-
-        # Vérification des bonnes réponses du texte à trous du tab 4
-        score_t4 = sum(
-            [
-                st.session_state.get("3f_t1_final") == "concourant",
-                st.session_state.get("3f_t2_final") == "triangle",
-                st.session_state.get("3f_t3_final") == "nulle",
-                st.session_state.get("3f_t4_final") == "déséquilibre",
-                st.session_state.get("3f_t5_final") == "zéro",
-                st.session_state.get("3f_t6_final") == "deux",
-                st.session_state.get("3f_t7_final") == "équilibre",
-                st.session_state.get("3f_t8_final") == "graphique",
-                st.session_state.get("3f_t9_final") == "matériel",
-                st.session_state.get("3f_t10_final") == "départ",
-            ]
-        )
-
-        st.session_state.score_suite4_p1 = round(float(score_q4), 1)
-        st.session_state.score_suite4_p2 = round(float(score_t4), 1)
-        st.session_state.score_final_suite4 = round(float(score_q4 + score_t4), 1)
-        st.session_state.suite_verrouille_tab4 = True
-        st.rerun()
-
-# --- COMPILATION DU DOCUMENT EXPORTABLE HTML TAB 4 ---
-if st.session_state.get("suite_verrouille_tab4", False):
-    scr1_4 = st.session_state.get("score_suite4_p1", 0.0)
-    scr2_4 = st.session_state.get("score_suite4_p2", 0.0)
-    tot_s4 = st.session_state.get("score_final_suite4", 0.0)
-    timestamp_suite4 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
-    
-    st.success(f"ATELIER 4 SCELLÉ | Note globale de l'Atelier : {tot_s4:.1f} / 20")
-    
-    html_export_tab4 = f"""<!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Rapport Équilibre 3 Forces - {n_eleve}</title>
-        <style>
-            body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-            .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-            .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-            .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-            table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-            th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-            td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-            .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-            .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-        </style>
-    </head>
-    <body>
-        <div class="header-box">
-            <h1>Rapport d'Évaluation de Mécanique - Statique</h1>
-            <p>Atelier 4 : Équilibre d'un point soumis à trois forces</p>
-            <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-            <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite4}</p>
-            <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s4:.1f}</span> / 20</div>
-        </div>
-        
-        <div class="sub-title">Récapitulatif des Notes Obtenues</div>
-        <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-            Note obtenue au Quiz 3 Forces : <strong>{scr1_4:.1f} / 10</strong><br>
-            Note obtenue à la Synthèse (Textes à trous) : <strong>{scr2_4:.1f} / 10</strong><br>
-            Note Totale de l'Atelier 4 : <strong>{tot_s4:.1f} / 20</strong>
-        </p>
-
-        <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE DE SESSION)</div>
-        <table>
-            <thead>
-                <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-            </thead>
-            <tbody>
-    """
-
-    if "ordre_quiz_tab4_aleatoire" in st.session_state:
-        for num, q_item in enumerate(st.session_state.ordre_quiz_tab4_aleatoire, 1):
-            saisie = st.session_state.get(f"3f_at_final_g_{q_item['id']}", "Choisir...")
-            attendu = q_item["rep"]
-            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_tab4 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-
-    html_export_tab4 += """
-            </tbody>
-        </table>
-
-        <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
-        <table>
-            <thead>
-                <tr><th>N° Énoncé</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-            </thead>
-            <tbody>
-    """
-
-    champs_trous_3forces = [
-        ("1. Trois forces coplanaires non parallèles convergent...", "3f_t1_final", "concourant"),
-        ("2. Leur représentation géométrique bout à bout...", "3f_t2_final", "triangle"),
-        ("3. Pour stabiliser le point matériel, la résultante...", "3f_t3_final", "nulle"),
-        ("4. Une fermeture manquante sur le graphique traduit...", "3f_t4_final", "déséquilibre"),
-        ("5. La somme algébrique des projections horizontales...", "3f_t5_final", "zéro"),
-        ("6. La troisième force neutralise la résultante des...", "3f_t6_final", "deux"),
-        ("7. Modifier un seul paramètre rompt immédiatement...", "3f_t7_final", "équilibre"),
-        ("8. Le polygone fermé confirme la validité de la méthode...", "3f_t8_final", "graphique"),
-        ("9. Les forces concourantes agissent sur un unique...", "3f_t9_final", "matériel"),
-        ("10. En statique, le vecteur final retourne à la position...", "3f_t10_final", "départ")
-    ]
-
-    for label_t, key_t, attendu_t in champs_trous_3forces:
-        saisie_t = st.session_state.get(key_t, "Choisir...")
-        v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
-        v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
-        html_export_tab4 += f"<tr><td>{label_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
-
-    html_export_tab4 += """
-            </tbody>
-        </table>
-    </body>
-    </html>
-    """
-    nom_fichier_html4 = preparer_nom_fichier("Rapport_Atelier_4").replace(".txt", ".html")
-    st.download_button(
-        label="Télécharger le rapport d'évaluation officiel de l'Atelier 4 (.html)",
-        data=html_export_tab4,
-        file_name=nom_fichier_html4,
-        mime="text/html",
-        use_container_width=True
+    case_certif_stat4 = st.checkbox(
+        "Je certifie avoir complété les questions et réglé le système à trois forces.",
+        key="check_certif_tab4_final_net",
+        disabled=verrou_at4,
     )
+
+    # --- BLOC DE CORRECTION ET BOUTON VALIDER ---
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_suite4_official_net", use_container_width=True, disabled=verrou_at4):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat4: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q4 = 0.0
+            if "ordre_quiz_tab4_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab4_aleatoire:
+                    reponse_eleve = st.session_state.get(f"3f_at_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q4 += 1.0
+
+            # Vérification des bonnes réponses du texte à trous du tab 4
+            score_t4 = sum(
+                [
+                    st.session_state.get("3f_t1_final") == "concourant",
+                    st.session_state.get("3f_t2_final") == "triangle",
+                    st.session_state.get("3f_t3_final") == "nulle",
+                    st.session_state.get("3f_t4_final") == "déséquilibre",
+                    st.session_state.get("3f_t5_final") == "zéro",
+                    st.session_state.get("3f_t6_final") == "deux",
+                    st.session_state.get("3f_t7_final") == "équilibre",
+                    st.session_state.get("3f_t8_final") == "graphique",
+                    st.session_state.get("3f_t9_final") == "matériel",
+                    st.session_state.get("3f_t10_final") == "départ",
+                ]
+            )
+
+            st.session_state.score_suite4_p1 = round(float(score_q4), 1)
+            st.session_state.score_suite4_p2 = round(float(score_t4), 1)
+            st.session_state.score_final_suite4 = round(float(score_q4 + score_t4), 1)
+            st.session_state.suite_verrouille_tab4 = True
+            st.rerun()
+
+    # --- COMPILATION DU DOCUMENT EXPORTABLE HTML TAB 4 ---
+    if st.session_state.get("suite_verrouille_tab4", False):
+        scr1_4 = st.session_state.get("score_suite4_p1", 0.0)
+        scr2_4 = st.session_state.get("score_suite4_p2", 0.0)
+        tot_s4 = st.session_state.get("score_final_suite4", 0.0)
+        timestamp_suite4 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        
+        st.success(f"ATELIER 4 SCELLÉ | Note globale de l'Atelier : {tot_s4:.1f} / 20")
+        
+        html_export_tab4 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Équilibre 3 Forces - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Mécanique - Statique</h1>
+                <p>Atelier 4 : Équilibre d'un point soumis à trois forces</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite4}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s4:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Obtenues</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz 3 Forces : <strong>{scr1_4:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse (Textes à trous) : <strong>{scr2_4:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 4 : <strong>{tot_s4:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab4_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab4_aleatoire, 1):
+                saisie = st.session_state.get(f"3f_at_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_tab4 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tab4 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N° Énoncé</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        champs_trous_3forces = [
+            ("1. Trois forces coplanaires non parallèles convergent...", "3f_t1_final", "concourant"),
+            ("2. Leur représentation géométrique bout à bout...", "3f_t2_final", "triangle"),
+            ("3. Pour stabiliser le point matériel, la résultante...", "3f_t3_final", "nulle"),
+            ("4. Une fermeture manquante sur le graphique traduit...", "3f_t4_final", "déséquilibre"),
+            ("5. La somme algébrique des projections horizontales...", "3f_t5_final", "zéro"),
+            ("6. La troisième force neutralise la résultante des...", "3f_t6_final", "deux"),
+            ("7. Modifier un seul paramètre rompt immédiatement...", "3f_t7_final", "équilibre"),
+            ("8. Le polygone fermé confirme la validité de la méthode...", "3f_t8_final", "graphique"),
+            ("9. Les forces concourantes agissent sur un unique...", "3f_t9_final", "matériel"),
+            ("10. En statique, le vecteur final retourne à la position...", "3f_t10_final", "départ")
+        ]
+
+        for label_t, key_t, attendu_t in champs_trous_3forces:
+            saisie_t = st.session_state.get(key_t, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_tab4 += f"<tr><td>{label_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_tab4 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html4 = preparer_nom_fichier("Rapport_Atelier_4").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 4 (.html)",
+            data=html_export_tab4,
+            file_name=nom_fichier_html4,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
@@ -1952,161 +1952,161 @@ with tab6:
         st.session_state.trous_metier_statiques = banque_ref["trous"]
         
     cas_index_alea = st.session_state[f"indice_alea_{metier_choisi}"]
-    
-if f"suite_verrouille_tab6_{metier_choisi}" not in st.session_state:
-    st.session_state[f"suite_verrouille_tab6_{metier_choisi}"] = False
-    
-verrou_at6 = st.session_state[f"suite_verrouille_tab6_{metier_choisi}"]
-
-# Affichage dynamique de l'exercice basé sur le tirage aléatoire du métier choisi
-afficher_atelier_metier_complet(metier_choisi, cas_index_alea, verrouille=verrou_at6)
-
-st.write("---")
-st.subheader("Validation et Exportation du module métier")
-p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-case_certif_stat6 = st.checkbox(
-    "Je certifie avoir complété les évaluations techniques liées à ma filière métier.",
-    key=f"check_certif_tab6_{metier_choisi}",
-    disabled=verrou_at6,
-)
-
-# --- BLOC DE CORRECTION ET BOUTON VALIDER TAB 6 ---
-if st.button("VALIDER ET EXPORTER LE BILAN METIER", key=f"btn_export_tab6_{metier_choisi}", use_container_width=True, disabled=verrou_at6):
-    if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
-        st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-    elif not case_certif_stat6: 
-        st.error("Action refusée : Cochez la case de certification.")
-    else:
-        score_q6 = 0.0
-        banque_verif = obtenir_banque_metiers()[metier_choisi]
         
-        # Évaluation du quiz mélangé
-        for q_item in st.session_state.quiz_metier_aleatoire:
-            reponse_eleve = st.session_state.get(f"met_at_g_{q_item['id']}", "Choisir...")
-            if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
-                score_q6 += 1.0
-                
-        # Évaluation du texte à trous spécifique (Note ramenée sur 10 pts)
-        score_t6 = 0.0
-        if st.session_state.get("m_t1") == banque_verif["trous"][0][2]:
-            score_t6 += 5.0
-        if st.session_state.get("m_t2") == banque_verif["trous"][1][2]:
-            score_t6 += 5.0
-            
-        # Ramener le quiz sur 10 points également pour obtenir une note sur 20
-        score_q6_normalise = round((score_q6 / len(banque_verif["quiz"])) * 10.0, 1)
+    if f"suite_verrouille_tab6_{metier_choisi}" not in st.session_state:
+        st.session_state[f"suite_verrouille_tab6_{metier_choisi}"] = False
         
-        st.session_state[f"score_q_{metier_choisi}"] = score_q6_normalise
-        st.session_state[f"score_t_{metier_choisi}"] = score_t6
-        st.session_state[f"score_total_{metier_choisi}"] = round(score_q6_normalise + score_t6, 1)
-        st.session_state[f"suite_verrouille_tab6_{metier_choisi}"] = True
-        st.rerun()
+    verrou_at6 = st.session_state[f"suite_verrouille_tab6_{metier_choisi}"]
 
-# --- COMPILATION DU DOCUMENT EXPORTABLE HTML METIER ---
-if st.session_state.get(f"suite_verrouille_tab6_{metier_choisi}", False):
-    scr1_6 = st.session_state.get(f"score_q_{metier_choisi}", 0.0)
-    scr2_6 = st.session_state.get(f"score_t_{metier_choisi}", 0.0)
-    tot_s6 = st.session_state.get(f"score_total_{metier_choisi}", 0.0)
-    timestamp_suite6 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
-    
-    st.success(f"ATELIER TP MÉTIER SCELLÉ | Note finale : {tot_s6:.1f} / 20")
-    
-    banque_html = obtenir_banque_metiers()[metier_choisi]
-    scen_html = banque_html["scenarios"][cas_index_alea]
+    # Affichage dynamique de l'exercice basé sur le tirage aléatoire du métier choisi
+    afficher_atelier_metier_complet(metier_choisi, cas_index_alea, verrouille=verrou_at6)
 
-    html_export_tab6 = f"""<!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Rapport Statique Métier - {n_eleve}</title>
-        <style>
-            body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-            .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-            .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-            .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-            table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-            th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-            td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-            .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-            .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-        </style>
-    </head>
-    <body>
-        <div class="header-box">
-            <h1>Rapport d'Application Professionnelle - Statique</h1>
-            <p>Branche Spécialisée : {banque_html['nom']}</p>
-            <p>Scénario Évalué : {scen_html['titre']}</p>
-            <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-            <p style="font-size: 12px; opacity: 0.7;">Généré automatiquement le : {timestamp_suite6}</p>
-            <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s6:.1f}</span> / 20</div>
-        </div>
-        
-        <div class="sub-title">Récapitulatif des Notes Obtenues</div>
-        <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-            Note obtenue au Quiz Technique : <strong>{scr1_6:.1f} / 10</strong><br>
-            Note obtenue à la Synthèse : <strong>{scr2_6:.1f} / 10</strong><br>
-            Note Totale de l'Atelier 6 : <strong>{tot_s6:.1f} / 20</strong>
-        </p>
+    st.write("---")
+    st.subheader("Validation et Exportation du module métier")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-        <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE DE SESSION)</div>
-        <table>
-            <thead>
-                <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-            </thead>
-            <tbody>
-    """
-
-    for num, q_item in enumerate(st.session_state.quiz_metier_aleatoire, 1):
-        saisie = st.session_state.get(f"met_at_g_{q_item['id']}", "Choisir...")
-        attendu = q_item["rep"]
-        v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-        v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-        html_export_tab6 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-
-    html_export_tab6 += """
-            </tbody>
-        </table>
-
-        <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE APPLICATIVE</div>
-        <table>
-            <thead>
-                <tr><th>Case N°</th><th>Énoncé Textuel Interne</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-            </thead>
-            <tbody>
-    """
-
-    # Génération dynamique des deux lignes de texte à trous propres au métier choisi
-    for idx_t, trou_item in enumerate(banque_html["trous"], 1):
-        enonce_t = trou_item[0]
-        cle_t = trou_item[3]
-        attendu_t = trou_item[2]
-        saisie_t = st.session_state.get(cle_t, "Choisir...")
-        v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
-        v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
-        html_export_tab6 += f"<tr><td>{idx_t}</td><td>{enonce_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
-
-    html_export_tab6 += """
-            </tbody>
-        </table>
-    </body>
-    </html>
-    """
-    
-    try:
-        nom_fichier_html6 = preparer_nom_fichier(f"Rapport_Atelier_6_{metier_choisi}").replace(".txt", ".html")
-    except NameError:
-        nom_fichier_html6 = f"Rapport_Atelier_6_{metier_choisi}_{n_eleve}.html"
-        
-    st.download_button(
-        label="Télécharger le rapport d'évaluation officiel de l'Atelier 6 (.html)",
-        data=html_export_tab6,
-        file_name=nom_fichier_html6,
-        mime="text/html",
-        use_container_width=True
+    case_certif_stat6 = st.checkbox(
+        "Je certifie avoir complété les évaluations techniques liées à ma filière métier.",
+        key=f"check_certif_tab6_{metier_choisi}",
+        disabled=verrou_at6,
     )
+
+    # --- BLOC DE CORRECTION ET BOUTON VALIDER TAB 6 ---
+    if st.button("VALIDER ET EXPORTER LE BILAN METIER", key=f"btn_export_tab6_{metier_choisi}", use_container_width=True, disabled=verrou_at6):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat6: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q6 = 0.0
+            banque_verif = obtenir_banque_metiers()[metier_choisi]
+            
+            # Évaluation du quiz mélangé
+            for q_item in st.session_state.quiz_metier_aleatoire:
+                reponse_eleve = st.session_state.get(f"met_at_g_{q_item['id']}", "Choisir...")
+                if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                    score_q6 += 1.0
+                    
+            # Évaluation du texte à trous spécifique (Note ramenée sur 10 pts)
+            score_t6 = 0.0
+            if st.session_state.get("m_t1") == banque_verif["trous"][0][2]:
+                score_t6 += 5.0
+            if st.session_state.get("m_t2") == banque_verif["trous"][1][2]:
+                score_t6 += 5.0
+                
+            # Ramener le quiz sur 10 points également pour obtenir une note sur 20
+            score_q6_normalise = round((score_q6 / len(banque_verif["quiz"])) * 10.0, 1)
+            
+            st.session_state[f"score_q_{metier_choisi}"] = score_q6_normalise
+            st.session_state[f"score_t_{metier_choisi}"] = score_t6
+            st.session_state[f"score_total_{metier_choisi}"] = round(score_q6_normalise + score_t6, 1)
+            st.session_state[f"suite_verrouille_tab6_{metier_choisi}"] = True
+            st.rerun()
+
+    # --- COMPILATION DU DOCUMENT EXPORTABLE HTML METIER ---
+    if st.session_state.get(f"suite_verrouille_tab6_{metier_choisi}", False):
+        scr1_6 = st.session_state.get(f"score_q_{metier_choisi}", 0.0)
+        scr2_6 = st.session_state.get(f"score_t_{metier_choisi}", 0.0)
+        tot_s6 = st.session_state.get(f"score_total_{metier_choisi}", 0.0)
+        timestamp_suite6 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        
+        st.success(f"ATELIER TP MÉTIER SCELLÉ | Note finale : {tot_s6:.1f} / 20")
+        
+        banque_html = obtenir_banque_metiers()[metier_choisi]
+        scen_html = banque_html["scenarios"][cas_index_alea]
+
+        html_export_tab6 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Statique Métier - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Application Professionnelle - Statique</h1>
+                <p>Branche Spécialisée : {banque_html['nom']}</p>
+                <p>Scénario Évalué : {scen_html['titre']}</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Généré automatiquement le : {timestamp_suite6}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s6:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Obtenues</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_6:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_6:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 6 : <strong>{tot_s6:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        for num, q_item in enumerate(st.session_state.quiz_metier_aleatoire, 1):
+            saisie = st.session_state.get(f"met_at_g_{q_item['id']}", "Choisir...")
+            attendu = q_item["rep"]
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_tab6 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tab6 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE APPLICATIVE</div>
+            <table>
+                <thead>
+                    <tr><th>Case N°</th><th>Énoncé Textuel Interne</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        # Génération dynamique des deux lignes de texte à trous propres au métier choisi
+        for idx_t, trou_item in enumerate(banque_html["trous"], 1):
+            enonce_t = trou_item[0]
+            cle_t = trou_item[3]
+            attendu_t = trou_item[2]
+            saisie_t = st.session_state.get(cle_t, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_tab6 += f"<tr><td>{idx_t}</td><td>{enonce_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_tab6 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        try:
+            nom_fichier_html6 = preparer_nom_fichier(f"Rapport_Atelier_6_{metier_choisi}").replace(".txt", ".html")
+        except NameError:
+            nom_fichier_html6 = f"Rapport_Atelier_6_{metier_choisi}_{n_eleve}.html"
+            
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 6 (.html)",
+            data=html_export_tab6,
+            file_name=nom_fichier_html6,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
