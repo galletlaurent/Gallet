@@ -21,6 +21,100 @@ import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
 import plotly.graph_objects as go
+import sys
+from PIL import Image
+
+
+BASE_DIR = os.path.abspath(".")
+
+def charger_image(nom_fichier):
+    nom_fichier = os.path.basename(nom_fichier)
+    # Python scanne automatiquement tous les dossiers présents à côté du script
+    for element in os.listdir(BASE_DIR):
+        chemin_dossier = os.path.join(BASE_DIR, element)
+        if os.path.isdir(chemin_dossier) and element.startswith("image"):
+            chemin_image = os.path.join(chemin_dossier, nom_fichier)
+            if os.path.exists(chemin_image):
+                try:
+                    return Image.open(chemin_image)
+                except Exception:
+                    pass
+                        
+    # Sécurité si l'application est déjà masquée dans fichiers_systemes
+    chemin_secours = os.path.join(BASE_DIR, "image", nom_fichier)
+    if os.path.exists(chemin_secours):
+        try: 
+            return Image.open(chemin_secours)
+        except Exception: 
+            pass
+    return None
+
+# --- TOUS LES CORRECTIFS SÉCURISÉS (RERUN, COLUMNS, CONTAINER, IMAGE) ---
+
+# 1. Sauvegarde STRICTE des fonctions d'origine AVANT modification
+_vrai_st_rerun = st.rerun if hasattr(st, "rerun") else (st.experimental_rerun if hasattr(st, "experimental_rerun") else None)
+_vrai_st_image = st.image
+_vrai_st_columns = st.columns
+_vrai_st_container = st.container
+
+# 2. Correctif pour st.rerun
+def safe_rerun():
+    if _vrai_st_rerun is not None:
+        try: 
+            _vrai_st_rerun()
+        except Exception:
+            from streamlit.runtime.scriptrunner import RerunData, RerunException
+            raise RerunException(RerunData())
+st.rerun = safe_rerun
+
+# 3. Correctif pour st.image (Résolution de la boucle infinie)
+def safe_image(image, *args, **kwargs):
+    if "use_container_width" in kwargs:
+        kwargs["use_column_width"] = kwargs.pop("use_container_width")
+    if isinstance(image, str) and not image.startswith(("http://", "https://", "data:image")):
+        nom_fichier = os.path.basename(image)
+        img_pil = charger_image(nom_fichier)
+        if img_pil is not None: 
+            image = img_pil
+    return _vrai_st_image(image, *args, **kwargs)  # Utilise la vraie fonction d'origine
+st.image = safe_image
+
+# 4. Interception pour st.columns (vertical_alignment)
+def safe_columns(*args, **kwargs):
+    if "vertical_alignment" in kwargs:
+        kwargs.pop("vertical_alignment")
+    return _vrai_st_columns(*args, **kwargs)
+st.columns = safe_columns
+
+# 5. Interception pour st.container (border)
+def safe_container(*args, **kwargs):
+    if "border" in kwargs:
+        kwargs.pop("border")
+    return _vrai_st_container(*args, **kwargs)
+st.container = safe_container
+
+# 6. Rétrocompatibilité st.toggle -> st.checkbox
+if not hasattr(st, "toggle"):
+    def safe_toggle(label, value=False, key=None, **kwargs):
+        return st.checkbox(label, value=value, key=key)
+    st.toggle = safe_toggle
+
+# 7. Rétrocompatibilité st.dialog
+if not hasattr(st, "dialog"):
+    def safe_dialog(*args, **kwargs):
+        return st.container()
+    st.dialog = safe_dialog
+
+# 8. Décorateur pour sécuriser l'état des widgets (Session State)
+def securiser_widget_factory(fonction_origine):
+    def safe_widget(*args, **kwargs):
+        cle = kwargs.get("key")
+        if cle and cle in st.session_state:
+            kwargs.pop("value", None)
+        return fonction_origine(*args, **kwargs)
+    return safe_widget
+
+
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
@@ -72,7 +166,7 @@ def valider_saisie():
         st.session_state.verrouille = True
         
         st.success(f"Identification réussie pour : {nom_clean} {prenom_clean} ({classe_clean}).")
-
+        st.rerun()
 
 def valider_session():
     """Fonction passerelle de sécurité pour l'ouverture des droits d'ateliers."""
@@ -3129,16 +3223,11 @@ with tab5:
     # =========================================================================
     # RAPPEL DE COURS PRÉCIS (FORMAT LATEX)
     # =========================================================================
-    st.markdown("""
-    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
-        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel des Formules du Cours :</p>
-        <ul>
-            <li><strong>Somme des probabilites :</strong> $\sum p_i = p_1 + p_2 + p_3 = 1$</li>
-            <li><strong>Esperance Mathematique (Valeur moyenne) :</strong> $E(X) = \sum x_i \cdot p_i = x_1p_1 + x_2p_2 + x_3p_3$</li>
-            <li><strong>Variance (Indicateur de dispersion) :</strong> $V(X) = \sum (x_i)^2 \cdot p_i - [E(X)]^2$</li>
-        </ul>
-    </div>
-    """, unsafe_allow_html=True)
+with st.info(""):
+    st.markdown("**Rappel des Formules du Cours :**")
+    st.markdown("- **Somme des probabilités :** $\sum p_i = p_1 + p_2 + p_3 = 1$")
+    st.markdown("- **Espérance Mathématique (Valeur moyenne) :** $E(X) = \sum x_i \cdot p_i = x_1p_1 + x_2p_2 + x_3p_3$")
+    st.markdown("- **Variance (Indicateur de dispersion) :** $V(X) = \sum (x_i)^2 \cdot p_i - [E(X)]^2$")
 
     if "at5_verrouille" not in st.session_state:
         st.session_state.at5_verrouille = False
