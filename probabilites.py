@@ -3218,17 +3218,46 @@ with tab4:
 
 
 with tab5:
-    st.title("Atelier 5 : Espérance Mathématique & Variance")
+    # Correction de la faute de frappe dans le titre
+    st.header("Atelier 5 : Espérance Mathématique & Variance")
+    
+    # =========================================================================
+    # RAPPEL DE COURS PRÉCIS (STYLE INJECTÉ ET FORMAT LATEX FONCTIONNEL)
+    # =========================================================================
+    # 1. Injection du style CSS personnalisé
+    st.markdown("""
+        <style>
+        .rappel-cours-box {
+            background-color: #f8fafc; 
+            border-left: 4px solid #1e3a8a; 
+            padding: 15px; 
+            border-radius: 4px; 
+            margin-bottom: 20px;
+        }
+        .rappel-cours-title {
+            font-weight: bold; 
+            color: #1e3a8a; 
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
-    with st.info("Rappel des Formules du Cours"):
-        st.markdown("**1. Somme des probabilités :**")
-        st.latex(r"\sum_{i=1}^{3} p_i = p_1 + p_2 + p_3 = 1")
-        
-        st.markdown("**2. Espérance Mathématique (Valeur moyenne) :**")
-        st.latex(r"E(X) = \sum_{i=1}^{3} x_i \cdot p_i = x_1p_1 + x_2p_2 + x_3p_3")
-        
-        st.markdown("**3. Variance (Indicateur de dispersion) :**")
-        st.latex(r"V(X) = \sum_{i=1}^{3} (x_i)^2 \cdot p_i - [E(X)]^2")
+    # 2. Rendu de l'encadré avec le Markdown et le LaTeX interprétés
+    st.markdown("""
+    <div class="rappel-cours-box">
+        <p class="rappel-cours-title">Rappel des Formules du Cours :</p>
+
+- **Somme des probabilités :** $\sum p_i = p_1 + p_2 + p_3 = 1$
+- **Espérance Mathématique (Valeur moyenne) :** $E(X) = \sum x_i \cdot p_i = x_1p_1 + x_2p_2 + x_3p_3$
+- **Variance (Indicateur de dispersion) :** $V(X) = \sum (x_i)^2 \cdot p_i - [E(X)]^2$
+
+    </div>
+    """, unsafe_allow_html=True)
+
+    # =========================================================================
+    # INITIALISATION DU SESSION STATE
+    # =========================================================================
     if "at5_verrouille" not in st.session_state:
         st.session_state.at5_verrouille = False
     if "at5_afficher_correction" not in st.session_state:
