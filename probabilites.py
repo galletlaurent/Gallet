@@ -3223,11 +3223,11 @@ with tab5:
     # =========================================================================
     # RAPPEL DE COURS PRÉCIS (FORMAT LATEX)
     # =========================================================================
-with st.info(""):
-    st.markdown("**Rappel des Formules du Cours :**")
-    st.markdown("- **Somme des probabilités :** $\sum p_i = p_1 + p_2 + p_3 = 1$")
-    st.markdown("- **Espérance Mathématique (Valeur moyenne) :** $E(X) = \sum x_i \cdot p_i = x_1p_1 + x_2p_2 + x_3p_3$")
-    st.markdown("- **Variance (Indicateur de dispersion) :** $V(X) = \sum (x_i)^2 \cdot p_i - [E(X)]^2$")
+    with st.info(""):
+        st.markdown("**Rappel des Formules du Cours :**")
+        st.markdown("- **Somme des probabilités :** $\sum p_i = p_1 + p_2 + p_3 = 1$")
+        st.markdown("- **Espérance Mathématique (Valeur moyenne) :** $E(X) = \sum x_i \cdot p_i = x_1p_1 + x_2p_2 + x_3p_3$")
+        st.markdown("- **Variance (Indicateur de dispersion) :** $V(X) = \sum (x_i)^2 \cdot p_i - [E(X)]^2$")
 
     if "at5_verrouille" not in st.session_state:
         st.session_state.at5_verrouille = False
