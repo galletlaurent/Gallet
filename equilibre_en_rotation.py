@@ -865,8 +865,6 @@ with tab1:
 
 
     # Appel de la fonction de questionnaire pour les Généralités sur les forces
-    res_q1, res_t1 = afficher_questions_forces_dynamiques(verrouille=verrou_forces_1)
-
     st.write("---")
     st.subheader("Validation de la section sur les forces")
 
