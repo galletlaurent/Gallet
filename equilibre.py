@@ -1175,7 +1175,40 @@ with tab2:
 
 
 with tab3:
+
     st.header("Cas a 2 Forces")
+    st.subheader("Caricature de l'equilibre a deux forces (Sequence en 4 etapes)")
+
+    # Separation en deux colonnes : 60% pour le texte en bleu, 40% pour l'image unique
+    col_texte, col_image = st.columns([0.6, 0.4])
+
+    with col_texte:
+        # Utilisation de st.info pour afficher l'ensemble du texte dans un encadre bleu
+        st.info("""
+        ### Analyse de la statique a deux forces opposes
+        
+        **Etape 1 : Situation d'equilibre initial**
+        Un personnage tire sur une corde fixee a un anneau mural rigide. Le systeme est parfaitement immobile car la force de traction et la reaction du mur ont la meme droite d'action, des normes egales et des sens opposes.
+        
+        **Etape 2 : Augmentation de l'intensite**
+        Le personnage prend davantage d'appui et tire deux fois plus fort. Simultanement, la force de reaction du support augmente instantanement de la meme valeur. Les deux vecteurs s'allongent mais l'equilibre statique reste maintenu.
+        
+        **Etape 3 : Rupture de la droite d'action**
+        La fixation murale glisse brusquement vers le haut le long d'un rail vertical. Les deux forces n'ont plus la meme droite d'action commune. Cela cree un couple de forces qui engendre un mouvement de rotation du systeme.
+        
+        **Etape 4 : Desequilibre et mouvement**
+        La corde se rompt definitivement. La force de reaction s'annule instantanement tandis que la force de traction interne provoque la chute du personnage vers l'riere. La somme vectorielle n'est plus nulle.
+        """)
+
+    with col_image:
+        # Remplacer "caricature_deux_forces.jpg" par le nom exact de votre fichier image unique
+        nom_image_2f = "caricature_deux_forces.jpg"
+        
+        if os.path.exists(nom_image_2f):
+            st.image(nom_image_2f, caption="Sequence complete de l'equilibre a deux forces", use_container_width=True)
+        else:
+            st.warning(f"L'image {nom_image_2f} est manquante sur le serveur.")
+        
     st.write("Deux forces s'équilibrent si elles ont la meme droite d'action, des normes egales et des sens opposes.")
     analyser_systeme_forces(nb_forces=2, suffixe_clef="2f", nom_onglet="Equilibre_2_forces")
 
