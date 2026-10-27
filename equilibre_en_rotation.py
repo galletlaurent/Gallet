@@ -353,19 +353,14 @@ with tab1:
     col_hist_txt, col_hist_img = st.columns([1, 1])
     
     with col_hist_txt:
-        st.write("**La bande dessinée humoristique : Le choc des générations**")
+        st.write("**La bande dessinée humoristique : L'évolution de la mesure mécanique**")
         st.info(
-            "**Case 1 : Le coup de vieux mécanique (1973) :** Un ingénieur montre fièrement son premier prototype "
-            "de dynamomètre portable à ressort de 2 kilos sur la 6ème Avenue, clamant qu'il peut mesurer des forces directement dans la rue.\n\n"
-            "**Case 2 : Le silence à l'autre bout (Bell Labs) :** Son interlocuteur au téléphone fixe rigole derrière son bureau, "
-            "se demandant comment une brique si lourde peut être pratique sur un vrai chantier.\n\n"
-            "**Case 3 : L'autoroute des hexagones (Années 2000) :** Les capteurs s'allègent. Les données de traction passent "
-            "de pylône en antenne pour transférer les mesures de force de manière fluide et sans fil.\n\n"
-            "**Case 4 : Le couteau suisse moderne :** Un jeune technicien regarde l'ancien appareil mécanique et s'étonne : "
-            "Une brique d'un kilo pour juste mesurer une force ? Mais comment faisaient-ils à l'époque pour envoyer des messages, "
-            "analyser des graphiques en ligne et partager les rapports directement depuis la rue ?"
+            "**Case 1 : Le dynamomètre traditionnel (Passé) :** Un technicien manipule un peson mécanique massif à ressort en acier. Ses collègues le regardent avec étonnement, car l'appareil est lourd à transporter d'un chantier à un autre.\n\n"
+            "**Case 2 : L'ancien système de lecture (Passé) :** À l'autre bout de l'atelier, un opérateur doit plisser les yeux pour lire la valeur de la force sur une graduation rectiligne en métal usée, peu précise et difficile à déchiffrer.\n\n"
+            "**Case 3 : L'arrivée de l'électronique (Années 2000) :** Les capteurs de force deviennent miniatures. Les données de traction ou de compression sont converties en signaux électriques et transmises proprement par des câbles ou des liaisons sans fil.\n\n"
+            "**Case 4 : Le technicien moderne (Aujourd'hui) :** Un jeune apprenti utilise un dynamomètre numérique de poche connecté en Bluetooth. Il regarde les anciens appareils à ressort et s'étonne : Comment faisaient-ils avant pour enregistrer les variations de force en temps réel, stocker les données sur ordinateur et tracer automatiquement des graphiques d'équilibre sans écran ?"
         )
-        
+            
     with col_hist_img:
         if os.path.exists("caricature_forces.jpg"):
             st.image("caricature_forces.jpg", caption="Évolution technologique des systèmes de mesure", use_container_width=True)
