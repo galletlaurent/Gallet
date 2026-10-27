@@ -801,12 +801,24 @@ with tab2:
         "Pour étudier l'effet des forces sur un objet pivotant, il est obligatoire de choisir un sens "
         "de rotation considéré comme positif. Par convention :"
     )
-    st.markdown(
-        """
-        *   **Le sens positif (ou trigonométrique)** : Sens inverse des aiguilles d'une montre.
-        *   **Le sens négatif (ou horaire)** : Sens des aiguilles d'une montre.
-        """
-    )
+    
+    col_sens_a, col_sens_b = st.columns(2)
+    
+    with col_sens_a:
+        st.markdown("*   **Le sens positif (ou trigonométrique)** : Sens inverse des aiguilles d'une montre.")
+        if os.path.exists("sens_positif.jpg"):
+            st.image("sens_positif.jpg", caption="Représentation graphique du sens positif (anti-horaire)", use_container_width=True)
+        else:
+            st.info("Emplacement pour l'image : sens_positif.jpg")
+
+    with col_sens_b:
+        st.markdown("*   **Le sens négatif (ou horaire)** : Sens des aiguilles d'une montre.")
+        if os.path.exists("sens_negatif.jpg"):
+            st.image("sens_negatif.jpg", caption="Représentation graphique du sens négatif (horaire)", use_container_width=True)
+        else:
+            st.info("Emplacement pour l'image : sens_negatif.jpg")
+
+    st.write("")
     st.write(
         "Une force qui tend à faire tourner le système dans le sens positif aura un effet positif, "
         "tandis qu'une force qui tend à le faire tourner dans le sens inverse aura un effet négatif."
@@ -819,6 +831,47 @@ with tab2:
         "La somme algébrique des effets de rotation de toutes les forces appliquées doit donc être égale à zéro."
     )
 
+    # --- NOUVELLE SECTION : EXEMPLES DE LA VIE COURANTE ---
+    st.subheader("4. Exemples d'objets en rotation dans la vie courante")
+    st.write(
+        "Voici des applications concrètes de solides en rotation ou recherchant l'équilibre des moments "
+        "que vous rencontrez quotidiennement à la maison ou dans les ateliers :"
+    )
+
+    col_vie_1, col_vie_2 = st.columns(2)
+    
+    with col_vie_1:
+        st.markdown("**Exemple A : La roue de vélo ou le manège**")
+        st.write("L'axe métallique central reste fixe pendant que la structure externe tourne sous l'effet d'une force.")
+        if os.path.exists("vie_courante_roue.jpg"):
+            st.image("vie_courante_roue.jpg", caption="Roue en rotation autour de son moyeu central fixe", use_container_width=True)
+        else:
+            st.info("Emplacement pour l'image : vie_courante_roue.jpg")
+
+        st.write("")
+        st.markdown("**Exemple B : La clé de serrage en atelier**")
+        st.write("Plus le manche est long, plus l'effet de la force mécanique augmente pour faire pivoter le boulon.")
+        if os.path.exists("vie_courante_cle.jpg"):
+            st.image("vie_courante_cle.jpg", caption="Utilisation du bras de levier pour engendrer une rotation", use_container_width=True)
+        else:
+            st.info("Emplacement pour l'image : vie_courante_cle.jpg")
+
+    with col_vie_2:
+        st.markdown("**Exemple C : La poignée de porte**")
+        st.write("L'action de votre main à l'extrémité de la béquille crée le moment nécessaire pour actionner le pêne.")
+        if os.path.exists("vie_courante_poignee.jpg"):
+            st.image("vie_courante_poignee.jpg", caption="Pivotement de la poignée autour de son carré d'axe", use_container_width=True)
+        else:
+            st.info("Emplacement pour l'image : vie_courante_poignee.jpg")
+
+        st.write("")
+        st.markdown("**Exemple D : La pédale de commande ou le pédalier**")
+        st.write("L'effort musculaire vertical est transformé en un couple mécanique de rotation autour de l'axe de pédalier.")
+        if os.path.exists("vie_courante_pedale.jpg"):
+            st.image("vie_courante_pedale.jpg", caption="Transformation de l'effort linéaire en mouvement circulaire", use_container_width=True)
+        else:
+            st.info("Emplacement pour l'image : vie_courante_pedale.jpg")
+            
     # --- LOGIQUE DE COUPLAGE ET VALIDATION DE L'ONGLET 2 ---
     st.divider()
     st.subheader("4. Évaluation sur l'équilibre en rotation")
