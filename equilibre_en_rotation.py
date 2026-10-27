@@ -1105,6 +1105,7 @@ with tab3:
         timestamp_moments3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
         st.success(f"SECTION THÉORÈME DES MOMENTS SCELLÉE | Note de session : {tot_s:.1f} / 20")
 
+        # Initialisation obligatoire de la variable avant la boucle
         html_export_moments3 = f"""<!DOCTYPE html>
         <html>
         <head>
@@ -1141,81 +1142,84 @@ with tab3:
             <div class="sub-title">Correction détaillée du Quiz (ordre d'affichage de la session)</div>
             <table>
                 <thead>
+                    <tr>
+                        <th>N°</th>
+                        <th>Question Posée</th>
+                        <th>Saisie Élève</th>
+                        <th>Attendu Académique</th>
+                        <th>Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
 
-                <tr>
-                    <th>N°</th>
-                    <th>Question Posée</th>
-                    <th>Saisie Élève</th>
-                    <th>Attendu Académique</th>
-                    <th>Verdict</th>
-                </tr>
-            </thead>
-            <tbody>
-    """
+        # Remplissage des lignes du Quiz
+        if "ordre_quiz3_moments" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz3_moments, 1):
+                saisie = st.session_state.get(f"moments_cl_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_moments3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-    if "ordre_quiz3_moments" in st.session_state:
-        for num, q_item in enumerate(st.session_state.ordre_quiz3_moments, 1):
-            saisie = st.session_state.get(f"moments_cl_g_{q_item['id']}", "Choisir...")
-            attendu = q_item["rep"]
-            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_moments3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+        # Suite du HTML et ouverture du second tableau
+        html_export_moments3 += """
+                </tbody>
+            </table>
 
-    html_export_moments3 += """
-            </tbody>
-        </table>
+            <div class="sub-title">Correction détaillée des trous de synthèse</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>N°</th>
+                        <th>Énoncé de cours</th>
+                        <th>Saisie Élève</th>
+                        <th>Attendu Académique</th>
+                        <th>Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
 
-        <div class="sub-title">Correction détaillée des trous de synthèse</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>N°</th>
-                    <th>Énoncé de cours</th>
-                    <th>Saisie Élève</th>
-                    <th>Attendu Académique</th>
-                    <th>Verdict</th>
-                </tr>
-            </thead>
-            <tbody>
-    """
+        phrases_trous3 = [
+            "1. Le moment d'une force par rapport à un axe est le produit de la force par le",
+            "2. Ce bras de levier correspond à la distance la plus courte, mesurée de façon",
+            "3. entre l'axe de rotation Delta et la ligne d'action du vecteur",
+            "4. L'unité de mesure combinée s'écrit sous la forme mathématique du",
+            "5. Si la droite d'action d'une force coupe directement l'axe, la distance est",
+            "6. Dans ce cas spécifique, l'action mécanique ne produit aucun effet de",
+            "7. À l'équilibre, la somme des moments qui font tourner dans le sens",
+            "8. compense les moments opposés. On affecte un signe moins aux rotations du sens",
+            "9. La somme algébrique totale de ces grandeurs est représentée par le symbole",
+            "10. L'application pratique directe de cette loi se retrouve dans l'utilisation des"
+        ]
+        attendus_trous3 = ["Bras de levier", "Perpendiculaire", "Force", "Newton-mètre", "Nulle", "Rotation", "Trigonométrique", "Horaire", "Sigma", "Leviers"]
+        cles_trous3 = ["mom_t1_s3", "mom_t2_s3", "mom_t3_s3", "mom_t4_s3", "mom_t5_s3", "mom_t6_s3", "mom_t7_s3", "mom_t8_s3", "mom_t9_s3", "mom_t10_s3"]
 
-    phrases_trous3 = [
-        "1. Le moment d'une force par rapport à un axe est le produit de la force par le",
-        "2. Ce bras de levier correspond à la distance la plus courte, mesurée de façon",
-        "3. entre l'axe de rotation Delta et la ligne d'action du vecteur",
-        "4. L'unité de mesure combinée s'écrit sous la forme mathématique du",
-        "5. Si la droite d'action d'une force coupe directement l'axe, la distance est",
-        "6. Dans ce cas spécifique, l'action mécanique ne produit aucun effet de",
-        "7. À l'équilibre, la somme des moments qui font tourner dans le sens",
-        "8. compense les moments opposés. On affecte un signe moins aux rotations du sens",
-        "9. La somme algébrique totale de ces grandeurs est représentée par le symbole",
-        "10. L'application pratique directe de cette loi se retrouve dans l'utilisation des"
-    ]
-    attendus_trous3 = ["Bras de levier", "Perpendiculaire", "Force", "Newton-mètre", "Nulle", "Rotation", "Trigonométrique", "Horaire", "Sigma", "Leviers"]
-    cles_trous3 = ["mom_t1_s3", "mom_t2_s3", "mom_t3_s3", "mom_t4_s3", "mom_t5_s3", "mom_t6_s3", "mom_t7_s3", "mom_t8_s3", "mom_t9_s3", "mom_t10_s3"]
+        # Remplissage des lignes du texte à trous
+        for idx, (phrase, attendu, cle) in enumerate(zip(phrases_trous3, attendus_trous3, cles_trous3), 1):
+            saisie_t = st.session_state.get(cle, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_moments3 += f"<tr><td>{idx}</td><td>{phrase} ...</td><td>{saisie_t}</td><td>{attendu}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
 
-    for idx, (phrase, attendu, cle) in enumerate(zip(phrases_trous3, attendus_trous3, cles_trous3), 1):
-        saisie_t = st.session_state.get(cle, "Choisir...")
-        v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu).strip() else "INCORRECT"
-        v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
-        html_export_moments3 += f"<tr><td>{idx}</td><td>{phrase} ...</td><td>{saisie_t}</td><td>{attendu}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+        # Fermeture finale du fichier HTML
+        html_export_moments3 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
 
-    html_export_moments3 += """
-            </tbody>
-        </table>
-    </body>
-    </html>
-    """
-
-    nom_fichier_html3 = preparer_nom_fichier("rapport_moments") + ".html"
-    st.download_button(
-        label="Télécharger le fichier de rapport officiel de l'Atelier 3 (HTML)",
-        data=html_export_moments3,
-        file_name=nom_fichier_html3,
-        mime="text/html",
-        use_container_width=True
-    )
-
+        # Affichage du bouton de téléchargement Streamlit
+        nom_fichier_html3 = preparer_nom_fichier("rapport_moments") + ".html"
+        st.download_button(
+            label="Télécharger le fichier de rapport officiel de l'Atelier 3 (HTML)",
+            data=html_export_moments3,
+            file_name=nom_fichier_html3,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
