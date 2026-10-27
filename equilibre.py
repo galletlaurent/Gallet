@@ -814,7 +814,7 @@ with tab1:
         if os.path.exists("portrait_archimede.jpg"):
             st.image("portrait_archimede.jpg", caption="Archimède", use_container_width=True)
         else:
-            st.info("portrait_archimede.jpg.")
+            st.info("portrait_archimede.jpg")
     with arc_col2:
         if os.path.exists("decouverte_archimede.jpg"):
             st.image("decouverte_archimede.jpg", caption="La loi du levier et de la balance", use_container_width=True)
