@@ -203,18 +203,29 @@ def afficher_questions_exemple2_dynamiques(verrouille=False):
     import streamlit as st
     import random
     
+    # Récupération des valeurs de l'élève
+    f1_user = st.session_state.get("ex2_f1_aleatoire", 12000)
+    d1_user = st.session_state.get("ex2_d1_aleatoire", 15)
+    f2_user = st.session_state.get("ex2_f2_aleatoire", 36000)
+    d2_user_attendu = round((f1_user * d1_user) / f2_user, 2)
+    m1_user = f1_user * d1_user
+    
+    # Faux calculs pour les options
+    faux_d1 = round((f1_user * f2_user) / d1_user, 2)
+    faux_d2 = round(m1_user + f2_user, 2)
+
     if "ordre_quiz_ex2" not in st.session_state:
         base_quiz_ex2 = [
-            {"id": "qe2_1", "q": "Pour convertir une masse de tonnes (t) en kilogrammes (kg), il faut :", "type": "menu", "options": ["Multiplier par 1000", "Diviser par 1000", "Multiplier par 100"], "rep": "Multiplier par 1000"},
-            {"id": "qe2_2", "q": "La formule mathématique permettant de calculer l'intensité d'un poids est :", "type": "menu", "options": ["P = m x g", "P = m / g", "P = F x d"], "rep": "P = m x g"},
-            {"id": "qe2_3", "q": "Sur la Terre, l'intensité de la pesanteur g vaut environ :", "type": "menu", "options": ["9,81 N/kg", "1,62 N/kg", "100 N/kg"], "rep": "9,81 N/kg"},
-            {"id": "qe2_4", "q": "Une masse de 4 tonnes équivaut à un poids réel sur Terre de :", "type": "menu", "options": ["39 240 N", "4 000 N", "400 N"], "rep": "39 240 N"},
-            {"id": "qe2_5", "q": "À l'équilibre d'une grue, le moment de la charge à gauche doit être égal au :", "type": "menu", "options": ["Moment du contrepoids à droite", "Poids du mât central", "Poids de la charge seule"], "rep": "Moment du contrepoids à droite"},
-            {"id": "qe2_6", "q": "Si le moment de la charge devient supérieur au moment du contrepoids, la grue :", "type": "menu", "options": ["Bascule vers l'avant", "Reste stable", "Bascule vers l'arrière"], "rep": "Bascule vers l'avant"},
-            {"id": "qe2_7", "q": "La droite d'action du poids d'un conteneur suspendu est toujours :", "type": "menu", "options": ["Verticale", "Horizontale", "Oblique"], "rep": "Verticale"},
-            {"id": "qe2_8", "q": "Le centre de gravité d'un corps est le point d'application de :", "type": "menu", "options": ["Son poids", "Sa force de réaction", "Sa force de traction"], "rep": "Son poids"},
-            {"id": "qe2_9", "q": "Pour équilibrer une force très grande avec une force plus petite, il faut que la petite force ait :", "type": "menu", "options": ["Un bras de levier plus grand", "Un bras de levier plus petit", "Une distance nulle"], "rep": "Un bras de levier plus grand"},
-            {"id": "qe2_10", "q": "Si on rapproche le contrepoids du mât central d'une grue, son moment :", "type": "menu", "options": ["Diminue", "Augmente", "Reste identique"], "rep": "Diminue"}
+            {"id": "qe2_1", "q": f"À l'équilibre de la grue, le moment de F1 à gauche doit compenser le moment de :", "type": "menu", "options": ["F2 à droite", "L'axe central uniquement", "La flèche seule"], "rep": "F2 à droite"},
+            {"id": "qe2_2", "q": f"Calculez le moment généré à gauche par la charge F1 (M1 = {f1_user} N x {d1_user} m) :", "type": "menu", "options": [f"{m1_user} N.m", f"{f1_user} N.m", "180 000 N.m"], "rep": f"{m1_user} N.m"},
+            {"id": "qe2_3", "q": f"Quelle est la valeur de la force F2 du contrepoids lue dans votre énoncé ?", "type": "menu", "options": [f"{f2_user} N", f"{f1_user} N", "36 000 N"], "rep": f"{f2_user} N"},
+            {"id": "qe2_4", "q": "Pour isoler la distance d2 dans la relation d'équilibre, la formule exacte est :", "type": "menu", "options": ["d2 = (F1 x d1) / F2", "d2 = F2 / (F1 x d1)", "d2 = F1 x d1 x F2"], "rep": "d2 = (F1 x d1) / F2"},
+            {"id": "qe2_5", "q": f"Quelle distance d2 trouvez-vous pour obtenir l'équilibre parfait de votre grue ?", "type": "menu", "options": [f"{d2_user_attendu} m", f"{faux_d1} m", f"{faux_d2} m"], "rep": f"{d2_user_attendu} m"},
+            {"id": "qe2_6", "q": "Le poids du conteneur maritime suspendu constitue une force s'exerçant à :", "type": "menu", "options": ["Distance", "Contact", "Frottement"], "rep": "Distance"},
+            {"id": "qe2_7", "q": "La droite d'action du vecteur poids d'un corps suspendu est toujours :", "type": "menu", "options": ["Verticale", "Horizontale", "Oblique"], "rep": "Verticale"},
+            {"id": "qe2_8", "q": "Le point d'application de la force du poids du conteneur se situe au :", "type": "menu", "options": ["Centre de gravité G", "Point d'ancrage du câble", "Moyeu du mât central"], "rep": "Centre de gravité G"},
+            {"id": "qe2_9", "q": "Si la charge F1 s'éloigne du mât central, son bras de levier d1 va :", "type": "menu", "options": ["Augmente", "Diminue", "Rester constant"], "rep": "Augmente"},
+            {"id": "qe2_10", "q": "Si le moment à gauche devient supérieur au moment à droite, la grue va :", "type": "menu", "options": ["Basculer vers l'avant", "Basculer vers l'arrière", "Rester immobile"], "rep": "Basculer vers l'avant"}
         ]
         copie_base = list(base_quiz_ex2)
         random.shuffle(copie_base)
@@ -241,18 +252,17 @@ def afficher_questions_exemple2_dynamiques(verrouille=False):
         st.markdown("##### Synthèse de mécanique de l'Exemple 2 (10 trous - 10 pts)")
         dict_trous = {}
         trous_data_ex2 = [
-            ("1. L'étude d'une grue portuaire repose sur le théorème des", ["Choisir...", "Moments", "Forces"], "ex2_t1_s6", "Moments"),
-            ("2. La charge suspendue à l'extrémité de la flèche crée une force due au", ["Choisir...", "Poids", "Vent"], "ex2_t2_s6", "Poids"),
-            ("3. Pour calculer cette force, la masse en tonnes est convertie en", ["Choisir...", "Kilogrammes", "Grammes"], "ex2_t3_s6", "Kilogrammes"),
-            ("4. La constante de proportionnalité g désigne l'intensité de la", ["Choisir...", "Pesanteur", "Traction"], "ex2_t4_s6", "Pesanteur"),
-            ("5. Le mât central vertical matérialise le pivot ou l'action de l'", ["Choisir...", "Axe", "Support"], "ex2_t5_s6", "Axe"),
-            ("6. Afin de stabiliser la flèche horizontale, on installe un", ["Choisir...", "Contrepoids", "Moteur"], "ex2_t6_s6", "Contrepoids"),
-            ("7. Les deux actions mécaniques agissent dans des sens de rotation", ["Choisir...", "Opposés", "Identiques"], "ex2_t7_s6", "Opposés"),
-            ("8. L'équilibre est atteint quand la somme algébrique des moments est", ["Choisir...", "Nulle", "Maximale"], "ex2_t8_s6", "Nulle"),
-            ("9. La modification de la position d'un bloc modifie son bras de", ["Choisir...", "Levier", "Câble"], "ex2_t9_s6", "Levier"),
-            ("10. Cette égalité mathématique garantit la sécurité lors du", ["Choisir...", "Levage", "Stockage"], "ex2_t10_s6", "Levage")
+            (f"1. Le moment calculé à gauche pour votre charge F1 s'élève à :", ["Choisir...", f"{m1_user} N.m", "180 000 N.m"], "ex2_t1_s6", f"{m1_user} N.m"),
+            (f"2. À l'équilibre, le moment à droite créé par F2 doit valoir :", ["Choisir...", f"{m1_user} N.m", f"{f2_user} N.m"], "ex2_t2_s6", f"{m1_user} N.m"),
+            (f"3. La distance théorique d2 calculée pour votre contrepoids vaut :", ["Choisir...", f"{d2_user_attendu} m", f"{d1_user} m"], "ex2_t3_s6", f"{d2_user_attendu} m"),
+            (f"4. L'équilibre de la flèche est régi par le théorème des :", ["Choisir...", "Moments", "Trajectoires"], "ex2_t4_s6", "Moments"),
+            (f"5. Le mât central de la structure matérialise l'axe noté :", ["Choisir...", "Delta", "Sigma"], "ex2_t5_s6", "Delta"),
+            (f"6. L'intensité de l'action mécanique du contrepoids F2 est de :", ["Choisir...", f"{f2_user} N", "36 000 N"], "ex2_t6_s6", f"{f2_user} N"),
+            (f"7. La distance d1 reliant l'axe à votre charge mesure :", ["Choisir...", f"{d1_user} m", "15 m"], "ex2_t7_s6", f"{d1_user} m"),
+            (f"8. Les deux actions mécaniques s'exercent dans des sens :", ["Choisir...", "Opposés", "Identiques"], "ex2_t8_s6", "Opposés"),
+            (f"9. Si le contrepoids se rapproche du centre, son moment va :", ["Choisir...", "Diminuer", "Augmenter"], "ex2_t9_s6", "Diminuer"),
+            (f"10. Cette loi garantit la sécurité lors des opérations de :", ["Choisir...", "Levage", "Soudage"], "ex2_t10_s6", "Levage")
         ]
-        
         for phrase, opts, key, rep in trous_data_ex2:
             c_p, c_s = st.columns([0.70, 0.30], vertical_alignment="bottom")
             with c_p: st.write(phrase)
@@ -268,18 +278,28 @@ def afficher_questions_exemple1_dynamiques(verrouille=False):
     import streamlit as st
     import random
     
+    # Récupération des valeurs de l'élève
+    f_user = st.session_state.get("ex1_force_aleatoire", 150)
+    d_cm_user = st.session_state.get("ex1_dist_aleatoire", 30)
+    d_m_user = round(d_cm_user / 100, 2)
+    m_user = round(f_user * d_m_user, 1)
+    
+    # Calculs pour de fausses options cohérentes
+    faux_m1 = round(f_user / d_m_user, 1) if d_m_user != 0 else 0.0
+    faux_m2 = round(f_user * d_cm_user, 1)
+
     if "ordre_quiz_ex1" not in st.session_state:
         base_quiz_ex1 = [
-            {"id": "qe1_1", "q": "Pour convertir une distance de centimètres (cm) en mètres (m), il faut :", "type": "menu", "options": ["Diviser par 100", "Multiplier par 100", "Diviser par 1000"], "rep": "Diviser par 100"},
-            {"id": "qe1_2", "q": "Une longueur de manche de clé de 45 cm correspond à une distance de :", "type": "menu", "options": ["0,45 m", "4,5 m", "0,045 m"], "rep": "0,45 m"},
-            {"id": "qe1_3", "q": "Si on applique une force de 200 N avec une clé de 0,5 m, le moment vaut :", "type": "menu", "options": ["100 N.m", "400 N.m", "50 N.m"], "rep": "100 N.m"},
-            {"id": "qe1_4", "q": "Dans un atelier, l'outil permettant de mesurer directement un couple de serrage est :", "type": "menu", "options": ["La clé dynamométrique", "Le pied à coulisse", "Le réglet métallique"], "rep": "La clé dynamométrique"},
-            {"id": "qe1_5", "q": "Le bras de levier est la distance mesurée de manière perpendiculaire entre l'axe et :", "type": "menu", "options": ["La droite d'action de la force", "Le point d'application seul", "L'extrémité du manche"], "rep": "La droite d'action de la force"},
-            {"id": "qe1_6", "q": "Si le moment appliqué dépasse la tolérance maximale du constructeur, le risque est :", "type": "menu", "options": ["La rupture du filetage", "Le desserrage de la pièce", "L'allègement de la structure"], "rep": "La rupture du filetage"},
-            {"id": "qe1_7", "q": "La tolérance de serrage exprimée en pourcentage (%) mesure :", "type": "menu", "options": ["L'écart maximal autorisé", "L'usure de l'outil", "La longueur de la vis"], "rep": "L'écart maximal autorisé"},
-            {"id": "qe1_8", "q": "L'expression du moment d'une force perpendiculaire au bras de levier est :", "type": "menu", "options": ["M = F x d", "M = F / d", "M = F + d"], "rep": "M = F x d"},
-            {"id": "qe1_9", "q": "Une clé plus longue permet, pour un même effort musculaire, d'obtenir un moment :", "type": "menu", "options": ["Plus grand", "Plus petit", "Identique"], "rep": "Plus grand"},
-            {"id": "qe1_10", "q": "Une force dont la droite d'action passe par le centre de l'écrou possède un moment :", "type": "menu", "options": ["Nul", "Très élevé", "Uniquement négatif"], "rep": "Nul"}
+            {"id": "qe1_1", "q": f"Quelle est la formule littérale pour calculer le moment de votre force F = {f_user} N ?", "type": "menu", "options": ["M = F x d", "M = F / d", "M = F + d"], "rep": "M = F x d"},
+            {"id": "qe1_2", "q": f"Quelle valeur lisez-vous pour l'intensité de votre force F dans l'énoncé personnalisé ?", "type": "menu", "options": [f"{f_user} N", f"{d_cm_user} N", "150 N"], "rep": f"{f_user} N"},
+            {"id": "qe1_3", "q": f"Dans le calcul du moment, la distance initiale d = {d_cm_user} cm doit être exprimée en :", "type": "menu", "options": ["Mètres (m)", "Millimètres (mm)", "Kilomètres (km)"], "rep": "Mètres (m)"},
+            {"id": "qe1_4", "q": f"Le moment de votre force (M = {f_user} N x {d_m_user} m) est égal à :", "type": "menu", "options": [f"{m_user} N.m", f"{faux_m1} N.m", f"{faux_m2} N.m"], "rep": f"{m_user} N.m"},
+            {"id": "qe1_5", "q": "L'unité légale du moment d'une force calculé dans le système international est :", "type": "menu", "options": ["Newton-mètre (N.m)", "Newton (N)", "Mètre (m)"], "rep": "Newton-mètre (N.m)"},
+            {"id": "qe1_6", "q": f"Si vous doublez la valeur de votre force (F = {f_user * 2} N) sans changer la clé, le moment :", "type": "menu", "options": ["Double", "Est divisé par deux", "Reste identique"], "rep": "Double"},
+            {"id": "qe1_7", "q": "Si la droite d'action de la force passait par le centre de l'écrou, le moment serait :", "type": "menu", "options": ["Nul", "Plus grand", "Inversé"], "rep": "Nul"},
+            {"id": "qe1_8", "q": "Le bras de levier est la distance mesurée de façon perpendiculaire par rapport à :", "type": "menu", "options": ["La droite d'action de la force", "L'extrémité de la clé", "Le sol de l'atelier"], "rep": "La droite d'action de la force"},
+            {"id": "qe1_9", "q": "Une clé dotée d'un manche plus long permet d'obtenir, pour un même effort musculaire, un moment :", "type": "menu", "options": ["Plus élevé", "Plus faible", "Identique"], "rep": "Plus élevé"},
+            {"id": "qe1_10", "q": "L'appareil professionnel d'atelier utilisé pour appliquer ce couple précis est la :", "type": "menu", "options": ["Clé dynamométrique", "Clé plate standard", "Pince multiprise"], "rep": "Clé dynamométrique"}
         ]
         copie_base = list(base_quiz_ex1)
         random.shuffle(copie_base)
@@ -306,16 +326,16 @@ def afficher_questions_exemple1_dynamiques(verrouille=False):
         st.markdown("##### Synthèse d'atelier de l'Exemple 1 (10 trous - 10 pts)")
         dict_trous = {}
         trous_data = [
-            ("1. La clé dynamométrique permet d'appliquer un couple de", ["Choisir...", "Serrage", "Flexion"], "ex1_t1_s5", "Serrage"),
-            ("2. L'unité réglementaire de cette grandeur mécanique est le", ["Choisir...", "Newton-mètre", "Watt"], "ex1_t2_s5", "Newton-mètre"),
-            ("3. Pour effectuer le calcul, la longueur du manche doit être convertie en", ["Choisir...", "Mètres", "Millimètres"], "ex1_t3_s5", "Mètres"),
-            ("4. Une distance exprimée en centimètres doit être divisée par", ["Choisir...", "100", "1000"], "ex1_t4_s5", "100"),
-            ("5. La force exercée par l'opérateur s'exprime quant à elle en", ["Choisir...", "Newtons", "Kilogrammes"], "ex1_t5_s5", "Newtons"),
-            ("6. Le bras de levier forme un angle obligatoirement", ["Choisir...", "Droit", "Aigu"], "ex1_t6_s5", "Droit"),
-            ("7. avec la droite d'action de la force appliquée sur l'extrémité de l'un", ["Choisir...", "Manche", "Axe"], "ex1_t7_s5", "Manche"),
-            ("8. Le constructeur définit une marge d'erreur appelée une", ["Choisir...", "Tolérance", "Déformation"], "ex1_t8_s5", "Tolérance"),
-            ("9. Un effort trop important engendre un dépassement du couple et un risque de", ["Choisir...", "Rupture", "Glissement"], "ex1_t9_s5", "Rupture"),
-            ("10. de la liaison filetée, rendant l'assemblage non", ["Choisir...", "Conforme", "Mobile"], "ex1_t10_s5", "Conforme")
+            (f"1. La distance d de votre énoncé convertie en mètres vaut :", ["Choisir...", f"{d_m_user} m", f"{d_cm_user} m"], "ex1_t1_s5", f"{d_m_user} m"),
+            (f"2. Pour effectuer cette conversion, on divise les centimètres par :", ["Choisir...", "100", "1000"], "ex1_t2_s5", "100"),
+            (f"3. La valeur de la force F affectée à votre profil s'élève à :", ["Choisir...", f"{f_user} N", "150 N"], "ex1_t3_s5", f"{f_user} N"),
+            (f"4. Le moment résultant de votre serrage est de :", ["Choisir...", f"{m_user} N.m", "45 N.m"], "ex1_t4_s5", f"{m_user} N.m"),
+            (f"5. L'action mécanique exercée par l'opérateur est une force de :", ["Choisir...", "Contact", "Distance"], "ex1_t5_s5", "Contact"),
+            (f"6. Le bras de levier forme un angle obligatoirement :", ["Choisir...", "Droit", "Aigu"], "ex1_t6_s5", "Droit"),
+            (f"7. avec la droite d'action de la force appliquée sur le :", ["Choisir...", "Manche", "Pivot"], "ex1_t7_s5", "Manche"),
+            (f"8. Le terme 'couple de serrage' désigne un effet de :", ["Choisir...", "Rotation", "Translation"], "ex1_t8_s5", "Rotation"),
+            (f"9. En cas de dépassement des tolérances, il y a risque de :", ["Choisir...", "Rupture", "Glissement"], "ex1_t9_s5", "Rupture"),
+            (f"10. du filetage mécanique, rendant l'assemblage non :", ["Choisir...", "Conforme", "Mobile"], "ex1_t10_s5", "Conforme")
         ]
         for phrase, opts, key, rep in trous_data:
             c_p, c_s = st.columns([0.70, 0.30], vertical_alignment="bottom")
@@ -1972,14 +1992,14 @@ with tab5:
 
             # 2. Correction de la Synthèse d'atelier (10 points)
             score_t1 = sum([
-                st.session_state.get("ex1_t1_s5") == "Serrage",
-                st.session_state.get("ex1_t2_s5") == "Newton-mètre",
-                st.session_state.get("ex1_t3_s5") == "Mètres",
-                st.session_state.get("ex1_t4_s5") == "100",
-                st.session_state.get("ex1_t5_s5") == "Newtons",
+                st.session_state.get("ex1_t1_s5") == f"{d_m_attendu} m",
+                st.session_state.get("ex1_t2_s5") == "100",
+                st.session_state.get("ex1_t3_s5") == f"{f_ex1} N",
+                st.session_state.get("ex1_t4_s5") == f"{moment_attendu} N.m",
+                st.session_state.get("ex1_t5_s5") == "Contact",
                 st.session_state.get("ex1_t6_s5") == "Droit",
                 st.session_state.get("ex1_t7_s5") == "Manche",
-                st.session_state.get("ex1_t8_s5") == "Tolérance",
+                st.session_state.get("ex1_t8_s5") == "Rotation",
                 st.session_state.get("ex1_t9_s5") == "Rupture",
                 st.session_state.get("ex1_t10_s5") == "Conforme"
             ])
@@ -2019,8 +2039,8 @@ with tab5:
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
                 <p>Exemple 1 : Étude d'un cas concret de serrage mécanique</p>
-                <p>Échantillon de l'énoncé : Force = {f_ex1} N | Distance initiale = {d_cm_ex1} cm</p>
-                <p>Valeurs attendues résolues : Bras de levier = {d_m_attendu} m | Moment cible = {moment_attendu} N.m</p>
+                <p>Énoncé de session : Force = {f_ex1} N | Distance initiale = {d_cm_ex1} cm</p>
+                <p>Valeurs attendues calculées : Bras de levier = {d_m_attendu} m | Moment cible = {moment_attendu} N.m</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_ex1}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
@@ -2049,7 +2069,7 @@ with tab5:
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
                 html_export_ex1 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_ex1 += """
+        html_export_ex1 += f"""
                 </tbody>
             </table>
 
@@ -2062,18 +2082,18 @@ with tab5:
         """
 
         phrases_trous_ex1 = [
-            "1. La clé dynamométrique permet d'appliquer un couple de",
-            "2. L'unité réglementaire de cette grandeur mécanique est le",
-            "3. Pour effectuer le calcul, la longueur du manche doit être convertie en",
-            "4. Une distance exprimée en centimètres doit être divisée par",
-            "5. La force exercée par l'opérateur s'exprime quant à elle en",
-            "6. Le bras de levier forme un angle obligatoirement",
-            "7. avec la droite d'action de la force appliquée sur l'extrémité de l'un",
-            "8. Le constructeur définit une marge d'erreur appelée une",
-            "9. Un effort trop important engendre un dépassement du couple et un risque de",
-            "10. de la liaison filetée, rendant l'assemblage non"
+            "1. La distance d de votre énoncé convertie en mètres vaut :",
+            "2. Pour effectuer cette conversion, on divise les centimètres par :",
+            "3. La valeur de la force F affectée à votre profil s'élève à :",
+            "4. Le moment résultant de votre calcul de serrage personnalisé vaut :",
+            "5. L'action mécanique exercée par l'opérateur est une force de :",
+            "6. Le bras de levier forme un angle obligatoirement :",
+            "7. avec la droite d'action de la force appliquée sur le :",
+            "8. Le terme 'couple de serrage' désigne un effet de :",
+            "9. En cas de dépassement des tolérances, il y a risque de :",
+            "10. du filetage mécanique, rendant l'assemblage final non :"
         ]
-        attendus_trous_ex1 = ["Serrage", "Newton-mètre", "Mètres", "100", "Newtons", "Droit", "Manche", "Tolérance", "Rupture", "Conforme"]
+        attendus_trous_ex1 = [f"{d_m_attendu} m", "100", f"{f_ex1} N", f"{moment_attendu} N.m", "Contact", "Droit", "Manche", "Rotation", "Rupture", "Conforme"]
         cles_trous_ex1 = ["ex1_t1_s5", "ex1_t2_s5", "ex1_t3_s5", "ex1_t4_s5", "ex1_t5_s5", "ex1_t6_s5", "ex1_t7_s5", "ex1_t8_s5", "ex1_t9_s5", "ex1_t10_s5"]
 
         for idx, (phrase, attendu, cle) in enumerate(zip(phrases_trous_ex1, attendus_trous_ex1, cles_trous_ex1), 1):
@@ -2091,7 +2111,6 @@ with tab5:
 
         nom_fichier_ex1 = preparer_nom_fichier("rapport_exemple1") + ".html"
         st.download_button(label="Télécharger le fichier de rapport officiel Exemple 1 (HTML)", data=html_export_ex1, file_name=nom_fichier_ex1, mime="text/html", use_container_width=True)
-
 
 with tab6:
     st.header("Exemple 2 : Équilibre d'un système de levage (Grue)")
@@ -2165,15 +2184,15 @@ with tab6:
 
             # 2. Correction de la Synthèse mécanique (10 points)
             score_t2 = sum([
-                st.session_state.get("ex2_t1_s6") == "Moments",
-                st.session_state.get("ex2_t2_s6") == "Poids",
-                st.session_state.get("ex2_t3_s6") == "Kilogrammes",
-                st.session_state.get("ex2_t4_s6") == "Pesanteur",
-                st.session_state.get("ex2_t5_s6") == "Axe",
-                st.session_state.get("ex2_t6_s6") == "Contrepoids",
-                st.session_state.get("ex2_t7_s6") == "Opposés",
-                st.session_state.get("ex2_t8_s6") == "Nulle",
-                st.session_state.get("ex2_t9_s6") == "Levier",
+                st.session_state.get("ex2_t1_s6") == f"{m1_user} N.m",
+                st.session_state.get("ex2_t2_s6") == f"{m1_user} N.m",
+                st.session_state.get("ex2_t3_s6") == f"{d2_user_attendu} m",
+                st.session_state.get("ex2_t4_s6") == "Moments",
+                st.session_state.get("ex2_t5_s6") == "Delta",
+                st.session_state.get("ex2_t6_s6") == f"{f2_user} N",
+                st.session_state.get("ex2_t7_s6") == f"{d1_user} m",
+                st.session_state.get("ex2_t8_s6") == "Opposés",
+                st.session_state.get("ex2_t9_s6") == "Diminuer",
                 st.session_state.get("ex2_t10_s6") == "Levage"
             ])
 
@@ -2212,8 +2231,8 @@ with tab6:
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
                 <p>Exemple 2 : Étude de l'équilibre d'une grue de levage</p>
-                <p>Échantillon de l'énoncé : F1 = {f1_ex2} N | d1 = {d1_ex2} m | F2 = {f2_ex2} N</p>
-                <p>Valeur attendue résolue : Position d'équilibre d2 = {d2_attendu_ex2} m</p>
+                <p>Énoncé de session : F1 = {f1_user} N | d1 = {d1_user} m | F2 = {f2_user} N</p>
+                <p>Valeurs attendues calculées : Moment gauche = {m1_user} N.m | Position d'équilibre d2 = {d2_user_attendu} m</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_ex2}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
@@ -2242,7 +2261,7 @@ with tab6:
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
                 html_export_ex2 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_ex2 += """
+        html_export_ex2 += f"""
                 </tbody>
             </table>
 
@@ -2255,18 +2274,18 @@ with tab6:
         """
 
         phrases_trous_ex2 = [
-            "1. L'étude d'une grue portuaire repose sur le théorème des",
-            "2. La charge suspendue à l'extrémité de la flèche crée une force due au",
-            "3. Pour calculer cette force, la masse en tonnes est convertie en",
-            "4. La constante de proportionnalité g désigne l'intensité de la",
-            "5. Le mât central vertical matérialise le pivot ou l'action de l'",
-            "6. Afin de stabiliser la flèche horizontale, on installe un",
-            "7. Les deux actions mécaniques agissent dans des sens de rotation",
-            "8. L'équilibre est atteint quand la somme algébrique des moments est",
-            "9. La modification de la position d'un bloc modifie son bras de",
-            "10. Cette égalité mathématique garantit la sécurité lors du"
+            "1. Le moment calculé à gauche pour votre charge F1 s'élève à :",
+            "2. À l'équilibre, le moment à droite créé par F2 doit valoir :",
+            "3. La distance théorique d2 calculée pour votre contrepoids vaut :",
+            "4. L'équilibre de la flèche est régi par le théorème des :",
+            "5. Le mât central de la structure matérialise l'axe noté :",
+            "6. L'intensité de l'action mécanique du contrepoids F2 est de :",
+            "7. La distance d1 reliant l'axe à votre charge mesure :",
+            "8. Les deux actions mécaniques s'exerzent dans des sens :",
+            "9. Si le contrepoids se rapproche du centre, son moment va :",
+            "10. Cette loi garantit la sécurité lors des opérations de :"
         ]
-        attendus_trous_ex2 = ["Moments", "Poids", "Kilogrammes", "Pesanteur", "Axe", "Contrepoids", "Opposés", "Nulle", "Levier", "Levage"]
+        attendus_trous_ex2 = [f"{m1_user} N.m", f"{m1_user} N.m", f"{d2_user_attendu} m", "Moments", "Delta", f"{f2_user} N", f"{d1_user} m", "Opposés", "Diminuer", "Levage"]
         cles_trous_ex2 = ["ex2_t1_s6", "ex2_t2_s6", "ex2_t3_s6", "ex2_t4_s6", "ex2_t5_s6", "ex2_t6_s6", "ex2_t7_s6", "ex2_t8_s6", "ex2_t9_s6", "ex2_t10_s6"]
 
         for idx, (phrase, attendu, cle) in enumerate(zip(phrases_trous_ex2, attendus_trous_ex2, cles_trous_ex2), 1):
@@ -2284,8 +2303,4 @@ with tab6:
 
         nom_fichier_ex2 = preparer_nom_fichier("rapport_exemple2") + ".html"
         st.download_button(label="Télécharger le fichier de rapport officiel Exemple 2 (HTML)", data=html_export_ex2, file_name=nom_fichier_ex2, mime="text/html", use_container_width=True)
-
-
-
-
 
