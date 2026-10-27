@@ -99,6 +99,7 @@ def preparer_nom_fichier(nom_onglet):
 onglets = st.tabs([
     "Identification",
     "Définition",
+    "Base de sustentation",
     "Equilibre à deux forces",
     "Equilibre à trois forces",
     "Equilibre à plus de trois forces",
@@ -111,7 +112,7 @@ tab2 = onglets[2]
 tab3 = onglets[3]
 tab4 = onglets[4]
 tab5 = onglets[5]
-
+tab6 = onglets[6]
 
 COURS_COLORS = ['#FF4B4B', '#0068C9', '#29B09D', '#FFABAB', '#781C81', '#FFC614', '#9D4EDD']
 SEUIL_STATIQUE = 1e-2
@@ -382,6 +383,9 @@ def obtenir_banque_metiers():
 
 def afficher_atelier_metier_complet(metier_cle, scenario_index, verrouille=False):
     """Affiche le module d'exercice adapte au metier selectionne avec un schema de principe."""
+    import streamlit as st
+    import matplotlib.pyplot as plt
+
     banque = obtenir_banque_metiers()
     data = banque[metier_cle]
     scen = data["scenarios"][scenario_index]
@@ -457,7 +461,7 @@ def afficher_atelier_metier_complet(metier_cle, scenario_index, verrouille=False
     
     # --- SUITE DU MODULE (LABORATOIRE ET SAISIE) ---
     st.write("---")
-    analyser_systeme_forces(nb_forces=scen["forces"], suffixe_clef=f"metier_{metier_cle}", nom_onglet=f"Atelier_5_{metier_cle}")
+    analyser_systeme_forces(nb_forces=scen["forces"], suffixe_clef=f"metier_{metier_cle}", nom_onglet=f"Atelier_6_{metier_cle}")
     
     st.write("---")
     col_quiz, col_trous = st.columns(2)
@@ -476,12 +480,12 @@ def afficher_atelier_metier_complet(metier_cle, scenario_index, verrouille=False
             c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
             with c_txt: st.write(enonce)
             with c_sel: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
-
-
+            
 
 def afficher_atelier_plus_trois_forces_complet(verrouille=False):
-    """Affiche le Quiz et le Texte à trous de l'Atelier 4 (Équilibre à plus de trois forces) sur deux colonnes."""
+    """Affiche le Quiz et le Texte à trous de l'Atelier 5 (Équilibre à plus de trois forces) sur deux colonnes."""
     import random
+    import streamlit as st
 
     questions_plus_f_sources = [
         {"id": "qpf1", "q": "Pour un système à N forces en équilibre, la géométrie du dynamique bout à bout forme un :", "options": ["Polygone fermé à N côtés", "Triangle équilatéral unique", "Cercle de rayon infini"], "rep": "Polygone fermé à N côtés"},
@@ -489,16 +493,16 @@ def afficher_atelier_plus_trois_forces_complet(verrouille=False):
         {"id": "qpf3", "q": "Si un point subit 4 forces et que la somme des 3 premières donne un vecteur unique V, la 4ème force doit être :", "options": ["Directement opposée à V (-V)", "Perpendiculaire à V", "Égale à zéro"], "rep": "Directement opposée à V (-V)"},
         {"id": "qpf4", "q": "Comment évolue la complexité du tracé graphique lorsque le nombre de forces augmente ?", "options": ["Le nombre de segments du polygone augmente mais la règle de fermeture reste la même", "Le polygone devient obligatoirement un carré", "La méthode graphique devient mathématiquement fausse"], "rep": "Le nombre de segments du polygone augmente mais la règle de fermeture reste la même"},
         {"id": "qpf5", "q": "Si le polygone de 5 forces se referme exactement sur lui-même, on en déduit que :", "options": ["L'accélération du point matériel est nulle (statique)", "Le système possède une force résultante motrice", "Toutes les forces ont la même norme"], "rep": "L'accélération du point matériel est nulle (statique)"},
-        {"id": "qpf6", "q": "Dans un système concourant complexe, modifier l'intensité d'une seule force :", "options": ["Rompt l'équilibre global sauf si une autre force compense exactement", "Ne change rien si le système contient plus de 6 forces", "Modifie uniquement l'axe horizontal X"], "rep": "Rompt l'équilibre global sauf si une autre force compense exactement"},
+        {"id": "qpf6", "q": "Dans un système concourant complexe, modifier l'intensité d'une seule force :", "options": ["Rompt l'équilibre global sauf si une another force compense exactement", "Ne change rien si le système contient plus de 6 forces", "Modifie uniquement l'axe horizontal X"], "rep": "Rompt l'équilibre global sauf si une autre force compense exactement"},
         {"id": "qpf7", "q": "Pour équilibrer parfaitement 4 forces de même norme distribuées de manière régulière, l'écart angulaire entre chaque force successive doit être de :", "options": ["90 degrés", "120 degrés", "45 degrés"], "rep": "90 degrés"},
         {"id": "qpf8", "q": "Si la somme des projections horizontales donne un résultat non nul, le point matériel va :", "options": ["Subir une accélération sur l'axe horizontal X", "Rester en équilibre statique parfait", "Se déplacer uniquement sur l'axe vertical Y"], "rep": "Subir une accélération sur l'axe horizontal X"},
         {"id": "qpf9", "q": "La méthode de décomposition analytique par tableau de composants (Fx, Fy) est recommandée pour N forces car :", "options": ["Elle permet d'additionner simplement les valeurs numériques axe par axe", "Elle élimine le besoin d'utiliser les fonctions cosinus et sinus", "Elle limite le nombre de forces utilisables à un maximum de 4"], "rep": "Elle permet d'additionner simplement les valeurs numériques axe par axe"},
         {"id": "qpf10", "q": "Lorsque le polygone des forces reste ouvert, le vecteur reliant l'extrémité finale à l'origine de départ est :", "options": ["La force équilibrante nécessaire à la statique", "La force résultante de déséquilibre", "La force de frottement cinétique"], "rep": "La force équilibrante nécessaire à la statique"},
     ]
 
-    if "ordre_quiz_tab4_aleatoire" not in st.session_state:
+    if "ordre_quiz_tab5_aleatoire" not in st.session_state:
         random.shuffle(questions_plus_f_sources)
-        st.session_state.ordre_quiz_tab4_aleatoire = questions_plus_f_sources
+        st.session_state.ordre_quiz_tab5_aleatoire = questions_plus_f_sources
 
     champs_plus_f = [
         ("1. Un ensemble de plusieurs forces concourantes converge vers un seul .........", ["Choisir...", "point", "axe"], "point", "pf_t1_final"),
@@ -516,7 +520,7 @@ def afficher_atelier_plus_trois_forces_complet(verrouille=False):
     col_quiz, col_trous = st.columns(2)
     with col_quiz:
         st.markdown("##### Quiz Cas à Plus de 3 Forces (10 questions - 10 pts)")
-        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab4_aleatoire, 1):
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab5_aleatoire, 1):
             st.write(f"**{idx}.** {q_data['q']}")
             cle_select = f"pf_at_final_g_{q_data['id']}"
             opts_affichees = ["Choisir..."] + q_data["options"]
@@ -528,17 +532,18 @@ def afficher_atelier_plus_trois_forces_complet(verrouille=False):
             c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
             with c_txt: st.write(enonce)
             with c_sel: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
-
+            
 def afficher_atelier_trois_forces_complet(verrouille=False):
-    """Affiche le Quiz et le Texte à trous de l'Atelier 3 (Équilibre à trois forces) sur deux colonnes."""
+    """Affiche le Quiz et le Texte à trous de l'Atelier 4 (Équilibre à trois forces) sur deux colonnes."""
     import random
+    import streamlit as st
 
     questions_3f_sources = [
         {"id": "q3f1", "q": "Pour que trois forces non parallèles soient en équilibre, leurs lignes d'action doivent être obligatoirement :", "options": ["Concourantes (se couper en un point)", "Parallèles entre elles", "Perpendiculaires deux à deux"], "rep": "Concourantes (se couper en un point)"},
         {"id": "q3f2", "q": "Géométriquement, le dynamique de trois forces en équilibre forme un :", "options": ["Triangle fermé", "Rectangle parfait", "Segment rectiligne plat"], "rep": "Triangle fermé"},
         {"id": "q3f3", "q": "Si un point est soumis à trois forces de 10 N chacune en équilibre, quel est l'écart angulaire régulier entre elles ?", "options": ["120 degrés", "90 degrés", "60 degrés"], "rep": "120 degrés"},
         {"id": "q3f4", "q": "Si la somme vectorielle de deux premières forces vaut un vecteur R, la troisième force F3 doit être :", "options": ["Égale et opposée à R (F3 = -R)", "Identique à R (F3 = R)", "Perpendiculaire à R"], "rep": "Égale et opposée à R (F3 = -R)"},
-        {"id": "q3f5", "q": "Trois forces s'appliquant sur un point ont pour coordonnées cumulées (Fx=0, Fy=5). Le système est-il équilibré ?", "options": ["Non, il y a un mouvement vers le haut", "Oui, car Fx est nulle", "Oui, le point reste immobile"], "rep": "Non, il y a un mouvement vers le haut"},
+        {"id": "q3f5", "q": "Trois forces s'appliquant sur un point ont pour coordonnées cumulées (Fx=0, Fy=5). Le système est-il équilibré ?", "options": ["Non, il y a un mouvement vers le haut", "Oui, car Fx été nulle", "Oui, le point reste immobile"], "rep": "Non, il y a un mouvement vers le haut"},
         {"id": "q3f6", "q": "Lorsque le triangle des forces est tracé bout à bout, la pointe du troisième vecteur arrive :", "options": ["Exactement à l'origine du premier vecteur", "À une distance égale à la moyenne des normes", "À l'infini"], "rep": "Exactement à l'origine du premier vecteur"},
         {"id": "q3f7", "q": "Le théorème des trois forces stipule que si deux droites d'action se coupent en un point P, la troisième passe par :", "options": ["Ce même point P", "L'origine du repère uniquement", "Le milieu du segment opposé"], "rep": "Ce même point P"},
         {"id": "q3f8", "q": "Un solide glisse à vitesse constante sur un plan incliné avec frottement. Il subit le poids, la réaction normale et la friction. Le système est en statique ?", "options": ["Oui, la vitesse étant constante, la somme des 3 forces est nulle", "Non, car l'objet est en déplacement", "Seulement si le plan est vertical"], "rep": "Oui, la vitesse étant constante, la somme des 3 forces est nulle"},
@@ -546,9 +551,9 @@ def afficher_atelier_trois_forces_complet(verrouille=False):
         {"id": "q3f10", "q": "La condition analytique complète pour l'équilibre à trois forces nécessite :", "options": ["La nullité simultanée de la somme des Fx et de la somme des Fy", "Que chaque force individuelle soit nulle", "Que l'angle total cumulé dépasse 360 degrés"], "rep": "La nullité simultanée de la somme des Fx et de la somme des Fy"},
     ]
 
-    if "ordre_quiz_tab3_aleatoire" not in st.session_state:
+    if "ordre_quiz_tab4_aleatoire" not in st.session_state:
         random.shuffle(questions_3f_sources)
-        st.session_state.ordre_quiz_tab3_aleatoire = questions_3f_sources
+        st.session_state.ordre_quiz_tab4_aleatoire = questions_3f_sources
 
     champs_3f = [
         ("1. Trois forces coplanaires non parallèles convergent en un point .........", ["Choisir...", "concourant", "distant"], "concourant", "3f_t1_final"),
@@ -566,7 +571,7 @@ def afficher_atelier_trois_forces_complet(verrouille=False):
     col_quiz, col_trous = st.columns(2)
     with col_quiz:
         st.markdown("##### Quiz Cas à 3 Forces (10 questions - 10 pts)")
-        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab3_aleatoire, 1):
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab4_aleatoire, 1):
             st.write(f"**{idx}.** {q_data['q']}")
             cle_select = f"3f_at_final_g_{q_data['id']}"
             opts_affichees = ["Choisir..."] + q_data["options"]
@@ -578,11 +583,11 @@ def afficher_atelier_trois_forces_complet(verrouille=False):
             c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
             with c_txt: st.write(enonce)
             with c_sel: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
-
-
+            
 def afficher_atelier_deux_forces_complet(verrouille=False):
-    """Affiche le Quiz et le Texte à trous de l'Atelier 2 (Équilibre à deux forces) sur deux colonnes."""
+    """Affiche le Quiz et le Texte à trous de l'Atelier 3 (Équilibre à deux forces) sur deux colonnes."""
     import random
+    import streamlit as st
 
     questions_2f_sources = [
         {"id": "q2f1", "q": "Si un point matériel est soumis à deux forces en équilibre, leurs directions sont obligatoirement :", "options": ["Confondues (colinéaires)", "Perpendiculaires", "Quelconques"], "rep": "Confondues (colinéaires)"},
@@ -597,9 +602,9 @@ def afficher_atelier_deux_forces_complet(verrouille=False):
         {"id": "q2f10", "q": "Si la somme de deux forces n'est pas nulle, le vecteur manquant pour assurer la statique s'appelle :", "options": ["La force équilibrante", "La force résultante", "La force motrice"], "rep": "La force équilibrante"},
     ]
 
-    if "ordre_quiz_tab2_aleatoire" not in st.session_state:
+    if "ordre_quiz_tab3_aleatoire" not in st.session_state:
         random.shuffle(questions_2f_sources)
-        st.session_state.ordre_quiz_tab2_aleatoire = questions_2f_sources
+        st.session_state.ordre_quiz_tab3_aleatoire = questions_2f_sources
 
     champs_2f = [
         ("1. Deux forces en équilibre possèdent la même droite d'.........", ["Choisir...", "action", "intensité"], "action", "2f_t1_final"),
@@ -617,7 +622,7 @@ def afficher_atelier_deux_forces_complet(verrouille=False):
     col_quiz, col_trous = st.columns(2)
     with col_quiz:
         st.markdown("##### Quiz Cas à 2 Forces (10 questions - 10 pts)")
-        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab2_aleatoire, 1):
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab3_aleatoire, 1):
             st.write(f"**{idx}.** {q_data['q']}")
             cle_select = f"2f_at_final_g_{q_data['id']}"
             opts_affichees = ["Choisir..."] + q_data["options"]
@@ -629,6 +634,63 @@ def afficher_atelier_deux_forces_complet(verrouille=False):
             c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
             with c_txt: st.write(enonce)
             with c_sel: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+            
+
+def afficher_atelier_base_sustentation_complet(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'Atelier 2 (Base de sustentation) sur deux colonnes."""
+    import random
+    import streamlit as st
+
+    questions_sustent_sources = [
+        {"id": "qs1", "q": "La base de sustentation correspond geometriquement au plus petit polygone :", "options": ["Convexe enveloppant les appuis", "Concave reliant les appuis", "Regulier centre sur l'origine"], "rep": "Convexe enveloppant les appuis"},
+        {"id": "qs2", "q": "Pour assurer l'equilibre statique, la ligne d'action verticale du poids doit :", "options": ["Couper la base de sustentation", "Froler l'exterieur des appuis", "Etre parallele au sol"], "rep": "Couper la base de sustentation"},
+        {"id": "qs3", "q": "Si un athlete ecarte ses deux pieds au sol, la surface de sa base de sustentation :", "options": ["Augmente", "Diminue", "Reste rigoureusement identique"], "rep": "Augmente"},
+        {"id": "qs4", "q": "Si un individu se tient debout en appui sur un seul pied, sa base de sustentation est :", "options": ["Reduite a la surface de ce seul pied", "Le rectangle delimitant ses deux jambes", "Un point virtuel sans surface"], "rep": "Reduite a la surface de ce seul pied"},
+        {"id": "qs5", "q": "Quel savant de la Renaissance a etudie les ajustements posturaux lies au centre de masse ?", "options": ["Leonard de Vinci", "Isaac Newton", "Rene Descartes"], "rep": "Leonard de Vinci"},
+        {"id": "qs6", "q": "En biomecanique, l'abaissement de la position du centre de gravite a pour effet d' :", "options": ["Accroitre la stabilite", "Provoquer un basculement immediat", "Reduire les points d'appui"], "rep": "Accroitre la stabilite"},
+        {"id": "qs7", "q": "Lorsque la projection verticale du centre de gravite sort du polygone d'appui :", "options": ["Le solide bascule", "L'equilibre devient indifferent", "La force gravitationnelle s'annule"], "rep": "Le solide bascule"},
+        {"id": "qs8", "q": "L'ouvrage mecanique de reference 'De Motu Animalium' (1680) a ete redige par :", "options": ["Giovanni Alfonso Borelli", "Archimede de Syracuse", "Galileo Galilei"], "rep": "Giovanni Alfonso Borelli"},
+        {"id": "qs9", "q": "Les verins stabilisateurs deployes sur une grue mobile servent specifiquement a :", "options": ["Elargir la base de sustentation", "Reduire la masse totale de la grue", "Augmenter l'altitude de la fleche"], "rep": "Elargir la base de sustentation"},
+        {"id": "qs10", "q": "La stabilite d'un corps pose sur un plan est inversement proportionnelle a :", "options": ["La hauteur de son centre de gravite", "La surface totale de ses appuis", "La norme de sa force de reaction"], "rep": "La hauteur de son centre de gravite"},
+    ]
+
+    if "ordre_quiz_tab2_aleatoire" not in st.session_state:
+        random.shuffle(questions_sustent_sources)
+        st.session_state.ordre_quiz_tab2_aleatoire = questions_sustent_sources
+
+    # Conservation stricte de vos tuples d'origine à 4 éléments
+    champs_s = [
+        ("1. Le polygone geometrique reliant les appuis au sol est la base de .........", ["Choisir...", "sustentation", "translation"], "sustentation", "sust_t1_final"),
+        ("2. L'equilibre d'un solide exige que la projection de G se situe a l'..........", ["Choisir...", "interieur", "exterieur"], "interieur", "sust_t2_final"),
+        ("3. Ecarter les pieds permet d'obtenir une stabilite accrue en .......... la base.", ["Choisir...", "agrandissant", "reduisant"], "agrandissant", "sust_t3_final"),
+        ("4. Une hauteur reduite du centre de gravite favorise un meilleur ..........", ["Choisir...", "equilibre", "mouvement"], "equilibre", "sust_t4_final"),
+        ("5. Lorsque le vecteur poids sort de la zone d'appui, l'objet subit un ..........", ["Choisir...", "basculement", "glissement"], "basculement", "sust_t5_final"),
+        ("6. Archimede a pose les premieres lois statiques des figures ..........", ["Choisir...", "planes", "espace"], "planes", "sust_t6_final"),
+        ("7. Pour une grue, l'usage de verins elargit la geometrie des ..........", ["Choisir...", "appuis", "cables"], "appuis", "sust_t7_final"),
+        ("8. Modifier sa posture corporelle entraine un deplacement du centre de ..........", ["Choisir...", "gravite", "symetrie"], "gravite", "sust_t8_final"),
+        ("9. Le polygone minimal englobant tous les contacts au sol doit etre ..........", ["Choisir...", "convexe", "concave"], "convexe", "sust_t9_final"),
+        ("10. Avancer rapidement un pied lors d'une chute permet le .......... de l'equilibre.", ["Choisir...", "retablissement", "blocage"], "retablissement", "sust_t10_final"),
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    with col_quiz:
+        st.markdown("##### Quiz Base de Sustentation (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab2_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"sust_at6_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthese Base de Sustentation (Texte a trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in champs_s:
+            c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c_txt: st.write(enonce)
+            with c_sel: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+
+
+
+
 
 def afficher_atelier_decomposition_complet(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'Atelier 1 (Décomposition des forces) sur deux colonnes."""
@@ -894,23 +956,81 @@ with tab1:
         )
 
 
-
 with tab2:
-    st.header("Cas a 2 Forces")
-    st.write("Deux forces s'équilibrent si elles ont la meme droite d'action, des normes egales et des sens opposes.")
-    analyser_systeme_forces(nb_forces=2, suffixe_clef="2f", nom_onglet="Equilibre_2_forces")
+    st.header("Base de sustentation")
+    
+    # Section 1 : Théorie
+    st.subheader("1. Approche historique et theorique")
+    st.write("""
+    L'etude de la stabilite des corps remonte aux fondements de la statique geometrique. **Archimede de Syracuse** 
+    pose les premieres bases de la geometrie des centres de gravite dans son traite *De l'equilibre des figures planes*. 
+    Plus tard, au XVIIe siecle, **Giovanni Alfonso Borelli** formalise le fait que le maintien de la station debout 
+    exige que la projection verticale du centre de gravite tombe precisement entre les pieds.
+    
+    ### Definition mecanique
+    La base de sustentation est la surface geometrique plane convexe minimale qui enveloppe l'ensemble des points 
+    d'appui d'un corps avec le sol. 
+    
+    Pour qu'un solide reste en equilibre statique, la droite d'action verticale de son poids (passant par le centre 
+    de gravite G) doit imperativement intersecter la surface de cette base de sustentation.
+    """)
+    
+    # Section 2 : Exemples en images (Fichiers JPG)
+    st.subheader("2. Exemples d'application")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # Description : Grue mobile avec ses stabilisateurs deployes au maximum
+        st.image("grue_stabilite.jpg", caption="Exemple 1 : Engin de chantier mecanique")
+        st.write("""
+        **Analyse de l'image :** Les verins hydrauliques (stabilisateurs) ecartent les points de contact avec 
+        le sol bien au-dela des roues du camion. Cela agrandit la base de sustentation pour eviter le basculement 
+        lors du levage de charges lourdes reculees.
+        """)
+        
+    with col2:
+        # Description : Athlete en position de garde (judo ou boxe), pieds ecartes et genoux flechis
+        st.image("athlete_posture.jpg", caption="Exemple 2 : Biomecanique humaine")
+        st.write("""
+        **Analyse de l'image :** L'athlete augmente sa stabilite en ecartant les pieds (agrandissement de la 
+        base de sustentation) et en flechissant les jambes (abaissement du centre de gravite G). Cette configuration 
+        demande une force exterieure beaucoup plus elevee pour provoquer un basculement.
+        """)
 
+    # Section 3 : Caricature pedagogique en 4 images
+    st.subheader("3. Caricature de la stabilite (Sequence en 4 etapes)")
+    
+    c1, c2, c3, c4 = st.columns(4)
+    
+    with c1:
+        # Description caricature 1 : Personnage debout bien droit, les pieds joints. Le vecteur G est vert et tombe entre les pieds.
+        st.image("caricature_etape1.jpg", caption="Etape 1 : Posture initiale")
+        st.write("Le personnage est immobile. La ligne de gravite tombe au centre des pieds joints. L'equilibre est assure mais precaire.")
 
+    with c2:
+        # Description caricature 2 : Le personnage pousse un meuble lourd, son corps se penche vers l'avant. Son vecteur G se deplace vers la limite des orteils.
+        st.image("caricature_etape2.jpg", caption="Etape 2 : Deplacement de G")
+        st.write("En poussant une charge, le corps s'incline. Le centre de gravite se déplace vers l'avant, frolant la limite de la base.")
 
+    with c3:
+        # Description caricature 3 : Le meuble cede brusquement. Le personnage bascule vers l'avant, la ligne rouge de G tombe dans le vide devant les pieds. Ses bras s'agitent.
+        st.image("caricature_etape3.jpg", caption="Etape 3 : Perte d'equilibre")
+        st.write("La projection de G sort de la base de sustentation. Le poids genere un moment de rotation : la chute est amorcee.")
+
+    with c4:
+        # Description caricature 4 : Le personnage a avance un pied pour bloquer sa chute. Une nouvelle ligne verte montre que le pied avance a cree une nouvelle base plus grande.
+        st.image("caricature_etape4.jpg", caption="Etape 4 : Retablissement")
+        st.write("Le personnage avance un pied. Cette action cree instantanement une nouvelle base de sustentation plus large, englobant a nouveau la ligne de gravite.")
 
     st.write("---")        
     if "suite_verrouille_tab2" not in st.session_state:
         st.session_state.suite_verrouille_tab2 = False
     verrou_at2 = st.session_state.suite_verrouille_tab2
 
-    # Insertion de la nouvelle zone de questions/trous pour le tab 2
-    afficher_atelier_deux_forces_complet(verrouille=verrou_at2)
-    
+    # Insertion de la zone de questions/trous pour le tab 2
+    afficher_atelier_base_sustentation_complet(verrouille=verrou_at2)
+
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 2")
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
@@ -918,11 +1038,11 @@ with tab2:
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_stat2 = st.checkbox(
-        "Je certifie avoir complété les questions et réglé le système à deux forces.",
+        "Je certifie avoir complété les questions et réglé le système de base de sustentation.",
         key="check_certif_tab2_final_net",
         disabled=verrou_at2,
     )
-    
+
     # --- BLOC DE CORRECTION ET BOUTON VALIDER ---
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_suite2_official_net", use_container_width=True, disabled=verrou_at2):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
@@ -933,23 +1053,23 @@ with tab2:
             score_q2 = 0.0
             if "ordre_quiz_tab2_aleatoire" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_tab2_aleatoire:
-                    reponse_eleve = st.session_state.get(f"2f_at_final_g_{q_item['id']}", "Choisir...")
+                    reponse_eleve = st.session_state.get(f"sust_at6_final_g_{q_item['id']}", "Choisir...")
                     if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
                         score_q2 += 1.0
 
             # Vérification des bonnes réponses du texte à trous du tab 2
             score_t2 = sum(
                 [
-                    st.session_state.get("2f_t1_final") == "action",
-                    st.session_state.get("2f_t2_final") == "opposés",
-                    st.session_state.get("2f_t3_final") == "égales",
-                    st.session_state.get("2f_t4_final") == "zéro",
-                    st.session_state.get("2f_t5_final") == "fermé",
-                    st.session_state.get("2f_t6_final") == "déséquilibre",
-                    st.session_state.get("2f_t7_final") == "poids",
-                    st.session_state.get("2f_t8_final") == "opposées",
-                    st.session_state.get("2f_t9_final") == "nulle",
-                    st.session_state.get("2f_t10_final") == "différentes",
+                    st.session_state.get("sust_t1_final") == "sustentation",
+                    st.session_state.get("sust_t2_final") == "interieur",
+                    st.session_state.get("sust_t3_final") == "agrandissant",
+                    st.session_state.get("sust_t4_final") == "equilibre",
+                    st.session_state.get("sust_t5_final") == "basculement",
+                    st.session_state.get("sust_t6_final") == "planes",
+                    st.session_state.get("sust_t7_final") == "appuis",
+                    st.session_state.get("sust_t8_final") == "gravite",
+                    st.session_state.get("sust_t9_final") == "convexe",
+                    st.session_state.get("sust_t10_final") == "retablissement",
                 ]
             )
 
@@ -957,7 +1077,7 @@ with tab2:
             st.session_state.score_suite2_p2 = round(float(score_t2), 1)
             st.session_state.score_final_suite2 = round(float(score_q2 + score_t2), 1)
             st.session_state.suite_verrouille_tab2 = True
-            st.st.rerun()
+            st.rerun()
 
     # --- COMPILATION DU DOCUMENT EXPORTABLE HTML TAB 2 ---
     if st.session_state.get("suite_verrouille_tab2", False):
@@ -972,7 +1092,7 @@ with tab2:
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Équilibre 2 Forces - {n_eleve}</title>
+            <title>Rapport Base de Sustentation - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
@@ -988,7 +1108,7 @@ with tab2:
         <body>
             <div class="header-box">
                 <h1>Rapport d'Évaluation de Mécanique - Statique</h1>
-                <p>Atelier 2 : Équilibre d'un point soumis à deux forces</p>
+                <p>Atelier 2 : Stabilité et base de sustentation</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite2}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s2:.1f}</span> / 20</div>
@@ -996,7 +1116,7 @@ with tab2:
             
             <div class="sub-title">Récapitulatif des Notes Obtenues</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                Note obtenue au Quiz 2 Forces : <strong>{scr1_2:.1f} / 10</strong><br>
+                Note obtenue au Quiz Base de Sustentation : <strong>{scr1_2:.1f} / 10</strong><br>
                 Note obtenue à la Synthèse : <strong>{scr2_2:.1f} / 10</strong><br>
                 Note Totale de l'Atelier 2 : <strong>{tot_s2:.1f} / 20</strong>
             </p>
@@ -1011,7 +1131,7 @@ with tab2:
 
         if "ordre_quiz_tab2_aleatoire" in st.session_state:
             for num, q_item in enumerate(st.session_state.ordre_quiz_tab2_aleatoire, 1):
-                saisie = st.session_state.get(f"2f_at_final_g_{q_item['id']}", "Choisir...")
+                saisie = st.session_state.get(f"sust_at6_final_g_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
@@ -1034,13 +1154,13 @@ with tab2:
 
 
 
+
+
+
 with tab3:
-    st.header("Cas a 3 Forces")
-    st.write("Pour 3 forces non paralleles en equilibre, leurs droites d'action sont obligatoirement concourantes (se coupent au meme point) et leur dynamique forme un triangle ferme.")
-    analyser_systeme_forces(nb_forces=3, suffixe_clef="3f", nom_onglet="Equilibre_3_forces")
-
-
-
+    st.header("Cas a 2 Forces")
+    st.write("Deux forces s'équilibrent si elles ont la meme droite d'action, des normes egales et des sens opposes.")
+    analyser_systeme_forces(nb_forces=2, suffixe_clef="2f", nom_onglet="Equilibre_2_forces")
 
     st.write("---")        
     if "suite_verrouille_tab3" not in st.session_state:
@@ -1048,7 +1168,7 @@ with tab3:
     verrou_at3 = st.session_state.suite_verrouille_tab3
 
     # Insertion de la zone de questions/trous pour le tab 3
-    afficher_atelier_trois_forces_complet(verrouille=verrou_at3)
+    afficher_atelier_deux_forces_complet(verrouille=verrou_at3)
     
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 3")
@@ -1057,7 +1177,7 @@ with tab3:
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_stat3 = st.checkbox(
-        "Je certifie avoir complété les questions et réglé le système à trois forces.",
+        "Je certifie avoir complété les questions et réglé le système à deux forces.",
         key="check_certif_tab3_final_net",
         disabled=verrou_at3,
     )
@@ -1072,23 +1192,23 @@ with tab3:
             score_q3 = 0.0
             if "ordre_quiz_tab3_aleatoire" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_tab3_aleatoire:
-                    reponse_eleve = st.session_state.get(f"3f_at_final_g_{q_item['id']}", "Choisir...")
+                    reponse_eleve = st.session_state.get(f"2f_at_final_g_{q_item['id']}", "Choisir...")
                     if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
                         score_q3 += 1.0
 
             # Vérification des bonnes réponses du texte à trous du tab 3
             score_t3 = sum(
                 [
-                    st.session_state.get("3f_t1_final") == "concourant",
-                    st.session_state.get("3f_t2_final") == "triangle",
-                    st.session_state.get("3f_t3_final") == "nulle",
-                    st.session_state.get("3f_t4_final") == "déséquilibre",
-                    st.session_state.get("3f_t5_final") == "zéro",
-                    st.session_state.get("3f_t6_final") == "deux",
-                    st.session_state.get("3f_t7_final") == "équilibre",
-                    st.session_state.get("3f_t8_final") == "graphique",
-                    st.session_state.get("3f_t9_final") == "matériel",
-                    st.session_state.get("3f_t10_final") == "départ",
+                    st.session_state.get("2f_t1_final") == "action",
+                    st.session_state.get("2f_t2_final") == "opposés",
+                    st.session_state.get("2f_t3_final") == "égales",
+                    st.session_state.get("2f_t4_final") == "zéro",
+                    st.session_state.get("2f_t5_final") == "fermé",
+                    st.session_state.get("2f_t6_final") == "déséquilibre",
+                    st.session_state.get("2f_t7_final") == "poids",
+                    st.session_state.get("2f_t8_final") == "opposées",
+                    st.session_state.get("2f_t9_final") == "nulle",
+                    st.session_state.get("2f_t10_final") == "différentes",
                 ]
             )
 
@@ -1111,7 +1231,7 @@ with tab3:
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Équilibre 3 Forces - {n_eleve}</title>
+            <title>Rapport Équilibre 2 Forces - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
@@ -1127,7 +1247,7 @@ with tab3:
         <body>
             <div class="header-box">
                 <h1>Rapport d'Évaluation de Mécanique - Statique</h1>
-                <p>Atelier 3 : Équilibre d'un point soumis à trois forces</p>
+                <p>Atelier 3 : Équilibre d'un solide soumis à deux forces</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite3}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s3:.1f}</span> / 20</div>
@@ -1135,7 +1255,7 @@ with tab3:
             
             <div class="sub-title">Récapitulatif des Notes Obtenues</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                Note obtenue au Quiz 3 Forces : <strong>{scr1_3:.1f} / 10</strong><br>
+                Note obtenue au Quiz 2 Forces : <strong>{scr1_3:.1f} / 10</strong><br>
                 Note obtenue à la Synthèse : <strong>{scr2_3:.1f} / 10</strong><br>
                 Note Totale de l'Atelier 3 : <strong>{tot_s3:.1f} / 20</strong>
             </p>
@@ -1150,7 +1270,7 @@ with tab3:
 
         if "ordre_quiz_tab3_aleatoire" in st.session_state:
             for num, q_item in enumerate(st.session_state.ordre_quiz_tab3_aleatoire, 1):
-                saisie = st.session_state.get(f"3f_at_final_g_{q_item['id']}", "Choisir...")
+                saisie = st.session_state.get(f"2f_at_final_g_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
@@ -1173,17 +1293,10 @@ with tab3:
 
 
 
-
-
-
-
-
 with tab4:
-    st.header("Cas a Plus de 3 Forces")
-    nb_perso = st.slider("Selectionnez le nombre exact de forces a analyser :", min_value=4, max_value=8, value=4)
-    analyser_systeme_forces(nb_forces=nb_perso, suffixe_clef="plus_f", nom_onglet="Equilibre_plus_3_forces")
-
-
+    st.header("Cas a 3 Forces")
+    st.write("Pour 3 forces non paralleles en equilibre, leurs droites d'action sont obligatoirement concourantes (se coupent au meme point) et leur dynamique forme un triangle ferme.")
+    analyser_systeme_forces(nb_forces=3, suffixe_clef="3f", nom_onglet="Equilibre_3_forces")
 
     st.write("---")        
     if "suite_verrouille_tab4" not in st.session_state:
@@ -1191,7 +1304,7 @@ with tab4:
     verrou_at4 = st.session_state.suite_verrouille_tab4
 
     # Insertion de la zone de questions/trous pour le tab 4
-    afficher_atelier_plus_trois_forces_complet(verrouille=verrou_at4)
+    afficher_atelier_trois_forces_complet(verrouille=verrou_at4)
     
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 4")
@@ -1200,7 +1313,7 @@ with tab4:
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_stat4 = st.checkbox(
-        "Je certifie avoir complété les questions et réglé le système à forces multiples.",
+        "Je certifie avoir complété les questions et réglé le système à trois forces.",
         key="check_certif_tab4_final_net",
         disabled=verrou_at4,
     )
@@ -1215,23 +1328,23 @@ with tab4:
             score_q4 = 0.0
             if "ordre_quiz_tab4_aleatoire" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_tab4_aleatoire:
-                    reponse_eleve = st.session_state.get(f"pf_at_final_g_{q_item['id']}", "Choisir...")
+                    reponse_eleve = st.session_state.get(f"3f_at_final_g_{q_item['id']}", "Choisir...")
                     if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
                         score_q4 += 1.0
 
             # Vérification des bonnes réponses du texte à trous du tab 4
             score_t4 = sum(
                 [
-                    st.session_state.get("pf_t1_final") == "point",
-                    st.session_state.get("pf_t2_final") == "polygone",
-                    st.session_state.get("pf_t3_final") == "nulle",
-                    st.session_state.get("pf_t4_final") == "déséquilibre",
-                    st.session_state.get("pf_t5_final") == "axe",
-                    st.session_state.get("pf_t6_final") == "dynamique",
-                    st.session_state.get("pf_t7_final") == "équilibre",
-                    st.session_state.get("pf_t8_final") == "résultante",
-                    st.session_state.get("pf_t9_final") == "verticales",
-                    st.session_state.get("pf_t10_final") == "équilibrante",
+                    st.session_state.get("3f_t1_final") == "concourant",
+                    st.session_state.get("3f_t2_final") == "triangle",
+                    st.session_state.get("3f_t3_final") == "nulle",
+                    st.session_state.get("3f_t4_final") == "déséquilibre",
+                    st.session_state.get("3f_t5_final") == "zéro",
+                    st.session_state.get("3f_t6_final") == "deux",
+                    st.session_state.get("3f_t7_final") == "équilibre",
+                    st.session_state.get("3f_t8_final") == "graphique",
+                    st.session_state.get("3f_t9_final") == "matériel",
+                    st.session_state.get("3f_t10_final") == "départ",
                 ]
             )
 
@@ -1254,7 +1367,7 @@ with tab4:
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Forces Multiples - {n_eleve}</title>
+            <title>Rapport Équilibre 3 Forces - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
@@ -1270,7 +1383,7 @@ with tab4:
         <body>
             <div class="header-box">
                 <h1>Rapport d'Évaluation de Mécanique - Statique</h1>
-                <p>Atelier 4 : Équilibre d'un point soumis à plus de trois forces</p>
+                <p>Atelier 4 : Équilibre d'un point soumis à trois forces</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite4}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s4:.1f}</span> / 20</div>
@@ -1278,7 +1391,7 @@ with tab4:
             
             <div class="sub-title">Récapitulatif des Notes Obtenues</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                Note obtenue au Quiz Forces Multiples : <strong>{scr1_4:.1f} / 10</strong><br>
+                Note obtenue au Quiz 3 Forces : <strong>{scr1_4:.1f} / 10</strong><br>
                 Note obtenue à la Synthèse : <strong>{scr2_4:.1f} / 10</strong><br>
                 Note Totale de l'Atelier 4 : <strong>{tot_s4:.1f} / 20</strong>
             </p>
@@ -1293,7 +1406,7 @@ with tab4:
 
         if "ordre_quiz_tab4_aleatoire" in st.session_state:
             for num, q_item in enumerate(st.session_state.ordre_quiz_tab4_aleatoire, 1):
-                saisie = st.session_state.get(f"pf_at_final_g_{q_item['id']}", "Choisir...")
+                saisie = st.session_state.get(f"3f_at_final_g_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
@@ -1316,7 +1429,144 @@ with tab4:
 
 
 
+
+
 with tab5:
+    st.header("Cas a Plus de 3 Forces")
+    nb_perso = st.slider("Selectionnez le nombre exact de forces a analyser :", min_value=4, max_value=8, value=4)
+    analyser_systeme_forces(nb_forces=nb_perso, suffixe_clef="plus_f", nom_onglet="Equilibre_plus_3_forces")
+
+    st.write("---")        
+    if "suite_verrouille_tab5" not in st.session_state:
+        st.session_state.suite_verrouille_tab5 = False
+    verrou_at5 = st.session_state.suite_verrouille_tab5
+
+    # Insertion de la zone de questions/trous pour le tab 5
+    afficher_atelier_plus_trois_forces_complet(verrouille=verrou_at5)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 5")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat5 = st.checkbox(
+        "Je certifie avoir complété les questions et réglé le système à forces multiples.",
+        key="check_certif_tab5_final_net",
+        disabled=verrou_at5,
+    )
+    
+    # --- BLOC DE CORRECTION ET BOUTON VALIDER ---
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_suite5_official_net", use_container_width=True, disabled=verrou_at5):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat5: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q5 = 0.0
+            if "ordre_quiz_tab5_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab5_aleatoire:
+                    reponse_eleve = st.session_state.get(f"pf_at_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q5 += 1.0
+
+            # Vérification des bonnes réponses du texte à trous du tab 5
+            score_t5 = sum(
+                [
+                    st.session_state.get("pf_t1_final") == "point",
+                    st.session_state.get("pf_t2_final") == "polygone",
+                    st.session_state.get("pf_t3_final") == "nulle",
+                    st.session_state.get("pf_t4_final") == "déséquilibre",
+                    st.session_state.get("pf_t5_final") == "axe",
+                    st.session_state.get("pf_t6_final") == "dynamique",
+                    st.session_state.get("pf_t7_final") == "équilibre",
+                    st.session_state.get("pf_t8_final") == "résultante",
+                    st.session_state.get("pf_t9_final") == "verticales",
+                    st.session_state.get("pf_t10_final") == "équilibrante",
+                ]
+            )
+
+            st.session_state.score_suite5_p1 = round(float(score_q5), 1)
+            st.session_state.score_suite5_p2 = round(float(score_t5), 1)
+            st.session_state.score_final_suite5 = round(float(score_q5 + score_t5), 1)
+            st.session_state.suite_verrouille_tab5 = True
+            st.rerun()
+
+    # --- COMPILATION DU DOCUMENT EXPORTABLE HTML TAB 5 ---
+    if st.session_state.get("suite_verrouille_tab5", False):
+        scr1_5 = st.session_state.get("score_suite5_p1", 0.0)
+        scr2_5 = st.session_state.get("score_suite5_p2", 0.0)
+        tot_s5 = st.session_state.get("score_final_suite5", 0.0)
+        timestamp_suite5 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        
+        st.success(f"ATELIER 5 SCELLÉ | Note globale de l'Atelier : {tot_s5:.1f} / 20")
+        
+        html_export_tab5 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Forces Multiples - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Mécanique - Statique</h1>
+                <p>Atelier 5 : Équilibre d'un point soumis à plus de trois forces</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite5}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s5:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Obtenues</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Forces Multiples : <strong>{scr1_5:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_5:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 5 : <strong>{tot_s5:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab5_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab5_aleatoire, 1):
+                saisie = st.session_state.get(f"pf_at_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_tab5 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tab5 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html5 = preparer_nom_fichier("Rapport_Atelier_5").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 5 (.html)",
+            data=html_export_tab5,
+            file_name=nom_fichier_html5,
+            mime="text/html",
+            use_container_width=True
+        )
+
+
+with tab6:
     st.header("Applications Spécifiques aux Métiers")
     
     # Encadré méthodologique destiné à guider l'élève pas à pas
@@ -1342,7 +1592,7 @@ with tab5:
             "maintenance": "Maintenance Industrielle",
             "geometre": "Géomètre et Topographie"
         }[x],
-        key="select_metier_onglet5"
+        key="select_metier_onglet6"
     )
     
     # --- Gestion de l'aléa anti-triche par session de métier ---
@@ -1360,13 +1610,13 @@ with tab5:
         
     cas_index_alea = st.session_state[f"indice_alea_{metier_choisi}"]
     
-    if f"suite_verrouille_tab5_{metier_choisi}" not in st.session_state:
-        st.session_state[f"suite_verrouille_tab5_{metier_choisi}"] = False
+    if f"suite_verrouille_tab6_{metier_choisi}" not in st.session_state:
+        st.session_state[f"suite_verrouille_tab6_{metier_choisi}"] = False
         
-    verrou_at5 = st.session_state[f"suite_verrouille_tab5_{metier_choisi}"]
+    verrou_at6 = st.session_state[f"suite_verrouille_tab6_{metier_choisi}"]
     
     # Affichage dynamique de l'exercice basé sur le tirage aléatoire du métier choisi
-    afficher_atelier_metier_complet(metier_choisi, cas_index_alea, verrouille=verrou_at5)
+    afficher_atelier_metier_complet(metier_choisi, cas_index_alea, verrouille=verrou_at6)
     
     st.write("---")
     st.subheader("Validation et Exportation du module métier")
@@ -1374,57 +1624,57 @@ with tab5:
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    case_certif_stat5 = st.checkbox(
+    case_certif_stat6 = st.checkbox(
         "Je certifie avoir complété les évaluations techniques liées à ma filière métier.",
-        key=f"check_certif_tab5_{metier_choisi}",
-        disabled=verrou_at5,
+        key=f"check_certif_tab6_{metier_choisi}",
+        disabled=verrou_at6,
     )
     
-    # --- BLOC DE CORRECTION ET BOUTON VALIDER TAB 5 ---
-    if st.button("VALIDER ET EXPORTER LE BILAN METIER", key=f"btn_export_tab5_{metier_choisi}", use_container_width=True, disabled=verrou_at5):
+    # --- BLOC DE CORRECTION ET BOUTON VALIDER TAB 6 ---
+    if st.button("VALIDER ET EXPORTER LE BILAN METIER", key=f"btn_export_tab6_{metier_choisi}", use_container_width=True, disabled=verrou_at6):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif not case_certif_stat5: 
+        elif not case_certif_stat6: 
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            score_q5 = 0.0
+            score_q6 = 0.0
             banque_verif = obtenir_banque_metiers()[metier_choisi]
             
             # Évaluation du quiz mélangé
             for q_item in st.session_state.quiz_metier_aleatoire:
                 reponse_eleve = st.session_state.get(f"met_at_g_{q_item['id']}", "Choisir...")
                 if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
-                    score_q5 += 1.0
+                    score_q6 += 1.0
                     
             # Évaluation du texte à trous spécifique (Note ramenée sur 10 pts)
-            score_t5 = 0.0
+            score_t6 = 0.0
             if st.session_state.get("m_t1") == banque_verif["trous"][0][2]:
-                score_t5 += 5.0
+                score_t6 += 5.0
             if st.session_state.get("m_t2") == banque_verif["trous"][1][2]:
-                score_t5 += 5.0
+                score_t6 += 5.0
                 
             # Ramener le quiz sur 10 points également pour obtenir une note sur 20
-            score_q5_normalise = round((score_q5 / len(banque_verif["quiz"])) * 10.0, 1)
+            score_q6_normalise = round((score_q6 / len(banque_verif["quiz"])) * 10.0, 1)
             
-            st.session_state[f"score_q_{metier_choisi}"] = score_q5_normalise
-            st.session_state[f"score_t_{metier_choisi}"] = score_t5
-            st.session_state[f"score_total_{metier_choisi}"] = round(score_q5_normalise + score_t5, 1)
-            st.session_state[f"suite_verrouille_tab5_{metier_choisi}"] = True
+            st.session_state[f"score_q_{metier_choisi}"] = score_q6_normalise
+            st.session_state[f"score_t_{metier_choisi}"] = score_t6
+            st.session_state[f"score_total_{metier_choisi}"] = round(score_q6_normalise + score_t6, 1)
+            st.session_state[f"suite_verrouille_tab6_{metier_choisi}"] = True
             st.rerun()
 
     # --- COMPILATION DU DOCUMENT EXPORTABLE HTML METIER ---
-    if st.session_state.get(f"suite_verrouille_tab5_{metier_choisi}", False):
-        scr1_5 = st.session_state.get(f"score_q_{metier_choisi}", 0.0)
-        scr2_5 = st.session_state.get(f"score_t_{metier_choisi}", 0.0)
-        tot_s5 = st.session_state.get(f"score_total_{metier_choisi}", 0.0)
-        timestamp_suite5 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+    if st.session_state.get(f"suite_verrouille_tab6_{metier_choisi}", False):
+        scr1_6 = st.session_state.get(f"score_q_{metier_choisi}", 0.0)
+        scr2_6 = st.session_state.get(f"score_t_{metier_choisi}", 0.0)
+        tot_s6 = st.session_state.get(f"score_total_{metier_choisi}", 0.0)
+        timestamp_suite6 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
         
-        st.success(f"ATELIER TP METIER SCELLE | Note finale : {tot_s5:.1f} / 20")
+        st.success(f"ATELIER TP METIER SCELLE | Note finale : {tot_s6:.1f} / 20")
         
         banque_html = obtenir_banque_metiers()[metier_choisi]
         scen_html = banque_html["scenarios"][cas_index_alea]
 
-        html_export_tab5 = f"""<!DOCTYPE html>
+        html_export_tab6 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
@@ -1447,21 +1697,21 @@ with tab5:
                 <p>Branche Spécialisée : {banque_html['nom']}</p>
                 <p>Scénario Évalué : {scen_html['titre']}</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Généré automatiquement le : {timestamp_suite5}</p>
-                <div class="score-badge">NOTE METIER<br><span style="font-size: 32px;">{tot_s5:.1f}</span> / 20</div>
+                <p style="font-size: 12px; opacity: 0.7;">Généré automatiquement le : {timestamp_suite6}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s6:.1f}</span> / 20</div>
             </div>
             
-            <div class="sub-title">Synthèse des Résultats Acquis</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #047857;">
-                Note Partie Théorie / Quiz Métier : <strong>{scr1_5:.1f} / 10</strong><br>
-                Note Partie Synthèse de texte : <strong>{scr2_5:.1f} / 10</strong><br>
-                Note Finale Pondérée : <strong>{tot_s5:.1f} / 20</strong>
+            <div class="sub-title">Récapitulatif des Notes Obtenues</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_6:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_6:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 6 : <strong>{tot_s6:.1f} / 20</strong>
             </p>
 
-            <div class="sub-title">Correction du Quiz</div>
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE DE SESSION)</div>
             <table>
                 <thead>
-                    <tr><th>N°</th><th>Question Technique Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
         """
@@ -1471,26 +1721,21 @@ with tab5:
             attendu = q_item["rep"]
             v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_tab5 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+            html_export_tab6 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_tab5 += """
+        html_export_tab6 += """
                 </tbody>
             </table>
         </body>
         </html>
         """
-        nom_fichier_html5 = preparer_nom_fichier(f"Rapport_Metier_{metier_choisi}").replace(".txt", ".html")
-        st.download_button(
-            label=f"Télécharger le rapport d'évaluation officiel du secteur {metier_choisi} (.html)",
-            data=html_export_tab5,
-            file_name=nom_fichier_html5,
+        nom_fichier_html6 = preparer_nom_fichier(f"Rapport_Atelier_6_{metier_choisi}").replace(".txt", ".html")
+        st.download_button(abel="Télécharger le rapport d'évaluation officiel de l'Atelier 6 (.html)",
+            data=html_export_tab6,
+            file_name=nom_fichier_html6,
             mime="text/html",
             use_container_width=True
-        )
-
-
-
-
+            )
 
 
 
