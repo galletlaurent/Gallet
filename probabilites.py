@@ -4950,26 +4950,47 @@ with tab9:
     st.header("Atelier 9 : Loi de Gauss (Loi Normale)")
     
     # =========================================================================
-    # RAPPEL DE COURS TECHNIQUE (FORMAT LATEX)
+    # RAPPEL DE COURS TECHNIQUE (STYLE INJECTÉ ET FORMAT LATEX FONCTIONNEL)
     # =========================================================================
+    # Injection du style CSS personnalisé (si non défini plus haut dans la page)
     st.markdown("""
-    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
-        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel des Formules de la Loi Normale N(&mu;, &sigma;) :</p>
-        <ul>
-            <li><strong>Fonction de densite (Courbe en cloche) :</strong> $f(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}} e^{-\\frac{1}{2}\\left(\\frac{x-\\mu}{\\sigma}\\right)^2}$</li>
-            <li><strong>Esperance Mathematique (Moyenne theorique) :</strong> $E(X) = \\mu$</li>
-            <li><strong>Variable centree reduite :</strong> $Z = \\frac{X - \\mu}{\\sigma}$ suit la loi normale standard $N(0, 1)$</li>
-            <li><strong>Intervalles remarquables :</strong> $P(\\mu - \\sigma \\le X \\le \\mu + \\sigma) \\approx 0.683$ &nbsp;|&nbsp; $P(\\mu - 2\\sigma \\le X \\le \\mu + 2\\sigma) \\approx 0.954$</li>
-        </ul>
+        <style>
+        .rappel-cours-box {
+            background-color: #f8fafc; 
+            border-left: 4px solid #1e3a8a; 
+            padding: 15px; 
+            border-radius: 4px; 
+            margin-bottom: 20px;
+        }
+        .rappel-cours-title {
+            font-weight: bold; 
+            color: #1e3a8a; 
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # Rendu de l'encadré avec le Markdown et le LaTeX interprétés
+    st.markdown("""
+    <div class="rappel-cours-box">
+        <p class="rappel-cours-title">Rappel des Formules de la Loi Normale $\mathcal{N}(\mu, \sigma^2)$ :</p>
+
+- **Fonction de densité (Courbe en cloche) :** $f(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}} e^{-\\frac{1}{2}\\left(\\frac{x-\\mu}{\\sigma}\\right)^2}$
+- **Espérance Mathématique (Moyenne théorique) :** $E(X) = \\mu$
+- **Variable centrée réduite :** $Z = \\frac{X - \\mu}{\\sigma}$ suit la loi normale standard $\mathcal{N}(0, 1)$
+- **Intervalles remarquables :** $P(\\mu - \\sigma \\le X \\le \\mu + \\sigma) \\approx 0{,}683$ $\\mid$ $P(\\mu - 2\\sigma \\le X \\le \\mu + 2\\sigma) \\approx 0{,}954$
+
     </div>
     """, unsafe_allow_html=True)
 
+    # =========================================================================
+    # INITIALISATION DU SESSION STATE ATELIER 9
+    # =========================================================================
     if "at9_verrouille" not in st.session_state:
         st.session_state.at9_verrouille = False
     if "at9_afficher_correction" not in st.session_state:
-        st.session_state.at9_afficher_correction = False
-
-    # =========================================================================
+        st.session_state.at9_afficher_correction = False    # =========================================================================
     # CONFIGURATION & GÉNÉRATEUR D'EXERCICE DYNAMIQUE
     # =========================================================================
     filiere_at9 = st.selectbox(
