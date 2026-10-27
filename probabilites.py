@@ -3682,20 +3682,43 @@ with tab6:
     st.header("Atelier 6 : Loi Exponentielle")
     
     # =========================================================================
-    # RAPPEL DE COURS TECHNIQUE (FORMAT LATEX)
+    # RAPPEL DE COURS TECHNIQUE (STYLE INJECTÉ ET FORMAT LATEX FONCTIONNEL)
     # =========================================================================
+    # Injection du style CSS personnalisé (si non défini plus haut dans la page)
     st.markdown("""
-    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
-        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel des Formules de la Loi Exponentielle :</p>
-        <ul>
-            <li><strong>Fonction de densite :</strong> $t(x) = \lambda e^{-\lambda x}$ pour $x \ge 0$</li>
-            <li><strong>Esperance Mathematique (Duree moyenne de vie) :</strong> $E(X) = \\frac{1}{\\lambda}$</li>
-            <li><strong>Probabilite d'un intervalle P(X <= t) :</strong> $P(X \\le t) = 1 - e^{-\lambda t}$</li>
-            <li><strong>Probabilite de survie P(X > t) :</strong> $P(X > t) = e^{-\lambda t}$</li>
-        </ul>
+        <style>
+        .rappel-cours-box {
+            background-color: #f8fafc; 
+            border-left: 4px solid #1e3a8a; 
+            padding: 15px; 
+            border-radius: 4px; 
+            margin-bottom: 20px;
+        }
+        .rappel-cours-title {
+            font-weight: bold; 
+            color: #1e3a8a; 
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # Rendu de l'encadré avec le Markdown et le LaTeX interprétés
+    st.markdown("""
+    <div class="rappel-cours-box">
+        <p class="rappel-cours-title">Rappel des Formules de la Loi Exponentielle :</p>
+
+- **Fonction de densité :** $f(x) = \lambda e^{-\lambda x}$ pour $x \ge 0$
+- **Espérance Mathématique (Durée moyenne de vie) :** $E(X) = \\frac{1}{\\lambda}$
+- **Probabilité d'un intervalle $P(X \le t)$ :** $P(X \\le t) = 1 - e^{-\lambda t}$
+- **Probabilité de survie $P(X > t)$ :** $P(X > t) = e^{-\lambda t}$
+
     </div>
     """, unsafe_allow_html=True)
 
+    # =========================================================================
+    # INITIALISATION DU SESSION STATE ATELIER 6
+    # =========================================================================
     if "at6_verrouille" not in st.session_state:
         st.session_state.at6_verrouille = False
     if "at6_afficher_correction" not in st.session_state:
