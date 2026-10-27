@@ -4146,12 +4146,13 @@ with tab7:
     # Rendu de l'encadré avec le Markdown et le LaTeX interprétés
     st.markdown("""
     <div class="rappel-cours-box">
-        <p class="rappel-cours-title">Rappel des Formules de la Loi Binomiale $\mathcal{B}(n, p)$ :</p>
 
-- **Probabilité d'obtenir exactement $k$ succès :** $P(X = k) = \\binom{n}{k} \\cdot p^k \\cdot (1-p)^{n-k}$
-- **Coefficients binomiaux (Combinaisons) :** $\\binom{n}{k} = \\frac{n!}{k!(n-k)!}$
-- **Espérance Mathématique (Nombre moyen de succès) :** $E(X) = n \\cdot p$
-- **Variance et Écart-type :** $V(X) = n \\cdot p \\cdot (1-p)$ et $\\sigma(X) = \\sqrt{V(X)}$
+    **Rappel des Formules de la Loi Binomiale $\mathcal{B}(n, p)$ :**
+
+    - **Probabilité d'obtenir exactement $k$ succès :** $P(X = k) = \\binom{n}{k} \\cdot p^k \\cdot (1-p)^{n-k}$
+    - **Coefficients binomiaux (Combinaisons) :** $\\binom{n}{k} = \\frac{n!}{k!(n-k)!}$
+    - **Espérance Mathématique (Nombre moyen de succès) :** $E(X) = n \\cdot p$
+    - **Variance et Écart-type :** $V(X) = n \\cdot p \\cdot (1-p)$ et $\\sigma(X) = \\sqrt{V(X)}$
 
     </div>
     """, unsafe_allow_html=True)
