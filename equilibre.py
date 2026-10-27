@@ -812,14 +812,14 @@ with tab1:
     arc_col1, arc_col2 = st.columns(2)
     with arc_col1:
         if os.path.exists("portrait_archimede.jpg"):
-            st.image("portrait_archimede.jpg", caption="Portrait d'Archimède", use_container_width=True)
+            st.image("portrait_archimede.jpg", caption="Archimède", use_container_width=True)
         else:
-            st.info("Illustration : Portrait historique d'Archimède de Syracuse.")
+            st.info("portrait_archimede.jpg.")
     with arc_col2:
         if os.path.exists("decouverte_archimede.jpg"):
             st.image("decouverte_archimede.jpg", caption="La loi du levier et de la balance", use_container_width=True)
         else:
-            st.info("Illustration : Schéma mécanique d'un levier en équilibre sur son point d'appui.")
+            st.info("decouverte_archimede.jpg.")
             
     st.markdown("""
     **Son apport fondamental :**  
@@ -837,14 +837,14 @@ with tab1:
     stev_col1, stev_col2 = st.columns(2)
     with stev_col1:
         if os.path.exists("portrait_stevin.jpg"):
-            st.image("portrait_stevin.jpg", caption="Portrait de Simon Stevin", use_container_width=True)
+            st.image("portrait_stevin.jpg", caption="Simon Stevin", use_container_width=True)
         else:
-            st.info("Illustration : Portrait du mathématicien et ingénieur hollandais Simon Stevin.")
+            st.info("portrait_stevin.jpg.")
     with stev_col2:
         if os.path.exists("decouverte_stevin.jpg"):
             st.image("decouverte_stevin.jpg", caption="Le plan incliné et le triangle des forces", use_container_width=True)
         else:
-            st.info("Illustration : Représentation historique du 'Cloothkrans' (couronne de sphères) sur un plan incliné.")
+            st.info("decouverte_stevin.jpg")
             
     st.markdown("""
     **Son apport fondamental :**  
@@ -862,14 +862,14 @@ with tab1:
     newt_col1, newt_col2 = st.columns(2)
     with newt_col1:
         if os.path.exists("portrait_newton.jpg"):
-            st.image("portrait_newton.jpg", caption="Portrait d'Isaac Newton", use_container_width=True)
+            st.image("portrait_newton.jpg", caption="Isaac Newton", use_container_width=True)
         else:
             st.info("Illustration : Portrait du physicien britannique Isaac Newton.")
     with newt_col2:
         if os.path.exists("decouverte_newton.jpg"):
-            st.image("decouverte_newton.jpg", caption="Les lois du mouvement (Principia)", use_container_width=True)
+            st.image("decouverte_newton.jpg", caption="Les lois du mouvement (Principe)", use_container_width=True)
         else:
-            st.info("Illustration : Diagramme des forces d'action et de réaction réciproques.")
+            st.info("decouverte_newton.jpg")
             
     st.markdown("""
     **Son apport fondamental :**  
@@ -887,14 +887,14 @@ with tab1:
     var_col1, var_col2 = st.columns(2)
     with var_col1:
         if os.path.exists("portrait_varignon.jpg"):
-            st.image("portrait_varignon.jpg", caption="Portrait de Pierre Varignon", use_container_width=True)
+            st.image("portrait_varignon.jpg", caption="Pierre Varignon", use_container_width=True)
         else:
-            st.info("Illustration : Portrait du mathématicien français Pierre Varignon.")
+            st.info("portrait_varignon.jpg.")
     with var_col2:
         if os.path.exists("decouverte_varignon.jpg"):
             st.image("decouverte_varignon.jpg", caption="Le théorème des moments et le polygone des forces", use_container_width=True)
         else:
-            st.info("Illustration : Tracé géométrique d'un polygone de forces concourantes en équilibre.")
+            st.info("decouverte_varignon.jpg")
             
     st.markdown("""
     **Son apport fondamental :**  
