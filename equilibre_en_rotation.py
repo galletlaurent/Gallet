@@ -200,7 +200,6 @@ tab5 = onglets[5]
 tab6 = onglets[6]
 
 def afficher_questions_forces_dynamiques(verrouille=False):
-    import streamlit as st
     import random
     
     if "ordre_quiz1_forces" not in st.session_state:
@@ -266,7 +265,7 @@ def afficher_questions_forces_dynamiques(verrouille=False):
         with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "Électronique", "Chimique", "Thermique"], key="forces_t4_s1", disabled=verrouille, label_visibility="collapsed")
         
         c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c9: st.write("5. Le poids d'un objet est une action mécanique s'exerçant à")
+        with c9: st.write("5. Le poids d'un objet is une action mécanique s'exerçant à")
         with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", "Distance", "Contact", "L'infini"], key="forces_t5_s1", disabled=verrouille, label_visibility="collapsed")
         
         c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
@@ -290,7 +289,6 @@ def afficher_questions_forces_dynamiques(verrouille=False):
         with c20: dict_trous["t10"] = st.selectbox("", ["Choisir...", "Kilogramme", "Mètre", "Seconde"], key="forces_t10_s1", disabled=verrouille, label_visibility="collapsed")
 
     return dict_reponses_quiz, dict_trous
-
 
 
 
@@ -392,15 +390,25 @@ with tab1:
     
     st.subheader("4. Typologie des forces")
     col_forces_a, col_forces_b = st.columns(2)
+    
     with col_forces_a:
         st.markdown("**Forces de contact**")
         st.write("L'action nécessite un contact physique entre l'auteur et le receveur.")
         st.markdown("- Tension d'un câble ou d'une corde\n- Force de frottement sur le sol\n- Réaction d'un support")
+        if os.path.exists("force_contact.jpg"):
+            st.image("force_contact.jpg", caption="Illustration d'une action mécanique de contact", use_container_width=True)
+        else:
+            st.info("Emplacement pour l'image : force_contact.jpg")
+
     with col_forces_b:
         st.markdown("**Forces à distance**")
         st.write("L'action s'exerce sans qu'il n'y ait de contact physique entre les objets.")
         st.markdown("- Force gravitationnelle (Poids d'un corps)\n- Force magnétique (Aimant)\n- Force électrostatique")
-
+        if os.path.exists("force_distance.jpg"):
+            st.image("force_distance.jpg", caption="Illustration d'une action mécanique à distance", use_container_width=True)
+        else:
+            st.info("Emplacement pour l'image : force_distance.jpg")
+            
     st.divider()
 
     st.subheader("5. Unités et appareils de mesure")
