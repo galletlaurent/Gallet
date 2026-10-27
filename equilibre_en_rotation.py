@@ -1050,128 +1050,128 @@ with tab3:
         # =============================================================================
         # LABORATOIRE AVANCÉ DYNAMIQUE MULTI-FORCES (À insérer sous la première simulation)
         # =============================================================================
-        st.write("---")
-        st.subheader("3. Laboratoire virtuel avancé : Systèmes multi-forces")
-        st.write(
-            "Dans la réalité industrielle, un objet en rotation peut être soumis à plusieurs forces simultanées "
-            "de chaque côté de l'axe. Configurez votre système sur-mesure ci-dessous :"
-        )
+    st.write("---")
+    st.subheader("3. Laboratoire virtuel avancé : Systèmes multi-forces")
+    st.write(
+        "Dans la réalité industrielle, un objet en rotation peut être soumis à plusieurs forces simultanées "
+        "de chaque côté de l'axe. Configurez votre système sur-mesure ci-dessous :"
+    )
 
-        col_cfg_g, col_cfg_d = st.columns(2)
+    col_cfg_g, col_cfg_d = st.columns(2)
+    
+    with col_cfg_g:
+        nb_forces_g = st.number_input("Nombre de forces à GAUCHE", min_value=1, max_value=4, value=2, step=1, key="nb_f_g")
+    with col_cfg_d:
+        nb_forces_d = st.number_input("Nombre de forces à DROITE", min_value=1, max_value=4, value=2, step=1, key="nb_f_d")
+
+    st.write("##### Saisie des caractéristiques des forces")
+    col_tab_g, col_tab_d = st.columns(2)
+    
+    forces_g_list = []
+    distances_g_list = []
+    moments_g_list = []
+    
+    with col_tab_g:
+        st.markdown("**Tableau des actions à GAUCHE**")
+        for i in range(int(nb_forces_g)):
+            c_f, c_d = st.columns(2)
+            with c_f:
+                f_val = st.number_input(f"Force G{i+1} (en N)", min_value=0.0, max_value=500.0, value=100.0 if i==0 else 50.0, step=10.0, key=f"f_g_{i}")
+            with c_d:
+                d_val = st.number_input(f"Distance G{i+1} (en m)", min_value=0.1, max_value=5.0, value=1.0 + i*0.5, step=0.1, key=f"d_g_{i}")
+            m_val = round(f_val * d_val, 2)
+            forces_g_list.append(f_val)
+            distances_g_list.append(d_val)
+            moments_g_list.append(m_val)
+
+    forces_d_list = []
+    distances_d_list = []
+    moments_d_list = []
+
+    with col_tab_d:
+        st.markdown("**Tableau des actions à DROITE**")
+        for j in range(int(nb_forces_d)):
+            c_f, c_d = st.columns(2)
+            with c_f:
+                f_val = st.number_input(f"Force D{j+1} (en N)", min_value=0.0, max_value=500.0, value=150.0 if j==0 else 50.0, step=10.0, key=f"f_d_{j}")
+            with c_d:
+                d_val = st.number_input(f"Distance D{j+1} (en m)", min_value=0.1, max_value=5.0, value=0.8 + j*0.6, step=0.1, key=f"d_d_{j}")
+            m_val = round(f_val * d_val, 2)
+            forces_d_list.append(f_val)
+            distances_d_list.append(d_val)
+            moments_d_list.append(m_val)
+
+    # Calculs des sommes des moments
+    somme_moments_gauche = round(sum(moments_g_list), 2)
+    somme_moments_droite = round(sum(moments_d_list), 2)
+
+    st.write("##### Tableau récapitulatif et bilan des moments algébriques")
+    
+    # Affichage du tableau de synthèse dynamique pour la conclusion de l'élève
+    col_res_g, col_res_d = st.columns(2)
+    with col_res_g:
+        st.info(f"Somme des moments faisant tourner à GAUCHE (+) : {somme_moments_gauche} N.m")
+    with col_res_d:
+        st.info(f"Somme des moments faisant tourner à DROITE (-) : {somme_moments_droite} N.m")
+
+    col_visu_lbl, col_visu_graph = st.columns([0.4, 0.6])
+    
+    with col_visu_lbl:
+        st.write("**Verdict de l'équilibre multi-forces :**")
+        ecart_moments = abs(somme_moments_gauche - somme_moments_droite)
         
-        with col_cfg_g:
-            nb_forces_g = st.number_input("Nombre de forces à GAUCHE", min_value=1, max_value=4, value=2, step=1, key="nb_f_g")
-        with col_cfg_d:
-            nb_forces_d = st.number_input("Nombre de forces à DROITE", min_value=1, max_value=4, value=2, step=1, key="nb_f_d")
+        if ecart_moments < 1.5:
+            st.success("SYSTÈME EN PARFAIT ÉQUILIBRE ! La somme des moments est nulle (Somme M = 0). Le levier ne tourne pas.")
+            verdict_texte = "PARFAIT ÉQUILIBRE"
+            verdict_coulor = "green"
+        elif somme_moments_gauche > somme_moments_droite:
+            st.error(f"BASCULE À GAUCHE ! Le moment total à gauche est supérieur de {round(ecart_moments, 2)} N.m.")
+            verdict_texte = "BASCULE A GAUCHE"
+            verdict_coulor = "red"
+        else:
+            st.error(f"BASCULE À DROITE ! Le moment total à droite est supérieur de {round(ecart_moments, 2)} N.m.")
+            verdict_texte = "BASCULE A DROITE"
+            verdict_coulor = "red"
 
-        st.write("##### Saisie des caractéristiques des forces")
-        col_tab_g, col_tab_d = st.columns(2)
+    with col_visu_graph:
+        # Génération du graphique dynamique matplotlib pour le système multi-forces
+        fig_multi, ax_multi = plt.subplots(figsize=(7, 4))
         
-        forces_g_list = []
-        distances_g_list = []
-        moments_g_list = []
+        # Dessin de la planche principale et du pivot central
+        ax_multi.plot([-5.5, 5.5], [0, 0], color="brown", lw=6)
+        ax_multi.plot([0, -0.3, 0.3, 0], [0, -0.5, -0.5, 0], color="black", lw=3)
+        ax_multi.text(-0.3, -0.9, "Axe D", fontsize=10, weight='bold')
+
+        # Tracé dynamique de toutes les forces de GAUCHE (Rouge)
+        for idx, (f, d) in enumerate(zip(forces_g_list, distances_g_list)):
+            ax_multi.annotate('', xy=(-d, -1.2), xytext=(-d, 0), arrowprops=dict(facecolor='red', width=2, headwidth=8))
+            ax_multi.text(-d - 0.2, -1.5, f"G{idx+1}:{int(f)}N", color='red', fontsize=8, weight='bold')
+            ax_multi.text(-d, 0.2, f"{d}m", color='red', fontsize=8)
+
+        # Tracé dynamique de toutes les forces de DROITE (Vert)
+        for idx, (f, d) in enumerate(zip(forces_d_list, distances_d_list)):
+            ax_multi.annotate('', xy=(d, -1.2), xytext=(d, 0), arrowprops=dict(facecolor='green', width=2, headwidth=8))
+            ax_multi.text(d - 0.2, -1.5, f"D{idx+1}:{int(f)}N", color='green', fontsize=8, weight='bold')
+            ax_multi.text(d, 0.2, f"{d}m", color='green', fontsize=8)
+
+        ax_multi.set_xlim(-6, 6)
+        ax_multi.set_ylim(-2.2, 1)
+        ax_multi.axis('off')
+        ax_multi.title.set_text(verdict_texte)
+        ax_multi.title.set_color(verdict_coulor)
         
-        with col_tab_g:
-            st.markdown("**Tableau des actions à GAUCHE**")
-            for i in range(int(nb_forces_g)):
-                c_f, c_d = st.columns(2)
-                with c_f:
-                    f_val = st.number_input(f"Force G{i+1} (en N)", min_value=0.0, max_value=500.0, value=100.0 if i==0 else 50.0, step=10.0, key=f"f_g_{i}")
-                with c_d:
-                    d_val = st.number_input(f"Distance G{i+1} (en m)", min_value=0.1, max_value=5.0, value=1.0 + i*0.5, step=0.1, key=f"d_g_{i}")
-                m_val = round(f_val * d_val, 2)
-                forces_g_list.append(f_val)
-                distances_g_list.append(d_val)
-                moments_g_list.append(m_val)
-
-        forces_d_list = []
-        distances_d_list = []
-        moments_d_list = []
-
-        with col_tab_d:
-            st.markdown("**Tableau des actions à DROITE**")
-            for j in range(int(nb_forces_d)):
-                c_f, c_d = st.columns(2)
-                with c_f:
-                    f_val = st.number_input(f"Force D{j+1} (en N)", min_value=0.0, max_value=500.0, value=150.0 if j==0 else 50.0, step=10.0, key=f"f_d_{j}")
-                with c_d:
-                    d_val = st.number_input(f"Distance D{j+1} (en m)", min_value=0.1, max_value=5.0, value=0.8 + j*0.6, step=0.1, key=f"d_d_{j}")
-                m_val = round(f_val * d_val, 2)
-                forces_d_list.append(f_val)
-                distances_d_list.append(d_val)
-                moments_d_list.append(m_val)
-
-        # Calculs des sommes des moments
-        somme_moments_gauche = round(sum(moments_g_list), 2)
-        somme_moments_droite = round(sum(moments_d_list), 2)
-
-        st.write("##### Tableau récapitulatif et bilan des moments algébriques")
+        st.pyplot(fig_multi)
         
-        # Affichage du tableau de synthèse dynamique pour la conclusion de l'élève
-        col_res_g, col_res_d = st.columns(2)
-        with col_res_g:
-            st.info(f"Somme des moments faisant tourner à GAUCHE (+) : {somme_moments_gauche} N.m")
-        with col_res_d:
-            st.info(f"Somme des moments faisant tourner à DROITE (-) : {somme_moments_droite} N.m")
-
-        col_visu_lbl, col_visu_graph = st.columns([0.4, 0.6])
-        
-        with col_visu_lbl:
-            st.write("**Verdict de l'équilibre multi-forces :**")
-            ecart_moments = abs(somme_moments_gauche - somme_moments_droite)
-            
-            if ecart_moments < 1.5:
-                st.success("SYSTÈME EN PARFAIT ÉQUILIBRE ! La somme des moments est nulle (Somme M = 0). Le levier ne tourne pas.")
-                verdict_texte = "PARFAIT ÉQUILIBRE"
-                verdict_coulor = "green"
-            elif somme_moments_gauche > somme_moments_droite:
-                st.error(f"BASCULE À GAUCHE ! Le moment total à gauche est supérieur de {round(ecart_moments, 2)} N.m.")
-                verdict_texte = "BASCULE A GAUCHE"
-                verdict_coulor = "red"
-            else:
-                st.error(f"BASCULE À DROITE ! Le moment total à droite est supérieur de {round(ecart_moments, 2)} N.m.")
-                verdict_texte = "BASCULE A DROITE"
-                verdict_coulor = "red"
-
-        with col_visu_graph:
-            # Génération du graphique dynamique matplotlib pour le système multi-forces
-            fig_multi, ax_multi = plt.subplots(figsize=(7, 4))
-            
-            # Dessin de la planche principale et du pivot central
-            ax_multi.plot([-5.5, 5.5], [0, 0], color="brown", lw=6)
-            ax_multi.plot([0, -0.3, 0.3, 0], [0, -0.5, -0.5, 0], color="black", lw=3)
-            ax_multi.text(-0.3, -0.9, "Axe D", fontsize=10, weight='bold')
-
-            # Tracé dynamique de toutes les forces de GAUCHE (Rouge)
-            for idx, (f, d) in enumerate(zip(forces_g_list, distances_g_list)):
-                ax_multi.annotate('', xy=(-d, -1.2), xytext=(-d, 0), arrowprops=dict(facecolor='red', width=2, headwidth=8))
-                ax_multi.text(-d - 0.2, -1.5, f"G{idx+1}:{int(f)}N", color='red', fontsize=8, weight='bold')
-                ax_multi.text(-d, 0.2, f"{d}m", color='red', fontsize=8)
-
-            # Tracé dynamique de toutes les forces de DROITE (Vert)
-            for idx, (f, d) in enumerate(zip(forces_d_list, distances_d_list)):
-                ax_multi.annotate('', xy=(d, -1.2), xytext=(d, 0), arrowprops=dict(facecolor='green', width=2, headwidth=8))
-                ax_multi.text(d - 0.2, -1.5, f"D{idx+1}:{int(f)}N", color='green', fontsize=8, weight='bold')
-                ax_multi.text(d, 0.2, f"{d}m", color='green', fontsize=8)
-
-            ax_multi.set_xlim(-6, 6)
-            ax_multi.set_ylim(-2.2, 1)
-            ax_multi.axis('off')
-            ax_multi.title.set_text(verdict_texte)
-            ax_multi.title.set_color(verdict_coulor)
-            
-            st.pyplot(fig_multi)
-            
-            # Exportation du schéma multi-forces personnalisé au format JPG
-            nom_img_multi = preparer_nom_fichier("laboratoire_multiforces") + ".jpg"
-            plt.savefig("temp_multi.jpg", format="jpg", dpi=150, bbox_inches='tight')
-            with open("temp_multi.jpg", "rb") as file_multi:
-                st.download_button(
-                    label="Télécharger le schéma du laboratoire avancé (JPG)",
-                    data=file_multi,
-                    file_name=nom_img_multi,
-                    mime="image/jpeg",
-                    key="btn_dl_multi")
+        # Exportation du schéma multi-forces personnalisé au format JPG
+        nom_img_multi = preparer_nom_fichier("laboratoire_multiforces") + ".jpg"
+        plt.savefig("temp_multi.jpg", format="jpg", dpi=150, bbox_inches='tight')
+        with open("temp_multi.jpg", "rb") as file_multi:
+            st.download_button(
+                label="Télécharger le schéma du laboratoire avancé (JPG)",
+                data=file_multi,
+                file_name=nom_img_multi,
+                mime="image/jpeg",
+                key="btn_dl_multi")
 
 
 
