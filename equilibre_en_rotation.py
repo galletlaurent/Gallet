@@ -200,6 +200,98 @@ tab5 = onglets[5]
 tab6 = onglets[6]
 
 
+def afficher_questions_applications_dynamiques(verrouille=False):
+    import streamlit as st
+    import random
+    
+    if "ordre_quiz4_applications" not in st.session_state:
+        base_quiz4_applications = [
+            {"id": "q4_1", "q": "Sur une grue de chantier, le contrepoids en béton sert principalement à :", "type": "menu", "options": ["Compenser le moment de la charge", "Augmenter la hauteur de la flèche", "Freiner la rotation de la cabine"], "rep": "Compenser le moment de la charge"},
+            {"id": "q4_2", "q": "Si une grue soulève une charge trop lourde en bout de flèche, le risque majeur est :", "type": "menu", "options": ["Le basculement de la structure", "La rupture du câble uniquement", "L'arrêt du moteur électrique"], "rep": "Le basculement de la structure"},
+            {"id": "q4_3", "q": "Pour serrer un écrou à une valeur de couple précise en atelier, on utilise :", "type": "menu", "options": ["Une clé dynamométrique", "Une clé plate standard", "Un dynamomètre à aiguille"], "rep": "Une clé dynamométrique"},
+            {"id": "q4_4", "q": "Le terme 'couple de serrage' employé en mécanique industrielle est équivalent à :", "type": "menu", "options": ["Un moment de force", "Une intensité de force", "Une puissance thermique"], "rep": "Un moment de force"},
+            {"id": "q4_5", "q": "Lorsqu'on éloigne une charge de la cabine d'une grue, son bras de levier :", "type": "menu", "options": ["Augmente", "Diminue", "Reste constant"], "rep": "Augmente"},
+            {"id": "q4_6", "q": "Pour maintenir une grue en équilibre lorsque la charge s'éloigne, il faut :", "type": "menu", "options": ["Diminuer la masse de la charge", "Augmenter la masse de la charge", "Rapprocher le contrepoids"], "rep": "Diminuer la masse de la charge"},
+            {"id": "q4_7", "q": "L'unité du couple de serrage indiquée sur les outils professionnels est le :", "type": "menu", "options": ["Newton-mètre", "Newton par mètre", "Kilogramme"], "rep": "Newton-mètre"},
+            {"id": "q4_8", "q": "Un pont basculant pour camions repose sur le principe mécanique :", "type": "menu", "options": ["Du levier et des moments", "De la déformation élastique", "De la poussée d'Archimède"], "rep": "Du levier et des moments"},
+            {"id": "q4_9", "q": "Si le manche d'une clé est trop court pour desserrer un écrou, un technicien peut :", "type": "menu", "options": ["Utiliser une rallonge de manche", "Appuyer plus près de l'écrou", "Réduire sa force musculaire"], "rep": "Utiliser une rallonge de manche"},
+            {"id": "q4_10", "q": "Dans l'industrie, le non-respect du couple de serrage d'un boulon peut entraîner :", "type": "menu", "options": ["La rupture ou le desserrage de la pièce", "Une augmentation de la masse", "Une usure de l'axe de rotation"], "rep": "La rupture ou le desserrage de la pièce"}
+        ]
+        copie_base = list(base_quiz4_applications)
+        random.shuffle(copie_base)
+        st.session_state.ordre_quiz4_applications = copie_base
+
+    col_double_quiz_a4, col_double_trous_a4 = st.columns(2)
+
+    with col_double_quiz_a4:
+        st.markdown("##### Quiz sur les applications industrielles (10 questions - 10 pts)")
+        dict_reponses_quiz = {}
+        
+        for idx, q_data in enumerate(st.session_state.ordre_quiz4_applications, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"apps_cl_g_{q_data['id']}"
+            
+            cle_shuff_opts = f"opts_shuff_apps_{q_data['id']}"
+            if cle_shuff_opts not in st.session_state:
+                opts_copie = list(q_data["options"])
+                random.shuffle(opts_copie)
+                st.session_state[cle_shuff_opts] = ["Choisir..."] + opts_copie
+                
+            val_p = st.session_state.get(cle_select, "Choisir...")
+            sel_idx = st.session_state[cle_shuff_opts].index(val_p) if val_p in st.session_state[cle_shuff_opts] else 0
+            
+            dict_reponses_quiz[q_data["id"]] = st.selectbox(
+                "", st.session_state[cle_shuff_opts], 
+                index=sel_idx, key=cle_select, 
+                disabled=verrouille, label_visibility="collapsed"
+            )
+
+    with col_double_trous_a4:
+        st.markdown("##### Synthèse sur l'exploitation technique (10 trous - 10 pts)")
+        dict_trous = {}
+        
+        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c1: st.write("1. Une grue à tour maintient sa flèche horizontale en ajustant la position du")
+        with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "Contrepoids", "Moteur", "Châssis"], key="apps_t1_s4", disabled=verrouille, label_visibility="collapsed")
+        
+        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c3: st.write("2. afin que le moment généré par les blocs de béton compense celui de la")
+        with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "Charge", "Cabine", "Structure"], key="apps_t2_s4", disabled=verrouille, label_visibility="collapsed")
+        
+        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c5: st.write("3. suspendue à l'autre extrémité. En maintenance automobile, le contrôle du")
+        with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "Serrage", "Niveau", "Mouvement"], key="apps_t3_s4", disabled=verrouille, label_visibility="collapsed")
+        
+        c47, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c47: st.write("4. des culasses ou des roues nécessite un outil de précision gradué en")
+        with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "Newton-mètres", "Newtons", "Millimètres"], key="apps_t4_s4", disabled=verrouille, label_visibility="collapsed")
+        
+        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c9: st.write("5. Cette clé spéciale intègre un système de déclenchement mécanique ou")
+        with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", "Électronique", "Hydraulique", "Pneumatique"], key="apps_t5_s4", disabled=verrouille, label_visibility="collapsed")
+        
+        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c11: st.write("6. qui signale par un clic visuel ou sonore que la valeur requise du")
+        with c12: dict_trous["t6"] = st.selectbox("", ["Choisir...", "Moment", "Vecteur", "Poids"], key="apps_t6_s4", disabled=verrouille, label_visibility="collapsed")
+        
+        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c13: st.write("7. est atteinte. L'application d'un effort trop intense risque de déformer le")
+        with c14: dict_trous["t7"] = st.selectbox("", ["Choisir...", "Boulon", "Manche", "Pivot"], key="apps_t7_s4", disabled=verrouille, label_visibility="collapsed")
+        
+        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c15: st.write("8. et d'endommager définitivement le filetage. Les bras télescopiques utilisent la")
+        with c16: dict_trous["t8"] = st.selectbox("", ["Choisir...", "Variation", "Stabilité", "Constante"], key="apps_t8_s4", disabled=verrouille, label_visibility="collapsed")
+        
+        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c17: st.write("9. de la distance pour modifier l'efficacité de la rotation sans changer la")
+        with c18: dict_trous["t9"] = st.selectbox("", ["Choisir...", "Force", "Masse", "Vitesse"], key="apps_t9_s4", disabled=verrouille, label_visibility="collapsed")
+        
+        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        with c19: st.write("10. Ce principe de levier reste indispensable à la conception des machines de")
+        with c20: dict_trous["t10"] = st.selectbox("", ["Choisir...", "Levage", "Usinage", "Soudage"], key="apps_t10_s4", disabled=verrouille, label_visibility="collapsed")
+
+    return dict_reponses_quiz, dict_trous
+
 def afficher_questions_moments_dynamiques(verrouille=False):
     import streamlit as st
     import random
@@ -1403,9 +1495,223 @@ with tab3:
         )
 
 
+with tab4:
+    st.header("Applications en mécanique")
+    
+    st.subheader("1. Étude de cas A : L'équilibre des grues à tour")
+    st.write(
+        "Dans le secteur du bâtiment, les grues doivent manutentionner des charges lourdes à des distances "
+        "variables. Pour éviter le basculement, la structure utilise un contrepoids en béton fixe ou mobile. "
+        "L'équilibre de la flèche est régi par l'égalité des moments de part et d'autre du mât central."
+    )
+    
+    col_app_1, col_app_2 = st.columns(2)
+    with col_app_1:
+        st.markdown("**Fonctionnement de la flèche et de la contre-flèche :**")
+        st.write(
+            "La charge suspendue crée une tendance à faire basculer la grue vers l'avant (moment positif). "
+            "Le contrepoids situé sur la contre-flèche crée un moment opposé (moment négatif). "
+            "Si la charge doit s'éloigner du mât, sa distance augmente : il faut impérativement réduire "
+            "la masse maximale autorisée pour que la structure reste stable."
+        )
+    with col_app_2:
+        if os.path.exists("application_grue.jpg"):
+            st.image("application_grue.jpg", caption="Application du théorème des moments sur une grue de chantier", use_container_width=True)
+        else:
+            st.info("Emplacement pour l'image : application_grue.jpg")
 
+    st.divider()
 
+    st.subheader("2. Étude de cas B : Le contrôle du serrage industriel (Clé dynamométrique)")
+    st.write(
+        "En maintenance mécanique, l'assemblage de pièces maîtresses exige un effort de serrage parfaitement calibré. "
+        "Un serrage insuffisant provoque des vibrations et un desserrage, tandis qu'un serrage excessif risque "
+        "de casser le goujon ou de déformer les filetages."
+    )
+    
+    col_app_3, col_app_4 = st.columns(2)
+    with col_app_3:
+        st.markdown("**Principe de la clé dynamométrique :**")
+        st.write(
+            "Cet outil permet d'appliquer un moment de force précis appelé couple de serrage. "
+            "Grâce à un manche de longueur fixe connue (le bras de levier), le mécanisme interne "
+            "mesure l'effort appliqué par l'opérateur et déclenche un signal mécanique ou électronique "
+            "lorsque la valeur cible en Newton-mètres (N.m) est rigoureusement atteinte."
+        )
+    with col_app_4:
+        if os.path.exists("application_cle.jpg"):
+            st.image("application_cle.jpg", caption="Contrôle du couple de serrage à l'aide d'une clé graduée", use_container_width=True)
+        else:
+            st.info("Emplacement pour l'image : application_cle.jpg")
 
+    # --- LOGIQUE DE COUPLAGE ET VALIDATION DE L'ONGLET 4 ---
+    st.divider()
+    st.subheader("3. Évaluation sur les applications mécaniques")
+    
+    verrou_apps_4 = st.session_state.get("apps_verrouille_tab4", False)
+    res_q4, res_t4 = afficher_questions_applications_dynamiques(verrouille=verrou_apps_4)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_apps4 = st.checkbox(
+        "Je certifie avoir complété les questions de l'évaluation sur les applications.", 
+        key="check_certif_apps4_official", 
+        disabled=verrou_apps_4
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DES APPLICATIONS EN MÉCANIQUE", key="btn_export_apps4_official_net", use_container_width=True, disabled=verrou_apps_4):
+        if not st.session_state.get("identifie", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_apps4:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q4 = 0.0
+            if "ordre_quiz4_applications" in st.session_state:
+                for q_item in st.session_state.ordre_quiz4_applications:
+                    reponse_eleve = st.session_state.get(f"apps_cl_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q4 += 1.0
+
+            score_t4 = sum([
+                st.session_state.get("apps_t1_s4") == "Contrepoids",
+                st.session_state.get("apps_t2_s4") == "Charge",
+                st.session_state.get("apps_t3_s4") == "Serrage",
+                st.session_state.get("apps_t4_s4") == "Newton-mètres",
+                st.session_state.get("apps_t5_s4") == "Électronique",
+                st.session_state.get("apps_t6_s4") == "Moment",
+                st.session_state.get("apps_t7_s4") == "Boulon",
+                st.session_state.get("apps_t8_s4") == "Variation",
+                st.session_state.get("apps_t9_s4") == "Force",
+                st.session_state.get("apps_t10_s4") == "Levage"
+            ])
+
+            st.session_state.score_apps4_p1 = round(float(score_q4), 1)
+            st.session_state.score_apps4_p2 = round(float(score_t4), 1)
+            st.session_state.score_final_apps4 = round(float(score_q4 + score_t4), 1)
+            st.session_state.apps_verrouille_tab4 = True
+            st.rerun()
+
+    if st.session_state.get("apps_verrouille_tab4", False):
+        scr1 = st.session_state.get("score_apps4_p1", 0.0)
+        scr2 = st.session_state.get("score_apps4_p2", 0.0)
+        tot_s = st.session_state.get("score_final_apps4", 0.0)
+
+        timestamp_apps4 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"SECTION APPLICATIONS SCELLÉE | Note de session : {tot_s:.1f} / 20")
+
+        html_export_apps4 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Applications mécaniques - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Évaluation : Applications industrielles et concrètes du théorème des moments</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_apps4}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des notes générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                &bull; Note obtenue au Quiz Applications : <strong>{scr1:.1f} / 10</strong><br>
+                &bull; Note obtenue à la Synthèse technique : <strong>{scr2:.1f} / 10</strong><br>
+                &bull; Note Totale de la section : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">Correction détaillée du Quiz (ordre d'affichage de la session)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>N°</th>
+                        <th>Question Posée</th>
+                        <th>Saisie Élève</th>
+                        <th>Attendu Académique</th>
+                        <th>Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz4_applications" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz4_applications, 1):
+                saisie = st.session_state.get(f"apps_cl_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_apps4 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_apps4 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">Correction détaillée des trous de synthèse</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>N°</th>
+                        <th>Énoncé de cours</th>
+                        <th>Saisie Élève</th>
+                        <th>Attendu Académique</th>
+
+                        <th>Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous4 = [
+            "1. Une grue à tour maintient sa flèche horizontale en ajustant la position du",
+            "2. afin que le moment généré par les blocs de béton compense celui de la",
+            "3. suspendue à l'autre extrémité. En maintenance automobile, le contrôle du",
+            "4. des culasses ou des roues nécessite un outil de précision gradué en",
+            "5. Cette clé spéciale intègre un système de déclenchement mécanique ou",
+            "6. qui signale par un clic visuel ou sonore que la valeur requise du",
+            "7. est atteinte. L'application d'un effort trop intense risque de déformer le",
+            "8. et d'endommager définitivement le filetage. Les bras télescopiques utilisent la",
+            "9. de la distance pour modifier l'efficacité de la rotation sans changer la",
+            "10. Ce principe de levier reste indispensable à la conception des machines de"
+        ]
+        attendus_trous4 = ["Contrepoids", "Charge", "Serrage", "Newton-mètres", "Électronique", "Moment", "Boulon", "Variation", "Force", "Levage"]
+        cles_trous4 = ["apps_t1_s4", "apps_t2_s4", "apps_t3_s4", "apps_t4_s4", "apps_t5_s4", "apps_t6_s4", "apps_t7_s4", "apps_t8_s4", "apps_t9_s4", "apps_t10_s4"]
+
+        for idx, (phrase, attendu, cle) in enumerate(zip(phrases_trous4, attendus_trous4, cles_trous4), 1):
+            saisie_t = st.session_state.get(cle, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_apps4 += f"<tr><td>{idx}</td><td>{phrase} ...</td><td>{saisie_t}</td><td>{attendu}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_apps4 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        nom_fichier_html4 = preparer_nom_fichier("rapport_applications") + ".html"
+        st.download_button(
+            label="Télécharger le fichier de rapport officiel de l'Atelier 4 (HTML)",
+            data=html_export_apps4,
+            file_name=nom_fichier_html4,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
