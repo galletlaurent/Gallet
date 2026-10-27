@@ -4569,11 +4569,12 @@ with tab8:
     # Rendu de l'encadré avec le Markdown et le LaTeX interprétés
     st.markdown("""
     <div class="rappel-cours-box">
-        <p class="rappel-cours-title">Rappel des Formules de la Loi de Poisson $\mathcal{P}(\lambda)$ :</p>
 
-- **Probabilité d'obtenir exactement $k$ événements :** $P(X = k) = \\frac{e^{-\\lambda} \\cdot \\lambda^k}{k!}$
-- **Espérance Mathématique (Nombre moyen d'événements) :** $E(X) = \\lambda$
-- **Variance et Écart-type :** $V(X) = \\lambda$ et $\\sigma(X) = \\sqrt{\\lambda}$
+    **Rappel des Formules de la Loi de Poisson $\mathcal{P}(\lambda)$ :**
+
+    - **Probabilité d'obtenir exactement $k$ événements :** $P(X = k) = \\frac{e^{-\\lambda} \\cdot \\lambda^k}{k!}$
+    - **Espérance Mathématique (Nombre moyen d'événements) :** $E(X) = \\lambda$
+    - **Variance et Écart-type :** $V(X) = \\lambda$ et $\\sigma(X) = \\sqrt{\\lambda}$
 
     </div>
     """, unsafe_allow_html=True)
