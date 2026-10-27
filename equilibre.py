@@ -1037,7 +1037,9 @@ with tab2:
         if os.path.exists(nom_image_caricature):
             st.image(nom_image_caricature, caption="Sequence complete du basculement", use_container_width=True)
         else:
-            st.warning(f"L'image {nom_image_caricature} est manquante sur le serveur
+            st.warning(f"L'image {nom_image_caricature} est manquante sur le serveur.")
+
+
     st.write("---")        
     if "suite_verrouille_tab2" not in st.session_state:
         st.session_state.suite_verrouille_tab2 = False
