@@ -2177,6 +2177,13 @@ with tab6:
         elif not case_certif_ex2:
             st.error("Action refusée : Cochez la case de certification.")
         else:
+            # Récupération et calcul des variables attendues nécessaires à la correction
+            f1_user = st.session_state.get("ex2_f1_aleatoire", 12000)
+            d1_user = st.session_state.get("ex2_d1_aleatoire", 15)
+            f2_user = st.session_state.get("ex2_f2_aleatoire", 36000)
+            d2_user_attendu = round((f1_user * d1_user) / f2_user, 2)
+            m1_user = f1_user * d1_user
+
             # # 1. Correction du Quiz Technique (10 points)
             score_q2 = 0.0
             if "ordre_quiz_ex2" in st.session_state:
@@ -2204,7 +2211,6 @@ with tab6:
             st.session_state.score_final_ex2 = round(float(score_q2 + score_t2), 1)
             st.session_state.ex2_verrouille_tab6 = True
             st.rerun()
-
     if st.session_state.get("ex2_verrouille_tab6", False):
         scr1 = st.session_state.get("score_ex2_p1", 0.0)
         scr2 = st.session_state.get("score_ex2_p2", 0.0)
