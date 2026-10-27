@@ -1901,25 +1901,6 @@ with tab4:
 
 
 # =========================================================================
-# INITIALISATION ET SÉCURISATION DES DONNÉES (ANTI-TRICHE)
-# =========================================================================
-if "quiz_data" not in st.session_state:
-    random.seed()  # Assure un tirage de valeurs unique par étudiant
-    
-    # Génération de 15 paires de valeurs (Force, Distance) aléatoires distinctes
-    valeurs_aleatoires = []
-    for _ in range(15):
-        f = random.randint(20, 300)         # Force entre 20 et 300 N
-        d = round(random.uniform(0.15, 5.0), 2) # Distance entre 0.15 et 5.0 m
-        valeurs_aleatoires.append((f, d))
-    
-    st.session_state.quiz_data = valeurs_aleatoires
-    st.session_state.score_calculs_valide = 0
-    st.session_state.score_trous_valide = 0
-
-valeurs = st.session_state.quiz_data
-
-# =========================================================================
 # CODE POUR L'ONGLET 5 : EXERCICES DE CALCUL NUMÉRIQUES ALÉATOIRES
 # =========================================================================
 with tab5:
@@ -1928,16 +1909,26 @@ with tab5:
     col_ex1_txt, col_ex1_img = st.columns(2)
     
     with col_ex1_txt:
+        if "ex1_force_aleatoire" not in st.session_state:
+            import random
+            st.session_state.ex1_force_aleatoire = random.randint(11, 25) * 10 # Entre 110 N et 250 N
+            st.session_state.ex1_dist_aleatoire = random.randint(20, 50)     # Entre 20 cm et 50 cm
+
+        f_ex1 = st.session_state.ex1_force_aleatoire
+        d_cm_ex1 = st.session_state.ex1_dist_aleatoire
+        d_m_attendu = round(d_cm_ex1 / 100, 2)
+        moment_attendu = round(f_ex1 * d_m_attendu, 1)
+
         st.subheader("Énoncé de l'exercice")
         st.write(
             "Un opérateur utilise une clé de serrage pour fixer un boulon sur une structure industrielle. "
             "L'effort exercé à l'extrémité du manche de la clé est perpendiculaire à l'outil."
         )
         st.markdown(
-            """
-            **Données de l'étude :**
-            *   Intensité de la force appliquée : F = 150 N
-            *   Longueur utile de la clé (bras de levier) : d = 30 cm
+            f"""
+            **Données de l'étude personnalisées :**
+            *   Intensité de la force appliquée : F = **{f_ex1} N**
+            *   Longueur utile de la clé (bras de levier) : d = **{d_cm_ex1} cm**
             """
         )
 
@@ -1971,6 +1962,7 @@ with tab5:
         elif not case_certif_ex1:
             st.error("Action refusée : Cochez la case de certification.")
         else:
+            # 1. Correction du Quiz Technique (10 points)
             score_q1 = 0.0
             if "ordre_quiz_ex1" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_ex1:
@@ -1978,6 +1970,7 @@ with tab5:
                     if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
                         score_q1 += 1.0
 
+            # 2. Correction de la Synthèse d'atelier (10 points)
             score_t1 = sum([
                 st.session_state.get("ex1_t1_s5") == "Serrage",
                 st.session_state.get("ex1_t2_s5") == "Newton-mètre",
@@ -2026,6 +2019,8 @@ with tab5:
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
                 <p>Exemple 1 : Étude d'un cas concret de serrage mécanique</p>
+                <p>Échantillon de l'énoncé : Force = {f_ex1} N | Distance initiale = {d_cm_ex1} cm</p>
+                <p>Valeurs attendues résolues : Bras de levier = {d_m_attendu} m | Moment cible = {moment_attendu} N.m</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_ex1}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
@@ -2094,6 +2089,9 @@ with tab5:
         </html>
         """
 
+        nom_fichier_ex1 = preparer_nom_fichier("rapport_exemple1") + ".html"
+        st.download_button(label="Télécharger le fichier de rapport officiel Exemple 1 (HTML)", data=html_export_ex1, file_name=nom_fichier_ex1, mime="text/html", use_container_width=True)
+
 
 with tab6:
     st.header("Exemple 2 : Équilibre d'un système de levage (Grue)")
@@ -2101,16 +2099,29 @@ with tab6:
     col_ex2_txt, col_ex2_img = st.columns(2)
     
     with col_ex2_txt:
+        if "ex2_force_aleatoire" not in st.session_state:
+            import random
+            st.session_state.ex2_f1_aleatoire = random.randint(10, 18) * 1000  # Entre 10 000 N et 18 000 N
+            st.session_state.ex2_d1_aleatoire = random.randint(10, 20)         # Entre 10 m et 20 m
+            st.session_state.ex2_f2_aleatoire = random.randint(30, 45) * 1000  # Entre 30 000 N et 45 000 N
+
+        f1_ex2 = st.session_state.ex2_f1_aleatoire
+        d1_ex2 = st.session_state.ex2_d1_aleatoire
+        f2_ex2 = st.session_state.ex2_f2_aleatoire
+        
+        # Calcul automatique de la distance cible pour l'équilibre (F1 x d1) / F2
+        d2_attendu_ex2 = round((f1_ex2 * d1_ex2) / f2_ex2, 2)
+
         st.subheader("Énoncé de l'exercice")
         st.write(
             "On étudie la flèche d'une grue de chantier en équilibre de rotation autour de son pylône central. "
             "La charge suspendue à gauche crée une tendance à la rotation qui doit être compensée par le contrepoids situé à droite."
         )
         st.markdown(
-            """
-            **Données du problème :**
-            *   Action de la charge à gauche : F1 = 12 000 N située à d1 = 15 m de l'axe.
-            *   Action du contrepoids à droite : F2 = 36 000 N.
+            f"""
+            **Données du problème personnalisées :**
+            *   Action de la charge à gauche : F1 = **{f1_ex2:,} N** située à d1 = **{d1_ex2} m** de l'axe.
+            *   Action du contrepoids à droite : F2 = **{f2_ex2:,} N**.
             """
         )
 
@@ -2144,6 +2155,7 @@ with tab6:
         elif not case_certif_ex2:
             st.error("Action refusée : Cochez la case de certification.")
         else:
+            # 1. Correction du Quiz Technique (10 points)
             score_q2 = 0.0
             if "ordre_quiz_ex2" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_ex2:
@@ -2151,6 +2163,7 @@ with tab6:
                     if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
                         score_q2 += 1.0
 
+            # 2. Correction de la Synthèse mécanique (10 points)
             score_t2 = sum([
                 st.session_state.get("ex2_t1_s6") == "Moments",
                 st.session_state.get("ex2_t2_s6") == "Poids",
@@ -2199,6 +2212,8 @@ with tab6:
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
                 <p>Exemple 2 : Étude de l'équilibre d'une grue de levage</p>
+                <p>Échantillon de l'énoncé : F1 = {f1_ex2} N | d1 = {d1_ex2} m | F2 = {f2_ex2} N</p>
+                <p>Valeur attendue résolue : Position d'équilibre d2 = {d2_attendu_ex2} m</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_ex2}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
@@ -2268,18 +2283,7 @@ with tab6:
         """
 
         nom_fichier_ex2 = preparer_nom_fichier("rapport_exemple2") + ".html"
-
-        st.download_button(
-            label="Télécharger le fichier de rapport officiel Exemple 2 (HTML)",
-            data=html_export_ex2,
-            file_name=nom_fichier_ex2,
-            mime="text/html",
-            use_container_width=True
-        )
-
-
-
-
+        st.download_button(label="Télécharger le fichier de rapport officiel Exemple 2 (HTML)", data=html_export_ex2, file_name=nom_fichier_ex2, mime="text/html", use_container_width=True)
 
 
 
