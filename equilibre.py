@@ -800,22 +800,118 @@ with tab0:
 
 with tab1:
     st.header("Histoire et Fondements de la Statique")
-    
-    st.subheader("Un peu d'histoire")
+
+    st.subheader("Un peu d'histoire : Les grands fondateurs")
+    st.write("Découvrez les scientifiques majeurs dont les travaux ont permis de bâtir les lois de la statique moderne.")
+
+    st.write("---")
+
+    # --- 1. ARCHIMÈDE ---
+    st.markdown("### 1. Archimède de Syracuse (IIIe siècle av. J.-C.)")
+
+    arc_col1, arc_col2 = st.columns(2)
+    with arc_col1:
+        if os.path.exists("portrait_archimede.jpg"):
+            st.image("portrait_archimede.jpg", caption="Portrait d'Archimède", use_container_width=True)
+        else:
+            st.info("Illustration : Portrait historique d'Archimède de Syracuse.")
+    with arc_col2:
+        if os.path.exists("decouverte_archimede.jpg"):
+            st.image("decouverte_archimede.jpg", caption="La loi du levier et de la balance", use_container_width=True)
+        else:
+            st.info("Illustration : Schéma mécanique d'un levier en équilibre sur son point d'appui.")
+            
     st.markdown("""
-    La statique est l'une des plus anciennes branches de la physique. Ses fondements ont évolué sur plusieurs siècles :
-    
-    * **L'Antiquité (Archimède de Syracuse, IIIe siècle av. J.-C.) :** Il pose les premières lois géométriques de la statique en étudiant les leviers, les balances et le centre de gravité. Pour lui, l'équilibre est une balance parfaite des poids.
-    * **La Renaissance (Simon Stevin, XVIe siècle) :** Ce scientifique hollandais découvre la loi de la composition des forces. C'est lui qui introduit le principe du **triangle des forces**, jetant les bases de la statique graphique moderne.
-    * **Le XVIIe siècle (Isaac Newton et Pierre Varignon) :** En 1687, Newton formalise sa première loi (le principe d'inertie). Pierre Varignon, quant à lui, démontre de manière définitive que l'équilibre géométrique (le polygone) correspond parfaitement à l'équilibre algébrique (la somme des composantes est égale à zéro).
+    **Son apport fondamental :**  
+    Archimède pose les premières lois géométriques et mathématiques de la statique dans son traité *De l'équilibre des figures planes*. 
+    En étudiant les leviers et les balances, il formalise le concept de **centre de gravité**. Pour lui, l'équilibre est purement 
+    géométrique et se définit comme une balance parfaite des poids autour d'un point de pivot. Sa célèbre phrase *"Donnez-moi un 
+    point d'appui et je souleverai la Terre"* illustre la loi mathématique du moment d'une force.
     """)
-    
+
+    st.write("---")
+
+    # --- 2. SIMON STEVIN ---
+    st.markdown("### 2. Simon Stevin (XVIe siècle)")
+
+    stev_col1, stev_col2 = st.columns(2)
+    with stev_col1:
+        if os.path.exists("portrait_stevin.jpg"):
+            st.image("portrait_stevin.jpg", caption="Portrait de Simon Stevin", use_container_width=True)
+        else:
+            st.info("Illustration : Portrait du mathématicien et ingénieur hollandais Simon Stevin.")
+    with stev_col2:
+        if os.path.exists("decouverte_stevin.jpg"):
+            st.image("decouverte_stevin.jpg", caption="Le plan incliné et le triangle des forces", use_container_width=True)
+        else:
+            st.info("Illustration : Représentation historique du 'Cloothkrans' (couronne de sphères) sur un plan incliné.")
+            
+    st.markdown("""
+    **Son apport fondamental :**  
+    Ce scientifique et ingénieur hollandais révolutionne la mécanique en découvrant la loi de la composition des forces. À travers l'étude 
+    du plan incliné, il démontre comment plusieurs forces obliques agissent sur un même objet. C'est lui qui introduit le principe 
+    fondamental du **triangle des forces**, posant ainsi les bases scientifiques de la statique graphique moderne qui permet de résoudre 
+    des problèmes mécaniques par le dessin vectoriel.
+    """)
+
+    st.write("---")
+
+    # --- 3. ISAAC NEWTON ---
+    st.markdown("### 3. Isaac Newton (XVIIe siècle)")
+
+    newt_col1, newt_col2 = st.columns(2)
+    with newt_col1:
+        if os.path.exists("portrait_newton.jpg"):
+            st.image("portrait_newton.jpg", caption="Portrait d'Isaac Newton", use_container_width=True)
+        else:
+            st.info("Illustration : Portrait du physicien britannique Isaac Newton.")
+    with newt_col2:
+        if os.path.exists("decouverte_newton.jpg"):
+            st.image("decouverte_newton.jpg", caption="Les lois du mouvement (Principia)", use_container_width=True)
+        else:
+            st.info("Illustration : Diagramme des forces d'action et de réaction réciproques.")
+            
+    st.markdown("""
+    **Son apport fondamental :**  
+    En 1687, dans son ouvrage majeur *Principia Mathematica*, Isaac Newton formalise sa première loi appelée **principe d'inertie**. 
+    Cette loi stipule que tout corps persévère dans son état de repos ou de mouvement rectiligne uniforme si les forces qui s'exercent 
+    sur lui s'annulent. Newton apporte ainsi un cadre théorique universel : l'immobilité (la statique) devient un cas particulier de la 
+    dynamique où l'accélération du système est rigoureusement nulle.
+    """)
+
+    st.write("---")
+
+    # --- 4. PIERRE VARIGNON ---
+    st.markdown("### 4. Pierre Varignon (XVIIe siècle)")
+
+    var_col1, var_col2 = st.columns(2)
+    with var_col1:
+        if os.path.exists("portrait_varignon.jpg"):
+            st.image("portrait_varignon.jpg", caption="Portrait de Pierre Varignon", use_container_width=True)
+        else:
+            st.info("Illustration : Portrait du mathématicien français Pierre Varignon.")
+    with var_col2:
+        if os.path.exists("decouverte_varignon.jpg"):
+            st.image("decouverte_varignon.jpg", caption="Le théorème des moments et le polygone des forces", use_container_width=True)
+        else:
+            st.info("Illustration : Tracé géométrique d'un polygone de forces concourantes en équilibre.")
+            
+    st.markdown("""
+    **Son apport fondamental :**  
+    Le mathématicien français Pierre Varignon unifie définitivement les approches de ses prédécesseurs. Dans son *Projet d'une nouvelle 
+    mécanique*, il énonce le théorème des moments et démontre la stricte équivalence entre la géométrie et l'algèbre. Il prive que 
+    l'équilibre géométrique d'un système (la fermeture parfaite du **polygone des forces**) correspond mathématiquement à l'équilibre 
+    algébrique (la somme des projections des composantes sur les axes X et Y est égale à zéro).
+    """)
+
+    # --- TEXTE EXPLICATIF PHYSIQUE ---
+    st.write("---")
     st.subheader("Explication physique de l'équilibre")
     st.markdown("""
     Pour qu'un point matériel reste parfaitement immobile dans notre repère, les forces qui agissent sur lui doivent s'annuler mutuellement. Si ce n'était pas le cas, l'objet se mettrait en mouvement et accélérerait.
-    
+
     Pour vérifier cet équilibre, deux approches complémentaires existent :
-    
+
     1. **L'approche analytique (Algébrique) :**
        On projette chaque force sur deux axes perpendiculaires (X et Y). On calcule les composantes $F_x$ et $F_y$ pour chaque force grâce à la trigonométrie :
        $$ F_x = F \\cdot \\cos(\\alpha) $$
@@ -1341,7 +1437,7 @@ with tab3:
 
 
 with tab4:
-    st.header("Casà 3 Forces")
+    st.header("Cas à 3 Forces")
     st.subheader("Caricature de l'équilibre à trois forces (Séquence en 4 étapes)")
 
     # Séparation en deux colonnes : 60% pour le texte en bleu, 40% pour l'image unique
