@@ -1341,8 +1341,41 @@ with tab3:
 
 
 with tab4:
-    st.header("Cas a 3 Forces")
-    st.write("Pour 3 forces non paralleles en equilibre, leurs droites d'action sont obligatoirement concourantes (se coupent au meme point) et leur dynamique forme un triangle ferme.")
+    st.header("Casà 3 Forces")
+    st.subheader("Caricature de l'équilibre à trois forces (Séquence en 4 étapes)")
+
+    # Séparation en deux colonnes : 60% pour le texte en bleu, 40% pour l'image unique
+    col_texte, col_image = st.columns([0.6, 0.4])
+
+    with col_texte:
+        # Utilisation de st.info pour afficher l'ensemble du texte dans un encadré bleu avec les accents
+        st.info("""
+        ### Analyse de la statique à trois forces concourantes
+        
+        **Étape 1 : Posture d'équilibre stable**
+        Un panneau publicitaire est suspendu à un anneau central. Il reste parfaitement immobile sous l'action de trois forces coplanaires : son poids vertical dirigé vers le bas, et les deux tensions obliques des câbles de fixation latérale. Les trois droites d'action se coupent en un point unique concourant, et le dynamique vectoriel forme un triangle parfaitement fermé.
+        
+        **Étape 2 : Perturbation par une force externe**
+        Une rafale de vent horizontal constante vient frapper le panneau. Le système pivote légèrement et trouve une nouvelle position d'équilibre inclinée. Le poids, la tension des câbles modifiée et la force de poussée du vent forment un nouveau système concourant où la somme vectorielle reste nulle, fermant toujours le triangle des forces.
+        
+        **Étape 3 : Rupture géométrique des lignes d'action**
+        L'un des câbles d'attache se détache du mur et se bloque sur un support plus bas. Les lignes d'action du poids et des deux tensions de câbles ne convergent plus vers le même point d'intersection. Le non-concours des forces détruit immédiatement les conditions de la statique et crée un couple de rotation.
+        
+        **Étape 4 : Rupture mécanique et chute**
+        Le second câble cède sous la contrainte géométrique. Les tensions s'annulent instantanément, laissant le panneau soumis à son seul poids vertical et à la poussée résiduelle du vent. Le triangle des forces reste grand ouvert, ce qui engendre un mouvement de translation accéléré vers le sol : le système s'effondre.
+        """)
+
+    with col_image:
+        # Remplacer "caricature_trois_forces.jpg" par le nom exact de votre fichier image unique
+        nom_image_3f = "caricature_trois_forces.jpg"
+        
+        if os.path.exists(nom_image_3f):
+            st.image(nom_image_3f, caption="Séquence complète de l'équilibre à trois forces", use_container_width=True)
+        else:
+            st.warning(f"L'image {nom_image_3f} est manquante sur le serveur.")
+
+    
+    st.write("Pour 3 forces non paralleles en équilibre, leurs droites d'action sont obligatoirement concourantes (se coupent au meme point) et leur dynamique forme un triangle ferme.")
     analyser_systeme_forces(nb_forces=3, suffixe_clef="3f", nom_onglet="Equilibre_3_forces")
 
     st.write("---")        
@@ -1479,7 +1512,40 @@ with tab4:
 
 
 with tab5:
-    st.header("Cas a Plus de 3 Forces")
+    st.header("Cas à Plus de 3 Forces")
+
+    st.subheader("Caricature de l'équilibre à forces multiples (Séquence en 4 étapes)")
+
+    # Séparation en deux colonnes : 60% pour le texte en bleu, 40% pour l'image unique
+    col_texte, col_image = st.columns([0.6, 0.4])
+
+    with col_texte:
+        # Utilisation de st.info pour afficher l'ensemble du texte dans un encadré bleu avec les accents
+        st.info("""
+        ### Analyse de la statique à forces multiples concourantes
+        
+        **Étape 1 : Équilibre complexe initial**
+        Une structure métallique lourde est maintenue en suspension au-dessus d'un chantier à l'aide de quatre filins d'acier distincts reliés à des ancrages différents. Malgré la multiplicité des actions, l'objet demeure parfaitement immobile. Graphiquement, la mise bout à bout des cinq vecteurs (le poids et les quatre tensions) engendre un polygone fermé à cinq côtés, validant la nullité de la résultante.
+        
+        **Étape 2 : Modification contrôlée des tensions**
+        Les opérateurs activent deux treuils mécaniques pour réajuster la position de la charge. Les intensités et les angles de deux filins se modifient simultanément. La géométrie interne du dynamique se déforme en direct, mais le tracé vectoriel réussit à se refermer sur sa position d'origine : l'équilibre statique est préservé.
+        
+        **Étape 3 : Surcharge et ouverture du polygone**
+        Un coup de vent violent et imprévu applique une force horizontale supplémentaire sur la structure, tandis que l'un des filins d'acier commence à se détendre anormalement. La somme analytique des composantes horizontales et verticales n'est plus égale à zéro. Graphiquement, le dynamique des forces ne parvient plus à se refermer, créant un vecteur résultant de déséquilibre.
+        
+        **Étape 4 : Défaillance en chaîne et mouvement**
+        Le filin détendu cède sous le report brutal de la charge. Le déséquilibre devient majeur, et la force résultante non nulle provoque une accélération soudaine de la structure métallique. Le polygone reste largement ouvert, et la trajectoire du système se transforme en un mouvement de translation accéléré incontrôlable.
+        """)
+
+    with col_image:
+        # Remplacer "caricature_plus_trois_forces.jpg" par le nom exact de votre fichier image unique
+        nom_image_plus_f = "caricature_plus_trois_forces.jpg"
+        
+        if os.path.exists(nom_image_plus_f):
+            st.image(nom_image_plus_f, caption="Séquence complète de l'équilibre à plus de trois forces", use_container_width=True)
+        else:
+            st.warning(f"L'image {nom_image_plus_f} est manquante sur le serveur.")
+    
     nb_perso = st.slider("Selectionnez le nombre exact de forces a analyser :", min_value=4, max_value=8, value=4)
     analyser_systeme_forces(nb_forces=nb_perso, suffixe_clef="plus_f", nom_onglet="Equilibre_plus_3_forces")
 
