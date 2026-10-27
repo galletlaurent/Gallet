@@ -1007,27 +1007,27 @@ with tab2:
         """)
 
     # Section 3 : Caricature pedagogique en 4 images
-    st.subheader("Caricature de la stabilite (Sequence en 4 etapes)")
+    st.subheader("Caricature de la stabilité (Séquence en 4 étapes)")
 
-    # Separation en deux colonnes : 60% pour le texte en bleu, 40% pour l'image unique
+    # Séparation en deux colonnes : 60% pour le texte en bleu, 40% pour l'image unique
     col_texte, col_image = st.columns([0.6, 0.4])
 
     with col_texte:
-        # Utilisation de st.info pour afficher l'ensemble du texte dans un encadre bleu
+        # Utilisation de st.info pour afficher l'ensemble du texte dans un encadré bleu avec les accents
         st.info("""
-        ### Analyse de la stabilite et du basculement
+        ### Analyse de la stabilité et du basculement
         
-        **Etape 1 : Posture initiale**
-        Le personnage est immobile. La ligne de gravite tombe au centre des pieds joints. L'equilibre est assure mais precaire.
+        **Étape 1 : Posture initiale**
+        Le personnage est immobile. La ligne de gravité tombe au centre des pieds joints. L'équilibre est assuré mais précaire.
         
-        **Etape 2 : Deplacement de G**
-        En poussant une charge, le corps s'incline. Le centre de gravite se deplace vers l'avant, frolant la limite de la base.
+        **Étape 2 : Déplacement de G**
+        En poussant une charge, le corps s'incline. Le centre de gravité se déplace vers l'avant, frôlant la limite de la base.
         
-        **Etape 3 : Perte d'equilibre**
-        La projection de G sort de la base de sustentation. Le poids genere un moment de rotation : la chute est amorcee.
+        **Étape 3 : Perte d'équilibre**
+        La projection de G sort de la base de sustentation. Le poids génère un moment de rotation : la chute est amorcée.
         
-        **Etape 4 : Retablissement**
-        Le personnage avance un pied. Cette action cree instantanement une nouvelle base de sustentation plus large, englobant a nouveau la ligne de gravite.
+        **Étape 4 : Rétablissement**
+        Le personnage avance un pied. Cette action crée instantanément une nouvelle base de sustentation plus large, englobant à nouveau la ligne de gravité.
         """)
 
     with col_image:
@@ -1035,11 +1035,9 @@ with tab2:
         nom_image_caricature = "caricature_base_sustentation.jpg"
         
         if os.path.exists(nom_image_caricature):
-            st.image(nom_image_caricature, caption="Sequence complete du basculement", use_container_width=True)
+            st.image(nom_image_caricature, caption="Séquence complète du basculement", use_container_width=True)
         else:
             st.warning(f"L'image {nom_image_caricature} est manquante sur le serveur.")
-
-
     st.write("---")        
     if "suite_verrouille_tab2" not in st.session_state:
         st.session_state.suite_verrouille_tab2 = False
@@ -1177,27 +1175,27 @@ with tab2:
 with tab3:
 
     st.header("Cas a 2 Forces")
-    st.subheader("Caricature de l'equilibre a deux forces (Sequence en 4 etapes)")
+    st.subheader("Caricature de l'équilibre à deux forces (Séquence en 4 étapes)")
 
-    # Separation en deux colonnes : 60% pour le texte en bleu, 40% pour l'image unique
-    col_texte, col_image = st.columns([0.6, 0.4])
+    # Séparation en deux colonnes : 60% pour le texte en bleu, 40% pour l'image unique
+    col_texte, col_image = st.columns([0.6, 0.4])   
 
     with col_texte:
-        # Utilisation de st.info pour afficher l'ensemble du texte dans un encadre bleu
+        # Utilisation de st.info pour afficher l'ensemble du texte dans un encadré bleu avec les accents
         st.info("""
-        ### Analyse de la statique a deux forces opposes
+        ### Analyse de la statique à deux forces opposées
         
-        **Etape 1 : Situation d'equilibre initial**
-        Un personnage tire sur une corde fixee a un anneau mural rigide. Le systeme est parfaitement immobile car la force de traction et la reaction du mur ont la meme droite d'action, des normes egales et des sens opposes.
+        **Étape 1 : Situation d'équilibre initial**
+        Un personnage tire sur une corde fixée à un anneau mural rigide. Le système est parfaitement immobile car la force de traction et la réaction du mur ont la même droite d'action, des normes égales et des sens opposés.
         
-        **Etape 2 : Augmentation de l'intensite**
-        Le personnage prend davantage d'appui et tire deux fois plus fort. Simultanement, la force de reaction du support augmente instantanement de la meme valeur. Les deux vecteurs s'allongent mais l'equilibre statique reste maintenu.
+        **Étape 2 : Augmentation de l'intensité**
+        Le personnage prend davantage d'appui et tire deux fois plus fort. Simultanément, la force de réaction du support augmente instantanément de la même valeur. Les deux vecteurs s'allongent mais l'équilibre statique reste maintenu.
         
-        **Etape 3 : Rupture de la droite d'action**
-        La fixation murale glisse brusquement vers le haut le long d'un rail vertical. Les deux forces n'ont plus la meme droite d'action commune. Cela cree un couple de forces qui engendre un mouvement de rotation du systeme.
+        **Étape 3 : Rupture de la droite d'action**
+        La fixation murale glisse brusquement vers le haut le long d'un rail vertical. Les deux forces n'ont plus la même droite d'action commune. Cela crée un couple de forces qui engendre un mouvement de rotation du système.
         
-        **Etape 4 : Desequilibre et mouvement**
-        La corde se rompt definitivement. La force de reaction s'annule instantanement tandis que la force de traction interne provoque la chute du personnage vers l'riere. La somme vectorielle n'est plus nulle.
+        **Étape 4 : Déséquilibre et mouvement**
+        La corde se rompt définitivement. La force de reaction s'annule instantanément tandis que la force de traction interne provoque la chute du personnage vers l'arrière. La somme vectorielle n'est plus nulle.
         """)
 
     with col_image:
@@ -1205,10 +1203,9 @@ with tab3:
         nom_image_2f = "caricature_deux_forces.jpg"
         
         if os.path.exists(nom_image_2f):
-            st.image(nom_image_2f, caption="Sequence complete de l'equilibre a deux forces", use_container_width=True)
+            st.image(nom_image_2f, caption="Séquence complète de l'équilibre à deux forces", use_container_width=True)
         else:
-            st.warning(f"L'image {nom_image_2f} est manquante sur le serveur.")
-        
+            st.warning(f"L'image {nom_image_2f} est manquante sur le serveur.")        
     st.write("Deux forces s'équilibrent si elles ont la meme droite d'action, des normes egales et des sens opposes.")
     analyser_systeme_forces(nb_forces=2, suffixe_clef="2f", nom_onglet="Equilibre_2_forces")
 
