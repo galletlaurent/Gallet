@@ -862,14 +862,13 @@ with tab1:
      # =========================================================================
     # LOGIQUE DE COUPLAGE DES CONFIGURATIONS DE NOTATION DYNAMIQUES (FORCES)
     # =========================================================================
+    st.divider()
+    st.subheader("Validation de la section sur les forces")
+    
     verrou_forces_1 = st.session_state.get("forces_verrouille_tab1", False)
-
-    # Appel de la fonction de questionnaire pour les Généralités sur les forces
     res_q1, res_t1 = afficher_questions_forces_dynamiques(verrouille=verrou_forces_1)
 
     st.write("---")
-    st.subheader("Validation de la section sur les forces")
-
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
@@ -881,12 +880,12 @@ with tab1:
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ÉVALUATION DES FORCES", key="btn_export_forces1_official_net", use_container_width=True, disabled=verrou_forces_1):
-        if not st.session_state.get("identifie", False):
+        # Utilisation de la clé globale définie dans valider_saisie()
+        if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_forces1:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # 1. Correction automatique adaptative liée à l'ordre mélangé du Quiz Forces
             score_q1 = 0.0
             if "ordre_quiz1_forces" in st.session_state:
                 for q_item in st.session_state.ordre_quiz1_forces:
@@ -894,7 +893,6 @@ with tab1:
                     if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
                         score_q1 += 1.0
 
-            # 2. Correction automatique du Texte à trous sur la mécanique (10 points)
             score_t1 = sum([
                 st.session_state.get("forces_t1_s1") == "Force",
                 st.session_state.get("forces_t2_s1") == "Dynamomètre",
