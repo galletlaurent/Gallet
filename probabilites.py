@@ -4973,9 +4973,9 @@ with tab9:
 
     # Rendu de l'encadré avec le Markdown et le LaTeX interprétés
     st.markdown("""
-    <div class="rappel-cours-box">
-        <p class="rappel-cours-title">Rappel des Formules de la Loi Normale $\mathcal{N}(\mu, \sigma^2)$ :</p>
+        <div class="rappel-cours-box">
 
+    ### Rappel des Formules de la Loi Normale $\mathcal{N}(\mu, \sigma^2)$ :
 - **Fonction de densité (Courbe en cloche) :** $f(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}} e^{-\\frac{1}{2}\\left(\\frac{x-\\mu}{\\sigma}\\right)^2}$
 - **Espérance Mathématique (Moyenne théorique) :** $E(X) = \\mu$
 - **Variable centrée réduite :** $Z = \\frac{X - \\mu}{\\sigma}$ suit la loi normale standard $\mathcal{N}(0, 1)$
