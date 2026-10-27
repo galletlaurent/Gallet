@@ -986,235 +986,235 @@ with tab3:
         "et la distance d, représentant le bras de levier, est impérativement convertie en mètres (m)."
     )
         
-        st.subheader("2. Laboratoire virtuel d'expérimentation")
-        col1, col2 = st.columns(2)
+    st.subheader("2. Laboratoire virtuel d'expérimentation")
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("Configuration des actions")
+        f1 = st.slider("Force gauche (F1 en N)", 10, 200, 100, step=10)
+        d1 = st.slider("Bras de levier gauche (d1 en m)", 0.5, 4.0, 2.0, step=0.1)
         
-        with col1:
-            st.subheader("Configuration des actions")
-            f1 = st.slider("Force gauche (F1 en N)", 10, 200, 100, step=10)
-            d1 = st.slider("Bras de levier gauche (d1 en m)", 0.5, 4.0, 2.0, step=0.1)
-            
-            st.divider()
-            
-            f2 = st.slider("Force droite (F2 en N)", 10, 200, 50, step=10)
-            d2_cible = round((f1 * d1) / f2, 2)
-            
-            st.info(f"Objectif : Pour obtenir l'équilibre parfait, la distance théorique d2 doit être de {d2_cible} m.")
-            d2_user = st.slider("Ajustez votre position réelle (d2 en m)", 0.5, 4.0, 3.5, step=0.1)
-
-        with col2:
-            st.subheader("Schéma de la situation")
-            
-            fig, ax = plt.subplots(figsize=(6, 4))
-            ax.plot([-4.5, 4.5], [0, 0], color="brown", lw=6)
-            ax.plot([0, -0.3, 0.3, 0], [0, -0.5, -0.5, 0], color="black", lw=3)
-            ax.text(-0.3, -0.9, "Axe D", fontsize=10, weight='bold')
-
-            # Force GAUCHE
-            ax.annotate('', xy=(-d1, -1), xytext=(-d1, 0), arrowprops=dict(facecolor='red', width=3, headwidth=10))
-            ax.text(-d1 - 0.5, -1.3, f"F1: {f1}N", color='red', weight='bold')
-            ax.text(-d1/2, 0.2, f"{d1}m", color='red')
-
-            # Force DROITE
-            ax.annotate('', xy=(d2_user, -1), xytext=(d2_user, 0), arrowprops=dict(facecolor='green', width=3, headwidth=10))
-            ax.text(d2_user - 0.2, -1.3, f"F2: {f2}N", color='green', weight='bold')
-            ax.text(d2_user/2, 0.2, f"{d2_user}m", color='green')
-
-            ax.set_xlim(-5, 5)
-            ax.set_ylim(-2, 1)
-            ax.axis('off')
-            
-            mom_gauche = f1 * d1
-            mom_droite = f2 * d2_user
-            
-            if abs(mom_gauche - mom_droite) < 1.0:
-                ax.title.set_text("PARFAIT ÉQUILIBRE !")
-                ax.title.set_color("green")
-                st.success("Bravo ! L'équilibre des moments est respecté.")
-            elif mom_gauche > mom_droite:
-                ax.title.set_text("BASCULE A GAUCHE")
-                ax.title.set_color("red")
-                st.error("Le moment à gauche est supérieur. Augmentez d2 ou diminuez d1.")
-            else:
-                ax.title.set_text("BASCULE A DROITE")
-                ax.title.set_color("red")
-                st.error("Le moment à droite est supérieur. Rapprochez la force F2.")
-
-            st.pyplot(fig)
-            
-            nom_image = preparer_nom_fichier("theoreme_moments") + ".jpg"
-            plt.savefig("temp_schema.jpg", format="jpg", dpi=150, bbox_inches='tight')
-            with open("temp_schema.jpg", "rb") as file:
-                st.download_button(label="Télécharger le schéma (JPG)", data=file, file_name=nom_image, mime="image/jpeg")
-
-        # --- LOGIQUE DE COUPLAGE ET VALIDATION DE L'ONGLET 3 ---
         st.divider()
-        st.subheader("3. Évaluation sur le théorème des moments")
         
-        verrou_moments_3 = st.session_state.get("moments_verrouille_tab3", False)
-        res_q3, res_t3 = afficher_questions_moments_dynamiques(verrouille=verrou_moments_3)
+        f2 = st.slider("Force droite (F2 en N)", 10, 200, 50, step=10)
+        d2_cible = round((f1 * d1) / f2, 2)
+        
+        st.info(f"Objectif : Pour obtenir l'équilibre parfait, la distance théorique d2 doit être de {d2_cible} m.")
+        d2_user = st.slider("Ajustez votre position réelle (d2 en m)", 0.5, 4.0, 3.5, step=0.1)
 
-        st.write("---")
-        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    with col2:
+        st.subheader("Schéma de la situation")
+        
+        fig, ax = plt.subplots(figsize=(6, 4))
+        ax.plot([-4.5, 4.5], [0, 0], color="brown", lw=6)
+        ax.plot([0, -0.3, 0.3, 0], [0, -0.5, -0.5, 0], color="black", lw=3)
+        ax.text(-0.3, -0.9, "Axe D", fontsize=10, weight='bold')
 
-        case_certif_moments3 = st.checkbox(
-            "Je certifie avoir complété les questions de l'évaluation sur le théorème des moments.", 
-            key="check_certif_moments3_official", 
-            disabled=verrou_moments_3
-        )
+        # Force GAUCHE
+        ax.annotate('', xy=(-d1, -1), xytext=(-d1, 0), arrowprops=dict(facecolor='red', width=3, headwidth=10))
+        ax.text(-d1 - 0.5, -1.3, f"F1: {f1}N", color='red', weight='bold')
+        ax.text(-d1/2, 0.2, f"{d1}m", color='red')
 
-        if st.button("VALIDER ET EXPORTER LE BILAN DU THÉORÈME DES MOMENTS", key="btn_export_moments3_official_net", use_container_width=True, disabled=verrou_moments_3):
-            if not st.session_state.get("identifie", False):
-                st.error("Action refusée : Saisissez votre identity dans l'onglet 'Identification'.")
-            elif not case_certif_moments3:
-                st.error("Action refusée : Cochez la case de certification.")
-            else:
-                score_q3 = 0.0
-                if "ordre_quiz3_moments" in st.session_state:
-                    for q_item in st.session_state.ordre_quiz3_moments:
-                        reponse_eleve = st.session_state.get(f"moments_cl_g_{q_item['id']}", "Choisir...")
-                        if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
-                            score_q3 += 1.0
+        # Force DROITE
+        ax.annotate('', xy=(d2_user, -1), xytext=(d2_user, 0), arrowprops=dict(facecolor='green', width=3, headwidth=10))
+        ax.text(d2_user - 0.2, -1.3, f"F2: {f2}N", color='green', weight='bold')
+        ax.text(d2_user/2, 0.2, f"{d2_user}m", color='green')
 
-                score_t3 = sum([
-                    st.session_state.get("mom_t1_s3") == "Bras de levier",
-                    st.session_state.get("mom_t2_s3") == "Perpendiculaire",
-                    st.session_state.get("mom_t3_s3") == "Force",
-                    st.session_state.get("mom_t4_s3") == "Newton-mètre",
-                    st.session_state.get("mom_t5_s3") == "Nulle",
-                    st.session_state.get("mom_t6_s3") == "Rotation",
-                    st.session_state.get("mom_t7_s3") == "Trigonométrique",
-                    st.session_state.get("mom_t8_s3") == "Horaire",
-                    st.session_state.get("mom_t9_s3") == "Sigma",
-                    st.session_state.get("mom_t10_s3") == "Leviers"
-                ])
+        ax.set_xlim(-5, 5)
+        ax.set_ylim(-2, 1)
+        ax.axis('off')
+        
+        mom_gauche = f1 * d1
+        mom_droite = f2 * d2_user
+        
+        if abs(mom_gauche - mom_droite) < 1.0:
+            ax.title.set_text("PARFAIT ÉQUILIBRE !")
+            ax.title.set_color("green")
+            st.success("Bravo ! L'équilibre des moments est respecté.")
+        elif mom_gauche > mom_droite:
+            ax.title.set_text("BASCULE A GAUCHE")
+            ax.title.set_color("red")
+            st.error("Le moment à gauche est supérieur. Augmentez d2 ou diminuez d1.")
+        else:
+            ax.title.set_text("BASCULE A DROITE")
+            ax.title.set_color("red")
+            st.error("Le moment à droite est supérieur. Rapprochez la force F2.")
 
-                st.session_state.score_moments3_p1 = round(float(score_q3), 1)
-                st.session_state.score_moments3_p2 = round(float(score_t3), 1)
-                st.session_state.score_final_moments3 = round(float(score_q3 + score_t3), 1)
-                st.session_state.moments_verrouille_tab3 = True
-                st.rerun()
+        st.pyplot(fig)
+        
+        nom_image = preparer_nom_fichier("theoreme_moments") + ".jpg"
+        plt.savefig("temp_schema.jpg", format="jpg", dpi=150, bbox_inches='tight')
+        with open("temp_schema.jpg", "rb") as file:
+            st.download_button(label="Télécharger le schéma (JPG)", data=file, file_name=nom_image, mime="image/jpeg")
 
-        if st.session_state.get("moments_verrouille_tab3", False):
-            scr1 = st.session_state.get("score_moments3_p1", 0.0)
-            scr2 = st.session_state.get("score_moments3_p2", 0.0)
-            tot_s = st.session_state.get("score_final_moments3", 0.0)
+    # --- LOGIQUE DE COUPLAGE ET VALIDATION DE L'ONGLET 3 ---
+    st.divider()
+    st.subheader("3. Évaluation sur le théorème des moments")
+    
+    verrou_moments_3 = st.session_state.get("moments_verrouille_tab3", False)
+    res_q3, res_t3 = afficher_questions_moments_dynamiques(verrouille=verrou_moments_3)
 
-            timestamp_moments3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
-            st.success(f"SECTION THÉORÈME DES MOMENTS SCELLÉE | Note de session : {tot_s:.1f} / 20")
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-            html_export_moments3 = f"""<!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="utf-8">
-                <title>Rapport Théorème des moments - {n_eleve}</title>
-                <style>
-                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                    table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-                </style>
-            </head>
-            <body>
-                <div class="header-box">
-                    <h1>Professeur Laurent GALLET</h1>
-                    <p>Évaluation : Modélisation des actions mécaniques et théorème des moments</p>
-                    <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                    <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_moments3}</p>
-                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
-                </div>
-                
-                <div class="sub-title">Récapitulatif des notes générées</div>
-                <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                    &bull; Note obtenue au Quiz sur le calcul des moments : <strong>{scr1:.1f} / 10</strong><br>
-                    &bull; Note obtenue à la Synthèse mathématique : <strong>{scr2:.1f} / 10</strong><br>
-                    &bull; Note Totale de la section : <strong>{tot_s:.1f} / 20</strong>
-                </p>
+    case_certif_moments3 = st.checkbox(
+        "Je certifie avoir complété les questions de l'évaluation sur le théorème des moments.", 
+        key="check_certif_moments3_official", 
+        disabled=verrou_moments_3
+    )
 
-                <div class="sub-title">Correction détaillée du Quiz (ordre d'affichage de la session)</div>
-                <table>
-                    <thead>
+    if st.button("VALIDER ET EXPORTER LE BILAN DU THÉORÈME DES MOMENTS", key="btn_export_moments3_official_net", use_container_width=True, disabled=verrou_moments_3):
+        if not st.session_state.get("identifie", False):
+            st.error("Action refusée : Saisissez votre identity dans l'onglet 'Identification'.")
+        elif not case_certif_moments3:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q3 = 0.0
+            if "ordre_quiz3_moments" in st.session_state:
+                for q_item in st.session_state.ordre_quiz3_moments:
+                    reponse_eleve = st.session_state.get(f"moments_cl_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q3 += 1.0
 
-                    <tr>
-                        <th>N°</th>
-                        <th>Question Posée</th>
-                        <th>Saisie Élève</th>
-                        <th>Attendu Académique</th>
-                        <th>Verdict</th>
-                    </tr>
-                </thead>
-                <tbody>
-        """
+            score_t3 = sum([
+                st.session_state.get("mom_t1_s3") == "Bras de levier",
+                st.session_state.get("mom_t2_s3") == "Perpendiculaire",
+                st.session_state.get("mom_t3_s3") == "Force",
+                st.session_state.get("mom_t4_s3") == "Newton-mètre",
+                st.session_state.get("mom_t5_s3") == "Nulle",
+                st.session_state.get("mom_t6_s3") == "Rotation",
+                st.session_state.get("mom_t7_s3") == "Trigonométrique",
+                st.session_state.get("mom_t8_s3") == "Horaire",
+                st.session_state.get("mom_t9_s3") == "Sigma",
+                st.session_state.get("mom_t10_s3") == "Leviers"
+            ])
 
-        if "ordre_quiz3_moments" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz3_moments, 1):
-                saisie = st.session_state.get(f"moments_cl_g_{q_item['id']}", "Choisir...")
-                attendu = q_item["rep"]
-                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_moments3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+            st.session_state.score_moments3_p1 = round(float(score_q3), 1)
+            st.session_state.score_moments3_p2 = round(float(score_t3), 1)
+            st.session_state.score_final_moments3 = round(float(score_q3 + score_t3), 1)
+            st.session_state.moments_verrouille_tab3 = True
+            st.rerun()
 
-        html_export_moments3 += """
-                </tbody>
-            </table>
+    if st.session_state.get("moments_verrouille_tab3", False):
+        scr1 = st.session_state.get("score_moments3_p1", 0.0)
+        scr2 = st.session_state.get("score_moments3_p2", 0.0)
+        tot_s = st.session_state.get("score_final_moments3", 0.0)
 
-            <div class="sub-title">Correction détaillée des trous de synthèse</div>
+        timestamp_moments3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"SECTION THÉORÈME DES MOMENTS SCELLÉE | Note de session : {tot_s:.1f} / 20")
+
+        html_export_moments3 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Théorème des moments - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Évaluation : Modélisation des actions mécaniques et théorème des moments</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_moments3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des notes générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                &bull; Note obtenue au Quiz sur le calcul des moments : <strong>{scr1:.1f} / 10</strong><br>
+                &bull; Note obtenue à la Synthèse mathématique : <strong>{scr2:.1f} / 10</strong><br>
+                &bull; Note Totale de la section : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">Correction détaillée du Quiz (ordre d'affichage de la session)</div>
             <table>
                 <thead>
-                    <tr>
-                        <th>N°</th>
-                        <th>Énoncé de cours</th>
-                        <th>Saisie Élève</th>
-                        <th>Attendu Académique</th>
-                        <th>Verdict</th>
-                    </tr>
-                </thead>
-                <tbody>
-        """
 
-        phrases_trous3 = [
-            "1. Le moment d'une force par rapport à un axe est le produit de la force par le",
-            "2. Ce bras de levier correspond à la distance la plus courte, mesurée de façon",
-            "3. entre l'axe de rotation Delta et la ligne d'action du vecteur",
-            "4. L'unité de mesure combinée s'écrit sous la forme mathématique du",
-            "5. Si la droite d'action d'une force coupe directement l'axe, la distance est",
-            "6. Dans ce cas spécifique, l'action mécanique ne produit aucun effet de",
-            "7. À l'équilibre, la somme des moments qui font tourner dans le sens",
-            "8. compense les moments opposés. On affecte un signe moins aux rotations du sens",
-            "9. La somme algébrique totale de ces grandeurs est représentée par le symbole",
-            "10. L'application pratique directe de cette loi se retrouve dans l'utilisation des"
-        ]
-        attendus_trous3 = ["Bras de levier", "Perpendiculaire", "Force", "Newton-mètre", "Nulle", "Rotation", "Trigonométrique", "Horaire", "Sigma", "Leviers"]
-        cles_trous3 = ["mom_t1_s3", "mom_t2_s3", "mom_t3_s3", "mom_t4_s3", "mom_t5_s3", "mom_t6_s3", "mom_t7_s3", "mom_t8_s3", "mom_t9_s3", "mom_t10_s3"]
+                <tr>
+                    <th>N°</th>
+                    <th>Question Posée</th>
+                    <th>Saisie Élève</th>
+                    <th>Attendu Académique</th>
+                    <th>Verdict</th>
+                </tr>
+            </thead>
+            <tbody>
+    """
 
-        for idx, (phrase, attendu, cle) in enumerate(zip(phrases_trous3, attendus_trous3, cles_trous3), 1):
-            saisie_t = st.session_state.get(cle, "Choisir...")
-            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu).strip() else "INCORRECT"
-            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
-            html_export_moments3 += f"<tr><td>{idx}</td><td>{phrase} ...</td><td>{saisie_t}</td><td>{attendu}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+    if "ordre_quiz3_moments" in st.session_state:
+        for num, q_item in enumerate(st.session_state.ordre_quiz3_moments, 1):
+            saisie = st.session_state.get(f"moments_cl_g_{q_item['id']}", "Choisir...")
+            attendu = q_item["rep"]
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_moments3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_moments3 += """
-                </tbody>
-            </table>
-        </body>
-        </html>
-        """
+    html_export_moments3 += """
+            </tbody>
+        </table>
 
-        nom_fichier_html3 = preparer_nom_fichier("rapport_moments") + ".html"
-        st.download_button(
-            label="Télécharger le fichier de rapport officiel de l'Atelier 3 (HTML)",
-            data=html_export_moments3,
-            file_name=nom_fichier_html3,
-            mime="text/html",
-            use_container_width=True
-        )
+        <div class="sub-title">Correction détaillée des trous de synthèse</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>N°</th>
+                    <th>Énoncé de cours</th>
+                    <th>Saisie Élève</th>
+                    <th>Attendu Académique</th>
+                    <th>Verdict</th>
+                </tr>
+            </thead>
+            <tbody>
+    """
+
+    phrases_trous3 = [
+        "1. Le moment d'une force par rapport à un axe est le produit de la force par le",
+        "2. Ce bras de levier correspond à la distance la plus courte, mesurée de façon",
+        "3. entre l'axe de rotation Delta et la ligne d'action du vecteur",
+        "4. L'unité de mesure combinée s'écrit sous la forme mathématique du",
+        "5. Si la droite d'action d'une force coupe directement l'axe, la distance est",
+        "6. Dans ce cas spécifique, l'action mécanique ne produit aucun effet de",
+        "7. À l'équilibre, la somme des moments qui font tourner dans le sens",
+        "8. compense les moments opposés. On affecte un signe moins aux rotations du sens",
+        "9. La somme algébrique totale de ces grandeurs est représentée par le symbole",
+        "10. L'application pratique directe de cette loi se retrouve dans l'utilisation des"
+    ]
+    attendus_trous3 = ["Bras de levier", "Perpendiculaire", "Force", "Newton-mètre", "Nulle", "Rotation", "Trigonométrique", "Horaire", "Sigma", "Leviers"]
+    cles_trous3 = ["mom_t1_s3", "mom_t2_s3", "mom_t3_s3", "mom_t4_s3", "mom_t5_s3", "mom_t6_s3", "mom_t7_s3", "mom_t8_s3", "mom_t9_s3", "mom_t10_s3"]
+
+    for idx, (phrase, attendu, cle) in enumerate(zip(phrases_trous3, attendus_trous3, cles_trous3), 1):
+        saisie_t = st.session_state.get(cle, "Choisir...")
+        v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu).strip() else "INCORRECT"
+        v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+        html_export_moments3 += f"<tr><td>{idx}</td><td>{phrase} ...</td><td>{saisie_t}</td><td>{attendu}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+    html_export_moments3 += """
+            </tbody>
+        </table>
+    </body>
+    </html>
+    """
+
+    nom_fichier_html3 = preparer_nom_fichier("rapport_moments") + ".html"
+    st.download_button(
+        label="Télécharger le fichier de rapport officiel de l'Atelier 3 (HTML)",
+        data=html_export_moments3,
+        file_name=nom_fichier_html3,
+        mime="text/html",
+        use_container_width=True
+    )
 
 
 
