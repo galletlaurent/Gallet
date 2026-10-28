@@ -202,7 +202,14 @@ tab4 = onglets[4]
 
 def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
     """Gère le tirage aléatoire d'un scénario et affiche 10 QCM + 10 textes à trous spécifiques au métier."""
-    
+    routierA = False
+    routierB = False
+    TPA = False
+    TPB = False
+    MMA = False
+    MMB = False
+    GEOA = False
+    GEOB = False    
     # BANQUE DES SCÉNARIOS ÉTANCHE (2 variantes à 10 QCM et 10 trous par métier)
     banque_cas = {
         "Transport Routier": [
