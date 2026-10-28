@@ -21,6 +21,8 @@ import numpy as np
 import plotly.graph_objects as go
 import pandas as pd
 import streamlit.components.v1 as components
+import sys
+from PIL import Image
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
@@ -40,8 +42,94 @@ if "classe_var" not in st.session_state:
 if "verrouille" not in st.session_state:
     st.session_state.verrouille = False
 
+BASE_DIR = os.path.abspath(".")
 
+def charger_image(nom_fichier):
+    nom_fichier = os.path.basename(nom_fichier)
+    # Python scanne automatiquement tous les dossiers présents à côté du script
+    for element in os.listdir(BASE_DIR):
+        chemin_dossier = os.path.join(BASE_DIR, element)
+        if os.path.isdir(chemin_dossier) and element.startswith("image"):
+            chemin_image = os.path.join(chemin_dossier, nom_fichier)
+            if os.path.exists(chemin_image):
+                try:
+                    return Image.open(chemin_image)
+                except Exception:
+                    pass
+                        
+    # Sécurité si l'application est déjà masquée dans fichiers_systemes
+    chemin_secours = os.path.join(BASE_DIR, "image", nom_fichier)
+    if os.path.exists(chemin_secours):
+        try: 
+            return Image.open(chemin_secours)
+        except Exception: 
+            pass
+    return None
 
+# --- TOUS LES CORRECTIFS SÉCURISÉS (RERUN, COLUMNS, CONTAINER, IMAGE) ---
+
+# 1. Sauvegarde STRICTE des fonctions d'origine AVANT modification
+_vrai_st_rerun = st.rerun if hasattr(st, "rerun") else (st.experimental_rerun if hasattr(st, "experimental_rerun") else None)
+_vrai_st_image = st.image
+_vrai_st_columns = st.columns
+_vrai_st_container = st.container
+
+# 2. Correctif pour st.rerun
+def safe_rerun():
+    if _vrai_st_rerun is not None:
+        try: 
+            _vrai_st_rerun()
+        except Exception:
+            from streamlit.runtime.scriptrunner import RerunData, RerunException
+            raise RerunException(RerunData())
+st.rerun = safe_rerun
+
+# 3. Correctif pour st.image (Résolution de la boucle infinie)
+def safe_image(image, *args, **kwargs):
+    if "use_container_width" in kwargs:
+        kwargs["use_column_width"] = kwargs.pop("use_container_width")
+    if isinstance(image, str) and not image.startswith(("http://", "https://", "data:image")):
+        nom_fichier = os.path.basename(image)
+        img_pil = charger_image(nom_fichier)
+        if img_pil is not None: 
+            image = img_pil
+    return _vrai_st_image(image, *args, **kwargs)  # Utilise la vraie fonction d'origine
+st.image = safe_image
+
+# 4. Interception pour st.columns (vertical_alignment)
+def safe_columns(*args, **kwargs):
+    if "vertical_alignment" in kwargs:
+        kwargs.pop("vertical_alignment")
+    return _vrai_st_columns(*args, **kwargs)
+st.columns = safe_columns
+
+# 5. Interception pour st.container (border)
+def safe_container(*args, **kwargs):
+    if "border" in kwargs:
+        kwargs.pop("border")
+    return _vrai_st_container(*args, **kwargs)
+st.container = safe_container
+
+# 6. Rétrocompatibilité st.toggle -> st.checkbox
+if not hasattr(st, "toggle"):
+    def safe_toggle(label, value=False, key=None, **kwargs):
+        return st.checkbox(label, value=value, key=key)
+    st.toggle = safe_toggle
+
+# 7. Rétrocompatibilité st.dialog
+if not hasattr(st, "dialog"):
+    def safe_dialog(*args, **kwargs):
+        return st.container()
+    st.dialog = safe_dialog
+
+# 8. Décorateur pour sécuriser l'état des widgets (Session State)
+def securiser_widget_factory(fonction_origine):
+    def safe_widget(*args, **kwargs):
+        cle = kwargs.get("key")
+        if cle and cle in st.session_state:
+            kwargs.pop("value", None)
+        return fonction_origine(*args, **kwargs)
+    return safe_widget
 # =============================================================================
 # FONCTIONS GLOBALES DE VALIDATION DE L'IDENTITÉ
 # =============================================================================
@@ -437,6 +525,24 @@ with tab1:
             )
         except Exception as e:
             st.error(f"Image manquante : {info['image_pot']}")
+
+        st.subheader("Réaction Chimique")
+        st.markdown(f"**Observation visuelle :** Formation d'un précipité de couleur {info['couleur']}.")
+        st.markdown(f"**Nom du produit formé (précipité) :** {info['precipite']}")
+        
+        try:
+            st.image(
+                info["image_reaction"],
+                caption=f"Schéma : Ajout du réactif au goutte-à-goutte et coloration finale ({info['couleur']})",
+                use_container_width=True
+            )
+        except Exception as e:
+            st.error(f"Dessin de l'expérience manquant : {info['image_reaction']}")
+            
+        st.markdown("**Équation-bilan de la réaction :**")
+        st.latex(info["equation"])
+
+            
     with col2:
         st.header("Fiche Expérimentale et Sécurité")
         
@@ -471,21 +577,7 @@ with tab1:
             st.error(f"**En cas d'ingestion :** {info['secours']['ingestion']}")
             st.caption("Alerte générale : Informer immédiatement le professeur ou le responsable.")
             
-        st.subheader("Réaction Chimique")
-        st.markdown(f"**Observation visuelle :** Formation d'un précipité de couleur {info['couleur']}.")
-        st.markdown(f"**Nom du produit formé (précipité) :** {info['precipite']}")
-        
-        try:
-            st.image(
-                info["image_reaction"],
-                caption=f"Schéma : Ajout du réactif au goutte-à-goutte et coloration finale ({info['couleur']})",
-                use_container_width=True
-            )
-        except Exception as e:
-            st.error(f"Dessin de l'expérience manquant : {info['image_reaction']}")
-            
-        st.markdown("**Équation-bilan de la réaction :**")
-        st.latex(info["equation"])
+
 
     st.write("---")
     if "ions_verrouille_tab" not in st.session_state:
