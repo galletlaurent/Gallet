@@ -1175,7 +1175,7 @@ with tab1:
         {"nom": "oxygène", "symb": "O", "bg": "#e74c3c", "fg": "white", "masse": 16.0},
         {"nom": "azote", "symb": "N", "bg": "#3498db", "fg": "white", "masse": 14.0},
         {"nom": "soufre", "symb": "S", "bg": "#ffff00", "fg": "black", "masse": 32.0},
-        {"nom": "phosphore", "symb": "P", "bg": "#e67e22", "fg": "white", "masse": 31.0},
+        {"nom": "phosphore", "symb": "P", "bg": "#808080", "fg": "white", "masse": 31.0},
         {"nom": "chlore", "symb": "Cl", "bg": "#2ecc71", "fg": "white", "masse": 35.5},
         {"nom": "fer", "symb": "Fe", "bg": "#e67e22", "fg": "white", "masse": 56.0},
         {"nom": "iode", "symb": "I", "bg": "#9400d3", "fg": "white", "masse": 127.0}
@@ -1355,7 +1355,7 @@ with tab2:
         {"nom": "oxygène", "symb": "O", "bg": "#e74c3c", "fg": "white", "masse": 16.0},
         {"nom": "azote", "symb": "N", "bg": "#3498db", "fg": "white", "masse": 14.0},
         {"nom": "soufre", "symb": "S", "bg": "#ffff00", "fg": "black", "masse": 32.0},
-        {"nom": "phosphore", "symb": "P", "bg": "#e67e22", "fg": "white", "masse": 31.0},
+        {"nom": "phosphore", "symb": "P", "bg": "#808080", "fg": "white", "masse": 31.0},
         {"nom": "chlore", "symb": "Cl", "bg": "#2ecc71", "fg": "white", "masse": 35.5},
         {"nom": "fer", "symb": "Fe", "bg": "#e67e22", "fg": "white", "masse": 56.0},
         {"nom": "iode", "symb": "I", "bg": "#9400d3", "fg": "white", "masse": 127.0}
