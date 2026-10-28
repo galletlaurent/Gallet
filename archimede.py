@@ -1163,7 +1163,28 @@ with tab3:
         st.plotly_chart(fig2, use_container_width=True)
 
         st.image("paradoxe_creux_plein.jpg", caption="Marque de Plimsoll sur une coque", use_container_width=True)
-    
+
+
+    col_bd_bathum2, col_bd_bathum3 = st.columns(2)
+
+    with col_bd_bathum2:
+        st.write("**La BD humoristique textuelle : Le test du capitaine**")
+        st.info(
+            "**Case 1 :** Un vieux loup de mer en ciré jaune inspecte son cargo en acier rempli de cales vides : 'Regardez-moi cette merveille, dix mille tonnes de métal et ça flotte comme une plume !'.\n\n"
+            "**Case 2 :** Un docker empile une montagne gigantesque de caisses de fonte lourde sur le pont arrière. Le navire commence à pencher dangereusement en grinçant du métal : 'Capitaine ! On est en train de dépasser la marque rouge de sécurité sur la coque !'.\n\n"
+            "**Case 3 :** Le capitaine hausse les épaules en ricanant : 'Balivernes ! Archimède est mon ami, il va pousser plus fort par-dessous !'. Les petites bulles d'eau sous la quille grimacent sous le poids écrasant.\n\n"
+            "**Case 4 :** Une vague arrive, l'eau dépasse la ligne limite et s'engouffre par les fenêtres. Le navire descend tout droit vers le fond tandis que le capitaine flotte dans sa bouée en caoutchouc en marmonnant : 'D'accord... Le volume d'air était utile, j'ai compris la leçon'."
+        )
+    with col_bd_bathum3:
+        try:
+            # L'image utilise bien le nom exact configuré dans votre projet
+            st.image("archimede_bateau.jpeg", caption="Vais-je arriver à bon port??? ", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'archimede_bateau.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
+        
+    st.divider()
+
+
     st.subheader("Simulateur dynamique de ligne de flottaison d'un cargo")
     st.write(
         "Utilisez les curseurs pour modifier la masse du chargement et le volume de la coque. "
@@ -1250,27 +1271,7 @@ with tab3:
     st.caption(f"Statut : Poids = {poids_total_cargo:.0f} t (Vide + Charge) | Largeur = {largeur_coque} m | Enfoncement = {enfoncement_coque:.2f} m")
     
 
-    col_bd_bathum2, col_bd_bathum3 = st.columns(2)
 
-    with col_bd_bathum2:
-        st.write("**La BD humoristique textuelle : Le test du capitaine**")
-        st.info(
-            "**Case 1 :** Un vieux loup de mer en ciré jaune inspecte son cargo en acier rempli de cales vides : 'Regardez-moi cette merveille, dix mille tonnes de métal et ça flotte comme une plume !'.\n\n"
-            "**Case 2 :** Un docker empile une montagne gigantesque de caisses de fonte lourde sur le pont arrière. Le navire commence à pencher dangereusement en grinçant du métal : 'Capitaine ! On est en train de dépasser la marque rouge de sécurité sur la coque !'.\n\n"
-            "**Case 3 :** Le capitaine hausse les épaules en ricanant : 'Balivernes ! Archimède est mon ami, il va pousser plus fort par-dessous !'. Les petites bulles d'eau sous la quille grimacent sous le poids écrasant.\n\n"
-            "**Case 4 :** Une vague arrive, l'eau dépasse la ligne limite et s'engouffre par les fenêtres. Le navire descend tout droit vers le fond tandis que le capitaine flotte dans sa bouée en caoutchouc en marmonnant : 'D'accord... Le volume d'air était utile, j'ai compris la leçon'."
-        )
-    with col_bd_bathum3:
-        try:
-            # L'image utilise bien le nom exact configuré dans votre projet
-            st.image("archimede_bateau.jpeg", caption="Vais-je arriver à bon port??? ", use_container_width=True)
-        except Exception:
-            st.warning("L'image 'archimede_bateau.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
-            
-        
-
-        
-    st.divider()
 
     # --- SECTION LOGIQUE : ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 3 ---
 
