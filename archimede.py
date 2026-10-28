@@ -813,19 +813,7 @@ with tab2:
     )
     
     st.divider()
-    
-    # --- LAB INTERACTIF : SCHÉMA DYNAMIQUE AVEC FLÈCHES VECTORIELLES ---
-    st.subheader("Simulateur dynamique d'équilibre hydrostatique")
-    st.write(
-        "Modifiez le curseur ci-dessous pour changer la densité de l'objet carré. "
-        "Le graphique Matplotlib recalculera immédiatement sa flottaison et tracera les deux forces en présence :\n"
-        "* **Le Poids réel (flèche noire $\\vec{P}$)** appliqué au centre de gravité de l'objet, tirant vers le bas.\n"
-        "* **La Poussée d'Archimède (flèche bleue $\\vec{\\Pi}$)** appliquée au centre de carène, poussant vers le haut."
-    )
-    
-    # Curseur interactif de masse volumique pour l'élève
-    masse_vol_objet = st.slider("Sélectionner la masse volumique du solide (en kg/m³ - Eau = 1000) :", min_value=300, max_value=1800, value=600, step=50, key="slider_density_arch2")
-    
+
     col_graph_arch, col_bd_arch = st.columns([0.55, 0.45])
     
     with col_graph_arch:
@@ -845,6 +833,21 @@ with tab2:
         except Exception:
             st.warning("L'image 'archimede_bassin.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
                  
+
+    
+    # --- LAB INTERACTIF : SCHÉMA DYNAMIQUE AVEC FLÈCHES VECTORIELLES ---
+    st.subheader("Simulateur dynamique d'équilibre hydrostatique")
+    st.write(
+        "Modifiez le curseur ci-dessous pour changer la densité de l'objet carré. "
+        "Le graphique Matplotlib recalculera immédiatement sa flottaison et tracera les deux forces en présence :\n"
+        "* **Le Poids réel (flèche noire $\\vec{P}$)** appliqué au centre de gravité de l'objet, tirant vers le bas.\n"
+        "* **La Poussée d'Archimède (flèche bleue $\\vec{\\Pi}$)** appliquée au centre de carène, poussant vers le haut."
+    )
+    
+    # Curseur interactif de masse volumique pour l'élève
+    masse_vol_objet = st.slider("Sélectionner la masse volumique du solide (en kg/m³ - Eau = 1000) :", min_value=300, max_value=1800, value=600, step=50, key="slider_density_arch2")
+    
+
     import matplotlib.pyplot as plt
     import matplotlib.patches as patches
     
@@ -1438,6 +1441,23 @@ with tab4:
     )
     
     st.divider()
+    col_graph_fl, col_bd_fl = st.columns([0.55, 0.45])
+    
+    with col_graph_fl:
+        st.write("**La BD humoristique textuelle : Le grand saut des cubes**")
+        st.info(
+            "**Case 1 :** Un cube en plastique dur de $900 \\text{ kg/m}^3$ se présente devant trois bassins alignés : un pot d'huile, une cuve d'eau pure et un baril de glycérine visqueuse.\n\n"
+            "**Case 2 :** Il saute dans le premier pot d'huile lourde. Les molécules d'huile, trop légères ($800 \\text{ kg/m}^3$), s'écartent en panique : 'Ah ! Il est trop dense pour nous, on n'arrive pas à le retenir !'. Le cube frappe le fond du pot dans un bruit sourd.\n\n"
+            "**Case 3 :** Il saute dans la cuve d'eau pure ($1000 \\text{ kg/m}^3$). Les molécules d'eau se bousculent et parviennent à le bloquer juste avant la noyade. Le cube flotte timidement, le nez hors de l'eau.\n\n"
+            "**Case 4 :** Il plonge enfin dans le baril de glycérine ($1260 \\text{ kg/m}^3$). Les molécules de glycérine, unies comme un mur de briques solides, le repoussent instantanément vers le ciel : 'Pas chez nous, l'ami ! Tu es un poids plume pour nous !'. Le cube se retrouve assis en surface, totalement au sec."
+        )
+
+    with col_bd_fl:
+        try:
+            # L'image utilise bien le nom exact configuré dans votre projet
+            st.image("archimede_cube.jpeg", caption="Vais-je me noyer ??? ", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'archimede_cube.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
     
     # --- LAB INTERACTIF : SCHÉMA DYNAMIQUE COMPARATIF DES FLUIDES ---
     st.subheader("Simulateur dynamique de poussée multi-fluides")
@@ -1465,23 +1485,6 @@ with tab4:
         rho_fluide_sim = 1260.0
         couleur_fluide = "#cbd5e1"  # Transparent opalin
         
-    col_graph_fl, col_bd_fl = st.columns([0.55, 0.45])
-    
-    with col_graph_fl:
-        st.write("**La BD humoristique textuelle : Le grand saut des cubes**")
-        st.info(
-            "**Case 1 :** Un cube en plastique dur de $900 \\text{ kg/m}^3$ se présente devant trois bassins alignés : un pot d'huile, une cuve d'eau pure et un baril de glycérine visqueuse.\n\n"
-            "**Case 2 :** Il saute dans le premier pot d'huile lourde. Les molécules d'huile, trop légères ($800 \\text{ kg/m}^3$), s'écartent en panique : 'Ah ! Il est trop dense pour nous, on n'arrive pas à le retenir !'. Le cube frappe le fond du pot dans un bruit sourd.\n\n"
-            "**Case 3 :** Il saute dans la cuve d'eau pure ($1000 \\text{ kg/m}^3$). Les molécules d'eau se bousculent et parviennent à le bloquer juste avant la noyade. Le cube flotte timidement, le nez hors de l'eau.\n\n"
-            "**Case 4 :** Il plonge enfin dans le baril de glycérine ($1260 \\text{ kg/m}^3$). Les molécules de glycérine, unies comme un mur de briques solides, le repoussent instantanément vers le ciel : 'Pas chez nous, l'ami ! Tu es un poids plume pour nous !'. Le cube se retrouve assis en surface, totalement au sec."
-        )
-
-    with col_bd_fl:
-        try:
-            # L'image utilise bien le nom exact configuré dans votre projet
-            st.image("archimede_cube.jpeg", caption="Vais-je me noyer ??? ", use_container_width=True)
-        except Exception:
-            st.warning("L'image 'archimede_cube.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
 
         
     import matplotlib.pyplot as plt
@@ -1712,18 +1715,8 @@ with tab5:
         "apparaît sur la paroi, le fluide pénètre à l'intérieur. Le poids de l'objet augmente brutalement, la force de gravité devient "
         "très supérieure à la poussée d'Archimède, et le plongeur coule au fond de la cuve, déclenchant une fausse alarme de niveau bas."
     )
-    
-    # --- LAB INTERACTIF : SCHÉMA DYNAMIQUE DE CUVE ET DÉTECTION DE FUITE ---
-    st.subheader("Simulateur dynamique de vidange de cuve et force de poussée")
-    st.write(
-        "Actionnez le curseur pour simuler le niveau de remplissage de la cuve industrielle. "
-        "Observez comment le volume immergé du plongeur de maintenance (le cylindre gris) s'ajuste, "
-        "modifiant la taille de la flèche bleue de la poussée d'Archimède."
-    )
-    
-    # Curseur interactif de hauteur de liquide dans la cuve
-    hauteur_liquide = st.slider("Ajuster le niveau du liquide dans la cuve (en mètres) :", min_value=0.0, max_value=3.0, value=2.0, step=0.2, key="slider_maintenance_level")
-    
+
+
     col_graph_maint, col_bd_maint = st.columns([0.55, 0.45])
     
     with col_graph_maint:
@@ -1742,7 +1735,19 @@ with tab5:
             st.image("archimede_mm.jpeg", caption="Quelle plongée !", use_container_width=True)
         except Exception:
             st.warning("L'image 'archimede_mm.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
-            
+                
+    # --- LAB INTERACTIF : SCHÉMA DYNAMIQUE DE CUVE ET DÉTECTION DE FUITE ---
+    st.subheader("Simulateur dynamique de vidange de cuve et force de poussée")
+    st.write(
+        "Actionnez le curseur pour simuler le niveau de remplissage de la cuve industrielle. "
+        "Observez comment le volume immergé du plongeur de maintenance (le cylindre gris) s'ajuste, "
+        "modifiant la taille de la flèche bleue de la poussée d'Archimède."
+    )
+    
+    # Curseur interactif de hauteur de liquide dans la cuve
+    hauteur_liquide = st.slider("Ajuster le niveau du liquide dans la cuve (en mètres) :", min_value=0.0, max_value=3.0, value=2.0, step=0.2, key="slider_maintenance_level")
+    
+
     st.divider()
 
     import matplotlib.pyplot as plt
@@ -1970,17 +1975,8 @@ with tab6:
         "on installe des pompes de forage en continu autour des fouilles pour abaisser artificiellement le niveau de la nappe "
         "et travailler hors d'eau."
     )
-    
-    # --- LAB INTERACTIF : SCHÉMA DYNAMIQUE DE CANALISATION INONDÉE ---
-    st.subheader("Simulateur dynamique de poussée sur une buse de TP enterrée")
-    st.write(
-        "Faites varier le niveau de la nappe phréatique dans le sol à l'aide du curseur. "
-        "Observez l'évolution des forces s'exerçant sur une canalisation d'évacuation vide (le cercle gris) enterrée sous la route."
-    )
-    
-    # Curseur interactif de hauteur de nappe phréatique
-    niveau_nappe = st.slider("Ajuster le niveau de la nappe phréatique dans le sol (en mètres) :", min_value=0.0, max_value=2.5, value=1.2, step=0.2, key="slider_civil_engineering_water")
-    
+
+
     col_graph_tp, col_bd_tp = st.columns([0.55, 0.45])
     
     with col_graph_tp:
@@ -1999,6 +1995,18 @@ with tab6:
             st.warning("L'image 'archimede_tp.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
 
         
+    
+    # --- LAB INTERACTIF : SCHÉMA DYNAMIQUE DE CANALISATION INONDÉE ---
+    st.subheader("Simulateur dynamique de poussée sur une buse de TP enterrée")
+    st.write(
+        "Faites varier le niveau de la nappe phréatique dans le sol à l'aide du curseur. "
+        "Observez l'évolution des forces s'exerçant sur une canalisation d'évacuation vide (le cercle gris) enterrée sous la route."
+    )
+    
+    # Curseur interactif de hauteur de nappe phréatique
+    niveau_nappe = st.slider("Ajuster le niveau de la nappe phréatique dans le sol (en mètres) :", min_value=0.0, max_value=2.5, value=1.2, step=0.2, key="slider_civil_engineering_water")
+    
+
     
     import matplotlib.pyplot as plt
     import matplotlib.patches as patches
@@ -2239,18 +2247,8 @@ with tab7:
         "freinent le déplacement du fluide et dissipent l'énergie cinétique de la vague liquide, maintenant le "
         "véhicule stable sur sa trajectoire."
     )
-    
-    # --- LAB INTERACTIF : SCHÉMA DYNAMIQUE DE CITERNE ET PRESSION AU FOND ---
-    st.subheader("Simulateur dynamique de hauteur de cargaison et pression hydrostatique")
-    st.write(
-        "Modifiez le curseur pour ajuster le niveau de remplissage de la citerne routière. "
-        "Le schéma vectoriel calculera la pression s'exerçant sur le capteur de fond (le point rouge) "
-        "et adaptera la flèche noire représentant la force de gravité exercée sur l'essieu."
-    )
-    
-    # Curseur interactif de hauteur de carburant
-    hauteur_citerne = st.slider("Ajuster le niveau de remplissage de la citerne (en mètres) :", min_value=0.0, max_value=2.0, value=1.5, step=0.1, key="slider_truck_fluid_height")
-    
+
+
     col_graph_tr, col_bd_tr = st.columns([0.55, 0.45])
     
     with col_graph_tr:
@@ -2269,7 +2267,21 @@ with tab7:
             st.image("archimede_routier.jpeg", caption="Quelle force !", use_container_width=True)
         except Exception:
             st.warning("L'image 'archimede_routier.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
+
             
+    
+    # --- LAB INTERACTIF : SCHÉMA DYNAMIQUE DE CITERNE ET PRESSION AU FOND ---
+    st.subheader("Simulateur dynamique de hauteur de cargaison et pression hydrostatique")
+    st.write(
+        "Modifiez le curseur pour ajuster le niveau de remplissage de la citerne routière. "
+        "Le schéma vectoriel calculera la pression s'exerçant sur le capteur de fond (le point rouge) "
+        "et adaptera la flèche noire représentant la force de gravité exercée sur l'essieu."
+    )
+    
+    # Curseur interactif de hauteur de carburant
+    hauteur_citerne = st.slider("Ajuster le niveau de remplissage de la citerne (en mètres) :", min_value=0.0, max_value=2.0, value=1.5, step=0.1, key="slider_truck_fluid_height")
+    
+
         
     st.divider()
 
