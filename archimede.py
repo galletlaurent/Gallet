@@ -1068,30 +1068,52 @@ with tab3:
    
     # --- SECTION COURS : LES PRINCIPES DE LA FLOTTAISON ---
     st.subheader("L'équilibre statique du navire")
-    st.write(
-        "L'application la plus spectaculaire de l'hydrostatique est la flottaison des navires. "
-        "Pour qu'un bateau reste immobile à la surface, l'intensité de la **poussée d'Archimède ($\\vec{\\Pi}$)** "
-        "développée par l'eau doit équilibrer de manière absolue le **Poids total ($\\vec{P}$)** du navire et de sa cargaison.\n\n"
-        "Cet équilibre met en relation deux centres géométriques distincts :\n"
-        "* **Le centre de gravité (G) :** Point d'application du Poids, déterminé par la répartition des masses lourdes.\n"
-        "* **Le centre de carène (C) :** Point d'application de la poussée d'Archimède, correspondant au centre de gravité "
-        "du volume de la coque immergée sous l'eau."
-    )
-    
+
+    # 1. Création de deux colonnes (60% pour le texte, 40% pour l'image)
+    col_texte, col_image = st.columns([3, 2])
+
+    # 2. Contenu de la colonne de gauche (le texte)
+    with col_texte:
+        st.write(
+            "L'application la plus spectaculaire de l'hydrostatique est la flottaison des navires. "
+            "Pour qu'un bateau reste immobile à la surface, l'intensité de la **poussée d'Archimède ($\\vec{\\Pi}$)** "
+            "développée par l'eau doit équilibrer de manière absolue le **Poids total ($\\vec{P}$)** du navire et de sa cargaison.\n\n"
+            "Cet équilibre met en relation deux centres géométriques distincts :\n"
+            "* **Le centre de gravité (G) :** Point d'application du Poids, déterminé par la répartition des masses lourdes.\n"
+            "* **Le centre de carène (C) :** Point d'application de la poussée d'Archimède, correspondant au centre de gravité "
+            "du volume de la coque immergée sous l'eau."
+        )
+
+    # 3. Contenu de la colonne de droite (l'image)
+    with col_image:
+        # Remplacez "chemin_vers_votre_image.jpg" par le nom ou le lien de votre image
+        st.image("chemin_vers_votre_image.jpg", caption="Schéma des forces G et C", use_container_width=True)
+
     st.divider()
     
     st.subheader("Le paradoxe de l'acier creux et les lignes de charge")
-    st.write(
-        "Un lingot d'acier coule instantanément car sa masse volumique ($7800 \text{ kg/m}^3$) est bien supérieure à celle de l'eau ($1000 \text{ kg/m}^3$). "
-        "Pourtant, un cargo construit avec des milliers de tonnes d'acier flotte parfaitement. Le secret réside dans la géométrie de la coque : "
-        "en étant large et creuse, elle enferme un immense **volume d'air**. La masse volumique globale du navire (masse totale divisée "
-        "par le volume total de la coque) devient inférieure à celle de l'eau, lui permettant de flotter.\n\n"
-        "Lorsque l'on charge des conteneurs, le poids augmente. Le bateau s'enfonce alors dans l'eau pour déplacer un volume liquide "
-        "supplémentaire, ce qui augmente la poussée d'Archimède jusqu'à retrouver l'équilibre. "
-        "Pour éviter la surcharge et le naufrage, les navires portent une marque gravée sur leurs flancs : la **ligne de flottaison** "
-        "(ou marque de Plimsoll), indiquant la limite de submersion sécurisée selon la densité de l'eau (l'eau de mer salée étant plus dense "
-        "que l'eau douce des fleuves, le navire y flotte plus haut)."
-    )
+
+    # 1. Création de deux colonnes (60% pour le texte, 40% pour l'image)
+    col_texte, col_image = st.columns([3, 2])
+
+    # 2. Contenu de la colonne de gauche (le texte)
+    with col_texte:
+        st.write(
+            "Un lingot d'acier coule instantanément car sa masse volumique ($7800 \text{ kg/m}^3$) est bien supérieure à celle de l'eau ($1000 \text{ kg/m}^3$). "
+            "Pourtant, un cargo construit avec des milliers de tonnes d'acier flotte parfaitement. Le secret réside dans la géométrie de la coque : "
+            "en étant large et creuse, elle enferme un immense **volume d'air**. La masse volumique globale du navire (masse totale divisée "
+            "par le volume total de la coque) devient inférieure à celle de l'eau, lui permettant de flotter.\n\n"
+            "Lorsque l'on charge des conteneurs, le poids augmente. Le bateau s'enfonce alors dans l'eau pour déplacer un volume liquide "
+            "supplémentaire, ce qui augmente la poussée d'Archimède jusqu'à retrouver l'équilibre. "
+            "Pour éviter la surcharge et le naufrage, les navires portent une marque gravée sur leurs flancs : la **ligne de flottaison** "
+            "(ou marque de Plimsoll), indiquant la limite de submersion sécurisée selon la densité de l'eau (l'eau de mer salée étant plus dense "
+            "que l'eau douce des fleuves, le navire y flotte plus haut)."
+        )
+
+    # 3. Contenu de la colonne de droite (l'image)
+    with col_image:
+        # Remplacez "chemin_vers_votre_image_2.jpg" par le nom ou le lien de votre image
+        st.image("chemin_vers_votre_image_2.jpg", caption="Marque de Plimsoll sur une coque", use_container_width=True)
     
     # --- LAB INTERACTIF : SCHÉMA DYNAMIQUE DE CHARGEMENT DE CARGO ---
     st.subheader("Simulateur dynamique de ligne de flottaison d'un cargo")
