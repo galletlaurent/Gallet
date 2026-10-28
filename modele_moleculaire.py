@@ -143,7 +143,7 @@ STYLE_ATOMES = {
     'H': {'couleur': "#ffffff", 'texte': "black", 'nom': "Hydrogène", 'masse': 1.0},
     'N': {'couleur': "#3498db", 'texte': "white", 'nom': "Azote", 'masse': 14.0},
     'S': {'couleur': "#ffff00", 'texte': "black", 'nom': "Soufre", 'masse': 32.0},
-    'P': {'couleur': "#e67e22", 'white': "white", 'nom': "Phosphore", 'masse': 31.0},
+    'P': {'couleur': "#808080", 'white': "white", 'nom': "Phosphore", 'masse': 31.0},
     'Cl': {'couleur': "#2ecc71", 'texte': "white", 'nom': "Chlore", 'masse': 35.5},
     'Fe': {'couleur': "#e67e22", 'texte': "white", 'nom': "Fer", 'masse': 56.0},
     'I': {'couleur': "#9400d3", 'texte': "white", 'nom': "Iode", 'masse': 127.0}
@@ -1363,7 +1363,7 @@ with tab2:
 
     adjectifs_couleurs = {
         "hydrogène": "blanche", "carbone": "noire", "oxygène": "rouge", 
-        "azote": "bleue", "soufre": "jaune", "phosphore": "orange", "chlore": "verte",
+        "azote": "bleue", "soufre": "jaune", "phosphore": "grise", "chlore": "verte",
         "fer": "marron", "iode": "violette"
     }
     # --- INITIALISATION DES VARIABLES DE SESSION SPECIFIQUES A LA TAB 2 ---
