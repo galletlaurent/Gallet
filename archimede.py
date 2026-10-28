@@ -1086,37 +1086,7 @@ with tab3:
 
     # 3. Contenu de la colonne de droite (l'image)
     with col_image:
-        st.caption("**Légende du schéma :**")
-        st.markdown(
-            "- <span style='color:#EF553B; font-weight:bold;'>Vector P (Rouge)</span> : Poids appliqué au Centre de Gravité (G)\n"
-            "- <span style='color:#636EFA; font-weight:bold;'>Vector Π (Bleu)</span> : Poussée d'Archimède appliquée au Centre de Carène (C)\n"
-            "- **Zone ombrée** : Volume de la coque immergée (Carène)", 
-            unsafe_allow_html=True
-        )
-        
-        # Génération du graphique d'équilibre des forces
-        import plotly.graph_objects as go
-        
-        fig = go.Figure()
-        # Ligne de flottaison
-        fig.add_shape(type="line", x0=-2, y0=0, x1=2, y1=0, line=dict(color="RoyalBlue", width=2, dash="dash"))
-        # Coque immergée (carène)
-        fig.add_shape(type="path", path="M -1,0 Q 0,-1.2 1,0 Z", fillcolor="rgba(173, 216, 230, 0.4)", line=dict(color="LightBlue"))
-        # Coque émergée
-        fig.add_shape(type="path", path="M -1,0 L -1.2,0.8 L 1.2,0.8 L 1,0 Z", fillcolor="rgba(200, 200, 200, 0.2)", line=dict(color="Gray"))
-        
-        # Points G et C
-        fig.add_trace(go.Scatter(x=[0], y=[0.3], mode="markers+text", name="G (Gravité)", text=["G"], textposition="top right", marker=dict(color="red", size=10)))
-        fig.add_trace(go.Scatter(x=[0], y=[-0.4], mode="markers+text", name="C (Carène)", text=["C"], textposition="bottom right", marker=dict(color="blue", size=10)))
-        
-        # Vecteurs de force (Flèches)
-        fig.add_annotation(x=0, y=-0.7, ax=0, ay=0.3, xref="x", yref="y", axref="x", ayref="y", text="", showarrow=True, arrowhead=3, arrowsize=1, arrowwidth=3, arrowcolor="red")
-        fig.add_annotation(x=0, y=0.6, ax=0, ay=-0.4, xref="x", yref="y", axref="x", ayref="y", text="", showarrow=True, arrowhead=3, arrowsize=1, arrowwidth=3, arrowcolor="blue")
-        
-        fig.update_layout(showlegend=False, xaxis=dict(visible=False, range=[-2, 2]), yaxis=dict(visible=False, range=[-1.5, 1.5]), margin=dict(l=10, r=10, t=10, b=10), height=300)
-        st.plotly_chart(fig, use_container_width=True)
-        # Remplacez "chemin_vers_votre_image.jpg" par le nom ou le lien de votre image
-        
+      
         st.image("equilibre_navire.jpg", caption="Schéma des forces G et C", use_container_width=True)
 
     st.divider()
