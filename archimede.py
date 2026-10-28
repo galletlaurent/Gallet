@@ -899,7 +899,7 @@ with tab2:
         y_centre_poussee = y_bas_objet + 0.5
         
     # Échelle de tracé pour les vecteurs forces (flèches)
-    echelle_fleche = 0.6 / (volume_total * 1800 * 9.81 / 1000.0)
+    echelle_fleche = 1 / (volume_total * 1800 * 9.81 / 1000.0)
     longueur_poids = poids_val * echelle_fleche
     longueur_poussee = poussee_val * echelle_fleche
     
