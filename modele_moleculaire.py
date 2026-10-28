@@ -1183,7 +1183,7 @@ with tab1:
 
     adjectifs_couleurs = {
         "hydrogène": "blanche", "carbone": "noire", "oxygène": "rouge", 
-        "azote": "bleue", "soufre": "jaune", "phosphore": "mauve", "chlore": "verte",
+        "azote": "bleue", "soufre": "jaune", "phosphore": "grise", "chlore": "verte",
         "fer": "marron", "iode": "violette"
     }
 
