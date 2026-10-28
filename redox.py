@@ -795,10 +795,7 @@ with tab1:
     # Insertion de votre image locale pour l'historique
     try:
         st.image(
-            "historique.jpg",
-            caption="Illustration historique des travaux de Lavoisier sur l'oxygène",
-            use_container_width=True
-        )
+            "historique.jpg", caption="Illustration historique des travaux de Lavoisier sur l'oxygène"  )
     except FileNotFoundError:
         st.warning("L'image 'historique.jpg' n'a pas été trouvée dans le dossier.")
 
