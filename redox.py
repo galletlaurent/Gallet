@@ -856,7 +856,7 @@ with tab1:
         "toutes ces problématiques découlent directement des découvertes de ces scientifiques."
     )
 
-      col_17, col_18, col_19, col_20= st.columns(4)
+    col_17, col_18, col_19, col_20= st.columns(4)
     with col_17:
         try:
             st.image("rouille_tp.jpg", caption="dégradation du béton armé")
