@@ -483,7 +483,7 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
         
         rouitierA = charger_image("routierA.jpg")        
         if routierA:
-            st.image(routierA, caption="Camion-Citerne", width=300)
+            st.image(routierA, caption="Camion-Citerne", use_container_width=True)
         else:
             st.warning("Illustration en cours de chargement ou fichier 'routierA.jpg' absent du serveur.")
 
@@ -525,7 +525,7 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
                 
         rouitierB = charger_image("routierB.jpg")        
         if routierB:
-            st.image(routierB, caption="Convoi Exceptionnel", width=300)
+            st.image(routierB, caption="Convoi Exceptionnel", use_container_width=True)
         else:
             st.warning("Illustration en cours de chargement ou fichier 'routierB.jpg' absent du serveur.")
 
