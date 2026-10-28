@@ -1086,20 +1086,49 @@ with tab3:
 
     # 3. Contenu de la colonne de droite (l'image)
     with col_image:
+            st.caption("**Légende du schéma :**")
+        st.markdown(
+            "- <span style='color:#EF553B; font-weight:bold;'>Vector P (Rouge)</span> : Poids appliqué au Centre de Gravité (G)\n"
+            "- <span style='color:#636EFA; font-weight:bold;'>Vector Π (Bleu)</span> : Poussée d'Archimède appliquée au Centre de Carène (C)\n"
+            "- **Zone ombrée** : Volume de la coque immergée (Carène)", 
+            unsafe_allow_html=True
+        )
+        
+        # Génération du graphique d'équilibre des forces
+        import plotly.graph_objects as go
+        
+        fig = go.Figure()
+        # Ligne de flottaison
+        fig.add_shape(type="line", x0=-2, y0=0, x1=2, y1=0, line=dict(color="RoyalBlue", width=2, dash="dash"))
+        # Coque immergée (carène)
+        fig.add_shape(type="path", path="M -1,0 Q 0,-1.2 1,0 Z", fillcolor="rgba(173, 216, 230, 0.4)", line=dict(color="LightBlue"))
+        # Coque émergée
+        fig.add_shape(type="path", path="M -1,0 L -1.2,0.8 L 1.2,0.8 L 1,0 Z", fillcolor="rgba(200, 200, 200, 0.2)", line=dict(color="Gray"))
+        
+        # Points G et C
+        fig.add_trace(go.Scatter(x=[0], y=[0.3], mode="markers+text", name="G (Gravité)", text=["G"], textposition="top right", marker=dict(color="red", size=10)))
+        fig.add_trace(go.Scatter(x=[0], y=[-0.4], mode="markers+text", name="C (Carène)", text=["C"], textposition="bottom right", marker=dict(color="blue", size=10)))
+        
+        # Vecteurs de force (Flèches)
+        fig.add_annotation(x=0, y=-0.7, ax=0, ay=0.3, xref="x", yref="y", axref="x", ayref="y", text="", showarrow=True, arrowhead=3, arrowsize=1, arrowwidth=3, arrowcolor="red")
+        fig.add_annotation(x=0, y=0.6, ax=0, ay=-0.4, xref="x", yref="y", axref="x", ayref="y", text="", showarrow=True, arrowhead=3, arrowsize=1, arrowwidth=3, arrowcolor="blue")
+        
+        fig.update_layout(showlegend=False, xaxis=dict(visible=False, range=[-2, 2]), yaxis=dict(visible=False, range=[-1.5, 1.5]), margin=dict(l=10, r=10, t=10, b=10), height=300)
+        st.plotly_chart(fig, use_container_width=True)
         # Remplacez "chemin_vers_votre_image.jpg" par le nom ou le lien de votre image
-        st.image("chemin_vers_votre_image.jpg", caption="Schéma des forces G et C", use_container_width=True)
+        st.image("equilibre_navire.jpg", caption="Schéma des forces G et C", use_container_width=True)
 
     st.divider()
     
     st.subheader("Le paradoxe de l'acier creux et les lignes de charge")
 
-    # 1. Création de deux colonnes (60% pour le texte, 40% pour l'image)
+        # 1. Création de deux colonnes (60% pour le texte, 40% pour l'image)
     col_texte, col_image = st.columns([3, 2])
 
     # 2. Contenu de la colonne de gauche (le texte)
     with col_texte:
         st.write(
-            "Un lingot d'acier coule instantanément car sa masse volumique ($7800 \text{ kg/m}^3$) est bien supérieure à celle de l'eau ($1000 \text{ kg/m}^3$). "
+            "Un lingot d'acier coule instantanément car sa masse volumique ($7800 \\text{ kg/m}^3$) est bien supérieure à celle de l'eau ($1000 \\text{ kg/m}^3$). "
             "Pourtant, un cargo construit avec des milliers de tonnes d'acier flotte parfaitement. Le secret réside dans la géométrie de la coque : "
             "en étant large et creuse, elle enferme un immense **volume d'air**. La masse volumique globale du navire (masse totale divisée "
             "par le volume total de la coque) devient inférieure à celle de l'eau, lui permettant de flotter.\n\n"
@@ -1110,10 +1139,59 @@ with tab3:
             "que l'eau douce des fleuves, le navire y flotte plus haut)."
         )
 
-    # 3. Contenu de la colonne de droite (l'image)
+    # 3. Contenu de la colonne de droite (le graphique vectoriel de la marque de Plimsoll)
     with col_image:
-        # Remplacez "chemin_vers_votre_image_2.jpg" par le nom ou le lien de votre image
-        st.image("chemin_vers_votre_image_2.jpg", caption="Marque de Plimsoll sur une coque", use_container_width=True)
+        st.caption("**Légende de la marque de Plimsoll :**")
+        st.markdown(
+            "- <span style='color:#636EFA; font-weight:bold;'>TF / F</span> : Eau douce tropicale / Eau douce (le navire s'enfonce plus, eau moins dense)\n"
+            "- <span style='color:#00CC96; font-weight:bold;'>T / S / W</span> : Eau de mer (Tropicale / Été / Hiver)\n"
+            "- **WNA** : Hiver dans l'Atlantique Nord (limite la plus stricte, mer difficile)", 
+            unsafe_allow_html=True
+        )
+        
+        # Création du graphique Plotly pour simuler la ligne de charge
+        fig2 = go.Figure()
+        
+        # Ligne verticale principale du flanc du navire
+        fig2.add_shape(type="line", x0=0, y0=-1.5, x1=0, y1=1.5, line=dict(color="DarkSlateGray", width=5))
+        
+        # Cercle et ligne horizontale principale (Ligne d'été 'S')
+        fig2.add_shape(type="circle", x0=-0.6, y0=-0.3, x1=0.6, y1=0.3, line=dict(color="DarkSlateGray", width=4))
+        fig2.add_shape(type="line", x0=-0.9, y0=0, x1=0.9, y1=0, line=dict(color="DarkSlateGray", width=4))
+        
+        # Lignes de charge à droite (Eau de mer)
+        niveaux_mer = [
+            (0.6, "T (Tropical)", "#00CC96"),
+            (0.0, "S (Été)", "#00CC96"),
+            (-0.4, "W (Hiver)", "#00CC96"),
+            (-0.9, "WNA", "#00CC96")
+        ]
+        for y, label, color in niveaux_mer:
+            fig2.add_shape(type="line", x0=0, y0=y, x1=0.8, y1=y, line=dict(color=color, width=4))
+            fig2.add_annotation(x=0.9, y=y, text=label.split()[0], showarrow=False, font=dict(color=color, size=12), xanchor="left")
+            
+        # Lignes de charge à gauche (Eau douce)
+        niveaux_douce = [
+            (0.8, "TF (Tropic Fresh)", "#636EFA"),
+            (0.3, "F (Fresh Water)", "#636EFA")
+        ]
+        for y, label, color in niveaux_douce:
+            fig2.add_shape(type="line", x0=-0.8, y0=y, x1=0, y1=y, line=dict(color=color, width=4))
+            fig2.add_annotation(x=-0.9, y=y, text=label.split()[0], showarrow=False, font=dict(color=color, size=12), xanchor="right")
+
+        # Ajustement des axes et marges
+        fig2.update_layout(
+            showlegend=False,
+            xaxis=dict(visible=False, range=[-1.5, 1.5]),
+            yaxis=dict(visible=False, range=[-1.8, 1.8]),
+            margin=dict(l=10, r=10, t=10, b=10),
+            height=320,
+            template="plotly_white"
+        )
+        
+        st.plotly_chart(fig2, use_container_width=True)
+
+        st.image("paradoxe_creux_plein.jpg", caption="Marque de Plimsoll sur une coque", use_container_width=True)
     
     # --- LAB INTERACTIF : SCHÉMA DYNAMIQUE DE CHARGEMENT DE CARGO ---
     st.subheader("Simulateur dynamique de ligne de flottaison d'un cargo")
