@@ -992,7 +992,11 @@ with tab2:
             f"L'eau de la nappe presente une forte agressivite potentielle pour les futurs betons, typique des ions Sulfate (SO42-) "
             f"dont la concentration estimee est de {st.session_state.sulfates_val} ppm."
         )
-        
+        try:
+            st.image("parcelle.jpg", caption="Pollution des eaux de fouille sur un chantier")
+        except Exception:
+            st.warning("parcelle.jpg' est introuvable.")
+            
         reactif_choisi = st.selectbox(
             "Quel reactif devez-vous utiliser pour valider la presence des ions Sulfate ?",
             ["Choisir...", "Soude (Hydroxyde de sodium)", "Nitrate d'argent", "Chlorure de baryum"],
