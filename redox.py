@@ -792,20 +792,22 @@ with tab1:
         "À l'inverse, extraire l'oxygène d'un oxyde pour récupérer le métal pur a été nommé la **Réduction** (diminution de la masse de la matière)."
     )
 
-    # Insertion de votre image locale pour l'historique
-    try:
+        # Insertion de votre image locale pour l'historique
+    if os.path.exists("historique.jpg"):
         st.image(
-            "historique.jpg", caption="Illustration historique des travaux de Lavoisier sur l'oxygène"  )
-    except FileNotFoundError:
+            "historique.jpg",
+            caption="Illustration historique des travaux de Lavoisier sur l'oxygène",
+            use_container_width=True,
+        )
+    else:
         st.warning("L'image 'historique.jpg' n'a pas été trouvée dans le dossier.")
-
 
     st.subheader("Comment la définition a-t-elle évolué ?")
     st.write(
         "Au fil des siècles, les chimistes ont observé des réactions totalement identiques "
         "à la corrosion ou à la combustion, mais qui ne faisaient intervenir **aucun atome d'oxygène**."
     )
-    
+
     st.info(
         "Le grand virage scientifique a eu lieu au début du 20e siècle avec la découverte de l'électron "
         "par J.J. Thomson (1897) et la théorie de la liaison chimique de Gilbert Lewis. "
@@ -813,37 +815,47 @@ with tab1:
         "c'est l'**échange d'électrons**."
     )
 
-
     st.subheader("Les travaux historiques marquants")
+
+    # --- SECTION LAVOISIER ---
     col_11, col_12 = st.columns(2)
     with col_11:
-        st.markdown("- **1777 - Antoine Lavoisier :** Théorie de la combustion. Définition de l'oxydation par fixation de l'oxygène.")
+        st.markdown(
+            "- **1777 - Antoine Lavoisier :** Théorie de la combustion. Définition de l'oxydation par fixation de l'oxygène."
+        )
     with col_12:
-        try:
+        if os.path.exists("Lavoisier.jpg"):
             st.image("Lavoisier.jpg", caption="Antoine Lavoisier")
-        except Exception:
+        else:
             st.warning("L'image 'Lavoisier.jpg' est introuvable.")
 
+    # --- SECTION VOLTA ---
     col_13, col_14 = st.columns(2)
     with col_13:
-        st.markdown("- **1800 - Alessandro Volta :** Invention de la première pile électrique (Cuivre / Zinc). Début de l'électrochimie.")
+        st.markdown(
+            "- **1800 - Alessandro Volta :** Invention de la première pile électrique (Cuivre / Zinc). Début de l'électrochimie."
+        )
     with col_14:
-        try:
+        if os.path.exists("Volta.jpg"):
             st.image("Volta.jpg", caption="Alessandro Volta")
-        except Exception:
-            st.warning("Volta.jpg' est introuvable.")
+        else:
+            st.warning("L'image 'Volta.jpg' est introuvable.")
 
-
+    # --- SECTION FARADAY ---
     col_15, col_16 = st.columns(2)
     with col_15:
-        st.markdown("- **1834 - Michael Faraday :** Établissement des lois de l'électrolyse, reliant la chimie à la quantité d'électricité.")
+        st.markdown(
+            "- **1834 - Michael Faraday :** Établissement des lois de l'électrolyse, reliant la chimie à la quantité d'électricité."
+        )
     with col_16:
-        try:
+        if os.path.exists("Faraday.jpg"):
             st.image("Faraday.jpg", caption="Michael Faraday")
-        except Exception:
-            st.warning("Faraday.jpg' est introuvable.") 
-            
-    st.markdown("- **1920s - Extension moderne :** Définition définitive et universelle de l'oxydoréduction par transfert d'électrons.")
+        else:
+            st.warning("L'image 'Faraday.jpg' est introuvable.")
+
+    st.markdown(
+        "- **1920s - Extension moderne :** Définition définitive et universelle de l'oxydoréduction par transfert d'électrons."
+    )
 
     st.divider()
     st.subheader("Pourquoi cette étude dans vos filières ?")
@@ -853,34 +865,39 @@ with tab1:
         "toutes ces problématiques découlent directement des découvertes de ces scientifiques."
     )
 
-    col_17, col_18, col_19, col_20= st.columns(4)
+    # --- APPLICATIONS MÉTIERS (4 COLONNES) ---
+    col_17, col_18, col_19, col_20 = st.columns(4)
     with col_17:
-        try:
+        if os.path.exists("rouille_tp.jpg"):
             st.image("rouille_tp.jpg", caption="dégradation du béton armé")
-        except Exception:
-            st.warning("rouille_tp.jpg' est introuvable.")
+        else:
+            st.warning("L'image 'rouille_tp.jpg' est introuvable.")
+
     with col_18:
-        try:
+        if os.path.exists("rouille_routier.jpg"):
             st.image("rouille_routier.jpg", caption="corrosion des châssis")
-        except Exception:
-            st.warning("Volta.jpg' est introuvable.")
+        else:
+            st.warning("L'image 'rouille_routier.jpg' est introuvable.")
+
     with col_19:
-        try:
+        if os.path.exists("rouille_mm.jpg"):
             st.image("rouille_mm.jpg", caption="dégradation structure")
-        except Exception:
-            st.warning("rouille_tp.jpg' est introuvable.")
+        else:
+            st.warning("L'image 'rouille_mm.jpg' est introuvable.")
+
     with col_20:
-        try:
+        if os.path.exists("rouille_geo.jpg"):
             st.image("rouille_geo.jpg", caption="repères topographiques")
-        except Exception:
-            st.warning("Volta.jpg' est introuvable.")
+        else:
+            st.warning("L'image 'rouille_geo.jpg' est introuvable.")
+
     st.divider()
-           
+
     st.write(
         "Découvrez l'évolution de la science à travers cette mise en scène historique."
     )
 
-    # Découpage en deux colonnes pour l'histoire textuelle et l'image
+    # --- SECTION CARICATURE ET TEXTE BLEU ---
     col_graph_hist, col_bd_hist = st.columns(2)
 
     with col_graph_hist:
@@ -888,7 +905,7 @@ with tab1:
             "**La BD humoristique textuelle : La révolution invisible de l'électron**"
         )
 
-        # Affichage du texte narratif dans un encadré bleu (st.info)
+        # Affichage du texte narratif dans l'encadré bleu d'information
         st.info(
             "**Case 1 :** Antoine Lavoisier, en perruque blanche dans son laboratoire de 1777, regarde un morceau de fer brûler sous une cloche de verre. Il note fièrement sur son cahier : 'Le fer s'associe avec l'oxygène de l'air pour devenir de la rouille. J'appelle cela l'oxydation ! C'est clair et limpide !'.\n\n"
             "**Case 2 :** Un siècle plus tard, en 1897, le physicien J.J. Thomson observe ses tubes à rayons cathodiques avec une loupe. Il sursaute sur sa chaise en découvrant une particule minuscule et s'écrie : 'Eurêka ! Il y a des grains d'électricité négative encore plus petits que les atomes ! Je vais les appeler les électrons !'.\n\n"
@@ -897,14 +914,13 @@ with tab1:
         )
 
     with col_bd_hist:
-        # Intégration de votre image locale en 4 cases
-        try:
+        if os.path.exists("historique_caricature.jpg"):
             st.image(
                 "historique_caricature.jpg",
                 caption="Illustration humoristique du changement de modèle scientifique en 4 cases",
                 use_container_width=True,
             )
-        except Exception:
+        else:
             st.warning(
                 "L'image 'historique_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
             )
