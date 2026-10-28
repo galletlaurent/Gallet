@@ -829,77 +829,6 @@ with tab2:
     col_graph_arch, col_bd_arch = st.columns([0.55, 0.45])
     
     with col_graph_arch:
-        import matplotlib.pyplot as plt
-        import matplotlib.patches as patches
-        
-        # Calcul de la position d'équilibre hydrostatique
-        # Si densité < 1000, l'objet flotte (partie immergée = ratio_densite)
-        # Si densité >= 1000, l'objet coule au fond (immersion totale = 1.0)
-        densite_eau = 1000.0
-        volume_total = 1.0  # Cube de 1x1
-        cote = 1.0
-        
-        fig_arch, ax_arch = plt.subplots(figsize=(5, 4.2), facecolor="white")
-        ax_arch.set_facecolor("white")
-        
-        # Tracé de la cuve et de l'eau (ligne d'eau fixe à y = 2.0)
-        ax_arch.add_patch(patches.Rectangle((0.5, 0), 4.0, 2.0, facecolor="#0284c7", alpha=0.4, label="Eau (1000 kg/m³)", zorder=1))
-        ax_arch.axhline(2.0, color="#0284c7", linewidth=2.5, linestyle="-", zorder=2)
-        
-        if masse_vol_objet < densite_eau:
-            # Cas de flottaison : immersion partielle
-            fraction_immergee = masse_vol_objet / densite_eau
-            y_bas_objet = 2.0 - fraction_immergee
-            statut_visu = "L'objet flotte"
-            color_bloc = "#e2e8f0"  # Gris clair (bois)
-            
-            poids_val = volume_total * masse_vol_objet * 9.81 / 1000.0
-            poussee_val = poids_val  # Équilibre parfait
-        else:
-            # Cas de submersion : l'objet coule au fond (y_bas = 0.2)
-            y_bas_objet = 0.2
-            statut_visu = "L'objet coule au fond"
-            color_bloc = "#94a3b8"  # Gris foncé (pierre)
-            
-            poids_val = volume_total * masse_vol_objet * 9.81 / 1000.0
-            poussee_val = volume_total * densite_eau * 9.81 / 1000.0  # Poussee maximale limitée au volume du bloc
-            
-        # Dessin du bloc solide
-        x_gauche_objet = 2.0
-        ax_arch.add_patch(patches.Rectangle((x_gauche_objet, y_bas_objet), cote, cote, facecolor=color_bloc, edgecolor="#1e293b", linewidth=2, zorder=3))
-        
-        # Coordonnées des centres d'applications des forces
-        x_centre = x_gauche_objet + 0.5
-        y_centre_poids = y_bas_objet + 0.5
-        
-        # Centre de carène (milieu de la zone immergée)
-        if masse_vol_objet < densite_eau:
-            hauteur_immergee = fraction_immergee
-            y_centre_poussee = y_bas_objet + (hauteur_immergee / 2.0)
-        else:
-            y_centre_poussee = y_bas_objet + 0.5
-            
-        # Échelle de tracé pour les vecteurs forces (flèches)
-        echelle_fleche = 0.6 / (volume_total * 1800 * 9.81 / 1000.0)
-        longueur_poids = poids_val * echelle_fleche
-        longueur_poussee = poussee_val * echelle_fleche
-        
-        # Tracé des vecteurs forces avec flèches explicites
-        # Poids (vers le bas, noir)
-        ax_arch.arrow(x_centre, y_centre_poids, 0, -longueur_poids, head_width=0.12, head_length=0.12, fc="#1e293b", ec="#1e293b", linewidth=2.5, length_includes_head=True, zorder=4)
-        ax_arch.text(x_centre + 0.15, y_centre_poids - (longueur_poids / 2), r"$\vec{P}$", color="#1e293b", weight="bold", fontsize=12)
-        
-        # Poussée d'Archimède (vers le haut, bleu roi)
-        ax_arch.arrow(x_centre, y_centre_poussee, 0, longueur_poussee, head_width=0.12, head_length=0.12, fc="#1d4ed8", ec="#1e3a8a", linewidth=2.5, length_includes_head=True, zorder=4)
-        ax_arch.text(x_centre - 0.35, y_centre_poussee + (longueur_poussee / 2), r"$\vec{\Pi}$", color="#1d4ed8", weight="bold", fontsize=12)
-        
-        ax_arch.set_xlim(0, 5)
-        ax_arch.set_ylim(0, 3.5)
-        ax_arch.axis("off")
-        st.pyplot(fig_arch)
-        st.caption(f"État du système : {statut_visu} (Poids = {poids_val:.1f} N | Poussée = {poussee_val:.1f} N)")
-
-    with col_bd_arch:
         st.write("**La BD humoristique textuelle : La révolte des Molécules**")
         st.info(
             "**Case 1 :** Un bloc de plomb lourd s'apprête à sauter du plongeoir d'une piscine en bombant le torse : 'Je vais fendre l'eau comme un météore !'.\n\n"
@@ -908,12 +837,85 @@ with tab2:
             "**Case 4 :** Si le bloc est en bois léger, les molécules le rejettent victorieusement à la surface en criant : 'Et un retour à l'envoyeur, un !'. Si le bloc est trop lourd, il descend au fond mais les molécules s'essuient le front : 'On a perdu la bataille de la gravité, mais on lui a quand même retiré pas mal de kilos !'."
         )
 
+    with col_bd_arch:
+
         try:
             # L'image utilise bien le nom exact configuré dans votre projet
             st.image("archimede_bassin.jpeg", caption="Quelle plongée !", use_container_width=True)
         except Exception:
             st.warning("L'image 'archimede_bassin.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
-            
+                 
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+    
+    # Calcul de la position d'équilibre hydrostatique
+    # Si densité < 1000, l'objet flotte (partie immergée = ratio_densite)
+    # Si densité >= 1000, l'objet coule au fond (immersion totale = 1.0)
+    densite_eau = 1000.0
+    volume_total = 1.0  # Cube de 1x1
+    cote = 1.0
+    
+    fig_arch, ax_arch = plt.subplots(figsize=(5, 4.2), facecolor="white")
+    ax_arch.set_facecolor("white")
+    
+    # Tracé de la cuve et de l'eau (ligne d'eau fixe à y = 2.0)
+    ax_arch.add_patch(patches.Rectangle((0.5, 0), 4.0, 2.0, facecolor="#0284c7", alpha=0.4, label="Eau (1000 kg/m³)", zorder=1))
+    ax_arch.axhline(2.0, color="#0284c7", linewidth=2.5, linestyle="-", zorder=2)
+    
+    if masse_vol_objet < densite_eau:
+        # Cas de flottaison : immersion partielle
+        fraction_immergee = masse_vol_objet / densite_eau
+        y_bas_objet = 2.0 - fraction_immergee
+        statut_visu = "L'objet flotte"
+        color_bloc = "#e2e8f0"  # Gris clair (bois)
+        
+        poids_val = volume_total * masse_vol_objet * 9.81 / 1000.0
+        poussee_val = poids_val  # Équilibre parfait
+    else:
+        # Cas de submersion : l'objet coule au fond (y_bas = 0.2)
+        y_bas_objet = 0.2
+        statut_visu = "L'objet coule au fond"
+        color_bloc = "#94a3b8"  # Gris foncé (pierre)
+        
+        poids_val = volume_total * masse_vol_objet * 9.81 / 1000.0
+        poussee_val = volume_total * densite_eau * 9.81 / 1000.0  # Poussee maximale limitée au volume du bloc
+        
+    # Dessin du bloc solide
+    x_gauche_objet = 2.0
+    ax_arch.add_patch(patches.Rectangle((x_gauche_objet, y_bas_objet), cote, cote, facecolor=color_bloc, edgecolor="#1e293b", linewidth=2, zorder=3))
+    
+    # Coordonnées des centres d'applications des forces
+    x_centre = x_gauche_objet + 0.5
+    y_centre_poids = y_bas_objet + 0.5
+    
+    # Centre de carène (milieu de la zone immergée)
+    if masse_vol_objet < densite_eau:
+        hauteur_immergee = fraction_immergee
+        y_centre_poussee = y_bas_objet + (hauteur_immergee / 2.0)
+    else:
+        y_centre_poussee = y_bas_objet + 0.5
+        
+    # Échelle de tracé pour les vecteurs forces (flèches)
+    echelle_fleche = 0.6 / (volume_total * 1800 * 9.81 / 1000.0)
+    longueur_poids = poids_val * echelle_fleche
+    longueur_poussee = poussee_val * echelle_fleche
+    
+    # Tracé des vecteurs forces avec flèches explicites
+    # Poids (vers le bas, noir)
+    ax_arch.arrow(x_centre, y_centre_poids, 0, -longueur_poids, head_width=0.12, head_length=0.12, fc="#1e293b", ec="#1e293b", linewidth=2.5, length_includes_head=True, zorder=4)
+    ax_arch.text(x_centre + 0.15, y_centre_poids - (longueur_poids / 2), r"$\vec{P}$", color="#1e293b", weight="bold", fontsize=12)
+    
+    # Poussée d'Archimède (vers le haut, bleu roi)
+    ax_arch.arrow(x_centre, y_centre_poussee, 0, longueur_poussee, head_width=0.12, head_length=0.12, fc="#1d4ed8", ec="#1e3a8a", linewidth=2.5, length_includes_head=True, zorder=4)
+    ax_arch.text(x_centre - 0.35, y_centre_poussee + (longueur_poussee / 2), r"$\vec{\Pi}$", color="#1d4ed8", weight="bold", fontsize=12)
+    
+    ax_arch.set_xlim(0, 5)
+    ax_arch.set_ylim(0, 3.5)
+    ax_arch.axis("off")
+    st.pyplot(fig_arch)
+    st.caption(f"État du système : {statut_visu} (Poids = {poids_val:.1f} N | Poussée = {poussee_val:.1f} N)")
+
+
     st.divider()
 
     # --- SECTION LOGIQUE : ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 2 ---
@@ -1466,61 +1468,6 @@ with tab4:
     col_graph_fl, col_bd_fl = st.columns([0.55, 0.45])
     
     with col_graph_fl:
-        import matplotlib.pyplot as plt
-        import matplotlib.patches as patches
-        
-        # Objet fixe de densité 900 kg/m³
-        rho_bloc_fixe = 900.0
-        cote_b = 1.0
-        
-        fig_fl, ax_fl = plt.subplots(figsize=(5, 4.2), facecolor="white")
-        ax_fl.set_facecolor("white")
-        
-        # Dessin du fluide sélectionné (niveau à y = 2.0)
-        ax_fl.add_patch(patches.Rectangle((0.5, 0), 4.0, 2.0, facecolor=couleur_fluide, alpha=0.5, zorder=1))
-        ax_fl.axhline(2.0, color="#475569", linewidth=2, linestyle="-", zorder=2)
-        
-        if rho_bloc_fixe < rho_fluide_sim:
-            # Cas de flottaison partielle
-            ratio_imm = rho_bloc_fixe / rho_fluide_sim
-            y_base_b = 2.0 - ratio_imm
-            statut_fl = "Le bloc flotte à l'équilibre"
-            p_val = 1.0 * rho_bloc_fixe * 9.81 / 1000.0
-            pi_val = p_val
-        else:
-            # Cas où le bloc coule (le bloc de 900 coule dans l'huile de 800)
-            y_base_b = 0.2
-            statut_fl = "Le bloc est trop lourd et COULE au fond"
-            p_val = 1.0 * rho_bloc_fixe * 9.81 / 1000.0
-            pi_val = 1.0 * rho_fluide_sim * 9.81 / 1000.0
-            
-        # Dessin du bloc en bois ($900\text{ kg/m}^3$)
-        ax_fl.add_patch(patches.Rectangle((2.0, y_base_b), cote_b, cote_b, facecolor="#b45309", edgecolor="#1e293b", linewidth=2, zorder=3))
-        
-        # Tracé des axes vectoriels
-        x_c = 2.5
-        y_g = y_base_b + 0.5
-        y_car = y_base_b + ((2.0 - y_base_b)/2.0) if rho_bloc_fixe < rho_fluide_sim else y_base_b + 0.5
-        
-        echelle_f = 0.6 / (900.0 * 9.81 / 1000.0)
-        len_p = p_val * echelle_f
-        len_pi = pi_val * echelle_f
-        
-        # Poids (Noir)
-        ax_fl.arrow(x_c, y_g, 0, -len_p, head_width=0.12, head_length=0.12, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=4)
-        ax_fl.text(x_c + 0.15, y_g - (len_p / 2), r"$\vec{P}$", color="black", weight="bold", fontsize=12)
-        
-        # Poussée (Bleu)
-        ax_fl.arrow(x_c, y_car, 0, len_pi, head_width=0.12, head_length=0.12, fc="#1d4ed8", ec="#1e3a8a", linewidth=2.5, length_includes_head=True, zorder=4)
-        ax_fl.text(x_c - 0.35, y_car + (len_pi / 2), r"$\vec{\Pi}$", color="#1d4ed8", weight="bold", fontsize=12)
-        
-        ax_fl.set_xlim(0, 5)
-        ax_fl.set_ylim(0, 3.5)
-        ax_fl.axis("off")
-        st.pyplot(fig_fl)
-        st.caption(f"Résultat : {statut_fl} (Poids = {p_val:.1f} N | Poussée = {pi_val:.1f} N)")
-
-    with col_bd_fl:
         st.write("**La BD humoristique textuelle : Le grand saut des cubes**")
         st.info(
             "**Case 1 :** Un cube en plastique dur de $900 \\text{ kg/m}^3$ se présente devant trois bassins alignés : un pot d'huile, une cuve d'eau pure et un baril de glycérine visqueuse.\n\n"
@@ -1528,13 +1475,71 @@ with tab4:
             "**Case 3 :** Il saute dans la cuve d'eau pure ($1000 \\text{ kg/m}^3$). Les molécules d'eau se bousculent et parviennent à le bloquer juste avant la noyade. Le cube flotte timidement, le nez hors de l'eau.\n\n"
             "**Case 4 :** Il plonge enfin dans le baril de glycérine ($1260 \\text{ kg/m}^3$). Les molécules de glycérine, unies comme un mur de briques solides, le repoussent instantanément vers le ciel : 'Pas chez nous, l'ami ! Tu es un poids plume pour nous !'. Le cube se retrouve assis en surface, totalement au sec."
         )
+
+    with col_bd_fl:
         try:
             # L'image utilise bien le nom exact configuré dans votre projet
             st.image("archimede_cube.jpeg", caption="Vais-je me noyer ??? ", use_container_width=True)
         except Exception:
             st.warning("L'image 'archimede_cube.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
-            
+
         
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+    
+    # Objet fixe de densité 900 kg/m³
+    rho_bloc_fixe = 900.0
+    cote_b = 1.0
+    
+    fig_fl, ax_fl = plt.subplots(figsize=(5, 4.2), facecolor="white")
+    ax_fl.set_facecolor("white")
+    
+    # Dessin du fluide sélectionné (niveau à y = 2.0)
+    ax_fl.add_patch(patches.Rectangle((0.5, 0), 4.0, 2.0, facecolor=couleur_fluide, alpha=0.5, zorder=1))
+    ax_fl.axhline(2.0, color="#475569", linewidth=2, linestyle="-", zorder=2)
+    
+    if rho_bloc_fixe < rho_fluide_sim:
+        # Cas de flottaison partielle
+        ratio_imm = rho_bloc_fixe / rho_fluide_sim
+        y_base_b = 2.0 - ratio_imm
+        statut_fl = "Le bloc flotte à l'équilibre"
+        p_val = 1.0 * rho_bloc_fixe * 9.81 / 1000.0
+        pi_val = p_val
+    else:
+        # Cas où le bloc coule (le bloc de 900 coule dans l'huile de 800)
+        y_base_b = 0.2
+        statut_fl = "Le bloc est trop lourd et COULE au fond"
+        p_val = 1.0 * rho_bloc_fixe * 9.81 / 1000.0
+        pi_val = 1.0 * rho_fluide_sim * 9.81 / 1000.0
+        
+    # Dessin du bloc en bois ($900\text{ kg/m}^3$)
+    ax_fl.add_patch(patches.Rectangle((2.0, y_base_b), cote_b, cote_b, facecolor="#b45309", edgecolor="#1e293b", linewidth=2, zorder=3))
+    
+    # Tracé des axes vectoriels
+    x_c = 2.5
+    y_g = y_base_b + 0.5
+    y_car = y_base_b + ((2.0 - y_base_b)/2.0) if rho_bloc_fixe < rho_fluide_sim else y_base_b + 0.5
+    
+    echelle_f = 0.6 / (900.0 * 9.81 / 1000.0)
+    len_p = p_val * echelle_f
+    len_pi = pi_val * echelle_f
+    
+    # Poids (Noir)
+    ax_fl.arrow(x_c, y_g, 0, -len_p, head_width=0.12, head_length=0.12, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=4)
+    ax_fl.text(x_c + 0.15, y_g - (len_p / 2), r"$\vec{P}$", color="black", weight="bold", fontsize=12)
+    
+    # Poussée (Bleu)
+    ax_fl.arrow(x_c, y_car, 0, len_pi, head_width=0.12, head_length=0.12, fc="#1d4ed8", ec="#1e3a8a", linewidth=2.5, length_includes_head=True, zorder=4)
+    ax_fl.text(x_c - 0.35, y_car + (len_pi / 2), r"$\vec{\Pi}$", color="#1d4ed8", weight="bold", fontsize=12)
+    
+    ax_fl.set_xlim(0, 5)
+    ax_fl.set_ylim(0, 3.5)
+    ax_fl.axis("off")
+    st.pyplot(fig_fl)
+    st.caption(f"Résultat : {statut_fl} (Poids = {p_val:.1f} N | Poussée = {pi_val:.1f} N)")
+
+
+    
     st.divider()
 
     # --- SECTION LOGIQUE : ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 4 ---
@@ -1722,62 +1727,6 @@ with tab5:
     col_graph_maint, col_bd_maint = st.columns([0.55, 0.45])
     
     with col_graph_maint:
-        import matplotlib.pyplot as plt
-        import matplotlib.patches as patches
-        
-        fig_mn, ax_mn = plt.subplots(figsize=(5, 4.2), facecolor="white")
-        ax_mn.set_facecolor("white")
-        
-        # Dessin de la cuve industrielle (parois grises)
-        ax_mn.plot([1.0, 1.0, 4.0, 4.0], [3.2, 0.2, 0.2, 3.2], color="#475569", linewidth=3, zorder=2)
-        
-        # Dessin du liquide (hauteur variable)
-        if hauteur_liquide > 0:
-            ax_mn.add_patch(patches.Rectangle((1.02, 0.22), 2.96, hauteur_liquide, facecolor="#0284c7", alpha=0.5, zorder=1))
-            
-        # Plongeur de mesure fixe suspendu (x = 2.2, de y = 0.5 à y = 2.5, hauteur = 2.0)
-        ax_mn.add_patch(patches.Rectangle((2.2, 0.5), 0.6, 2.0, facecolor="#94a3b8", edgecolor="#1e293b", linewidth=2, zorder=3))
-        # Câble de suspension
-        ax_mn.plot([2.5, 2.5], [2.5, 3.5], color="#1e293b", linewidth=1.5, linestyle="-", zorder=2)
-        
-        # Calcul du volume immergé du plongeur
-        # Le plongeur s'étend de y=0.5 à y=2.5. Sa hauteur totale est 2.0.
-        if hauteur_liquide + 0.2 <= 0.5:
-            hauteur_immergee_plongeur = 0.0
-        elif hauteur_liquide + 0.2 >= 2.5:
-            hauteur_immergee_plongeur = 2.0
-        else:
-            hauteur_immergee_plongeur = (hauteur_liquide + 0.2) - 0.5
-            
-        # Intensité des forces pour affichage des flèches vectorielles
-        # Poids propre du plongeur fixe (Noir)
-        poids_plongeur = 15.0
-        poussee_maint = hauteur_immergee_plongeur * 6.0  # Proportionnel au niveau immergé
-        
-        x_arrow = 2.5
-        y_arrow_p = 1.5
-        
-        # Échelle de tracé
-        scale_m = 1.2 / 15.0
-        len_p_m = poids_plongeur * scale_m
-        len_pi_m = poussee_maint * scale_m
-        
-        # Flèche Poids (vers le bas)
-        ax_mn.arrow(x_arrow, y_arrow_p, 0, -len_p_m, head_width=0.1, head_length=0.1, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=4)
-        ax_mn.text(x_arrow + 0.15, y_arrow_p - (len_p_m / 2), r"$\vec{P}$", color="black", weight="bold", fontsize=12)
-        
-        # Flèche Poussée d'Archimède (vers le haut, s'affiche si la hauteur immergée > 0)
-        if len_pi_m > 0:
-            ax_mn.arrow(x_arrow, 0.5 + (hauteur_immergee_plongeur / 2.0), 0, len_pi_m, head_width=0.1, head_length=0.1, fc="#1d4ed8", ec="#1e3a8a", linewidth=2.5, length_includes_head=True, zorder=4)
-            ax_mn.text(x_arrow - 0.35, 0.5 + (hauteur_immergee_plongeur / 2.0) + (len_pi_m / 2), r"$\vec{\Pi}$", color="#1d4ed8", weight="bold", fontsize=12)
-            
-        ax_mn.set_xlim(0, 5)
-        ax_mn.set_ylim(0, 4)
-        ax_mn.axis("off")
-        st.pyplot(fig_mn)
-        st.caption(f"Bilan de maintenance : Hauteur immergée du plongeur = {hauteur_immergee_plongeur:.2f} m | Poussée d'Archimède = {poussee_maint:.1f} N")
-
-    with col_bd_maint:
         st.write("**La BD humoristique textuelle : Le mystère de la Cuve 4**")
         st.info(
             "**Case 1 :** Un technicien de maintenance en bleu de travail consulte sa console de contrôle d'usine. Une alarme rouge clignote en hurlant : 'Alerte ! Cuve 4 vide ! Niveau critique !'.\n\n"
@@ -1786,6 +1735,8 @@ with tab5:
             "**Case 4 :** Le technicien remplace le plongeur défaillant par un neuf étanche. Le nouveau plongeur remonte aussitôt comme un bouchon, suspendu à son câble. La flèche bleue d'Archimède se déploie et la console verte s'éteint : 'Anomalie résolue, l'hydrostatique a repris ses droits !'."
         )
 
+    with col_bd_maint:
+
         try:
             # L'image utilise bien le nom exact configuré dans votre projet
             st.image("archimede_mm.jpeg", caption="Quelle plongée !", use_container_width=True)
@@ -1793,6 +1744,63 @@ with tab5:
             st.warning("L'image 'archimede_mm.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
             
     st.divider()
+
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+    
+    fig_mn, ax_mn = plt.subplots(figsize=(5, 4.2), facecolor="white")
+    ax_mn.set_facecolor("white")
+    
+    # Dessin de la cuve industrielle (parois grises)
+    ax_mn.plot([1.0, 1.0, 4.0, 4.0], [3.2, 0.2, 0.2, 3.2], color="#475569", linewidth=3, zorder=2)
+    
+    # Dessin du liquide (hauteur variable)
+    if hauteur_liquide > 0:
+        ax_mn.add_patch(patches.Rectangle((1.02, 0.22), 2.96, hauteur_liquide, facecolor="#0284c7", alpha=0.5, zorder=1))
+        
+    # Plongeur de mesure fixe suspendu (x = 2.2, de y = 0.5 à y = 2.5, hauteur = 2.0)
+    ax_mn.add_patch(patches.Rectangle((2.2, 0.5), 0.6, 2.0, facecolor="#94a3b8", edgecolor="#1e293b", linewidth=2, zorder=3))
+    # Câble de suspension
+    ax_mn.plot([2.5, 2.5], [2.5, 3.5], color="#1e293b", linewidth=1.5, linestyle="-", zorder=2)
+    
+    # Calcul du volume immergé du plongeur
+    # Le plongeur s'étend de y=0.5 à y=2.5. Sa hauteur totale est 2.0.
+    if hauteur_liquide + 0.2 <= 0.5:
+        hauteur_immergee_plongeur = 0.0
+    elif hauteur_liquide + 0.2 >= 2.5:
+        hauteur_immergee_plongeur = 2.0
+    else:
+        hauteur_immergee_plongeur = (hauteur_liquide + 0.2) - 0.5
+        
+    # Intensité des forces pour affichage des flèches vectorielles
+    # Poids propre du plongeur fixe (Noir)
+    poids_plongeur = 15.0
+    poussee_maint = hauteur_immergee_plongeur * 6.0  # Proportionnel au niveau immergé
+    
+    x_arrow = 2.5
+    y_arrow_p = 1.5
+    
+    # Échelle de tracé
+    scale_m = 1.2 / 15.0
+    len_p_m = poids_plongeur * scale_m
+    len_pi_m = poussee_maint * scale_m
+    
+    # Flèche Poids (vers le bas)
+    ax_mn.arrow(x_arrow, y_arrow_p, 0, -len_p_m, head_width=0.1, head_length=0.1, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=4)
+    ax_mn.text(x_arrow + 0.15, y_arrow_p - (len_p_m / 2), r"$\vec{P}$", color="black", weight="bold", fontsize=12)
+    
+    # Flèche Poussée d'Archimède (vers le haut, s'affiche si la hauteur immergée > 0)
+    if len_pi_m > 0:
+        ax_mn.arrow(x_arrow, 0.5 + (hauteur_immergee_plongeur / 2.0), 0, len_pi_m, head_width=0.1, head_length=0.1, fc="#1d4ed8", ec="#1e3a8a", linewidth=2.5, length_includes_head=True, zorder=4)
+        ax_mn.text(x_arrow - 0.35, 0.5 + (hauteur_immergee_plongeur / 2.0) + (len_pi_m / 2), r"$\vec{\Pi}$", color="#1d4ed8", weight="bold", fontsize=12)
+        
+    ax_mn.set_xlim(0, 5)
+    ax_mn.set_ylim(0, 4)
+    ax_mn.axis("off")
+    st.pyplot(fig_mn)
+    st.caption(f"Bilan de maintenance : Hauteur immergée du plongeur = {hauteur_immergee_plongeur:.2f} m | Poussée d'Archimède = {poussee_maint:.1f} N")
+
+
 
     # --- SECTION LOGIQUE : ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 5 ---
     if "suite_verrouille_tab5_archimede" not in st.session_state:
@@ -1976,69 +1984,6 @@ with tab6:
     col_graph_tp, col_bd_tp = st.columns([0.55, 0.45])
     
     with col_graph_tp:
-        import matplotlib.pyplot as plt
-        import matplotlib.patches as patches
-        
-        fig_tp, ax_tp = plt.subplots(figsize=(5, 4.2), facecolor="white")
-        ax_mn.set_facecolor("white") if 'ax_mn' in locals() else ax_tp.set_facecolor("white")
-        
-        # Dessin du sol (fond brun)
-        ax_tp.add_patch(patches.Rectangle((0, 0), 6.0, 3.0, facecolor="#f5e0ce", edgecolor="#854d0e", linewidth=1.5, zorder=1))
-        # Ligne de la chaussée (Goudron noir à y = 3.0)
-        ax_tp.axhline(3.0, color="#1e293b", linewidth=6, label="Chaussée", zorder=3)
-        
-        # Dessin de la zone ennoyée par la nappe phréatique (bleu transparent)
-        if niveau_nappe > 0:
-            ax_tp.add_patch(patches.Rectangle((0, 0), 6.0, niveau_nappe, facecolor="#0284c7", alpha=0.4, zorder=2))
-            ax_tp.axhline(niveau_nappe, color="#0284c7", linewidth=1.5, linestyle="--", zorder=2)
-            
-        # Dessin de la canalisation circulaire vide (centre x = 3.0, y = 1.5, rayon = 0.6)
-        rayon_buse = 0.6
-        y_centre_buse = 1.5
-        ax_tp.add_patch(patches.Circle((3.0, y_centre_buse), rayon_buse, facecolor="#cbd5e1", edgecolor="#475569", linewidth=2.5, zorder=4))
-        
-        # Calcul de la fraction immergée de la buse dans la nappe
-        # La buse s'étend de y = 0.9 à y = 2.1
-        y_bas_buse = y_centre_buse - rayon_buse
-        y_haut_buse = y_centre_buse + rayon_buse
-        
-        if niveau_nappe <= y_bas_buse:
-            fraction_volume_inonde = 0.0
-        elif niveau_nappe >= y_haut_buse:
-            fraction_volume_inonde = 1.0
-        else:
-            fraction_volume_inonde = (niveau_nappe - y_bas_buse) / (2.0 * rayon_buse)
-            
-        # Intensité des forces fictives
-        poids_buse_vide = 6.0
-        poussee_tp_val = fraction_volume_inonde * 14.0  # Force ascendante proportionnelle
-        
-        x_tp_arrow = 3.0
-        
-        # Échelle graphique
-        scale_tp = 1.0 / 14.0
-        len_p_tp = poids_buse_vide * scale_tp
-        len_pi_tp = poussee_tp_val * scale_tp
-        
-        # Flèche Poids (vers le bas)
-        ax_tp.arrow(x_tp_arrow, y_centre_buse, 0, -len_p_tp, head_width=0.12, head_length=0.12, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=5)
-        ax_tp.text(x_tp_arrow + 0.15, y_centre_buse - (len_p_tp / 2), r"$\vec{P}$", color="black", weight="bold", fontsize=12)
-        
-        # Flèche Poussée d'Archimède (vers le haut)
-        if len_pi_tp > 0:
-            y_base_poussee_fleche = y_bas_buse + (fraction_volume_inonde * rayon_buse)
-            ax_tp.arrow(x_tp_arrow, y_base_poussee_fleche, 0, len_pi_tp, head_width=0.12, head_length=0.12, fc="#1d4ed8", ec="#1e3a8a", linewidth=2.5, length_includes_head=True, zorder=5)
-            ax_tp.text(x_tp_arrow - 0.35, y_base_poussee_fleche + (len_pi_tp / 2), r"$\vec{\Pi}$", color="#1d4ed8", weight="bold", fontsize=12)
-            
-        ax_tp.set_xlim(0, 6)
-        ax_tp.set_ylim(0, 3.8)
-        ax_tp.axis("off")
-        st.pyplot(fig_tp)
-        
-        statut_tp = "Ouvrage STABLE" if poids_buse_vide >= poussee_tp_val else "RISQUE DE SOULÈVEMENT DE LA ROUTE !"
-        st.caption(f"Bilan TP : Volume ennoyé = {fraction_volume_inonde*100:.0f} % | Poussée d'Archimède = {poussee_tp_val:.1f} N | Statut : {statut_tp}")
-
-    with col_bd_tp:
         st.write("**La BD humoristique textuelle : Le mystère de la buse volante**")
         st.info(
             "**Case 1 :** Un chef de chantier en casque blanc contemple fièrement une immense tranchée ouverte au milieu de la rue : 'Voilà ! Une magnifique conduite d'évacuation en béton de deux mètres de large, posée bien au sec !'.\n\n"
@@ -2046,13 +1991,78 @@ with tab6:
             "**Case 3 :** Le lendemain matin, le chef de chantier arrive sur le site et pousse un cri d'effroi. La route en goudron est totalement soulevée et éventrée. La buse en béton flotte tranquillement au milieu d'une mare de boue comme un canard en plastique : 'Par les pouvoirs d'Archimède ! Le tuyau s'est envolé !'.\n\n"
             "**Case 4 :** L'ingénieur conseil arrive en souriant et lui montre le plan : 'Mon ami, un tuyau vide déplace un volume d'eau énorme. Pour le prochain chantier, n'oublie pas de couler un lourd radier de lestage en béton par-dessus pour clouer le tuyau au fond !'."
         )
+    with col_bd_tp:
 
         try:
             st.image("archimede_tp.jpeg", caption="Remontée spectaculaire !", use_container_width=True)
         except Exception:
             st.warning("L'image 'archimede_tp.jpeg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
 
-            
+        
+    
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+    
+    fig_tp, ax_tp = plt.subplots(figsize=(5, 4.2), facecolor="white")
+    ax_mn.set_facecolor("white") if 'ax_mn' in locals() else ax_tp.set_facecolor("white")
+    
+    # Dessin du sol (fond brun)
+    ax_tp.add_patch(patches.Rectangle((0, 0), 6.0, 3.0, facecolor="#f5e0ce", edgecolor="#854d0e", linewidth=1.5, zorder=1))
+    # Ligne de la chaussée (Goudron noir à y = 3.0)
+    ax_tp.axhline(3.0, color="#1e293b", linewidth=6, label="Chaussée", zorder=3)
+    
+    # Dessin de la zone ennoyée par la nappe phréatique (bleu transparent)
+    if niveau_nappe > 0:
+        ax_tp.add_patch(patches.Rectangle((0, 0), 6.0, niveau_nappe, facecolor="#0284c7", alpha=0.4, zorder=2))
+        ax_tp.axhline(niveau_nappe, color="#0284c7", linewidth=1.5, linestyle="--", zorder=2)
+        
+    # Dessin de la canalisation circulaire vide (centre x = 3.0, y = 1.5, rayon = 0.6)
+    rayon_buse = 0.6
+    y_centre_buse = 1.5
+    ax_tp.add_patch(patches.Circle((3.0, y_centre_buse), rayon_buse, facecolor="#cbd5e1", edgecolor="#475569", linewidth=2.5, zorder=4))
+    
+    # Calcul de la fraction immergée de la buse dans la nappe
+    # La buse s'étend de y = 0.9 à y = 2.1
+    y_bas_buse = y_centre_buse - rayon_buse
+    y_haut_buse = y_centre_buse + rayon_buse
+    
+    if niveau_nappe <= y_bas_buse:
+        fraction_volume_inonde = 0.0
+    elif niveau_nappe >= y_haut_buse:
+        fraction_volume_inonde = 1.0
+    else:
+        fraction_volume_inonde = (niveau_nappe - y_bas_buse) / (2.0 * rayon_buse)
+        
+    # Intensité des forces fictives
+    poids_buse_vide = 6.0
+    poussee_tp_val = fraction_volume_inonde * 14.0  # Force ascendante proportionnelle
+    
+    x_tp_arrow = 3.0
+    
+    # Échelle graphique
+    scale_tp = 1.0 / 14.0
+    len_p_tp = poids_buse_vide * scale_tp
+    len_pi_tp = poussee_tp_val * scale_tp
+    
+    # Flèche Poids (vers le bas)
+    ax_tp.arrow(x_tp_arrow, y_centre_buse, 0, -len_p_tp, head_width=0.12, head_length=0.12, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=5)
+    ax_tp.text(x_tp_arrow + 0.15, y_centre_buse - (len_p_tp / 2), r"$\vec{P}$", color="black", weight="bold", fontsize=12)
+    
+    # Flèche Poussée d'Archimède (vers le haut)
+    if len_pi_tp > 0:
+        y_base_poussee_fleche = y_bas_buse + (fraction_volume_inonde * rayon_buse)
+        ax_tp.arrow(x_tp_arrow, y_base_poussee_fleche, 0, len_pi_tp, head_width=0.12, head_length=0.12, fc="#1d4ed8", ec="#1e3a8a", linewidth=2.5, length_includes_head=True, zorder=5)
+        ax_tp.text(x_tp_arrow - 0.35, y_base_poussee_fleche + (len_pi_tp / 2), r"$\vec{\Pi}$", color="#1d4ed8", weight="bold", fontsize=12)
+        
+    ax_tp.set_xlim(0, 6)
+    ax_tp.set_ylim(0, 3.8)
+    ax_tp.axis("off")
+    st.pyplot(fig_tp)
+    
+    statut_tp = "Ouvrage STABLE" if poids_buse_vide >= poussee_tp_val else "RISQUE DE SOULÈVEMENT DE LA ROUTE !"
+    st.caption(f"Bilan TP : Volume ennoyé = {fraction_volume_inonde*100:.0f} % | Poussée d'Archimède = {poussee_tp_val:.1f} N | Statut : {statut_tp}")
+
+
     st.divider()
 
     # --- SECTION LOGIQUE : ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 6 ---
@@ -2244,45 +2254,6 @@ with tab7:
     col_graph_tr, col_bd_tr = st.columns([0.55, 0.45])
     
     with col_graph_tr:
-        import matplotlib.pyplot as plt
-        import matplotlib.patches as patches
-        
-        fig_tr, ax_tr = plt.subplots(figsize=(5, 4.2), facecolor="white")
-        ax_tr.set_facecolor("white")
-        
-        # Dessin de la silhouette du camion (roues et cabine simplifiées)
-        ax_tr.add_patch(patches.Circle((1.5, 0.4), 0.3, facecolor="#1e293b", edgecolor="black", zorder=2)) # Roue avant
-        ax_tr.add_patch(patches.Circle((4.0, 0.4), 0.3, facecolor="#1e293b", edgecolor="black", zorder=2)) # Roue arrière
-        ax_tr.add_patch(patches.Rectangle((0.6, 0.7), 0.8, 1.2, facecolor="#334155", zorder=2))           # Cabine
-        
-        # Dessin du réservoir de la citerne (ellipse ou rectangle arrondi, de x=1.5 à x=4.8, y=0.7 à y=2.7)
-        ax_tr.add_patch(patches.Rectangle((1.5, 0.7), 3.3, 2.0, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=3))
-        
-        # Remplissage de carburant (Masse volumique essence = 800 kg/m³)
-        if hauteur_citerne > 0:
-            ax_tr.add_patch(patches.Rectangle((1.52, 0.72), 3.26, hauteur_citerne, facecolor="#f59e0b", alpha=0.6, zorder=1))
-            
-        # Point du capteur hydrostatique de fond (Orifice bas)
-        ax_tr.plot(4.6, 0.75, marker="o", color="#b91c1c", markersize=6, zorder=4)
-        
-        # Calcul de la pression hydrostatique au fond (P = rho * g * h)
-        pression_fond_pa = 800.0 * 9.81 * hauteur_citerne
-        pression_bar = pression_fond_pa / 100000.0
-        
-        # Flèche de charge de gravité s'exerçant sur l'essieu arrière (proportionnelle au niveau)
-        poids_essieu = 8.0 + (hauteur_citerne * 12.0)
-        len_f_tr = poids_essieu * (1.2 / 32.0)
-        
-        ax_tr.arrow(4.0, 0.4, 0, -len_f_tr, head_width=0.12, head_length=0.12, fc="#b91c1c", ec="#7f1d1d", linewidth=2.5, length_includes_head=True, zorder=5)
-        ax_tr.text(4.2, 0.4 - (len_f_tr / 2), r"$\vec{F}_{\text{charge}}$", color="#b91c1c", weight="bold", fontsize=11)
-        
-        ax_tr.set_xlim(0, 6)
-        ax_tr.set_ylim(-1, 3.2)
-        ax_tr.axis("off")
-        st.pyplot(fig_tr)
-        st.caption(f"Mesure embarquée : Pression hydrostatique lue = {pression_bar:.3f} bar | Hauteur de fluide = {hauteur_citerne:.2f} m")
-
-    with col_bd_tr:
         st.write("**La BD humoristique textuelle : Le coup de frein du laitier**")
         st.info(
             "**Case 1 :** Un chauffeur de camion-citerne transporte une cuve remplie à moitié de lait frais : 'La route est belle, le réservoir est léger, on va arriver en avance pour la livraison !'.\n\n"
@@ -2291,6 +2262,8 @@ with tab7:
             "**Case 4 :** Le camion s'arrête de justesse au milieu du carrefour. Le chauffeur s'essuie le front tandis que le capteur de pression de fond oscille follement : 'Ouf... Demain, je demande un camion équipé de cloisons brise-lames pour calmer cette poussée d'Archimède mouvante !'."
         )
 
+
+    with col_bd_tr:
         try:
             # L'image utilise bien le nom exact configuré dans votre projet
             st.image("archimede_routier.jpeg", caption="Quelle force !", use_container_width=True)
@@ -2299,6 +2272,48 @@ with tab7:
             
         
     st.divider()
+
+
+    
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+    
+    fig_tr, ax_tr = plt.subplots(figsize=(5, 4.2), facecolor="white")
+    ax_tr.set_facecolor("white")
+    
+    # Dessin de la silhouette du camion (roues et cabine simplifiées)
+    ax_tr.add_patch(patches.Circle((1.5, 0.4), 0.3, facecolor="#1e293b", edgecolor="black", zorder=2)) # Roue avant
+    ax_tr.add_patch(patches.Circle((4.0, 0.4), 0.3, facecolor="#1e293b", edgecolor="black", zorder=2)) # Roue arrière
+    ax_tr.add_patch(patches.Rectangle((0.6, 0.7), 0.8, 1.2, facecolor="#334155", zorder=2))           # Cabine
+    
+    # Dessin du réservoir de la citerne (ellipse ou rectangle arrondi, de x=1.5 à x=4.8, y=0.7 à y=2.7)
+    ax_tr.add_patch(patches.Rectangle((1.5, 0.7), 3.3, 2.0, facecolor="#f1f5f9", edgecolor="#475569", linewidth=2.5, zorder=3))
+    
+    # Remplissage de carburant (Masse volumique essence = 800 kg/m³)
+    if hauteur_citerne > 0:
+        ax_tr.add_patch(patches.Rectangle((1.52, 0.72), 3.26, hauteur_citerne, facecolor="#f59e0b", alpha=0.6, zorder=1))
+        
+    # Point du capteur hydrostatique de fond (Orifice bas)
+    ax_tr.plot(4.6, 0.75, marker="o", color="#b91c1c", markersize=6, zorder=4)
+    
+    # Calcul de la pression hydrostatique au fond (P = rho * g * h)
+    pression_fond_pa = 800.0 * 9.81 * hauteur_citerne
+    pression_bar = pression_fond_pa / 100000.0
+    
+    # Flèche de charge de gravité s'exerçant sur l'essieu arrière (proportionnelle au niveau)
+    poids_essieu = 8.0 + (hauteur_citerne * 12.0)
+    len_f_tr = poids_essieu * (1.2 / 32.0)
+    
+    ax_tr.arrow(4.0, 0.4, 0, -len_f_tr, head_width=0.12, head_length=0.12, fc="#b91c1c", ec="#7f1d1d", linewidth=2.5, length_includes_head=True, zorder=5)
+    ax_tr.text(4.2, 0.4 - (len_f_tr / 2), r"$\vec{F}_{\text{charge}}$", color="#b91c1c", weight="bold", fontsize=11)
+    
+    ax_tr.set_xlim(0, 6)
+    ax_tr.set_ylim(-1, 3.2)
+    ax_tr.axis("off")
+    st.pyplot(fig_tr)
+    st.caption(f"Mesure embarquée : Pression hydrostatique lue = {pression_bar:.3f} bar | Hauteur de fluide = {hauteur_citerne:.2f} m")
+
+
 
     # --- SECTION LOGIQUE : ZONE DES EXERCICES ET SCELLÉ DE L'ATELIER 7 ---
     if "suite_verrouille_tab7_archimede" not in st.session_state:
