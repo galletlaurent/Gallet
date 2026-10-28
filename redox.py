@@ -818,38 +818,50 @@ with tab1:
     st.subheader("Les travaux historiques marquants")
 
     # --- SECTION LAVOISIER ---
+    st.markdown(
+        "- **1777 - Antoine Lavoisier :** Théorie de la combustion. Définition de l'oxydation par fixation de l'oxygène."
+    )
     col_11, col_12 = st.columns(2)
     with col_11:
-        st.markdown(
-            "- **1777 - Antoine Lavoisier :** Théorie de la combustion. Définition de l'oxydation par fixation de l'oxygène."
-        )
-    with col_12:
         if os.path.exists("Lavoisier.jpg"):
             st.image("Lavoisier.jpg", caption="Antoine Lavoisier")
         else:
             st.warning("L'image 'Lavoisier.jpg' est introuvable.")
+    with col_12:
+        if os.path.exists("lavoisier _composition_de_air.jpg"):
+            st.image("lavoisier _composition_de_air.jpg", caption="En chauffant du mercure (seul métal à l’état liquide à température ordinaire, et à relativement faible température d’ébullition à 350 °C), Lavoisier voit apparaître des flocules rouges d’oxyde de mercure. L’oxygène de l’air de la cornue a réagi avec le mercure pour former l’oxyde : il ne reste plus dans l’air de la cornue que l’azote. Lavoisier remarque que cette substance n’est pas respirable : un animal ne peut y vivre (azote = a- zoos-, privatif de vie). Dans un second temps, Lavoisier fait chauffer les flocules rouges : c’est la réaction inverse, avec dégagement d’un gaz « éminemment respirable » (l’oxygène), qui ravive la flamme d’une bougie quasi éteinte")
+        else:
+            st.warning("L'image 'Lavoisier.jpg' est introuvable.")
 
     # --- SECTION VOLTA ---
+
+    st.markdown(
+        "- **1800 - Alessandro Volta :** Invention de la première pile électrique (Cuivre / Zinc). Début de l'électrochimie."
+    )
     col_13, col_14 = st.columns(2)
     with col_13:
-        st.markdown(
-            "- **1800 - Alessandro Volta :** Invention de la première pile électrique (Cuivre / Zinc). Début de l'électrochimie."
-        )
-    with col_14:
         if os.path.exists("Volta.jpg"):
             st.image("Volta.jpg", caption="Alessandro Volta")
         else:
             st.warning("L'image 'Volta.jpg' est introuvable.")
-
+    with col_14:
+        if os.path.exists("pile_volta.jpg"):
+            st.image("pile_volta.jpg", caption="pile volta")
+        else:
+            st.warning("L'image 'Volta.jpg' est introuvable.")
+            
+    st.markdown(
+        "- **1834 - Michael Faraday :** Établissement des lois de l'électrolyse, reliant la chimie à la quantité d'électricité.")
     # --- SECTION FARADAY ---
     col_15, col_16 = st.columns(2)
     with col_15:
-        st.markdown(
-            "- **1834 - Michael Faraday :** Établissement des lois de l'électrolyse, reliant la chimie à la quantité d'électricité."
-        )
-    with col_16:
         if os.path.exists("Faraday.jpg"):
             st.image("Faraday.jpg", caption="Michael Faraday")
+        else:
+            st.warning("L'image 'Faraday.jpg' est introuvable.")
+    with col_16:
+        if os.path.exists("electrolyse.jpg"):
+            st.image("electrolyse.jpg", caption="Michael Faraday")
         else:
             st.warning("L'image 'Faraday.jpg' est introuvable.")
 
