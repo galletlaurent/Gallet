@@ -803,7 +803,11 @@ with tab2:
             f"une fuite suspecte d'environ {st.session_state.fuite_vol} litres emane du raccord de purge. "
             f"Le liquide bleuatre s'ecoule sur le sol du centre de fret. Vous suspectez la presence d'ions Cuivre II (Cu2+)."
         )
-        
+        try:
+            st.image("fuite_citerne.jpg", caption="Transport de matieres dangereuses")
+        except Exception:
+            st.warning("L'image 'fuite_citerne.jpg' est introuvable."
+                       
         reactif_choisi = st.selectbox(
             "Quel reactif devez-vous utiliser pour confirmer la presence des ions Cuivre II ?",
             ["Choisir...", "Soude (Hydroxyde de sodium)", "Nitrate d'argent", "Chlorure de baryum"],
@@ -862,7 +866,11 @@ with tab2:
             f"du circuit de refroidissement, le liquide presente une coloration suspecte. Vous suspectez une usure "
             f"des pieces en fonte liberant des ions Fer II (Fe2+) a hauteur de {st.session_state.fer_taux} mg/L."
         )
-        
+        try:
+            st.image("usure_moteur.jpg", caption="Usure anormale et corrosion des blocs moteurs")
+        except Exception:
+            st.warning("L'image usure_moteur.jpg' est introuvable."
+                       
         reactif_choisi = st.selectbox(
             "Quel reactif devez-vous utiliser pour confirmer la presence des ions Fer II ?",
             ["Choisir...", "Soude (Hydroxyde de sodium)", "Nitrate d'argent", "Chlorure de baryum"],
