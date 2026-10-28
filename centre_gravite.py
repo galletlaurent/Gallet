@@ -1103,7 +1103,7 @@ with tab1:
         else:
             st.warning("Illustration en cours de chargement ou fichier 'Christiaan_Huygens.jpg' absent du serveur.")
 
-    with col_graph13
+    with col_graph13:
         img_marconi = charger_image("newton.jpg")
         if img_marconi:
             st.image(img_marconi, caption="Isaac Newton", width=300)
