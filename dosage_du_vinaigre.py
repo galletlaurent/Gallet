@@ -299,16 +299,16 @@ def afficher_questions_bouteille_commerciale(verrouille=False):
 
 
 
-def generer_le_quiz_analytique_atelier_deux(v_eq_theorique, df_donnees=None, verrouille=False):
+def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
     import numpy as np
     import streamlit as st
 
-    # Si la valeur n'est pas en session, on prend la valeur dynamique du TP en cours !
-    v_eq_attendu = st.session_state.get("vin_vrai_veq_calc", v_eq_theorique)
+    # Récupération automatique de la valeur unique générée pour le TP en cours
+    v_eq_attendu = st.session_state.get("vin_vrai_veq_calc", 12.0)
     c_base_session = st.session_state.get("c_base", 0.1)
     v_acide_dosé = 10.0  # Volume Va du bécher
 
-    # Calculs des attendus (automatiquement synchronisés avec la valeur aléatoire du TP)
+    # Les calculs s'adaptent instantanément à la valeur aléatoire du TP
     n_soude_equiv = (c_base_session * v_eq_attendu) / 1000.0
     c_vinaigre_dose_attendu = (c_base_session * v_eq_attendu) / v_acide_dosé
 
