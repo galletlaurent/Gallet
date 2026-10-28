@@ -1194,15 +1194,18 @@ with tab3:
 
         st.image("paradoxe_creux_plein.jpg", caption="Marque de Plimsoll sur une coque", use_container_width=True)
     
-    # --- LAB INTERACTIF : SCHÉMA DYNAMIQUE DE CHARGEMENT DE CARGO ---
     st.subheader("Simulateur dynamique de ligne de flottaison d'un cargo")
     st.write(
-        "Utilisez le curseur pour simuler l'ajout de conteneurs dans les cales du cargo. "
-        "Le graphique recalculera l'enfoncement de la coque et la position des vecteurs de forces."
+        "Utilisez les curseurs pour modifier la masse du chargement et le volume de la coque. "
+        "Observez comment un bateau plus large (plus de volume) s'enfonce moins dans l'eau."
     )
     
-    # Curseur interactif de chargement de marchandises
-    poids_marchandise = st.slider("Sélectionner la masse de cargaison à charger (en tonnes) :", min_value=0, max_value=1200, value=400, step=100, key="slider_cargo_weight")
+    # 1. Les deux curseurs de contrôle
+    col_param1, col_param2 = st.columns(2)
+    with col_param1:
+        poids_marchandise = st.slider("Masse de cargaison (en tonnes) :", min_value=0, max_value=1200, value=400, step=100, key="slider_cargo_weight")
+    with col_param2:
+        largeur_coque = st.slider("Volume / Largeur du bateau (mètres) :", min_value=3.0, max_value=5.5, value=4.5, step=0.5, key="slider_ship_volume")
     
     import matplotlib.pyplot as plt
     import matplotlib.patches as patches
@@ -1211,8 +1214,12 @@ with tab3:
     poids_coque_vide = 500.0
     poids_total_cargo = poids_coque_vide + poids_marchandise
     
+    # Calcul de la section de la coque (Surface de flottaison proportionnelle à la largeur choisie)
+    # Plus la coque est large, plus la surface d'appui est grande
+    surface_flottaison = largeur_coque * 100.0 
+    
     # Calcul de l'enfoncement (hauteur immergée)
-    enfoncement_coque = poids_total_cargo / 500.0
+    enfoncement_coque = poids_total_cargo / surface_flottaison
     
     fig_bat, ax_bat = plt.subplots(figsize=(5, 4.2), facecolor="white")
     ax_bat.set_facecolor("white")
@@ -1221,29 +1228,39 @@ with tab3:
     ax_bat.add_patch(patches.Rectangle((0, 0), 6.0, 1.8, facecolor="#0284c7", alpha=0.4, zorder=1))
     ax_bat.axhline(1.8, color="#0284c7", linewidth=2, linestyle="-", zorder=2)
     
-    # Positionnement de la coque du bateau selon l'enfoncement calculé
+    # Positionnement vertical de la coque selon l'enfoncement calculé
     y_fond_coque = 1.8 - enfoncement_coque
-    y_haut_coque = y_fond_coque + 1.5  # <--- FIXE : Le haut suit le bas, hauteur totale toujours = 1.5
+    y_haut_coque = y_fond_coque + 1.5  # Hauteur totale de la coque toujours fixe = 1.5
     
-    # Dessin de la coque du navire (forme de bateau simplifiée qui descend en bloc)
+    # Calcul de la géométrie horizontale de la coque (centrée sur l'écran)
+    x_centre = 3.0
+    demi_largeur = largeur_coque / 2.0
+    
+    x_arriere_bas = x_centre - demi_largeur + 0.4
+    x_arriere_haut = x_centre - demi_largeur
+    x_avant_bas = x_centre + demi_largeur - 0.4
+    x_avant_haut = x_centre + demi_largeur
+    
+    # Dessin de la coque du navire avec ses nouvelles dimensions dynamiques
     coque_points = [
-        [1.0, y_haut_coque],       # Arrière haut
-        [1.0, y_fond_coque],       # Arrière bas
-        [4.5, y_fond_coque],       # Avant bas
-        [5.2, y_haut_coque]        # Avant haut (proue)
+        [x_arriere_haut, y_haut_coque],       # Arrière haut
+        [x_arriere_bas, y_fond_coque],         # Arrière bas
+        [x_avant_bas, y_fond_coque],           # Avant bas
+        [x_avant_haut, y_haut_coque]           # Avant haut (proue)
     ]
     ax_bat.add_patch(patches.Polygon(coque_points, facecolor="#1e293b", edgecolor="#0f172a", linewidth=2.5, zorder=3))
     
     # Dessin des conteneurs chargés sur le pont (visibles si poids > 0)
     if poids_marchandise > 0:
         nb_blocs = int(poids_marchandise / 200)
+        # On ajuste l'écartement des blocs pour qu'ils restent centrés sur le pont mobile
+        x_depart_conteneur = x_centre - (max(1, nb_blocs) * 0.7 / 2)
         for b in range(max(1, nb_blocs)):
-            # Les conteneurs sont posés sur le pont mouvant (y_haut_coque)
-            ax_bat.add_patch(patches.Rectangle((1.5 + b*0.8, y_haut_coque), 0.7, 0.4, facecolor="#b91c1c", edgecolor="white", linewidth=1, zorder=4))
+            ax_bat.add_patch(patches.Rectangle((x_depart_conteneur + b*0.75, y_haut_coque), 0.6, 0.4, facecolor="#b91c1c", edgecolor="white", linewidth=1, zorder=4))
             
     # Calcul des vecteurs forces pour affichage des flèches explicites
-    x_g = 2.8
-    y_g = y_fond_coque + 0.8  # Centre de gravité suit la structure du navire
+    x_g = x_centre
+    y_g = y_fond_coque + 0.8  # Centre de gravité
     y_c = y_fond_coque + (enfoncement_coque / 2.0)  # Centre de carène au milieu de la zone immergée
     
     longueur_force = 0.4 + (poids_total_cargo / 1700.0) * 1.0
@@ -1260,9 +1277,8 @@ with tab3:
     ax_bat.set_ylim(0, 3.5)
     ax_bat.axis("off")
     st.pyplot(fig_bat)
-    st.caption(f"Statut : Poids de charge = {poids_marchandise} t | Enfoncement sous l'eau = {enfoncement_coque:.2f} m")
-
-    col_graph_bathum, col_bd_bathum = st.columns(2)
+    st.caption(f"Statut : Poids = {poids_total_cargo:.0f} t (Vide + Charge) | Largeur = {largeur_coque} m | Enfoncement = {enfoncement_coque:.2f} m")
+    
 
     with col_bd_bathum:
         st.write("**La BD humoristique textuelle : Le test du capitaine**")
