@@ -927,6 +927,11 @@ with tab2:
             f"s'accumule dans la tranchee. Le pH mesure est anormalement eleve ({st.session_state.eau_ph}). Vous suspectez "
             "une pollution par des rejets d'adjuvants riches en ions Chlorure (Cl-)."
         )
+
+        try:
+            st.image("eau_polue.jpg", caption="Pollution des eaux de fouille sur un chantier")
+        except Exception:
+            st.warning("L'image 'eau_polue.jpg' est introuvable.")
         
         reactif_choisi = st.selectbox(
             "Quel reactif devez-vous verser pour confirmer la presence des ions Chlorure ?",
