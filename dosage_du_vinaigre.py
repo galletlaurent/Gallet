@@ -867,7 +867,7 @@ with tab2:
         ph_eq_theorique = 7.0
 
     v_eq_visuel = v_eq_theorique if v_eq_theorique < v_max_ml else 12.0
-
+    st.session_state["vin_vrai_veq_calc"] = v_eq_theorique
 
     # --- ZONE DES REGLAGES SUPERIEURS ---
     with st.container():
