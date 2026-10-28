@@ -571,10 +571,9 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
 
         TPA = charger_image("TPA.jpg")        
         if TPA:
-            st.image(TPA, caption="Grue à tour", width=300)
+            st.image(TPA, caption="Grue à tour", use_container_width=True)
         else:
-            st.warning("Illustration en cours de chargement ou fichier 'TPA.jpg' absent du serveur.")
-
+            st.warning("Illustration en cours de chargement ou fichier 'TPA.jpg' absent de l'application.")
         # Curseur pour régler la portée de la benne à béton
         x_chariot = st.slider(
             "Portée / Distance du chariot sur la flèche (m)", 
@@ -615,9 +614,9 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
 
         TPB = charger_image("TPB.jpg")        
         if TPB:
-            st.image(TPB, caption=" Blindage de fouille", width=300)
+            st.image(TPB, caption="Blindage de fouille", use_container_width=True)
         else:
-            st.warning("Illustration en cours de chargement ou fichier 'TPB.jpg' absent du serveur.")
+            st.warning("Illustration en cours de chargement ou fichier 'TPB.jpg' absent de l'application.")
 
         # Curseur pour modifier la profondeur d'excavation du blindage
         hauteur_fouille = st.slider(
@@ -661,10 +660,10 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
 
         MMA = charger_image("MMA.jpg")        
         if MMA:
-            st.image(MMA, caption="Équilibrage de rotor de ventilation", width=300)
+            st.image(MMA, caption="Équilibrage de rotor de ventilation", use_container_width=True)
         else:
-            st.warning("Illustration en cours de chargement ou fichier 'MMA.jpg' absent du serveur.")
-            
+            st.warning("Illustration en cours de chargement ou fichier 'MMA.jpg' absent de l'application.")
+                
         # Curseur pour chercher l'angle d'équilibrage de la masse corrective
         angle_correction = st.slider(
             "Ajustement angulaire de la masse de correction (°)", 
@@ -712,9 +711,9 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
 
         MMB = charger_image("MMB.jpg")        
         if MMB:
-            st.image(MMB, caption="Pont Roulant", width=300)
+            st.image(MMB, caption="Pont Roulant", use_container_width=True)
         else:
-            st.warning("Illustration en cours de chargement ou fichier 'MMB.jpg' absent du serveur.")
+            st.warning("Illustration en cours de chargement ou fichier 'MMB.jpg' absent de l'application.")
             
         # Curseur pour translater le chariot du pont roulant
         x_chariot_pont = st.slider(
@@ -754,9 +753,9 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
 
         GEOA = charger_image("GEOA.jpg")        
         if GEOA:
-            st.image(GEOA, caption="Division de parcelle irrégulière", width=300)
+            st.image(GEOA, caption="Division de parcelle irrégulière", use_container_width=True)
         else:
-            st.warning("Illustration en cours de chargement ou fichier 'GEOA.jpg' absent du serveur.")
+            st.warning("Illustration en cours de chargement ou fichier 'GEOA.jpg' absent de l'application.")
 
         
         facteur_forme = st.slider(
@@ -783,9 +782,9 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
 
         GEOB = charger_image("GEOB.jpg")        
         if GEOB:
-            st.image(GEOB, caption="Profil de terrain (Remblais / Déblais)", width=300)
+            st.image(GEOB, caption="Profil de terrain (Remblais / Déblais)", use_container_width=True)
         else:
-            st.warning("Illustration en cours de chargement ou fichier 'GEOB.jpg' absent du serveur.")
+            st.warning("Illustration en cours de chargement ou fichier 'GEOB.jpg' absent de l'application.")
         # Curseur pour régler la hauteur de nivellement du projet
         hauteur_projet = st.slider(
             "Hauteur de la ligne neutre du projet (m)", 
@@ -1092,23 +1091,23 @@ with tab1:
     with col_graph11:
         img_archimede = charger_image("archimede.jpg")
         if img_archimede:
-            st.image(img_archimede, caption="Archimède de Syracuse", width=300)
+            st.image(img_archimede, caption="Archimède de Syracuse", use_container_width=True)
         else:
-            st.warning("Illustration en cours de chargement ou fichier 'archimede.jpg' absent du serveur.")
+            st.warning("Illustration 'archimede.jpg' absente du dossier de l'application.")
 
     with col_graph12:     
         img_Huygens = charger_image("Christiaan_Huygens.jpg")
         if img_Huygens:
-            st.image(img_Huygens, caption=" Christiaan Huygens", width=300)
+            st.image(img_Huygens, caption="Christiaan Huygens", use_container_width=True)
         else:
-            st.warning("Illustration en cours de chargement ou fichier 'Christiaan_Huygens.jpg' absent du serveur.")
+            st.warning("Illustration 'Christiaan_Huygens.jpg' absente du dossier de l'application.")
 
     with col_graph13:
         img_newton = charger_image("newton.jpg")
         if img_newton:
-            st.image(img_newton, caption="Isaac Newton", width=300)
+            st.image(img_newton, caption="Isaac Newton", use_container_width=True)
         else:
-            st.warning("Illustration en cours de chargement ou fichier 'newton.jpg' absent du serveur.")
+            st.warning("Illustration 'newton.jpg' absente du dossier de l'application.")
 
     st.markdown("---")
     
