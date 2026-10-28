@@ -1623,8 +1623,12 @@ with tab4:
             evenement_clic = st.plotly_chart(fig_clic, use_container_width=True, on_select="rerun")
 
             # 3. Analyse et affichage du resultat du clic souris
-            if evenement_clic and "selection" in evenement_clic and evenement_clic["selection"]["points"]:
-                # Recuperation des coordonnees du clic sur la surface web
+            if (
+                evenement_clic 
+                and "selection" in evenement_clic 
+                and evenement_clic["selection"] is not None 
+                and len(evenement_clic["selection"].get("points", [])) > 0
+            ):                # Recuperation des coordonnees du clic sur la surface web
                 pt_clique = evenement_clic["selection"]["points"][0]
                 xc = float(pt_clique["x"])
                 yc = float(pt_clique["y"])
