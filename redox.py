@@ -792,15 +792,6 @@ with tab1:
         "À l'inverse, extraire l'oxygène d'un oxyde pour récupérer le métal pur a été nommé la **Réduction** (diminution de la masse de la matière)."
     )
 
-        # Insertion de votre image locale pour l'historique
-    if os.path.exists("historique.jpg"):
-        st.image(
-            "historique.jpg",
-            caption="Illustration historique des travaux de Lavoisier sur l'oxygène",
-            use_container_width=True,
-        )
-    else:
-        st.warning("L'image 'historique.jpg' n'a pas été trouvée dans le dossier.")
 
     st.subheader("Comment la définition a-t-elle évolué ?")
     st.write(
