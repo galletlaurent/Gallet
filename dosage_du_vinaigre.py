@@ -301,14 +301,12 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
     import numpy as np
     import streamlit as st
 
-    # Récupération de la vraie valeur calculée dynamiquement par le modèle physique
-    v_eq_attendu = st.session_state.get("vin_vrai_veq_calc", 12.0)
+    v_eq_attendu = st.session_state.get("vin_vrai_veq_calc", 13.55)
     c_base_session = st.session_state.get("c_base", 0.1)
-    v_acide_dosé = 10.0 # Aligné sur le V_ini = 10.0 de votre modèle physico-chimique
+    v_acide_dosé = 10.0  # Fixé strictement à 10.0 mL pour le vinaigre introduit
 
-    # Calcul des moles de soude versées à l'équivalence : n = Cb * Ve
+    # Calculs des attendus pour le correcteur automatique
     n_soude_equiv = (c_base_session * v_eq_attendu) / 1000.0
-    # À l'équivalence n_acide = n_base
     c_vinaigre_dose_attendu = (c_base_session * v_eq_attendu) / v_acide_dosé
 
     col_double_quiz_vin, col_double_trous_vin = st.columns(2)
@@ -319,25 +317,31 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
         st.markdown("##### Quiz numerique sur VOTRE suivi de titrage (6 questions - 10 pts)")
         dict_reponses_quiz = {}
         
+        # Q1 : Concentration de la soude
         opts_q1 = ["Choisir...", f"{c_base_session:.2f} mol/L", "1.00 mol/L", "0.50 mol/L"]
         st.write("**1.** Quelle est la concentration molaire de la solution titrante de soude ($C_b$) utilisee ?")
         dict_reponses_quiz["q1"] = st.selectbox("", opts_q1, key="col_g_quiz_vin_q1_tab2", disabled=verrouille, label_visibility="collapsed")
 
-        # Ajustement cosmétique des options pour inclure les 10.0 mL attendus en bonne place
-        opts_q2 = ["Choisir...", f"{v_acide_dosé:.1f} mL", "20.0 mL", "25.0 mL"]
+        # Q2 : Volume de vinaigre introduit
+        opts_q2 = ["Choisir...", "10.00 mL", "20.00 mL", "25.00 mL"]
         st.write("**2.** Quel volume de solution titrée de vinaigre dilué ($V_a$) a été introduit dans le bécher ?")
         dict_reponses_quiz["q2"] = st.selectbox("", opts_q2, key="col_g_quiz_vin_q2_tab2", disabled=verrouille, label_visibility="collapsed")
 
+        # Q3 : Volume équivalent dynamique et aléatoire
         opts_q3 = ["Choisir...", f"{v_eq_attendu:.2f} mL", "10.00 mL", "15.00 mL"]
         st.write("**3.** Quel est le volume équivalent exact ($V_E$) de soude versé ?")
         dict_reponses_quiz["q3"] = st.selectbox("", opts_q3, key="col_g_quiz_vin_q3_tab2", disabled=verrouille, label_visibility="collapsed")
+
+        # Q4 : Relation à l'équivalence
         st.write("**4.** Quelle est la relation entre Ca , Cb , Va , Vb à l'équivalence ?")
         dict_reponses_quiz["q4"] = st.selectbox("", ["Choisir...", "Ca * Va = Cb * Ve", "Ca * Cb = Va * Ve", "Ca / Va = Cb / Ve"], key="col_g_quiz_vin_q4_tab2", disabled=verrouille, label_visibility="collapsed")
 
+        # Q5 : Quantité de matière versée (moles)
         opts_q5 = ["Choisir...", f"{n_soude_equiv:.5f} mol", f"{n_soude_equiv * 10:.5f} mol", "0.00100 mol"]
         st.write("**5.** Quelle quantite de matiere d'ions hydroxyle $HO^-$ a ete versee a l'equivalence ?")
         dict_reponses_quiz["q5"] = st.selectbox("", opts_q5, key="col_g_quiz_vin_q5_tab2", disabled=verrouille, label_visibility="collapsed")
 
+        # Q6 : Concentration de l'acide calculée
         opts_q6 = ["Choisir...", f"{c_vinaigre_dose_attendu:.3f} mol/L", "0.010 mol/L", "0.100 mol/L"]
         st.write("**6.** Déduisez-en la concentration molaire molaire ($C_a$) du vinaigre dosé dans le bécher :")
         dict_reponses_quiz["q6"] = st.selectbox("", opts_q6, key="col_g_quiz_vin_q6_tab2", disabled=verrouille, label_visibility="collapsed")
@@ -346,29 +350,24 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
         st.markdown("##### Synthèse de cours (Texte à trous - 5 cases - 10 pts)")
         dict_trous = {}
         
-        # CORRECTION : Retrait de vertical_alignment
         c1, c2 = st.columns([0.70, 0.30])
-        with c1: st.write("1. La verrerie graduée utilisée pour verser la solution titrante is la")
+        with c1: st.write("1. La verrerie graduée utilisée pour verser la solution titrante est la")
         with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "Burette","Eprouvette graduée", "Pipette graduee"], key="vin_t1_tab2", disabled=verrouille, label_visibility="collapsed")
 
-        # CORRECTION : Retrait de vertical_alignment
         c3, c4 = st.columns([0.70, 0.30])
         with c3: st.write("2. Pour prélever les 10 mL de vinaigre de manière précise, on utilise une")
         with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "Pipette jaugée", "Eprouvette graduée", "Burette graduée"], key="vin_t2_tab2", disabled=verrouille, label_visibility="collapsed")
 
-        # CORRECTION : Retrait de vertical_alignment
         c5, c6 = st.columns([0.70, 0.30])
-        with c5: st.write("3. Pour convertir le volume équivalent de mL en Litres, on doit l")
+        with c5: st.write("3. Pour convertir le volume équivalent de mL en Litres, on doit le")
         with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "diviser par 1000", "multiplier par 1000", "diviser par 10", "multiplier par 10"], key="vin_t3_tab2", disabled=verrouille, label_visibility="collapsed")
 
-        # CORRECTION : Retrait de vertical_alignment
         c7, c8 = st.columns([0.70, 0.30])
-        with c7: st.write("4. A l'équivalence, le nombre de moles d'acide et le nombre de moles de base sont")
+        with c7: st.write("4. À l'équivalence, le nombre de moles d'acide et le nombre de moles de base sont")
         with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "Egaux", "Doubles", "Inverses"], key="vin_t4_tab2", disabled=verrouille, label_visibility="collapsed")
 
-        # CORRECTION : Retrait de vertical_alignment
         c9, c10 = st.columns([0.70, 0.30])
-        with c9: st.write("5. L'équivalence est obtenue au ")
+        with c9: st.write("5. L'équivalence est obtenue au")
         with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...","Au début du dosage", "Au saut de pH", "A la fin du dosage"], key="vin_t5_tab2", disabled=verrouille, label_visibility="collapsed")
 
     return dict_reponses_quiz, dict_trous
