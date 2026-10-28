@@ -1125,68 +1125,68 @@ with tab3:
     # Curseur interactif de chargement de marchandises
     poids_marchandise = st.slider("Sélectionner la masse de cargaison à charger (en tonnes) :", min_value=0, max_value=1200, value=400, step=100, key="slider_cargo_weight")
     
-    col_graph_bat, col_bd_bat = st.columns([0.55, 0.45])
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
     
-    with col_graph_bat:
-        import matplotlib.pyplot as plt
-        import matplotlib.patches as patches
-        
-        # Paramètres fixes du cargo
-        poids_coque_vide = 500.0
-        poids_total_cargo = poids_coque_vide + poids_marchandise
-        
-        # Calcul de l'enfoncement (hauteur immergée)
-        # Supposons une surface de coque rectangulaire de section S = 500 m²
-        # Enfoncement = Poids / (Surface * densite_eau)
-        enfoncement_coque = poids_total_cargo / 500.0
-        
-        fig_bat, ax_bat = plt.subplots(figsize=(5, 4.2), facecolor="white")
-        ax_bat.set_facecolor("white")
-        
-        # Dessin de l'eau (ligne d'eau fixe à y = 1.8)
-        ax_bat.add_patch(patches.Rectangle((0, 0), 6.0, 1.8, facecolor="#0284c7", alpha=0.4, zorder=1))
-        ax_bat.axhline(1.8, color="#0284c7", linewidth=2, linestyle="-", zorder=2)
-        
-        # Positionnement de la coque du bateau selon l'enfoncement calcule
-        y_fond_coque = 1.8 - enfoncement_coque
-        
-        # Dessin de la coque du navire (forme de bateau simplifiée)
-        coque_points = [
-            [1.0, 2.5],            # Arrière haut
-            [1.0, y_fond_coque],   # Arrière bas
-            [4.5, y_fond_coque],   # Avant bas
-            [5.2, 2.5]             # Avant haut (proue)
-        ]
-        ax_bat.add_patch(patches.Polygon(coque_points, facecolor="#1e293b", edgecolor="#0f172a", linewidth=2.5, zorder=3))
-        
-        # Dessin des conteneurs chargés sur le pont (visibles si poids > 0)
-        if poids_marchandise > 0:
-            nb_blocs = int(poids_marchandise / 200)
-            for b in range(max(1, nb_blocs)):
-                ax_bat.add_patch(patches.Rectangle((1.5 + b*0.8, 2.5), 0.7, 0.4, facecolor="#b91c1c", edgecolor="white", linewidth=1, zorder=4))
-                
-        # Calcul des vecteurs forces pour affichage des flèches explicites
-        x_g = 2.8
-        y_g = y_fond_coque + 0.8  # Centre de gravité estimé
-        y_c = y_fond_coque + (enfoncement_coque / 2.0)  # Centre de carène au milieu de la zone immergée
-        
-        longueur_force = 0.4 + (poids_total_cargo / 1700.0) * 1.0
-        
-        # Flèche Poids (vers le bas, noir)
-        ax_bat.arrow(x_g, y_g, 0, -longueur_force, head_width=0.12, head_length=0.12, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=5)
-        ax_bat.text(x_g + 0.15, y_g - (longueur_force / 2), r"$\vec{P}$", color="black", weight="bold", fontsize=12)
-        
-        # Flèche Poussée d'Archimède (vers le haut, bleu roi)
-        ax_bat.arrow(x_g, y_c, 0, longueur_force, head_width=0.12, head_length=0.12, fc="#1d4ed8", ec="#1e3a8a", linewidth=2.5, length_includes_head=True, zorder=5)
-        ax_bat.text(x_g - 0.35, y_c + (longueur_force / 2), r"$\vec{\Pi}$", color="#1d4ed8", weight="bold", fontsize=12)
-        
-        ax_bat.set_xlim(0, 6)
-        ax_bat.set_ylim(0, 3.5)
-        ax_bat.axis("off")
-        st.pyplot(fig_bat)
-        st.caption(f"Statut : Poids de charge = {poids_marchandise} t | Enfoncement sous l'eau = {enfoncement_coque:.2f} m")
+    # Paramètres fixes du cargo
+    poids_coque_vide = 500.0
+    poids_total_cargo = poids_coque_vide + poids_marchandise
+    
+    # Calcul de l'enfoncement (hauteur immergée)
+    # Supposons une surface de coque rectangulaire de section S = 500 m²
+    # Enfoncement = Poids / (Surface * densite_eau)
+    enfoncement_coque = poids_total_cargo / 500.0
+    
+    fig_bat, ax_bat = plt.subplots(figsize=(5, 4.2), facecolor="white")
+    ax_bat.set_facecolor("white")
+    
+    # Dessin de l'eau (ligne d'eau fixe à y = 1.8)
+    ax_bat.add_patch(patches.Rectangle((0, 0), 6.0, 1.8, facecolor="#0284c7", alpha=0.4, zorder=1))
+    ax_bat.axhline(1.8, color="#0284c7", linewidth=2, linestyle="-", zorder=2)
+    
+    # Positionnement de la coque du bateau selon l'enfoncement calcule
+    y_fond_coque = 1.8 - enfoncement_coque
+    
+    # Dessin de la coque du navire (forme de bateau simplifiée)
+    coque_points = [
+        [1.0, 2.5],            # Arrière haut
+        [1.0, y_fond_coque],   # Arrière bas
+        [4.5, y_fond_coque],   # Avant bas
+        [5.2, 2.5]             # Avant haut (proue)
+    ]
+    ax_bat.add_patch(patches.Polygon(coque_points, facecolor="#1e293b", edgecolor="#0f172a", linewidth=2.5, zorder=3))
+    
+    # Dessin des conteneurs chargés sur le pont (visibles si poids > 0)
+    if poids_marchandise > 0:
+        nb_blocs = int(poids_marchandise / 200)
+        for b in range(max(1, nb_blocs)):
+            ax_bat.add_patch(patches.Rectangle((1.5 + b*0.8, 2.5), 0.7, 0.4, facecolor="#b91c1c", edgecolor="white", linewidth=1, zorder=4))
+            
+    # Calcul des vecteurs forces pour affichage des flèches explicites
+    x_g = 2.8
+    y_g = y_fond_coque + 0.8  # Centre de gravité estimé
+    y_c = y_fond_coque + (enfoncement_coque / 2.0)  # Centre de carène au milieu de la zone immergée
+    
+    longueur_force = 0.4 + (poids_total_cargo / 1700.0) * 1.0
+    
+    # Flèche Poids (vers le bas, noir)
+    ax_bat.arrow(x_g, y_g, 0, -longueur_force, head_width=0.12, head_length=0.12, fc="black", ec="black", linewidth=2.5, length_includes_head=True, zorder=5)
+    ax_bat.text(x_g + 0.15, y_g - (longueur_force / 2), r"$\vec{P}$", color="black", weight="bold", fontsize=12)
+    
+    # Flèche Poussée d'Archimède (vers le haut, bleu roi)
+    ax_bat.arrow(x_g, y_c, 0, longueur_force, head_width=0.12, head_length=0.12, fc="#1d4ed8", ec="#1e3a8a", linewidth=2.5, length_includes_head=True, zorder=5)
+    ax_bat.text(x_g - 0.35, y_c + (longueur_force / 2), r"$\vec{\Pi}$", color="#1d4ed8", weight="bold", fontsize=12)
+    
+    ax_bat.set_xlim(0, 6)
+    ax_bat.set_ylim(0, 3.5)
+    ax_bat.axis("off")
+    st.pyplot(fig_bat)
+    st.caption(f"Statut : Poids de charge = {poids_marchandise} t | Enfoncement sous l'eau = {enfoncement_coque:.2f} m")
 
-    with col_bd_bat:
+
+    col_graph_bathum, col_bd_bathum = st.columns(2)
+
+    with col_bd_bathum:
         st.write("**La BD humoristique textuelle : Le test du capitaine**")
         st.info(
             "**Case 1 :** Un vieux loup de mer en ciré jaune inspecte son cargo en acier rempli de cales vides : 'Regardez-moi cette merveille, dix mille tonnes de métal et ça flotte comme une plume !'.\n\n"
@@ -1194,7 +1194,7 @@ with tab3:
             "**Case 3 :** Le capitaine hausse les épaules en ricanant : 'Balivernes ! Archimède est mon ami, il va pousser plus fort par-dessous !'. Les petites bulles d'eau sous la quille grimacent sous le poids écrasant.\n\n"
             "**Case 4 :** Une vague arrive, l'eau dépasse la ligne limite et s'engouffre par les fenêtres. Le navire descend tout droit vers le fond tandis que le capitaine flotte dans sa bouée en caoutchouc en marmonnant : 'D'accord... Le volume d'air était utile, j'ai compris la leçon'."
         )
-
+    with col_bd_bathum:
         try:
             # L'image utilise bien le nom exact configuré dans votre projet
             st.image("archimede_bateau.jpeg", caption="Vais-je arriver à bon port??? ", use_container_width=True)
