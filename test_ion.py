@@ -417,7 +417,7 @@ with tab1:
             "Ion Zinc (Zn²⁺)": {
                 "solution_tester": "Solution de sulfate de zinc (contenant les ions Zn²⁺)",
                 "contenant": "Solution de sulfate de zinc",
-                "image_pot": "tube_essai.jpeg",
+                "image_pot": "solution_zinc.jpeg",
                 "reactif": "Soude (Hydroxyde de sodium)", 
                 "images_picto": ["SGH05.png"],
                 "image_reaction": "ion_zinc.jpg",
@@ -482,8 +482,8 @@ with tab1:
                 },
                 "couleur": "Blanc", 
                 "precipite": "Sulfate de baryum BaSO₄",
-                "equation": "$$\\text{Ba}^{2+}_{\\text{(aq)}} + \\text{SO}_4^{2-}_{\\text{(aq)}} \\rightarrow \\text{BaSO}_{4\\text{(s)}}$$"
-            }
+                "equation": r"Ba^{2+}_{(aq)} + SO_4^{2-}_{(aq)} \rightarrow BaSO_{4(s)}"
+                }
         }
     }
     col1, col2 = st.columns([1, 1.2])
