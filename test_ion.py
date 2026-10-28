@@ -453,7 +453,7 @@ with tab1:
             "Ion Chlorure (Cl⁻)": {
                 "solution_tester": "Solution de chlorure de sodium (contenant les ions Cl⁻)",
                 "contenant": "Solution de chlorure de sodium",
-                "image_pot": "tube_essai.jpeg",
+                "image_pot": "solution_chlorure.jpeg",
                 "reactif": "Nitrate d'argent", 
                 "images_picto": ["SGH05.png", "SGH09.png"],
                 "image_reaction": "ion_chlorure.jpg",
@@ -470,7 +470,7 @@ with tab1:
             "Ion Sulfate (SO₄²⁻)": {
                 "solution_tester": "Solution de sulfate de sodium (contenant les ions SO₄²⁻)",
                 "contenant": "Solution de sulfate de sodium",
-                "image_pot": "tube_essai.jpeg",
+                "image_pot": "solution_sulfate.jpeg",
                 "reactif": "Chlorure de baryum", 
                 "images_picto": ["SGH06.png"],
                 "image_reaction": "ion_sulfate.jpg",
