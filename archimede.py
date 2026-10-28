@@ -1116,6 +1116,7 @@ with tab3:
         fig.update_layout(showlegend=False, xaxis=dict(visible=False, range=[-2, 2]), yaxis=dict(visible=False, range=[-1.5, 1.5]), margin=dict(l=10, r=10, t=10, b=10), height=300)
         st.plotly_chart(fig, use_container_width=True)
         # Remplacez "chemin_vers_votre_image.jpg" par le nom ou le lien de votre image
+        
         st.image("equilibre_navire.jpg", caption="Schéma des forces G et C", use_container_width=True)
 
     st.divider()
@@ -1211,8 +1212,6 @@ with tab3:
     poids_total_cargo = poids_coque_vide + poids_marchandise
     
     # Calcul de l'enfoncement (hauteur immergée)
-    # Supposons une surface de coque rectangulaire de section S = 500 m²
-    # Enfoncement = Poids / (Surface * densite_eau)
     enfoncement_coque = poids_total_cargo / 500.0
     
     fig_bat, ax_bat = plt.subplots(figsize=(5, 4.2), facecolor="white")
@@ -1222,15 +1221,16 @@ with tab3:
     ax_bat.add_patch(patches.Rectangle((0, 0), 6.0, 1.8, facecolor="#0284c7", alpha=0.4, zorder=1))
     ax_bat.axhline(1.8, color="#0284c7", linewidth=2, linestyle="-", zorder=2)
     
-    # Positionnement de la coque du bateau selon l'enfoncement calcule
+    # Positionnement de la coque du bateau selon l'enfoncement calculé
     y_fond_coque = 1.8 - enfoncement_coque
+    y_haut_coque = y_fond_coque + 1.5  # <--- FIXE : Le haut suit le bas, hauteur totale toujours = 1.5
     
-    # Dessin de la coque du navire (forme de bateau simplifiée)
+    # Dessin de la coque du navire (forme de bateau simplifiée qui descend en bloc)
     coque_points = [
-        [1.0, 2.5],            # Arrière haut
-        [1.0, y_fond_coque],   # Arrière bas
-        [4.5, y_fond_coque],   # Avant bas
-        [5.2, 2.5]             # Avant haut (proue)
+        [1.0, y_haut_coque],       # Arrière haut
+        [1.0, y_fond_coque],       # Arrière bas
+        [4.5, y_fond_coque],       # Avant bas
+        [5.2, y_haut_coque]        # Avant haut (proue)
     ]
     ax_bat.add_patch(patches.Polygon(coque_points, facecolor="#1e293b", edgecolor="#0f172a", linewidth=2.5, zorder=3))
     
@@ -1238,11 +1238,12 @@ with tab3:
     if poids_marchandise > 0:
         nb_blocs = int(poids_marchandise / 200)
         for b in range(max(1, nb_blocs)):
-            ax_bat.add_patch(patches.Rectangle((1.5 + b*0.8, 2.5), 0.7, 0.4, facecolor="#b91c1c", edgecolor="white", linewidth=1, zorder=4))
+            # Les conteneurs sont posés sur le pont mouvant (y_haut_coque)
+            ax_bat.add_patch(patches.Rectangle((1.5 + b*0.8, y_haut_coque), 0.7, 0.4, facecolor="#b91c1c", edgecolor="white", linewidth=1, zorder=4))
             
     # Calcul des vecteurs forces pour affichage des flèches explicites
     x_g = 2.8
-    y_g = y_fond_coque + 0.8  # Centre de gravité estimé
+    y_g = y_fond_coque + 0.8  # Centre de gravité suit la structure du navire
     y_c = y_fond_coque + (enfoncement_coque / 2.0)  # Centre de carène au milieu de la zone immergée
     
     longueur_force = 0.4 + (poids_total_cargo / 1700.0) * 1.0
@@ -1260,7 +1261,6 @@ with tab3:
     ax_bat.axis("off")
     st.pyplot(fig_bat)
     st.caption(f"Statut : Poids de charge = {poids_marchandise} t | Enfoncement sous l'eau = {enfoncement_coque:.2f} m")
-
 
     col_graph_bathum, col_bd_bathum = st.columns(2)
 
