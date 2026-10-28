@@ -1097,7 +1097,7 @@ with tab1:
             st.warning("Illustration en cours de chargement ou fichier 'archimede.jpg' absent du serveur.")
 
     with col_graph12:     
-        img_Huygensi = charger_image("Christiaan_Huygens.jpg")
+        img_Huygens = charger_image("Christiaan_Huygens.jpg")
         if img_Huygens:
             st.image(img_Huygens, caption=" Christiaan Huygens", width=300)
         else:
