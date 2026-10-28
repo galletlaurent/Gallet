@@ -523,7 +523,7 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
     elif cas["id_cas"] == "routier_B":
 
                 
-        rouitierB = charger_image("routierB.jpg")        
+        routierB = charger_image("routierB.jpg")        
         if routierB:
             st.image(routierB, caption="Convoi Exceptionnel", use_container_width=True)
         else:
