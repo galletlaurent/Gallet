@@ -482,7 +482,7 @@ with tab1:
                 },
                 "couleur": "Blanc", 
                 "precipite": "Sulfate de baryum BaSO₄",
-                "equation": r"Ba^{2+}_{(aq)} + SO_4^{2-}_{(aq)} \rightarrow BaSO_4{(s)}"
+                "equation": r"Ba^{2+}_{(aq)} + (SO_4)^{2-}_{(aq)} \rightarrow BaSO_4{(s)}"
             }
         }
     }
