@@ -55,6 +55,77 @@ if "indicateurs" not in st.session_state:
 
     }
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+# 2. Fonction sécurisée pour charger et ouvrir physiquement vos images
+def charger_image(nom_fichier):
+    # Remplacez "image tableau electrique" par le nom EXACT de votre dossier d'images sur Windows
+    chemin = os.path.join(BASE_DIR, "image vinaigre", nom_fichier)
+
+    if os.path.exists(chemin):
+        try:
+            # On force l'ouverture en mémoire avec PIL pour le serveur de l'exécutable
+            return Image.open(chemin)
+        except Exception:
+            return None
+    else:
+        return None
+if hasattr(st, "rerun"):
+    _original_rerun = st.rerun
+elif hasattr(st, "experimental_rerun"):
+    _original_rerun = st.experimental_rerun
+else:
+    _original_rerun = None
+
+def safe_rerun():
+    if _original_rerun is not None:
+        try:
+            _original_rerun()
+        except Exception:
+            # Secours bas niveau pour l'exécutable PyInstaller
+            from streamlit.runtime.scriptrunner import RerunData, RerunException
+            raise RerunException(RerunData())
+    else:
+        st.error("Fonction de rechargement Streamlit introuvable.")
+
+# Applique le correctif global
+st.rerun = safe_rerun
+
+
+
+_original_image = st.image
+
+def safe_image(image, *args, **kwargs):
+    # Si l'image est passée sous forme de texte (un nom de fichier ou un chemin)
+    if isinstance(image, str) and not image.startswith(("http://", "https://", "data:image")):
+        # Si l'application tourne dans l'exécutable (.exe)
+        if hasattr(sys, '_MEIPASS'):
+            # Si vos images sont restées à la racine du projet
+            chemin_exe_racine = os.path.join(sys._MEIPASS, os.path.basename(image))
+            # Si vous les avez rangées dans un dossier 'images'
+            chemin_exe_dossier = os.path.join(sys._MEIPASS, "images", os.path.basename(image))
+            
+            if os.path.exists(chemin_exe_racine):
+                image = chemin_exe_racine
+            elif os.path.exists(chemin_exe_dossier):
+                image = chemin_exe_dossier
+    
+    # On renvoie vers la vraie fonction Streamlit avec le bon chemin trouvé
+    return _original_image(image, *args, **kwargs)
+
+# On remplace la fonction officielle par notre fonction intelligente
+st.image = safe_image
+
+
+
+
+
+
+
+
+
+
 # =============================================================================
 # FONCTIONS GLOBALES DE VALIDATION DE L'IDENTITÉ
 # =============================================================================
@@ -80,7 +151,7 @@ def valider_saisie():
         st.session_state.verrouille = True
         
         st.success(f"Identification réussie pour : {nom_clean} {prenom_clean} ({classe_clean}).")
-
+        st.rerun()
 
 def valider_session():
     """Fonction passerelle de sécurité pour l'ouverture des droits d'ateliers."""
@@ -147,35 +218,36 @@ def afficher_questions_bouteille_commerciale(verrouille=False):
     st.markdown('<div class="bloc-bleu-at3">', unsafe_allow_html=True)
     st.markdown("<p style='margin-top:0; font-weight:bold; color:#0284c7;'>EXPLOITATION DU DOSAGE DANS LE BÉCHER</p>", unsafe_allow_html=True)
     
-    c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    # CORRECTION : Retrait de vertical_alignment sur toutes les lignes st.columns
+    c1, c2 = st.columns([0.70, 0.30])
     with c1: st.write("Convertir le volume équivalent en litre :")
     with c2: dict_reponses_bouteille["v_eq_l"] = st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_v_eq_l", disabled=verrouille, label_visibility="collapsed")
 
-    c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    c3, c4 = st.columns([0.70, 0.30])
     with c3: st.write("Calculer le nombre de mole de soude versée :")
     with c4: dict_reponses_bouteille["n_soude"] = st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_n_soude", disabled=verrouille, label_visibility="collapsed")
 
-    c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    c5, c6 = st.columns([0.70, 0.30])
     with c5: st.write("En déduire le nombre de mole de vinaigre dosée :")
     with c6: dict_reponses_bouteille["n_acide_becher"] = st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_n_acide_becher", disabled=verrouille, label_visibility="collapsed")
 
-    c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    c7, c8 = st.columns([0.70, 0.30])
     with c7: st.write("Calculer la concentration molaire en vinaigre dosée en mol/L :")
     with c8: dict_reponses_bouteille["c_molaire_fille"] = st.number_input("", min_value=0.000, max_value=10.000, format="%.3f", key="at3_c_molaire_fille", disabled=verrouille, label_visibility="collapsed")
 
-    c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    c9, c10 = st.columns([0.70, 0.30])
     with c9: st.write("Calculer la masse de vinaigre dosée en gramme :")
     with c10: dict_reponses_bouteille["m_acide_gramme"] = st.number_input("", min_value=0.0000, max_value=100.0000, format="%.4f", key="at3_m_acide_gramme", disabled=verrouille, label_visibility="collapsed")
 
-    c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    c11, c12 = st.columns([0.70, 0.30])
     with c11: st.write("En déduire la masse de vinaigre dosée en milligramme :")
     with c12: dict_reponses_bouteille["m_acide_mg"] = st.number_input("", min_value=0.0, max_value=10000.0, format="%.1f", key="at3_m_acide_mg", disabled=verrouille, label_visibility="collapsed")
 
-    c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    c13, c14 = st.columns([0.70, 0.30])
     with c13: st.write("Calculer la concentration massique de vinaigre dosée en g/L :")
     with c14: dict_reponses_bouteille["c_massique_fille"] = st.number_input("", min_value=0.00, max_value=500.00, format="%.2f", key="at3_c_massique_fille", disabled=verrouille, label_visibility="collapsed")
 
-    c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    c15, c16 = st.columns([0.70, 0.30])
     with c15: st.write("Calculer la concentration massique de vinaigre dosée en mg/L :")
     with c16: dict_reponses_bouteille["c_massique_fille_mg"] = st.number_input("", min_value=0.0, max_value=500000.0, format="%.1f", key="at3_c_massique_fille_mg", disabled=verrouille, label_visibility="collapsed")
 
@@ -185,39 +257,39 @@ def afficher_questions_bouteille_commerciale(verrouille=False):
     st.markdown('<div class="bloc-jaune-at3">', unsafe_allow_html=True)
     st.markdown("<p style='margin-top:0; font-weight:bold; color:#ca8a04;'>REMONTÉE À LA BOUTEILLE COMMERCIALE</p>", unsafe_allow_html=True)
 
-    c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    c17, c18 = st.columns([0.70, 0.30])
     with c17: st.write("Donner le rapport de dilution :")
     with c18: dict_reponses_bouteille["rapport_dilution"] = st.number_input("", min_value=0.0, max_value=1000.0, format="%.1f", key="at3_rapport_dilution", disabled=verrouille, label_visibility="collapsed")
 
-    c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    c19, c20 = st.columns([0.70, 0.30])
     with c19: st.write("En déduire le nombre de mole de vinaigre dans la fiole :")
     with c20: dict_reponses_bouteille["n_acide_fiole"] = st.number_input("", min_value=0.00000, max_value=1.00000, format="%.5f", key="at3_n_acide_fiole", disabled=verrouille, label_visibility="collapsed")
 
-    c21, c22 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    c21, c22 = st.columns([0.70, 0.30])
     with c21: st.write("En déduire le nombre de mole de vinaigre dans la bouteille :")
     with c22: dict_reponses_bouteille["n_acide_bouteille"] = st.number_input("", min_value=0.00000, max_value=5.00000, format="%.5f", key="at3_n_acide_bouteille", disabled=verrouille, label_visibility="collapsed")
 
-    c23, c24 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    c23, c24 = st.columns([0.70, 0.30])
     with c23: st.write("Calculer la concentration molaire en vinaigre de la bouteille en mol/L :")
     with c24: dict_reponses_bouteille["c_molaire_mere"] = st.number_input("", min_value=0.00, max_value=20.00, format="%.2f", key="at3_c_molaire_mere", disabled=verrouille, label_visibility="collapsed")
 
-    c25, c26 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    c25, c26 = st.columns([0.70, 0.30])
     with c25: st.write("Calculer la masse de vinaigre dans la bouteille en gramme :")
     with c26: dict_reponses_bouteille["m_mere_gramme"] = st.number_input("", min_value=0.0, max_value=1000.0, format="%.1f", key="at3_m_mere_gramme", disabled=verrouille, label_visibility="collapsed")
 
-    c27, c28 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    c27, c28 = st.columns([0.70, 0.30])
     with c27: st.write("En déduire la masse de vinaigre dans la bouteille en milligramme :")
     with c28: dict_reponses_bouteille["m_mere_mg"] = st.number_input("", min_value=0.0, max_value=1000000.0, format="%.1f", key="at3_m_mere_mg", disabled=verrouille, label_visibility="collapsed")
 
-    c29, c30 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    c29, c30 = st.columns([0.70, 0.30])
     with c29: st.write("Calculer la concentration massique de vinaigre de la bouteille en g/L :")
     with c30: dict_reponses_bouteille["c_massique_mere"] = st.number_input("", min_value=0.0, max_value=1000.0, format="%.1f", key="at3_c_massique_mere", disabled=verrouille, label_visibility="collapsed")
 
-    c31, c32 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+    c31, c32 = st.columns([0.70, 0.30])
     with c31: st.write("En déduire le degré de votre vinaigre :")
     with c32: dict_reponses_bouteille["c_massique_mere_mg"] = st.number_input("", min_value=0.0, max_value=1000000.0, format="%.1f", key="at3_c_massique_mere_mg", disabled=verrouille, label_visibility="collapsed")
 
-    c33, c34 = st.columns([0.55, 0.45], vertical_alignment="bottom")
+    c33, c34 = st.columns([0.55, 0.45])
     with c33: st.write("Conclure sur l'affichage de la bouteille :")
     with c34: dict_reponses_bouteille["conclusion_bouteille"] = st.selectbox("", ["Choisir...", "Le vinaigre est conforme a l'étiquette (8°)", "Le vinaigre n'est pas conforme"], key="at3_conclusion_bouteille", disabled=verrouille, label_visibility="collapsed")
 
@@ -275,23 +347,28 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
         st.markdown("##### Synthèse de cours (Texte à trous - 5 cases - 10 pts)")
         dict_trous = {}
         
-        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
-        with c1: st.write("1. La verrerie graduée utilisée pour verser la solution titrante est la")
+        # CORRECTION : Retrait de vertical_alignment
+        c1, c2 = st.columns([0.70, 0.30])
+        with c1: st.write("1. La verrerie graduée utilisée pour verser la solution titrante is la")
         with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "Burette","Eprouvette graduée", "Pipette graduee"], key="vin_t1_tab2", disabled=verrouille, label_visibility="collapsed")
 
-        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        # CORRECTION : Retrait de vertical_alignment
+        c3, c4 = st.columns([0.70, 0.30])
         with c3: st.write("2. Pour prélever les 10 mL de vinaigre de manière précise, on utilise une")
         with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...", "Pipette jaugée", "Eprouvette graduée", "Burette graduée"], key="vin_t2_tab2", disabled=verrouille, label_visibility="collapsed")
 
-        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        # CORRECTION : Retrait de vertical_alignment
+        c5, c6 = st.columns([0.70, 0.30])
         with c5: st.write("3. Pour convertir le volume équivalent de mL en Litres, on doit l")
         with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "diviser par 1000", "multiplier par 1000", "diviser par 10", "multiplier par 10"], key="vin_t3_tab2", disabled=verrouille, label_visibility="collapsed")
 
-        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        # CORRECTION : Retrait de vertical_alignment
+        c7, c8 = st.columns([0.70, 0.30])
         with c7: st.write("4. A l'équivalence, le nombre de moles d'acide et le nombre de moles de base sont")
         with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "Egaux", "Doubles", "Inverses"], key="vin_t4_tab2", disabled=verrouille, label_visibility="collapsed")
 
-        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        # CORRECTION : Retrait de vertical_alignment
+        c9, c10 = st.columns([0.70, 0.30])
         with c9: st.write("5. L'équivalence est obtenue au ")
         with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...","Au début du dosage", "Au saut de pH", "A la fin du dosage"], key="vin_t5_tab2", disabled=verrouille, label_visibility="collapsed")
 
@@ -355,48 +432,48 @@ def afficher_questions_vinaigre1_dynamiques(verrouille=False):
         st.markdown("##### Synthèse des propriétés acido-basiques (10 trous - 10 pts)")
         dict_trous = {}
         
-        c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        # CORRECTION : Retrait de vertical_alignment sur l'ensemble des sous-colonnes
+        c1, c2 = st.columns([0.70, 0.30])
         with c1: st.write("1. Le vinaigre commercial est une solution aqueuse d'acide")
         with c2: dict_trous["t1"] = st.selectbox("", ["Choisir...", "Ethanoique", "Méthanoique"], key="vin_t1_s1", disabled=verrouille, label_visibility="collapsed")
         
-        c3, c4 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        c3, c4 = st.columns([0.70, 0.30])
         with c3: st.write("2. Le pKa signifie que  ")
         with c4: dict_trous["t2"] = st.selectbox("", ["Choisir...",  "L 'acide est fort", "L'acide est faible","La base est forte", "La base est faible"], key="vin_t2_s1", disabled=verrouille, label_visibility="collapsed")
         
-        c5, c6 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        c5, c6 = st.columns([0.70, 0.30])
         with c5: st.write("3. L'acide acetique appartient à la categorie des acides")
         with c6: dict_trous["t3"] = st.selectbox("", ["Choisir...", "Faibles", "Forts"], key="vin_t3_s1", disabled=verrouille, label_visibility="collapsed")
         
-        c7, c8 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        c7, c8 = st.columns([0.70, 0.30])
         with c7: st.write("4. La fin de la réaction est caractérisé par ")
         with c8: dict_trous["t4"] = st.selectbox("", ["Choisir...", "Le changement de couleur dans le bécher", "Le changement de couleur dans la burette"], key="vin_t4_s1", disabled=verrouille, label_visibility="collapsed")
         
-        c9, c10 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        c9, c10 = st.columns([0.70, 0.30])
         with c9: st.write("5. Le pKa du couple de l'acide acetique a 25°C vaut")
         with c10: dict_trous["t5"] = st.selectbox("", ["Choisir...", "4.8", "7.0", "9.2"], key="vin_t5_s1", disabled=verrouille, label_visibility="collapsed")
         
-        c11, c12 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        c11, c12 = st.columns([0.70, 0.30])
         with c11: st.write("6. L'espèce chimique titrante employée dans la burette est la")
         with c12: dict_trous["t6"] = st.selectbox("", ["Choisir...", "Soude", "Acide"], key="vin_t6_s1", disabled=verrouille, label_visibility="collapsed")
         
-        c13, c14 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        c13, c14 = st.columns([0.70, 0.30])
         with c13: st.write("7. La soude est ")
         with c14: dict_trous["t7"] = st.selectbox("", ["Choisir...", "Une base", "Un acide"], key="vin_t7_s1", disabled=verrouille, label_visibility="collapsed")
         
-        c15, c16 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        c15, c16 = st.columns([0.70, 0.30])
         with c15: st.write("8. L'unite internationale de la concentration molaire est")
         with c16: dict_trous["t8"] = st.selectbox("", ["Choisir...", "mol/L", "g/mol", "g/L"], key="vin_t8_s1", disabled=verrouille, label_visibility="collapsed")
         
-        c17, c18 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        c17, c18 = st.columns([0.70, 0.30])
         with c17: st.write("9. Le virage de couleur de l'indicateur signale l'")
         with c18: dict_trous["t9"] = st.selectbox("", ["Choisir...", "Equivalence", "Dissociation"], key="vin_t9_s1", disabled=verrouille, label_visibility="collapsed")
         
-        c19, c20 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+        c19, c20 = st.columns([0.70, 0.30])
         with c19: st.write("10. Diluer une solution acide fait tendre sa valeur de pH vers")
         with c20: dict_trous["t10"] = st.selectbox("", ["Choisir...", "7.0", "0.0", "14.0"], key="vin_t10_s1", disabled=verrouille, label_visibility="collapsed")
 
     return dict_reponses_quiz, dict_trous
-
 
 
 
@@ -792,7 +869,7 @@ with tab2:
 
 
     # --- ZONE DES REGLAGES SUPERIEURS ---
-    with st.container(border=True):
+    with st.container():
         st.subheader("Paramètres de la solution titrante et du goutte-à-goutte")
         col_p1, col_p2, col_p3 = st.columns(3)
         
@@ -1021,6 +1098,7 @@ with tab2:
     st.subheader("Formulaire d'évaluation numérique - Atelier 2")
 
     # Calculs automatiques des veritables attendus pour la correction automatique du bouton
+    v_eq_theorique = st.session_state.get("vin_vrai_veq_calc", 12.0)
     v_acide_dose = 20.0
     moles_soude_equiv = (C_base * v_eq_theorique) / 1000.0
     concentration_lactique_attendue = (C_base * v_eq_theorique) / v_acide_dose
