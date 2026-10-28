@@ -27,6 +27,62 @@ st.title("TP les vecteur du plan ")
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
+BASE_DIR = os.path.abspath(".")
+
+def charger_image(nom_fichier):
+    nom_fichier = os.path.basename(nom_fichier)
+    
+    # Python scanne automatiquement tous les dossiers présents à côté du script
+    for element in os.listdir(BASE_DIR):
+        chemin_dossier = os.path.join(BASE_DIR, element)
+        if os.path.isdir(chemin_dossier) and element.startswith("image"):
+            chemin_image = os.path.join(chemin_dossier, nom_fichier)
+            if os.path.exists(chemin_image):
+                try:
+                    return Image.open(chemin_image)
+                except Exception:
+                    pass
+                    
+    # Sécurité si l'application est déjà masquée dans fichiers_systemes
+    chemin_secours = os.path.join(BASE_DIR, "image", nom_fichier)
+    if os.path.exists(chemin_secours):
+        try: return Image.open(chemin_secours)
+        except Exception: pass
+    return None
+
+# --- TOUS VOS CORRECTIFS (RERUN, COLUMNS, CONTAINER, IMAGE) ---
+if hasattr(st, "rerun"): _original_rerun = st.rerun
+elif hasattr(st, "experimental_rerun"): _original_rerun = st.experimental_rerun
+else: _original_rerun = None
+
+def safe_rerun():
+    if _original_rerun is not None:
+        try: _original_rerun()
+        except Exception:
+            from streamlit.runtime.scriptrunner import RerunData, RerunException
+            raise RerunException(RerunData())
+st.rerun = safe_rerun
+
+_original_image = st.image
+def safe_image(image, *args, **kwargs):
+    if isinstance(image, str) and not image.startswith(("http://", "https://", "data:image")):
+        nom_fichier = os.path.basename(image)
+        img_pil = charger_image(nom_fichier)
+        if img_pil is not None: image = img_pil
+    return _original_image(image, *args, **kwargs)
+st.image = safe_image
+
+_original_columns = st.columns
+def safe_columns(*args, **kwargs):
+    if "vertical_alignment" in kwargs: kwargs.pop("vertical_alignment")
+    return _original_columns(*args, **kwargs)
+st.columns = safe_columns
+
+_original_container = st.container
+def safe_container(*args, **kwargs):
+    if "border" in kwargs: kwargs.pop("border")
+    return _original_container(*args, **kwargs)
+st.container = safe_container
 
 if "identifie" not in st.session_state:
     st.session_state.identifie = False
