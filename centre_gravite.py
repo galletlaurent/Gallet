@@ -1089,11 +1089,11 @@ with tab1:
     col_graph11, col_graph12, col_graph13 = st.columns(3)
 
     with col_graph11:
-        img_archimede = charger_image("archimede.jpg")
+        img_archimede = charger_image("portrait_archimede.jpg")
         if img_archimede:
             st.image(img_archimede, caption="Archimède de Syracuse", use_container_width=True)
         else:
-            st.warning("Illustration 'archimede.jpg' absente du dossier de l'application.")
+            st.warning("Illustration 'portrait_archimede.jpg' absente du dossier de l'application.")
 
     with col_graph12:     
         img_Huygens = charger_image("Christiaan_Huygens.jpg")
@@ -1103,11 +1103,11 @@ with tab1:
             st.warning("Illustration 'Christiaan_Huygens.jpg' absente du dossier de l'application.")
 
     with col_graph13:
-        img_newton = charger_image("newton.jpg")
+        img_newton = charger_image("portrait_newton.jpg")
         if img_newton:
             st.image(img_newton, caption="Isaac Newton", use_container_width=True)
         else:
-            st.warning("Illustration 'newton.jpg' absente du dossier de l'application.")
+            st.warning("Illustration 'portrait_newton.jpg' absente du dossier de l'application.")
 
     st.markdown("---")
     
