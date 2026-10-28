@@ -1655,8 +1655,8 @@ with tab4:
             ax.set_aspect('equal', adjustable='box')
             
             ax.set_facecolor("#e2e8f0")
-            ax.set_xticks(np.arange(-3, 20, 2))
-            ax.set_yticks(np.arange(-3, 7, 1))
+            ax.set_xticks(np.arange(-3, 20, 1))
+            ax.set_yticks(np.arange(-10,20, 1))
             ax.grid(True, which='both', color='#94a3b8', linestyle='--', linewidth=0.7, zorder=2)
             ax.axhline(0, color="#ef4444", linewidth=1.5, zorder=3)
             ax.axvline(0, color="#ef4444", linewidth=1.5, zorder=3)
