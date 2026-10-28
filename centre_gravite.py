@@ -1091,22 +1091,22 @@ with tab1:
 
     with col_graph11:
         img_archimede = charger_image("archimede.jpg")
-        if img_hertz:
+        if img_archimede:
             st.image(img_archimede, caption="Archimède de Syracuse", width=300)
         else:
             st.warning("Illustration en cours de chargement ou fichier 'archimede.jpg' absent du serveur.")
 
     with col_graph12:     
-        img_marconi = charger_image("Christiaan_Huygens.jpg")
-        if img_marconi:
-            st.image(img_marconi, caption=" Christiaan Huygens", width=300)
+        img_Huygensi = charger_image("Christiaan_Huygens.jpg")
+        if img_Huygens:
+            st.image(img_Huygens, caption=" Christiaan Huygens", width=300)
         else:
             st.warning("Illustration en cours de chargement ou fichier 'Christiaan_Huygens.jpg' absent du serveur.")
 
     with col_graph13:
-        img_marconi = charger_image("newton.jpg")
-        if img_marconi:
-            st.image(img_marconi, caption="Isaac Newton", width=300)
+        img_newton = charger_image("newton.jpg")
+        if img_newton:
+            st.image(img_newton, caption="Isaac Newton", width=300)
         else:
             st.warning("Illustration en cours de chargement ou fichier 'newton.jpg' absent du serveur.")
 
