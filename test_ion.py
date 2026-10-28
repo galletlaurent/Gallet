@@ -806,7 +806,7 @@ with tab2:
         try:
             st.image("fuite_citerne.jpg", caption="Transport de matieres dangereuses")
         except Exception:
-            st.warning("L'image fuite_citerne.jpg' est introuvable."
+            st.warning("L'image 'fuite_citerne.jpg' est introuvable.")
                        
         reactif_choisi = st.selectbox(
             "Quel reactif devez-vous utiliser pour confirmer la presence des ions Cuivre II ?",
@@ -869,8 +869,7 @@ with tab2:
         try:
             st.image("usure_moteur.jpg", caption="Usure anormale et corrosion des blocs moteurs")
         except Exception:
-            st.warning("L'image usure_moteur.jpg' est introuvable."
-                       
+            st.warning("L'image 'usure_moteur.jpg' est introuvable.")
         reactif_choisi = st.selectbox(
             "Quel reactif devez-vous utiliser pour confirmer la presence des ions Fer II ?",
             ["Choisir...", "Soude (Hydroxyde de sodium)", "Nitrate d'argent", "Chlorure de baryum"],
