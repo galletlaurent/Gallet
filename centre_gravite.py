@@ -20,6 +20,8 @@ import numpy as np
 import plotly.graph_objects as go
 import pandas as pd
 import streamlit.components.v1 as components
+import sys
+from PIL import Image
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
@@ -39,6 +41,94 @@ if "classe_var" not in st.session_state:
 if "verrouille" not in st.session_state:
     st.session_state.verrouille = False
 
+BASE_DIR = os.path.abspath(".")
+
+def charger_image(nom_fichier):
+    nom_fichier = os.path.basename(nom_fichier)
+    # Python scanne automatiquement tous les dossiers présents à côté du script
+    for element in os.listdir(BASE_DIR):
+        chemin_dossier = os.path.join(BASE_DIR, element)
+        if os.path.isdir(chemin_dossier) and element.startswith("image"):
+            chemin_image = os.path.join(chemin_dossier, nom_fichier)
+            if os.path.exists(chemin_image):
+                try:
+                    return Image.open(chemin_image)
+                except Exception:
+                    pass
+                        
+    # Sécurité si l'application est déjà masquée dans fichiers_systemes
+    chemin_secours = os.path.join(BASE_DIR, "image", nom_fichier)
+    if os.path.exists(chemin_secours):
+        try: 
+            return Image.open(chemin_secours)
+        except Exception: 
+            pass
+    return None
+
+# --- TOUS LES CORRECTIFS SÉCURISÉS (RERUN, COLUMNS, CONTAINER, IMAGE) ---
+
+# 1. Sauvegarde STRICTE des fonctions d'origine AVANT modification
+_vrai_st_rerun = st.rerun if hasattr(st, "rerun") else (st.experimental_rerun if hasattr(st, "experimental_rerun") else None)
+_vrai_st_image = st.image
+_vrai_st_columns = st.columns
+_vrai_st_container = st.container
+
+# 2. Correctif pour st.rerun
+def safe_rerun():
+    if _vrai_st_rerun is not None:
+        try: 
+            _vrai_st_rerun()
+        except Exception:
+            from streamlit.runtime.scriptrunner import RerunData, RerunException
+            raise RerunException(RerunData())
+st.rerun = safe_rerun
+
+# 3. Correctif pour st.image (Résolution de la boucle infinie)
+def safe_image(image, *args, **kwargs):
+    if "use_container_width" in kwargs:
+        kwargs["use_column_width"] = kwargs.pop("use_container_width")
+    if isinstance(image, str) and not image.startswith(("http://", "https://", "data:image")):
+        nom_fichier = os.path.basename(image)
+        img_pil = charger_image(nom_fichier)
+        if img_pil is not None: 
+            image = img_pil
+    return _vrai_st_image(image, *args, **kwargs)  # Utilise la vraie fonction d'origine
+st.image = safe_image
+
+# 4. Interception pour st.columns (vertical_alignment)
+def safe_columns(*args, **kwargs):
+    if "vertical_alignment" in kwargs:
+        kwargs.pop("vertical_alignment")
+    return _vrai_st_columns(*args, **kwargs)
+st.columns = safe_columns
+
+# 5. Interception pour st.container (border)
+def safe_container(*args, **kwargs):
+    if "border" in kwargs:
+        kwargs.pop("border")
+    return _vrai_st_container(*args, **kwargs)
+st.container = safe_container
+
+# 6. Rétrocompatibilité st.toggle -> st.checkbox
+if not hasattr(st, "toggle"):
+    def safe_toggle(label, value=False, key=None, **kwargs):
+        return st.checkbox(label, value=value, key=key)
+    st.toggle = safe_toggle
+
+# 7. Rétrocompatibilité st.dialog
+if not hasattr(st, "dialog"):
+    def safe_dialog(*args, **kwargs):
+        return st.container()
+    st.dialog = safe_dialog
+
+# 8. Décorateur pour sécuriser l'état des widgets (Session State)
+def securiser_widget_factory(fonction_origine):
+    def safe_widget(*args, **kwargs):
+        cle = kwargs.get("key")
+        if cle and cle in st.session_state:
+            kwargs.pop("value", None)
+        return fonction_origine(*args, **kwargs)
+    return safe_widget
 
 
 # =============================================================================
@@ -390,6 +480,13 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
     # --- METIER 1 : TRANSPORT ROUTIER ---
     if cas["id_cas"] == "routier_A":
         col_citerne1, col_citerne2 = st.columns(2)
+        
+        rouitierA = charger_image("routierA.jpg")        
+        if routierA:
+            st.image(routierA, caption="Camion-Citerne", width=300)
+        else:
+            st.warning("Illustration en cours de chargement ou fichier 'routierA.jpg' absent du serveur.")
+
         with col_citerne1:
             hauteur_liquide = st.slider("Niveau de remplissage de la citerne (m)", min_value=-0.9, max_value=0.9, value=-0.40, step=0.1, disabled=verrouille, key="slider_remplissage")
         with col_citerne2:
@@ -424,6 +521,14 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
         ax.scatter(x_cg_dynamique, y_cg_dynamique, color="red", marker="x", s=150, lw=3, label="G (Fluide)")
 
     elif cas["id_cas"] == "routier_B":
+
+                
+        rouitierB = charger_image("routierB.jpg")        
+        if routierB:
+            st.image(routierB, caption="Convoi Exceptionnel", width=300)
+        else:
+            st.warning("Illustration en cours de chargement ou fichier 'routierB.jpg' absent du serveur.")
+
         # Curseur pour déplacer l'engin lourd sur la remorque
         x_charge = st.slider(
             "Positionnement de la pelle de chantier sur le plateau (m)", 
@@ -463,6 +568,13 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
 
     # --- METIER 2 : TRAVAUX PUBLICS ---
     elif cas["id_cas"] == "tp_A":
+
+        TPA = charger_image("TPA.jpg")        
+        if TPA:
+            st.image(TPA, caption="Grue à tour", width=300)
+        else:
+            st.warning("Illustration en cours de chargement ou fichier 'TPA.jpg' absent du serveur.")
+
         # Curseur pour régler la portée de la benne à béton
         x_chariot = st.slider(
             "Portée / Distance du chariot sur la flèche (m)", 
@@ -500,6 +612,13 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
         ax.set_ylim(-0.5, 5.0)
         
     elif cas["id_cas"] == "tp_B":
+
+        TPB = charger_image("TPB.jpg")        
+        if TPB:
+            st.image(TPB, caption=" Blindage de fouille", width=300)
+        else:
+            st.warning("Illustration en cours de chargement ou fichier 'TPB.jpg' absent du serveur.")
+
         # Curseur pour modifier la profondeur d'excavation du blindage
         hauteur_fouille = st.slider(
             "Profondeur de la tranchée de fouille (m)", 
@@ -539,6 +658,13 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
 
         # --- METIER 3 : MAINTENANCE INDUSTRIELLE ---
     elif cas["id_cas"] == "maint_A":
+
+        MMA = charger_image("MMA.jpg")        
+        if MMA:
+            st.image(MMA, caption="Équilibrage de rotor de ventilation", width=300)
+        else:
+            st.warning("Illustration en cours de chargement ou fichier 'MMA.jpg' absent du serveur.")
+            
         # Curseur pour chercher l'angle d'équilibrage de la masse corrective
         angle_correction = st.slider(
             "Ajustement angulaire de la masse de correction (°)", 
@@ -583,6 +709,13 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
         ax.set_ylim(-1.2, 1.2)
         
     elif cas["id_cas"] == "maint_B":
+
+        MMB = charger_image("MMB.jpg")        
+        if MMB:
+            st.image(MMB, caption="Pont Roulant", width=300)
+        else:
+            st.warning("Illustration en cours de chargement ou fichier 'MMB.jpg' absent du serveur.")
+            
         # Curseur pour translater le chariot du pont roulant
         x_chariot_pont = st.slider(
             "Position du chariot sur la portée de la poutre (m)", 
@@ -618,7 +751,14 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
 
     # --- METIER 4 : GÉOMÈTRE ---
     elif cas["id_cas"] == "geo_A":
-        # Curseur pour modifier dynamiquement une des bornes du terrain cadastral
+
+        GEOA = charger_image("GEOA.jpg")        
+        if GEOA:
+            st.image(GEOA, caption="Division de parcelle irrégulière", width=300)
+        else:
+            st.warning("Illustration en cours de chargement ou fichier 'GEOA.jpg' absent du serveur.")
+
+        
         facteur_forme = st.slider(
             "Position en ordonnée de la borne principale Nord (m)", 
             min_value=30, 
@@ -640,6 +780,12 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
         ax.scatter(x_g, y_g, color="red", marker="x", s=150, lw=3, label="G (Isobarycentre)")
         
     elif cas["id_cas"] == "geo_B":
+
+        GEOB = charger_image("GEOB.jpg")        
+        if GEOB:
+            st.image(GEOB, caption="Profil de terrain (Remblais / Déblais)", width=300)
+        else:
+            st.warning("Illustration en cours de chargement ou fichier 'GEOB.jpg' absent du serveur.")
         # Curseur pour régler la hauteur de nivellement du projet
         hauteur_projet = st.slider(
             "Hauteur de la ligne neutre du projet (m)", 
@@ -940,7 +1086,30 @@ with tab1:
         "**Isaac Newton** ont généralisé ces principes pour les appliquer à la mécanique céleste et aux "
         "systèmes dynamiques complexes."
     )
-    
+
+    col_graph11, col_graph12, col_graph13 = st.columns(3)
+
+    with col_graph11:
+        img_archimede = charger_image("archimede.jpg")
+        if img_hertz:
+            st.image(img_archimede, caption="Archimède de Syracuse", width=300)
+        else:
+            st.warning("Illustration en cours de chargement ou fichier 'archimede.jpg' absent du serveur.")
+
+    with col_graph12:     
+        img_marconi = charger_image("Christiaan_Huygens.jpg")
+        if img_marconi:
+            st.image(img_marconi, caption=" Christiaan Huygens", width=300)
+        else:
+            st.warning("Illustration en cours de chargement ou fichier 'Christiaan_Huygens.jpg' absent du serveur.")
+
+    with col_graph13
+        img_marconi = charger_image("newton.jpg")
+        if img_marconi:
+            st.image(img_marconi, caption="Isaac Newton", width=300)
+        else:
+            st.warning("Illustration en cours de chargement ou fichier 'newton.jpg' absent du serveur.")
+
     st.markdown("---")
     
     # --- SECTION PHYSIQUE ---
