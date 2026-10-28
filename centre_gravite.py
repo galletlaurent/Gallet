@@ -488,11 +488,10 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
     if cas["id_cas"] == "routier_A":
         col_citerne1, col_citerne2 = st.columns(2)
         
-        rouitierA = charger_image("routierA.jpg")        
-        if routierA:
-            st.image(routierA, caption="Camion-Citerne", use_container_width=True)
-        else:
-            st.warning("Illustration en cours de chargement ou fichier 'routierA.jpg' absent du serveur.")
+        try:
+            st.image("routierA.jpg", caption="Camion-Citerne", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'routierA.jpg' est introuvable.")
 
         with col_citerne1:
             hauteur_liquide = st.slider("Niveau de remplissage de la citerne (m)", min_value=-0.9, max_value=0.9, value=-0.40, step=0.1, disabled=verrouille, key="slider_remplissage")
@@ -530,11 +529,10 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
     elif cas["id_cas"] == "routier_B":
 
                 
-        routierB = charger_image("routierB.jpg")        
-        if routierB:
-            st.image(routierB, caption="Convoi Exceptionnel", use_container_width=True)
-        else:
-            st.warning("Illustration en cours de chargement ou fichier 'routierB.jpg' absent du serveur.")
+        try:
+            st.image("routierB.jpg", caption="Convoi Exceptionnel", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'routierB.jpg' est introuvable.")
 
         # Curseur pour déplacer l'engin lourd sur la remorque
         x_charge = st.slider(
@@ -576,11 +574,10 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
     # --- METIER 2 : TRAVAUX PUBLICS ---
     elif cas["id_cas"] == "tp_A":
 
-        TPA = charger_image("TPA.jpg")        
-        if TPA:
-            st.image(TPA, caption="Grue à tour", use_container_width=True)
-        else:
-            st.warning("Illustration en cours de chargement ou fichier 'TPA.jpg' absent de l'application.")
+        try:
+            st.image("TPA.jpg", caption="Grue à tour", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'TPA.jpg' est introuvable.")
         # Curseur pour régler la portée de la benne à béton
         x_chariot = st.slider(
             "Portée / Distance du chariot sur la flèche (m)", 
@@ -619,11 +616,10 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
         
     elif cas["id_cas"] == "tp_B":
 
-        TPB = charger_image("TPB.jpg")        
-        if TPB:
-            st.image(TPB, caption="Blindage de fouille", use_container_width=True)
-        else:
-            st.warning("Illustration en cours de chargement ou fichier 'TPB.jpg' absent de l'application.")
+        try:
+            st.image("TPB.jpg", caption="Blindage de fouille", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'TPB.jpg' est introuvable.")
 
         # Curseur pour modifier la profondeur d'excavation du blindage
         hauteur_fouille = st.slider(
@@ -665,11 +661,10 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
         # --- METIER 3 : MAINTENANCE INDUSTRIELLE ---
     elif cas["id_cas"] == "maint_A":
 
-        MMA = charger_image("MMA.jpg")        
-        if MMA:
-            st.image(MMA, caption="Équilibrage de rotor de ventilation", use_container_width=True)
-        else:
-            st.warning("Illustration en cours de chargement ou fichier 'MMA.jpg' absent de l'application.")
+        try:
+            st.image("MMA.jpg", caption="Équilibrage de rotor de ventilation", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'MMA.jpg' est introuvable.")
                 
         # Curseur pour chercher l'angle d'équilibrage de la masse corrective
         angle_correction = st.slider(
@@ -716,11 +711,10 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
         
     elif cas["id_cas"] == "maint_B":
 
-        MMB = charger_image("MMB.jpg")        
-        if MMB:
-            st.image(MMB, caption="Pont Roulant", use_container_width=True)
-        else:
-            st.warning("Illustration en cours de chargement ou fichier 'MMB.jpg' absent de l'application.")
+        try:
+            st.image("MMB.jpg", caption="Pont Roulant", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'MMB.jpg' est introuvable.")
             
         # Curseur pour translater le chariot du pont roulant
         x_chariot_pont = st.slider(
@@ -758,11 +752,10 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
     # --- METIER 4 : GÉOMÈTRE ---
     elif cas["id_cas"] == "geo_A":
 
-        GEOA = charger_image("GEOA.jpg")        
-        if GEOA:
-            st.image(GEOA, caption="Division de parcelle irrégulière", use_container_width=True)
-        else:
-            st.warning("Illustration en cours de chargement ou fichier 'GEOA.jpg' absent de l'application.")
+        try:
+            st.image("GEOA.jpg", caption="Division de parcelle irrégulière", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'GEOA.jpg' est introuvable.")
 
         
         facteur_forme = st.slider(
@@ -787,11 +780,11 @@ def afficher_atelier_metiers_etanche(metier_selectionne, verrouille=False):
         
     elif cas["id_cas"] == "geo_B":
 
-        GEOB = charger_image("GEOB.jpg")        
-        if GEOB:
-            st.image(GEOB, caption="Profil de terrain (Remblais / Déblais)", use_container_width=True)
-        else:
-            st.warning("Illustration en cours de chargement ou fichier 'GEOB.jpg' absent de l'application.")
+        try:
+            st.image("GEOB.jpg", caption="Profil de terrain (Remblais / Déblais)", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'GEOB.jpg' est introuvable.")
+            
         # Curseur pour régler la hauteur de nivellement du projet
         hauteur_projet = st.slider(
             "Hauteur de la ligne neutre du projet (m)", 
@@ -1096,25 +1089,22 @@ with tab1:
     col_graph11, col_graph12, col_graph13 = st.columns(3)
 
     with col_graph11:
-        img_archimede = charger_image("portrait_archimede.jpg")
-        if img_archimede:
-            st.image(img_archimede, caption="Archimède de Syracuse", use_container_width=True)
-        else:
-            st.warning("Illustration 'portrait_archimede.jpg' absente du dossier de l'application.")
+        try:
+            st.image("portrait_archimede.jpg", caption="Archimède de Syracuse", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'portrait_archimede.jpg' est introuvable.")
 
     with col_graph12:     
-        img_Huygens = charger_image("Christiaan_Huygens.jpg")
-        if img_Huygens:
-            st.image(img_Huygens, caption="Christiaan Huygens", use_container_width=True)
-        else:
-            st.warning("Illustration 'Christiaan_Huygens.jpg' absente du dossier de l'application.")
+        try:
+            st.image("Christiaan_Huygens.jpg", caption="Christiaan Huygens", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'Christiaan_Huygens.jpg' est introuvable.")
 
     with col_graph13:
-        img_newton = charger_image("portrait_newton.jpg")
-        if img_newton:
-            st.image(img_newton, caption="Isaac Newton", use_container_width=True)
-        else:
-            st.warning("Illustration 'portrait_newton.jpg' absente du dossier de l'application.")
+        try:
+            st.image("portrait_newton.jpg", caption="Isaac Newton", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'portrait_newton.jpg' est introuvable.")
 
     st.markdown("---")
     
