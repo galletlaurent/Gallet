@@ -483,7 +483,7 @@ with tab1:
                 "couleur": "Blanc", 
                 "precipite": "Sulfate de baryum BaSO₄",
                 "equation": r"Ba^{2+}_{(aq)} + SO_4^{2-}_{(aq)} \rightarrow BaS(O)_{4\,(s)}"
-                }
+            }
         }
     }
     col1, col2 = st.columns([1, 1.2])
