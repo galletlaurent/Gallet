@@ -1086,7 +1086,7 @@ with tab3:
 
     # 3. Contenu de la colonne de droite (l'image)
     with col_image:
-            st.caption("**Légende du schéma :**")
+        st.caption("**Légende du schéma :**")
         st.markdown(
             "- <span style='color:#EF553B; font-weight:bold;'>Vector P (Rouge)</span> : Poids appliqué au Centre de Gravité (G)\n"
             "- <span style='color:#636EFA; font-weight:bold;'>Vector Π (Bleu)</span> : Poussée d'Archimède appliquée au Centre de Carène (C)\n"
