@@ -301,14 +301,14 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
     import numpy as np
     import streamlit as st
 
-    # Récupération sécurisée des constantes calculées par le moteur de paillasse
+    # Récupération de la vraie valeur calculée dynamiquement par le modèle physique
     v_eq_attendu = st.session_state.get("vin_vrai_veq_calc", 12.0)
     c_base_session = st.session_state.get("c_base", 0.1)
-    v_acide_dosé = 10.0 # Volume initial d'acide Va mis dans le bécher
+    v_acide_dosé = 10.0 # Aligné sur le V_ini = 10.0 de votre modèle physico-chimique
 
-    # Calcul des moles de soude versées à l'équivalence pour le corrigé automatique : n = Cb * Ve
+    # Calcul des moles de soude versées à l'équivalence : n = Cb * Ve
     n_soude_equiv = (c_base_session * v_eq_attendu) / 1000.0
-    # À l'équivalence n_acide = n_base car les coefficients stœchiométriques valent 1
+    # À l'équivalence n_acide = n_base
     c_vinaigre_dose_attendu = (c_base_session * v_eq_attendu) / v_acide_dosé
 
     col_double_quiz_vin, col_double_trous_vin = st.columns(2)
@@ -321,9 +321,9 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
         
         opts_q1 = ["Choisir...", f"{c_base_session:.2f} mol/L", "1.00 mol/L", "0.50 mol/L"]
         st.write("**1.** Quelle est la concentration molaire de la solution titrante de soude ($C_b$) utilisee ?")
-        # RÉPARATION : Ajout du suffixe _tab2 unique
         dict_reponses_quiz["q1"] = st.selectbox("", opts_q1, key="col_g_quiz_vin_q1_tab2", disabled=verrouille, label_visibility="collapsed")
 
+        # Ajustement cosmétique des options pour inclure les 10.0 mL attendus en bonne place
         opts_q2 = ["Choisir...", f"{v_acide_dosé:.1f} mL", "20.0 mL", "25.0 mL"]
         st.write("**2.** Quel volume de solution titrée de vinaigre dilué ($V_a$) a été introduit dans le bécher ?")
         dict_reponses_quiz["q2"] = st.selectbox("", opts_q2, key="col_g_quiz_vin_q2_tab2", disabled=verrouille, label_visibility="collapsed")
@@ -331,7 +331,6 @@ def generer_le_quiz_analytique_atelier_deux(df_donnees=None, verrouille=False):
         opts_q3 = ["Choisir...", f"{v_eq_attendu:.2f} mL", "10.00 mL", "15.00 mL"]
         st.write("**3.** Quel est le volume équivalent exact ($V_E$) de soude versé ?")
         dict_reponses_quiz["q3"] = st.selectbox("", opts_q3, key="col_g_quiz_vin_q3_tab2", disabled=verrouille, label_visibility="collapsed")
-
         st.write("**4.** Quelle est la relation entre Ca , Cb , Va , Vb à l'équivalence ?")
         dict_reponses_quiz["q4"] = st.selectbox("", ["Choisir...", "Ca * Va = Cb * Ve", "Ca * Cb = Va * Ve", "Ca / Va = Cb / Ve"], key="col_g_quiz_vin_q4_tab2", disabled=verrouille, label_visibility="collapsed")
 
