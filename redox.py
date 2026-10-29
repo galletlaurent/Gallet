@@ -650,22 +650,25 @@ def afficher_atelier_bilan_verrouille(verrouille=False):
 
     with col_trous:
         st.markdown(
-            "##### Synthèse de l'Atelier 6 (Texte à trous - 5 cases - 10 pts)"
+            "##### Synthèse de l'Atelier (Texte à trous - 10 pts)"
         )
-        for ligne in st.session_state.champs_bil6_clean:
-            enonce, choix, cle = ligne, ligne, ligne[-1]
-            c_txt, c_sel = st.columns(
-                [0.65, 0.35], vertical_alignment="bottom"
-            )
+        # Utilisation de st.columns pour forcer un alignement parfait sur deux blocs propres
+        for ligne in st.session_state.champs_gam5_clean:
+            enonce, choix, attendu, cle = ligne
+            
+            # Création de deux colonnes asymétriques pour laisser de la place au texte
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="center")
+            
             with c_txt:
                 st.write(enonce)
+                
             with c_sel:
                 st.selectbox(
-                    "",
-                    choix,
-                    key=f"{cle}_bil6_clean",
+                    label=enonce, # Le label sert d'ancre d'accessibilité invisible
+                    options=choix,
+                    key=f"{cle}_gam5_clean",
                     disabled=verrouille,
-                    label_visibility="collapsed",
+                    label_visibility="collapsed" # Masque le label pour ne garder que la boîte propre
                 )
 
 
