@@ -2696,6 +2696,18 @@ with tab5:
             "(situé en haut à gauche) et **le réducteur le plus fort** (situé en bas à droite)."
         )
 
+        if os.path.exists("potentiel_echelle.jpg"):
+            st.image(
+                "potentiel_echelle.jpg",
+                caption="Exemple de potentiels ",
+                use_container_width=True,
+            )
+        else:
+            st.warning(
+                "L'image 'potentiel_echelle.jpg' n'a pas été trouvée dans le dossier."
+            )
+
+
         st.subheader("Tracé géométrique de la règle")
         
         st.markdown("**Méthode de lecture graphique :**")
