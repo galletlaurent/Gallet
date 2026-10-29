@@ -3609,8 +3609,6 @@ with tab7:
                 if str(saisie_t).strip() == str(attendu_t).strip()
                 else "INCORRECT"
             )
-            v_class_t = (
-                "status-correct"
             # Détermination de la classe CSS pour la couleur (Vert si correct, Rouge si incorrect)
             v_class_t = (
                 "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
