@@ -534,6 +534,132 @@ bibliotheque_redox = {
         }
 
 
+def afficher_atelier_reduction_verrouille(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 3 (Réaction de réduction) sur deux colonnes."""
+    import random
+
+    questions_reduction3_sources = [
+        {
+            "id": "red1",
+            "q": "Quelle est la définition électronique exacte d'une réduction ?",
+            "options": [
+                "Un gain d'électrons",
+                "Une perte d'électrons",
+                "Un transfert de neutrons",
+            ],
+            "rep": "Un gain d'électrons",
+        },
+        {
+            "id": "red2",
+            "q": "Comment qualifie-t-on l'espèce de départ qui capture et accepte les électrons ?",
+            "options": ["L'oxydant", "Le réducteur", "L'anion"],
+            "rep": "L'oxydant",
+        },
+        {
+            "id": "red3",
+            "q": "Dans l'écriture standard d'une réduction, où se trouvent les électrons captés ?",
+            "options": [
+                "Du côté des réactifs (à gauche)",
+                "Du côté des produits (à droite)",
+                "Ils sont invisibles",
+            ],
+            "rep": "Du côté des réactifs (à gauche)",
+        },
+        {
+            "id": "red4",
+            "q": "Lors de la réduction des ions bleus Cu²⁺, quel solide métallique brillant obtient-on ?",
+            "options": ["Le cuivre métallique", "Le zinc métallique", "Le fer blanc"],
+            "rep": "Le cuivre métallique",
+        },
+        {
+            "id": "red5",
+            "q": "Que subit le nombre d'oxydation (n.o.) d'un atome lors d'une réduction ?",
+            "options": [
+                "Il diminue",
+                "Il augmente",
+                "Il double d'intensité",
+            ],
+            "rep": "Il diminue",
+        },
+    ]
+
+    if "ordre_quiz_tab3_red_aleatoire" not in st.session_state:
+        random.shuffle(questions_reduction3_sources)
+        st.session_state.ordre_quiz_tab3_red_aleatoire = (
+            questions_reduction3_sources
+        )
+
+    if "champs_red3_clean" not in st.session_state:
+        st.session_state.champs_red_clean = [
+            (
+                "1. La réduction se définit toujours comme un .......... d'électrons.",
+                ["Choisir...", "gain", "rejet"],
+                "gain",
+                "red3_t1",
+            ),
+            (
+                "2. L'entité chimique qui capture ces charges négatives est l'..........",
+                ["Choisir...", "oxydant", "réducteur"],
+                "oxydant",
+                "red3_t2",
+            ),
+            (
+                "3. Les électrons absorbés figurent à gauche, du côté des ..........",
+                ["Choisir...", "réactifs", "produits"],
+                "réactifs",
+                "red3_t3",
+            ),
+            (
+                "4. En milieu acide, la réduction des ions H₃O⁺ libère le gaz ..........",
+                ["Choisir...", "dihydrogène", "dioxygène"],
+                "dihydrogène",
+                "red3_t4",
+            ),
+            (
+                "5. Un oxydant ayant capté ses électrons devient son réducteur ..........",
+                ["Choisir...", "conjugué", "inverse"],
+                "conjugué",
+                "red3_t5",
+            ),
+        ]
+
+    col_quiz, col_trous = st.columns(2)
+    with col_quiz:
+        st.markdown(
+            "##### Quiz Technique de la Réduction (5 questions - 10 pts)"
+        )
+        for idx, q_data in enumerate(
+            st.session_state.ordre_quiz_tab3_red_aleatoire, 1
+        ):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox(
+                "",
+                options=["Choisir..."] + q_data["options"],
+                key=f"red_at3_final_g_{q_data['id']}",
+                disabled=verrouille,
+                label_visibility="collapsed",
+            )
+
+    with col_trous:
+        st.markdown(
+            "##### Synthèse de l'Atelier 3 (Texte à trous - 5 cases - 10 pts)"
+        )
+        for ligne in st.session_state.champs_red_clean:
+            enonce, choix, cle = ligne[0], ligne[1], ligne[-1]
+            c_txt, c_sel = st.columns(
+                [0.65, 0.35], vertical_alignment="bottom"
+            )
+            with c_txt:
+                st.write(enonce)
+            with c_sel:
+                st.selectbox(
+                    "",
+                    choix,
+                    key=f"{cle}_red3_clean",
+                    disabled=verrouille,
+                    label_visibility="collapsed",
+                )
+
 def afficher_atelier_oxydation_verrouille(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 2 (Réaction d'oxydation) sur deux colonnes."""
     import random
@@ -1686,9 +1812,225 @@ with tab2:
 
 
 
+with tab3:
+    st.header("La Réaction de Réduction")
 
+    if os.path.exists("reduction_intro.jpg"):
+        st.image(
+            "reduction_intro.jpg",
+            caption="Mise en évidence expérimentale de la réduction en laboratoire",
+            use_container_width=True,
+        )
+    else:
+        st.warning(
+            "L'image 'reduction_intro.jpg' n'a pas été trouvée dans le dossier."
+        )
 
+    st.subheader("Qu'est-ce qu'une réduction ?")
+    st.write(
+        "Selon la définition électronique moderne, une **réduction** est une transformation chimique "
+        "au cours de laquelle une espèce chimique **gagne un ou plusieurs électrons**."
+    )
 
+    st.info(
+        "L'espèce chimique qui capte ces électrons est appelée l'**oxydant**. "
+        "L'oxydant est donc le receveur d'électrons. Après avoir emmagasiné ces charges négatives, l'oxydant se transforme "
+        "en son réducteur conjugué."
+    )
+
+    # Menu déroulant connecté à la bibliothèque redox
+    st.subheader("Générateur dynamique de demi-équations de réduction")
+    st.write(
+        "Sélectionnez un couple dans le menu pour afficher sa réaction de réduction pure (sens du gain d'électrons) :"
+    )
+
+    liste_couples_dispo = list(bibliotheque_redox.keys())
+
+    couple_choisi_red = st.selectbox(
+        "Choisir un couple à réduire :",
+        liste_couples_dispo,
+        key="select_menu_reduction_dynamique",
+    )
+
+    if couple_choisi_red:
+        data_couple = bibliotheque_redox[couple_choisi_red]
+
+        nom_propre_couple = couple_choisi_red.split(" ")[0].strip()
+        forme_ox_texte = nom_propre_couple.split("/")[0].strip()
+        forme_red_texte = nom_propre_couple.split("/")[1].strip()
+
+        col_menu1, col_menu2 = st.columns(2)
+        with col_menu1:
+            st.markdown(f"**Analyse du couple :** {couple_choisi_red}")
+            st.write(f"- Oxydant de départ : **{forme_ox_texte}**")
+            st.write(f"- Réducteur conjugué produit : **{forme_red_texte}**")
+            st.write(
+                f"- Quantité d'électrons captés : **{data_couple['electrons']} e⁻**"
+            )
+            st.write(
+                f"- Décompte molécules d'eau associées : {data_couple['h2o_acide']} H2O"
+            )
+
+        with col_menu2:
+            st.markdown("**Équation de la réduction (Milieu Acide) :**")
+            # Affichage de la chaîne LaTeX directement extraite de la bibliothèque
+            st.latex(data_couple["milieu_acide"])
+
+    st.divider()
+
+    st.write(
+        "Découvrez le mécanisme intime de la réduction à travers cette mise en scène."
+    )
+
+    # --- SECTION CARICATURE ET TEXTE BLEU ---
+    col_graph_red, col_bd_red = st.columns(2)
+
+    with col_graph_red:
+        st.write(
+            "**La BD humoristique textuelle : Le sauvetage des ions égarés**"
+        )
+        st.info(
+            "**Case 1 :** Un ion cuivre II (Cu2+) flotte tristement dans l'eau bleue d'un bécher. Privé de ses deux électrons de surface, il appelle à l'aide : 'Je me sens si vide et immatériel en tant qu'ion soluble... Si seulement quelqu'un pouvait me rendre nos charges !'.\n\n"
+            "**Case 2 :** Une électrode de carbone reliée à un générateur électrique plonge dans la solution. Un flux massif de charges négatives arrive par le câble. L'électrode crie dans le liquide : 'Avis à la population ionique ! Distribution générale d'électrons frais en provenance de la borne négative !'.\n\n"
+            "**Case 3 :** L'ion cuivre se précipite sur la surface métallique et intercepte deux électrons au passage. Un éclair d'énergie traverse sa structure : 'Ça y est ! C'est la réduction ! Mes orbitales se remplissent à nouveau, je quitte mon état d'ion dissous !'.\n\n"
+            "**Case 4 :** L'atome de cuivre redevenu neutre s'accroche solidement à la paroi sous forme de métal solide et brillant. Il salue ses compagnons restés en solution : 'Opération réussie ! Grâce à ce gain d'électrons, je reprenne ma place de solide indestructible. L'oxydant a été réduit !'."
+        )
+
+    with col_bd_red:
+        if os.path.exists("reduction_caricature.jpg"):
+            st.image(
+                "reduction_caricature.jpg",
+                caption="Illustration humoristique du mécanisme de réduction en 4 cases",
+                use_container_width=True,
+            )
+        else:
+            st.warning(
+                "L'image 'reduction_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+            )
+
+    if "suite_verrouille_tab3_reduction" not in st.session_state:
+        st.session_state.suite_verrouille_tab3_reduction = False
+    verrou_at3 = st.session_state.suite_verrouille_tab3_reduction
+
+    afficher_atelier_reduction_verrouille(verrouille=verrou_at3)
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 3")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat3 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier sur la Réduction.",
+        key="check_certif_red3_final_net",
+        disabled=verrou_at3,
+    )
+
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3",
+        key="btn_export_suite3_red_official",
+        use_container_width=True,
+        disabled=verrou_at3,
+    ):
+        if st.session_state.get("nom_var", "Nom") in [
+            "Nom",
+            "",
+        ] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error(
+                "Action refusée : Saisissez votre identité dans l'onglet 'Identification'."
+            )
+        elif not case_certif_stat3:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # Note du Quiz (ramenée sur 10 pts : 2 pts par question)
+            score_q3 = 0.0
+            if "ordre_quiz_tab3_red_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab3_red_aleatoire:
+                    saisie = st.session_state.get(
+                        f"red_at3_final_g_{q_item['id']}", "Choisir..."
+                    )
+                    if str(saisie).strip() == str(q_item["rep"]).strip():
+                        score_q3 += 2.0
+
+            # Note du Texte à trous (ramenée sur 10 pts : 2 pts par case)
+            score_t3 = 0.0
+            if "champs_red3_clean" in st.session_state:
+                for ligne in st.session_state.champs_red_clean:
+                    cle_variable = ligne[-1]
+                    attendu_valeur = ligne[2]
+                    if (
+                        st.session_state.get(
+                            f"{cle_variable}_red3_clean", "Choisir..."
+                        )
+                        == attendu_valeur
+                    ):
+                        score_t3 += 2.0
+
+            st.session_state.score_suite3_red_p1 = round(float(score_q3), 1)
+            st.session_state.score_suite3_red_p2 = round(float(score_t3), 1)
+            st.session_state.score_final_suite3_red = round(
+                float(score_q3 + score_t3), 1
+            )
+            st.session_state.suite_verrouille_tab3_reduction = True
+            st.rerun()
+
+    if st.session_state.get("suite_verrouille_tab3_reduction", False):
+        scr1_t3 = st.session_state.get("score_suite3_red_p1", 0.0)
+        scr2_t3 = st.session_state.get("score_suite3_red_p2", 0.0)
+        tot_s_t3 = st.session_state.get("score_final_suite3_red", 0.0)
+        timestamp_suite3 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(
+            f"ATELIER RÉDUCTION SCELLÉ | Note de session : {tot_s_t3:.1f} / 20"
+        )
+
+        html_export_red3 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Réduction - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #15803d; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #2563eb; color: white; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #1e293b; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Chimie</h1>
+                <p>Atelier 3 : Étude de la réaction de réduction et gain d'électrons</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t3:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Récapitulatif des Notes</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #15803d;">
+                Quiz Technique : <strong>{scr1_t3:.1f} / 10</strong><br>
+                Synthèse de Cours : <strong>{scr2_t3:.1f} / 10</strong><br>
+                Note Totale : <strong>{tot_s_t3:.1f} / 20</strong>
+            </p>
+        </body>
+        </html>
+        """
+
+        nom_brut = preparer_nom_fichier("Rapport_Atelier_Reduction")
+        nom_fichier_html_red3 = os.path.basename(nom_brut).replace(
+            ".txt", ".html"
+        )
+
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 3 (.html)",
+            data=html_export_red3,
+            file_name=nom_fichier_html_red3,
+            mime="text/html",
+        )
 
 
 
