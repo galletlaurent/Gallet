@@ -3135,19 +3135,25 @@ with tab7:
             key="btn_generer_exercice_aleatoire_t7",
             use_container_width=True,
         ):
+            # 1. Suppression du cas actif pour forcer le nouveau tirage aléatoire
             if "choix_id_routier" in st.session_state:
                 del st.session_state["choix_id_routier"]
 
+            # 2. CRUCIAL : Suppression de la banque pour forcer la réinitialisation de la condition de l'onglet
+            if "banque_complete_routier" in st.session_state:
+                del st.session_state["banque_complete_routier"]
+
+            # 3. Réinitialisation complète des verrous d'ateliers et de bilans
             st.session_state.verrou_routier_bilan = False
             st.session_state.verrou_routier_at = False
             st.session_state.suite_verrouille_tab7_routier = False
 
+            # 4. Nettoyage des anciens scores calculés
             if "score_routier_partie_bilan" in st.session_state:
                 del st.session_state["score_routier_partie_bilan"]
 
+            # 5. Rechargement propre de la page avec les nouvelles données
             st.rerun()
-
-    st.write("---")
 
 
     # 1. BANQUE DE DONNÉES DYNAMIQUE PAR CAS (ÉNONCÉ, BD, QUIZ, TROUS)
