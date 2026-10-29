@@ -534,6 +534,137 @@ bibliotheque_redox = {
         }
 
 
+
+
+def afficher_atelier_couples_verrouille(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 4 (Les couples redox) sur deux colonnes."""
+    import random
+
+    # 1. BASE DE DONNÉES DU QUIZ DES COUPLES
+    questions_couples4_sources = [
+        {
+            "id": "cpl1",
+            "q": "Quelle est la convention d'écriture internationale pour désigner un couple redox ?",
+            "options": [
+                "Oxydant / Réducteur",
+                "Réducteur / Oxydant",
+                "Acide / Base",
+            ],
+            "rep": "Oxydant / Réducteur",
+        },
+        {
+            "id": "cpl2",
+            "q": "Quel symbole mathématique utilise-t-on dans la demi-équation d'un couple pour signifier sa réversibilité ?",
+            "options": [
+                "Une double flèche (réversible)",
+                "Une flèche simple vers la droite",
+                "Un signe égal",
+            ],
+            "rep": "Une double flèche (réversible)",
+        },
+        {
+            "id": "cpl3",
+            "q": "Comment qualifie-t-on l'oxydant et le réducteur qui composent un même couple ?",
+            "options": ["Conjugués", "Isomères", "Neutres"],
+            "rep": "Conjugués",
+        },
+        {
+            "id": "cpl4",
+            "q": "Dans le couple Cu²⁺ / Cu, quelle est la nature physique de la forme réductrice ?",
+            "options": [
+                "Un solide métallique orange",
+                "Un liquide bleu soluble",
+                "Un gaz incolore",
+            ],
+            "rep": "Un solide métallique orange",
+        },
+        {
+            "id": "cpl5",
+            "q": "Quelle particule fait le lien exclusif entre les deux formes d'un couple redox ?",
+            "options": ["L'électron", "Le proton", "Le neutron"],
+            "rep": "L'électron",
+        },
+    ]
+
+    if "ordre_quiz_tab4_cpl_aleatoire" not in st.session_state:
+        random.shuffle(questions_couples4_sources)
+        st.session_state.ordre_quiz_tab4_cpl_aleatoire = (
+            questions_couples4_sources
+        )
+
+    # 2. BASE DE DONNÉES DU TEXTE À TROUS DES COUPLES
+    if "champs_cpl4_clean" not in st.session_state:
+        st.session_state.champs_cpl4_clean = [
+            (
+                "1. Un couple chimique associe toujours l'oxydant et son .......... conjugué.",
+                ["Choisir...", "réducteur", "solvant"],
+                "réducteur",
+                "cpl4_t1",
+            ),
+            (
+                "2. Par convention, l'un s'écrit à gauche du slash et représente l'..........",
+                ["Choisir...", "oxydant", "réducteur"],
+                "oxydant",
+                "cpl4_t2",
+            ),
+            (
+                "3. La double flèche prouve le caractère .......... de l'échange électronique.",
+                ["Choisir...", "réversible", "irréversible"],
+                "réversible",
+                "cpl4_t3",
+            ),
+            (
+                "4. Dans le couple Fe²⁺ / Fe, l'entité Fe²⁺ est la forme ..........",
+                ["Choisir...", "oxydée", "réduite"],
+                "oxydée",
+                "cpl4_t4",
+            ),
+            (
+                "5. L'atome neutre de métal pur constitue toujours le .......... du couple.",
+                ["Choisir...", "réducteur", "catalyseur"],
+                "réducteur",
+                "cpl4_t5",
+            ),
+        ]
+
+    # 3. RENDU DES DEUX COLONNES STREAMLIT
+    col_quiz, col_trous = st.columns(2)
+
+    with col_quiz:
+        st.markdown("##### Quiz Technique sur les Couples (5 questions - 10 pts)")
+        for idx, q_data in enumerate(
+            st.session_state.ordre_quiz_tab4_cpl_aleatoire, 1
+        ):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox(
+                "",
+                options=["Choisir..."] + q_data["options"],
+                key=f"cpl_at4_final_g_{q_data['id']}",
+                disabled=verrouille,
+                label_visibility="collapsed",
+            )
+
+    with col_trous:
+        st.markdown(
+            "##### Synthèse de l'Atelier 4 (Texte à trous - 5 cases - 10 pts)"
+        )
+        for ligne in st.session_state.champs_cpl4_clean:
+            enonce, choix, cle = ligne[0], ligne[1], ligne[-1]
+            c_txt, c_sel = st.columns(
+                [0.65, 0.35], vertical_alignment="bottom"
+            )
+            with c_txt:
+                st.write(enonce)
+            with c_sel:
+                st.selectbox(
+                    "",
+                    choix,
+                    key=f"{cle}_cpl4_clean",
+                    disabled=verrouille,
+                    label_visibility="collapsed",
+                )
+
+
 def afficher_atelier_reduction_verrouille(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 3 (Réaction de réduction) sur deux colonnes."""
     import random
@@ -2041,9 +2172,244 @@ with tab3:
 
 
 
+with tab4:
+    st.header("Les Couples Redox")
 
+    if os.path.exists("couples_intro.jpg"):
+        st.image(
+            "couples_intro.jpg",
+            caption="Représentation de la dualité Oxydant / Réducteur",
+            use_container_width=True,
+        )
+    else:
+        st.warning(
+            "L'image 'couples_intro.jpg' n'a pas été trouvée dans le dossier."
+        )
 
+    st.subheader("Qu'est-ce qu'un couple redox ?")
+    st.write(
+        "En chimie, un oxydant et un réducteur ne réagissent jamais seuls. "
+        "Ils sont indissociables et forment ce que l'on appelle un **couple oxydant/réducteur** (ou couple redox). "
+        "Par convention, un couple s'écrit toujours dans l'ordre suivant : **Oxydant / Réducteur**."
+    )
 
+    st.info(
+        "La forme oxydée et la forme réduite d'un même élément chimique sont dites **conjuguées**. "
+        "Le passage de l'une à l'autre se fait par un transfert réversible d'électrons, formalisé par une double flèche "
+        "dans la demi-équation."
+    )
+
+    st.subheader("La formulation mathématique et exemples de couples")
+
+    # --- SECTION FORMULE GÉNÉRALE ---
+    col_41, col_42 = st.columns(2)
+    with col_41:
+        st.markdown("**Équation générale d'un couple redox :**")
+        st.write(
+            "La double flèche indique que la transformation peut se produire dans les deux sens "
+            "(oxydation ou réduction selon les partenaires de la réaction)."
+        )
+        st.latex(r"\text{Oxydant} + n \cdot e^- \rightleftharpoons \text{Réducteur}")
+    with col_42:
+        if os.path.exists("formule_couple.jpg"):
+            st.image(
+                "formule_couple.jpg", caption="Schéma du transfert réversible"
+            )
+        else:
+            st.warning("L'image 'formule_couple.jpg' est introuvable.")
+
+    # --- SECTION EXEMPLE DU COUPLE CUIVRE ---
+    col_43, col_44 = st.columns(2)
+    with col_43:
+        st.markdown("**Exemple 1 : Le couple Cu²⁺ / Cu**")
+        st.write(
+            "L'ion cuivre II (Cu²⁺) est l'oxydant conjugué du cuivre métallique (Cu), qui est le réducteur. "
+            "Leur passage mutuel met en jeu deux électrons."
+        )
+        st.latex(r"\text{Cu}^{2+} + 2e^- \rightleftharpoons \text{Cu}")
+    with col_44:
+        if os.path.exists("couple_cuivre.jpg"):
+            st.image(
+                "couple_cuivre.jpg",
+                caption="Forme ionique liquide (bleue) et forme métallique solide (orange)",
+            )
+        else:
+            st.warning("L'image 'couple_cuivre.jpg' est introuvable.")
+
+    # --- SECTION EXEMPLE DU COUPLE FER ---
+    col_45, col_46 = st.columns(2)
+    with col_45:
+        st.markdown("**Exemple 2 : Le couple Fe²⁺ / Fe**")
+        st.write(
+            "Ce couple est au cœur des problématiques de corrosion. L'ion fer II (Fe²⁺) "
+            "coexiste avec le fer solide (Fe) par le biais d'un échange de deux électrons."
+        )
+        st.latex(r"\text{Fe}^{2+} + 2e^- \rightleftharpoons \text{Fe}")
+    with col_46:
+        if os.path.exists("couple_fer.jpg"):
+            st.image(
+                "couple_fer.jpg",
+                caption="Équilibre électrochimique des espèces du fer",
+            )
+        else:
+            st.warning("L'image 'couple_fer.jpg' est introuvable.")
+
+    st.divider()
+
+    st.write(
+        "Découvrez la notion de couple redox à travers cette mise en scène."
+    )
+
+    # --- SECTION CARICATURE ET TEXTE BLEU ---
+    col_graph_couple, col_bd_couple = st.columns(2)
+
+    with col_graph_couple:
+        st.write(
+            "**La BD humoristique textuelle : Le pacte indissociable du binôme**"
+        )
+        st.info(
+            "**Case 1 :** Un ion Zinc (Zn2+) et un atome de Zinc métallique (Zn) sont assis sur le canapé d'un conseiller d'orientation chimique. Le conseiller leur dit : 'Vous devez faire un choix, vous ne pouvez pas rester indécis entre être un liquide ou un solide !'.\n\n"
+            "**Case 2 :** L'atome de Zinc solide secoue la tête et répond : 'Impossible d'être séparés ! Nous sommes les deux faces d'une même pièce. S'il perd deux électrons, je deviens lui. Si je les récupère, il devient moi !'.\n\n"
+            "**Case 3 :** Le conseiller regarde ses fiches, perplexe, et s'exclame : 'C'est une vraie colocation électronique ! Un coup à gauche avec les électrons, un coup à droite sans les électrons... Comment écrivez-vous cette alliance ?'.\n\n"
+            "**Case 4 :** Le binôme brandit un panneau arborant une double flèche parfaitement équilibrée. Le Zinc solide conclut fièrement : 'Nous écrivons Oxydant / Réducteur avec une double flèche au milieu. Nous sommes un couple redox, liés pour le pire et pour le meilleur !'."
+        )
+
+    with col_bd_couple:
+        if os.path.exists("couple_caricature.jpg"):
+            st.image(
+                "couple_caricature.jpg",
+                caption="Illustration humoristique de la notion de couple en 4 cases",
+                use_container_width=True,
+            )
+        else:
+            st.warning(
+                "L'image 'couple_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+            )
+
+    if "suite_verrouille_tab4_couples" not in st.session_state:
+        st.session_state.suite_verrouille_tab4_couples = False
+    verrou_at4 = st.session_state.suite_verrouille_tab4_couples
+
+    # Appel de la fonction de l'atelier
+    afficher_atelier_couples_verrouille(verrouille=verrou_at4)
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 4")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat4 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier sur les Couples.",
+        key="check_certif_cpl4_final_net",
+        disabled=verrou_at4,
+    )
+
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4",
+        key="btn_export_suite4_cpl_official",
+        use_container_width=True,
+        disabled=verrou_at4,
+    ):
+        if st.session_state.get("nom_var", "Nom") in [
+            "Nom",
+            "",
+        ] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error(
+                "Action refusée : Saisissez votre identité dans l'onglet 'Identification'."
+            )
+        elif not case_certif_stat4:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # Note du Quiz (2 pts par question)
+            score_q4 = 0.0
+            if "ordre_quiz_tab4_cpl_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab4_cpl_aleatoire:
+                    saisie = st.session_state.get(
+                        f"cpl_at4_final_g_{q_item['id']}", "Choisir..."
+                    )
+                    if str(saisie).strip() == str(q_item["rep"]).strip():
+                        score_q4 += 2.0
+
+            # Note du Texte à trous (2 pts par case)
+            score_t4 = 0.0
+            if "champs_cpl4_clean" in st.session_state:
+                for ligne in st.session_state.champs_cpl4_clean:
+                    cle_variable = ligne[-1]
+                    attendu_valeur = ligne[2]
+                    if (
+                        st.session_state.get(
+                            f"{cle_variable}_cpl4_clean", "Choisir..."
+                        )
+                        == attendu_valeur
+                    ):
+                        score_t4 += 2.0
+
+            st.session_state.score_suite4_cpl_p1 = round(float(score_q4), 1)
+            st.session_state.score_suite4_cpl_p2 = round(float(score_t4), 1)
+            st.session_state.score_final_suite4_cpl = round(
+                float(score_q4 + score_t4), 1
+            )
+            st.session_state.suite_verrouille_tab4_couples = True
+            st.rerun()
+
+    if st.session_state.get("suite_verrouille_tab4_couples", False):
+        scr1_t4 = st.session_state.get("score_suite4_cpl_p1", 0.0)
+        scr2_t4 = st.session_state.get("score_suite4_cpl_p2", 0.0)
+        tot_s_t4 = st.session_state.get("score_final_suite4_cpl", 0.0)
+        timestamp_suite4 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(
+            f"ATELIER COUPLES SCELLÉ | Note de session : {tot_s_t4:.1f} / 20"
+        )
+
+        html_export_cpl4 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Couples Redox - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #4f46e5; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #1e293b; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Chimie</h1>
+                <p>Atelier 4 : Étude de la notion de couple Oxydant / Réducteur</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite4}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t4:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Récapitulatif des Notes</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #4f46e5;">
+                Quiz Technique : <strong>{scr1_t4:.1f} / 10</strong><br>
+                Synthèse de Cours : <strong>{scr2_t4:.1f} / 10</strong><br>
+                Note Totale : <strong>{tot_s_t4:.1f} / 20</strong>
+            </p>
+        </body>
+        </html>
+        """
+
+        nom_brut = preparer_nom_fichier("Rapport_Atelier_Couples")
+        nom_fichier_html_cpl4 = os.path.basename(nom_brut).replace(
+            ".txt", ".html"
+        )
+
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 4 (.html)",
+            data=html_export_cpl4,
+            file_name=nom_fichier_html_cpl4,
+            mime="text/html",
+        )
 
 
 
