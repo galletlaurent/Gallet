@@ -3120,3 +3120,495 @@ with tab6:
             file_name=nom_fichier_html_bil6,
             mime="text/html",
         )
+
+
+with tab7:
+    st.header("Application dans le domaine du transport routier")
+
+    # Tirage au sort d'un énoncé parmi trois variantes différentes
+    if "enonce_routier_aleatoire" not in st.session_state:
+        enonces_routier_banque = [
+            {
+                "id": "routier_cas1",
+                "titre": "Cas pratique A : Corrosion par le sel de déneigement sur les châssis",
+                "texte": "En hiver, le salage des routes apporte une quantité massive d'ions chlorure. L'humidité stagnante sur les longerons en acier crée un milieu conducteur agressif. Le fer métallique solide du châssis subit une oxydation destructrice et cède ses électrons au dioxygène de l'air humide, entraînant la formation de cloques de rouille.",
+                "couple_ox": "O2 / H2O",
+                "couple_red": "Fe²⁺ / Fe",
+                "metal": "Fe",
+                "ion": "Fe²⁺"
+            },
+            {
+                "id": "routier_cas2",
+                "titre": "Cas pratique B : Attaque acide des bennes de transport de produits chimiques",
+                "texte": "Une benne en acier transporte des résidus industriels acides mal neutralisés. Les ions hydronium H₃O⁺ attaquent les parois intérieures de la cuve de transport. Le fer solide s'oxyde et se dissout, tandis que les ions acides subissent une réduction immédiate provoquant un dégagement de dihydrogène gazeux sous pression.",
+                "couple_ox": "H3O⁺ / H2",
+                "couple_red": "Fe²⁺ / Fe",
+                "metal": "Fe",
+                "ion": "Fe²⁺"
+            },
+            {
+                "id": "routier_cas3",
+                "titre": "Cas pratique C : Protection par anodes en zinc sur les remorques porte-engins",
+                "texte": "Pour préserver les essieux et structures basses des remorques porte-engins, les constructeurs installent des blocs de zinc. Lors d'une agression saline, le zinc s'oxyde en premier à la place du fer de la structure. Le zinc se sacrifie pour empêcher la réduction de l'oxygène sur l'acier.",
+                "couple_ox": "O2 / H2O",
+                "couple_red": "Zn²⁺ / Zn",
+                "metal": "Zn",
+                "ion": "Zn²⁺"
+            }
+        ]
+        st.session_state.enonce_routier_aleatoire = random.choice(enonces_routier_banque)
+
+    cas_routier = st.session_state.enonce_routier_aleatoire
+
+    # Affichage de l'énoncé choisi
+    st.subheader(cas_routier["titre"])
+    st.write(cas_routier["texte"])
+
+    # Affichage sécurisé de l'image JPG correspondante
+    image_routier = f"{cas_routier['id']}.jpg"
+    if os.path.exists(image_routier):
+        st.image(image_routier, caption="Constat des dégradations sur le véhicule de transport")
+    else:
+        st.warning(f"L'image '{image_routier}' est introuvable à la racine de l'application.")
+
+    st.divider()
+
+    # Affichage de la caricature sous forme de bande dessinée textuelle dans l'encadré bleu
+    col_g_rt, col_b_rt = st.columns(2)
+    with col_g_rt:
+        st.write("**La BD humoristique textuelle : Sabotage hivernal sur l'autoroute**")
+        st.info(
+            "**Case 1 :** Un camion de 44 tonnes roule de nuit sous une tempête de neige. Derrière lui, une saleuse projette des milliers de grains de sel. Le chauffeur sourit au volant : 'Super, la route est bien dégagée, l'adhérence est parfaite !'.\n\n"
+            "**Case 2 :** Zoom sous le châssis métallique. Une couche de boue salée et fondue recouvre les longerons en acier. Les ions Chlorure (Cl⁻), déguisés en petits agents secrets, frottent leurs mains avec malice : 'Hé les gars, la peinture a sauté ici ! Le passage est libre, installez l'autoroute à électrons !'.\n\n"
+            "**Case 3 :** Les atomes de fer du châssis se mettent à trembler. Attaqués par les molécules de dioxygène de l'air humide, ils lâchent leurs électrons à toute vitesse : 'Oh non ! Le sel rend l'eau trop conductrice, la fuite de nos charges est dix fois trop rapide ! On s'oxyde en ions Fe2+ !'.\n\n"
+            "**Case 4 :** Au printemps, lors de la révision à l'atelier, le mécanicien tape sur le châssis avec un marteau. Des plaques de rouille tombent au sol. Le mécanicien soupire : 'Encore un coup de l'oxydoréduction hivernale... Il va falloir souder un renfort et refaire un traitement anticorrosion complet !'."
+        )
+    with col_b_rt:
+        if os.path.exists("transport_caricature.jpg"):
+            st.image(
+                "transport_caricature.jpg",
+                caption="Illustration humoristique du mécanisme appliqué au transport routier",
+                use_container_width=True
+            )
+        else:
+            st.warning("L'image 'transport_caricature.jpg' est introuvable.")
+
+    st.divider()
+
+    st.subheader("Générateur d'équation bilan du transport (Note sur 10 points)")
+    st.write("Sélectionnez les bons éléments et équilibrez l'équation finale par rapport à l'énoncé ci-dessus :")
+
+    if "verrou_routier_bilan" not in st.session_state:
+        st.session_state.verrou_routier_bilan = False
+    v_routier = st.session_state.verrou_routier_bilan
+
+    col_rb1, col_rb2 = st.columns(2)
+    with col_rb1:
+        choix_rc_ox = st.selectbox("Sélectionnez le couple de l'oxydant :", ["Choisir...", "O2 / H2O", "H3O⁺ / H2", "Fe²⁺ / Fe"], disabled=v_routier, key="rc_ox_sel")
+        choix_rdemi_ox = st.selectbox("Sélectionnez la bonne écriture de l'oxydation :", ["Choisir...", "Fe -> Fe²⁺ + 2e⁻", "Zn -> Zn²⁺ + 2e⁻", "2H2O -> O2 + 4H3O⁺ + 4e⁻"], disabled=v_routier, key="rdemi_ox_sel")
+
+    with col_rb2:
+        choix_rc_red = st.selectbox("Sélectionnez le couple du réducteur :", ["Choisir...", "Fe²⁺ / Fe", "Zn²⁺ / Zn", "O2 / H2O"], disabled=v_routier, key="rc_red_sel")
+        choix_rdemi_red = st.selectbox("Sélectionnez la bonne écriture de la réduction :", ["Choisir...", "O2 + 4H3O⁺ + 4e⁻ -> 6H2O", "2H3O⁺ + 2e⁻ -> H2 + 2H2O", "Fe²⁺ + 2e⁻ -> Fe"], disabled=v_routier, key="rdemi_red_sel")
+
+    st.markdown("**Équilibrez l'équation bilan globale finale :**")
+    col_re1, col_re2, col_re3, col_re4, col_re5, col_re6, col_re7 = st.columns([0.1, 0.2, 0.05, 0.2, 0.05, 0.2, 0.2], vertical_alignment="bottom")
+
+    with col_re1:
+        r_coef_1 = st.selectbox("Coef", ["", "1", "2"], key="rc1", disabled=v_routier)
+    with col_re2:
+        r_reactif_1 = st.selectbox("Réactif 1", ["", "Fe", "Zn", "O2"], key="rr1", disabled=v_routier)
+    with col_re3:
+        st.write("+")
+    with col_re4:
+        r_reactif_2 = st.selectbox("Réactif 2", ["", "O2", "H3O⁺", "H2O"], key="rr2", disabled=v_routier)
+    with col_re5:
+        st.write("->")
+    with col_re6:
+        r_prod_1 = st.selectbox("Produit 1", ["", "Fe²⁺", "Zn²⁺", "H2"], key="rp1", disabled=v_routier)
+    with col_re7:
+        r_prod_2 = st.selectbox("Produit 2", ["", "H2O", "H2", "Fe²⁺"], key="rp2", disabled=v_routier)
+
+    if st.button("VALIDER L'ÉQUATION BILAN (10 PTS)", key="btn_v_rb", disabled=v_routier):
+        r_score = 0.0
+        if choix_rc_ox == cas_routier["couple_ox"]:
+            r_score += 2.0
+        if choix_rc_red == cas_routier["couple_red"]:
+            r_score += 2.0
+
+        # Vérification de l'équation globale par rapport au cas tiré au sort
+        if cas_routier["id"] in ["routier_cas1", "routier_cas2"] and r_reactif_1 == "Fe" and r_prod_1 == "Fe²⁺":
+            r_score += 6.0
+        elif cas_routier["id"] == "routier_cas3" and r_reactif_1 == "Zn" and r_prod_1 == "Zn²⁺":
+            r_score += 6.0
+
+        st.session_state.score_routier_partie_bilan = r_score
+        st.session_state.verrou_routier_bilan = True
+        st.rerun()
+
+    if st.session_state.get("verrou_routier_bilan"):
+        st.info(f"Note enregistrée pour l'équation bilan : {st.session_state.get('score_routier_partie_bilan', 0.0)} / 10")
+
+    st.divider()
+    if "ordre_quiz_routier" not in st.session_state:
+        banque_quiz_routier = [
+            {
+                "id": "qrt1",
+                "q": "Qui est le réducteur métallique de départ qui se détériore dans les cas pratiques A et B ?",
+                "options": ["Le fer solide", "Le dioxygène", "L'ion chlorure"],
+                "rep": "Le fer solide"
+            },
+            {
+                "id": "qrt2",
+                "q": "Qui est l'oxydant gazeux destructeur présent dans l'air humide de l'autoroute ?",
+                "options": ["Le dioxygène", "Le diazote", "Le dioxyde de carbone"],
+                "rep": "Le dioxygène"
+            },
+            {
+                "id": "qrt3",
+                "q": "Combien d'électrons sont transférés par chaque atome de fer (Fe) lors de son oxydation ?",
+                "options": ["2 électrons", "1 électron", "4 électrons"],
+                "rep": "2 électrons"
+            },
+            {
+                "id": "qrt4",
+                "q": "Combien d'électrons sont captés par une molécule de dioxygène (O2) lors de sa réduction ?",
+                "options": ["4 électrons", "2 électrons", "6 électrons"],
+                "rep": "4 électrons"
+            },
+            {
+                "id": "qrt5",
+                "q": "Quelle est la couleur finale de l'oxyde de fer hydraté qui ronge la carrosserie du camion ?",
+                "options": ["Orange / Brun (Rouille)", "Bleu azur", "Vert bouteille"],
+                "rep": "Orange / Brun (Rouille)"
+            },
+            {
+                "id": "qrt6",
+                "q": "Quelle est la couleur ou l'aspect visuel de la tôle d'acier saine avant l'attaque corrosive ?",
+                "options": ["Gris métallique brillant", "Rouge orangé", "Blanc opaque"],
+                "rep": "Gris métallique brillant"
+            },
+            {
+                "id": "qrt7",
+                "q": "Quel type de milieu chimique (pH inférieur à 7) caractérise la cargaison de la benne du Cas B ?",
+                "options": ["Un milieu acide", "Un milieu basique", "Un milieu neutre"],
+                "rep": "Un milieu acide"
+            },
+            {
+                "id": "qrt8",
+                "q": "Comment qualifie-t-on la transformation subie par le métal du camion (perte de ses électrons) ?",
+                "options": ["Une oxydation", "Une réduction", "Une précipitation"],
+                "rep": "Une oxydation"
+            },
+            {
+                "id": "qrt9",
+                "q": "En perdant ses charges négatives de valence, l'atome métallique du châssis se transforme en :",
+                "options": ["Cation (ion positif)", "Anion (ion négatif)", "Molécule gazeuse"],
+                "rep": "Cation (ion positif)"
+            },
+            {
+                "id": "qrt10",
+                "q": "Quel type de protection utilise le Cas C en plaçant du zinc plus réducteur que l'acier ?",
+                "options": ["Une protection sacrificielle", "Une passivation acide", "Une isolation plastique"],
+                "rep": "Une protection sacrificielle"
+            }
+        ]
+        random.shuffle(banque_quiz_routier)
+        st.session_state.ordre_quiz_routier = banque_quiz_routier
+
+    if "champs_trous_routier" not in st.session_state:
+        st.session_state.champs_trous_routier = [
+            (
+                "1. Par rapport à l'énoncé, le métal qui perd ses électrons joue le rôle de ..........",
+                ["Choisir...", "réducteur", "oxydant"],
+                "réducteur",
+                "t_rt1"
+            ),
+            (
+                "2. La transformation inverse menant au gain d'électrons par le gaz est la ..........",
+                ["Choisir...", "réduction", "combustion"],
+                "réduction",
+                "t_rt2"
+            ),
+            (
+                "3. Lors de la dégradation, un atome de fer libère un nombre de .......... électrons.",
+                ["Choisir...", "deux", "quatre"],
+                "deux",
+                "t_rt3"
+            ),
+            (
+                "4. L'attaque de la benne par des substances à pH bas correspond à un milieu ..........",
+                ["Choisir...", "acide", "basique"],
+                "acide",
+                "t_rt4"
+            ),
+            (
+                "5. Le produit final friable issu de la corrosion du fer présente une couleur ..........",
+                ["Choisir...", "orange", "bleue"],
+                "orange",
+                "t_rt5"
+            ),
+            (
+                "6. Le zinc protège le véhicule car il est un métal plus .......... que le fer.",
+                ["Choisir...", "réducteur", "oxydant"],
+                "réducteur",
+                "t_rt6"
+            ),
+            (
+                "7. Avant toute altération chimique, la tôle d'acier saine montre une teinte ..........",
+                ["Choisir...", "grise", "brune"],
+                "grise",
+                "t_rt7"
+            ),
+            (
+                "8. L'égalisation stricte des charges se fait par le biais de l'équation ..........",
+                ["Choisir...", "bilan", "partielle"],
+                "bilan",
+                "t_rt8"
+            ),
+            (
+                "9. Dans le Cas B, la réduction des ions hydronium produit un dégagement de ..........",
+                ["Choisir...", "dihydrogène", "dioxygène"],
+                "dihydrogène",
+                "t_rt9"
+            ),
+            (
+                "10. L'atome de fer neutre oxydé quitte la structure sous la forme d'un ..........",
+                ["Choisir...", "ion", "solide"],
+                "ion",
+                "t_rt10"
+            )
+        ]
+
+    if "verrou_routier_at" not in st.session_state:
+        st.session_state.verrou_routier_at = False
+    v_rat = st.session_state.verrou_routier_at
+
+    col_rq, col_rt = st.columns(2)
+
+    with col_rq:
+        st.markdown("##### Quiz Technique Transport Routier (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_routier, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox(label=q_data["q"], options=["Choisir..."] + q_data["options"], key=f"routier_quiz_{q_data['id']}", disabled=v_rat, label_visibility="collapsed")
+
+    with col_rt:
+        st.markdown("##### Synthèse du Châssis (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_trous_routier:
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
+
+            # Utilisation du correctif d'alignement parfait
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="center")
+            with c_txt:
+                st.write(enonce)
+            with c_sel:
+                st.selectbox(label=enonce, options=choix, key=f"{cle}_routier_clean", disabled=v_rat, label_visibility="collapsed")
+
+
+    if "suite_verrouille_tab7_routier" not in st.session_state:
+        st.session_state.suite_verrouille_tab7_routier = False
+    verrou_at7 = st.session_state.suite_verrouille_tab7_routier
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 7")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat7 = st.checkbox(
+        "Je certifie avoir complété toutes les activités de l'Atelier Transport Routier (Bilan et Questionnaire).",
+        key="check_certif_routier7_final_net",
+        disabled=verrou_at7,
+    )
+
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 7",
+        key="btn_export_suite7_routier_official",
+        use_container_width=True,
+        disabled=verrou_at7,
+    ):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not st.session_state.get("verrou_routier_bilan", False):
+            st.error("Action refusée : Vous devez d'abord cliquer sur le bouton de validation de l'Équation Bilan ci-dessus.")
+        elif not case_certif_stat7:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Récupération de la note du générateur bilan (déjà validée sur 10 pts)
+            note_bilan_10 = float(st.session_state.get("score_routier_partie_bilan", 0.0))
+
+            # 2. Correction automatisée du Quiz Technique (10 questions -> 10 pts)
+            score_q7 = 0.0
+            if "ordre_quiz_routier" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_routier:
+                    saisie_q = st.session_state.get(f"routier_quiz_{q_item['id']}", "Choisir...")
+                    if str(saisie_q).strip() == str(q_item["rep"]).strip():
+                        score_q7 += 1.0
+
+            # 3. Correction automatisée du Texte à trous (10 trous -> 10 pts)
+            score_t7 = 0.0
+            if "champs_trous_routier" in st.session_state:
+                for ligne in st.session_state.champs_trous_routier:
+                    cle_variable = ligne[-1]
+                    attendu_valeur = ligne[2]
+                    saisie_t = st.session_state.get(f"{cle_variable}_routier_clean", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu_valeur).strip():
+                        score_t7 += 1.0
+
+            # 4. Consolidation des notes de la session sur 30 points
+            st.session_state.score_t7_bilan_final = round(note_bilan_10, 1)
+            st.session_state.score_t7_atelier_final = round(float(score_q7 + score_t7), 1)
+            st.session_state.score_final_global_t7 = round(float(note_bilan_10 + score_q7 + score_t7), 1)
+            
+            st.session_state.suite_verrouille_tab7_routier = True
+            st.rerun()
+
+    # --- RENDER DU RAPPORT SCELLÉ HTML ---
+    if st.session_state.get("suite_verrouille_tab7_routier", False):
+        not_b = st.session_state.get("score_t7_bilan_final", 0.0)
+        not_at = st.session_state.get("score_t7_atelier_final", 0.0)
+        not_tot = st.session_state.get("score_final_global_t7", 0.0)
+        timestamp_suite7 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER TRANSPORT ROUTIER SCELLÉ | Note finale globale : {not_tot:.1f} / 30")
+
+        # Récupération textuelle des sélections de l'élève pour le bilan
+        equation_eleve_texte = f"{r_coef_1} {r_reactif_1} + {r_reactif_2} -> {r_prod_1} + {r_prod_2}"
+
+        html_export_routier = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Transport Routier - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #2563eb; color: white; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                .enonce-box {{ background-color: #f1f5f9; border-left: 4px solid #64748b; padding: 15px; margin-bottom: 20px; font-size: 13px; line-height: 1.5; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #1e293b; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Chimie Appliquée</h1>
+                <p>Domaine professionnel : Transport Routier et Logistique</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé électroniquement le : {timestamp_suite7}</p>
+                <div class="score-badge">NOTE GLOBALE<br><span style="font-size: 32px;">{not_tot:.1f}</span> / 30</div>
+            </div>
+            
+            <div class="sub-title">Énoncé du cas de synthèse tiré au sort</div>
+            <div class="enonce-box">
+                <strong>{cas_routier['titre']}</strong><br><br>
+                {cas_routier['texte']}
+            </div>
+
+            <div class="sub-title">Détail des compétences évaluées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                1. Configuration des couples et Équation Bilan Générée : <strong>{not_b:.1f} / 10</strong><br>
+                2. Atelier technique et Synthèse de Cours (Quiz + Trous) : <strong>{not_at:.1f} / 20</strong><br>
+                <strong>Note totale consolidée de la session : {not_tot:.1f} / 30</strong>
+            </p>
+
+            <div class="sub-title">Activité 1 : Vérification de l'Équation Bilan</div>
+            <table>
+                <thead>
+                    <tr><th>Paramètre réactif</th><th>Saisie de l'Élève</th><th>Validation Académique</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Couple de l'Oxydant choisi</td><td>{choix_rc_ox}</td><td>{cas_routier['couple_ox']}</td></tr>
+                    <tr><td>Couple du Réducteur choisi</td><td>{choix_rc_red}</td><td>{cas_routier['couple_red']}</td></tr>
+                    <tr><td>Équation globale construite</td><td><code>{equation_eleve_texte}</code></td><td>Validation par script automatisé</td></tr>
+                </tbody>
+            </table>
+            
+            <div class="sub-title">Activité 2 : Correction détaillée du Quiz Technique (10 pts)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Technique</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_routier" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_routier, 1):
+                saisie = st.session_state.get(f"routier_quiz_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_routier += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_routier += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">Activité 3 : Correction détaillée du Texte à trous (10 pts)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Énoncé de synthèse complété</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_trous_routier" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_trous_routier, 1):
+                enonce_texte = ligne
+                attendu_texte = ligne
+                cle_variable = ligne[-1]
+                saisie_texte = st.session_state.get(f"{cle_variable}_routier_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_routier += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_routier += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        # Utilisation stricte de os.path pour exporter proprement le fichier HTML
+        nom_fichier_brut = preparer_nom_fichier("Rapport_Application_Transport")
+        nom_propre_html_t7 = os.path.basename(nom_fichier_brut).replace(".txt", ".html")
+
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel Transport Routier (.html)",
+            data=html_export_routier,
+            file_name=nom_propre_html_t7,
+            mime="text/html",
+        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
