@@ -784,27 +784,32 @@ def afficher_atelier_gamma_verrouille(verrouille=False):
                 disabled=verrouille,
                 label_visibility="collapsed",
             )
-
     with col_trous:
         st.markdown(
             "##### Synthèse de l'Atelier 5 (Texte à trous - 5 cases - 10 pts)"
         )
+        
+        # Parcours de la liste des champs de l'Atelier 5
         for ligne in st.session_state.champs_gam5_clean:
-            enonce, choix, cle = ligne, ligne, ligne[-1]
-            c_txt, c_sel = st.columns(
-                [0.65, 0.35], vertical_alignment="bottom"
-            )
+            # Extraction sécurisée par index pour éviter l'erreur de déballage
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
+            
+            # Alignement en deux colonnes proportionnelles
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            
             with c_txt:
                 st.write(enonce)
+                
             with c_sel:
                 st.selectbox(
-                    "",
-                    choix,
+                    label=enonce,
+                    options=choix,
                     key=f"{cle}_gam5_clean",
                     disabled=verrouille,
-                    label_visibility="collapsed",
+                    label_visibility="collapsed"
                 )
-
 
 
 def afficher_atelier_couples_verrouille(verrouille=False):
