@@ -3235,8 +3235,18 @@ with tab7:
                     ("9. Le dioxygène se réduit en produisant des molécules d'..........", ["Choisir...", "eau", "zinc"], "eau", "t_rC9"),
                     ("10. L'absence d'électrons libres caractérise l'équation ..........", ["Choisir...", "bilan", "partielle"], "bilan", "t_rC10")
 
+                    ),
+                ],  # Ferme la liste "trous" du cas 3
+            }  # Ferme le dictionnaire du cas 3
+        }  # Ferme le grand dictionnaire "banque_complete_routier"
+
+    # =============================================================================
+    # INITIALISATION ET SÉLECTION DU CAS ACTIF
+    # =============================================================================
     if "choix_id_routier" not in st.session_state:
-        st.session_state.choix_id_routier = random.choice(list(st.session_state.banque_complete_routier.keys()))
+        st.session_state.choix_id_routier = random.choice(
+            list(st.session_state.banque_complete_routier.keys())
+        )
 
     id_cas = st.session_state.choix_id_routier
     cas_routier = st.session_state.banque_complete_routier[id_cas]
