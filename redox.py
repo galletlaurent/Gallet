@@ -1683,47 +1683,34 @@ with tab1:
         use_container_width=True,
         disabled=verrou_at1,
     ):
-        if st.session_state.get("nom_var", "Nom") in [
-            "Nom",
-            "",
-        ] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
-            st.error(
-                "Action refusée : Saisissez votre identité dans l'onglet 'Identification'."
-            )
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_stat1:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Correction automatisee du Quiz
+            # 1. Correction automatisée du Quiz
             score_q1 = 0.0
             if "ordre_quiz_tab1_redox_aleatoire" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_tab1_redox_aleatoire:
-                    saisie = st.session_state.get(
-                        f"redox_at1_final_g_{q_item['id']}", "Choisir..."
-                    )
+                    saisie = st.session_state.get(f"redox_at1_final_g_{q_item['id']}", "Choisir...")
                     if str(saisie).strip() == str(q_item["rep"]).strip():
                         score_q1 += 1.0
 
-            # Correction automatisee du Texte a trous
+            # 2. Correction automatisée sécurisée du Texte à trous
             score_t1 = 0.0
             if "champs_redox1_clean" in st.session_state:
                 for ligne in st.session_state.champs_redox1_clean:
-                    cle = ligne[-1]
-                    attendu = ligne[2]
-                    if (
-                        st.session_state.get(f"{cle}_redox1_clean", "Choisir...")
-                        == attendu
-                    ):
+                    enonce_t, choix_t, attendu_t, cle_t = ligne  # Déballage propre des 4 éléments du tuple
+                    saisie_t = st.session_state.get(f"{cle_t}_redox1_clean", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu_t).strip():
                         score_t1 += 1.0
 
-            # Sauvegarde des scores et verrouillage
+            # 3. Sauvegarde des scores et verrouillage
             st.session_state.score_suite1_redox_p1 = round(float(score_q1), 1)
             st.session_state.score_suite1_redox_p2 = round(float(score_t1), 1)
-            st.session_state.score_final_suite1_redox = round(
-                float(score_q1 + score_t1), 1
-            )
+            st.session_state.score_final_suite1_redox = round(float(score_q1 + score_t1), 1)
             st.session_state.suite_verrouille_tab1_redox = True
             st.rerun()
-
     # --- COMPILATION DU BILAN HTML SCELLÉ ---
     if st.session_state.get("suite_verrouille_tab1_redox", False):
         scr1_t1 = st.session_state.get("score_suite1_redox_p1", 0.0)
@@ -2053,47 +2040,34 @@ with tab2:
         use_container_width=True,
         disabled=verrou_at2,
     ):
-        if st.session_state.get("nom_var", "Nom") in [
-            "Nom",
-            "",
-        ] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
-            st.error(
-                "Action refusée : Saisissez votre identité dans l'onglet 'Identification'."
-            )
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_stat2:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Correction automatisee du Quiz
+            # 1. Correction automatisée du Quiz
             score_q2 = 0.0
             if "ordre_quiz_tab2_ox_aleatoire" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_tab2_ox_aleatoire:
-                    saisie = st.session_state.get(
-                        f"ox_at2_final_g_{q_item['id']}", "Choisir..."
-                    )
+                    saisie = st.session_state.get(f"ox_at2_final_g_{q_item['id']}", "Choisir...")
                     if str(saisie).strip() == str(q_item["rep"]).strip():
                         score_q2 += 1.0
 
-            # Correction automatisee du Texte a trous
+            # 2. Correction automatisée sécurisée du Texte à trous
             score_t2 = 0.0
             if "champs_ox2_clean" in st.session_state:
                 for ligne in st.session_state.champs_ox2_clean:
-                    cle_variable = ligne[-1]
-                    attendu_valeur = ligne[2]
-                    if (
-                        st.session_state.get(f"{cle_variable}_ox2_clean", "Choisir...")
-                        == attendu_valeur
-                    ):
+                    enonce_t, choix_t, attendu_t, cle_t = ligne  # Déballage propre des 4 éléments
+                    saisie_t = st.session_state.get(f"{cle_t}_ox2_clean", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu_t).strip():
                         score_t2 += 1.0
 
-            # Sauvegarde des scores et verrouillage
+            # 3. Sauvegarde des scores et verrouillage
             st.session_state.score_suite2_ox_p1 = round(float(score_q2), 1)
             st.session_state.score_suite2_ox_p2 = round(float(score_t2), 1)
-            st.session_state.score_final_suite2_ox = round(
-                float(score_q2 + score_t2), 1
-            )
+            st.session_state.score_final_suite2_ox = round(float(score_q2 + score_t2), 1)
             st.session_state.suite_verrouille_tab2_oxydation = True
             st.rerun()
-
     # --- COMPILATION DU BILAN HTML SCELLÉ ---
     if st.session_state.get("suite_verrouille_tab2_oxydation", False):
         scr1_t2 = st.session_state.get("score_suite2_ox_p1", 0.0)
@@ -2340,53 +2314,39 @@ with tab3:
         key="check_certif_red3_final_net",
         disabled=verrou_at3,
     )
-
     if st.button(
         "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3",
         key="btn_export_suite3_red_official",
         use_container_width=True,
         disabled=verrou_at3,
     ):
-        if st.session_state.get("nom_var", "Nom") in [
-            "Nom",
-            "",
-        ] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
-            st.error(
-                "Action refusée : Saisissez votre identité dans l'onglet 'Identification'."
-            )
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_stat3:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Note du Quiz (ramenée sur 10 pts : 2 pts par question)
+            # 1. Note du Quiz (ramenée sur 10 pts : 2 pts par question)
             score_q3 = 0.0
             if "ordre_quiz_tab3_red_aleatoire" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_tab3_red_aleatoire:
-                    saisie = st.session_state.get(
-                        f"red_at3_final_g_{q_item['id']}", "Choisir..."
-                    )
+                    saisie = st.session_state.get(f"red_at3_final_g_{q_item['id']}", "Choisir...")
                     if str(saisie).strip() == str(q_item["rep"]).strip():
                         score_q3 += 2.0
 
-            # Note du Texte à trous (ramenée sur 10 pts : 2 pts par case)
+            # 2. Correction automatisée sécurisée du Texte à trous (2 pts par case)
             score_t3 = 0.0
             if "champs_red3_clean" in st.session_state:
-                for ligne in st.session_state.champs_red_clean:
-                    cle_variable = ligne[-1]
-                    attendu_valeur = ligne[2]
-                    if (
-                        st.session_state.get(
-                            f"{cle_variable}_red3_clean", "Choisir..."
-                        )
-                        == attendu_valeur
-                    ):
+                for ligne in st.session_state.champs_red3_clean:
+                    enonce_t, choix_t, attendu_t, cle_t = ligne  # Déballage propre des 4 éléments
+                    saisie_t = st.session_state.get(f"{cle_t}_red3_clean", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu_t).strip():
                         score_t3 += 2.0
 
+            # 3. Consolidation et enregistrement des scores de la session
             st.session_state.score_suite3_red_p1 = round(float(score_q3), 1)
             st.session_state.score_suite3_red_p2 = round(float(score_t3), 1)
-            st.session_state.score_final_suite3_red = round(
-                float(score_q3 + score_t3), 1
-            )
-            st.session_state.suite_verrouille_tab3_reduction = True
+            st.session_state.score_final_suite3_red = round(float(score_q3 + score_t3), 1)
+            st.session_state.st.session_state.suite_verrouille_tab3_reduction = True
             st.rerun()
 
     if st.session_state.get("suite_verrouille_tab3_reduction", False):
@@ -2588,48 +2548,34 @@ with tab4:
         use_container_width=True,
         disabled=verrou_at4,
     ):
-        if st.session_state.get("nom_var", "Nom") in [
-            "Nom",
-            "",
-        ] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
-            st.error(
-                "Action refusée : Saisissez votre identité dans l'onglet 'Identification'."
-            )
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_stat4:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Note du Quiz (2 pts par question)
+            # 1. Note du Quiz (2 pts par question)
             score_q4 = 0.0
             if "ordre_quiz_tab4_cpl_aleatoire" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_tab4_cpl_aleatoire:
-                    saisie = st.session_state.get(
-                        f"cpl_at4_final_g_{q_item['id']}", "Choisir..."
-                    )
+                    saisie = st.session_state.get(f"cpl_at4_final_g_{q_item['id']}", "Choisir...")
                     if str(saisie).strip() == str(q_item["rep"]).strip():
                         score_q4 += 2.0
 
-            # Note du Texte à trous (2 pts par case)
+            # 2. Correction automatisée sécurisée du Texte à trous (2 pts par case juste)
             score_t4 = 0.0
             if "champs_cpl4_clean" in st.session_state:
                 for ligne in st.session_state.champs_cpl4_clean:
-                    cle_variable = ligne[-1]
-                    attendu_valeur = ligne[2]
-                    if (
-                        st.session_state.get(
-                            f"{cle_variable}_cpl4_clean", "Choisir..."
-                        )
-                        == attendu_valeur
-                    ):
+                    enonce_t, choix_t, attendu_t, cle_t = ligne  # Déballage propre des 4 éléments
+                    saisie_t = st.session_state.get(f"{cle_t}_cpl4_clean", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu_t).strip():
                         score_t4 += 2.0
 
+            # 3. Consolidation et enregistrement des scores de la session
             st.session_state.score_suite4_cpl_p1 = round(float(score_q4), 1)
             st.session_state.score_suite4_cpl_p2 = round(float(score_t4), 1)
-            st.session_state.score_final_suite4_cpl = round(
-                float(score_q4 + score_t4), 1
-            )
+            st.session_state.score_final_suite4_cpl = round(float(score_q4 + score_t4), 1)
             st.session_state.suite_verrouille_tab4_couples = True
             st.rerun()
-
     if st.session_state.get("suite_verrouille_tab4_couples", False):
         scr1_t4 = st.session_state.get("score_suite4_cpl_p1", 0.0)
         scr2_t4 = st.session_state.get("score_suite4_cpl_p2", 0.0)
@@ -2811,48 +2757,34 @@ with tab5:
         use_container_width=True,
         disabled=verrou_at5,
     ):
-        if st.session_state.get("nom_var", "Nom") in [
-            "Nom",
-            "",
-        ] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
-            st.error(
-                "Action refusée : Saisissez votre identité dans l'onglet 'Identification'."
-            )
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_stat5:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Note du Quiz (2 pts par réponse juste)
+            # 1. Note du Quiz (2 pts par réponse juste)
             score_q5 = 0.0
             if "ordre_quiz_tab5_gam_aleatoire" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_tab5_gam_aleatoire:
-                    saisie = st.session_state.get(
-                        f"gam_at5_final_g_{q_item['id']}", "Choisir..."
-                    )
+                    saisie = st.session_state.get(f"gam_at5_final_g_{q_item['id']}", "Choisir...")
                     if str(saisie).strip() == str(q_item["rep"]).strip():
                         score_q5 += 2.0
 
-            # Note du Texte à trous (2 pts par case juste)
+            # 2. CORRECTION CORRIGÉE ET SÉCURISÉE : Déballage des 4 éléments du tuple
             score_t5 = 0.0
             if "champs_gam5_clean" in st.session_state:
                 for ligne in st.session_state.champs_gam5_clean:
-                    cle_variable = ligne[-1]
-                    attendu_valeur = ligne
-                    if (
-                        st.session_state.get(
-                            f"{cle_variable}_gam5_clean", "Choisir..."
-                        )
-                        == attendu_valeur
-                    ):
+                    enonce_t, choix_t, attendu_t, cle_t = ligne  # Déballage propre des 4 éléments
+                    saisie_t = st.session_state.get(f"{cle_t}_gam5_clean", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu_t).strip():
                         score_t5 += 2.0
 
+            # 3. Consolidation et enregistrement des scores de la session
             st.session_state.score_suite5_gam_p1 = round(float(score_q5), 1)
             st.session_state.score_suite5_gam_p2 = round(float(score_t5), 1)
-            st.session_state.score_final_suite5_gam = round(
-                float(score_q5 + score_t5), 1
-            )
+            st.session_state.score_final_suite5_gam = round(float(score_q5 + score_t5), 1)
             st.session_state.suite_verrouille_tab5_gamma = True
             st.rerun()
-
     if st.session_state.get("suite_verrouille_tab5_gamma", False):
         scr1_t5 = st.session_state.get("score_suite5_gam_p1", 0.0)
         scr2_t5 = st.session_state.get("score_suite5_gam_p2", 0.0)
@@ -3021,45 +2953,32 @@ with tab6:
         use_container_width=True,
         disabled=verrou_at6,
     ):
-        if st.session_state.get("nom_var", "Nom") in [
-            "Nom",
-            "",
-        ] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
-            st.error(
-                "Action refusée : Saisissez votre identité dans l'onglet 'Identification'."
-            )
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_stat6:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Note du Quiz (2 pts par réponse juste)
+            # 1. Note du Quiz Technique de l'Atelier 6 (2 pts par bonne réponse -> 10 pts)
             score_q6 = 0.0
             if "ordre_quiz_tab6_bil_aleatoire" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_tab6_bil_aleatoire:
-                    saisie = st.session_state.get(
-                        f"bil_at6_final_g_{q_item['id']}", "Choisir..."
-                    )
+                    saisie = st.session_state.get(f"bil_at6_final_g_{q_item['id']}", "Choisir...")
                     if str(saisie).strip() == str(q_item["rep"]).strip():
                         score_q6 += 2.0
 
-            # Note du Texte à trous (2 pts par case juste)
+            # 2. CORRECTION CORRIGÉE ET SÉCURISÉE : Extraction des 4 éléments du tuple pour comparer l'attendu textuel
             score_t6 = 0.0
             if "champs_bil6_clean" in st.session_state:
                 for ligne in st.session_state.champs_bil6_clean:
-                    cle_variable = ligne[-1]
-                    attendu_valeur = ligne
-                    if (
-                        st.session_state.get(
-                            f"{cle_variable}_bil6_clean", "Choisir..."
-                        )
-                        == attendu_valeur
-                    ):
+                    enonce_t, choix_t, attendu_t, cle_t = ligne  # Déballage strict des 4 éléments du tuple
+                    saisie_t = st.session_state.get(f"{cle_t}_bil6_clean", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu_t).strip():
                         score_t6 += 2.0
 
+            # 3. Consolidation et rafraîchissement des scores de la session
             st.session_state.score_suite6_bil_p1 = round(float(score_q6), 1)
             st.session_state.score_suite6_bil_p2 = round(float(score_t6), 1)
-            st.session_state.score_final_suite6_bil = round(
-                float(score_q6 + score_t6), 1
-            )
+            st.session_state.score_final_suite6_bil = round(float(score_q6 + score_t6), 1)
             st.session_state.suite_verrouille_tab6_bilan = True
             st.rerun()
 
