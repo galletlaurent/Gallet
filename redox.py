@@ -3135,25 +3135,34 @@ with tab7:
             key="btn_generer_exercice_aleatoire_t7",
             use_container_width=True,
         ):
-            # 1. Suppression du cas actif pour forcer le nouveau tirage aléatoire
-            if "choix_id_routier" in st.session_state:
-                del st.session_state["choix_id_routier"]
+            # Liste des clés de cas disponibles
+            liste_options_cas = ["routier_cas1", "routier_cas2", "routier_cas3"]
 
-            # 2. CRUCIAL : Suppression de la banque pour forcer la réinitialisation de la condition de l'onglet
-            if "banque_complete_routier" in st.session_state:
-                del st.session_state["banque_complete_routier"]
+            # Force le choix d'un cas DIFFERENT du cas actuel si possible
+            cas_actuel = st.session_state.get("choix_id_routier", "")
+            choix_possibles = [c for c in liste_options_cas if c != cas_actuel]
 
-            # 3. Réinitialisation complète des verrous d'ateliers et de bilans
+            if not choix_possibles:
+                choix_possibles = liste_options_cas
+
+            # Écrit directement le nouveau choix forcé dans la session
+            st.session_state["choix_id_routier"] = random.choice(
+                choix_possibles
+            )
+
+            # Réinitialisation propre des états de l'exercice
             st.session_state.verrou_routier_bilan = False
             st.session_state.verrou_routier_at = False
             st.session_state.suite_verrouille_tab7_routier = False
 
-            # 4. Nettoyage des anciens scores calculés
+            # Effacement des anciennes notes pour ne pas tricher
             if "score_routier_partie_bilan" in st.session_state:
                 del st.session_state["score_routier_partie_bilan"]
 
-            # 5. Rechargement propre de la page avec les nouvelles données
+            # Relance l'application immédiatement avec le nouveau cas forcé
             st.rerun()
+
+    st.write("---")
 
 
     # 1. BANQUE DE DONNÉES DYNAMIQUE PAR CAS (ÉNONCÉ, BD, QUIZ, TROUS)
