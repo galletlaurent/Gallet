@@ -534,6 +534,269 @@ bibliotheque_redox = {
         }
 
 
+def afficher_atelier_bilan_verrouille(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 6 (Réaction d'oxydoréduction) sur deux colonnes."""
+    import random
+
+    # 1. BASE DE DONNÉES DU QUIZ
+    questions_bilan6_sources = [
+        {
+            "id": "bil1",
+            "q": "Les électrons libres peuvent-ils apparaître dans l'équation bilan finale d'oxydoréduction ?",
+            "options": [
+                "Non, ils doivent obligatoirement s'annuler",
+                "Oui, toujours du côté des produits",
+                "Oui, toujours du côté des réactifs",
+            ],
+            "rep": "Non, ils doivent obligatoirement s'annuler",
+        },
+        {
+            "id": "bil2",
+            "q": "Que doit-on faire si les deux demi-équations ne mettent pas en jeu le même nombre d'électrons ?",
+            "options": [
+                "Multiplier les lignes par des coefficients multiplicateurs",
+                "Ajouter des protons pour compenser",
+                "Ignorer les électrons restants",
+            ],
+            "rep": "Multiplier les lignes par des coefficients multiplicateurs",
+        },
+        {
+            "id": "bil3",
+            "q": "Une réaction d'oxydoréduction globale met toujours en relation :",
+            "options": [
+                "L'oxydant d'un couple et le réducteur d'un autre couple",
+                "Deux oxydants ensemble",
+                "Deux réducteurs ensemble",
+            ],
+            "rep": "L'oxydant d'un couple et le réducteur d'un autre couple",
+        },
+        {
+            "id": "bil4",
+            "q": "Dans l'action combinée, quelle entité chimique fournit le flux d'électrons ?",
+            "options": ["Le réducteur", "L'oxydant", "L'eau distillée"],
+            "rep": "Le réducteur",
+        },
+        {
+            "id": "bil5",
+            "q": "La règle stricte qui impose l'égalité des électrons échangés découle de la loi de :",
+            "options": [
+                "Conservation de la charge électrique",
+                "Dilution des solutions",
+                "L'attraction universelle",
+            ],
+            "rep": "Conservation de la charge électrique",
+        },
+    ]
+
+    if "ordre_quiz_tab6_bil_aleatoire" not in st.session_state:
+        random.shuffle(questions_bilan6_sources)
+        st.session_state.ordre_quiz_tab6_bil_aleatoire = (
+            questions_bilan6_sources
+        )
+
+    # 2. BASE DE DONNÉES DU TEXTE À TROUS
+    if "champs_bil6_clean" not in st.session_state:
+        st.session_state.champs_bil6_clean = [
+            (
+                "1. La réaction bilan résulte de l'association d'une oxydation et d'une ..........",
+                ["Choisir...", "réduction", "hydrolyse"],
+                "réduction",
+                "bil6_t1",
+            ),
+            (
+                "2. Le nombre d'électrons perdus par le réducteur doit être .......... à celui gagné.",
+                ["Choisir...", "égal", "supérieur"],
+                "égal",
+                "bil6_t2",
+            ),
+            (
+                "3. Les coefficients multiplicateurs servent à équilibrer les .......... transférés.",
+                ["Choisir...", "électrons", "atomes"],
+                "électrons",
+                "bil6_t3",
+            ),
+            (
+                "4. Dans le bilan global final écrit au propre, les électrons sont ..........",
+                ["Choisir...", "éliminés", "doublés"],
+                "éliminés",
+                "bil6_t4",
+            ),
+            (
+                "5. Ce transfert direct de charge valide la loi de conservation de la ..........",
+                ["Choisir...", "charge", "vitesse"],
+                "charge",
+                "bil6_t5",
+            ),
+        ]
+
+    # 3. RENDU DES COLONNES
+    col_quiz, col_trous = st.columns(2)
+
+    with col_quiz:
+        st.markdown(
+            "##### Quiz Technique Équation Bilan (5 questions - 10 pts)"
+        )
+        for idx, q_data in enumerate(
+            st.session_state.ordre_quiz_tab6_bil_aleatoire, 1
+        ):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox(
+                "",
+                options=["Choisir..."] + q_data["options"],
+                key=f"bil_at6_final_g_{q_data['id']}",
+                disabled=verrouille,
+                label_visibility="collapsed",
+            )
+
+    with col_trous:
+        st.markdown(
+            "##### Synthèse de l'Atelier 6 (Texte à trous - 5 cases - 10 pts)"
+        )
+        for ligne in st.session_state.champs_bil6_clean:
+            enonce, choix, cle = ligne, ligne, ligne[-1]
+            c_txt, c_sel = st.columns(
+                [0.65, 0.35], vertical_alignment="bottom"
+            )
+            with c_txt:
+                st.write(enonce)
+            with c_sel:
+                st.selectbox(
+                    "",
+                    choix,
+                    key=f"{cle}_bil6_clean",
+                    disabled=verrouille,
+                    label_visibility="collapsed",
+                )
+
+
+def afficher_atelier_gamma_verrouille(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 5 (La règle du gamma) sur deux colonnes."""
+    import random
+
+    # 1. BASE DE DONNÉES DU QUIZ
+    questions_gamma5_sources = [
+        {
+            "id": "gam1",
+            "q": "Quelle unité physique utilise-t-on pour exprimer le potentiel standard d'un couple redox ?",
+            "options": ["Le Volt", "L'Ampère", "Le Joule"],
+            "rep": "Le Volt",
+        },
+        {
+            "id": "gam2",
+            "q": "Où se situe l'oxydant le plus fort sur l'échelle verticale des potentiels standards ?",
+            "options": [
+                "Tout en haut à gauche",
+                "Tout en bas à droite",
+                "Au milieu exact de l'axe",
+            ],
+            "rep": "Tout en haut à gauche",
+        },
+        {
+            "id": "gam3",
+            "q": "La réaction spontanée se produit entre :",
+            "options": [
+                "L'oxydant le plus fort et le réducteur le plus fort",
+                "L'oxydant le plus faible et le réducteur le plus faible",
+                "Deux réducteurs face à face",
+            ],
+            "rep": "L'oxydant le plus fort et le réducteur le plus fort",
+        },
+        {
+            "id": "gam4",
+            "q": "Quelle lettre de l'alphabet grec a donné son nom à cette règle de lecture graphique ?",
+            "options": ["Gamma (γ)", "Alpha (α)", "Delta (δ)"],
+            "rep": "Gamma (γ)",
+        },
+        {
+            "id": "gam5",
+            "q": "Si le tracé sur l'échelle forme un Gamma inversé, la réaction est :",
+            "options": [
+                "Impossible spontanément",
+                "Immédiate et explosive",
+                "Parfaitement équilibrée",
+            ],
+            "rep": "Impossible spontanément",
+        },
+    ]
+
+    if "ordre_quiz_tab5_gam_aleatoire" not in st.session_state:
+        random.shuffle(questions_gamma5_sources)
+        st.session_state.ordre_quiz_tab5_gam_aleatoire = (
+            questions_gamma5_sources
+        )
+
+    # 2. BASE DE DONNÉES DU TEXTE À TROUS
+    if "champs_gam5_clean" not in st.session_state:
+        st.session_state.champs_gam5_clean = [
+            (
+                "1. L'échelle de classification s'appuie sur la mesure du potentiel ..........",
+                ["Choisir...", "standard", "cinétique"],
+                "standard",
+                "gam5_t1",
+            ),
+            (
+                "2. Plus le potentiel E0 est grand, plus le pouvoir .......... du corps augmente.",
+                ["Choisir...", "oxydant", "réducteur"],
+                "oxydant",
+                "gam5_t2",
+            ),
+            (
+                "3. À l'inverse, le réducteur le plus fort se trouve tout en .......... de l'axe.",
+                ["Choisir...", "bas", "haut"],
+                "bas",
+                "gam5_t3",
+            ),
+            (
+                "4. Lier graphiquement les réactifs valides dessine un .......... à l'endroit.",
+                ["Choisir...", "gamma", "oméga"],
+                "gamma",
+                "gam5_t4",
+            ),
+            (
+                "5. Cette méthode géométrique sert à valider la .......... d'une transformation.",
+                ["Choisir...", "spontanéité", "vitesse"],
+                "spontanéité",
+                "gam5_t5",
+            ),
+        ]
+
+    # 3. RENDU DES COLONNES
+    col_quiz, col_trous = st.columns(2)
+
+    with col_quiz:
+        st.markdown("##### Quiz Technique Règle du Gamma (5 questions - 10 pts)")
+        for idx, q_data in enumerate(
+            st.session_state.ordre_quiz_tab5_gam_aleatoire, 1
+        ):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox(
+                "",
+                options=["Choisir..."] + q_data["options"],
+                key=f"gam_at5_final_g_{q_data['id']}",
+                disabled=verrouille,
+                label_visibility="collapsed",
+            )
+
+    with col_trous:
+        st.markdown(
+            "##### Synthèse de l'Atelier 5 (Texte à trous - 5 cases - 10 pts)"
+        )
+        for ligne in st.session_state.champs_gam5_clean:
+            enonce, choix, cle = ligne, ligne, ligne[-1]
+            c_txt, c_sel = st.columns(
+                [0.65, 0.35], vertical_alignment="bottom"
+            )
+            with c_txt:
+                st.write(enonce)
+            with c_sel:
+                st.selectbox(
+                    "",
+                    choix,
+                    key=f"{cle}_gam5_clean",
+                    disabled=verrouille,
+                    label_visibility="collapsed",
+                )
+
 
 
 def afficher_atelier_couples_verrouille(verrouille=False):
@@ -2412,10 +2675,420 @@ with tab4:
         )
 
 
+with tab5:
+    st.header("La Règle du Gamma")
+
+    # Utilisation stricte de la bibliothèque os pour sécuriser l'image d'en-tête
+    if os.path.exists("gamma_intro.jpg"):
+        st.image(
+            "gamma_intro.jpg",
+            caption="Échelle des potentiels standards d'oxydoréduction (E0)",
+            use_container_width=True,
+        )
+    else:
+        st.warning(
+            "L'image 'gamma_intro.jpg' n'a pas été trouvée dans le dossier."
+        )
+
+    st.subheader("Prévoir la spontanéité d'une réaction")
+    st.write(
+        "Tous les oxydants n'ont pas la même force pour capter des électrons, et tous les réducteurs "
+        "n'ont pas la même facilité à les céder. Pour prévoir si une réaction chimique va se produire "
+        "naturellement, on classe les couples redox sur une échelle verticale selon leur **potentiel standard d'oxydoréduction (E⁰)** exprimé en Volts."
+    )
+
+    st.info(
+        "L'axe vertical est orienté vers le haut par ordre de pouvoir oxydant croissant (et pouvoir réducteur décroissant). "
+        "La **règle du gamma** stipule que la réaction chimique spontanée a toujours lieu entre **l'oxydant le plus fort** "
+        "(situé en haut à gauche) et **le réducteur le plus fort** (situé en bas à droite)."
+    )
+
+    st.subheader("Tracé géométrique de la règle")
+
+    # --- SECTION DU TRACÉ DU GAMMA ---
+    col_51, col_52 = st.columns(2)
+    with col_51:
+        st.markdown("**Méthode de lecture graphique :**")
+        st.write(
+            "En traçant une ligne reliant l'Oxydant 1 au Réducteur 2, puis en passant au travers "
+            "pour rejoindre l'Oxydant 2 et le Réducteur 1, on dessine la lettre grecque **Gamma (γ)**."
+        )
+        st.write(
+            "Si le sens du tracé suit le produit d'un Gamma à l'endroit, la réaction est thermodynamiquement "
+            "spontanée et possible. Si le tracé dessine un Gamma inversé, la réaction est impossible sans apport extérieur d'énergie."
+        )
+    with col_52:
+        if os.path.exists("regle_gamma_trace.jpg"):
+            st.image(
+                "regle_gamma_trace.jpg",
+                caption="Tracé de la lettre Gamma (γ) sur l'échelle des potentiels",
+            )
+        else:
+            st.warning("L'image 'regle_gamma_trace.jpg' est introuvable.")
+
+    st.divider()
+
+    st.write(
+        "Découvrez le principe de la règle du gamma à travers cette mise en scène."
+    )
+
+    # --- SECTION CARICATURE ET TEXTE BLEU ---
+    col_graph_gamma, col_bd_gamma = st.columns(2)
+
+    with col_graph_gamma:
+        st.write(
+            "**La BD humoristique textuelle : Le duel des forces de l'échelle**"
+        )
+        st.info(
+            "**Case 1 :** L'ion Cuivre II (Cu2+) trône fièrement tout en haut de l'échelle des potentiels, gonflant ses muscles moléculaires. Tout en bas, le Zinc solide (Zn) le regarde d'un air défiant en ajustant ses gants : 'Hé le cuivre ! Je te vois faire le fier là-haut, mais sache que j'ai une réserve d'électrons prêts à sauter !'.\n\n"
+            "**Case 2 :** L'ion Cu2+ rigole et répond : 'Parfait ! Viens te frotter à moi ! Je suis un oxydant puissant, j'adore capter les charges. Mon potentiel E0 est bien plus élevé que le tien, tu n'as aucune chance de les garder !'.\n\n"
+            "**Case 3 :** Un arbitre chimiste arrive avec un grand marqueur noir et dessine une ligne courbe qui part du Cu2+, plonge vers le Zinc solide, remonte vers l'ion Zinc naissant et termine sur le Cuivre métallique. L'arbitre s'écrie : 'Le tracé est impeccable ! Ça dessine un magnifique alphabet grec !'.\n\n"
+            "**Case 4 :** Le Zinc solide s'est oxydé et le Cuivre s'est matérialisé en métal rouge au tapis. L'arbitre lève le bras du vainqueur et conclut : 'Victoire par KO technique ! La lettre Gamma a parlé, la réaction spontanée a balayé les réactifs !'."
+        )
+
+    with col_bd_gamma:
+        if os.path.exists("gamma_caricature.jpg"):
+            st.image(
+                "gamma_caricature.jpg",
+                caption="Illustration humoristique de la règle du Gamma en 4 cases",
+                use_container_width=True,
+            )
+        else:
+            st.warning(
+                "L'image 'gamma_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+            )
+    if "suite_verrouille_tab5_gamma" not in st.session_state:
+        st.session_state.suite_verrouille_tab5_gamma = False
+    verrou_at5 = st.session_state.suite_verrouille_tab5_gamma
+
+    # Rendu du module d'évaluation
+    afficher_atelier_gamma_verrouille(verrouille=verrou_at5)
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 5")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat5 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Règle du Gamma.",
+        key="check_certif_gam5_final_net",
+        disabled=verrou_at5,
+    )
+
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5",
+        key="btn_export_suite5_gam_official",
+        use_container_width=True,
+        disabled=verrou_at5,
+    ):
+        if st.session_state.get("nom_var", "Nom") in [
+            "Nom",
+            "",
+        ] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error(
+                "Action refusée : Saisissez votre identité dans l'onglet 'Identification'."
+            )
+        elif not case_certif_stat5:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # Note du Quiz (2 pts par réponse juste)
+            score_q5 = 0.0
+            if "ordre_quiz_tab5_gam_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab5_gam_aleatoire:
+                    saisie = st.session_state.get(
+                        f"gam_at5_final_g_{q_item['id']}", "Choisir..."
+                    )
+                    if str(saisie).strip() == str(q_item["rep"]).strip():
+                        score_q5 += 2.0
+
+            # Note du Texte à trous (2 pts par case juste)
+            score_t5 = 0.0
+            if "champs_gam5_clean" in st.session_state:
+                for ligne in st.session_state.champs_gam5_clean:
+                    cle_variable = ligne[-1]
+                    attendu_valeur = ligne
+                    if (
+                        st.session_state.get(
+                            f"{cle_variable}_gam5_clean", "Choisir..."
+                        )
+                        == attendu_valeur
+                    ):
+                        score_t5 += 2.0
+
+            st.session_state.score_suite5_gam_p1 = round(float(score_q5), 1)
+            st.session_state.score_suite5_gam_p2 = round(float(score_t5), 1)
+            st.session_state.score_final_suite5_gam = round(
+                float(score_q5 + score_t5), 1
+            )
+            st.session_state.suite_verrouille_tab5_gamma = True
+            st.rerun()
+
+    if st.session_state.get("suite_verrouille_tab5_gamma", False):
+        scr1_t5 = st.session_state.get("score_suite5_gam_p1", 0.0)
+        scr2_t5 = st.session_state.get("score_suite5_gam_p2", 0.0)
+        tot_s_t5 = st.session_state.get("score_final_suite5_gam", 0.0)
+        timestamp_suite5 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(
+            f"ATELIER GAMMA SCELLÉ | Note de session : {tot_s_t5:.1f} / 20"
+        )
+
+        html_export_gam5 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Regre du Gamma - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #4f46e5; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #1e293b; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Chimie</h1>
+                <p>Atelier 5 : Application de la règle du Gamma et spontanéité des réactions</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite5}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t5:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Récapitulatif des Notes</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #4f46e5;">
+                Quiz Technique : <strong>{scr1_t5:.1f} / 10</strong><br>
+                Synthèse de Cours : <strong>{scr2_t5:.1f} / 10</strong><br>
+                Note Totale : <strong>{tot_s_t5:.1f} / 20</strong>
+            </p>
+        </body>
+        </html>
+        """
+
+        # Utilisation de os.path pour l'export sain du fichier .html
+        nom_brut = preparer_nom_fichier("Rapport_Atelier_Gamma")
+        nom_fichier_html_gam5 = os.path.basename(nom_brut).replace(
+            ".txt", ".html"
+        )
+
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 5 (.html)",
+            data=html_export_gam5,
+            file_name=nom_fichier_html_gam5,
+            mime="text/html",
+        )
 
 
+with tab6:
+    st.header("Réaction d'Oxydoréduction")
 
+    # Utilisation stricte de la bibliothèque os pour sécuriser l'image d'en-tête
+    if os.path.exists("bilan_redox_intro.jpg"):
+        st.image(
+            "bilan_redox_intro.jpg",
+            caption="Le transfert global d'électrons entre le réducteur et l'oxydant",
+            use_container_width=True,
+        )
+    else:
+        st.warning(
+            "L'image 'bilan_redox_intro.jpg' n'a pas été trouvée dans le dossier."
+        )
 
+    st.subheader("L'Équation Bilan Globale")
+    st.write(
+        "Une réaction d'oxydoréduction est l'association simultanée d'une demi-réaction d'oxydation "
+        "et d'une demi-réaction de réduction. Les électrons ne peuvent pas exister à l'état libre en solution : "
+        "tous les électrons cédés par le réducteur doivent être intégralement captés par l'oxydant."
+    )
 
+    st.info(
+        "Pour écrire l'équation bilan, on additionne membre à membre les deux demi-équations après avoir "
+        "multiplié chacune d'elles par un coefficient approprié, de manière à ce que le nombre d'électrons "
+        "libérés soit rigoureusement égal au nombre d'électrons captés. Les électrons s'annulent alors et n'apparaissent plus dans le bilan final."
+    )
 
+    st.subheader("Méthode d'ajustement des coefficients")
 
+    # --- SECTION DE L'ADDITION MEMBRE À MEMBRE ---
+    col_61, col_62 = st.columns(2)
+    with col_61:
+        st.markdown("**Exemple classique : Fer métallique et ions Cuivre II**")
+        st.write(
+            "Le fer se fait oxyder en libérant 2 électrons, tandis que l'ion cuivre II se fait réduire en captant 2 électrons. "
+            "Comme le nombre d'électrons échangés est identique (2 d'un côté, 2 de l'autre), l'addition est directe."
+        )
+        st.markdown("**Équation finale sans électrons libres :**")
+        st.latex(
+            r"\text{Zn (s)} + \text{Cu}^{2+}\text{ (aq)} \longrightarrow \text{Zn}^{2+}\text{ (aq)} + \text{Cu (s)}"
+        )
+    with col_62:
+        if os.path.exists("bilan_addition_methode.jpg"):
+            st.image(
+                "bilan_addition_methode.jpg",
+                caption="Méthodologie de simplification des électrons par addition",
+            )
+        else:
+            st.warning("L'image 'bilan_addition_methode.jpg' est introuvable.")
+
+    st.divider()
+
+    st.write(
+        "Découvrez le principe de la réaction d'oxydoréduction globale à travers cette mise en scène."
+    )
+
+    # --- SECTION CARICATURE ET TEXTE BLEU ---
+    col_graph_bilan, col_bd_bilan = st.columns(2)
+
+    with col_graph_bilan:
+        st.write(
+            "**La BD humoristique textuelle : Le grand traité de paix électronique**"
+        )
+        st.info(
+            "**Case 1 :** Dans le bécher, l'agitation est totale. Le Zinc solide crie en jetant deux électrons dans la solution : 'Je n'en veux plus, ils me pèsent ! Je m'oxyde !'. Les deux électrons flottent sans abri, créant une étincelle de tension dans le liquide.\n\n"
+            "**Case 2 :** L'ion Cuivre II (Cu2+) aperçoit les charges orphelines, fonce dessus en ouvrant grand ses liaisons et s'exclame : 'Quelle aubaine ! Exactement ce qu'il me fallait pour me réduire et me stabiliser sous forme de métal solide !'.\n\n"
+            "**Case 3 :** Un inspecteur de la ligue de protection des particules passe au crible les réactifs avec une balance de pesée et déclare : 'Le compte est bon. Deux électrons perdus à gauche, deux électrons gagnés à droite. Aucun électron n'a fui la pièce !'.\n\n"
+            "**Case 4 :** Les électrons disparus des équations finales laissent place à un magnifique dépôt rouge de cuivre pur. Les deux couples signent le registre de la réaction bilan et concluent en chœur : 'Plus d'électricité statique, la neutralité est totale, l'oxydoréduction a fusionné nos destins !'."
+        )
+
+    with col_bd_bilan:
+        if os.path.exists("bilan_caricature.jpg"):
+            st.image(
+                "bilan_caricature.jpg",
+                caption="Illustration humoristique de l'équation bilan globale en 4 cases",
+                use_container_width=True,
+            )
+        else:
+            st.warning(
+                "L'image 'bilan_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+            )
+
+    if "suite_verrouille_tab6_bilan" not in st.session_state:
+        st.session_state.suite_verrouille_tab6_bilan = False
+    verrou_at6 = st.session_state.suite_verrouille_tab6_bilan
+
+    # Rendu du module d'évaluation
+    afficher_atelier_bilan_verrouille(verrouille=verrou_at6)
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 6")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat6 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Équation Bilan.",
+        key="check_certif_bil6_final_net",
+        disabled=verrou_at6,
+    )
+
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 6",
+        key="btn_export_suite6_bil_official",
+        use_container_width=True,
+        disabled=verrou_at6,
+    ):
+        if st.session_state.get("nom_var", "Nom") in [
+            "Nom",
+            "",
+        ] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error(
+                "Action refusée : Saisissez votre identité dans l'onglet 'Identification'."
+            )
+        elif not case_certif_stat6:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # Note du Quiz (2 pts par réponse juste)
+            score_q6 = 0.0
+            if "ordre_quiz_tab6_bil_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab6_bil_aleatoire:
+                    saisie = st.session_state.get(
+                        f"bil_at6_final_g_{q_item['id']}", "Choisir..."
+                    )
+                    if str(saisie).strip() == str(q_item["rep"]).strip():
+                        score_q6 += 2.0
+
+            # Note du Texte à trous (2 pts par case juste)
+            score_t6 = 0.0
+            if "champs_bil6_clean" in st.session_state:
+                for ligne in st.session_state.champs_bil6_clean:
+                    cle_variable = ligne[-1]
+                    attendu_valeur = ligne
+                    if (
+                        st.session_state.get(
+                            f"{cle_variable}_bil6_clean", "Choisir..."
+                        )
+                        == attendu_valeur
+                    ):
+                        score_t6 += 2.0
+
+            st.session_state.score_suite6_bil_p1 = round(float(score_q6), 1)
+            st.session_state.score_suite6_bil_p2 = round(float(score_t6), 1)
+            st.session_state.score_final_suite6_bil = round(
+                float(score_q6 + score_t6), 1
+            )
+            st.session_state.suite_verrouille_tab6_bilan = True
+            st.rerun()
+
+    if st.session_state.get("suite_verrouille_tab6_bilan", False):
+        scr1_t6 = st.session_state.get("score_suite6_bil_p1", 0.0)
+        scr2_t6 = st.session_state.get("score_suite6_bil_p2", 0.0)
+        tot_s_t6 = st.session_state.get("score_final_suite6_bil", 0.0)
+        timestamp_suite6 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(
+            f"ATELIER BILAN SCELLÉ | Note de session : {tot_s_t6:.1f} / 20"
+        )
+
+        html_export_bil6 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Equation Bilan - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #0f172a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #1e293b; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Chimie</h1>
+                <p>Atelier 6 : Équation bilan globale d'oxydoréduction</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite6}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t6:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Récapitulatif des Notes</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Quiz Technique : <strong>{scr1_t6:.1f} / 10</strong><br>
+                Synthèse de Cours : <strong>{scr2_t6:.1f} / 10</strong><br>
+                Note Totale : <strong>{tot_s_t6:.1f} / 20</strong>
+            </p>
+        </body>
+        </html>
+        """
+
+        # Utilisation de os.path pour l'export sain du fichier .html
+        nom_brut = preparer_nom_fichier("Rapport_Atelier_Bilan")
+        nom_fichier_html_bil6 = os.path.basename(nom_brut).replace(
+            ".txt", ".html"
+        )
+
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 6 (.html)",
+            data=html_export_bil6,
+            file_name=nom_fichier_html_bil6,
+            mime="text/html",
+        )
