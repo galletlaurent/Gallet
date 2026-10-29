@@ -3125,45 +3125,6 @@ with tab6:
 with tab7:
     st.header("Application dans le domaine du transport routier")
 
-    # =============================================================================
-    # BOUTON DE GÉNÉRATION ALÉATOIRE D'EXERCICE
-    # =============================================================================
-    col_btn_gen, _ = st.columns([0.3, 0.7])
-    with col_btn_gen:
-        if st.button(
-            "GÉNÉRER UN EXERCICE AU HASARD",
-            key="btn_generer_exercice_aleatoire_t7",
-            use_container_width=True,
-        ):
-            # Liste des clés de cas disponibles
-            liste_options_cas = ["routier_cas1", "routier_cas2", "routier_cas3"]
-
-            # Force le choix d'un cas DIFFERENT du cas actuel si possible
-            cas_actuel = st.session_state.get("choix_id_routier", "")
-            choix_possibles = [c for c in liste_options_cas if c != cas_actuel]
-
-            if not choix_possibles:
-                choix_possibles = liste_options_cas
-
-            # Écrit directement le nouveau choix forcé dans la session
-            st.session_state["choix_id_routier"] = random.choice(
-                choix_possibles
-            )
-
-            # Réinitialisation propre des états de l'exercice
-            st.session_state.verrou_routier_bilan = False
-            st.session_state.verrou_routier_at = False
-            st.session_state.suite_verrouille_tab7_routier = False
-
-            # Effacement des anciennes notes pour ne pas tricher
-            if "score_routier_partie_bilan" in st.session_state:
-                del st.session_state["score_routier_partie_bilan"]
-
-
-
-    st.write("---")
-
-
     # 1. BANQUE DE DONNÉES DYNAMIQUE PAR CAS (ÉNONCÉ, BD, QUIZ, TROUS)
     if "banque_complete_routier" not in st.session_state:
         st.session_state.banque_complete_routier = {
@@ -3277,15 +3238,56 @@ with tab7:
             }
         }
     # =============================================================================
-    # INITIALISATION ET SÉLECTION DU CAS ACTIF
+    # 2. INITIALISATION DU CAS PROFESSIONNEL PAR DÉFAUT
     # =============================================================================
     if "choix_id_routier" not in st.session_state:
-        st.session_state.choix_id_routier = random.choice(
-            list(st.session_state.banque_complete_routier.keys())
-        )
+        st.session_state.choix_id_routier = "routier_cas1"
 
+    # =============================================================================
+    # 3. INTERACTION DU BOUTON : FORCER LE CHANGEMENT VERS UN AUTRE CAS
+    # =============================================================================
+    col_btn_gen, _ = st.columns([0.3, 0.7])
+    with col_btn_gen:
+        if st.button(
+            "GÉNÉRER UN EXERCICE AU HASARD",
+            key="btn_generer_exercice_aleatoire_t7",
+            use_container_width=True,
+        ):
+            # Liste absolue des cas programmés dans votre dictionnaire
+            options_totale = ["routier_cas1", "routier_cas2", "routier_cas3"]
+            cas_en_cours = st.session_state.choix_id_routier
+
+            # On filtre pour exclure le cas en cours et forcer le changement réel
+            choix_restants = [c for c in options_totale if c != cas_en_cours]
+            st.session_state.choix_id_routier = random.choice(choix_restants)
+
+            # Déverrouillage immédiat des formulaires pour la nouvelle partie
+            st.session_state.verrou_routier_bilan = False
+            st.session_state.verrou_routier_at = False
+            st.session_state.suite_verrouille_tab7_routier = False
+
+            # Nettoyage des anciennes notes enregistrées
+            if "score_routier_partie_bilan" in st.session_state:
+                del st.session_state["score_routier_partie_bilan"]
+
+            # Force le rechargement immédiat de la page
+            st.rerun()
+
+    st.write("---")
+
+    # =============================================================================
+    # 4. AFFECTATION DES VARIABLES DU CAS CHOISI POUR LE RENDU DE L'INTERFACE
+    # =============================================================================
     id_cas = st.session_state.choix_id_routier
     cas_routier = st.session_state.banque_complete_routier[id_cas]
+
+    # Tri persistant des questions du quiz pour éviter les mélanges intempestifs
+    if f"quiz_melange_{id_cas}" not in st.session_state:
+        liste_q = list(cas_routier["quiz"])
+        random.shuffle(liste_q)
+        st.session_state[f"quiz_melange_{id_cas}"] = liste_q
+
+    questions_cas_optimales = st.session_state[f"quiz_melange_{id_cas}"]
 
     # =============================================================================
     # ACTIVITÉ INTERACTIVE : GÉNÉRATEUR D'ÉQUATION BILAN (10 POINTS)
