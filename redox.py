@@ -1855,10 +1855,17 @@ with tab3:
     if couple_choisi_red:
         data_couple = bibliotheque_redox[couple_choisi_red]
 
-        nom_propre_couple = couple_choisi_red.split(" ")[0].strip()
-        forme_ox_texte = nom_propre_couple.split("/")[0].strip()
-        forme_red_texte = nom_propre_couple.split("/")[1].strip()
+        # 1. On isole d'abord ce qui est avant la parenthèse pour ne garder que "MnO4⁻ / Mn²⁺"
+        formules_brutes = couple_choisi_red.split("(")[0].strip()
 
+        # 2. On sépare ensuite de manière sécurisée selon le premier slash trouvé
+        partie_gauche, partie_droite = formules_brutes.split("/", 1)
+
+        # 3. Nettoyage final des espaces blancs restants
+        forme_ox_texte = partie_gauche.strip()
+        forme_red_texte = partie_droite.strip()
+
+        # Reste du rendu inchangé...
         col_menu1, col_menu2 = st.columns(2)
         with col_menu1:
             st.markdown(f"**Analyse du couple :** {couple_choisi_red}")
