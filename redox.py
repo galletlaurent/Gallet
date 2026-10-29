@@ -3223,8 +3223,8 @@ with tab7:
                     ("8. Le fer solide détruit passe en solution sous forme d'..........", ["Choisir...", "ion", "précipité"], "ion", "t_rB8"),
                     ("9. Les électrons quittent le métal pour réduire l'..........", ["Choisir...", "acide", "sel"], "acide", "t_rB9"),
                     ("10. L'égalisation des charges permet d'écrire l'équation ..........", ["Choisir...", "bilan", "partielle"], "bilan", "t_rB10")
-                ]
-            },
+                    ]
+                    },      
             "routier_cas3": {
                 "titre": "Cas pratique C : Protection par anodes en zinc sur les remorques porte-engins",
                 "texte": "Pour préserver les essieux et structures basses des remorques porte-engins, les constructeurs installent des blocs de zinc. Lors d'une agression saline, le zinc s'oxyde en premier à la place du fer de la structure. Le zinc se sacrifie pour empêcher la réduction de l'oxygène sur l'acier.",
@@ -3258,13 +3258,8 @@ with tab7:
                     ("7. L'humidité saline environnante joue le rôle d'.......... conducteur.", ["Choisir...", "électrolyte", "isolant"], "électrolyte", "t_rC7"),
                     ("8. Le potentiel E0 du zinc est plus bas, il est donc plus .......... que le fer.", ["Choisir...", "réducteur", "oxydant"], "réducteur", "t_rC8"),
                     ("9. Le dioxygène se réduit en produisant des molécules d'..........", ["Choisir...", "eau", "zinc"], "eau", "t_rC9"),
-                    (
-                        "10. L'absence d'électrons libres caractérise l'équation ..........",
-                        ["Choisir...", "bilan", "partielle"],
-                        "bilan",
-                        "t_rC10",
-                    ),
-                ],
+                    ("10. L'absence d'électrons libres caractérise l'équation ..........", ["Choisir...", "bilan", "partielle"], "bilan", "t_rC10")
+                ]
             }
         }
     # =============================================================================
