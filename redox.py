@@ -4210,7 +4210,7 @@ with tab9:
     if "banque_complete_tp" not in st.session_state:
         st.session_state.banque_complete_tp = {
             "tp_cas1": {
-                "titre": "Cas pratique A : Carbonatation des armatures d'un pont en béton armé",
+                "titre": " Carbonatation des armatures d'un pont en béton armé",
                 "texte": "Le dioxyde de carbone de l'air s'infiltre dans les pores du béton. Le pH s'effondre, détruisant la couche de passivation du fer solide. Les armatures en fer s'oxydent au contact de l'eau et du dioxygène atmosphérique en ions fer II, ce qui fait éclater le béton sous l'effet de la poussée mécanique de la rouille.",
                 "couple_ox": "O2 / H2O",
                 "couple_red": "Fe²⁺ / Fe",
@@ -4246,7 +4246,7 @@ with tab9:
                 ]
             },
             "tp_cas2": {
-                "titre": "Cas pratique B : Attaque par les eaux acides des fondations de soutènement",
+                "titre": " Attaque par les eaux acides des fondations de soutènement",
                 "texte": "Les fondations en acier d'un réseau de soutènement de tranchée sont immergées dans une nappe phréatique polluée par des rejets acides. Les ions hydronium H₃O⁺ attaquent directement le fer métallique des palplanches, provoquant sa dissolution corrosive sous forme d'ions Fe²⁺ et un dégagement continu de dihydrogène gazeux.",
                 "couple_ox": "H3O⁺ / H2",
                 "couple_red": "Fe²⁺ / Fe",
@@ -4282,7 +4282,7 @@ with tab9:
                 ]
             },
             "tp_cas3": {
-                "titre": "Chantier C : Galvanisation des structures métalliques de pylônes",
+                "titre": " Galvanisation des structures métalliques de pylônes",
                 "texte": "Pour protéger les structures de soutènement contre les intempéries agressives, les ingénieurs des travaux publics réalisent une galvanisation au zinc. En cas de rayure profonde, le zinc métallique s'oxyde préférentiellement pour bloquer la réduction de l'oxygène, agissant comme une anode sacrificielle.",
                 "couple_ox": "O2 / H2O",
                 "couple_red": "Zn²⁺ / Zn",
@@ -4659,6 +4659,496 @@ with tab9:
             mime="text/html",
             key="download_btn_t9_final",
         )
+
+with tab10:
+    st.header("Application dans le domaine des géomètres")
+
+    # =============================================================================
+    # 1. BANQUE DE DONNÉES DYNAMIQUE PAR CAS POUR LES GÉOMÈTRES
+    # =============================================================================
+    if "banque_complete_geo" not in st.session_state:
+        st.session_state.banque_complete_geo = {
+            "geo_cas1": {
+                "titre": "Cas pratique A : Oxydation des repères topographiques métalliques en bronze",
+                "texte": "Les géomètres installent des repères fixes en bronze scellés dans le sol pour le chaînage topographique. Exposé aux intempéries et à l'air humide, le cuivre contenu dans le bronze subit une oxydation progressive. Il cède ses électrons au dioxygène de l'air pour former une patine de carbonate de cuivre qui altère la lisibilité des gravures de précision.",
+                "couple_ox": "O2 / H2O",
+                "couple_red": "Cu²⁺ / Cu",
+                "bd": (
+                    "**Case 1 :** Un géomètre installe son tachéomètre au-dessus d'un repère en bronze scellé dans une roche depuis des décennies. En regardant dans l'objectif, il plisse les yeux : 'Impossible de lire le point central, la gravure est complètement recouverte d'une couche verte !'.\n\n"
+                    "**Case 2 :** Zoom sur le repère en bronze. L'humidité de l'air et le dioxygène entourent le métal. Les molécules d'oxygène s'approchent en souriant : 'Regardez-moi ce joli cuivre tout propre, c'est l'heure de lui soutirer ses charges de surface !'.\n\n"
+                    "**Case 3 :** Les atomes de cuivre de surface cèdent deux électrons chacun et se détachent du bloc métallique : 'Aïe, nous subissons une oxydation en ions Cu²⁺ ! Notre éclat métallique brillant disparaît, on verdit à vue d'œil !'.\n\n"
+                    "**Case 4 :** Le fer métallique s'est oxydé en ions Cu²⁺ et a verdi sous forme de vert-de-gris. Le géomètre sort une brosse métallique et un produit protecteur isolant pour nettoyer le repère : 'On protège la référence de nivellement !'."
+                ),
+                "quiz": [
+                    {"id": "gA1", "q": "Qui est le réducteur de départ constitutif du repère qui subit l'altération ?", "options": ["Le cuivre solide", "Le dioxygène", "L'eau de pluie"], "rep": "Le cuivre solide"},
+                    {"id": "gA2", "q": "Qui est l'oxydant de l'air humide responsable de l'oxydation du repère ?", "options": ["Le dioxygène", "Le diazote", "Le dioxyde de soufre"], "rep": "Le dioxygène"},
+                    {"id": "gA3", "q": "Combien d'électrons sont transférés par chaque atome de cuivre lors de cette réaction ?", "options": ["2 électrons", "1 électron", "4 électrons"], "rep": "2 électrons"},
+                    {"id": "gA4", "q": "Quelle couleur prend le produit d'oxydation (vert-de-gris) qui recouvre le repère ?", "options": ["Vert / Bleu clair", "Rouge brique", "Noir intense"], "rep": "Vert / Bleu clair"},
+                    {"id": "gA5", "q": "Quelle est la couleur d'origine du métal cuivreux sain avant son altération ?", "options": ["Rouge orangé brillant", "Gris argenté", "Jaune vif"], "rep": "Rouge orangé brillant"},
+                    {"id": "gA6", "q": "Quelle transformation subit le cuivre métallique lorsqu'il cède ses électrons ?", "options": ["Une oxydation", "Une réduction", "Une fusion"], "rep": "Une oxydation"},
+                    {"id": "gA7", "q": "La captation des électrons par le dioxygène gazeux constitue une demi-réaction de :", "options": ["Réduction", "Oxydation", "Sublimation"], "rep": "Réduction"},
+                    {"id": "gA8", "q": "En perdant ses charges négatives, l'atome de cuivre neutre devient un :", "options": ["Cation Cu²⁺", "Anion Cu²⁻", "Atome de fer"], "rep": "Cation Cu²⁺"},
+                    {"id": "gA9", "q": "Quel type de milieu environnemental (humidité) favorise le transfert des électrons ?", "options": ["Un milieu conducteur", "Un milieu isolant", "Un milieu stérile"], "rep": "Un milieu conducteur"},
+                    {"id": "gA10", "q": "Dans l'écriture universelle du couple, la forme s'écrit sous la configuration :", "options": ["Oxydant / Réducteur", "Réducteur / Oxydant", "Acide / Base"], "rep": "Oxydant / Réducteur"}
+                ],
+                "trous": [
+                    ("1. Le cuivre solide constitutif du repère topographique agit comme le ..........", ["Choisir...", "réducteur", "oxydant"], "réducteur", "t_gA1"),
+                    ("2. Le dioxygène gazeux capte les charges au cours d'une ..........", ["Choisir...", "réduction", "oxydation"], "réduction", "t_gA2"),
+                    ("3. Chaque atome de cuivre cède un nombre de .......... électrons de valence.", ["Choisir...", "deux", "quatre"], "deux", "t_gA3"),
+                    ("4. La patine protectrice ou vert-de-gris présente une couleur ..........", ["Choisir...", "verte", "orange"], "verte", "t_gA4"),
+                    ("5. Avant d'être oxydé par l'air, le cuivre pur possède une teinte ..........", ["Choisir...", "orangée", "grise"], "orangée", "t_gA5"),
+                    ("6. L'atome de métal neutre se transforme en un .......... soluble Cu²⁺.", ["Choisir...", "ion", "gaz"], "ion", "t_gA6"),
+                    ("7. L'humidité de l'air ambiant joue le rôle d'un fluide ..........", ["Choisir...", "conducteur", "isolant"], "conducteur", "t_gA7"),
+                    ("8. Les électrons quittent le pôle métallique pour réduire le ..........", ["Choisir...", "gaz", "métal"], "gaz", "t_gA8"),
+                    ("9. La réduction de l'oxydant produit des molécules d'..........", ["Choisir...", "eau", "cuivre"], "eau", "t_gA9"),
+                    ("10. L'absence d'électrons libres caractérise l'équation ..........", ["Choisir...", "bilan", "partielle"], "bilan", "t_gA10")
+                ]
+            },
+            "geo_cas2": {
+                "titre": "Cas pratique B : Attaque acide des jalons d'arpentage en acier en zone marécageuse",
+                "texte": "Lors de relevés de limites de propriété en milieu marécageux acide, les jalons de visée en acier entrent en contact avec des eaux stagnantes chargées d'ions hydronium H₃O⁺. Ce milieu agressif déclenche l'oxydation du fer de la tige, provoquant sa dissolution et un dégagement de dihydrogène.",
+                "couple_ox": "H3O⁺ / H2",
+                "couple_red": "Fe²⁺ / Fe",
+                "bd": (
+                    "**Case 1 :** Un géomètre-expert plante un jalon de visée métallique dans le sol humide d'un marécage pour délimiter une parcelle. Le terrain dégage une forte odeur de décomposition organique.\n\n"
+                    "**Case 2 :** L'eau du marais est très acide. Les ions hydronium H₃O⁺ encerclent la pointe du jalon en acier : 'Hé regardez, le métal n'est pas protégé ici ! Volons-lui ses électrons !'.\n\n"
+                    "**Case 3 :** Les atomes de fer perdent leurs électrons de cohésion et se dissolvent : 'Au secours, nous subissons une oxydation en ions Fe²⁺ ! La pointe de notre jalon est en train de se dissoudre dans la boue !'.\n\n"
+                    "**Case 4 :** En absorbant les électrons du fer, les ions hydronium se transforment en gaz et s'échappent en bouillonnant. Le géomètre remarque de petites bulles de dihydrogène (H₂) remonter à la surface."
+                ),
+                "quiz": [
+                    {"id": "gB1", "q": "Qui est le réducteur métallique qui subit la dissolution au fond du marais ?", "options": ["Le fer solide", "L'ion hydronium", "Le gaz dihydrogène"], "rep": "Le fer solide"},
+                    {"id": "gB2", "q": "Qui est l'oxydant acide responsable de la destruction de la pointe du jalon ?", "options": ["L'ion hydronium H₃O⁺", "Le fer solide", "L'eau neutre"], "rep": "L'ion hydronium H₃O⁺"},
+                    {"id": "gB3", "q": "Quel dégagement gazeux se produit suite à la réduction en milieu acide ?", "options": ["Le dihydrogène", "Le dioxygène", "Le diazote"], "rep": "Le dihydrogène"},
+                    {"id": "gB4", "q": "Combien d'électrons un atome de fer cède-t-il lors de cette oxydation ?", "options": ["2 électrons", "1 électron", "4 électrons"], "rep": "2 électrons"},
+                    {"id": "gB5", "q": "Quel type de milieu chimique (pH inférieur à 7) caractérise l'eau du marécage ?", "options": ["Un milieu acide", "Un milieu basique", "Un milieu neutre"], "rep": "Un milieu acide"},
+                    {"id": "gB6", "q": "Quelle est la couleur de la tige de fer saine avant d'être plantée dans la boue ?", "options": ["Gris métallique", "Rouge", "Jaune"], "rep": "Gris métallique"},
+                    {"id": "gB7", "q": "La transformation subie par le fer solide (perte d'électrons) constitue une :", "options": ["Oxydation", "Réduction", "Précipitation"], "rep": "Oxydation"},
+                    {"id": "gB8", "q": "La capture des électrons par les ions hydronium constitue une :", "options": ["Réduction", "Oxydation", "Combustion"], "rep": "Réduction"},
+                    {"id": "gB9", "q": "En s'oxydant, l'atome de fer solide des Travaux Publics devient un ion de charge :", "options": ["Positive (Fe²⁺)", "Négative (Fe²⁻)", "Neutre"], "rep": "Positive (Fe²⁺)"},
+                    {"id": "gB10", "q": "L'égalisation des charges impose d'établir une équation dite :", "options": ["Bilan globale", "Partielle d'oxydation", "D'isomérisation"], "rep": "Bilan globale"}
+                ],
+                "trous": [
+                    ("1. Le fer solide du jalon d'arpentage subit une .......... destructive.", ["Choisir...", "oxydation", "réduction"], "oxydation", "t_gB1"),
+                    ("2. Les ions hydronium de la solution marécageuse subissent une ..........", ["Choisir...", "réduction", "oxydation"], "réduction", "t_gB2"),
+                    ("3. Le fer métallique joue le rôle de .......... dans cette réaction de terrain.", ["Choisir...", "réducteur", "oxydant"], "réducteur", "t_gB3"),
+                    ("4. L'agression chimique des jalons provient d'un liquide de nature ..........", ["Choisir...", "acide", "basique"], "acide", "t_gB4"),
+                    ("5. La réduction des protons de l'acide génère un dégagement de ..........", ["Choisir...", "dihydrogène", "dioxygène"], "dihydrogène", "t_gB5"),
+                    ("6. Chaque atome de fer libère un total de .......... électrons.", ["Choisir...", "deux", "quatre"], "deux", "t_gB6"),
+                    ("7. L'acier sain non altéré présente une couleur métallique ..........", ["Choisir...", "grise", "orange"], "grise", "t_gB7"),
+                    ("8. Le fer solide détruit passe en solution sous forme d'.......... Fe²⁺.", ["Choisir...", "ion", "solide"], "ion", "t_gB8"),
+                    ("9. Les électrons quittent le jalon de visée pour réduire l'..........", ["Choisir...", "acide", "sel"], "acide", "t_gB9"),
+                    ("10. Le croisement des charges électriques permet d'écrire l'équation ..........", ["Choisir...", "bilan", "partielle"], "bilan", "t_gB10")
+                ]
+            },
+            "geo_cas3": {
+                "titre": "Cas pratique C : Protection cathodique des repères de niveau par pastilles de zinc",
+                "texte": "Pour éviter le remplacement fréquent des repères métalliques fixés en extérieur, les géomètres utilisent des pastilles de zinc fixées à la base. En présence d'humidité saline, le zinc s'oxyde préférentiellement et protège le fer de la tige centrale par effet d'anode sacrificielle.",
+                "couple_ox": "O2 / H2O",
+                "couple_red": "Zn²⁺ / Zn",
+                "bd": (
+                    "**Case 1 :** Un géomètre vérifie un repère de haute précision fixé sur un mur extérieur en bord de mer. Le bloc est soumis aux embruns salés mais ne présente aucune trace de rouille.\n\n"
+                    "**Case 2 :** L'eau salée s'infiltre. La pastille de zinc se place devant la tige d'acier : 'Pas de panique la structure, je suis plus réducteur que toi, j'envoie mes électrons en premier !'.\n\n"
+                    "**Case 3 :** Le zinc subit une oxydation et se dissout lentement : 'Je perds mes électrons de surface et je deviens l'ion Zn²⁺, je me sacfifie pour préserver le nivellement !'.\n\n"
+                    "**Case 4 :** L'acier de la tige centrale reste parfaitement gris et intact. Le géomètre valide la mesure : 'La protection sacrificielle fonctionne à merveille, le point zéro reste stable !'."
+                ),
+                "quiz": [
+                    {"id": "gC1", "q": "Quel métal se sacrifie et joue le rôle de réducteur actif pour protéger le repère ?", "options": ["Le zinc", "Le fer", "Le plomb"], "rep": "Le zinc"},
+                    {"id": "gC2", "q": "Quel métal est préservé de la corrosion grâce à cette méthode ?", "options": ["Le fer (acier)", "Le zinc", "Le cuivre"], "rep": "Le fer (acier)"},
+                    {"id": "gC3", "q": "Qui est l'oxydant de l'air humide marin que le zinc doit neutraliser ?", "options": ["Le dioxygène", "Le diazote", "L'ion zinc"], "rep": "Le dioxygène"},
+                    {"id": "gC4", "q": "Combien d'électrons un atome de zinc libère-t-on en s'oxydant en ion Zn²⁺ ?", "options": ["2 électrons", "1 électron", "3 électrons"], "rep": "2 électrons"},
+                    {"id": "gC5", "q": "Quelle est la couleur d'origine de la pastille de zinc protectrice saine ?", "options": ["Gris mat", "Rouge orangé", "Jaune métallique"], "rep": "Gris mat"},
+                    {"id": "gC6", "q": "Quel nom donne-t-on à cette méthode de préservation des métaux ?", "options": ["Protection sacrificielle", "Passivation acide", "Peinture étanche"], "rep": "Protection sacrificielle"},
+                    {"id": "gC7", "q": "Pourquoi le zinc réagit-il à la place du fer de la tige de nivellement ?", "options": ["Il est plus réducteur que le fer", "Il est plus noble", "Il est plus dur"], "rep": "Il est plus réducteur que le fer"},
+                    {"id": "gC8", "q": "Quelle transformation subit le zinc en fournissant ses électrons ?", "options": ["Une oxydation", "Une réduction", "Une fusion"], "rep": "Une oxydation"},
+                    {"id": "gC9", "q": "La captation des électrons mobiles par le dioxygène de l'air constitue une :", "options": ["Réduction", "Oxydation", "Liquéfaction"], "rep": "Réduction"},
+                    {"id": "gC10", "q": "En s'oxydant, la pastille métallique de zinc produit des ions de formule :", "options": ["Zn²⁺", "Fe²⁺", "Cu²⁺"], "rep": "Zn²⁺"}
+                ],
+                "trous": [
+                    ("1. Le zinc de la pastille cède ses électrons, c'est le .......... du système.", ["Choisir...", "réducteur", "oxydant"], "réducteur", "t_gC1"),
+                    ("2. Le dioxygène capte ces électrons au cours d'une ..........", ["Choisir...", "réduction", "oxydation"], "réduction", "t_gC2"),
+                    ("3. Le zinc s'use lentement pour assurer une protection ..........", ["Choisir...", "sacrificielle", "mécanique"], "sacrificielle", "t_gC3"),
+                    ("4. Chaque atome de zinc sacrifie un total de .......... électrons.", ["Choisir...", "deux", "trois"], "deux", "t_gC4"),
+                    ("5. Grâce au zinc, la tige centrale en acier conserve sa couleur ..........", ["Choisir...", "grise", "orange"], "grise", "t_gC5"),
+                    ("6. L'atome de zinc solide se transforme en un .......... soluble Zn²⁺.", ["Choisir...", "ion", "gaz"], "ion", "t_gC6"),
+                    ("7. L'humidité saline des embruns joue le rôle d'un .......... conducteur.", ["Choisir...", "électrolyte", "isolant"], "électrolyte", "t_gC7"),
+                    ("8. Le potentiel E0 du zinc est plus bas, il est plus .......... que le fer.", ["Choisir...", "réducteur", "oxydant"], "réducteur", "t_gB8"),
+                    ("9. Le dioxygène se réduit en produisant des molécules d'..........", ["Choisir...", "eau", "zinc"], "eau", "t_gC9"),
+                    ("10. L'absence d'électrons libres caractérise l'équation ..........", ["Choisir...", "bilan", "partielle"], "bilan", "t_gC10")
+                ]
+            }
+        }
+
+    # =============================================================================
+    # INITIALISATION ET SÉLECTION DU CAS ACTIF POUR LES GÉOMÈTRES
+    # =============================================================================
+    if "choix_id_geo" not in st.session_state:
+        st.session_state.choix_id_geo = "geo_cas1"
+
+    id_cas_geo = st.session_state.choix_id_geo
+    cas_geo = st.session_state.banque_complete_geo[id_cas_geo]
+
+    if f"quiz_melange_{id_cas_geo}" not in st.session_state:
+        liste_q_geo = list(cas_geo["quiz"])
+        random.shuffle(liste_q_geo)
+        st.session_state[f"quiz_melange_{id_cas_geo}"] = liste_q_geo
+
+    questions_geo_optimales = st.session_state[f"quiz_melange_{id_cas_geo}"]
+
+    # =============================================================================
+    # BOUTON DE GÉNÉRATION D'EXERCICE ALÉATOIRE FORCÉ
+    # =============================================================================
+    col_btn_geo, _ = st.columns([0.3, 0.7])
+    with col_btn_geo:
+        if st.button(
+            "GÉNÉRER UN EXERCICE AU HASARD",
+            key="btn_generer_exercice_aleatoire_t10",
+            use_container_width=True,
+        ):
+            options_geo = ["geo_cas1", "geo_cas2", "geo_cas3"]
+            cas_en_cours = st.session_state.choix_id_geo
+
+            # Filtrage pour forcer un changement d'exercice réel
+            choix_restants = [c for c in options_geo if c != cas_en_cours]
+            st.session_state.choix_id_geo = random.choice(choix_restants)
+
+            # Réinitialisation complète des validations et formulaires
+            st.session_state.verrou_geo_bilan = False
+            st.session_state.verrou_geo_at = False
+            st.session_state.suite_verrouille_tab10_geo = False
+
+            if "score_geo_partie_bilan" in st.session_state:
+                del st.session_state["score_geo_partie_bilan"]
+            st.rerun()
+
+    st.write("---")
+
+    # =============================================================================
+    # AFFICHAGE DE L'ÉNONCÉ ET DE L'IMAGE TECHNIQUE DU CAS ACTIF
+    # =============================================================================
+    st.subheader(cas_geo["titre"])
+    st.write(cas_geo["texte"])
+
+    image_geo = f"{id_cas_geo}.jpg"
+    if os.path.exists(image_geo):
+        st.image(
+            image_geo,
+            caption="Constat d'état du matériel topographique sur le terrain",
+        )
+    else:
+        st.warning(
+            f"L'image '{image_geo}' est introuvable à la racine de l'application."
+        )
+
+    st.divider()
+
+    # =============================================================================
+    # RENDU DE LA CARICATURE (DOUBLE COLONNE : TEXTE BLEU + IMAGE)
+    # =============================================================================
+    col_g_geo, col_b_geo = st.columns(2)
+    with col_g_geo:
+        st.write("**La BD humoristique textuelle adaptée à votre situation**")
+        st.info(cas_geo["bd"])
+    with col_b_geo:
+        image_bd_geo = f"bd_{id_cas_geo}.jpg"
+        if os.path.exists(image_bd_geo):
+            st.image(
+                image_bd_geo,
+                caption="Illustration caricaturale du cas",
+                use_container_width=True,
+            )
+        else:
+            st.warning(f"L'image '{image_bd_geo}' est introuvable.")
+
+    st.divider()
+
+    st.subheader("Générateur d'équation bilan du domaine des géomètres (Note sur 10 points)")
+    st.write("Sélectionnez les bons éléments et équilibrez l'équation globale par rapport à votre énoncé :")
+
+    if "verrou_geo_bilan" not in st.session_state:
+        st.session_state.verrou_geo_bilan = False
+    v_geo_bilan = st.session_state.verrou_geo_bilan
+
+    # Ligne de sélection des couples et des demi-équations
+    col_geob1, col_geob2 = st.columns(2)
+    with col_geob1:
+        choix_geo_ox = st.selectbox("Sélectionnez le couple de l'oxydant :", ["Choisir...", "O2 / H2O", "H3O⁺ / H2", "Fe²⁺ / Fe"], disabled=v_geo_bilan, key="geo_ox_sel")
+        choix_geo_demi_ox = st.selectbox("Sélectionnez la bonne écriture de l'oxydation :", ["Choisir...", "Fe -> Fe²⁺ + 2e⁻", "Zn -> Zn²⁺ + 2e⁻", "Cu -> Cu²⁺ + 2e⁻"], disabled=v_geo_bilan, key="geo_demi_ox_sel")
+    with col_geob2:
+        choix_geo_red = st.selectbox("Sélectionnez le couple du réducteur :", ["Choisir...", "Fe²⁺ / Fe", "Zn²⁺ / Zn", "Cu²⁺ / Cu"], disabled=v_geo_bilan, key="geo_red_sel")
+        choix_geo_demi_red = st.selectbox("Sélectionnez la bonne écriture de la réduction :", ["Choisir...", "O2 + 4H3O⁺ + 4e⁻ -> 6H2O", "2H3O⁺ + 2e⁻ -> H2 + 2H2O", "Cu²⁺ + 2e⁻ -> Cu"], disabled=v_geo_bilan, key="geo_demi_red_sel")
+
+    # Alignement parfait pour la construction stœchiométrique
+    st.markdown("**Équilibrez l'équation bilan globale finale :**")
+    col_gee1, col_gee2, col_gee3, col_gee4, col_gee5, col_gee6, col_gee7 = st.columns([0.15, 0.25, 0.05, 0.25, 0.05, 0.25, 0.25], vertical_alignment="center")
+    with col_gee1: geo_coef_1 = st.selectbox("Coef", ["Choisir...", "1", "2"], key="geoc1", disabled=v_geo_bilan)
+    with col_gee2: geo_reactif_1 = st.selectbox("Réactif 1", ["Choisir...", "Fe", "Zn", "Cu", "O2"], key="geor1", disabled=v_geo_bilan)
+    with col_gee3: st.write("**+**")
+    with col_gee4: geo_reactif_2 = st.selectbox("Réactif 2", ["Choisir...", "O2", "H3O⁺", "H2O"], key="geor2", disabled=v_geo_bilan)
+    with col_gee5: st.write("**→**")
+    with col_gee6: geo_prod_1 = st.selectbox("Produit 1", ["Choisir...", "Fe²⁺", "Zn²⁺", "Cu²⁺", "H2"], key="geop1", disabled=v_geo_bilan)
+    with col_gee7: geo_prod_2 = st.selectbox("Produit 2", ["Choisir...", "H2O", "H2", "Cu²⁺"], key="geop2", disabled=v_geo_bilan)
+
+    if st.button("VALIDER L'ÉQUATION BILAN [10 PTS]", key="btn_v_mb_geo_final", disabled=v_geo_bilan):
+        if choix_geo_ox == "Choisir..." or choix_geo_red == "Choisir..." or geo_reactif_1 == "Choisir..." or geo_reactif_2 == "Choisir...":
+            st.error("Action refusée : Veuillez remplir tous les choix.")
+        else:
+            geo_score = 0.0
+            if choix_geo_ox == cas_geo["couple_ox"]: geo_score += 2.0
+            if choix_geo_red == cas_geo["couple_red"]: geo_score += 2.0
+
+            # Vérification par rapport au cas de géomètres tiré au sort
+            if id_cas_geo == "geo_cas1" and geo_coef_1 == "2" and geo_reactif_1 == "Cu" and geo_reactif_2 == "O2" and geo_prod_1 == "Cu²⁺" and geo_prod_2 == "H2O":
+                geo_score += 6.0
+            elif id_cas_geo == "geo_cas2" and geo_coef_1 == "1" and geo_reactif_1 == "Fe" and geo_reactif_2 == "H3O⁺" and geo_prod_1 == "Fe²⁺" and geo_prod_2 == "H2":
+                geo_score += 6.0
+            elif id_cas_geo == "geo_cas3" and geo_coef_1 == "2" and geo_reactif_1 == "Zn" and geo_reactif_2 == "O2" and geo_prod_1 == "Zn²⁺" and geo_prod_2 == "H2O":
+                geo_score += 6.0
+
+            st.session_state.score_geo_partie_bilan = geo_score
+            st.session_state.verrou_geo_bilan = True
+            st.rerun()
+
+    if st.session_state.get("verrou_geo_bilan"):
+        st.info(f"Note enregistrée pour l'équation bilan : {st.session_state.get('score_geo_partie_bilan', 0.0)} / 10")
+
+    st.divider()
+    if "verrou_geo_at" not in st.session_state:
+        st.session_state.verrou_geo_at = False
+    v_geo_at = st.session_state.verrou_geo_at
+
+    col_geoq, col_geot = st.columns(2)
+
+    with col_geoq:
+        st.markdown("##### Quiz Technique Géomètres (10 questions - 10 pts)")
+        for idx, q_data in enumerate(questions_geo_optimales, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox(
+                label=q_data["q"],
+                options=["Choisir..."] + q_data["options"],
+                key=f"geo_quiz_{q_data['id']}",
+                disabled=v_geo_at,
+                label_visibility="collapsed"
+            )
+
+    with col_geot:
+        st.markdown("##### Synthèse Technique à trous (10 cases - 10 pts)")
+        for ligne in cas_geo["trous"]:
+            enonce, choix, attendu, cle = ligne
+
+            # Correctif d'alignement parfait sur deux blocs
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="center")
+            with c_txt:
+                st.write(enonce)
+            with c_sel:
+                st.selectbox(
+                    label=enonce,
+                    options=choix,
+                    key=f"{cle}_geo_clean",
+                    disabled=v_geo_at,
+                    label_visibility="collapsed"
+                )
+
+    if "suite_verrouille_tab10_geo" not in st.session_state:
+        st.session_state.suite_verrouille_tab10_geo = False
+    verrou_at10 = st.session_state.suite_verrouille_tab10_geo
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 10")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat10 = st.checkbox(
+        "Je certifie avoir complété toutes les activités de cet Atelier Géomètres (Bilan et Questionnaire).",
+        key="check_certif_geo10_scelle",
+        disabled=verrou_at10,
+    )
+
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 10",
+        key="btn_exp_t10_final_official",
+        disabled=verrou_at10,
+        use_container_width=True,
+    ):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identity dans l'onglet 'Identification'.")
+        elif not st.session_state.get("verrou_geo_bilan", False):
+            st.error("Action refusée : Vous devez valider l'Équation Bilan ci-dessus au préalable.")
+        elif not case_certif_stat10:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Note du Générateur d'Équation Bilan (sur 10 pts)
+            note_b_geo = float(st.session_state.get("score_geo_partie_bilan", 0.0))
+
+            # 2. Correction automatisée du Quiz Technique (10 pts)
+            score_q10 = 0.0
+            for q in questions_geo_optimales:
+                saisie_q = st.session_state.get(f"geo_quiz_{q['id']}", "Choisir...")
+                if str(saisie_q).strip() == str(q["rep"]).strip():
+                    score_q10 += 1.0
+
+            # 3. Correction automatisée de la Synthèse à trous (10 pts)
+            score_t10 = 0.0
+            for t in cas_geo["trous"]:
+                cle_t = t[-1]
+                attendu_t = t
+                saisie_t = st.session_state.get(f"{cle_t}_geo_clean", "Choisir...")
+                if str(saisie_t).strip() == str(attendu_t).strip():
+                    score_t10 += 1.0
+
+            # 4. Enregistrement des notes globales de session sur 30 points
+            st.session_state.score_geo_bilan_final = round(note_b_geo, 1)
+            st.session_state.score_geo_atelier_final = round(float(score_q10 + score_t10), 1)
+            st.session_state.score_final_global_geo = round(float(note_b_geo + score_q10 + score_t10), 1)
+            st.session_state.suite_verrouille_tab10_geo = True
+            st.rerun()
+
+    # --- COMPILATION DU RAPPORT INDIVIDUEL SCELLÉ HTML POUR LES GÉOMÈTRES ---
+    if st.session_state.get("suite_verrouille_tab10_geo", False):
+        not_b_g = st.session_state.get("score_geo_bilan_final", 0.0)
+        not_at_g = st.session_state.get("score_geo_atelier_final", 0.0)
+        not_tot_g = st.session_state.get("score_final_global_geo", 0.0)
+        timestamp_suite10 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER GÉOMÈTRES SCELLÉ | Note globale enregistrée : {not_tot_g:.1f} / 30")
+
+        equation_eleve_geo_texte = f"{geo_coef_1} {geo_reactif_1} + {geo_reactif_2} -> {geo_prod_1} + {geo_prod_2}"
+        bd_html_geo_format = cas_geo["bd"].replace("\n\n", "<br><br>")
+
+        html_export_geo = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Géomètres - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #0f172a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #10b981; color: white; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                .enonce-box {{ background-color: #f1f5f9; border-left: 4px solid #0f172a; padding: 15px; margin-bottom: 20px; font-size: 13px; line-height: 1.5; }}
+                .bd-box {{ background-color: #f0fdf4; border-left: 4px solid #10b981; padding: 15px; margin-bottom: 20px; font-size: 13px; font-style: italic; line-height: 1.5; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; }}
+                th {{ background-color: #1e293b; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation Individuel Officiel</h1>
+                <p>Filière professionnelle : Topographie et Géomètres-Experts</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite10}</p>
+                <div class="score-badge">SCORE FINAL<br><span style="font-size: 32px;">{not_tot_g:.1f}</span> / 30</div>
+            </div>
+            
+            <div class="sub-title">Énoncé de l'étude de cas évaluée</div>
+            <div class="enonce-box">
+                <strong>{cas_geo['titre']}</strong><br><br>
+                {cas_geo['texte']}
+            </div>
+
+            <div class="sub-title">La Caricature Pédagogique Associée</div>
+            <div class="bd-box">
+                {bd_html_geo_format}
+            </div>
+
+            <div class="sub-title">Synthèse des Notes Obtenues</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                1. Équation Bilan de Terrain : <strong>{not_b_g:.1f} / 10</strong><br>
+                2. Questionnaire Technique de Synthèse (Quiz + Trous) : <strong>{not_at_g:.1f} / 20</strong><br>
+                <strong>Note totale consolidée : {not_tot_g:.1f} / 30</strong>
+            </p>
+
+            <div class="sub-title">Activité 1 : Vérification de la configuration d'Équation Bilan</div>
+            <table>
+                <thead>
+                    <tr><th>Paramètre d'Éléments</th><th>Saisie Réalisée Élève</th><th>Attendu Académique</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Couple de l'Oxydant sélectionné</td><td>{choix_geo_ox}</td><td>{cas_geo['couple_ox']}</td></tr>
+                    <tr><td>Couple du Réducteur sélectionné</td><td>{choix_geo_red}</td><td>{cas_geo['couple_red']}</td></tr>
+                    <tr><td>Équation globale équilibrée</td><td><code>{equation_eleve_geo_texte}</code></td><td>Validation par script automatique</td></tr>
+                </tbody>
+            </table>
+
+            <div class="sub-title">Activité 2 : Correction détaillée du Quiz Technique (10 pts)</div>
+            <table>
+                <thead><tr><th>N°</th><th>Question Technique Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr></thead>
+                <tbody>
+        """
+
+        for num, q_item in enumerate(questions_geo_optimales, 1):
+            saisie = st.session_state.get(f"geo_quiz_{q_item['id']}", "Choisir...")
+            attendu = q_item["rep"]
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_geo += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_geo += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">Activité 3 : Correction détaillée de la Synthèse à trous (10 pts)</div>
+            <table>
+                <thead><tr><th>N°</th><th>Phrase complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr></thead>
+                <tbody>
+        """
+
+        for num, t_item in enumerate(cas_geo["trous"], 1):
+            enonce_t, _, attendu_t, cle_t = t_item
+            saisie_t = st.session_state.get(f"{cle_t}_geo_clean", "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_geo += f"<tr><td>{num}</td><td>{enonce_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_geo += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        nom_fichier_brut_geo = preparer_nom_fichier("Rapport_Application_Geometres")
+        nom_propre_html_t10 = os.path.basename(nom_fichier_brut_geo).replace(".txt", ".html")
+
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel Géomètres (.html)",
+            data=html_export_geo,
+            file_name=nom_propre_html_t10,
+            mime="text/html",
+            key="download_btn_t10_final",
+        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
