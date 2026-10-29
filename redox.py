@@ -3290,6 +3290,54 @@ with tab7:
     questions_cas_optimales = st.session_state[f"quiz_melange_{id_cas}"]
 
     # =============================================================================
+    # 5. AFFICHAGE DES TEXTES DE L'ÉNONCÉ ET DE L'IMAGE TECHNIQUE
+    # =============================================================================
+    # Extraction et affichage du titre et du texte du cas actif
+    st.subheader(cas_routier["titre"])
+    st.write(cas_routier["texte"])
+
+    # Chargement sécurisé de l'image de constat technique sur le terrain
+    image_routier = f"{id_cas}.jpg"
+    if os.path.exists(image_routier):
+        st.image(
+            image_routier,
+            caption="Constat visuel de la dégradation sur le matériel de transport",
+        )
+    else:
+        st.warning(
+            f"L'image '{image_routier}' n'a pas été trouvée à la racine de l'application."
+        )
+
+    st.divider()
+
+    # =============================================================================
+    # 6. RENDU DE LA CARICATURE (DOUBLE COLONNE : TEXTE BLEU + IMAGE BD)
+    # =============================================================================
+    col_g_rt, col_b_rt = st.columns(2)
+
+    with col_g_rt:
+        st.write("**La BD humoristique textuelle adaptée à votre situation**")
+        # Affichage de la bande dessinée spécifique au cas dans l'encadré bleu
+        st.info(cas_routier["bd"])
+
+    with col_b_rt:
+        image_bd = f"bd_{id_cas}.jpg"
+        if os.path.exists(image_bd):
+            st.image(
+                image_bd,
+                caption="Illustration caricaturale du mécanisme chimique",
+                use_container_width=True,
+            )
+        else:
+            st.warning(
+                f"L'illustration caricaturale '{image_bd}' est introuvable."
+            )
+
+    st.divider()
+
+
+
+    # =============================================================================
     # ACTIVITÉ INTERACTIVE : GÉNÉRATEUR D'ÉQUATION BILAN (10 POINTS)
     # =============================================================================
     st.subheader("Générateur d'équation bilan du transport (Note sur 10 points)")
