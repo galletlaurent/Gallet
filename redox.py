@@ -3233,13 +3233,10 @@ with tab7:
                     ("7. L'humidité saline environnante joue le rôle d'.......... conducteur.", ["Choisir...", "électrolyte", "isolant"], "électrolyte", "t_rC7"),
                     ("8. Le potentiel E0 du zinc est plus bas, il est donc plus .......... que le fer.", ["Choisir...", "réducteur", "oxydant"], "réducteur", "t_rC8"),
                     ("9. Le dioxygène se réduit en produisant des molécules d'..........", ["Choisir...", "eau", "zinc"], "eau", "t_rC9"),
-                    ("10. L'absence d'électrons libres caractérise l'équation ..........", ["Choisir...", "bilan", "partielle"], "bilan", "t_rC10")
-
-                    ),
-                ],  # Ferme la liste "trous" du cas 3
+                    ( "10. L'absence d'électrons libres caractérise l'équation ..........", ["Choisir...", "bilan", "partielle"], "bilan", "t_rC10"),  # Pas de virgule ni de parenthèse isolée après cette ligne
+                ],  # Ferme la liste "trous" du cas 3 (Garder uniquement ce crochet)
             }  # Ferme le dictionnaire du cas 3
-        }  # Ferme le grand dictionnaire "banque_complete_routier"
-
+        } 
     # =============================================================================
     # INITIALISATION ET SÉLECTION DU CAS ACTIF
     # =============================================================================
