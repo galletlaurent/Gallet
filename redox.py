@@ -3392,7 +3392,7 @@ with tab7:
     # 2. DEUXIÈME LIGNE DE SÉLECTION : L'ÉQUATION BILAN GLOBALE FINALE
     st.markdown("**Équilibrez l'équation bilan globale finale :**")
 
-    # Découpage strict en colonnes proportionnelles pour reproduire fidèlement la mise en page de l'image
+    # Découpage strict en colonnes proportionnelles pour reproduire fidèlement la mise en page
     col_re1, col_re2, col_re3, col_re4, col_re5, col_re6, col_re7 = st.columns(
         [0.15, 0.25, 0.05, 0.25, 0.05, 0.25, 0.25], vertical_alignment="center"
     )
@@ -3437,7 +3437,7 @@ with tab7:
     # 3. SCRIPT DE CORRECTION AUTOMATISÉE ET ATTRIBUTION DES POINTS
     if st.button(
         "VALIDER L'ÉQUATION BILAN [10 PTS]",
-        key="btn_v_rb",
+        key="btn_v_rb_routier_officiel",
         disabled=v_routier,
     ):
         if (
@@ -3445,8 +3445,11 @@ with tab7:
             or choix_rc_red == "Choisir..."
             or r_reactif_1 == "Choisir..."
             or r_reactif_2 == "Choisir..."
+            or r_coef_1 == "Choisir..."
+            or r_prod_1 == "Choisir..."
+            or r_prod_2 == "Choisir..."
         ):
-            st.error("Action refusée : Veuillez remplir tous les choix.")
+            st.error("Action refusée : Veuillez remplir tous les choix avant de valider.")
         else:
             r_score = 0.0
 
@@ -3485,7 +3488,6 @@ with tab7:
             ):
                 r_score += 6.0
 
-            # Sauvegarde de la note dans la session
             st.session_state.score_routier_partie_bilan = r_score
             st.session_state.verrou_routier_bilan = True
             st.rerun()
@@ -3495,7 +3497,7 @@ with tab7:
             f"Note enregistrée pour l'équation bilan : {st.session_state.get('score_routier_partie_bilan', 0.0)} / 10"
         )
 
-
+    st.divider()
 
 
     # Mélange persistant des questions du quiz propre au cas actif
@@ -4030,14 +4032,14 @@ with tab8:
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_stat8 = st.checkbox(
-        "Je certifie avoir complété toutes les activités adaptées de cet Atelier (Bilan et Questionnaire).",
-        key="check_certif_maint8_scelle",
+        "Je certifie avoir complété toutes les activités de cet Atelier Maintenance (Bilan et Questionnaire).",
+        key="check_certif_maint8_scelle_ajuste",
         disabled=verrou_at8,
     )
 
     if st.button(
         "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 8",
-        key="btn_exp_t8_final_official",
+        key="btn_exp_t8_final_official_ajuste",
         disabled=verrou_at8,
         use_container_width=True,
     ):
@@ -4058,11 +4060,10 @@ with tab8:
                 if str(saisie_q).strip() == str(q["rep"]).strip():
                     score_q8 += 1.0
 
-            # 3. Correction automatisée de la Synthèse à trous (10 pts)
+            # 3. CORRECTION OPTIMISÉE : Comparaison directe avec la variable textuelle 'attendu_t'
             score_t8 = 0.0
             for t in cas_maint["trous"]:
-                cle_t = t[-1]
-                attendu_t = t[2]
+                enonce_t, choix_t, attendu_t, cle_t = t  # Déballage propre des 4 éléments du tuple
                 saisie_t = st.session_state.get(f"{cle_t}_maint_clean", "Choisir...")
                 if str(saisie_t).strip() == str(attendu_t).strip():
                     score_t8 += 1.0
@@ -4499,13 +4500,13 @@ with tab9:
 
     case_certif_stat9 = st.checkbox(
         "Je certifie avoir complété toutes les activités de cet Atelier Travaux Publics (Bilan et Questionnaire).",
-        key="check_certif_tp9_scelle",
+        key="check_certif_tp9_scelle_final",
         disabled=verrou_at9,
     )
 
     if st.button(
         "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 9",
-        key="btn_exp_t9_final_official",
+        key="btn_exp_t9_final_official_ajuste",
         disabled=verrou_at9,
         use_container_width=True,
     ):
@@ -4526,11 +4527,10 @@ with tab9:
                 if str(saisie_q).strip() == str(q["rep"]).strip():
                     score_q9 += 1.0
 
-            # 3. Correction automatisée de la Synthèse à trous (10 pts)
+            # 3. CORRECTION OPTIMISÉE : Comparaison directe avec la variable textuelle 'attendu_t'
             score_t9 = 0.0
             for t in cas_tp["trous"]:
-                cle_t = t[-1]
-                attendu_t = t[2]
+                enonce_t, choix_t, attendu_t, cle_t = t  # Déballage propre des 4 éléments
                 saisie_t = st.session_state.get(f"{cle_t}_tp_clean", "Choisir...")
                 if str(saisie_t).strip() == str(attendu_t).strip():
                     score_t9 += 1.0
@@ -4541,7 +4541,6 @@ with tab9:
             st.session_state.score_final_global_tp = round(float(note_b_tp + score_q9 + score_t9), 1)
             st.session_state.suite_verrouille_tab9_tp = True
             st.rerun()
-
     # --- COMPILATION DU RAPPORT INDIVIDUEL SCELLÉ HTML POUR LES TP ---
     if st.session_state.get("suite_verrouille_tab9_tp", False):
         not_b_t = st.session_state.get("score_tp_bilan_final", 0.0)
@@ -4669,7 +4668,7 @@ with tab10:
     if "banque_complete_geo" not in st.session_state:
         st.session_state.banque_complete_geo = {
             "geo_cas1": {
-                "titre": "Cas pratique A : Oxydation des repères topographiques métalliques en bronze",
+                "titre": " Oxydation des repères topographiques métalliques en bronze",
                 "texte": "Les géomètres installent des repères fixes en bronze scellés dans le sol pour le chaînage topographique. Exposé aux intempéries et à l'air humide, le cuivre contenu dans le bronze subit une oxydation progressive. Il cède ses électrons au dioxygène de l'air pour former une patine de carbonate de cuivre qui altère la lisibilité des gravures de précision.",
                 "couple_ox": "O2 / H2O",
                 "couple_red": "Cu²⁺ / Cu",
@@ -4705,7 +4704,7 @@ with tab10:
                 ]
             },
             "geo_cas2": {
-                "titre": "Cas pratique B : Attaque acide des jalons d'arpentage en acier en zone marécageuse",
+                "titre": " Attaque acide des jalons d'arpentage en acier en zone marécageuse",
                 "texte": "Lors de relevés de limites de propriété en milieu marécageux acide, les jalons de visée en acier entrent en contact avec des eaux stagnantes chargées d'ions hydronium H₃O⁺. Ce milieu agressif déclenche l'oxydation du fer de la tige, provoquant sa dissolution et un dégagement de dihydrogène.",
                 "couple_ox": "H3O⁺ / H2",
                 "couple_red": "Fe²⁺ / Fe",
@@ -4741,7 +4740,7 @@ with tab10:
                 ]
             },
             "geo_cas3": {
-                "titre": "Cas pratique C : Protection cathodique des repères de niveau par pastilles de zinc",
+                "titre": " Protection cathodique des repères de niveau par pastilles de zinc",
                 "texte": "Pour éviter le remplacement fréquent des repères métalliques fixés en extérieur, les géomètres utilisent des pastilles de zinc fixées à la base. En présence d'humidité saline, le zinc s'oxyde préférentiellement et protège le fer de la tige centrale par effet d'anode sacrificielle.",
                 "couple_ox": "O2 / H2O",
                 "couple_red": "Zn²⁺ / Zn",
@@ -4972,7 +4971,7 @@ with tab10:
         use_container_width=True,
     ):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
-            st.error("Action refusée : Saisissez votre identity dans l'onglet 'Identification'.")
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not st.session_state.get("verrou_geo_bilan", False):
             st.error("Action refusée : Vous devez valider l'Équation Bilan ci-dessus au préalable.")
         elif not case_certif_stat10:
@@ -4988,11 +4987,10 @@ with tab10:
                 if str(saisie_q).strip() == str(q["rep"]).strip():
                     score_q10 += 1.0
 
-            # 3. Correction automatisée de la Synthèse à trous (10 pts)
+            # 3. CORRECTION OPTIMISÉE : Comparaison directe avec la variable 'attendu'
             score_t10 = 0.0
             for t in cas_geo["trous"]:
-                cle_t = t[-1]
-                attendu_t = t
+                enonce_t, choix_t, attendu_t, cle_t = t  # Extraction propre des 4 éléments
                 saisie_t = st.session_state.get(f"{cle_t}_geo_clean", "Choisir...")
                 if str(saisie_t).strip() == str(attendu_t).strip():
                     score_t10 += 1.0
