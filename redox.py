@@ -3129,7 +3129,7 @@ with tab7:
     if "banque_complete_routier" not in st.session_state:
         st.session_state.banque_complete_routier = {
             "routier_cas1": {
-                "titre": "Cas pratique A : Corrosion par le sel de déneigement sur les châssis",
+                "titre": " Corrosion par le sel de déneigement sur les châssis",
                 "texte": "En hiver, le salage des routes apporte une quantité massive d'ions chlorure. L'humidité stagnante sur les longerons en acier crée un milieu conducteur agressif. Le fer métallique solide du châssis subit une oxydation destructrice et cède ses électrons au dioxygène de l'air humide, entraînant la formation de cloques de rouille.",
                 "couple_ox": "O2 / H2O",
                 "couple_red": "Fe²⁺ / Fe",
@@ -3165,7 +3165,7 @@ with tab7:
                 ]
             },
             "routier_cas2": {
-                "titre": "Cas pratique B : Attaque acide des bennes de transport de produits chimiques",
+                "titre": " Attaque acide des bennes de transport de produits chimiques",
                 "texte": "Une benne en acier transporte des résidus industriels acides mal neutralisés. Les ions hydronium H₃O⁺ attaquent les parois intérieures de la cuve de transport. Le fer solide s'oxyde et se dissout, tandis que les ions acides subissent une réduction immédiate provoquant un dégagement de dihydrogène gazeux sous pression.",
                 "couple_ox": "H3O⁺ / H2",
                 "couple_red": "Fe²⁺ / Fe",
@@ -3201,7 +3201,7 @@ with tab7:
                     ]
                     },      
             "routier_cas3": {
-                "titre": "Cas pratique C : Protection par anodes en zinc sur les remorques porte-engins",
+                "titre": " Protection par anodes en zinc sur les remorques porte-engins",
                 "texte": "Pour préserver les essieux et structures basses des remorques porte-engins, les constructeurs installent des blocs de zinc. Lors d'une agression saline, le zinc s'oxyde en premier à la place du fer de la structure. Le zinc se sacrifie pour empêcher la réduction de l'oxygène sur l'acier.",
                 "couple_ox": "O2 / H2O",
                 "couple_red": "Zn²⁺ / Zn",
@@ -3728,6 +3728,497 @@ with tab7:
             mime="text/html",
             key="download_btn_t7_final"
         )
+
+with tab8:
+    st.header("Application dans le domaine de la maintenance")
+
+    # =============================================================================
+    # 1. BANQUE DE DONNÉES DYNAMIQUE PAR CAS POUR LA MAINTENANCE
+    # =============================================================================
+    if "banque_complete_maint" not in st.session_state:
+        st.session_state.banque_complete_maint = {
+            "maint_cas1": {
+                "titre": "Cas pratique A : Corrosion perforante sur une canalisation de gaz enterrée",
+                "texte": "Lors d'un audit de maintenance préventive, un technicien constate une chute de pression sur une conduite forcée en acier enterrée. Après excavation, il découvre une perforation nette entourée de rouille. En raison d'un défaut de la gaine isolante, le fer solide de la canalisation s'est oxydé en cédant ses électrons au dioxygène dissous dans l'eau du sol humide, transformant le métal rigide en ions Fe²⁺ solubles.",
+                "couple_ox": "O2 / H2O",
+                "couple_red": "Fe²⁺ / Fe",
+                "bd": (
+                    "**Case 1 :** Un technicien de maintenance en bleu de travail inspecte une vanne de distribution de gaz. Le manomètre indique une chute de pression catastrophique. Il s'exclame : 'Alerte ! Fuite indétectable sur le secteur Nord ! Le débit s'effondre !'.\n\n"
+                    "**Case 2 :** Après excavation du sol, le technicien découvre la conduite en acier. Elle présente une perforation nette entourée de rouille épaisse. En grattant, il trouve un vieux câble rompu qui flotte dans la boue humide et s'interproge : 'Mais qui a coupé cette liaison électrique ? Ce n'est pas une simple usure mécanique...'.\n\n"
+                    "**Case 3 :** Zoom à l'échelle microscopique sous la terre humide. Les atomes de fer de la conduite hurlent en perdant leurs électrons : 'À l'aide ! Le milieu est trop acide ! Sans le courant de protection, on s'oxyde tous en ions Fe2+ ! Le métal fout le camp dans le sol !'.\n\n"
+                    "**Case 4 :** Le technicien remplace le tronçon percé et s'apprête à concevoir un système de protection durable. L'analyse du courant de passivation montre que l'oxydoréduction des sols agressifs doit être neutralisée au plus vite pour sceller la canalisation."
+                ),
+                "quiz": [
+                    {"id": "mA1", "q": "Qui est le réducteur métallique de départ qui subit la perforation sur la conduite ?", "options": ["Le fer solide", "Le dioxygène", "L'eau du sol"], "rep": "Le fer solide"},
+                    {"id": "mA2", "q": "Qui est l'oxydant responsable de la capture des électrons de l'acier enterré ?", "options": ["Le dioxygène", "Le diazote", "L'ion fer II"], "rep": "Le dioxygène"},
+                    {"id": "mA3", "q": "Combien d'électrons sont transférés par chaque atome de fer lors de cette oxydation ?", "options": ["2 électrons", "1 électron", "4 électrons"], "rep": "2 électrons"},
+                    {"id": "mA4", "q": "Combien d'électrons capte le dioxygène pour se réduire en milieu acide ?", "options": ["4 électrons", "2 électrons", "6 électrons"], "rep": "4 électrons"},
+                    {"id": "mA5", "q": "Quelle couleur prend l'oxyde de fer hydraté accumulé autour de la fuite ?", "options": ["Orange / Brun (Rouille)", "Bleu azur", "Vert"], "rep": "Orange / Brun (Rouille)"},
+                    {"id": "mA6", "q": "Quelle est la couleur ou l'éclat de la canalisation en acier saine avant l'attaque ?", "options": ["Gris métallique brillant", "Noir mat", "Jaune laiton"], "rep": "Gris métallique brillant"},
+                    {"id": "mA7", "q": "Quel type de milieu environnemental (humidité du sol) favorise cette dégradation ?", "options": ["Un milieu conducteur", "Un milieu isolant", "Un milieu totalement sec"], "rep": "Un milieu conducteur"},
+                    {"id": "mA8", "q": "La transformation subie par le fer de la conduite (perte d'électrons) est une :", "options": ["Oxydation", "Réduction", "Précipitation"], "rep": "Oxydation"},
+                    {"id": "mA9", "q": "En perdant ses charges négatives, l'atome de fer de la conduite devient un :", "options": ["Cation Fe²⁺", "Anion Fe²⁻", "Atome neutre"], "rep": "Cation Fe²⁺"},
+                    {"id": "mA10", "q": "La transformation de l'oxydant qui capte les électrons s'appelle une :", "options": ["Réduction", "Oxydation", "Fusion"], "rep": "Réduction"}
+                ],
+                "trous": [
+                    ("1. Dans ce cas, le fer solide de la canalisation agit comme le ..........", ["Choisir...", "réducteur", "oxydant"], "réducteur", "t_mA1"),
+                    ("2. Le dioxygène dissous capte les électrons au cours d'une ..........", ["Choisir...", "réduction", "oxydation"], "réduction", "t_mA2"),
+                    ("3. Au cours de la dégradation, chaque atome de fer libère .......... électrons.", ["Choisir...", "deux", "quatre"], "deux", "t_mA3"),
+                    ("4. L'humidité du sol environnant constitue un milieu liquide ..........", ["Choisir...", "conducteur", "isolant"], "conducteur", "t_mA4"),
+                    ("5. La dégradation de la paroi de fer produit de la .......... friable.", ["Choisir...", "rouille", "calamine"], "rouille", "t_mA5"),
+                    ("6. L'atome métallique neutre se transforme en un .......... Fe²⁺ soluble.", ["Choisir...", "ion", "gaz"], "ion", "t_mA6"),
+                    ("7. L'éclat d'une canalisation en acier saine présente une teinte ..........", ["Choisir...", "grise", "brune"], "grise", "t_mA7"),
+                    ("8. Les électrons quittent la tôle pour équilibrer la charge du ..........", ["Choisir...", "bilan", "solvant"], "bilan", "t_mA8"),
+                    ("9. La réduction complète du dioxygène engendre des molécules d'..........", ["Choisir...", "eau", "gaz"], "eau", "t_mA9"),
+                    ("10. L'égalisation des charges élimine les électrons de l'.......... finale.", ["Choisir...", "équation", "atmosphère"], "équation", "t_mA10")
+                ]
+            },
+            "maint_cas2": {
+                "titre": "Cas pratique B : Attaque acide par détartrage non inhibé sur un échangeur thermique",
+                "texte": "Une équipe de maintenance réalise le nettoyage chimique d'un échangeur en acier à l'aide d'une solution acide pour éliminer le calcaire. Faute d'ajout d'un inhibiteur de corrosion, les ions hydronium H₃O⁺ attaquent directement le fer de la structure. Le fer solide s'oxyde et se dissout, provoquant un dégagement de dihydrogène gazeux.",
+                "couple_ox": "H3O⁺ / H2",
+                "couple_red": "Fe²⁺ / Fe",
+                "bd": (
+                    "**Case 1 :** Un technicien injecte une solution de détartrage acide dans le circuit d'un échangeur thermique. Soudain, un sifflement retentit au niveau de la purge d'air.\n\n"
+                    "**Case 2 :** L'acide a dissous le calcaire mais s'attaque maintenant à la paroi métallique nue. Les ions hydronium H₃O⁺ s'exclament : 'Le fer n'est plus protégé, dépouillons-le de ses charges !'.\n\n"
+                    "**Case 3 :** Les atomes de fer perdent leurs électrons et passent en solution : 'À l'aide, l'acide nous oxyde en ions Fe²⁺ ! La paroi de l'échangeur s'amincit à toute vitesse !'.\n\n"
+                    "**Case 4 :** En absorbant les électrons, les ions hydronium se réduisent en bulles de dihydrogène gazeux (H₂). Le technicien coupe la pompe : 'Vite ! Stoppons l'oxydoréduction avant la perforation !'."
+                ),
+                "quiz": [
+                    {"id": "mB1", "q": "Qui est le réducteur métallique qui subit la dissolution lors du détartrage ?", "options": ["Le fer solide", "L'ion hydronium", "Le gaz dihydrogène"], "rep": "Le fer solide"},
+                    {"id": "mB2", "q": "Qui est l'oxydant acide responsable de la dégradation de la paroi ?", "options": ["L'ion hydronium H₃O⁺", "Le fer solide", "L'eau neutre"], "rep": "L'ion hydronium H₃O⁺"},
+                    {"id": "mB3", "q": "Quel gaz inflammable se dégage dans le circuit de l'échangeur ?", "options": ["Le dihydrogène", "Le dioxygène", "Le diazote"], "rep": "Le dihydrogène"},
+                    {"id": "mB4", "q": "Combien d'électrons cède un atome de fer lors de cette attaque acide ?", "options": ["2 électrons", "1 électron", "3 électrons"], "rep": "2 électrons"},
+                    {"id": "mB5", "q": "Quel type de milieu chimique (pH inférieur à 7) caractérise la solution de détartrage ?", "options": ["Un milieu acide", "Un milieu basique", "Un milieu neutre"], "rep": "Un milieu acide"},
+                    {"id": "mB6", "q": "Quelle est la couleur de la tôle d'acier intacte à l'intérieur du circuit ?", "options": ["Gris métallique", "Rouge brique", "Vert"], "rep": "Gris métallique"},
+                    {"id": "mB7", "q": "Que subit le fer métallique lors de sa transformation en ions Fe²⁺ ?", "options": ["Une oxydation", "Une réduction", "Une évaporation"], "rep": "Une oxydation"},
+                    {"id": "mB8", "q": "La transformation de l'ion hydronium en gaz dihydrogène constitue une :", "options": ["Réduction", "Oxydation", "Combustion"], "rep": "Réduction"},
+                    {"id": "mB9", "q": "En s'oxydant, l'atome de fer de l'échangeur devient un ion de charge :", "options": ["Positive (Fe²⁺)", "Négative (Fe²⁻)", "Neutre"], "rep": "Positive (Fe²⁺)"},
+                    {"id": "mB10", "q": "L'égalisation des charges impose d'établir une équation dite :", "options": ["Bilan globale", "Partielle d'oxydation", "D'isomérisation"], "rep": "Bilan globale"}
+                ],
+                "trous": [
+                    ("1. La paroi en fer de l'échangeur subit une .......... chimique.", ["Choisir...", "oxydation", "réduction"], "oxydation", "t_mb1"),
+                    ("2. Les ions hydronium de la solution acide subissent une ..........", ["Choisir...", "réduction", "oxydation"], "réduction", "t_mb2"),
+                    ("3. Le fer métallique joue le rôle de .......... dans ce détartrage.", ["Choisir...", "réducteur", "oxydant"], "réducteur", "t_mb3"),
+                    ("4. L'agression du circuit provient d'un liquide de nature ..........", ["Choisir...", "acide", "basique"], "acide", "t_mb4"),
+                    ("5. La réduction des protons génère un dégagement de ..........", ["Choisir...", "dihydrogène", "dioxygène"], "dihydrogène", "t_mb5"),
+                    ("6. Chaque atome de fer libère un total de .......... électrons.", ["Choisir...", "deux", "quatre"], "deux", "t_mb6"),
+                    ("7. L'acier sain non attaqué présente une couleur ..........", ["Choisir...", "grise", "orange"], "grise", "t_mb7"),
+                    ("8. Le fer solide détruit passe en solution sous forme d'.......... Fe²⁺.", ["Choisir...", "ion", "précipité"], "ion", "t_mb8"),
+                    ("9. Les électrons quittent le métal pour réduire l'..........", ["Choisir...", "acide", "sel"], "acide", "t_mb9"),
+                    ("10. L'égalisation des charges permet d'écrire l'équation ..........", ["Choisir...", "bilan", "partielle"], "bilan", "t_mb10")
+                ]
+            },
+            "maint_cas3": {
+                "titre": "Cas pratique C : Protection cathodique par anode sacrificielle en zinc sur un réservoir d'eau",
+                "texte": "Pour préserver les parois intérieures d'un réservoir de stockage d'eau industrielle, le service de maintenance fixe un bloc de zinc. En présence d'eau conductrice, le zinc s'oxyde préférentiellement à la place de l'acier de la cuve, se sacrifiant pour empêcher la réduction du dioxygène sur le fer.",
+                "couple_ox": "O2 / H2O",
+                "couple_red": "Zn²⁺ / Zn",
+                "bd": (
+                    "**Case 1 :** Un technicien de maintenance inspecte l'intérieur d'une cuve de stockage d'eau. Il sourit en voyant les parois intactes : 'Excellent, aucun point de rouille à signaler après un an !'.\n\n"
+                    "**Case 2 :** L'eau du réservoir attaque la structure. Le bloc de zinc vissé s'interpose devant l'acier : 'Pas touche au fer ! C'est moi le plus réducteur ici, j'envoie mes électrons en premier !'.\n\n"
+                    "**Case 3 :** Le zinc subit une oxydation et se dissout lentement : 'Je perds mes électrons de valence et je deviens l'ion Zn²⁺, je me sacrifie pour préserver la cuve !'.\n\n"
+                    "**Case 4 :** L'acier du réservoir reste parfaitement gris et robuste, tandis que l'oxygène est réduit de façon inoffensive. La maintenance valide : 'L'anode sacrificielle a fonctionné !'."
+                ),
+                "quiz": [
+                    {"id": "mC1", "q": "Quel métal se sacrifie et joue le rôle de réducteur actif ici ?", "options": ["Le zinc", "Le fer", "Le plomb"], "rep": "Le zinc"},
+                    {"id": "mC2", "q": "Quel métal est préservé de la corrosion grâce à cette méthode ?", "options": ["Le fer (acier)", "Le zinc", "L'aluminium"], "rep": "Le fer (acier)"},
+                    {"id": "mC3", "q": "Qui est l'oxydant de l'eau que le zinc doit neutraliser ?", "options": ["Le dioxygène", "Le diazote", "L'ion zinc"], "rep": "Le dioxygène"},
+                    {"id": "mC4", "q": "Combien d'électrons un atome de zinc libère-t-il en s'oxydant en ion Zn²⁺ ?", "options": ["2 électrons", "1 électron", "3 électrons"], "rep": "2 électrons"},
+                    {"id": "mC5", "q": "Quelle est la couleur d'origine du bloc de zinc protecteur sain ?", "options": ["Gris mat / bleuté", "Rouge cuivre", "Jaune"], "rep": "Gris mat / bleuté"},
+                    {"id": "mC6", "q": "Quel nom donne-t-on à cette méthode de préservation des métaux ?", "options": ["Protection sacrificielle", "Passivation acide", "Vernis étanche"], "rep": "Protection sacrificielle"},
+                    {"id": "mC7", "q": "Pourquoi le zinc réagit-il à la place du fer de la cuve ?", "options": ["Il est plus réducteur que le fer", "Il est plus noble", "Il est plus lourd"], "rep": "Il est plus réducteur que le fer"},
+                    {"id": "mC8", "q": "Quelle transformation subit le zinc en fournissant ses électrons ?", "options": ["Une oxydation", "Une réduction", "Une fusion"], "rep": "Une oxydation"},
+                    {"id": "mC9", "q": "La captation des électrons mobiles par le dioxygène constitue une :", "options": ["Réduction", "Oxydation", "Liquéfaction"], "rep": "Réduction"},
+                    {"id": "mC10", "q": "En s'oxydant, l'atome de zinc solide produit des ions :", "options": ["Zn²⁺", "Fe²⁺", "Cl⁻"], "rep": "Zn²⁺"}
+                ],
+                "trous": [
+                    ("1. Le zinc de la pastille cède ses électrons, c'est le .......... du système.", ["Choisir...", "réducteur", "oxydant"], "réducteur", "t_mC1"),
+                    ("2. Le dioxygène capte ces électrons au cours d'une ..........", ["Choisir...", "réduction", "oxydation"], "réduction", "t_mC2"),
+                    ("3. Le zinc s'use lentement pour assurer une protection ..........", ["Choisir...", "sacrificielle", "mécanique"], "sacrificielle", "t_mC3"),
+                    ("4. Chaque atome de zinc sacrifie un total de .......... électrons.", ["Choisir...", "deux", "trois"], "deux", "t_mC4"),
+                    ("5. Grâce au zinc, la cuve centrale en acier conserve sa couleur ..........", ["Choisir...", "grise", "orange"], "grise", "t_mC5"),
+                    ("6. L'atome de zinc solide se transforme en un .......... soluble Zn²⁺.", ["Choisir...", "ion", "gaz"], "ion", "t_mC6"),
+                    ("7. L'eau industrielle du réservoir joue le rôle d'un .......... conducteur.", ["Choisir...", "électrolyte", "isolant"], "électrolyte", "t_mC7"),
+                    ("8. Le potentiel E0 du zinc est plus bas, il est plus .......... que le fer.", ["Choisir...", "réducteur", "oxydant"], "réducteur", "t_rC8"),
+                    ("9. Le dioxygène se réduit en produisant des molécules d'..........", ["Choisir...", "eau", "zinc"], "eau", "t_mC9"),
+                    ("10. L'absence d'électrons libres caractérise l'équation ..........", ["Choisir...", "bilan", "partielle"], "bilan", "t_mC10")
+                ]
+            }
+        }
+
+    # =============================================================================
+    # INITIALISATION ET SÉLECTION DU CAS ACTIF DE MAINTENANCE
+    # =============================================================================
+    if "choix_id_maint" not in st.session_state:
+        st.session_state.choix_id_maint = "maint_cas1"
+
+    id_cas_maint = st.session_state.choix_id_maint
+    cas_maint = st.session_state.banque_complete_maint[id_cas_maint]
+
+    if f"quiz_melange_{id_cas_maint}" not in st.session_state:
+        liste_q_maint = list(cas_maint["quiz"])
+        random.shuffle(liste_q_maint)
+        st.session_state[f"quiz_melange_{id_cas_maint}"] = liste_q_maint
+
+    questions_maint_optimales = st.session_state[f"quiz_melange_{id_cas_maint}"]
+
+    # =============================================================================
+    # BOUTON DE GÉNÉRATION D'EXERCICE ALÉATOIRE FORCÉ
+    # =============================================================================
+    col_btn_maint, _ = st.columns([0.3, 0.7])
+    with col_btn_maint:
+        if st.button(
+            "GÉNÉRER UN EXERCICE AU HASARD",
+            key="btn_generer_exercice_aleatoire_t8",
+            use_container_width=True,
+        ):
+            options_maint = ["maint_cas1", "maint_cas2", "maint_cas3"]
+            cas_en_cours = st.session_state.choix_id_maint
+
+            # Filtrage pour forcer un changement d'exercice réel
+            choix_restants = [c for c in options_maint if c != cas_en_cours]
+            st.session_state.choix_id_maint = random.choice(choix_restants)
+
+            # Réinitialisation complète des validations et formulaires
+            st.session_state.verrou_maint_bilan = False
+            st.session_state.verrou_maint_at = False
+            st.session_state.suite_verrouille_tab8_maint = False
+
+            if "score_maint_partie_bilan" in st.session_state:
+                del st.session_state["score_maint_partie_bilan"]
+            st.rerun()
+
+    st.write("---")
+
+    # =============================================================================
+    # AFFICHAGE DE L'ÉNONCÉ ET DE L'IMAGE TECHNIQUE DU CAS ACTIF
+    # =============================================================================
+    st.subheader(cas_maint["titre"])
+    st.write(cas_maint["texte"])
+
+    image_maint = f"{id_cas_maint}.jpg"
+    if os.path.exists(image_maint):
+        st.image(
+            image_maint,
+            caption="Constat d'anomalie sur le réseau de maintenance",
+        )
+    else:
+        st.warning(
+            f"L'image '{image_maint}' est introuvable à la racine de l'application."
+        )
+
+    st.divider()
+
+    # =============================================================================
+    # RENDU DE LA CARICATURE (DOUBLE COLONNE : TEXTE BLEU + IMAGE)
+    # =============================================================================
+    col_g_maint, col_b_maint = st.columns(2)
+    with col_g_maint:
+        st.write("**La BD humoristique textuelle adaptée à votre situation**")
+        st.info(cas_maint["bd"])
+    with col_b_maint:
+        image_bd_maint = f"bd_{id_cas_maint}.jpg"
+        if os.path.exists(image_bd_maint):
+            st.image(
+                image_bd_maint,
+                caption="Illustration caricaturale du mécanisme",
+                use_container_width=True,
+            )
+        else:
+            st.warning(f"L'image '{image_bd_maint}' est introuvable.")
+
+    st.divider()
+
+    st.subheader("Générateur d'équation bilan de maintenance (Note sur 10 points)")
+    st.write("Sélectionnez les bons éléments et équilibrez l'équation globale par rapport à votre énoncé :")
+
+    if "verrou_maint_bilan" not in st.session_state:
+        st.session_state.verrou_maint_bilan = False
+    v_maint = st.session_state.verrou_maint_bilan
+
+    # Ligne de sélection des couples et des demi-équations
+    col_mb1, col_mb2 = st.columns(2)
+    with col_mb1:
+        choix_m_ox = st.selectbox("Sélectionnez le couple de l'oxydant :", ["Choisir...", "O2 / H2O", "H3O⁺ / H2", "Fe²⁺ / Fe"], disabled=v_maint, key="m_ox_sel")
+        choix_m_demi_ox = st.selectbox("Sélectionnez la bonne écriture de l'oxydation :", ["Choisir...", "Fe -> Fe²⁺ + 2e⁻", "Zn -> Zn²⁺ + 2e⁻", "2H2O -> O2 + 4H3O⁺ + 4e⁻"], disabled=v_maint, key="m_demi_ox_sel")
+    with col_mb2:
+        choix_m_red = st.selectbox("Sélectionnez le couple du réducteur :", ["Choisir...", "Fe²⁺ / Fe", "Zn²⁺ / Zn", "O2 / H2O"], disabled=v_maint, key="m_red_sel")
+        choix_m_demi_red = st.selectbox("Sélectionnez la bonne écriture de la réduction :", ["Choisir...", "O2 + 4H3O⁺ + 4e⁻ -> 6H2O", "2H3O⁺ + 2e⁻ -> H2 + 2H2O", "Fe²⁺ + 2e⁻ -> Fe"], disabled=v_maint, key="m_demi_red_sel")
+
+    # Alignement parfait pour la construction stœchiométrique
+    st.markdown("**Équilibrez l'équation bilan globale finale :**")
+    col_me1, col_me2, col_me3, col_me4, col_me5, col_me6, col_me7 = st.columns([0.15, 0.25, 0.05, 0.25, 0.05, 0.25, 0.25], vertical_alignment="center")
+    with col_me1: m_coef_1 = st.selectbox("Coef", ["Choisir...", "1", "2"], key="mc1", disabled=v_maint)
+    with col_me2: m_reactif_1 = st.selectbox("Réactif 1", ["Choisir...", "Fe", "Zn", "O2"], key="mr1", disabled=v_maint)
+    with col_me3: st.write("**+**")
+    with col_me4: m_reactif_2 = st.selectbox("Réactif 2", ["Choisir...", "O2", "H3O⁺", "H2O"], key="mr2", disabled=v_maint)
+    with col_me5: st.write("**→**")
+    with col_me6: m_prod_1 = st.selectbox("Produit 1", ["Choisir...", "Fe²⁺", "Zn²⁺", "H2"], key="mp1", disabled=v_maint)
+    with col_me7: m_prod_2 = st.selectbox("Produit 2", ["Choisir...", "H2O", "H2", "Fe²⁺"], key="mp2", disabled=v_maint)
+
+    if st.button("VALIDER L'ÉQUATION BILAN [10 PTS]", key="btn_v_mb_maint", disabled=v_maint):
+        if choix_m_ox == "Choisir..." or choix_m_red == "Choisir..." or m_reactif_1 == "Choisir..." or m_reactif_2 == "Choisir...":
+            st.error("Action refusée : Veuillez remplir tous les choix.")
+        else:
+            m_score = 0.0
+            if choix_m_ox == cas_maint["couple_ox"]: m_score += 2.0
+            if choix_m_red == cas_maint["couple_red"]: m_score += 2.0
+
+            # Vérification par rapport au cas de maintenance tiré au sort
+            if id_cas_maint == "maint_cas1" and m_coef_1 == "2" and m_reactif_1 == "Fe" and m_reactif_2 == "O2" and m_prod_1 == "Fe²⁺" and m_prod_2 == "H2O":
+                m_score += 6.0
+            elif id_cas_maint == "maint_cas2" and m_coef_1 == "1" and m_reactif_1 == "Fe" and m_reactif_2 == "H3O⁺" and m_prod_1 == "Fe²⁺" and m_prod_2 == "H2":
+                m_score += 6.0
+            elif id_cas_maint == "maint_cas3" and m_coef_1 == "2" and m_reactif_1 == "Zn" and m_reactif_2 == "O2" and m_prod_1 == "Zn²⁺" and m_prod_2 == "H2O":
+                m_score += 6.0
+
+            st.session_state.score_maint_partie_bilan = m_score
+            st.session_state.verrou_maint_bilan = True
+            st.rerun()
+
+    if st.session_state.get("verrou_maint_bilan"):
+        st.info(f"Note enregistrée pour l'équation bilan : {st.session_state.get('score_maint_partie_bilan', 0.0)} / 10")
+
+    st.divider()
+
+
+    if "verrou_maint_at" not in st.session_state:
+        st.session_state.verrou_maint_at = False
+    v_maint_at = st.session_state.verrou_maint_at
+
+    col_mq, col_mt = st.columns(2)
+
+    with col_mq:
+        st.markdown("##### Quiz Technique Maintenance (10 questions - 10 pts)")
+        for idx, q_data in enumerate(questions_maint_optimales, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox(
+                label=q_data["q"],
+                options=["Choisir..."] + q_data["options"],
+                key=f"maint_quiz_{q_data['id']}",
+                disabled=v_maint_at,
+                label_visibility="collapsed"
+            )
+
+    with col_mt:
+        st.markdown("##### Synthèse de la Conduite à trous (10 cases - 10 pts)")
+        for ligne in cas_maint["trous"]:
+            enonce, choix, attendu, cle = ligne
+
+            # Correctif d'alignement parfait sur deux blocs
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="center")
+            with c_txt:
+                st.write(enonce)
+            with c_sel:
+                st.selectbox(
+                    label=enonce,
+                    options=choix,
+                    key=f"{cle}_maint_clean",
+                    disabled=v_maint_at,
+                    label_visibility="collapsed"
+                )
+    if "suite_verrouille_tab8_maint" not in st.session_state:
+        st.session_state.suite_verrouille_tab8_maint = False
+    verrou_at8 = st.session_state.suite_verrouille_tab8_maint
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 8")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat8 = st.checkbox(
+        "Je certifie avoir complété toutes les activités adaptées de cet Atelier (Bilan et Questionnaire).",
+        key="check_certif_maint8_scelle",
+        disabled=verrou_at8,
+    )
+
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 8",
+        key="btn_exp_t8_final_official",
+        disabled=verrou_at8,
+        use_container_width=True,
+    ):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not st.session_state.get("verrou_maint_bilan", False):
+            st.error("Action refusée : Vous devez valider l'Équation Bilan ci-dessus au préalable.")
+        elif not case_certif_stat8:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Note du Générateur d'Équation Bilan (sur 10 pts)
+            note_b_maint = float(st.session_state.get("score_maint_partie_bilan", 0.0))
+
+            # 2. Correction automatisée du Quiz Technique (10 pts)
+            score_q8 = 0.0
+            for q in questions_maint_optimales:
+                saisie_q = st.session_state.get(f"maint_quiz_{q['id']}", "Choisir...")
+                if str(saisie_q).strip() == str(q["rep"]).strip():
+                    score_q8 += 1.0
+
+            # 3. Correction automatisée de la Synthèse à trous (10 pts)
+            score_t8 = 0.0
+            for t in cas_maint["trous"]:
+                cle_t = t[-1]
+                attendu_t = t[2]
+                saisie_t = st.session_state.get(f"{cle_t}_maint_clean", "Choisir...")
+                if str(saisie_t).strip() == str(attendu_t).strip():
+                    score_t8 += 1.0
+
+            # 4. Enregistrement des notes globales de session sur 30 points
+            st.session_state.score_t8_bilan_final = round(note_b_maint, 1)
+            st.session_state.score_t8_atelier_final = round(float(score_q8 + score_t8), 1)
+            st.session_state.score_final_global_t8 = round(float(note_b_maint + score_q8 + score_t8), 1)
+            st.session_state.suite_verrouille_tab8_maint = True
+            st.rerun()
+
+    # --- COMPILATION DU RAPPORT INDIVIDUEL SCELLÉ HTML POUR LA MAINTENANCE ---
+    if st.session_state.get("suite_verrouille_tab8_maint", False):
+        not_b_m = st.session_state.get("score_t8_bilan_final", 0.0)
+        not_at_m = st.session_state.get("score_t8_atelier_final", 0.0)
+        not_tot_m = st.session_state.get("score_final_global_t8", 0.0)
+        timestamp_suite8 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER MAINTENANCE SCELLÉ | Note globale enregistrée : {not_tot_m:.1f} / 30")
+
+        equation_eleve_maint_texte = f"{m_coef_1} {m_reactif_1} + {m_reactif_2} -> {m_prod_1} + {m_prod_2}"
+        bd_html_maint_format = cas_maint["bd"].replace("\n\n", "<br><br>")
+
+        html_export_maint = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Maintenance - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #b91c1c; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #2563eb; color: white; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                .enonce-box {{ background-color: #f1f5f9; border-left: 4px solid #b91c1c; padding: 15px; margin-bottom: 20px; font-size: 13px; line-height: 1.5; }}
+                .bd-box {{ background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 15px; margin-bottom: 20px; font-size: 13px; font-style: italic; line-height: 1.5; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; }}
+                th {{ background-color: #1e293b; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation Individuel Officiel</h1>
+                <p>Filière professionnelle : Maintenance Industrielle et Réseaux</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite8}</p>
+                <div class="score-badge">SCORE FINAL<br><span style="font-size: 32px;">{not_tot_m:.1f}</span> / 30</div>
+            </div>
+            
+            <div class="sub-title">Énoncé de l'étude de cas évaluée</div>
+            <div class="enonce-box">
+                <strong>{cas_maint['titre']}</strong><br><br>
+                {cas_maint['texte']}
+            </div>
+
+            <div class="sub-title">La Caricature Pédagogique Associée</div>
+            <div class="bd-box">
+                {bd_html_maint_format}
+            </div>
+
+            <div class="sub-title">Synthèse des Notes Obtenues</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #b91c1c;">
+                1. Équation Bilan de Diagnostic : <strong>{not_b_m:.1f} / 10</strong><br>
+                2. Questionnaire Technique de Synthèse (Quiz + Trous) : <strong>{not_at_m:.1f} / 20</strong><br>
+                <strong>Note totale consolidée : {not_tot_m:.1f} / 30</strong>
+            </p>
+
+            <div class="sub-title">Activité 1 : Vérification de la configuration d'Équation Bilan</div>
+            <table>
+                <thead>
+                    <tr><th>Paramètre d'Éléments</th><th>Saisie Réalisée Élève</th><th>Attendu Académique</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Couple de l'Oxydant sélectionné</td><td>{choix_m_ox}</td><td>{cas_maint['couple_ox']}</td></tr>
+                    <tr><td>Couple du Réducteur sélectionné</td><td>{choix_m_red}</td><td>{cas_maint['couple_red']}</td></tr>
+                    <tr><td>Équation globale équilibrée</td><td><code>{equation_eleve_maint_texte}</code></td><td>Validation par script automatique</td></tr>
+                </tbody>
+            </table>
+
+            <div class="sub-title">Activité 2 : Correction détaillée du Quiz Technique (10 pts)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Technique Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        for num, q_item in enumerate(questions_maint_optimales, 1):
+            saisie = st.session_state.get(f"maint_quiz_{q_item['id']}", "Choisir...")
+            attendu = q_item["rep"]
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_maint += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_maint += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">Activité 3 : Correction détaillée de la Synthèse à trous (10 pts)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        for num, t_item in enumerate(cas_maint["trous"], 1):
+            enonce_t, _, attendu_t, cle_t = t_item
+            saisie_t = st.session_state.get(f"{cle_t}_maint_clean", "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_maint += f"<tr><td>{num}</td><td>{enonce_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_maint += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        # Utilisation de la bibliothèque os pour nettoyer proprement le nom du fichier d'export
+        nom_fichier_brut_maint = preparer_nom_fichier("Rapport_Application_Maintenance")
+        nom_propre_html_t8 = os.path.basename(nom_fichier_brut_maint).replace(
+            ".txt", ".html"
+        )
+
+        # Rendu du bouton de téléchargement officiel scellé
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel Maintenance (.html)",
+            data=html_export_maint,
+            file_name=nom_propre_html_t8,
+            mime="text/html",
+            key="download_btn_t8_final",
+        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
