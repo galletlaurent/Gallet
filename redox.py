@@ -533,6 +533,202 @@ bibliotheque_redox = {
     }
         }
 
+
+def afficher_atelier_oxydation_verrouille(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 2 (Réaction d'oxydation) sur deux colonnes."""
+    import random
+
+    # 1. BASE DE DONNÉES DU QUIZ DE L'OXYDATION
+    questions_oxydation2_sources = [
+        {
+            "id": "ox1",
+            "q": "Quelle est la définition électronique exacte d'une réaction d'oxydation ?",
+            "options": [
+                "Une perte d'électrons",
+                "Un gain d'électrons",
+                "Un gain de protons",
+            ],
+            "rep": "Une perte d'électrons",
+        },
+        {
+            "id": "ox2",
+            "q": "Comment appelle-t-on l'espèce chimique capable de fournir ou céder des électrons au cours de la réaction ?",
+            "options": ["Le réducteur", "L'oxydant", "Le solvant"],
+            "rep": "Le réducteur",
+        },
+        {
+            "id": "ox3",
+            "q": "Dans l'écriture universelle d'une demi-équation d'oxydation, de quel côté se situent les électrons libérés ?",
+            "options": [
+                "Du côté des produits (à droite)",
+                "Du côté des réactifs (à gauche)",
+                "Ils ne s'écrivent pas",
+            ],
+            "rep": "Du côté des produits (à droite)",
+        },
+        {
+            "id": "ox4",
+            "q": "Lors de l'oxydation du fer métallique neutre (Fe), en quel ion se transforme-t-on le plus couramment ?",
+            "options": ["L'ion fer II (Fe²⁺)", "L'ion chlorure (Cl⁻)", "L'ion cuivre II (Cu²⁺)"],
+            "rep": "L'ion fer II (Fe²⁺)",
+        },
+        {
+            "id": "ox5",
+            "q": "Combien d'électrons un atome de zinc (Zn) libère-t-il lorsqu'il subit une oxydation totale en ion Zn²⁺ ?",
+            "options": ["2 électrons", "1 électron", "3 électrons"],
+            "rep": "2 électrons",
+        },
+        {
+            "id": "ox6",
+            "q": "Quelle modification subit le degré ou nombre d'oxydation (n.o.) d'un élément lors d'une oxydation ?",
+            "options": [
+                "Il augmente",
+                "Il diminue",
+                "Il reste strictement identique",
+            ],
+            "rep": "Il augmente",
+        },
+        {
+            "id": "ox7",
+            "q": "Dans le phénomène de la rouille, quel métal subit l'oxydation destructive en premier lieu ?",
+            "options": ["Le fer", "Le plastique", "L'or"],
+            "rep": "Le fer",
+        },
+        {
+            "id": "ox8",
+            "q": "Quel qualificatif donne-t-on à un métal comme le zinc qui s'oxyde exprès pour sauver l'acier sous-jacent ?",
+            "options": ["Sacrificiel", "Noble", "Passif"],
+            "rep": "Sacrificiel",
+        },
+        {
+            "id": "ox9",
+            "q": "Une espèce chimique qui subit une oxydation devient instantanément :",
+            "options": [
+                "Son oxydant conjugué",
+                "Son réducteur conjugué",
+                "Une molécule neutre",
+            ],
+            "rep": "Son oxydant conjugué",
+        },
+        {
+            "id": "ox10",
+            "q": "Dans la nature, quel élément gazeux de l'air est le déclencheur le plus fréquent de l'oxydation des métaux ?",
+            "options": ["Le dioxygène", "Le diazote", "L'hélium"],
+            "rep": "Le dioxygène",
+        },
+    ]
+
+    if "ordre_quiz_tab2_ox_aleatoire" not in st.session_state:
+        random.shuffle(questions_oxydation2_sources)
+        st.session_state.ordre_quiz_tab2_ox_aleatoire = (
+            questions_oxydation2_sources
+        )
+
+    # 2. BASE DE DONNÉES DU TEXTE À TROUS DE L'OXYDATION
+    if "champs_ox2_clean" not in st.session_state:
+        st.session_state.champs_ox2_clean = [
+            (
+                "1. Une oxydation se caractérise fondamentalement par une .......... d'électrons.",
+                ["Choisir...", "perte", "captation"],
+                "perte",
+                "ox2_t1",
+            ),
+            (
+                "2. L'espèce de départ qui fournit et cède ses électrons s'appelle le ..........",
+                ["Choisir...", "réducteur", "oxydant"],
+                "réducteur",
+                "ox2_t2",
+            ),
+            (
+                "3. Lors d'une oxydation, les électrons libérés figurent du côté des ..........",
+                ["Choisir...", "produits", "réactifs"],
+                "produits",
+                "ox2_t3",
+            ),
+            (
+                "4. Un atome métallique neutre perd ses charges et se transforme en ..........",
+                ["Choisir...", "cation", "anion"],
+                "cation",
+                "ox2_t4",
+            ),
+            (
+                "5. L'oxydation du fer engendre des ions fer II qui créent la ..........",
+                ["Choisir...", "rouille", "peinture"],
+                "rouille",
+                "ox2_t5",
+            ),
+            (
+                "6. Le zinc métallique s'oxyde pour jouer un rôle de protection ..........",
+                ["Choisir...", "sacrificielle", "mécanique"],
+                "sacrificielle",
+                "ox2_t6",
+            ),
+            (
+                "7. Au cours de l'oxydation, le nombre d'oxydation de l'élément ..........",
+                ["Choisir...", "augmente", "chute"],
+                "augmente",
+                "ox2_t7",
+            ),
+            (
+                "8. Un réducteur ayant perdu ses charges est converti en son .......... conjugué.",
+                ["Choisir...", "oxydant", "acide"],
+                "oxydant",
+                "ox2_t8",
+            ),
+            (
+                "9. L'attaque corrosive des structures en acier est provoquée par l'..........",
+                ["Choisir...", "oxydation", "réduction"],
+                "oxydation",
+                "ox2_t9",
+            ),
+            (
+                "10. Dans la demi-équation, la flèche pointe vers les électrons ..........",
+                ["Choisir...", "produits", "absorbés"],
+                "produits",
+                "ox2_t10",
+            ),
+        ]
+
+    # 3. RENDU DES DEUX COLONNES STREAMLIT
+    col_quiz, col_trous = st.columns(2)
+
+    with col_quiz:
+        st.markdown(
+            "##### Quiz Technique de l'Oxydation (10 questions - 10 pts)"
+        )
+        for idx, q_data in enumerate(
+            st.session_state.ordre_quiz_tab2_ox_aleatoire, 1
+        ):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox(
+                "",
+                options=["Choisir..."] + q_data["options"],
+                key=f"ox_at2_final_g_{q_data['id']}",
+                disabled=verrouille,
+                label_visibility="collapsed",
+            )
+
+    with col_trous:
+        st.markdown(
+            "##### Synthèse de l'Atelier 2 (Texte à trous - 10 cases - 10 pts)"
+        )
+        for ligne in st.session_state.champs_ox2_clean:
+            enonce, choix, cle = ligne[0], ligne[1], ligne[-1]
+            c_txt, c_sel = st.columns(
+                [0.65, 0.35], vertical_alignment="bottom"
+            )
+            with c_txt:
+                st.write(enonce)
+            with c_sel:
+                st.selectbox(
+                    "",
+                    choix,
+                    key=f"{cle}_ox2_clean",
+                    disabled=verrouille,
+                    label_visibility="collapsed",
+                )
+
+
 def afficher_atelier_histoire_verrouille(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 1 (Historique) sur deux colonnes."""
     import random
@@ -1114,3 +1310,346 @@ with tab1:
             file_name=nom_fichier_html_redox1,
             mime="text/html",
         )
+
+
+with tab2:
+    st.header("La Réaction d'Oxydation")
+
+    if os.path.exists("oxydation_intro.jpg"):
+        st.image(
+            "oxydation_intro.jpg",
+            caption="Mise en évidence expérimentale de l'oxydation d'un métal",
+            use_container_width=True,
+        )
+    else:
+        st.warning(
+            "L'image 'oxydation_intro.jpg' n'a pas été trouvée dans le dossier."
+        )
+
+    st.subheader("Qu'est-ce qu'une oxydation ?")
+    st.write(
+        "Selon la définition électronique moderne, une **oxydation** est une transformation chimique "
+        "au cours de laquelle une espèce chimique **perd un ou plusieurs électrons**."
+    )
+
+    st.info(
+        "L'espèce chimique qui perd ces électrons est appelée le **réducteur**. "
+        "Le réducteur est donc le donneur d'électrons. Après avoir perdu ses électrons, le réducteur se transforme "
+        "en son oxydant conjugué."
+    )
+
+    st.subheader("La formulation mathématique et exemples issus de la bibliothèque")
+
+    # --- SECTION FORMULE GÉNÉRALE ---
+    col_21, col_22 = st.columns(2)
+    with col_21:
+        st.markdown("**Équation générale d'une oxydation :**")
+        st.write(
+            "Le réducteur (Red) donne un oxydant (Ox) et libère une quantité 'n' d'électrons."
+        )
+        st.latex(r"\text{Réducteur} \longrightarrow \text{Oxydant} + n \cdot e^-")
+    with col_22:
+        if os.path.exists("formule_oxydation.jpg"):
+            st.image(
+                "formule_oxydation.jpg", caption="Mécanisme de perte d'électrons"
+            )
+        else:
+            st.warning("L'image 'formule_oxydation.jpg' est introuvable.")
+
+    # --- SECTION EXEMPLE DU FER (Récupéré de la bibliothèque) ---
+    col_23, col_24 = st.columns(2)
+    with col_23:
+        st.markdown("**Exemple 1 : L'oxydation du fer métallique (Fe)**")
+        st.write(
+            "Dans un milieu humide ou agressif, un atome de fer solide se dégrade. "
+            "Les données du couple de référence indiquent :"
+        )
+        # Extraction dynamique des données du couple Fe2+ / Fe
+        if "Fe²⁺ / Fe" in bibliotheque_redox:
+            un_couple = bibliotheque_redox["Fe²⁺ / Fe"]
+            st.write(f"- Nombre d'électrons libérés : {un_couple['electrons']}")
+            st.write(
+                f"- Degré d'oxydation final de l'ion : {un_couple['no_ox']}"
+            )
+        # Transformation de la demi-équation de la bibliothèque (sens Oxydation : Red -> Ox + ne-)
+        st.latex(r"\text{Fe} \longrightarrow \text{Fe}^{2+} + 2e^-")
+    with col_24:
+        if os.path.exists("oxydation_fer.jpg"):
+            st.image(
+                "oxydation_fer.jpg",
+                caption="Formation des ions ferreux de la rouille",
+            )
+        else:
+            st.warning("L'image 'oxydation_fer.jpg' est introuvable.")
+
+    # --- SECTION EXEMPLE DU ZINC (Récupéré de la bibliothèque) ---
+    col_25, col_26 = st.columns(2)
+    with col_25:
+        st.markdown("**Exemple 2 : L'oxydation du zinc (Zn)**")
+        st.write(
+            "Le zinc métallique, couramment utilisé pour la galvanisation et la protection des aciers, "
+            "s'oxyde selon les paramètres de sa fiche technique :"
+        )
+        # Extraction dynamique des données du couple Zn2+ / Zn
+        if "Zn²⁺ / Zn" in bibliotheque_redox:
+            un_couple_zn = bibliotheque_redox["Zn²⁺ / Zn"]
+            st.write(
+                f"- Nombre d'électrons transférés : {un_couple_zn['electrons']}"
+            )
+            st.write(
+                f"- Degré d'oxydation de la forme oxydée : {un_couple_zn['no_ox']}"
+            )
+        st.latex(r"\text{Zn} \longrightarrow \text{Zn}^{2+} + 2e^-")
+    with col_26:
+        if os.path.exists("oxydation_zinc.jpg"):
+            st.image(
+                "oxydation_zinc.jpg",
+                caption="Oxydation sacrificielle du zinc de protection",
+            )
+        else:
+            st.warning("L'image 'oxydation_zinc.jpg' est introuvable.")
+
+    st.divider()
+
+    st.write(
+        "Découvrez le mécanisme intime de l'oxydation à travers cette mise en scène."
+    )
+
+    # --- SECTION CARICATURE ET TEXTE BLEU ---
+    col_graph_ox, col_bd_ox = st.columns(2)
+
+    with col_graph_ox:
+        st.write(
+            "**La BD humoristique textuelle : Le drame des électrons perdus**"
+        )
+        st.info(
+            "**Case 1 :** Un atome de fer solide est tranquillement installé dans la structure métallique d'un châssis de camion. Il discute avec ses voisins métalliques : 'Tout va bien les gars, la cohésion est parfaite, on forme un bloc d'acier indestructible !'.\n\n"
+            "**Case 2 :** Une goute d'eau salée chargée d'oxygène atterrit pile sur l'atome de fer. L'oxygène, très gourmand, attrape l'atome par le bras et lui crie : 'Hé toi ! Donne-moi tes charges ! Tes deux électrons de valence m'intéressent grandement !'.\n\n"
+            "**Case 3 :** L'atome de fer, dépouillé de ses deux électrons de protection, commence à se dissoudre et à se détacher du réseau métallique. Il panique en se voyant changer de couleur : 'Oh non ! Je viens de subir une oxydation ! Je ne suis plus un métal solide, je me transforme en ion Fe2+ soluble ! C'est la liquéfaction !'.\n\n"
+            "**Case 4 :** Le fer oxydé flotte désormais dans la solution sous forme de rouille friable, laissant un trou béant dans la poutre. Les atomes d'oxygène s'enfuient en ricanant avec leur butin électronique : 'Affaire classée ! Encore un réducteur de terrassé par notre pouvoir oxydant !'."
+        )
+
+    with col_bd_ox:
+        if os.path.exists("oxydation_caricature.jpg"):
+            st.image(
+                "oxydation_caricature.jpg",
+                caption="Illustration humoristique du mécanisme d'oxydation en 4 cases",
+                use_container_width=True,
+            )
+        else:
+            st.warning(
+                "L'image 'oxydation_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+            )
+
+    import os
+
+    if "suite_verrouille_tab2_oxydation" not in st.session_state:
+        st.session_state.suite_verrouille_tab2_oxydation = False
+    verrou_at2 = st.session_state.suite_verrouille_tab2_oxydation
+
+    # Affichage du module de questions specifique a la reaction d'oxydation
+    afficher_atelier_oxydation_verrouille(verrouille=verrou_at2)
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 2")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat2 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier sur l'Oxydation.",
+        key="check_certif_ox2_final_net",
+        disabled=verrou_at2,
+    )
+
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2",
+        key="btn_export_suite2_ox_official",
+        use_container_width=True,
+        disabled=verrou_at2,
+    ):
+        if st.session_state.get("nom_var", "Nom") in [
+            "Nom",
+            "",
+        ] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error(
+                "Action refusée : Saisissez votre identité dans l'onglet 'Identification'."
+            )
+        elif not case_certif_stat2:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # Correction automatisee du Quiz
+            score_q2 = 0.0
+            if "ordre_quiz_tab2_ox_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab2_ox_aleatoire:
+                    saisie = st.session_state.get(
+                        f"ox_at2_final_g_{q_item['id']}", "Choisir..."
+                    )
+                    if str(saisie).strip() == str(q_item["rep"]).strip():
+                        score_q2 += 1.0
+
+            # Correction automatisee du Texte a trous
+            score_t2 = 0.0
+            if "champs_ox2_clean" in st.session_state:
+                for ligne in st.session_state.champs_ox2_clean:
+                    cle_variable = ligne[-1]
+                    attendu_valeur = ligne[2]
+                    if (
+                        st.session_state.get(f"{cle_variable}_ox2_clean", "Choisir...")
+                        == attendu_valeur
+                    ):
+                        score_t2 += 1.0
+
+            # Sauvegarde des scores et verrouillage
+            st.session_state.score_suite2_ox_p1 = round(float(score_q2), 1)
+            st.session_state.score_suite2_ox_p2 = round(float(score_t2), 1)
+            st.session_state.score_final_suite2_ox = round(
+                float(score_q2 + score_t2), 1
+            )
+            st.session_state.suite_verrouille_tab2_oxydation = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML SCELLÉ ---
+    if st.session_state.get("suite_verrouille_tab2_oxydation", False):
+        scr1_t2 = st.session_state.get("score_suite2_ox_p1", 0.0)
+        scr2_t2 = st.session_state.get("score_suite2_ox_p2", 0.0)
+        tot_s_t2 = st.session_state.get("score_final_suite2_ox", 0.0)
+        timestamp_suite2 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(
+            f"ATELIER OXYDATION SCELLÉ | Note de session : {tot_s_t2:.1f} / 20"
+        )
+
+        html_export_ox2 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Oxydation - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #b91c1c; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #2563eb; color: white; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #1e293b; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Chimie</h1>
+                <p>Atelier 2 : Étude de la réaction d'oxydation et perte d'électrons</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite2}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t2:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #b91c1c;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t2:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse de Cours : <strong>{scr2_t2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 2 : <strong>{tot_s_t2:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab2_ox_aleatoire" in st.session_state:
+            for num, q_item in enumerate(
+                st.session_state.ordre_quiz_tab2_ox_aleatoire, 1
+            ):
+                saisie = st.session_state.get(
+                    f"ox_at2_final_g_{q_item['id']}", "Choisir..."
+                )
+                attendu = q_item["rep"]
+                v_lbl = (
+                    "CORRECT"
+                    if str(saisie).strip() == str(attendu).strip()
+                    else "INCORRECT"
+                )
+                v_class = (
+                    "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                )
+                html_export_ox2 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_ox2 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_ox2_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_ox2_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+
+                saisie_texte = st.session_state.get(
+                    f"{cle_variable}_ox2_clean", "Choisir..."
+                )
+                v_lbl_t = (
+                    "CORRECT"
+                    if str(saisie_texte).strip() == str(attendu_texte).strip()
+                    else "INCORRECT"
+                )
+                v_class_t = (
+                    "status-correct"
+                    if v_lbl_t == "CORRECT"
+                    else "status-incorrect"
+                )
+                html_export_ox2 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_ox2 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        # Utilisation securisee de os.path
+        nom_brut = preparer_nom_fichier("Rapport_Atelier_Oxydation")
+        nom_fichier_html_ox2 = os.path.basename(nom_brut).replace(
+            ".txt", ".html"
+        )
+
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 2 (.html)",
+            data=html_export_ox2,
+            file_name=nom_fichier_html_ox2,
+            mime="text/html",
+        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
