@@ -1338,7 +1338,58 @@ with tab2:
         "en son oxydant conjugué."
     )
 
-    st.subheader("La formulation mathématique et exemples issus de la bibliothèque")
+    # =============================================================================
+    # NOUVEAU MENU DÉROULANT INTERACTIF LIÉ À LA BIBLIOTHÈQUE REDOX
+    # =============================================================================
+    st.subheader("Générateur dynamique de demi-équations d'oxydation")
+    st.write(
+        "Sélectionnez un couple dans le menu pour transformer sa fiche de la bibliothèque en réaction d'oxydation pure :"
+    )
+
+    # Extraction des couples disponibles dans votre dictionnaire global
+    liste_couples_dispo = list(bibliotheque_redox.keys())
+
+    couple_choisi_ox = st.selectbox(
+        "Choisir un couple à oxyder :",
+        liste_couples_dispo,
+        key="select_menu_oxydation_dynamique",
+    )
+
+    if couple_choisi_ox:
+        data_couple = bibliotheque_redox[couple_choisi_ox]
+
+        # Découpage du nom pour isoler la forme Ox et la forme Red
+        nom_propre_couple = couple_choisi_ox.split("(")[0].strip()
+        forme_ox_texte = nom_propre_couple.split("/")[0].strip()
+        forme_red_texte = nom_propre_couple.split("/")[1].strip()
+
+        col_menu1, col_menu2 = st.columns(2)
+        with col_menu1:
+            st.markdown(f"**Analyse du couple :** {couple_choisi_ox}")
+            st.write(f"- Réducteur de départ : **{forme_red_texte}**")
+            st.write(f"- Oxydant conjugué produit : **{forme_ox_texte}**")
+            st.write(
+                f"- Quantité d'électrons libérés : **{data_couple['electrons']} e⁻**"
+            )
+            st.write(f"- Degré d'oxydation de l'oxydant : {data_couple['no_ox']}")
+
+        with col_menu2:
+            st.markdown("**Équation de l'oxydation (Milieu Acide) :**")
+            # Inversion logique de la chaîne pour écrire dans le sens Red -> Ox + ne-
+            # Pour les métaux simples comme Cu, Zn, Fe, le rendu est direct.
+            if data_couple["h3o"] == 0:
+                st.latex(
+                    rf"\text{{{forme_red_texte}}} \longrightarrow \text{{{forme_ox_texte}}} + {data_couple['electrons']}e^-"
+                )
+            else:
+                # Modèle adapté pour les couples complexes avec molécules d'eau
+                st.latex(
+                    rf"\text{{{forme_red_texte}}} + {data_couple['h2o_acide']}\text{{H}}_2\text{{O}} \longrightarrow \text{{{forme_ox_texte}}} + {data_couple['h3o']}\text{{H}}_3\text{{O}}^+ + {data_couple['electrons']}e^-"
+                )
+
+    st.divider()
+
+    st.subheader("La formulation mathématique et exemples types")
 
     # --- SECTION FORMULE GÉNÉRALE ---
     col_21, col_22 = st.columns(2)
