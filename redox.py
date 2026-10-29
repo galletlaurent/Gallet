@@ -3162,121 +3162,121 @@ with tab7:
             # Relance l'application immédiatement avec le nouveau cas forcé
             st.rerun()
 
-    st.write("---")
+        st.write("---")
 
 
-    # 1. BANQUE DE DONNÉES DYNAMIQUE PAR CAS (ÉNONCÉ, BD, QUIZ, TROUS)
-    if "banque_complete_routier" not in st.session_state:
-        st.session_state.banque_complete_routier = {
-            "routier_cas1": {
-                "titre": "Cas pratique A : Corrosion par le sel de déneigement sur les châssis",
-                "texte": "En hiver, le salage des routes apporte une quantité massive d'ions chlorure. L'humidité stagnante sur les longerons en acier crée un milieu conducteur agressif. Le fer métallique solide du châssis subit une oxydation destructrice et cède ses électrons au dioxygène de l'air humide, entraînant la formation de cloques de rouille.",
-                "couple_ox": "O2 / H2O",
-                "couple_red": "Fe²⁺ / Fe",
-                "bd": (
-                    "**Case 1 :** Un camion de 44 tonnes roule de nuit sous une tempête de neige. Derrière lui, une saleuse projette du sel. Le chauffeur sourit : 'Super, la route est bien dégagée !'.\n\n"
-                    "**Case 2 :** Zoom sous le châssis en acier. Une boue salée recouvre les longerons. Les ions Chlorure (Cl⁻) ricanent : 'La peinture a sauté ici ! Installez l'autoroute à électrons !'.\n\n"
-                    "**Case 3 :** Les atomes de fer perdent leurs électrons face au dioxygène : 'Oh non ! Le sel rend l'eau trop conductrice, la fuite de nos charges est trop rapide ! On s'oxyde en ions Fe²⁺ !'.\n\n"
-                    "**Case 4 :** Au printemps, le mécanicien tape sur le châssis et de la rouille tombe : 'Encore un coup de l'oxydoréduction hivernale... Il va falloir souder un renfort !'."
-                ),
-                "quiz": [
-                    {"id": "rA1", "q": "Qui est le réducteur métallique qui se détériore sur le châssis ?", "options": ["Le fer solide", "Le dioxygène", "L'ion chlorure"], "rep": "Le fer solide"},
-                    {"id": "rA2", "q": "Qui est l'oxydant gazeux présent dans l'air humide responsable de l'attaque ?", "options": ["Le dioxygène", "Le diazote", "Le dioxyde de carbone"], "rep": "Le dioxygène"},
-                    {"id": "rA3", "q": "Combien d'électrons sont transférés par chaque atome de fer lors de cette oxydation ?", "options": ["2 électrons", "1 électron", "4 électrons"], "rep": "2 électrons"},
-                    {"id": "rA4", "q": "Combien d'électrons capte le dioxygène pour se réduire en milieu acide ?", "options": ["4 électrons", "2 électrons", "1 électron"], "rep": "4 électrons"},
-                    {"id": "rA5", "q": "Quelle couleur prend le produit de corrosion friable sur le châssis ?", "options": ["Orange / Brun (Rouille)", "Bleu azur", "Vert"], "rep": "Orange / Brun (Rouille)"},
-                    {"id": "rA6", "q": "Quelle est la teinte de la tôle d'acier saine avant l'action du sel ?", "options": ["Gris métallique brillant", "Noir opaque", "Rouge"], "rep": "Gris métallique brillant"},
-                    {"id": "rA7", "q": "Quel est le rôle des ions chlorures apportés par le sel de déneigement ?", "options": ["Augmenter la conductivité de l'eau", "Bloquer les électrons", "Dissoudre le plastique"], "rep": "Augmenter la conductivité de l'eau"},
-                    {"id": "rA8", "q": "La transformation subie par le fer solide (perte d'électrons) est une :", "options": ["Oxydation", "Réduction", "Précipitation"], "rep": "Oxydation"},
-                    {"id": "rA9", "q": "En perdant ses charges négatives, l'atome de fer du camion devient un :", "options": ["Cation Fe²⁺", "Anion Fe²⁻", "Gaz libre"], "rep": "Cation Fe²⁺"},
-                    {"id": "rA10", "q": "Le milieu aqueux salé formé sous le châssis constitue un bon :", "options": ["Électrolyte", "Isolant électrique", "Catalyseur neutre"], "rep": "Électrolyte"}
-                ],
-                "trous": [
-                    ("1. Dans ce cas, le fer solide du châssis joue le rôle de ..........", ["Choisir...", "réducteur", "oxydant"], "réducteur", "t_rA1"),
-                    ("2. Le dioxygène de l'air capte les électrons lors d'une ..........", ["Choisir...", "réduction", "oxydation"], "réduction", "t_rA2"),
-                    ("3. Chaque atome de fer libère un total de .......... électrons.", ["Choisir...", "deux", "quatre"], "deux", "t_rA3"),
-                    ("4. Le sel ne réagit pas mais rend le milieu très ..........", ["Choisir...", "conducteur", "isolant"], "conducteur", "t_rA4"),
-                    ("5. La dégradation du fer se manifeste par de la .......... orange.", ["Choisir...", "rouille", "calamine"], "rouille", "t_rA5"),
-                    ("6. L'atome neutre de fer se transforme en un .......... soluble.", ["Choisir...", "ion", "gaz"], "ion", "t_rA6"),
-                    ("7. L'éclat d'un châssis métallique sain est de couleur ..........", ["Choisir...", "grise", "brune"], "grise", "t_rA7"),
-                    ("8. Les électrons migrent à travers l'humidité depuis le ..........", ["Choisir...", "métal", "gaz"], "métal", "t_rA8"),
-                    ("9. La réduction de l'oxydant produit des molécules d'..........", ["Choisir...", "eau", "sel"], "eau", "t_rA9"),
-                    ("10. L'égalisation des charges élimine les électrons du .......... final.", ["Choisir...", "bilan", "solvant"], "bilan", "t_rA10")
-                ]
-            },
-            "routier_cas2": {
-                "titre": "Cas pratique B : Attaque acide des bennes de transport de produits chimiques",
-                "texte": "Une benne en acier transporte des résidus industriels acides mal neutralisés. Les ions hydronium H₃O⁺ attaquent les parois intérieures de la cuve de transport. Le fer solide s'oxyde et se dissout, tandis que les ions acides subissent une réduction immédiate provoquant un dégagement de dihydrogène gazeux sous pression.",
-                "couple_ox": "H3O⁺ / H2",
-                "couple_red": "Fe²⁺ / Fe",
-                "bd": (
-                    "**Case 1 :** Une citerne routière transporte une solution acide. Le manomètre de sécurité indique une mystérieuse montée de pression : 'C'est bizarre, le volume de gaz augmente !'.\n\n"
-                    "**Case 2 :** À l'intérieur de la cuve, le revêtement est endommagé. Les ions acides H₃O⁺ se ruent sur l'acier : 'Regardez, le fer est à nu ! À l'attaque, piquons-lui ses charges !'.\n\n"
-                    "**Case 3 :** Les atomes de fer portent leurs électrons et se dissolvent : 'Au secours, les acides nous oxydent en ions Fe²⁺ ! Notre paroi s'amincit !'.\n\n"
-                    "**Case 4 :** En captant les électrons, les ions hydronium se transforment en bulles de dihydrogène gazeux (H₂) : 'Liberté ! On passe à l'état gazeux, attention à la pression dans la benne !'."
-                ),
-                "quiz": [
-                    {"id": "rB1", "q": "Qui est le réducteur de la benne qui se fait dissoudre par la solution ?", "options": ["Le fer solide", "L'ion hydronium H₃O⁺", "Le gaz dihydrogène"], "rep": "Le fer solide"},
-                    {"id": "rB2", "q": "Qui est l'oxydant acide responsable de la destruction de la paroi ?", "options": ["L'ion hydronium H₃O⁺", "Le fer solide", "L'eau neutre"], "rep": "L'ion hydronium H₃O⁺"},
-                    {"id": "rB3", "q": "Quel gaz inflammable se dégage sous pression dans la citerne ?", "options": ["Le dihydrogène", "Le dioxygène", "Le chlore"], "rep": "Le dihydrogène"},
-                    {"id": "rB4", "q": "Combien d'électrons cède un atome de fer lors de cette attaque acide ?", "options": ["2 électrons", "1 électron", "3 électrons"], "rep": "2 électrons"},
-                    {"id": "rB5", "q": "Quel type de milieu chimique (pH inférieur à 7) cause cette panne ?", "options": ["Un milieu acide", "Un milieu basique", "Un milieu neutre"], "rep": "Un milieu acide"},
-                    {"id": "rB6", "q": "Quelle est la couleur de la paroi d'acier intacte à l'intérieur de la benne ?", "options": ["Gris brillant", "Rouge rouille", "Jaune"], "rep": "Gris brillant"},
-                    {"id": "rB7", "q": "Que subit la tôle métallique lors de sa transformation en ions Fe²⁺ ?", "options": ["Une oxydation", "Une réduction", "Une évaporation"], "rep": "Une oxydation"},
-                    {"id": "rB8", "q": "La transformation de l'ion H₃O⁺ en gaz H₂ constitue une :", "options": ["Réduction", "Oxydation", "Combustion"], "rep": "Réduction"},
-                    {"id": "rB9", "q": "En s'oxydant, l'atome de fer neutre devient un ion de charge :", "options": ["Positive (Fe²⁺)", "Négative (Fe²⁻)", "Neutre"], "rep": "Positive (Fe²⁺)"},
-                    {"id": "rB10", "q": "La formation du gaz H₂ fait courir au transport un risque de :", "options": ["Surpression et explosion", "Gel du liquide", "Liquéfaction"], "rep": "Surpression et explosion"}
-                ],
-                "trous": [
-                    ("1. La paroi de la benne en fer subit une .......... destructive.", ["Choisir...", "oxydation", "réduction"], "oxydation", "t_rB1"),
-                    ("2. Les ions hydronium de l'acide subissent une ..........", ["Choisir...", "réduction", "oxydation"], "réduction", "t_rB2"),
-                    ("3. Le fer métallique joue le rôle de .......... dans ce transport.", ["Choisir...", "réducteur", "oxydant"], "réducteur", "t_rB3"),
-                    ("4. L'agression provient d'un liquide de nature ..........", ["Choisir...", "acide", "basique"], "acide", "t_rB4"),
-                    ("5. La réduction des protons génère un dégagement de ..........", ["Choisir...", "dihydrogène", "dioxygène"], "dihydrogène", "t_rB5"),
-                    ("6. Chaque atome de fer transfère un total de .......... électrons.", ["Choisir...", "deux", "quatre"], "deux", "t_rB6"),
-                    ("7. L'acier sain non attaqué présente une couleur ..........", ["Choisir...", "grise", "orange"], "grise", "t_rB7"),
-                    ("8. Le fer solide détruit passe en solution sous forme d'..........", ["Choisir...", "ion", "précipité"], "ion", "t_rB8"),
-                    ("9. Les électrons quittent le métal pour réduire l'..........", ["Choisir...", "acide", "sel"], "acide", "t_rB9"),
-                    ("10. L'égalisation des charges permet d'écrire l'équation ..........", ["Choisir...", "bilan", "partielle"], "bilan", "t_rB10")
+        # 1. BANQUE DE DONNÉES DYNAMIQUE PAR CAS (ÉNONCÉ, BD, QUIZ, TROUS)
+        if "banque_complete_routier" not in st.session_state:
+            st.session_state.banque_complete_routier = {
+                "routier_cas1": {
+                    "titre": "Cas pratique A : Corrosion par le sel de déneigement sur les châssis",
+                    "texte": "En hiver, le salage des routes apporte une quantité massive d'ions chlorure. L'humidité stagnante sur les longerons en acier crée un milieu conducteur agressif. Le fer métallique solide du châssis subit une oxydation destructrice et cède ses électrons au dioxygène de l'air humide, entraînant la formation de cloques de rouille.",
+                    "couple_ox": "O2 / H2O",
+                    "couple_red": "Fe²⁺ / Fe",
+                    "bd": (
+                        "**Case 1 :** Un camion de 44 tonnes roule de nuit sous une tempête de neige. Derrière lui, une saleuse projette du sel. Le chauffeur sourit : 'Super, la route est bien dégagée !'.\n\n"
+                        "**Case 2 :** Zoom sous le châssis en acier. Une boue salée recouvre les longerons. Les ions Chlorure (Cl⁻) ricanent : 'La peinture a sauté ici ! Installez l'autoroute à électrons !'.\n\n"
+                        "**Case 3 :** Les atomes de fer perdent leurs électrons face au dioxygène : 'Oh non ! Le sel rend l'eau trop conductrice, la fuite de nos charges est trop rapide ! On s'oxyde en ions Fe²⁺ !'.\n\n"
+                        "**Case 4 :** Au printemps, le mécanicien tape sur le châssis et de la rouille tombe : 'Encore un coup de l'oxydoréduction hivernale... Il va falloir souder un renfort !'."
+                    ),
+                    "quiz": [
+                        {"id": "rA1", "q": "Qui est le réducteur métallique qui se détériore sur le châssis ?", "options": ["Le fer solide", "Le dioxygène", "L'ion chlorure"], "rep": "Le fer solide"},
+                        {"id": "rA2", "q": "Qui est l'oxydant gazeux présent dans l'air humide responsable de l'attaque ?", "options": ["Le dioxygène", "Le diazote", "Le dioxyde de carbone"], "rep": "Le dioxygène"},
+                        {"id": "rA3", "q": "Combien d'électrons sont transférés par chaque atome de fer lors de cette oxydation ?", "options": ["2 électrons", "1 électron", "4 électrons"], "rep": "2 électrons"},
+                        {"id": "rA4", "q": "Combien d'électrons capte le dioxygène pour se réduire en milieu acide ?", "options": ["4 électrons", "2 électrons", "1 électron"], "rep": "4 électrons"},
+                        {"id": "rA5", "q": "Quelle couleur prend le produit de corrosion friable sur le châssis ?", "options": ["Orange / Brun (Rouille)", "Bleu azur", "Vert"], "rep": "Orange / Brun (Rouille)"},
+                        {"id": "rA6", "q": "Quelle est la teinte de la tôle d'acier saine avant l'action du sel ?", "options": ["Gris métallique brillant", "Noir opaque", "Rouge"], "rep": "Gris métallique brillant"},
+                        {"id": "rA7", "q": "Quel est le rôle des ions chlorures apportés par le sel de déneigement ?", "options": ["Augmenter la conductivité de l'eau", "Bloquer les électrons", "Dissoudre le plastique"], "rep": "Augmenter la conductivité de l'eau"},
+                        {"id": "rA8", "q": "La transformation subie par le fer solide (perte d'électrons) est une :", "options": ["Oxydation", "Réduction", "Précipitation"], "rep": "Oxydation"},
+                        {"id": "rA9", "q": "En perdant ses charges négatives, l'atome de fer du camion devient un :", "options": ["Cation Fe²⁺", "Anion Fe²⁻", "Gaz libre"], "rep": "Cation Fe²⁺"},
+                        {"id": "rA10", "q": "Le milieu aqueux salé formé sous le châssis constitue un bon :", "options": ["Électrolyte", "Isolant électrique", "Catalyseur neutre"], "rep": "Électrolyte"}
+                    ],
+                    "trous": [
+                        ("1. Dans ce cas, le fer solide du châssis joue le rôle de ..........", ["Choisir...", "réducteur", "oxydant"], "réducteur", "t_rA1"),
+                        ("2. Le dioxygène de l'air capte les électrons lors d'une ..........", ["Choisir...", "réduction", "oxydation"], "réduction", "t_rA2"),
+                        ("3. Chaque atome de fer libère un total de .......... électrons.", ["Choisir...", "deux", "quatre"], "deux", "t_rA3"),
+                        ("4. Le sel ne réagit pas mais rend le milieu très ..........", ["Choisir...", "conducteur", "isolant"], "conducteur", "t_rA4"),
+                        ("5. La dégradation du fer se manifeste par de la .......... orange.", ["Choisir...", "rouille", "calamine"], "rouille", "t_rA5"),
+                        ("6. L'atome neutre de fer se transforme en un .......... soluble.", ["Choisir...", "ion", "gaz"], "ion", "t_rA6"),
+                        ("7. L'éclat d'un châssis métallique sain est de couleur ..........", ["Choisir...", "grise", "brune"], "grise", "t_rA7"),
+                        ("8. Les électrons migrent à travers l'humidité depuis le ..........", ["Choisir...", "métal", "gaz"], "métal", "t_rA8"),
+                        ("9. La réduction de l'oxydant produit des molécules d'..........", ["Choisir...", "eau", "sel"], "eau", "t_rA9"),
+                        ("10. L'égalisation des charges élimine les électrons du .......... final.", ["Choisir...", "bilan", "solvant"], "bilan", "t_rA10")
                     ]
-                    },      
-            "routier_cas3": {
-                "titre": "Cas pratique C : Protection par anodes en zinc sur les remorques porte-engins",
-                "texte": "Pour préserver les essieux et structures basses des remorques porte-engins, les constructeurs installent des blocs de zinc. Lors d'une agression saline, le zinc s'oxyde en premier à la place du fer de la structure. Le zinc se sacrifie pour empêcher la réduction de l'oxygène sur l'acier.",
-                "couple_ox": "O2 / H2O",
-                "couple_red": "Zn²⁺ / Zn",
-                "bd": (
-                    "**Case 1 :** Une remorque porte-engins revient d'une mission en zone côtière, couverte de boue saline. Le technicien sourit : 'Heureusement qu'on a fixé ces blocs de métal en dessous !'.\n\n"
-                    "**Case 2 :** L'eau salée attaque la structure. Le bloc de zinc s'interpose devant l'acier : 'Pas touche au fer ! C'est moi le plus réducteur ici, j'envoie mes électrons !'.\n\n"
-                    "**Case 3 :** Le zinc subit une oxydation et se dissout lentement : 'Je perds mes électrons et je deviens l'ion Zn²⁺, je me sacrifie pour la remorque !'.\n\n"
-                    "**Case 4 :** L'acier de la remorque reste intact et brillant, tandis que l'oxygène est réduit sans faire de rouille. L'acier remercie : 'Merci l'anode sacrificielle !'."
-                ),
-                "quiz": [
-                    {"id": "rC1", "q": "Quel métal se sacrifie et joue le rôle de réducteur actif ici ?", "options": ["Le zinc", "Le fer", "Le cuivre"], "rep": "Le zinc"},
-                    {"id": "rC2", "q": "Quel métal est protégé de la rouille grâce à cette méthode ?", "options": ["Le fer (acier)", "Le zinc", "L'aluminium"], "rep": "Le fer (acier)"},
-                    {"id": "rC3", "q": "Qui est l'oxydant de l'air humide que le zinc doit neutraliser ?", "options": ["Le dioxygène", "Le diazote", "L'ion zinc"], "rep": "Le dioxygène"},
-                    {"id": "rC4", "q": "Combien d'électrons un atome de zinc libère-t-il en s'oxydant en ion Zn²⁺ ?", "options": ["2 électrons", "1 électron", "3 électrons"], "rep": "2 électrons"},
-                    {"id": "rC5", "q": "Quelle est la couleur d'origine du bloc de zinc protecteur sain ?", "options": ["Gris mat / bleuté", "Rouge cuivre", "Transparent"], "rep": "Gris mat / bleuté"},
-                    {"id": "rC6", "q": "Quel qualificatif donne-t-on à cette méthode de protection de l'acier ?", "options": ["Protection sacrificielle", "Passivation acide", "Vernis étanche"], "rep": "Protection sacrificielle"},
-                    {"id": "rC7", "q": "Pourquoi le zinc réagit-il à la place du fer de la remorque ?", "options": ["Il est plus réducteur que le fer", "Il est plus noble", "Il est plus lourd"], "rep": "Il est plus réducteur que le fer"},
-                    {"id": "rC8", "q": "Quelle transformation subit le zinc en donnant ses charges ?", "options": ["Une oxydation", "Une réduction", "Une fusion"], "rep": "Une oxydation"},
-                    {"id": "rC9", "q": "La captation des électrons par le dioxygène constitue la demi-réaction de :", "options": ["Réduction", "Oxydation", "Liquéfaction"], "rep": "Réduction"},
-                    {"id": "rC10", "q": "En s'oxydant, l'atome de zinc solide produit des ions :", "options": ["Zn²⁺", "Fe²⁺", "Cl⁻"], "rep": "Zn²⁺"}
-                ],
-                "trous": [
-                    ("1. Le zinc métallique cède ses électrons, c'est le .......... de la remorque.", ["Choisir...", "réducteur", "oxydant"], "réducteur", "t_rC1"),
-                    ("2. Le dioxygène capte ces électrons au cours d'une ..........", ["Choisir...", "réduction", "oxydation"], "réduction", "t_rC2"),
-                    ("3. Le zinc se dégrade pour assurer une protection ..........", ["Choisir...", "sacrificielle", "acide"], "sacrificielle", "t_rC3"),
-                    ("4. Chaque atome de zinc sacrifie un total de .......... électrons.", ["Choisir...", "deux", "trois"], "deux", "t_rC4"),
-                    ("5. Grâce au zinc, l'acier de la structure conserve sa teinte ..........", ["Choisir...", "grise", "orange"], "grise", "t_rC5"),
-                    ("6. L'atome neutre de zinc solide se transforme en un .......... Zn²⁺.", ["Choisir...", "ion", "gaz"], "ion", "t_rC6"),
-                    ("7. L'humidité saline environnante joue le rôle d'.......... conducteur.", ["Choisir...", "électrolyte", "isolant"], "électrolyte", "t_rC7"),
-                    ("8. Le potentiel E0 du zinc est plus bas, il est donc plus .......... que le fer.", ["Choisir...", "réducteur", "oxydant"], "réducteur", "t_rC8"),
-                    ("9. Le dioxygène se réduit en produisant des molécules d'..........", ["Choisir...", "eau", "zinc"], "eau", "t_rC9"),
-                    ("10. L'absence d'électrons libres caractérise l'équation ..........", ["Choisir...", "bilan", "partielle"], "bilan", "t_rC10")
-                ]
+                },
+                "routier_cas2": {
+                    "titre": "Cas pratique B : Attaque acide des bennes de transport de produits chimiques",
+                    "texte": "Une benne en acier transporte des résidus industriels acides mal neutralisés. Les ions hydronium H₃O⁺ attaquent les parois intérieures de la cuve de transport. Le fer solide s'oxyde et se dissout, tandis que les ions acides subissent une réduction immédiate provoquant un dégagement de dihydrogène gazeux sous pression.",
+                    "couple_ox": "H3O⁺ / H2",
+                    "couple_red": "Fe²⁺ / Fe",
+                    "bd": (
+                        "**Case 1 :** Une citerne routière transporte une solution acide. Le manomètre de sécurité indique une mystérieuse montée de pression : 'C'est bizarre, le volume de gaz augmente !'.\n\n"
+                        "**Case 2 :** À l'intérieur de la cuve, le revêtement est endommagé. Les ions acides H₃O⁺ se ruent sur l'acier : 'Regardez, le fer est à nu ! À l'attaque, piquons-lui ses charges !'.\n\n"
+                        "**Case 3 :** Les atomes de fer portent leurs électrons et se dissolvent : 'Au secours, les acides nous oxydent en ions Fe²⁺ ! Notre paroi s'amincit !'.\n\n"
+                        "**Case 4 :** En captant les électrons, les ions hydronium se transforment en bulles de dihydrogène gazeux (H₂) : 'Liberté ! On passe à l'état gazeux, attention à la pression dans la benne !'."
+                    ),
+                    "quiz": [
+                        {"id": "rB1", "q": "Qui est le réducteur de la benne qui se fait dissoudre par la solution ?", "options": ["Le fer solide", "L'ion hydronium H₃O⁺", "Le gaz dihydrogène"], "rep": "Le fer solide"},
+                        {"id": "rB2", "q": "Qui est l'oxydant acide responsable de la destruction de la paroi ?", "options": ["L'ion hydronium H₃O⁺", "Le fer solide", "L'eau neutre"], "rep": "L'ion hydronium H₃O⁺"},
+                        {"id": "rB3", "q": "Quel gaz inflammable se dégage sous pression dans la citerne ?", "options": ["Le dihydrogène", "Le dioxygène", "Le chlore"], "rep": "Le dihydrogène"},
+                        {"id": "rB4", "q": "Combien d'électrons cède un atome de fer lors de cette attaque acide ?", "options": ["2 électrons", "1 électron", "3 électrons"], "rep": "2 électrons"},
+                        {"id": "rB5", "q": "Quel type de milieu chimique (pH inférieur à 7) cause cette panne ?", "options": ["Un milieu acide", "Un milieu basique", "Un milieu neutre"], "rep": "Un milieu acide"},
+                        {"id": "rB6", "q": "Quelle est la couleur de la paroi d'acier intacte à l'intérieur de la benne ?", "options": ["Gris brillant", "Rouge rouille", "Jaune"], "rep": "Gris brillant"},
+                        {"id": "rB7", "q": "Que subit la tôle métallique lors de sa transformation en ions Fe²⁺ ?", "options": ["Une oxydation", "Une réduction", "Une évaporation"], "rep": "Une oxydation"},
+                        {"id": "rB8", "q": "La transformation de l'ion H₃O⁺ en gaz H₂ constitue une :", "options": ["Réduction", "Oxydation", "Combustion"], "rep": "Réduction"},
+                        {"id": "rB9", "q": "En s'oxydant, l'atome de fer neutre devient un ion de charge :", "options": ["Positive (Fe²⁺)", "Négative (Fe²⁻)", "Neutre"], "rep": "Positive (Fe²⁺)"},
+                        {"id": "rB10", "q": "La formation du gaz H₂ fait courir au transport un risque de :", "options": ["Surpression et explosion", "Gel du liquide", "Liquéfaction"], "rep": "Surpression et explosion"}
+                    ],
+                    "trous": [
+                        ("1. La paroi de la benne en fer subit une .......... destructive.", ["Choisir...", "oxydation", "réduction"], "oxydation", "t_rB1"),
+                        ("2. Les ions hydronium de l'acide subissent une ..........", ["Choisir...", "réduction", "oxydation"], "réduction", "t_rB2"),
+                        ("3. Le fer métallique joue le rôle de .......... dans ce transport.", ["Choisir...", "réducteur", "oxydant"], "réducteur", "t_rB3"),
+                        ("4. L'agression provient d'un liquide de nature ..........", ["Choisir...", "acide", "basique"], "acide", "t_rB4"),
+                        ("5. La réduction des protons génère un dégagement de ..........", ["Choisir...", "dihydrogène", "dioxygène"], "dihydrogène", "t_rB5"),
+                        ("6. Chaque atome de fer transfère un total de .......... électrons.", ["Choisir...", "deux", "quatre"], "deux", "t_rB6"),
+                        ("7. L'acier sain non attaqué présente une couleur ..........", ["Choisir...", "grise", "orange"], "grise", "t_rB7"),
+                        ("8. Le fer solide détruit passe en solution sous forme d'..........", ["Choisir...", "ion", "précipité"], "ion", "t_rB8"),
+                        ("9. Les électrons quittent le métal pour réduire l'..........", ["Choisir...", "acide", "sel"], "acide", "t_rB9"),
+                        ("10. L'égalisation des charges permet d'écrire l'équation ..........", ["Choisir...", "bilan", "partielle"], "bilan", "t_rB10")
+                        ]
+                        },      
+                "routier_cas3": {
+                    "titre": "Cas pratique C : Protection par anodes en zinc sur les remorques porte-engins",
+                    "texte": "Pour préserver les essieux et structures basses des remorques porte-engins, les constructeurs installent des blocs de zinc. Lors d'une agression saline, le zinc s'oxyde en premier à la place du fer de la structure. Le zinc se sacrifie pour empêcher la réduction de l'oxygène sur l'acier.",
+                    "couple_ox": "O2 / H2O",
+                    "couple_red": "Zn²⁺ / Zn",
+                    "bd": (
+                        "**Case 1 :** Une remorque porte-engins revient d'une mission en zone côtière, couverte de boue saline. Le technicien sourit : 'Heureusement qu'on a fixé ces blocs de métal en dessous !'.\n\n"
+                        "**Case 2 :** L'eau salée attaque la structure. Le bloc de zinc s'interpose devant l'acier : 'Pas touche au fer ! C'est moi le plus réducteur ici, j'envoie mes électrons !'.\n\n"
+                        "**Case 3 :** Le zinc subit une oxydation et se dissout lentement : 'Je perds mes électrons et je deviens l'ion Zn²⁺, je me sacrifie pour la remorque !'.\n\n"
+                        "**Case 4 :** L'acier de la remorque reste intact et brillant, tandis que l'oxygène est réduit sans faire de rouille. L'acier remercie : 'Merci l'anode sacrificielle !'."
+                    ),
+                    "quiz": [
+                        {"id": "rC1", "q": "Quel métal se sacrifie et joue le rôle de réducteur actif ici ?", "options": ["Le zinc", "Le fer", "Le cuivre"], "rep": "Le zinc"},
+                        {"id": "rC2", "q": "Quel métal est protégé de la rouille grâce à cette méthode ?", "options": ["Le fer (acier)", "Le zinc", "L'aluminium"], "rep": "Le fer (acier)"},
+                        {"id": "rC3", "q": "Qui est l'oxydant de l'air humide que le zinc doit neutraliser ?", "options": ["Le dioxygène", "Le diazote", "L'ion zinc"], "rep": "Le dioxygène"},
+                        {"id": "rC4", "q": "Combien d'électrons un atome de zinc libère-t-il en s'oxydant en ion Zn²⁺ ?", "options": ["2 électrons", "1 électron", "3 électrons"], "rep": "2 électrons"},
+                        {"id": "rC5", "q": "Quelle est la couleur d'origine du bloc de zinc protecteur sain ?", "options": ["Gris mat / bleuté", "Rouge cuivre", "Transparent"], "rep": "Gris mat / bleuté"},
+                        {"id": "rC6", "q": "Quel qualificatif donne-t-on à cette méthode de protection de l'acier ?", "options": ["Protection sacrificielle", "Passivation acide", "Vernis étanche"], "rep": "Protection sacrificielle"},
+                        {"id": "rC7", "q": "Pourquoi le zinc réagit-il à la place du fer de la remorque ?", "options": ["Il est plus réducteur que le fer", "Il est plus noble", "Il est plus lourd"], "rep": "Il est plus réducteur que le fer"},
+                        {"id": "rC8", "q": "Quelle transformation subit le zinc en donnant ses charges ?", "options": ["Une oxydation", "Une réduction", "Une fusion"], "rep": "Une oxydation"},
+                        {"id": "rC9", "q": "La captation des électrons par le dioxygène constitue la demi-réaction de :", "options": ["Réduction", "Oxydation", "Liquéfaction"], "rep": "Réduction"},
+                        {"id": "rC10", "q": "En s'oxydant, l'atome de zinc solide produit des ions :", "options": ["Zn²⁺", "Fe²⁺", "Cl⁻"], "rep": "Zn²⁺"}
+                    ],
+                    "trous": [
+                        ("1. Le zinc métallique cède ses électrons, c'est le .......... de la remorque.", ["Choisir...", "réducteur", "oxydant"], "réducteur", "t_rC1"),
+                        ("2. Le dioxygène capte ces électrons au cours d'une ..........", ["Choisir...", "réduction", "oxydation"], "réduction", "t_rC2"),
+                        ("3. Le zinc se dégrade pour assurer une protection ..........", ["Choisir...", "sacrificielle", "acide"], "sacrificielle", "t_rC3"),
+                        ("4. Chaque atome de zinc sacrifie un total de .......... électrons.", ["Choisir...", "deux", "trois"], "deux", "t_rC4"),
+                        ("5. Grâce au zinc, l'acier de la structure conserve sa teinte ..........", ["Choisir...", "grise", "orange"], "grise", "t_rC5"),
+                        ("6. L'atome neutre de zinc solide se transforme en un .......... Zn²⁺.", ["Choisir...", "ion", "gaz"], "ion", "t_rC6"),
+                        ("7. L'humidité saline environnante joue le rôle d'.......... conducteur.", ["Choisir...", "électrolyte", "isolant"], "électrolyte", "t_rC7"),
+                        ("8. Le potentiel E0 du zinc est plus bas, il est donc plus .......... que le fer.", ["Choisir...", "réducteur", "oxydant"], "réducteur", "t_rC8"),
+                        ("9. Le dioxygène se réduit en produisant des molécules d'..........", ["Choisir...", "eau", "zinc"], "eau", "t_rC9"),
+                        ("10. L'absence d'électrons libres caractérise l'équation ..........", ["Choisir...", "bilan", "partielle"], "bilan", "t_rC10")
+                    ]
+                }
             }
-        }
     # =============================================================================
     # INITIALISATION ET SÉLECTION DU CAS ACTIF
     # =============================================================================
