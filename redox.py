@@ -3130,20 +3130,21 @@ with tab7:
     # =============================================================================
     col_btn_gen, _ = st.columns([0.3, 0.7])
     with col_btn_gen:
-        if st.button("GÉNÉRER UN EXERCICE AU HASARD", key="btn_generer_exercice_aleatoire_t7", use_container_width=True):
-            # Effacement du cas précédent pour forcer un nouveau tirage au sort
+        if st.button(
+            "GÉNÉRER UN EXERCICE AU HASARD",
+            key="btn_generer_exercice_aleatoire_t7",
+            use_container_width=True,
+        ):
             if "choix_id_routier" in st.session_state:
                 del st.session_state["choix_id_routier"]
-            
-            # Réinitialisation des verrous pour permettre à l'élève de répondre à nouveau
+
             st.session_state.verrou_routier_bilan = False
             st.session_state.verrou_routier_at = False
             st.session_state.suite_verrouille_tab7_routier = False
-            
-            # Nettoyage des scores de la session précédente
+
             if "score_routier_partie_bilan" in st.session_state:
                 del st.session_state["score_routier_partie_bilan"]
-            
+
             st.rerun()
 
     st.write("---")
@@ -3257,7 +3258,15 @@ with tab7:
                     ("7. L'humidité saline environnante joue le rôle d'.......... conducteur.", ["Choisir...", "électrolyte", "isolant"], "électrolyte", "t_rC7"),
                     ("8. Le potentiel E0 du zinc est plus bas, il est donc plus .......... que le fer.", ["Choisir...", "réducteur", "oxydant"], "réducteur", "t_rC8"),
                     ("9. Le dioxygène se réduit en produisant des molécules d'..........", ["Choisir...", "eau", "zinc"], "eau", "t_rC9"),
-                    ( "10. L'absence d'électrons libres caractérise l'équation ..........", ["Choisir...", "bilan", "partielle"], "bilan", "t_rC10") ] } } 
+                    (
+                        "10. L'absence d'électrons libres caractérise l'équation ..........",
+                        ["Choisir...", "bilan", "partielle"],
+                        "bilan",
+                        "t_rC10",
+                    ),
+                ],
+            }
+        }
     # =============================================================================
     # INITIALISATION ET SÉLECTION DU CAS ACTIF
     # =============================================================================
