@@ -2676,38 +2676,28 @@ with tab4:
 
 
 with tab5:
-    st.header("La Règle du Gamma")
 
-    # Utilisation stricte de la bibliothèque os pour sécuriser l'image d'en-tête
-    if os.path.exists("gamma_intro.jpg"):
-        st.image(
-            "gamma_intro.jpg",
-            caption="Échelle des potentiels standards d'oxydoréduction (E0)",
-            use_container_width=True,
-        )
-    else:
-        st.warning(
-            "L'image 'gamma_intro.jpg' n'a pas été trouvée dans le dossier."
-        )
-
-    st.subheader("Prévoir la spontanéité d'une réaction")
-    st.write(
-        "Tous les oxydants n'ont pas la même force pour capter des électrons, et tous les réducteurs "
-        "n'ont pas la même facilité à les céder. Pour prévoir si une réaction chimique va se produire "
-        "naturellement, on classe les couples redox sur une échelle verticale selon leur **potentiel standard d'oxydoréduction (E⁰)** exprimé en Volts."
-    )
-
-    st.info(
-        "L'axe vertical est orienté vers le haut par ordre de pouvoir oxydant croissant (et pouvoir réducteur décroissant). "
-        "La **règle du gamma** stipule que la réaction chimique spontanée a toujours lieu entre **l'oxydant le plus fort** "
-        "(situé en haut à gauche) et **le réducteur le plus fort** (situé en bas à droite)."
-    )
-
-    st.subheader("Tracé géométrique de la règle")
 
     # --- SECTION DU TRACÉ DU GAMMA ---
     col_51, col_52 = st.columns(2)
     with col_51:
+
+        # Utilisation stricte de la bibliothèque os pour sécuriser l'image d'en-tête
+        st.subheader("Prévoir la spontanéité d'une réaction")
+        st.write(
+            "Tous les oxydants n'ont pas la même force pour capter des électrons, et tous les réducteurs "
+            "n'ont pas la même facilité à les céder. Pour prévoir si une réaction chimique va se produire "
+            "naturellement, on classe les couples redox sur une échelle verticale selon leur **potentiel standard d'oxydoréduction (E⁰)** exprimé en Volts."
+        )
+
+        st.info(
+            "L'axe vertical est orienté vers le haut par ordre de pouvoir oxydant croissant (et pouvoir réducteur décroissant). "
+            "La **règle du gamma** stipule que la réaction chimique spontanée a toujours lieu entre **l'oxydant le plus fort** "
+            "(situé en haut à gauche) et **le réducteur le plus fort** (situé en bas à droite)."
+        )
+
+        st.subheader("Tracé géométrique de la règle")
+        
         st.markdown("**Méthode de lecture graphique :**")
         st.write(
             "En traçant une ligne reliant l'Oxydant 1 au Réducteur 2, puis en passant au travers "
@@ -2718,6 +2708,19 @@ with tab5:
             "spontanée et possible. Si le tracé dessine un Gamma inversé, la réaction est impossible sans apport extérieur d'énergie."
         )
     with col_52:
+        st.header("La Règle du Gamma")
+        if os.path.exists("gamma_intro.jpg"):
+            st.image(
+                "gamma_intro.jpg",
+                caption="Échelle des potentiels standards d'oxydoréduction ",
+                use_container_width=True,
+            )
+        else:
+            st.warning(
+                "L'image 'gamma_intro.jpg' n'a pas été trouvée dans le dossier."
+            )
+
+        
         if os.path.exists("regle_gamma_trace.jpg"):
             st.image(
                 "regle_gamma_trace.jpg",
