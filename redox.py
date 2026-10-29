@@ -650,26 +650,31 @@ def afficher_atelier_bilan_verrouille(verrouille=False):
 
     with col_trous:
         st.markdown(
-            "##### Synthèse de l'Atelier (Texte à trous - 10 pts)"
+            "##### Synthèse de l'Atelier 6 (Texte à trous - 5 cases - 10 pts)"
         )
-        # Utilisation de st.columns pour forcer un alignement parfait sur deux blocs propres
-        for ligne in st.session_state.champs_gam5_clean:
-            enonce, choix, attendu, cle = ligne
-            
-            # Création de deux colonnes asymétriques pour laisser de la place au texte
-            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="center")
-            
-            with c_txt:
-                st.write(enonce)
+        
+        # Vérification stricte que la liste existe dans le session_state
+        if "champs_bil6_clean" in st.session_state:
+            for ligne in st.session_state.champs_bil6_clean:
+                # Extraction sécurisée par index pour éviter tout problème de déballage (unpacking)
+                enonce = ligne[0]
+                choix = ligne[1]
+                cle = ligne[-1] # Récupère le dernier élément (la clé)
                 
-            with c_sel:
-                st.selectbox(
-                    label=enonce, # Le label sert d'ancre d'accessibilité invisible
-                    options=choix,
-                    key=f"{cle}_gam5_clean",
-                    disabled=verrouille,
-                    label_visibility="collapsed" # Masque le label pour ne garder que la boîte propre
-                )
+                # Création des deux colonnes avec alignement vertical centré
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="center")
+                
+                with c_txt:
+                    st.write(enonce)
+                    
+                with c_sel:
+                    st.selectbox(
+                        label=enonce,
+                        options=choix,
+                        key=f"{cle}_bil6_clean",
+                        disabled=verrouille,
+                        label_visibility="collapsed"
+                    )
 
 
 def afficher_atelier_gamma_verrouille(verrouille=False):
