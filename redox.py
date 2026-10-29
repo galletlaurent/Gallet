@@ -3150,7 +3150,7 @@ with tab7:
 
 
     # 1. BANQUE DE DONNÉES DYNAMIQUE PAR CAS (ÉNONCÉ, BD, QUIZ, TROUS)
-    if "banque_complete_routier" not in st.session_state:
+    if "banque_complete_routier" in st.session_state:
         st.session_state.banque_complete_routier = {
             "routier_cas1": {
                 "titre": "Cas pratique A : Corrosion par le sel de déneigement sur les châssis",
