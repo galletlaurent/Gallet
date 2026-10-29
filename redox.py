@@ -3582,19 +3582,71 @@ with tab7:
             st.rerun()
 
     # --- COMPILATION DU RAPPORT INDIVIDUEL SCELLÉ HTML ---
+    if "suite_verrouille_tab7_routier" not in st.session_state:
+        st.session_state.suite_verrouille_tab7_routier = False
+    verrou_at7 = st.session_state.suite_verrouille_tab7_routier
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 7")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat7 = st.checkbox(
+        "Je certifie avoir complété toutes les activités adaptées de cet Atelier (Bilan et Questionnaire).",
+        key="check_certif_routier7_scelle_officiel",
+        disabled=verrou_at7,
+    )
+
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 7",
+        key="btn_exp_t7_final_official_ajuste",
+        disabled=verrou_at7,
+        use_container_width=True,
+    ):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not st.session_state.get("verrou_routier_bilan", False):
+            st.error("Action refusée : Vous devez valider l'Équation Bilan ci-dessus au préalable.")
+        elif not case_certif_stat7:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Note du Générateur d'Équation Bilan (sur 10 pts)
+            note_b = float(st.session_state.get("score_routier_partie_bilan", 0.0))
+
+            # 2. Correction automatisée du Quiz Technique (10 pts)
+            score_q7 = 0.0
+            for q in questions_cas_optimales:
+                saisie_q = st.session_state.get(f"routier_quiz_{q['id']}", "Choisir...")
+                if str(saisie_q).strip() == str(q["rep"]).strip():
+                    score_q7 += 1.0
+
+            # 3. CORRECTION OPTIMISÉE : Comparaison directe avec la variable textuelle 'attendu_t'
+            score_t7 = 0.0
+            for t in cas_routier["trous"]:
+                enonce_t, choix_t, attendu_t, cle_t = t  # Déballage propre des 4 éléments du dictionnaire
+                saisie_t = st.session_state.get(f"{cle_t}_routier_clean", "Choisir...")
+                if str(saisie_t).strip() == str(attendu_t).strip():
+                    score_t7 += 1.0
+
+            # 4. Enregistrement des notes globales de session sur 30 points
+            st.session_state.score_t7_bilan_final = round(note_b, 1)
+            st.session_state.score_t7_atelier_final = round(float(score_q7 + score_t7), 1)
+            st.session_state.score_final_global_t7 = round(float(note_b + score_q7 + score_t7), 1)
+            st.session_state.suite_verrouille_tab7_routier = True
+            st.rerun()
+
+    # --- COMPILATION DU RAPPORT INDIVIDUEL SCELLÉ HTML POUR LE TRANSPORT ---
     if st.session_state.get("suite_verrouille_tab7_routier", False):
         not_b = st.session_state.get("score_t7_bilan_final", 0.0)
         not_at = st.session_state.get("score_t7_atelier_final", 0.0)
         not_tot = st.session_state.get("score_final_global_t7", 0.0)
         timestamp_suite7 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
 
-        st.success(
-            f"ATELIER SCELLÉ | Note globale enregistrée : {not_tot:.1f} / 30"
-        )
+        st.success(f"ATELIER TRANSPORT ROUTIER SCELLÉ | Note globale enregistrée : {not_tot:.1f} / 30")
 
         equation_eleve_texte = f"{r_coef_1} {r_reactif_1} + {r_reactif_2} -> {r_prod_1} + {r_prod_2}"
-
-        # Échappement des sauts de ligne de la BD pour le rendu HTML propre
         bd_html_format = cas_routier["bd"].replace("\n\n", "<br><br>")
 
         html_export_routier = f"""<!DOCTYPE html>
@@ -3657,25 +3709,15 @@ with tab7:
 
             <div class="sub-title">Activité 2 : Correction détaillée du Quiz Technique (10 pts)</div>
             <table>
-                <thead>
-                    <tr><th>N°</th><th>Question Technique Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-                </thead>
+                <thead><tr><th>N°</th><th>Question Technique Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr></thead>
                 <tbody>
         """
 
         for num, q_item in enumerate(questions_cas_optimales, 1):
-            saisie = st.session_state.get(
-                f"routier_quiz_{q_item['id']}", "Choisir..."
-            )
+            saisie = st.session_state.get(f"routier_quiz_{q_item['id']}", "Choisir...")
             attendu = q_item["rep"]
-            v_lbl = (
-                "CORRECT"
-                if str(saisie).strip() == str(attendu).strip()
-                else "INCORRECT"
-            )
-            v_class = (
-                "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            )
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_routier += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
         html_export_routier += """
@@ -3684,31 +3726,17 @@ with tab7:
             
             <div class="sub-title">Activité 3 : Correction détaillée de la Synthèse à trous (10 pts)</div>
             <table>
-                <thead>
-                    <tr><th>N°</th><th>Phrase complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-                </thead>
+                <thead><tr><th>N°</th><th>Phrase complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr></thead>
                 <tbody>
         """
 
         for num, t_item in enumerate(cas_routier["trous"], 1):
             enonce_t, _, attendu_t, cle_t = t_item
-            saisie_t = st.session_state.get(
-                f"{cle_t}_routier_clean", "Choisir..."
-            )
-            v_lbl_t = (
-                "CORRECT"
-                if str(saisie_t).strip() == str(attendu_t).strip()
-                else "INCORRECT"
-            )
-            # Détermination de la classe CSS pour la couleur (Vert si correct, Rouge si incorrect)
-            v_class_t = (
-                "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
-            )
-            
-            # Ajout de la ligne correspondante au tableau HTML
+            saisie_t = st.session_state.get(f"{cle_t}_routier_clean", "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
             html_export_routier += f"<tr><td>{num}</td><td>{enonce_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
 
-        # Fermeture des balises du tableau et de la page HTML
         html_export_routier += """
                 </tbody>
             </table>
@@ -3716,20 +3744,21 @@ with tab7:
         </html>
         """
 
-        # Utilisation de la bibliothèque os pour extraire proprement le nom du fichier
         nom_fichier_brut = preparer_nom_fichier("Rapport_Application_Transport")
-        nom_propre_html_t7 = os.path.basename(nom_fichier_brut).replace(
-            ".txt", ".html"
-        )
+        nom_propre_html_t7 = os.path.basename(nom_fichier_brut).replace(".txt", ".html")
 
-        # Rendu du bouton de téléchargement officiel scellé
         st.download_button(
             label="Télécharger le rapport d'évaluation officiel Transport Routier (.html)",
             data=html_export_routier,
             file_name=nom_propre_html_t7,
             mime="text/html",
-            key="download_btn_t7_final"
+            key="download_btn_t7_final",
         )
+
+
+
+
+            
 
 with tab8:
     st.header("Application dans le domaine de la maintenance")
