@@ -3258,7 +3258,7 @@ with tab6:
         )
 
         st.latex(r"\text{Fe}\rightleftharpoons \text{Fe}^{2+} + 2e^- ")
-        st.latex(r"\text{Ag}^{+} + 2e^- \rightleftharpoons \text{Ag}")
+        st.latex(r"\text{Ag}^{+} + e^- \rightleftharpoons \text{Ag}")
         
         st.markdown("**Équation finale sans électrons libres :**")
         st.latex(
