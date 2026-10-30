@@ -213,7 +213,7 @@ tab9 = onglets[9]
 tab10 = onglets[10]
 
 
-
+bibliotheque_redox = {
     # --- HALOGÈNES ET DÉRIVÉS ---
     "F2 / F⁻": {
         "E0": 2.87,
