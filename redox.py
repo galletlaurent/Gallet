@@ -3428,32 +3428,33 @@ with tab6:
                         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
 
                         def dessiner_becher_haute_precision(ax, couleur_solution, est_etat_final):
-                            # 1. Dessin de la solution aqueuse (Arrière-plan de la lame)
+                            # 1. COUCHE ARRIÈRE : Le bloc de liquide du fond du bécher
                             ax.add_patch(patches.Rectangle((1.2, 1.0), 2.6, 3.3, color=couleur_solution, alpha=0.7, zorder=1))
                             
-                            # 2. Dessin de la lame inclinée (Positionnement précis selon votre image)
-                            pts_lame = [[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]]
-                            ax.add_patch(patches.Polygon(pts_lame, color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=2))
+                            # 2. COUCHE ARRIÈRE : L'ellipse de surface (le fond coloré du dessus)
+                            ax.add_patch(patches.Ellipse((2.5, 4.3), 2.6, 0.4, color=couleur_solution, alpha=0.5, zorder=2))
                             
-                            # Si état final et qu'un dépôt métallique solide doit couvrir la lame immergée
+                            # 3. COUCHE ARRIÈRE : La face cachée arrière de la surface (pointillés)
+                            ax.add_patch(patches.Arc((2.5, 4.3), 2.6, 0.4, angle=0, theta1=0, theta2=180, color='#475569', lw=1, ls='--', zorder=3))
+                            
+                            # 4. COUCHE INTERMÉDIAIRE : La lame métallique inclinée
+                            pts_lame = [[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]]
+                            ax.add_patch(patches.Polygon(pts_lame, color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4))
+                            
+                            # 5. COUCHE INTERMÉDIAIRE : Le dépôt métallique (uniquement sur la partie immergée à l'état final)
                             if est_etat_final and s_red_init == "solide" and s_ox_fin == "solide":
                                 pts_depot = [[2.1, 1.3], [2.7, 1.2], [3.01, 4.3], [2.41, 4.3]]
-                                ax.add_patch(patches.Polygon(pts_depot, color=hex_ox_fin, edgecolor='#7e22ce' if hex_ox_fin == "#a855f7" else '#78350f', lw=1, alpha=0.95, zorder=3))
+                                ax.add_patch(patches.Polygon(pts_depot, color=hex_ox_fin, edgecolor='#7e22ce' if hex_ox_fin == "#a855f7" else '#78350f', lw=1, alpha=0.95, zorder=5))
 
-                            # 3. Contour précis du bécher en verre (Lignes fines sombres)
+                            # 6. COUCHE AVANT : La face avant visible du contour de l'eau (arc continu de 180 à 360°)
+                            # C'est cette ligne qui corrige le bug : elle s'arrête là où la barre sort de l'eau !
+                            ax.add_patch(patches.Arc((2.5, 4.3), 2.6, 0.4, angle=0, theta1=180, theta2=360, color='#1e293b', lw=1.5, zorder=6))
+
+                            # 7. COUCHE AVANT : Le contour global en verre du bécher
                             contours_verre = [
                                 [1.0, 5.0], [1.2, 5.0], [1.2, 1.0], [3.8, 1.0], [3.8, 5.0], [4.0, 5.0]
                             ]
-                            ax.add_patch(patches.Polygon(contours_verre, closed=False, fill=False, color='#1e293b', lw=2.5, zorder=4))
-                            
-                            # 4. Ellipses de surface pour la perspective du liquide (y = 4.3)
-                            # Fond de l'ellipse de surface
-                            ax.add_patch(patches.Ellipse((2.5, 4.3), 2.6, 0.4, color=couleur_solution, alpha=0.5, zorder=4))
-                            # Ligne de contour supérieure continue
-                            ax.add_patch(patches.Ellipse((2.5, 4.3), 2.6, 0.4, fill=False, color='#1e293b', lw=1.2, zorder=5))
-                            # Ligne en pointillés pour la face cachée arrière de l'ellipse de surface
-                            ax.add_patch(patches.Arc((2.5, 4.3), 2.6, 0.4, angle=0, theta1=0, theta2=180, color='#475569', lw=1, ls='--', zorder=6))
-
+                            ax.add_patch(patches.Polygon(contours_verre, closed=False, fill=False, color='#1e293b', lw=2.5, zorder=7))
                         # --- CONFIGURATION DU BÉCHER INITIAL (À GAUCHE) ---
                         col_sol_1 = hex_ox_init if s_ox_init == "solution" else teinte_eau_transparente
                         dessiner_becher_haute_precision(ax1, col_sol_1, est_etat_final=False)
