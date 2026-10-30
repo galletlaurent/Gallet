@@ -2995,7 +2995,7 @@ with tab6:
 
             # Ligne 3 : Lancement du calcul basé sur les E0 de votre bibliothèque
 
-        if reactif_ox_choisi != "Choisir..." and reactif_red_choisi != "Choisir...":
+            if reactif_ox_choisi != "Choisir..." and reactif_red_choisi != "Choisir...":
         st.write("")
         if st.button(
             "TESTER LA RÉACTION CHIMIQUE SUR LE TERRAIN",
