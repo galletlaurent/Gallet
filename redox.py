@@ -3389,7 +3389,6 @@ with tab6:
         "Mg²⁺": ("Mg²⁺", "solution", "#e0f2fe", "Incolore"),
         "Mg": ("Mg", "solide", "#94a3b8", "Gris blanc (Métal)")
     }
-
     t6_col_1, t6_col_2 = st.columns(2)
     with t6_col_1:
         t6_cpl_A = st.selectbox("Sélectionnez le premier couple redox (Couple A) :", ["Choisir..."] + t6_liste_couples, key="t6_v4_cpl_A")
@@ -3451,27 +3450,28 @@ with tab6:
                         import matplotlib.patches as patches
                         import numpy as np
 
-                        # Extraction propre des caractéristiques d'état depuis votre dictionnaire
-                        _, s_ox_init, hex_ox_init, lbl_ox_init = t6_couleurs_especes.get(t6_reactif_ox_choisi, (t6_reactif_ox_choisi, "solution", "#e0f2fe", "Incolore"))
-                        _, s_red_init, hex_red_init, lbl_red_init = t6_couleurs_especes.get(t6_reactif_red_choisi, (t6_reactif_red_choisi, "metal", "#94a3b8", "Métal"))
-                        _, s_ox_fin, hex_ox_fin, lbl_ox_fin = t6_couleurs_especes.get(t6_prod_ox, (t6_prod_ox, "solution", "#e0f2fe", "Incolore"))
-                        _, s_red_fin, hex_red_fin, lbl_red_fin = t6_couleurs_especes.get(t6_prod_red, (t6_prod_red, "solution", "#e0f2fe", "Incolore"))
+                        # EXTRACTION SÉCURISÉE DES PROPRIÉTÉS ET COULEURS DE CHAQUE ESPÈCE CHIMIQUE
+                        _, st_ox_i, hex_ox_init, lbl_ox_init = t6_couleurs_especes.get(t6_reactif_ox_choisi, (t6_reactif_ox_choisi, "solution", "#e0f2fe", "Incolore"))
+                        _, st_red_i, hex_red_init, lbl_red_init = t6_couleurs_especes.get(t6_reactif_red_choisi, (t6_reactif_red_choisi, "metal", "#94a3b8", "Métal"))
+                        _, st_ox_f, hex_ox_fin, lbl_ox_fin = t6_couleurs_especes.get(t6_prod_ox, (t6_prod_ox, "solution", "#e0f2fe", "Incolore"))
+                        _, st_red_f, hex_red_fin, lbl_red_fin = t6_couleurs_especes.get(t6_prod_red, (t6_prod_red, "solution", "#e0f2fe", "Incolore"))
 
-                        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 5))
+                        # Initialisation de la figure et de ses deux repères de dessin distincts ax1 et ax2
+                        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
                         teinte_eau = "#e0f2fe"
 
                         # --- AIGUILLAGE DU BÉCHER INITIAL (À GAUCHE) ---
-                        c_sol1 = hex_ox_init if s_ox_init == "solution" else teinte_eau
+                        c_sol1 = hex_ox_init if st_ox_i == "solution" else teinte_eau
                         
-                        if s_ox_init == "gaz" and s_red_init == "poudre":
+                        if st_ox_i == "gaz" and st_red_i == "poudre":
                             schema_gaz_solide(ax1, c_sol1, t6_reactif_ox_choisi, lbl_ox_init, t6_reactif_red_choisi, hex_red_init, est_final=False)
-                        elif s_ox_init == "gaz" and s_red_init == "metal":
+                        elif st_ox_i == "gaz" and st_red_i == "metal":
                             schema_gaz_metal(ax1, c_sol1, t6_reactif_ox_choisi, lbl_ox_init, t6_reactif_red_choisi, hex_red_init, est_final=False)
-                        elif s_ox_init == "solution" and s_red_init == "metal":
+                        elif st_ox_i == "solution" and st_red_i == "metal":
                             schema_liquide_metal(ax1, c_sol1, t6_reactif_red_choisi, hex_red_init, t6_reactif_ox_choisi, lbl_ox_init, est_final=False)
-                        elif s_ox_init == "gaz" and s_red_init == "gaz":
+                        elif st_ox_i == "gaz" and st_red_i == "gaz":
                             schema_gaz_gaz(ax1, c_sol1, t6_reactif_ox_choisi, t6_reactif_red_choisi, est_final=False)
-                        elif s_ox_init == "poudre" and s_red_init == "poudre":
+                        elif st_ox_i == "poudre" and st_red_i == "poudre":
                             schema_solide_solide(ax1, c_sol1, t6_reactif_ox_choisi, hex_ox_init, t6_reactif_red_choisi, hex_red_init, est_final=False)
                         else:
                             schema_liquide_liquide(ax1, c_sol1, f"Mélange initial\n{t6_reactif_ox_choisi} + {t6_reactif_red_choisi}")
@@ -3482,13 +3482,13 @@ with tab6:
                         ax1.axis('off')
 
                         # --- AIGUILLAGE DU BÉCHER FINAL (À DROITE) ---
-                        c_sol2 = hex_red_fin if s_red_fin == "solution" else (hex_ox_fin if s_ox_fin == "solution" else teinte_eau)
+                        c_sol2 = hex_red_fin if st_red_f == "solution" else (hex_ox_fin if st_ox_f == "solution" else teinte_eau)
                         
-                        if (s_ox_fin == "gaz" or s_red_fin == "gaz") and s_red_init == "metal":
+                        if st_ox_f == "gaz" or st_red_f == "gaz" or t6_prod_ox in ["O3", "H2", "NO2", "CO2", "SO2"]:
                             schema_gaz_metal(ax2, c_sol2, t6_prod_ox, lbl_ox_fin, t6_reactif_red_choisi, hex_red_init, est_final=True)
-                        elif s_ox_fin == "metal" and s_red_init == "metal":
+                        elif st_ox_f == "metal" and st_red_i == "metal":
                             schema_liquide_metal(ax2, c_sol2, t6_reactif_red_choisi, hex_red_init, t6_reactif_ox_choisi, lbl_ox_init, est_final=True, nom_depot=t6_prod_ox, hex_depot=hex_ox_fin)
-                        elif s_ox_fin == "poudre" or t6_prod_ox in ["S", "MnO2"]:
+                        elif st_ox_f == "poudre" or t6_prod_ox in ["S", "MnO2"]:
                             dessiner_contenant_becher(ax2, c_sol2)
                             ax2.add_patch(patches.Polygon([[1.22, 1.01], [3.78, 1.01], [3.6, 1.4], [1.4, 1.4]], color=hex_ox_fin, edgecolor='#1e293b', lw=1, zorder=5))
                             ax2.text(3.9, 1.2, f"Précipité de {t6_prod_ox}", color='#1e293b', fontsize=9, fontweight='bold', va='center')
