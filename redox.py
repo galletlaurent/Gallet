@@ -3602,8 +3602,8 @@ with tab6:
                     else:
                         st.error(
                             f"RÉSULTAT : RÉACTION CHIMIQUE IMPOSSIBLE !\n\n"
-                            f"L'oxydant choisi ({t6_reactif_ox_choisi}) se situe en dessous du réducteur choisi ({t6_reactif_red_choisi}) sur l'échelle.\n"
-                            f"Le gamma est inversé (E0 Ox = {t6_e0_ox:.2f} V <= E0 Red = {t6_e0_red:.2f} V). Les deux réactifs coexistent sans réagir."
+                            f"L'oxydant choisi ({t6_reactif_ox_choisi}) se situe en dessous du réducteur choisi ({t6_reactif_red_choisi}) sur l'échelle.\n\n"
+                            f"Le gamma est inversé (E0 Ox = {e0_ox:.2f} V <= E0 Red = {e0_red:.2f} V). Les deux réactifs coexistent sans réagir."
                         )
 
     st.write("---")
