@@ -3559,7 +3559,6 @@ with tab6:
                                 ax2.text(2.9, 5.2, f"Recueil de\n{gaz_trouves[0][0]}", color=gaz_trouves[0][1], fontsize=8, fontweight='bold', ha='center')
                                 ax2.text(4.4, 5.2, f"Recueil de\n{gaz_trouves[1][0]}", color=gaz_trouves[1][1], fontsize=8, fontweight='bold', ha='center')
                             else:
-                            else:
                                 # CONFIGURATION A UN SEUL GAZ -> Une canalisation simple vers une unique éprouvette inversée
                                 ax2.plot([1.7, 1.7, 3.4, 3.2], [5.4, 6.2, 6.0, 2.5], color='#475569', lw=2, zorder=4)
                                 ax2.add_patch(patches.Rectangle((2.8, 1.5), 0.8, 3.5, color='#e0f2fe', alpha=0.5, edgecolor='#1e293b', lw=1.5, zorder=5))
@@ -3570,34 +3569,33 @@ with tab6:
                                 for _ in range(25):
                                     ax2.add_patch(patches.Circle((3.2 + np.random.normal(0, 0.12), 4.3 + np.random.uniform(-0.4, 0.4)), radius=0.05, fill=False, color=col_g_unique, lw=1, zorder=6))
                                 ax2.text(3.2, 5.2, f"Recueil de {nom_g_unique}\n(Gaz pur)", color=col_g_unique, fontsize=8.5, fontweight='bold', ha='center')
+                                ax2.text(1.7, 2.5, "Milieu\nRéactionnel", color='#1e293b', fontsize=8, ha='center', fontweight='bold')
+                            else:
+                                # Configuration classique hors production de gaz : Remplacement par un Bécher standard ouvert
+                                c_sol2 = hex_red_fin if st_red_f == "solution" else (hex_ox_fin if st_ox_f == "solution" else teinte_eau)
+                                dessiner_contenant_becher(ax2, c_sol2)
+                                ax2.text(1.3, 3.5, "Solution finale\ntransformée", color='#1e293b', fontsize=9, va='center', fontweight='bold', zorder=8)
 
-                            ax2.text(1.7, 2.5, "Milieu\nRéactionnel", color='#1e293b', fontsize=8, ha='center', fontweight='bold')
-                        else:
-                            # Configuration classique hors production de gaz : Remplacement par un Bécher standard ouvert
-                            c_sol2 = hex_red_fin if st_red_f == "solution" else (hex_ox_fin if st_ox_f == "solution" else teinte_eau)
-                            dessiner_contenant_becher(ax2, c_sol2)
-                            ax2.text(1.3, 3.5, "Solution finale\ntransformée", color='#1e293b', fontsize=9, va='center', fontweight='bold', zorder=8)
+                                # --- PRODUIT 1 : ANALYSE DES SUPPORTS MÉTAUX ---
+                                if st_red_i == "metal":
+                                    ax2.add_patch(patches.Polygon([[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]], color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4))
+                                    if st_ox_f == "metal":
+                                        dep = patches.Polygon([[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]], color=hex_ox_fin, edgecolor='#78350f', lw=1.2, zorder=5)
+                                        ax2.add_patch(dep)
+                                        dep.set_clip_path(patches.Rectangle((1.0, 0.0), 3.0, 4.3, transform=ax2.transData))
+                                        ax2.text(3.4, 2.5, f"Dépôt de {t6_prod_ox}\n(Métal)", color='#78350f', fontsize=9, fontweight='bold')
 
-                            # --- PRODUIT 1 : ANALYSE DES SUPPORTS MÉTAUX ---
-                            if st_red_i == "metal":
-                                ax2.add_patch(patches.Polygon([[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]], color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4))
-                                if st_ox_f == "metal":
-                                    dep = patches.Polygon([[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]], color=hex_ox_fin, edgecolor='#78350f', lw=1.2, zorder=5)
-                                    ax2.add_patch(dep)
-                                    dep.set_clip_path(patches.Rectangle((1.0, 0.0), 3.0, 4.3, transform=ax2.transData))
-                                    ax2.text(3.4, 2.5, f"Dépôt de {t6_prod_ox}\n(Métal)", color='#78350f', fontsize=9, fontweight='bold')
+                                # --- PRODUIT 2 : ANALYSE DES PRÉCIPITÉS SÉDIMENTAIRES (S, MnO2...) ---
+                                if st_ox_f in ["poudre", "solide"] and t6_prod_ox in ["S", "MnO2"]:
+                                    ax2.add_patch(patches.Polygon([[1.22, 1.01], [3.78, 1.01], [3.6, 1.45], [1.4, 1.45]], color=hex_ox_fin, edgecolor='#1e293b', lw=1, zorder=5))
+                                    ax2.text(2.5, 1.15, f"Précipité de {t6_prod_ox}", color='#1e293b', fontsize=9, fontweight='bold', ha='center', zorder=6)
 
-                            # --- PRODUIT 2 : ANALYSE DES PRÉCIPITÉS SÉDIMENTAIRES (S, MnO2...) ---
-                            if st_ox_f in ["poudre", "solide"] and t6_prod_ox in ["S", "MnO2"]:
-                                ax2.add_patch(patches.Polygon([[1.22, 1.01], [3.78, 1.01], [3.6, 1.45], [1.4, 1.45]], color=hex_ox_fin, edgecolor='#1e293b', lw=1, zorder=5))
-                                ax2.text(2.5, 1.15, f"Précipité de {t6_prod_ox}", color='#1e293b', fontsize=9, fontweight='bold', ha='center', zorder=6)
+                            ax2.text(2.5, 0.2, "ÉTAT FINAL", fontsize=12, fontweight='bold', ha='center')
+                            ax2.set_xlim(0, 5.5)
+                            ax2.set_ylim(0, 7)
+                            ax2.axis('off')
 
-                        ax2.text(2.5, 0.2, "ÉTAT FINAL", fontsize=12, fontweight='bold', ha='center')
-                        ax2.set_xlim(0, 5.5)
-                        ax2.set_ylim(0, 7)
-                        ax2.axis('off')
-
-                        st.pyplot(fig)
+                            st.pyplot(fig)
 
 
 
