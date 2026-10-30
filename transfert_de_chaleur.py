@@ -985,7 +985,7 @@ with tab2:
         )
 
 
-        col_t21_h31, col_t31_h31 = st.columns(2)
+        col_t21_h31, col_t36_h36 = st.columns(2)
         
         with col_t21_h31:
             col_t21_h311, col_t21_h311 = st.columns(2)
