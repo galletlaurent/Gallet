@@ -2956,38 +2956,38 @@ with tab6:
         )
 
     # Ligne 2 : Choix des réactifs mis en contact
-            if cpl_selection_A != "Choisir..." and cpl_selection_B != "Choisir...":
-                if cpl_selection_A == cpl_selection_B:
-                    st.warning("Veuillez choisir deux couples distincts pour simuler un transfert d'électrons.")
-                else:
-                    # Initialisation par défaut pour éviter les erreurs d'affectation
-                    ox_A, red_A, ox_B, red_B = "", "", "", ""
-                    
-                    try:
-                        ox_A, red_A = cpl_selection_A.split(" / ")
-                        ox_B, red_B = cpl_selection_B.split(" / ")
-                        erreur_decoupage = False
-                    except ValueError:
-                        erreur_decoupage = True
+        if cpl_selection_A != "Choisir..." and cpl_selection_B != "Choisir...":
+            if cpl_selection_A == cpl_selection_B:
+                st.warning("Veuillez choisir deux couples distincts pour simuler un transfert d'électrons.")
+            else:
+                # Initialisation par défaut pour éviter les erreurs d'affectation
+                ox_A, red_A, ox_B, red_B = "", "", "", ""
+                
+                try:
+                    ox_A, red_A = cpl_selection_A.split(" / ")
+                    ox_B, red_B = cpl_selection_B.split(" / ")
+                    erreur_decoupage = False
+                except ValueError:
+                    erreur_decoupage = True
 
-                    # Le rendu des menus s'affiche uniquement si le découpage a fonctionné à 100%
-                    if not erreur_decoupage:
-                        st.write("")
-                        st.markdown("**Configuration des réactifs mélangés :**")
-                        col_mix_1, col_mix_2 = st.columns(2)
+                # Le rendu des menus s'affiche uniquement si le découpage a fonctionné à 100%
+                if not erreur_decoupage:
+                    st.write("")
+                    st.markdown("**Configuration des réactifs mélangés :**")
+                    col_mix_1, col_mix_2 = st.columns(2)
 
-                        with col_mix_1:
-                            reactif_ox_choisi = st.selectbox(
-                                "Sélectionnez l'oxydant introduit dans le système :",
-                                ["Choisir...", ox_A, ox_B],
-                                key="sim_bibliotheque_reactif_ox"
-                            )
-                        with col_mix_2:
-                            reactif_red_choisi = st.selectbox(
-                                "Sélectionnez le réducteur introduit dans le système :",
-                                ["Choisir...", red_A, red_B],
-                                key="sim_bibliotheque_reactif_red"
-                            )
+                    with col_mix_1:
+                        reactif_ox_choisi = st.selectbox(
+                            "Sélectionnez l'oxydant introduit dans le système :",
+                            ["Choisir...", ox_A, ox_B],
+                            key="sim_bibliotheque_reactif_ox"
+                        )
+                    with col_mix_2:
+                        reactif_red_choisi = st.selectbox(
+                            "Sélectionnez le réducteur introduit dans le système :",
+                            ["Choisir...", red_A, red_B],
+                            key="sim_bibliotheque_reactif_red"
+                        )
 
             # Ligne 3 : Lancement du calcul basé sur les E0 de votre bibliothèque
             if reactif_ox_choisi != "Choisir..." and reactif_red_choisi != "Choisir...":
