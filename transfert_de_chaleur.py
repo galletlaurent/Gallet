@@ -936,7 +936,6 @@ with tab2:
         "des particules au cœur de la matière :"
     )
 
-    # Création de deux colonnes pour positionner les deux images de laboratoire côte à côte
     img_col_gauche, img_col_droite = st.columns(2)
 
     with img_col_gauche:
@@ -944,23 +943,25 @@ with tab2:
         if os.path.exists("froid.jpg"):
             st.image(
                 "froid.jpg",
-                caption="basse température faible vitesse",
+                caption="Basse température : faible vitesse d'agitation",
+                use_container_width=True
             )
         else:
             st.warning(
-                "L'image 'froid.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+                "L'image 'froid.jpg' est introuvable. Placez l'illustration dans le répertoire de l'application."
             )
 
-
     with img_col_droite:
+        # Affichage de l'image de droite (Haute température)
         if os.path.exists("chaud.jpg"):
             st.image(
                 "chaud.jpg",
-                caption="haute température grande vitesse",
+                caption="Haute température : grande vitesse d'agitation",
+                use_container_width=True
             )
         else:
             st.warning(
-                "L'image 'chaud.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+                "L'image 'chaud.jpg' est introuvable. Placez l'illustration dans le répertoire de l'application."
             )
 
     st.write("---")
@@ -1033,17 +1034,19 @@ with tab2:
         st.markdown("**Formule de conversion appliquée :**")
         st.latex(formule_latex)
         
-        # Boîte de résultat finale
+        # Extraction propre du symbole d'unité (ex: '°C' au lieu de 'Degré Celsius (°C)')
+        symb_src = unite_source.split(" (")[1][:-1] if " (" in unite_source else unite_source
+        symb_cib = unite_cible.split(" (")[1][:-1] if " (" in unite_cible else unite_cible
+
+        # Boîte de résultat finale purgée des arguments invalides
         st.markdown(
             f"<div style='background-color: #f1f5f9; padding: 15px; border-radius: 6px; border-left: 4px solid #1e3a8a; font-size: 16px; font-weight: bold; color: #0f172a;'>"
-            f"Résultat de la conversion : {valeur_saisie:.2f} {unite_source.split(' (')[1][:-1]} = {resultat_conv:.2f} {unite_cible.split(' (')[1][:-1]}"
+            f"Résultat de la conversion : {valeur_saisie:.2f} {symb_src} = {resultat_conv:.2f} {symb_cib}"
             f"</div>",
-            unsafe_allow_width=True,
             unsafe_allow_html=True
         )
 
     st.write("---")
-
     # =============================================================================
     # CONFIGURATION DOUBLE COLONNE : TEXTE BLEU A GAUCHE / IMAGE ET GRAPHISME A DROITE
     # =============================================================================
