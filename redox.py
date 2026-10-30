@@ -3429,25 +3429,37 @@ with tab6:
 
                         def dessiner_becher_haute_precision(ax, couleur_solution, est_etat_final):
                             # 1. COUCHE ARRIÈRE : Le bloc de liquide du fond du bécher
-                            ax.add_patch(patches.Rectangle((1.2, 1.0), 2.6, 3.3, color=couleur_solution, alpha=0.7, zorder=1))
+                            liquide_fond = patches.Rectangle((1.2, 1.0), 2.6, 3.3, color=couleur_solution, alpha=0.7, zorder=1)
+                            ax.add_patch(liquide_fond)
                             
                             # 2. COUCHE ARRIÈRE : L'ellipse de surface (le fond coloré du dessus)
-                            ax.add_patch(patches.Ellipse((2.5, 4.3), 2.6, 0.4, color=couleur_solution, alpha=0.5, zorder=2))
+                            surface_ellipse = patches.Ellipse((2.5, 4.3), 2.6, 0.4, color=couleur_solution, alpha=0.5, zorder=2)
+                            ax.add_patch(surface_ellipse)
                             
                             # 3. COUCHE ARRIÈRE : La face cachée arrière de la surface (pointillés)
                             ax.add_patch(patches.Arc((2.5, 4.3), 2.6, 0.4, angle=0, theta1=0, theta2=180, color='#475569', lw=1, ls='--', zorder=3))
                             
                             # 4. COUCHE INTERMÉDIAIRE : La lame métallique inclinée
                             pts_lame = [[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]]
-                            ax.add_patch(patches.Polygon(pts_lame, color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4))
+                            lame_polygon = patches.Polygon(pts_lame, color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4)
+                            ax.add_patch(lame_polygon)
                             
-                            # 5. COUCHE INTERMÉDIAIRE : Le dépôt métallique (uniquement sur la partie immergée à l'état final)
+                            # 5. COUCHE INTERMÉDIAIRE : Le dépôt métallique épousant la courbure de l'eau
                             if est_etat_final and s_red_init == "solide" and s_ox_fin == "solide":
-                                pts_depot = [[2.1, 1.3], [2.7, 1.2], [3.01, 4.3], [2.41, 4.3]]
-                                ax.add_patch(patches.Polygon(pts_depot, color=hex_ox_fin, edgecolor='#7e22ce' if hex_ox_fin == "#a855f7" else '#78350f', lw=1, alpha=0.95, zorder=5))
+                                # On crée d'abord un polygone de dépôt volontairement plus haut que la ligne d'eau
+                                pts_depot_haut = [[2.1, 1.3], [2.7, 1.2], [2.9, 4.6], [2.3, 4.7]]
+                                depot_polygon = patches.Polygon(pts_depot_haut, color=hex_ox_fin, edgecolor='#7e22ce' if hex_ox_fin == "#a855f7" else '#78350f', lw=1, alpha=0.95, zorder=5)
+                                ax.add_patch(depot_polygon)
+                                
+                                # CORRECTIF CHOC : On utilise un masque de découpe combinant le bas du bécher et la courbe de l'ellipse
+                                # pour couper le sommet du dépôt de façon parfaitement incurvée comme l'eau
+                                zone_immergee = patches.Rectangle((1.2, 1.0), 2.6, 3.3, transform=ax.transData)
+                                surface_courbe = patches.Ellipse((2.5, 4.3), 2.6, 0.4, transform=ax.transData)
+                                
+                                # Le polygone est restreint pour ne jamais dépasser la courbure de la surface
+                                depot_polygon.set_clip_path(surface_ellipse)
 
                             # 6. COUCHE AVANT : La face avant visible du contour de l'eau (arc continu de 180 à 360°)
-                            # C'est cette ligne qui corrige le bug : elle s'arrête là où la barre sort de l'eau !
                             ax.add_patch(patches.Arc((2.5, 4.3), 2.6, 0.4, angle=0, theta1=180, theta2=360, color='#1e293b', lw=1.5, zorder=6))
 
                             # 7. COUCHE AVANT : Le contour global en verre du bécher
