@@ -3528,39 +3528,38 @@ with tab6:
                         # Condition structurale : Si un ou deux produits sont gazeux -> Montage étanche impératif
                         si_produit_gaz = (st_ox_f == "gaz" or st_red_f == "gaz")
 
-                        if si_produit_gaz:
-                            # Rendu d'un flacon de réaction hermétiquement obturé par un opercule
-                            c_sol2 = hex_red_fin if st_red_f == "solution" else (hex_ox_fin if st_ox_f == "solution" else teinte_eau)
+                        c_sol2 = hex_red_fin if st_red_f == "solution" else (hex_ox_fin if st_ox_f == "solution" else teinte_eau)
+                        
+                        # Détection si la transformation produit un ou plusieurs gaz
+                        if st_ox_f == "gaz" or st_red_f == "gaz" or t6_prod_ox in ["O3", "H2", "NO2", "CO2", "SO2", "O2"]:
+                            # 1. Flacon de réaction principal hermétique
                             ax2.add_patch(patches.Rectangle((1.2, 1.0), 1.0, 4.5, color=c_sol2, alpha=0.6, zorder=1))
                             ax2.add_patch(patches.Polygon([[1.2, 5.5], [1.2, 1.0], [2.2, 1.0], [2.2, 5.5]], closed=False, fill=False, color='#1e293b', lw=2.5, zorder=2))
-                            ax2.add_patch(patches.Rectangle((1.15, 5.2), 1.1, 0.4, color='#64748b', zorder=3)) # Bouchon étanche
+                            ax2.add_patch(patches.Rectangle((1.15, 5.2), 1.1, 0.4, color='#64748b', zorder=3)) # Bouchon
                             
-                            # Initialisation des variables de repérage des gaz finaux pour le double recueil
+                            # Initialisation des gaz à afficher
                             gaz_trouves = []
                             if st_ox_f == "gaz": gaz_trouves.append((t6_prod_ox, '#0369a1'))
                             if st_red_f == "gaz": gaz_trouves.append((t6_prod_red, '#b45309'))
 
-                            # Rendu dynamique des circuits de dérivation du verre de recueil (1 ou 2 éprouvettes)
+                            # CAS A : Présence de deux gaz distincts (ex: O2 + SO2)
                             if len(gaz_trouves) >= 2:
-                                # CONFIGURATION A MULTIPLE GAZ (Ex: O2 + SO2) -> Double canalisation et double éprouvette
                                 ax2.plot([1.5, 1.5, 2.9, 2.9], [5.4, 6.2, 6.2, 2.5], color='#475569', lw=1.5, zorder=4)
                                 ax2.plot([1.9, 1.9, 4.4, 4.5], [5.4, 6.6, 6.5, 2.5], color='#334155', lw=1.5, zorder=4)
                                 
-                                # Rendu géométrique des deux éprouvettes de piégeage inversées
                                 ax2.add_patch(patches.Rectangle((2.5, 1.5), 0.8, 3.5, color='#e0f2fe', alpha=0.5, edgecolor='#1e293b', lw=1.5, zorder=5))
                                 ax2.add_patch(patches.Rectangle((4.0, 1.5), 0.8, 3.5, color='#e0f2fe', alpha=0.5, edgecolor='#1e293b', lw=1.5, zorder=5))
                                 
-                                # Distribution des bulles d'isolements gazeux
                                 np.random.seed(24)
                                 for _ in range(15):
-                                    ax2.add_patch(patches.Circle((2.85 + np.random.normal(0, 0.1), 4.4 + np.random.uniform(-0.3, 0.4)), radius=0.04, fill=False, color=gaz_trouves[0][1], lw=0.9, zorder=6))
-                                    ax2.add_patch(patches.Circle((4.35 + np.random.normal(0, 0.1), 4.4 + np.random.uniform(-0.3, 0.4)), radius=0.04, fill=False, color=gaz_trouves[1][1], lw=0.9, zorder=6))
+                                    ax2.add_patch(patches.Circle((2.85 + np.random.normal(0, 0.1), 4.4 + np.random.uniform(-0.3, 0.4)), radius=0.04, fill=False, color='#0369a1', lw=0.9, zorder=6))
+                                    ax2.add_patch(patches.Circle((4.35 + np.random.normal(0, 0.1), 4.4 + np.random.uniform(-0.3, 0.4)), radius=0.04, fill=False, color='#b45309', lw=0.9, zorder=6))
                                 
-                                ax2.text(2.9, 5.2, f"Recueil de\n{gaz_trouves[0][0]}", color=gaz_trouves[0][1], fontsize=8, fontweight='bold', ha='center')
-                                ax2.text(4.4, 5.2, f"Recueil de\n{gaz_trouves[1][0]}", color=gaz_trouves[1][1], fontsize=8, fontweight='bold', ha='center')
+                                ax2.text(2.9, 5.2, f"Recueil de\n{gaz_trouves[0][0]}", color='#0369a1', fontsize=8, fontweight='bold', ha='center')
+                                ax2.text(4.4, 5.2, f"Recueil de\n{gaz_trouves[1][0]}", color='#b45309', fontsize=8, fontweight='bold', ha='center')
                             
+                            # CAS B : Un seul gaz est produit
                             else:
-                                # CONFIGURATION A UN SEUL GAZ -> Une canalisation simple vers une unique éprouvette inversée
                                 ax2.plot([1.7, 1.7, 3.4, 3.2], [5.4, 6.2, 6.0, 2.5], color='#475569', lw=2, zorder=4)
                                 ax2.add_patch(patches.Rectangle((2.8, 1.5), 0.8, 3.5, color='#e0f2fe', alpha=0.5, edgecolor='#1e293b', lw=1.5, zorder=5))
                                 
@@ -3569,38 +3568,35 @@ with tab6:
                                 col_g_unique = gaz_trouves[0][1] if gaz_trouves else '#475569'
                                 for _ in range(25):
                                     ax2.add_patch(patches.Circle((3.2 + np.random.normal(0, 0.12), 4.3 + np.random.uniform(-0.4, 0.4)), radius=0.05, fill=False, color=col_g_unique, lw=1, zorder=6))
-                                
-                                # LIGNE 1 SEPAREE
                                 ax2.text(3.2, 5.2, f"Recueil de {nom_g_unique}\n(Gaz pur)", color=col_g_unique, fontsize=8.5, fontweight='bold', ha='center')
                                 
-                            # LIGNE 2 SEPAREE ET REMISE A SON NIVEAU D'ALIGNEMENT GLOBAL
                             ax2.text(1.7, 2.5, "Milieu\nRéactionnel", color='#1e293b', fontsize=8, ha='center', fontweight='bold')
-                            else:
-                                # Configuration classique hors production de gaz : Remplacement par un Bécher standard ouvert
-                                c_sol2 = hex_red_fin if st_red_f == "solution" else (hex_ox_fin if st_ox_f == "solution" else teinte_eau)
-                                dessiner_contenant_becher(ax2, c_sol2)
-                                ax2.text(1.3, 3.5, "Solution finale\ntransformée", color='#1e293b', fontsize=9, va='center', fontweight='bold', zorder=8)
+                        
+                        # Configuration classique sans gaz : Dessin du Bécher ouvert standard
+                        else:
+                            dessiner_contenant_becher(ax2, c_sol2)
+                            ax2.text(1.3, 3.5, "Solution finale\ntransformée", color='#1e293b', fontsize=9, va='center', fontweight='bold', zorder=8)
 
-                                # --- PRODUIT 1 : ANALYSE DES SUPPORTS MÉTAUX ---
-                                if st_red_i == "metal":
-                                    ax2.add_patch(patches.Polygon([[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]], color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4))
-                                    if st_ox_f == "metal":
-                                        dep = patches.Polygon([[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]], color=hex_ox_fin, edgecolor='#78350f', lw=1.2, zorder=5)
-                                        ax2.add_patch(dep)
-                                        dep.set_clip_path(patches.Rectangle((1.0, 0.0), 3.0, 4.3, transform=ax2.transData))
-                                        ax2.text(3.4, 2.5, f"Dépôt de {t6_prod_ox}\n(Métal)", color='#78350f', fontsize=9, fontweight='bold')
+                            # --- PRODUIT RETROUVÉ 1 : LES SUPPORTS MÉTAUX ---
+                            if st_red_i == "metal":
+                                ax2.add_patch(patches.Polygon([[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]], color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4))
+                                if st_ox_f == "metal":
+                                    dep = patches.Polygon([[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]], color=hex_ox_fin, edgecolor='#78350f', lw=1.2, zorder=5)
+                                    ax2.add_patch(dep)
+                                    dep.set_clip_path(patches.Rectangle((1.0, 0.0), 3.0, 4.3, transform=ax2.transData))
+                                    ax2.text(3.4, 2.5, f"Dépôt de {t6_prod_ox}\n(Métal)", color='#78350f', fontsize=9, fontweight='bold')
 
-                                # --- PRODUIT 2 : ANALYSE DES PRÉCIPITÉS SÉDIMENTAIRES (S, MnO2...) ---
-                                if st_ox_f in ["poudre", "solide"] and t6_prod_ox in ["S", "MnO2"]:
-                                    ax2.add_patch(patches.Polygon([[1.22, 1.01], [3.78, 1.01], [3.6, 1.45], [1.4, 1.45]], color=hex_ox_fin, edgecolor='#1e293b', lw=1, zorder=5))
-                                    ax2.text(2.5, 1.15, f"Précipité de {t6_prod_ox}", color='#1e293b', fontsize=9, fontweight='bold', ha='center', zorder=6)
+                            # --- PRODUIT RETROUVÉ 2 : LES PRÉCIPITÉS (S, MnO2...) ---
+                            if st_ox_f in ["poudre", "solide"] and t6_prod_ox in ["S", "MnO2"]:
+                                ax2.add_patch(patches.Polygon([[1.22, 1.01], [3.78, 1.01], [3.6, 1.45], [1.4, 1.45]], color=hex_ox_fin, edgecolor='#1e293b', lw=1, zorder=5))
+                                ax2.text(2.5, 1.15, f"Précipité de {t6_prod_ox}", color='#1e293b', fontsize=9, fontweight='bold', ha='center', zorder=6)
 
-                            ax2.text(2.5, 0.2, "ÉTAT FINAL", fontsize=12, fontweight='bold', ha='center')
-                            ax2.set_xlim(0, 5.5)
-                            ax2.set_ylim(0, 7)
-                            ax2.axis('off')
+                        ax2.text(2.5, 0.2, "ÉTAT FINAL", fontsize=12, fontweight='bold', ha='center')
+                        ax2.set_xlim(0, 5.5)
+                        ax2.set_ylim(0, 7)
+                        ax2.axis('off')
 
-                            st.pyplot(fig)
+                        st.pyplot(fig)
          
                         # Cas impossible : Le gamma est inversé (Un seul bloc else conservé)
                         else:
