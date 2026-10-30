@@ -2069,7 +2069,7 @@ with tab2:
     if os.path.exists("oxydation_intro.jpg"):
         st.image(
             "oxydation_intro.jpg",
-            caption="Mise en évidence expérimentale de l'oxydation d'un métal",
+            caption="les antioxydants dans l'alimentation",
             use_container_width=True,
         )
     else:
@@ -2430,7 +2430,7 @@ with tab3:
     if os.path.exists("reduction_intro.jpg"):
         st.image(
             "reduction_intro.jpg",
-            caption="Mise en évidence expérimentale de la réduction en laboratoire",
+            caption="les oxydants dans l'alimentation",
             use_container_width=True,
         )
     else:
@@ -3243,9 +3243,31 @@ with tab6:
         )
         st.markdown("**Équation finale sans électrons libres :**")
         st.latex(
-            r"\text{Zn (s)} + \text{Cu}^{2+}\text{ (aq)} \longrightarrow \text{Zn}^{2+}\text{ (aq)} + \text{Cu (s)}"
+            r"\text{Fe (s)} + \text{Cu}^{2+}\text{ (aq)} \longrightarrow \text{Fe}^{2+}\text{ (aq)} + \text{Cu (s)}"
         )
+
+        st.markdown("**Exemple classique : Fer métallique et ions Ag I**")
+        st.write(
+            "Le fer se fait oxyder en libérant 2 électrons, tandis que l'ion argent I se fait réduire en captant 1 électron. "
+            "Comme le nombre d'électrons échangés est idifférents (2 d'un côté, 1 de l'autre), l'addition n' est pas directe."
+        )
+        st.markdown("**Équation finale sans électrons libres :**")
+        st.latex(
+            r"\text{ Fe (s)} + \text{2 Ag}^{+}\text{ (aq)} \longrightarrow \text{ Fe}^{2+}\text{ (aq)} + \text{2 Ag (s)}"
+        )
+
+
     with col_62:
+        if os.path.exists("bilan_addition_methodememe.jpg"):
+            st.image(
+                "bilan_addition_methodememe.jpg",
+                caption="Méthodologie de simplification des électrons par addition",
+            )
+        else:
+            st.warning("L'image 'bilan_addition_methodememe.jpg' est introuvable.")
+
+
+
         if os.path.exists("bilan_addition_methode.jpg"):
             st.image(
                 "bilan_addition_methode.jpg",
