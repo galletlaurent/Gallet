@@ -2927,6 +2927,96 @@ with tab6:
                 "L'image 'bilan_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
             )
 
+
+    # =============================================================================
+    # PARTIE PRATIQUE INTERACTIVE : SIMULATEUR VIA LA BIBLIOTHÈQUE REDOX
+    # =============================================================================
+    st.write("---")
+    st.subheader("Partie Pratique : Vérification de la possibilité d'une réaction")
+    st.write(
+        "Utilisez les menus déroulants pour choisir deux couples issus de la bibliothèque et vérifier si la réaction a lieu :"
+    )
+
+    # Récupération dynamique de la liste des couples configurés dans votre dictionnaire
+    liste_couples_disponibles = list(bibliotheque_redox.keys())
+
+    # Ligne 1 : Choix des deux couples à tester
+    col_sim_1, col_sim_2 = st.columns(2)
+    with col_sim_1:
+        cpl_selection_A = st.selectbox(
+            "Sélectionnez le premier couple redox (Couple A) :",
+            ["Choisir..."] + liste_couples_disponibles,
+            key="sim_menu_bibliotheque_couple_A",
+        )
+    with col_sim_2:
+        cpl_selection_B = st.selectbox(
+            "Sélectionnez le second couple redox (Couple B) :",
+            ["Choisir..."] + liste_couples_disponibles,
+            key="sim_menu_bibliotheque_couple_B",
+        )
+
+    # Ligne 2 : Choix des réactifs mis en contact
+    if cpl_selection_A != "Choisir..." and cpl_selection_B != "Choisir...":
+        if cpl_selection_A == cpl_selection_B:
+            st.warning(
+                "Veuillez choisir deux couples distincts pour simuler un transfert d'électrons."
+            )
+        else:
+            # Séparation automatique pour isoler l'Oxydant (gauche) et le Réducteur (droite)
+            ox_A, red_A = cpl_selection_A.split(" / ")
+            ox_B, red_B = cpl_selection_B.split(" / ")
+
+            st.write("")
+            st.markdown("**Configuration des réactifs mélangés :**")
+            col_mix_1, col_mix_2 = st.columns(2)
+
+            with col_mix_1:
+                reactif_ox_choisi = st.selectbox(
+                    "Sélectionnez l'oxydant introduit dans le système :",
+                    ["Choisir...", ox_A, ox_B],
+                    key="sim_bibliotheque_reactif_ox",
+                )
+            with col_mix_2:
+                reactif_red_choisi = st.selectbox(
+                    "Sélectionnez le réducteur introduit dans le système :",
+                    ["Choisir...", red_A, red_B],
+                    key="sim_bibliotheque_reactif_red",
+                )
+
+            # Ligne 3 : Lancement du calcul basé sur les E0 de votre bibliothèque
+            if reactif_ox_choisi != "Choisir..." and reactif_red_choisi != "Choisir...":
+                
+                # Extraction automatique des E0 depuis votre structure de dictionnaire existante
+                e0_cpl_A = float(bibliotheque_redox[cpl_selection_A]["E0"])
+                e0_cpl_B = float(bibliotheque_redox[cpl_selection_B]["E0"])
+
+                # Affectation selon le réactif sélectionné
+                e0_ox = e0_cpl_A if reactif_ox_choisi == ox_A else e0_cpl_B
+                e0_red = e0_cpl_A if reactif_red_choisi == red_A else e0_cpl_B
+
+                st.write("")
+                if st.button(
+                    "TESTER LA RÉACTION CHIMIQUE SUR LE TERRAIN",
+                    key="btn_run_simulation_gamma_bibliotheque",
+                    use_container_width=True,
+                ):
+                    # Règle du gamma direct : Oxydant au potentiel le plus haut + Réducteur au potentiel le plus bas
+                    if e0_ox > e0_red:
+                        st.success(
+                            f"RÉSULTAT : LA RÉACTION EST POSSIBLE !\n\n"
+                            f"L'oxydant choisi ({reactif_ox_choisi}) est placé au-dessus du réducteur choisi ({reactif_red_choisi}) sur l'échelle des potentiels.\n\n"
+                            f"La règle du gamma direct est respectée (E0 Ox = {e0_ox:.2f} V > E0 Red = {e0_red:.2f} V). Le transfert d'électrons est spontané."
+                        )
+                    else:
+                        st.error(
+                            f"RÉSULTAT : RÉACTION CHIMIQUE IMPOSSIBLE !\n\n"
+                            f"L'oxydant choisi ({reactif_ox_choisi}) se situe en dessous du réducteur choisi ({reactif_red_choisi}) sur l'échelle.\n\n"
+                            f"Le gamma est inversé (E0 Ox = {e0_ox:.2f} V <= E0 Red = {e0_red:.2f} V). Les deux réactifs sont stables et coexistent sans réagir."
+                        )
+
+    st.write("---")
+
+
     if "suite_verrouille_tab6_bilan" not in st.session_state:
         st.session_state.suite_verrouille_tab6_bilan = False
     verrou_at6 = st.session_state.suite_verrouille_tab6_bilan
