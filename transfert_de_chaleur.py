@@ -502,13 +502,13 @@ with tab1:
     # =============================================================================
     # BANDE DESSINÉE HUMORISTIQUE EN 4 CASES : LE DRAME DES CALORIES PERDUES
     # =============================================================================
-    col_gauche_texte, col_droite_img = st.columns([1.1, 1.0])
+    col_gauche_texte, col_droite_img = st.columns(2)
 
     with col_gauche_texte:
-        # Bloc textuel informatif de couleur bleue (st.info)
-        st.info("### La BD humoristique textuelle : Le drame des calories perdues")
+        st.write(
+            "**La BD humoristique textuelle : Le drame des calories perdues**")
         
-        st.markdown(
+        st.info(
             "**Cas 1 :** Un groupe d'atomes à l'intérieur d'une maison chauffée est tranquillement installé "
             "dans la structure de la paroi. Ils vibrent joyeusement ensemble et discutent avec leurs voisins : "
             "« Tout va bien les gars, la parfaite cohésion est là, on forme un bloc d'isolation indestructible ! ».\n\n"
@@ -529,24 +529,18 @@ with tab1:
         )
 
     with col_droite_img:
-        # Partie graphique représentant la bande dessinée humoristique en 4 cases
-        st.write("")
-        st.markdown("##### Illustration humoristique du mécanisme de fuite en 4 cas")
-        
-        # Grille interne pour simuler les 4 cases de l'image (2 lignes de 2 colonnes)
-        grid_l1_c1, grid_l1_c2 = st.columns(2)
-        with grid_l1_c1:
-            st.info("**La Structure Idéale**\n\n« Tout va bien les gars, la cohésion est parfaite, on forme un bloc indestructible ! »")
-        with grid_l1_c2:
-            st.warning("**L'Attaque du Froid**\n\n« Hé toi ! Donne-moi tes charges ! Tes joules m'intéressent grandement ! »")
+
+        if os.path.exists("chaleur_caricature.jpg"):
+            st.image(
+                "chaleur_caricature.jpg",
+                caption="Illustration humoristique du drame des calories perdues",
+                use_container_width=True,
+            )
+        else:
+            st.warning(
+                "L'image 'chaleur_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+            )
             
-        st.write("") # Espace entre les deux lignes de cases
-        
-        grid_l2_c1, grid_l2_c2 = st.columns(2)
-        with grid_l2_c1:
-            st.error("**Fuite & Dissipation**\n\n« Oh non ! Je viens de subir un transfert thermique ! Je me refroidis ! »")
-        with grid_l2_c2:
-            st.success("**Le Pont Thermique**\n\n« Affaire classée ! Encore un système terrassé par notre pouvoir absorbant ! »")
     st.write("---")
     if "suite_verrouille_tab1_redox" not in st.session_state:
         st.session_state.suite_verrouille_tab1_redox = False
