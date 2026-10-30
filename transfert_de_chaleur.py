@@ -929,7 +929,7 @@ with tab2:
                     st.image(
                         "Galilee.jpg",
                         caption="Galilée",
-                        use_container_width=True,
+                        use_container_width=True
                     )
                 else:
                     st.warning(
@@ -940,7 +940,7 @@ with tab2:
                     st.image(
                         "thermoscope.jpg",
                         caption="thermoscope de Galilée",
-                        use_container_width=True,
+                        use_container_width=True
                     )
                 else:
                     st.warning(
@@ -954,7 +954,7 @@ with tab2:
                     st.image(
                         "Fahrenheit.jpg",
                         caption="Daniel Gabriel Fahrenheit",
-                        use_container_width=True,
+                        use_container_width=True
                     )
                 else:
                     st.warning(
@@ -966,14 +966,12 @@ with tab2:
                     st.image(
                         "mercure.jpg",
                         caption="thermomètre à mercure",
-                        use_container_width=True,
+                        use_container_width=True
                     )
                 else:
                     st.warning(
                         "L'image 'mercure.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
                     )
-
-
             
     with col_t2_h2:
         st.markdown("##### L'Évolution des Unités")
@@ -984,28 +982,27 @@ with tab2:
             "représente l'état d'immobilisation totale de la matière."
         )
 
-
         col_t21_h31, col_t36_h36 = st.columns(2)
         
         with col_t21_h31:
-            col_t21_h311, col_t21_h311 = st.columns(2)
-            with col_t21_h311:
+            col_t21_c1, col_t21_c2 = st.columns(2)
+            with col_t21_c1:
                 if os.path.exists("Celsius.jpg"):
                     st.image(
                         "Celsius.jpg",
                         caption="Anders Celsius",
-                        use_container_width=True,
+                        use_container_width=True
                     )
                 else:
                     st.warning(
-                        "L'image 'Anders Celsius.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
+                        "L'image 'Celsius.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
 
-            with col_t21_h311:
+            with col_t21_c2:
                 if os.path.exists("thermomercure.jpg"):
                     st.image(
                         "thermomercure.jpg",
-                        caption="thermomètre degré celcius",
-                        use_container_width=True,
+                        caption="thermomètre degré Celsius",
+                        use_container_width=True
                     )
                 else:
                     st.warning(
@@ -1013,25 +1010,25 @@ with tab2:
                     )
 
         with col_t36_h36:
-            col_t36_h361, col_t36_h361 = st.columns(2)
-            with col_t36_h361:
+            col_t36_k1, col_t36_k2 = st.columns(2)
+            with col_t36_k1:
                 if os.path.exists("Kelvin.jpg"):
                     st.image(
                         "Kelvin.jpg",
                         caption="Lord Kelvin",
-                        use_container_width=True,
+                        use_container_width=True
                     )
                 else:
                     st.warning(
                         "L'image 'Kelvin.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
                     )
 
-            with col_t36_h361:
+            with col_t36_k2:
                 if os.path.exists("mercure.jpg"):
                     st.image(
                         "mercure.jpg",
                         caption="thermomètre à mercure",
-                        use_container_width=True,
+                        use_container_width=True
                     )
                 else:
                     st.warning(
