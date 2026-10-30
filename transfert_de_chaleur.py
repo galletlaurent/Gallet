@@ -984,6 +984,63 @@ with tab2:
             "représente l'état d'immobilisation totale de la matière."
         )
 
+
+        col_t21_h31, col_t31_h31 = st.columns(2)
+        
+        with col_t21_h31:
+            col_t21_h311, col_t21_h311 = st.columns(2)
+            with col_t21_h311:
+                if os.path.exists("Anders Celsius.jpg"):
+                    st.image(
+                        "Anders Celsius.jpg",
+                        caption="Anders Celsius",
+                        use_container_width=True,
+                    )
+                else:
+                    st.warning(
+                        "L'image 'Anders Celsius.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
+
+            with col_t21_h311:
+                if os.path.exists(".jpg"):
+                    st.image(
+                        "thermomercure.jpg",
+                        caption="thermomètre degré celcius",
+                        use_container_width=True,
+                    )
+                else:
+                    st.warning(
+                        "L'image 'thermomercure.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+                    )
+
+        with col_t36_h36:
+            col_t36_h361, col_t36_h361 = st.columns(2)
+            with col_t36_h361:
+                if os.path.exists("Kelvin.jpg"):
+                    st.image(
+                        "Kelvin.jpg",
+                        caption="Lord Kelvin",
+                        use_container_width=True,
+                    )
+                else:
+                    st.warning(
+                        "L'image 'Kelvin.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+                    )
+
+            with col_t36_h361:
+                if os.path.exists("mercure.jpg"):
+                    st.image(
+                        "mercure.jpg",
+                        caption="thermomètre à mercure",
+                        use_container_width=True,
+                    )
+                else:
+                    st.warning(
+                        "L'image 'mercure.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+                    )
+
+
+
+
     st.write("---")
     st.subheader("Modélisation microscopique : À quoi correspond la température ?")
     st.write(
