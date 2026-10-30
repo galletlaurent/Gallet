@@ -990,9 +990,9 @@ with tab2:
         with col_t21_h31:
             col_t21_h311, col_t21_h311 = st.columns(2)
             with col_t21_h311:
-                if os.path.exists("Anders Celsius.jpg"):
+                if os.path.exists("Celsius.jpg"):
                     st.image(
-                        "Anders Celsius.jpg",
+                        "Celsius.jpg",
                         caption="Anders Celsius",
                         use_container_width=True,
                     )
@@ -1001,7 +1001,7 @@ with tab2:
                         "L'image 'Anders Celsius.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
 
             with col_t21_h311:
-                if os.path.exists(".jpg"):
+                if os.path.exists("thermomercure.jpg"):
                     st.image(
                         "thermomercure.jpg",
                         caption="thermomètre degré celcius",
