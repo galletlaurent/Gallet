@@ -3293,258 +3293,141 @@ with tab6:
         "Mg": ("Mg", "solide", "#94a3b8", "Gris blanc (Métal)")
     }
 
-    # Ligne 1 : Sélection des deux couples avec clés uniques pour le tab 6
     t6_col_1, t6_col_2 = st.columns(2)
     with t6_col_1:
-        t6_cpl_A = st.selectbox(
-            "Sélectionnez le premier couple redox (Couple A) :",
-            ["Choisir..."] + t6_liste_couples,
-            key="t6_sim_menu_couple_A",
-        )
+        t6_cpl_A = st.selectbox("Sélectionnez le premier couple redox (Couple A) :", ["Choisir..."] + t6_liste_couples, key="t6_v4_cpl_A")
     with t6_col_2:
-        t6_cpl_B = st.selectbox(
-            "Sélectionnez le second couple redox (Couple B) :",
-            ["Choisir..."] + t6_liste_couples,
-            key="t6_sim_menu_couple_B",
-        )
+        t6_cpl_B = st.selectbox("Sélectionnez le second couple redox (Couple B) :", ["Choisir..."] + t6_liste_couples, key="t6_v4_cpl_B")
 
-    # Ligne 2 : Analyse et choix des réactifs mis en contact
-    if t6_cpl_A != "Choisir..." and t6_cpl_B != "Choisir..." and t6_liste_couples:
+    if t6_cpl_A != "Choisir..." and t6_cpl_B != "Choisir...":
         if t6_cpl_A == t6_cpl_B:
-            st.warning("Veuillez choisir deux couples distincts pour simuler un transfert d'électrons.")
+            st.warning("Veuillez choisir deux couples distincts.")
         else:
-            # Initialisations préventives isolées pour le tab 6
-            t6_ox_A, t6_red_A, t6_ox_B, t6_red_B = "", "", "", ""
-            t6_reactif_ox_choisi = "Choisir..."
-            t6_reactif_red_choisi = "Choisir..."
-            
-            try:
-                # Découpage sécurisé en enlevant la description entre parenthèses
-                t6_brut_A = t6_cpl_A.split(" (")[0]
-                t6_brut_B = t6_cpl_B.split(" (")[0]
-                
-                t6_ox_A, t6_red_A = t6_brut_A.split(" / ")
-                t6_ox_B, t6_red_B = t6_brut_B.split(" / ")
-                t6_erreur_decoupage = False
-            except ValueError:
-                t6_erreur_decoupage = True
+            t6_brut_A = t6_cpl_A.split(" (")[0]
+            t6_brut_B = t6_cpl_B.split(" (")[0]
+            t6_ox_A, t6_red_A = t6_brut_A.split(" / ")
+            t6_ox_B, t6_red_B = t6_brut_B.split(" / ")
 
-            # Affichage des menus de mélange si le découpage des chaînes est valide
-            if not t6_erreur_decoupage:
-                st.write("")
-                st.markdown("**Configuration des réactifs mélangés dans le récipient :**")
-                t6_col_mix1, t6_col_mix2 = st.columns(2)
+            st.write("")
+            st.markdown("**Configuration des réactifs introduits :**")
+            t6_col_m1, t6_col_mix2 = st.columns(2)
+            with t6_col_m1:
+                t6_reactif_ox_choisi = st.selectbox("Sélectionnez l'oxydant introduit :", ["Choisir...", t6_ox_A, t6_ox_B], key="t6_v4_ox")
+            with t6_col_mix2:
+                t6_reactif_red_choisi = st.selectbox("Sélectionnez le réducteur introduit :", ["Choisir...", t6_red_A, t6_red_B], key="t6_v4_red")
 
-                with t6_col_mix1:
-                    t6_reactif_ox_choisi = st.selectbox(
-                        "Sélectionnez l'oxydant introduit :",
-                        ["Choisir...", t6_ox_A, t6_ox_B],
-                        key="t6_sim_reactif_ox_selection"
-                    )
-                with t6_col_mix2:
-                    t6_reactif_red_choisi = st.selectbox(
-                        "Sélectionnez le réducteur introduit :",
-                        ["Choisir...", t6_red_A, t6_red_B],
-                        key="t6_sim_reactif_red_selection"
-                    )
-
-            # Ligne 3 : Lancement du calcul au clic sur le bouton d'action
             if t6_reactif_ox_choisi != "Choisir..." and t6_reactif_red_choisi != "Choisir...":
                 st.write("")
-                if st.button(
-                    "TESTER LA RÉACTION CHIMIQUE SUR LE TERRAIN",
-                    key="t6_btn_run_simulation_gamma",
-                    use_container_width=True,
-                ):
-                    # Lecture des potentiels standards depuis la structure de données
-                    t6_e0_cpl_A = float(bibliotheque_redox[t6_cpl_A]["E0"])
-                    t6_e0_cpl_B = float(bibliotheque_redox[t6_cpl_B]["E0"])
+                if st.button("TESTER LA RÉACTION CHIMIQUE SUR LE TERRAIN", key="t6_v4_btn", use_container_width=True):
+                    
+                    e0_ox = float(bibliotheque_redox[t6_cpl_A]["E0"]) if t6_reactif_ox_choisi == t6_ox_A else float(bibliotheque_redox[t6_cpl_B]["E0"])
+                    e0_red = float(bibliotheque_redox[t6_cpl_A]["E0"]) if t6_reactif_red_choisi == t6_red_A else float(bibliotheque_redox[t6_cpl_B]["E0"])
 
-                    # Affectation locale des potentiels d'oxydation et de réduction
-                    t6_e0_ox = t6_e0_cpl_A if t6_reactif_ox_choisi == t6_ox_A else t6_e0_cpl_B
-                    t6_e0_red = t6_e0_cpl_A if t6_reactif_red_choisi == t6_red_A else t6_e0_cpl_B
-
-                    # Cas thermodynamiquement possible : Règle du gamma direct validée
-                    if t6_e0_ox > t6_e0_red:
+                    if e0_ox > e0_red:
                         t6_cpl_ox_parent = t6_cpl_A if t6_reactif_ox_choisi == t6_ox_A else t6_cpl_B
                         t6_cpl_red_parent = t6_cpl_A if t6_reactif_red_choisi == t6_red_A else t6_cpl_B
 
-                        t6_demi_ox = bibliotheque_redox[t6_cpl_ox_parent]["milieu_acide"]
-                        t6_demi_red = bibliotheque_redox[t6_cpl_red_parent]["milieu_acide"]
+                        t6_prod_ox = t6_red_A if t6_reactif_ox_choisi == t6_ox_A else t6_red_B
+                        t6_prod_red = t6_ox_B if t6_reactif_red_choisi == t6_red_B else t6_ox_A
 
-                        st.success(
-                            f"RÉSULTAT : LA RÉACTION EST POSSIBLE !\n\n"
-                            f"L'oxydant choisi ({t6_reactif_ox_choisi}) est placé au-dessus du réducteur choisi ({t6_reactif_red_choisi}) sur l'échelle des potentiels.\n\n"
-                            f"La règle du gamma direct est respectée (E0 Ox = {t6_e0_ox:.2f} V > E0 Red = {t6_e0_red:.2f} V). Le transfert d'électrons est spontané."
-                        )
-                        
-                        st.markdown("##### Mécanisme de transfert d'électrons")
-                        
-                        st.markdown("**Demi-réaction de réduction (l'oxydant capte les électrons) :**")
-                        st.latex(t6_demi_ox)
-                        
-                        st.markdown("**Demi-réaction d'oxydation (le réducteur cède les électrons) :**")
-                        st.latex(t6_demi_red)
-                        
-                        st.markdown("**Équation bilan globale finale équilibrée :**")
-                        
-                        # Extraction des produits conjugués depuis la bibliothèque
-                        t6_clean_ox_parent = t6_cpl_ox_parent.split(" (")[0]
-                        t6_clean_red_parent = t6_cpl_red_parent.split(" (")[0]
-                        
-                        t6_prod_ox = t6_clean_ox_parent.split(" / ")[1]  # Le réducteur conjugué produit
-                        t6_prod_red = t6_clean_red_parent.split(" / ")[0]  # L'oxydant conjugué produit
-                        
-                        # CALCUL DYNAMIQUE DES COEFFICIENTS D'ÉQUILIBRE
+                        st.success(f"RÉSULTAT : LA RÉACTION EST POSSIBLE !\n\nLa règle du gamma direct est respectée (E0 Ox = {e0_ox:.2f} V > E0 Red = {e0_red:.2f} V).")
+
+                        # Équations LaTeX
+                        st.markdown("##### Équations chimiques associées")
+                        st.latex(bibliotheque_redox[t6_cpl_ox_parent]["milieu_acide"])
+                        st.latex(bibliotheque_redox[t6_cpl_red_parent]["milieu_acide"])
+
+                        import math
                         ne_ox = int(bibliotheque_redox[t6_cpl_ox_parent]["electrons"])
                         ne_red = int(bibliotheque_redox[t6_cpl_red_parent]["electrons"])
-                        
-                        # Simplification par le PGCD si les deux nombres d'électrons sont pairs
-                        import math
                         pgcd = math.gcd(ne_ox, ne_red)
                         coef_ox = ne_red // pgcd
                         coef_red = ne_ox // pgcd
-                        
-                        # Préparation des chaînes de texte pour masquer le coefficient "1" (plus propre en chimie)
-                        c_ox_txt = "" if coef_ox == 1 else f"{coef_ox}\,"
-                        c_red_txt = "" if coef_red == 1 else f"{coef_red}\,"
-                        
-                        # Rendu LaTeX parfait et rigoureusement équilibré
-                        st.latex(f"{c_ox_txt}{t6_reactif_ox_choisi} + {c_red_txt}{t6_reactif_red_choisi} \\longrightarrow {c_ox_txt}{t6_prod_ox} + {c_red_txt}{t6_prod_red}")
 
-                        # --- RENDU DE LA CORRESPONDANCE ET SCHÉMAS COULEURS (MATPLOTLIB) ---
+                        c_ox_str = "" if coef_ox == 1 else f"{coef_ox}\,"
+                        c_red_str = "" if coef_red == 1 else f"{coef_red}\,"
+                        st.markdown("**Équation bilan globale finale équilibrée :**")
+                        st.latex(f"{c_ox_str}{t6_reactif_ox_choisi} + {c_red_str}{t6_reactif_red_choisi} \\longrightarrow {c_ox_str}{t6_prod_ox} + {c_red_str}{t6_prod_red}")
+
+                        # --- RENDU GRAPHIQUE SCIENTIFIQUE DE HAUTE PRÉCISION ---
                         import matplotlib.pyplot as plt
                         import matplotlib.patches as patches
+                        import numpy as np
 
-                        teinte_eau_transparente = "#e0f2fe"
-
-                        # Récupération des couleurs et types depuis le dictionnaire local
-                        _, s_ox_init, hex_ox_init, lbl_ox_init = t6_couleurs_especes.get(t6_reactif_ox_choisi, (t6_reactif_ox_choisi, "solution", teinte_eau_transparente, "Incolore"))
-                        _, s_red_init, hex_red_init, lbl_red_init = t6_couleurs_especes.get(t6_reactif_red_choisi, (t6_reactif_red_choisi, "solide", "#94a3b8", "Gris"))
-                        
-                        _, s_ox_fin, hex_ox_fin, lbl_ox_fin = t6_couleurs_especes.get(t6_prod_ox, (t6_prod_ox, "solution", teinte_eau_transparente, "Incolore"))
-                        _, s_red_fin, hex_red_fin, lbl_red_fin = t6_couleurs_especes.get(t6_prod_red, (t6_prod_red, "solution", teinte_eau_transparente, "Incolore"))
+                        # Extraction propre des états
+                        _, s_ox_init, hex_ox_init, lbl_ox_init = t6_couleurs_especes.get(t6_reactif_ox_choisi, (t6_reactif_ox_choisi, "solution", "#e0f2fe", "Incolore"))
+                        _, s_red_init, hex_red_init, lbl_red_init = t6_couleurs_especes.get(t6_reactif_red_choisi, (t6_reactif_red_choisi, "metal", "#94a3b8", "Métal"))
+                        _, s_ox_fin, hex_ox_fin, lbl_ox_fin = t6_couleurs_especes.get(t6_prod_ox, (t6_prod_ox, "solution", "#e0f2fe", "Incolore"))
+                        _, s_red_fin, hex_red_fin, lbl_red_fin = t6_couleurs_especes.get(t6_prod_red, (t6_prod_red, "solution", "#e0f2fe", "Incolore"))
 
                         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
 
-                        def dessiner_becher_haute_precision(ax, couleur_solution, est_etat_final):
-                            import numpy as np
-
-                            # 1. COUCHE ARRIÈRE : Le bloc de liquide du fond du bécher
-                            liquide_fond = patches.Rectangle((1.2, 1.0), 2.6, 3.3, color=couleur_solution, alpha=0.7, zorder=1)
-                            ax.add_patch(liquide_fond)
-                            
-                            # 2. COUCHE ARRIÈRE : L'ellipse de surface (le fond coloré du dessus)
-                            surface_ellipse = patches.Ellipse((2.5, 4.3), 2.6, 0.4, color=couleur_solution, alpha=0.5, zorder=2)
-                            ax.add_patch(surface_ellipse)
-                            
-                            # 3. COUCHE ARRIÈRE : La face cachée arrière de la surface (pointillés)
+                        def dessiner_becher_systeme(ax, couleur_solution, est_final):
+                            # Liquide et Ellipse
+                            ax.add_patch(patches.Rectangle((1.2, 1.0), 2.6, 3.3, color=couleur_solution, alpha=0.7, zorder=1))
+                            ax.add_patch(patches.Ellipse((2.5, 4.3), 2.6, 0.4, color=couleur_solution, alpha=0.5, zorder=2))
                             ax.add_patch(patches.Arc((2.5, 4.3), 2.6, 0.4, angle=0, theta1=0, theta2=180, color='#475569', lw=1, ls='--', zorder=3))
 
-                            # Coordonnées universelles de la lame inclinée
                             pts_lame = [[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]]
 
-                            # --- GESTION ADAPTATIVE DE L'ÉTAT PHYSIQUE DES ESPÈCES ---
-                            if not est_etat_final:
-                                # ÉTAT INITIAL : Analyse du réducteur introduit
-                                if s_red_init == "solide" and t6_reactif_red_choisi in ["Fe", "Cu", "Ag", "Zn", "Al", "Ni", "Co", "Pb", "Sn", "Hg", "Au", "Pt"]:
-                                    # C'est un vrai métal solide : On dessine la lame grise d'origine
-                                    lame_globale = patches.Polygon(pts_lame, color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4)
-                                    ax.add_patch(lame_globale)
-                                elif s_red_init == "solide" and t6_reactif_red_choisi == "S":
-                                    # Le soufre est une poudre : On dessine un dépôt de poudre jaune au fond du bécher
-                                    poudre_fond = patches.Polygon([[1.3, 1.0], [3.7, 1.0], [3.5, 1.3], [1.5, 1.3]], color=hex_red_init, alpha=0.9, zorder=4)
-                                    ax.add_patch(poudre_fond)
+                            if not est_final:
+                                # DESSIN DU RÉACTIF INTRODUIT SELON SON ÉTAT RÉEL
+                                if s_red_init == "metal":
+                                    ax.add_patch(patches.Polygon(pts_lame, color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4))
+                                elif s_red_init == "poudre":
+                                    ax.add_patch(patches.Polygon([[1.3, 1.0], [3.7, 1.0], [3.5, 1.3], [1.5, 1.3]], color=hex_red_init, edgecolor='#78350f', lw=1, zorder=4))
                                 elif s_ox_init == "gaz" or s_red_init == "gaz":
-                                    # Présence d'un gaz : On génère des bulles aléatoires dans la solution
+                                    # Montage bouteille de gaz
+                                    ax.add_patch(patches.Rectangle((4.2, 1.0), 0.5, 2.5, color='#475569', edgecolor='#1e293b', lw=1.2, zorder=4))
+                                    ax.plot([4.35, 3.0, 3.0], [3.5, 3.5, 1.8], color='#334155', lw=2, zorder=4)
                                     np.random.seed(42)
-                                    for _ in range(15):
-                                        bx = np.random.uniform(1.4, 3.6)
-                                        by = np.random.uniform(1.2, 4.1)
-                                        bulle = patches.Circle((bx, by), radius=np.random.uniform(0.04, 0.08), fill=False, color='#94a3b8', lw=1, zorder=4)
-                                        ax.add_patch(bulle)
+                                    for _ in range(20):
+                                        ax.add_patch(patches.Circle((3.0 + np.random.normal(0, 0.2), 1.8 + np.random.uniform(0, 2.0)), radius=np.random.uniform(0.03, 0.05), fill=False, color='#0891b2', lw=0.7, zorder=5))
                             else:
-                                # ÉTAT FINAL : Analyse des produits formés
-                                # 1. Si le réducteur de départ était une lame métallique solide
-                                if s_red_init == "solide" and t6_reactif_red_choisi in ["Fe", "Cu", "Ag", "Zn", "Al", "Ni", "Co", "Pb", "Sn", "Hg", "Au", "Pt"]:
-                                    # Dessin du support de la lame grise continue
-                                    lame_globale = patches.Polygon(pts_lame, color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4)
-                                    ax.add_patch(lame_globale)
-                                    
-                                    # Si le produit obtenu est lui aussi un métal solide (ex: Dépôt de Cuivre)
-                                    if s_ox_fin == "solide" and t6_prod_ox in ["Fe", "Cu", "Ag", "Zn", "Al", "Ni", "Co", "Pb", "Sn", "Hg", "Au", "Pt"]:
-                                        depot_global = patches.Polygon(pts_lame, color=hex_ox_fin, edgecolor='#78350f' if hex_ox_fin != "#a855f7" else '#7e22ce', lw=1.2, zorder=5)
-                                        ax.add_patch(depot_global)
-                                        # Le dépôt s'arrête net sous la ligne d'eau y=4.3
-                                        masque_immerge = patches.Rectangle((1.0, 0.0), 3.0, 4.3, transform=ax.transData)
-                                        depot_global.set_clip_path(masque_immerge)
+                                # DESSIN DU PRODUIT OBTENU SELON SON ÉTAT RÉEL
+                                if s_red_init == "metal":
+                                    # Lame support
+                                    lame_b = patches.Polygon(pts_lame, color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4)
+                                    ax.add_patch(lame_b)
+                                    if s_ox_fin == "metal":
+                                        dep = patches.Polygon(pts_lame, color=hex_ox_fin, edgecolor='#78350f', lw=1.2, zorder=5)
+                                        ax.add_patch(dep)
+                                        dep.set_clip_path(patches.Rectangle((1.0, 0.0), 3.0, 4.3, transform=ax.transData))
 
-                                # 2. Si la réaction génère un précipité poudreux au fond (ex: S, MnO2)
-                                if s_ox_fin == "solide" and t6_prod_ox in ["S", "MnO2", "MnO3"]:
-                                    precipite = patches.Polygon([[1.3, 1.0], [3.7, 1.0], [3.5, 1.4], [1.5, 1.4]], color=hex_ox_fin, alpha=0.95, zorder=5)
-                                    ax.add_patch(precipite)
+                                if s_ox_fin == "poudre":
+                                    ax.add_patch(patches.Polygon([[1.3, 1.0], [3.7, 1.0], [3.5, 1.4], [1.5, 1.4]], color=hex_ox_fin, edgecolor='#1e293b', lw=1, zorder=5))
                                 
-                                # 3. Si la réaction génère un dégagement gazeux (ex: H2, NO2)
-                                if s_ox_fin == "gaz" or s_red_fin == "gaz" or t6_prod_ox in ["H2", "NO", "NO2", "CO2", "CH4", "SO2"]:
-                                    # Génération de bulles de gaz qui montent vers la surface
+                                if s_ox_fin == "gaz" or s_red_fin == "gaz":
                                     np.random.seed(24)
-                                    for _ in range(25):
-                                        bx = np.random.uniform(1.4, 3.6)
-                                        by = np.random.uniform(1.5, 4.3)
-                                        bulle = patches.Circle((bx, by), radius=np.random.uniform(0.03, 0.07), fill=False, color='#475569', lw=1, zorder=5)
-                                        ax.add_patch(bulle)
+                                    for _ in range(30):
+                                        ax.add_patch(patches.Circle((np.random.uniform(1.4, 3.6), np.random.uniform(1.3, 4.2)), radius=np.random.uniform(0.04, 0.07), fill=False, color='#475569', lw=0.9, zorder=5))
 
-                            # 6. COUCHE AVANT : La face avant visible du contour de l'eau (arc continu de 180 à 360°)
+                            # Arc avant de l'eau et Verre du bécher
                             ax.add_patch(patches.Arc((2.5, 4.3), 2.6, 0.4, angle=0, theta1=180, theta2=360, color='#1e293b', lw=1.5, zorder=6))
+                            ax.add_patch(patches.Polygon([[1.0, 5.0], [1.2, 5.0], [1.2, 1.0], [3.8, 1.0], [3.8, 5.0], [4.0, 5.0]], closed=False, fill=False, color='#1e293b', lw=2.5, zorder=7))
 
-                            # 7. COUCHE AVANT : Le contour global en verre du bécher
-                            contours_verre = [
-                                [1.0, 5.0], [1.2, 5.0], [1.2, 1.0], [3.8, 1.0], [3.8, 5.0], [4.0, 5.0]
-                            ]
-                            ax.add_patch(patches.Polygon(contours_verre, closed=False, fill=False, color='#1e293b', lw=2.5, zorder=7))                            
-                        # --- CONFIGURATION DU BÉCHER INITIAL (À GAUCHE) ---
-                        col_sol_1 = hex_ox_init if s_ox_init == "solution" else teinte_eau_transparente
-                        dessiner_becher_haute_precision(ax1, col_sol_1, est_etat_final=False)
-                        
-                        ax1.text(2.5, 6.3, f"Lame de {t6_reactif_red_choisi}", color='#1e293b', fontsize=10, ha='center', fontweight='bold')
-                        ax1.text(2.5, 3.2, f"{t6_reactif_ox_choisi}\n({lbl_ox_init})", color='#0f172a', fontsize=10, ha='center', fontweight='bold', zorder=7)
-                        ax1.text(2.5, 0.3, "ÉTAT INITIAL", fontsize=12, fontweight='bold', ha='center')
-                        
+                        # Bécher initial
+                        c_sol1 = hex_ox_init if s_ox_init == "solution" else "#e0f2fe"
+                        dessiner_becher_systeme(ax1, c_sol1, est_final=False)
+                        ax1.text(2.5, 0.3, "ÉTAT INITIAL", fontsize=11, fontweight='bold', ha='center')
                         ax1.set_xlim(0, 5)
                         ax1.set_ylim(0, 7)
                         ax1.axis('off')
 
-                        # --- CONFIGURATION DU BÉCHER FINAL (À DROITE) ---
-                        col_sol_2 = hex_red_fin if s_red_fin == "solution" else (hex_ox_fin if s_ox_fin == "solution" else teinte_eau_transparente)
-                        dessiner_becher_haute_precision(ax2, col_sol_2, est_etat_final=True)
-                        
-                        ax2.text(2.5, 3.2, "Solution finale\ntransformée", color='#1e293b', fontsize=10, ha='center', fontweight='bold', zorder=7)
-                        ax2.text(2.5, 0.3, "ÉTAT FINAL", fontsize=12, fontweight='bold', ha='center')
-                        
-                        # Ajout de la flèche d'annotation précise pour pointer le dépôt métallique formé
-                        if s_red_init == "solide" and s_ox_fin == "solide":
-                            color_fleche = '#7e22ce' if hex_ox_fin == "#a855f7" else '#78350f'
-                            ax2.annotate(
-                                f"Dépôt de {t6_prod_ox}\n({lbl_ox_fin})",
-                                xy=(2.6, 2.5),          # Pointe de la flèche sur le milieu de la lame immergée
-                                xytext=(3.9, 2.1),      # Position du texte descriptif décalé à droite
-                                color=color_fleche,
-                                fontsize=9.5,
-                                fontweight='bold',
-                                arrowprops=dict(arrowstyle="->", color=color_fleche, lw=1.5, connectionstyle="arc3,rad=-0.1")
-                            )
-                        
+                        # Bécher final
+                        c_sol2 = hex_red_fin if s_red_fin == "solution" else (hex_ox_fin if s_ox_fin == "solution" else "#e0f2fe")
+                        dessiner_becher_systeme(ax2, c_sol2, est_final=True)
+                        ax2.text(2.5, 0.3, "ÉTAT FINAL", fontsize=11, fontweight='bold', ha='center')
                         ax2.set_xlim(0, 5)
                         ax2.set_ylim(0, 7)
                         ax2.axis('off')
-
                         st.pyplot(fig)
 
-                    # Cas impossible : Le gamma est inversé
+                    # Cas impossible : Le gamma est inversé (Un seul bloc else conservé)
                     else:
                         st.error(
                             f"RÉSULTAT : RÉACTION CHIMIQUE IMPOSSIBLE !\n\n"
-                            f"L'oxydant choisi ({t6_reactif_ox_choisi}) se situe en dessous du réducteur choisi ({t6_reactif_red_choisi}) sur l'échelle.\n\n"
+                            f"L'oxydant choisi ({t6_reactif_ox_choisi}) se situe en dessous du réducteur choisi ({t6_reactif_red_choisi}) sur l'échelle.\n"
                             f"Le gamma est inversé (E0 Ox = {t6_e0_ox:.2f} V <= E0 Red = {t6_e0_red:.2f} V). Les deux réactifs coexistent sans réagir."
                         )
 
