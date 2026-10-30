@@ -214,45 +214,51 @@ tab10 = onglets[10]
 
 
 
-bibliotheque_redox = {
     # --- HALOGÈNES ET DÉRIVÉS ---
     "F2 / F⁻": {
+        "E0": 2.87,
         "no_ox": "0", "no_red": "-I", "electrons": 2,
         "milieu_acide": r"\text{F}_2 + 2e^- \rightleftharpoons 2\text{F}^-",
         "milieu_basique": r"\text{F}_2 + 2e^- \rightleftharpoons 2\text{F}^-",
         "h3o": 0, "oh": 0, "h2o_acide": 0, "h2o_basique": 0
     },
     "Cl2 / Cl⁻": {
+        "E0": 1.36,
         "no_ox": "0", "no_red": "-I", "electrons": 2,
         "milieu_acide": r"\text{Cl}_2 + 2e^- \rightleftharpoons 2\text{Cl}^-",
         "milieu_basique": r"\text{Cl}_2 + 2e^- \rightleftharpoons 2\text{Cl}^-",
         "h3o": 0, "oh": 0, "h2o_acide": 0, "h2o_basique": 0
     },
     "Br2 / Br⁻": {
+        "E0": 1.09,
         "no_ox": "0", "no_red": "-I", "electrons": 2,
         "milieu_acide": r"\text{Br}_2 + 2e^- \rightleftharpoons 2\text{Br}^-",
         "milieu_basique": r"\text{Br}_2 + 2e^- \rightleftharpoons 2\text{Br}^-",
         "h3o": 0, "oh": 0, "h2o_acide": 0, "h2o_basique": 0
     },
     "I2 / I⁻": {
+        "E0": 0.54,
         "no_ox": "0", "no_red": "-I", "electrons": 2,
         "milieu_acide": r"\text{I}_2 + 2e^- \rightleftharpoons 2\text{I}^-",
         "milieu_basique": r"\text{I}_2 + 2e^- \rightleftharpoons 2\text{I}^-",
         "h3o": 0, "oh": 0, "h2o_acide": 0, "h2o_basique": 0
     },
     "ClO⁻ / Cl⁻ (Hypochlorite / Chlorure)": {
+        "E0": 0.89,
         "no_ox": "+I", "no_red": "-I", "electrons": 2,
         "milieu_acide": r"\text{ClO}^- + 2\text{H}_3\text{O}^+ + 2e^- \rightleftharpoons \text{Cl}^- + 3\text{H}_2\text{O}",
         "milieu_basique": r"\text{ClO}^- + \text{H}_2\text{O} + 2e^- \rightleftharpoons \text{Cl}^- + 2\text{OH}^-",
         "h3o": 2, "oh": 2, "h2o_acide": 3, "h2o_basique": 1
     },
     "ClO3⁻ / Cl⁻ (Chlorate / Chlorure)": {
+        "E0": 1.45,
         "no_ox": "+V", "no_red": "-I", "electrons": 6,
         "milieu_acide": r"\text{ClO}_3^- + 6\text{H}_3\text{O}^+ + 6e^- \rightleftharpoons \text{Cl}^- + 9\text{H}_2\text{O}",
         "milieu_basique": r"\text{ClO}_3^- + 3\text{H}_2\text{O} + 6e^- \rightleftharpoons \text{Cl}^- + 6\text{OH}^-",
         "h3o": 6, "oh": 6, "h2o_acide": 9, "h2o_basique": 3
     },
     "IO3⁻ / I2 (Iodate / Diode)": {
+        "E0": 1.19,
         "no_ox": "+V", "no_red": "0", "electrons": 10,
         "milieu_acide": r"2\text{IO}_3^- + 12\text{H}_3\text{O}^+ + 10e^- \rightleftharpoons \text{I}_2 + 18\text{H}_2\text{O}",
         "milieu_basique": r"2\text{IO}_3^- + 6\text{H}_2\text{O} + 10e^- \rightleftharpoons \text{I}_2 + 12\text{OH}^-",
@@ -261,74 +267,87 @@ bibliotheque_redox = {
 
     # --- OXYGÈNE, HYDROGÈNE ET SOUFRE ---
     "O2 / H2O": {
+        "E0": 1.23,
         "no_ox": "0", "no_red": "-II", "electrons": 4,
         "milieu_acide": r"\text{O}_2 + 4\text{H}_3\text{O}^+ + 4e^- \rightleftharpoons 6\text{H}_2\text{O}",
         "milieu_basique": r"\text{O}_2 + 2\text{H}_2\text{O} + 4e^- \rightleftharpoons 4\text{OH}^-",
         "h3o": 4, "oh": 4, "h2o_acide": 6, "h2o_basique": 2
     },
     "H2O2 / H2O (Eau oxygénée / Eau)": {
+        "E0": 1.77,
         "no_ox": "-I", "no_red": "-II", "electrons": 2,
         "milieu_acide": r"\text{H}_2\text{O}_2 + 2\text{H}_3\text{O}^+ + 2e^- \rightleftharpoons 4\text{H}_2\text{O}",
         "milieu_basique": r"\text{H}_2\text{O}_2 + 2e^- \rightleftharpoons 2\text{OH}^-",
         "h3o": 2, "oh": 2, "h2o_acide": 4, "h2o_basique": 0
     },
     "O2 / H2O2 (Dioxygène / Eau oxygénée)": {
+        "E0": 0.68,
         "no_ox": "0", "no_red": "-I", "electrons": 2,
         "milieu_acide": r"\text{O}_2 + 2\text{H}_3\text{O}^+ + 2e^- \rightleftharpoons \text{H}_2\text{O}_2 + 2\text{H}_2\text{O}",
         "milieu_basique": r"\text{O}_2 + 2\text{H}_2\text{O} + 2e^- \rightleftharpoons \text{H}_2\text{O}_2 + 2\text{OH}^-",
         "h3o": 2, "oh": 2, "h2o_acide": 2, "h2o_basique": 2
     },
     "H3O⁺ / H2": {
+        "E0": 0.00,
         "no_ox": "+I", "no_red": "0", "electrons": 2,
         "milieu_acide": r"2\text{H}_3\text{O}^+ + 2e^- \rightleftharpoons \text{H}_2 + 2\text{H}_2\text{O}",
         "milieu_basique": r"2\text{H}_2\text{O} + 2e^- \rightleftharpoons \text{H}_2 + 2\text{OH}^-",
         "h3o": 2, "oh": 2, "h2o_acide": 2, "h2o_basique": 2
     },
     "S4O6²⁻ / S2O3²⁻ (Tétrathionate / Thiosulfate)": {
+        "E0": 0.08,
         "no_ox": "+II.5", "no_red": "+II", "electrons": 2,
         "milieu_acide": r"\text{S}_4\text{O}_6^{2-} + 2e^- \rightleftharpoons 2\text{S}_2\text{O}_3^{2-}",
         "milieu_basique": r"\text{S}_4\text{O}_6^{2-} + 2e^- \rightleftharpoons 2\text{S}_2\text{O}_3^{2-}",
         "h3o": 0, "oh": 0, "h2o_acide": 0, "h2o_basique": 0
     },
     "SO4²⁻ / SO2 (Sulfate / Dioxyde de soufre)": {
+        "E0": 0.17,
         "no_ox": "+VI", "no_red": "+IV", "electrons": 2,
         "milieu_acide": r"\text{SO}_4^{2-} + 4\text{H}_3\text{O}^+ + 2e^- \rightleftharpoons \text{SO}_2 + 6\text{H}_2\text{O}",
         "milieu_basique": r"\text{SO}_4^{2-} + 2\text{H}_2\text{O} + 2e^- \rightleftharpoons \text{SO}_2 + 4\text{OH}^-",
         "h3o": 4, "oh": 4, "h2o_acide": 6, "h2o_basique": 2
     },
     "SO2 / S (Dioxyde de soufre / Soufre)": {
+        "E0": 0.45,
         "no_ox": "+IV", "no_red": "0", "electrons": 4,
         "milieu_acide": r"\text{SO}_2 + 4\text{H}_3\text{O}^+ + 4e^- \rightleftharpoons \text{S} + 6\text{H}_2\text{O}",
         "milieu_basique": r"\text{SO}_2 + 2\text{H}_2\text{O} + 4e^- \rightleftharpoons \text{S} + 4\text{OH}^-",
         "h3o": 4, "oh": 4, "h2o_acide": 6, "h2o_basique": 2
     },
     "S / H2S (Soufre / Hydrogène sulfuré)": {
+        "E0": 0.14,
         "no_ox": "0", "no_red": "-II", "electrons": 2,
         "milieu_acide": r"\text{S} + 2\text{H}_3\text{O}^+ + 2e^- \rightleftharpoons \text{H}_2\text{S} + 2\text{H}_2\text{O}",
         "milieu_basique": r"\text{S} + 2\text{H}_2\text{O} + 2e^- \rightleftharpoons \text{H}_2\text{S} + 2\text{OH}^-",
         "h3o": 2, "oh": 2, "h2o_acide": 2, "h2o_basique": 2
     },
 
+
     # --- AZOTE ET PHOSPHORE ---
     "NO3⁻ / NO (Nitrate / Monoxyde d'azote)": {
+        "E0": 0.96,
         "no_ox": "+V", "no_red": "+II", "electrons": 3,
         "milieu_acide": r"\text{NO}_3^- + 4\text{H}_3\text{O}^+ + 3e^- \rightleftharpoons \text{NO} + 6\text{H}_2\text{O}",
         "milieu_basique": r"\text{NO}_3^- + 2\text{H}_2\text{O} + 3e^- \rightleftharpoons \text{NO} + 4\text{OH}^-",
         "h3o": 4, "oh": 4, "h2o_acide": 6, "h2o_basique": 2
     },
     "NO3⁻ / NO2 (Nitrate / Dioxyde d'azote)": {
+        "E0": 0.80,
         "no_ox": "+V", "no_red": "+IV", "electrons": 1,
         "milieu_acide": r"\text{NO}_3^- + 2\text{H}_3\text{O}^+ + 1e^- \rightleftharpoons \text{NO}_2 + 3\text{H}_2\text{O}",
         "milieu_basique": r"\text{NO}_3^- + \text{H}_2\text{O} + 1e^- \rightleftharpoons \text{NO}_2 + 2\text{OH}^-",
         "h3o": 2, "oh": 2, "h2o_acide": 3, "h2o_basique": 1
     },
     "NO / N2O (Monoxyde d'azote / Protoxyde d'azote)": {
+        "E0": 1.59,
         "no_ox": "+II", "no_red": "+I", "electrons": 2,
         "milieu_acide": r"2\text{NO} + 2\text{H}_3\text{O}^+ + 2e^- \rightleftharpoons \text{N}_2\text{O} + 3\text{H}_2\text{O}",
         "milieu_basique": r"2\text{NO} + \text{H}_2\text{O} + 2e^- \rightleftharpoons \text{N}_2\text{O} + 2\text{OH}^-",
         "h3o": 2, "oh": 2, "h2o_acide": 3, "h2o_basique": 1
     },
     "N2 / NH4⁺ (Diazote / Ammonium)": {
+        "E0": 0.27,
         "no_ox": "0", "no_red": "-III", "electrons": 6,
         "milieu_acide": r"\text{N}_2 + 8\text{H}_3\text{O}^+ + 6e^- \rightleftharpoons 2\text{NH}_4^+ + 8\text{H}_2\text{O}",
         "milieu_basique": r"\text{N}_2 + 6\text{H}_2\text{O} + 6e^- \rightleftharpoons 2\text{NH}_3 + 6\text{OH}^-",
@@ -337,170 +356,197 @@ bibliotheque_redox = {
 
     # --- MÉTAUX DE TRANSITION ACCENTUÉS ---
     "MnO4⁻ / Mn²⁺": {
+        "E0": 1.51,
         "no_ox": "+VII", "no_red": "+II", "electrons": 5,
         "milieu_acide": r"\text{MnO}_4^- + 8\text{H}_3\text{O}^+ + 5e^- \rightleftharpoons \text{Mn}^{2+} + 12\text{H}_2\text{O}",
         "milieu_basique": r"\text{MnO}_4^- + 4\text{H}_2\text{O} + 5e^- \rightleftharpoons \text{Mn(OH)}_4 + 4\text{OH}^-",
         "h3o": 8, "oh": 4, "h2o_acide": 12, "h2o_basique": 4
     },
     "MnO2 / Mn²⁺": {
+        "E0": 1.23,
         "no_ox": "+IV", "no_red": "+II", "electrons": 2,
         "milieu_acide": r"\text{MnO}_2 + 4\text{H}_3\text{O}^+ + 2e^- \rightleftharpoons \text{Mn}^{2+} + 6\text{H}_2\text{O}",
         "milieu_basique": r"\text{MnO}_2 + 2\text{H}_2\text{O} + 2e^- \rightleftharpoons \text{Mn(OH)}_2 + 2\text{OH}^-",
         "h3o": 4, "oh": 2, "h2o_acide": 6, "h2o_basique": 2
     },
     "Cr2O7²⁻ / Cr³⁺": {
+        "E0": 1.33,
         "no_ox": "+VI", "no_red": "+III", "electrons": 6,
         "milieu_acide": r"\text{Cr}_2\text{O}_7^{2-} + 14\text{H}_3\text{O}^+ + 6e^- \rightleftharpoons 2\text{Cr}^{3+} + 21\text{H}_2\text{O}",
         "milieu_basique": r"\text{Cr}_2\text{O}_7^{2-} + 7\text{H}_2\text{O} + 6e^- \rightleftharpoons 2\text{Cr}^{3+} + 14\text{OH}^-",
         "h3o": 14, "oh": 14, "h2o_acide": 21, "h2o_basique": 7
     },
     "Fe³⁺ / Fe²⁺": {
+        "E0": 0.77,
         "no_ox": "+III", "no_red": "+II", "electrons": 1,
-        "milieu_acide": r"\text{Fe}^{3+} + 1e^- \rightleftharpoons \text{Fe}^{2?}",
+        "milieu_acide": r"\text{Fe}^{3+} + 1e^- \rightleftharpoons \text{Fe}^{2+}",
         "milieu_basique": r"\text{Fe(OH)}_3 + 1e^- \rightleftharpoons \text{Fe(OH)}_2 + \text{OH}^-",
         "h3o": 0, "oh": 1, "h2o_acide": 0, "h2o_basique": 0
     },
     "Fe²⁺ / Fe": {
+        "E0": -0.44,
         "no_ox": "+II", "no_red": "0", "electrons": 2,
         "milieu_acide": r"\text{Fe}^{2+} + 2e^- \rightleftharpoons \text{Fe}",
         "milieu_basique": r"\text{Fe(OH)}_2 + 2e^- \rightleftharpoons \text{Fe} + 2\text{OH}^-",
         "h3o": 0, "oh": 2, "h2o_acide": 0, "h2o_basique": 0
     },
     "Cu²⁺ / Cu⁺": {
+        "E0": 0.15,
         "no_ox": "+II", "no_red": "+I", "electrons": 1,
         "milieu_acide": r"\text{Cu}^{2+} + 1e^- \rightleftharpoons \text{Cu}^+",
         "milieu_basique": r"\text{Cu(OH)}_2 + 1e^- \rightleftharpoons \text{CuOH} + \text{OH}^-",
         "h3o": 0, "oh": 1, "h2o_acide": 0, "h2o_basique": 0
     },
     "Cu²⁺ / Cu": {
+        "E0": 0.34,
         "no_ox": "+II", "no_red": "0", "electrons": 2,
         "milieu_acide": r"\text{Cu}^{2+} + 2e^- \rightleftharpoons \text{Cu}",
         "milieu_basique": r"\text{Cu(OH)}_2 + 2e^- \rightleftharpoons \text{Cu} + 2\text{OH}^-",
-
         "h3o": 0, "oh": 2, "h2o_acide": 0, "h2o_basique": 0
     },
     "Ag⁺ / Ag": {
+        "E0": 0.80,
         "no_ox": "+I", "no_red": "0", "electrons": 1,
         "milieu_acide": r"\text{Ag}^+ + 1e^- \rightleftharpoons \text{Ag}",
         "milieu_basique": r"\text{Ag}_2\text{O} + \text{H}_2\text{O} + 2e^- \rightleftharpoons 2\text{Ag} + 2\text{OH}^-",
         "h3o": 0, "oh": 2, "h2o_acide": 0, "h2o_basique": 1
     },
     "Zn²⁺ / Zn": {
+        "E0": -0.76,
         "no_ox": "+II", "no_red": "0", "electrons": 2,
         "milieu_acide": r"\text{Zn}^{2+} + 2e^- \rightleftharpoons \text{Zn}",
         "milieu_basique": r"\text{Zn(OH)}_2 + 2e^- \rightleftharpoons \text{Zn} + 2\text{OH}^-",
         "h3o": 0, "oh": 2, "h2o_acide": 0, "h2o_basique": 0
     },
     "Al³⁺ / Al": {
+        "E0": -1.66,
         "no_ox": "+III", "no_red": "0", "electrons": 3,
         "milieu_acide": r"\text{Al}^{3+} + 3e^- \rightleftharpoons \text{Al}",
         "milieu_basique": r"\text{Al(OH)}_3 + 3e^- \rightleftharpoons \text{Al} + 3\text{OH}^-",
         "h3o": 0, "oh": 3, "h2o_acide": 0, "h2o_basique": 0
     },
     "Ni²⁺ / Ni": {
+        "E0": -0.25,
         "no_ox": "+II", "no_red": "0", "electrons": 2,
         "milieu_acide": r"\text{Ni}^{2+} + 2e^- \rightleftharpoons \text{Ni}",
         "milieu_basique": r"\text{Ni(OH)}_2 + 2e^- \rightleftharpoons \text{Ni} + 2\text{OH}^-",
         "h3o": 0, "oh": 2, "h2o_acide": 0, "h2o_basique": 0
     },
     "Co²⁺ / Co": {
+        "E0": -0.28,
         "no_ox": "+II", "no_red": "0", "electrons": 2,
         "milieu_acide": r"\text{Co}^{2+} + 2e^- \rightleftharpoons \text{Co}",
         "milieu_basique": r"\text{Co(OH)}_2 + 2e^- \rightleftharpoons \text{Co} + 2\text{OH}^-",
         "h3o": 0, "oh": 2, "h2o_acide": 0, "h2o_basique": 0
     },
     "Co³⁺ / Co²⁺": {
+        "E0": 1.82,
         "no_ox": "+III", "no_red": "+II", "electrons": 1,
-        "milieu_acide": r"\text{Co}^{3+} + 1e^- \rightleftharpoons \text{Co}^{2?}",
+        "milieu_acide": r"\text{Co}^{3+} + 1e^- \rightleftharpoons \text{Co}^{2+}",
         "milieu_basique": r"\text{Co(OH)}_3 + 1e^- \rightleftharpoons \text{Co(OH)}_2 + \text{OH}^-",
         "h3o": 0, "oh": 1, "h2o_acide": 0, "h2o_basique": 0
     },
     "Pb²⁺ / Pb": {
+        "E0": -0.13,
         "no_ox": "+II", "no_red": "0", "electrons": 2,
         "milieu_acide": r"\text{Pb}^{2+} + 2e^- \rightleftharpoons \text{Pb}",
         "milieu_basique": r"\text{Pb(OH)}_2 + 2e^- \rightleftharpoons \text{Pb} + 2\text{OH}^-",
         "h3o": 0, "oh": 2, "h2o_acide": 0, "h2o_basique": 0
     },
     "PbO2 / Pb²⁺": {
+        "E0": 1.46,
         "no_ox": "+IV", "no_red": "+II", "electrons": 2,
         "milieu_acide": r"\text{PbO}_2 + 4\text{H}_3\text{O}^+ + 2e^- \rightleftharpoons \text{Pb}^{2+} + 6\text{H}_2\text{O}",
         "milieu_basique": r"\text{PbO}_2 + 2\text{H}_2\text{O} + 2e^- \rightleftharpoons \text{Pb(OH)}_2 + 2\text{OH}^-",
         "h3o": 4, "oh": 2, "h2o_acide": 6, "h2o_basique": 2
     },
     "Sn²⁺ / Sn": {
+        "E0": -0.14,
         "no_ox": "+II", "no_red": "0", "electrons": 2,
         "milieu_acide": r"\text{Sn}^{2+} + 2e^- \rightleftharpoons \text{Sn}",
         "milieu_basique": r"\text{Sn(OH)}_2 + 2e^- \rightleftharpoons \text{Sn} + 2\text{OH}^-",
         "h3o": 0, "oh": 2, "h2o_acide": 0, "h2o_basique": 0
     },
     "Sn⁴⁺ / Sn²⁺": {
+        "E0": 0.15,
         "no_ox": "+IV", "no_red": "+II", "electrons": 2,
-        "milieu_acide": r"\text{Sn}^{4+} + 2e^- \rightleftharpoons \text{Sn}^{2?}",
+        "milieu_acide": r"\text{Sn}^{4+} + 2e^- \rightleftharpoons \text{Sn}^{2+}",
         "milieu_basique": r"\text{Sn(OH)}_4 + 2e^- \rightleftharpoons \text{Sn(OH)}_2 + 2\text{OH}^-",
         "h3o": 0, "oh": 2, "h2o_acide": 0, "h2o_basique": 0
     },
     "Hg²⁺ / Hg": {
+        "E0": 0.85,
         "no_ox": "+II", "no_red": "0", "electrons": 2,
         "milieu_acide": r"\text{Hg}^{2+} + 2e^- \rightleftharpoons \text{Hg}",
         "milieu_basique": r"\text{HgO} + \text{H}_2\text{O} + 2e^- \rightleftharpoons \text{Hg} + 2\text{OH}^-",
         "h3o": 0, "oh": 2, "h2o_acide": 0, "h2o_basique": 1
     },
     "Au³⁺ / Au": {
+        "E0": 1.50,
         "no_ox": "+III", "no_red": "0", "electrons": 3,
         "milieu_acide": r"\text{Au}^{3+} + 3e^- \rightleftharpoons \text{Au}",
         "milieu_basique": r"\text{Au(OH)}_3 + 3e^- \rightleftharpoons \text{Au} + 3\text{OH}^-",
         "h3o": 0, "oh": 3, "h2o_acide": 0, "h2o_basique": 0
     },
     "Pt²⁺ / Pt": {
+        "E0": 1.20,
         "no_ox": "+II", "no_red": "0", "electrons": 2,
         "milieu_acide": r"\text{Pt}^{2+} + 2e^- \rightleftharpoons \text{Pt}",
         "milieu_basique": r"\text{Pt(OH)}_2 + 2e^- \rightleftharpoons \text{Pt} + 2\text{OH}^-",
         "h3o": 0, "oh": 2, "h2o_acide": 0, "h2o_basique": 0
     },
     "Ti³⁺ / Ti²⁺": {
+        "E0": -0.37,
         "no_ox": "+III", "no_red": "+II", "electrons": 1,
-        "milieu_acide": r"\text{Ti}^{3+} + 1e^- \rightleftharpoons \text{Ti}^{2?}",
+        "milieu_acide": r"\text{Ti}^{3+} + 1e^- \rightleftharpoons \text{Ti}^{2+}",
         "milieu_basique": r"\text{Ti(OH)}_3 + 1e^- \rightleftharpoons \text{Ti(OH)}_2 + \text{OH}^-",
         "h3o": 0, "oh": 1, "h2o_acide": 0, "h2o_basique": 0
     },
     "V³⁺ / V²⁺": {
+        "E0": -0.26,
         "no_ox": "+III", "no_red": "+II", "electrons": 1,
-        "milieu_acide": r"\text{V}^{3+} + 1e^- \rightleftharpoons \text{V}^{2?}",
+        "milieu_acide": r"\text{V}^{3+} + 1e^- \rightleftharpoons \text{V}^{2+}",
         "milieu_basique": r"\text{V(OH)}_3 + 1e^- \rightleftharpoons \text{V(OH)}_2 + \text{OH}^-",
         "h3o": 0, "oh": 1, "h2o_acide": 0, "h2o_basique": 0
     },
-        # --- COMPOSÉS ORGANIQUES ET DIVERS ---
+    # --- COMPOSÉS ORGANIQUES ET DIVERS ---
     "CH3COOH / CH3CH2OH (Acide acétique / Éthanol)": {
+        "E0": 0.05,
         "no_ox": "0", "no_red": "-II", "electrons": 4,
         "milieu_acide": r"\text{CH}_3\text{COOH} + 4\text{H}_3\text{O}^+ + 4e^- \rightleftharpoons \text{CH}_3\text{CH}_2\text{OH} + 6\text{H}_2\text{O}",
         "milieu_basique": r"\text{CH}_3\text{COO}^- + 3\text{H}_2\text{O} + 4e^- \rightleftharpoons \text{CH}_3\text{CH}_2\text{OH} + 5\text{OH}^-",
         "h3o": 4, "oh": 5, "h2o_acide": 6, "h2o_basique": 3
     },
     "CO2 / H2C2O4 (Dioxyde de carbone / Acide oxalique)": {
+        "E0": -0.49,
         "no_ox": "+IV", "no_red": "+III", "electrons": 2,
         "milieu_acide": r"2\text{CO}_2 + 2\text{H}_3\text{O}^+ + 2e^- \rightleftharpoons \text{H}_2\text{C}_2\text{O}_4 + 2\text{H}_2\text{O}",
         "milieu_basique": r"2\text{CO}_3^{2-} + 4\text{H}_2\text{O} + 2e^- \rightleftharpoons \text{C}_2\text{O}_4^{2-} + 4\text{OH}^-",
         "h3o": 2, "oh": 4, "h2o_acide": 2, "h2o_basique": 4
     },
     "CO2 / CH4 (Dioxyde de carbone / Méthane)": {
+        "E0": 0.17,
         "no_ox": "+IV", "no_red": "-IV", "electrons": 8,
         "milieu_acide": r"\text{CO}_2 + 8\text{H}_3\text{O}^+ + 8e^- \rightleftharpoons \text{CH}_4 + 12\text{H}_2\text{O}",
         "milieu_basique": r"\text{CO}_2 + 6\text{H}_2\text{O} + 8e^- \rightleftharpoons \text{CH}_4 + 8\text{OH}^-",
         "h3o": 8, "oh": 8, "h2o_acide": 12, "h2o_basique": 6
     },
     "CH2O / CH3OH (Formaldéhyde / Méthanol)": {
+        "E0": -0.13,
         "no_ox": "0", "no_red": "-II", "electrons": 2,
         "milieu_acide": r"\text{CH}_2\text{O} + 2\text{H}_3\text{O}^+ + 2e^- \rightleftharpoons \text{CH}_3\text{OH} + 2\text{H}_2\text{O}",
         "milieu_basique": r"\text{CH}_2\text{O} + 2\text{H}_2\text{O} + 2e^- \rightleftharpoons \text{CH}_3\text{OH} + 2\text{OH}^-",
         "h3o": 2, "oh": 2, "h2o_acide": 2, "h2o_basique": 2
     },
     "O3 / O2 (Ozone / Dioxygène)": {
+        "E0": 2.07,
         "no_ox": "0", "no_red": "0", "electrons": 2,
         "milieu_acide": r"\text{O}_3 + 2\text{H}_3\text{O}^+ + 2e^- \rightleftharpoons \text{O}_2 + 3\text{H}_2\text{O}",
-        "milique_basique": r"\text{O}_3 + \text{H}_2\text{O} + 2e^- \rightleftharpoons \text{O}_2 + 2\text{OH}^-",
+        "milieu_basique": r"\text{O}_3 + \text{H}_2\text{O} + 2e^- \rightleftharpoons \text{O}_2 + 2\text{OH}^-",
         "h3o": 2, "oh": 2, "h2o_acide": 3, "h2o_basique": 1
     },
     "Fe(CN)6³⁻ / Fe(CN)6⁴⁻": {
+        "E0": 0.36,
         "no_ox": "+III", "no_red": "+II", "electrons": 1,
         "milieu_acide": r"\text{Fe(CN)}_6^{3-} + 1e^- \rightleftharpoons \text{Fe(CN)}_6^{4-}",
         "milieu_basique": r"\text{Fe(CN)}_6^{3-} + 1e^- \rightleftharpoons \text{Fe(CN)}_6^{4-}",
@@ -508,30 +554,34 @@ bibliotheque_redox = {
     },
     # --- MÉTAUX ALCALINS ET ALCALINO-TERREUX ---
     "Na⁺ / Na": {
+        "E0": -2.71,
         "no_ox": "+I", "no_red": "0", "electrons": 1,
         "milieu_acide": r"\text{Na}^+ + 1e^- \rightleftharpoons \text{Na}",
         "milieu_basique": r"\text{Na}^+ + 1e^- \rightleftharpoons \text{Na}",
         "h3o": 0, "oh": 0, "h2o_acide": 0, "h2o_basique": 0
     },
     "K⁺ / K": {
+        "E0": -2.93,
         "no_ox": "+I", "no_red": "0", "electrons": 1,
         "milieu_acide": r"\text{K}^+ + 1e^- \rightleftharpoons \text{K}",
         "milieu_basique": r"\text{K}^+ + 1e^- \rightleftharpoons \text{K}",
         "h3o": 0, "oh": 0, "h2o_acide": 0, "h2o_basique": 0
     },
     "Ca²⁺ / Ca": {
+        "E0": -2.87,
         "no_ox": "+II", "no_red": "0", "electrons": 2,
         "milieu_acide": r"\text{Ca}^{2+} + 2e^- \rightleftharpoons \text{Ca}",
         "milieu_basique": r"\text{Ca}^{2+} + 2e^- \rightleftharpoons \text{Ca}",
         "h3o": 0, "oh": 0, "h2o_acide": 0, "h2o_basique": 0
     },
     "Mg²⁺ / Mg": {
+        "E0": -2.37,
         "no_ox": "+II", "no_red": "0", "electrons": 2,
         "milieu_acide": r"\text{Mg}^{2+} + 2e^- \rightleftharpoons \text{Mg}",
         "milieu_basique": r"\text{Mg}^{2+} + 2e^- \rightleftharpoons \text{Mg}",
         "h3o": 0, "oh": 0, "h2o_acide": 0, "h2o_basique": 0
     }
-        }
+}
 
 
 def afficher_atelier_bilan_verrouille(verrouille=False):
