@@ -922,7 +922,7 @@ with tab2:
 
         col_t21_h11, col_t21_h21 = st.columns(2)
         
-            with col_t21_h11:
+        with col_t21_h11:
             col_t21_h111, col_t21_h211 = st.columns(2)
                 with col_t21_h111:
                     if os.path.exists("Galilée.jpg"):
@@ -947,7 +947,7 @@ with tab2:
                             "L'image 'thermoscope.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
                         )
 
-            with col_t21_h21:
+        with col_t21_h21:
             col_t21_h311, col_t21_h411 = st.columns(2)
                 with col_t21_h311:
                     if os.path.exists("Fahrenheit.jpg"):
