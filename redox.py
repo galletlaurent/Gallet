@@ -667,6 +667,103 @@ bibliotheque_redox = {
     }
 }
 
+def dessiner_contenant_becher(ax, couleur_solution):
+    # Liquide de fond
+    ax.add_patch(patches.Rectangle((1.2, 1.0), 2.6, 3.3, color=couleur_solution, alpha=0.7, zorder=1))
+    # Ellipse de surface (dessus)
+    ax.add_patch(patches.Ellipse((2.5, 4.3), 2.6, 0.4, color=couleur_solution, alpha=0.5, zorder=2))
+    # Face cachée arrière (pointillés)
+    ax.add_patch(patches.Arc((2.5, 4.3), 2.6, 0.4, angle=0, theta1=0, theta2=180, color='#475569', lw=1, ls='--', zorder=3))
+    # Face avant visible de l'eau (arc continu)
+    ax.add_patch(patches.Arc((2.5, 4.3), 2.6, 0.4, angle=0, theta1=180, theta2=360, color='#1e293b', lw=1.5, zorder=6))
+    # Épaisseur du verre du bécher
+    ax.add_patch(patches.Polygon([[1.0, 5.0], [1.2, 5.0], [1.2, 1.0], [3.8, 1.0], [3.8, 5.0], [4.0, 5.0]], closed=False, fill=False, color='#1e293b', lw=2.5, zorder=7))
+    ax.text(0.6, 4.5, "Bécher en verre", color='#334155', fontsize=8, rotation=90, va='center')
+
+# --- 1. CAS LIQUIDE / MÉTAL (Lame classique) ---
+def schema_liquide_metal(ax, couleur_solution, nom_metal, hex_metal, nom_sol, lbl_sol, est_final, nom_depot="", hex_depot=""):
+    dessiner_contenant_becher(ax, couleur_solution)
+    pts_lame = [[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]]
+    # Dessin de la lame continue
+    ax.add_patch(patches.Polygon(pts_lame, color=hex_metal, edgecolor='#475569', lw=1.2, zorder=4))
+    
+    if not est_final:
+        ax.text(3.4, 5.5, f"Lame de {nom_metal}\n(Métal)", color='#1e293b', fontsize=9, fontweight='bold')
+        ax.text(1.3, 2.5, f"Solution :\n{nom_sol}\n({lbl_sol})", color='#1e3a8a', fontsize=9, va='center')
+    else:
+        if nom_depot: # Si un dépôt métallique recouvre la partie immergée
+            dep = patches.Polygon(pts_lame, color=hex_depot, edgecolor='#78350f', lw=1.2, zorder=5)
+            ax.add_patch(dep)
+            dep.set_clip_path(patches.Rectangle((1.0, 0.0), 3.0, 4.3, transform=ax.transData))
+            ax.text(3.4, 2.5, f"Dépôt de {nom_depot}\n(Métal)", color='#78350f', fontsize=9, fontweight='bold')
+        ax.text(1.3, 2.5, "Solution finale\ntransformée", color='#1e293b', fontsize=9, va='center')
+
+# --- 2. CAS GAZ / MÉTAL (Bouteille + Lame métallique) ---
+def schema_gaz_metal(ax, couleur_solution, nom_gaz, lbl_gaz, nom_metal, hex_metal, est_final):
+    dessiner_contenant_becher(ax, couleur_solution)
+    pts_lame = [[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]]
+    ax.add_patch(patches.Polygon(pts_lame, color=hex_metal, edgecolor='#475569', lw=1.2, zorder=4))
+    
+    if not est_final:
+        # Bouteille de gaz latérale autonome
+        ax.add_patch(patches.Rectangle((4.2, 1.0), 0.5, 2.5, color='#475569', edgecolor='#1e293b', lw=1.2, zorder=4))
+        ax.plot([4.35, 1.8, 1.8], [3.5, 3.5, 1.5], color='#334155', lw=2, zorder=4) # Tube plongeant incliné loin de la lame
+        np.random.seed(42)
+        for _ in range(20):
+            ax.add_patch(patches.Circle((1.8 + np.random.normal(0, 0.1), 1.5 + np.random.uniform(0, 2.0)), radius=0.04, fill=False, color='#0891b2', lw=0.7, zorder=5))
+        ax.text(4.4, 2.2, f"Bouteille {nom_gaz}", color='#475569', fontsize=8, rotation=90)
+        ax.text(3.4, 5.5, f"Lame de {nom_metal}", color='#1e293b', fontsize=9, fontweight='bold')
+    else:
+        # Si le gaz est produit à la fin : bulles d'effervescence tout autour de la lame
+        np.random.seed(24)
+        for _ in range(25):
+            ax.add_patch(patches.Circle((np.random.uniform(1.4, 3.6), np.random.uniform(1.3, 4.2)), radius=0.05, fill=False, color='#475569', lw=0.9, zorder=5))
+        ax.text(3.9, 3.0, f"Dégagement\nde {nom_gaz} (Bulles)", color='#475569', fontsize=9, fontweight='bold', va='center')
+
+# --- 3. CAS GAZ / SOLIDE EN POUDRE (Bouteille + Sédiment au fond) ---
+def schema_gaz_solide(ax, couleur_solution, nom_gaz, lbl_gaz, nom_poudre, hex_poudre, est_final):
+    dessiner_contenant_becher(ax, couleur_solution)
+    if not est_final:
+        # Poudre jaune ou noire sédimentée proprement au fond
+        ax.add_patch(patches.Polygon([[1.22, 1.01], [3.78, 1.01], [3.6, 1.35], [1.4, 1.35]], color=hex_poudre, edgecolor='#b45309', lw=1, zorder=4))
+        # Bouteille de gaz latérale avec son tube plongeur qui s'arrête bien au-dessus de la poudre
+        ax.add_patch(patches.Rectangle((4.2, 1.0), 0.5, 2.5, color='#475569', edgecolor='#1e293b', lw=1.2, zorder=4))
+        ax.plot([4.35, 2.5, 2.5], [3.5, 3.5, 2.2], color='#334155', lw=2, zorder=4)
+        np.random.seed(42)
+        for _ in range(15):
+            ax.add_patch(patches.Circle((2.5 + np.random.normal(0, 0.15), 2.2 + np.random.uniform(0, 1.5)), radius=0.04, fill=False, color='#0891b2', lw=0.7, zorder=5))
+        ax.text(3.9, 1.2, f"Poudre de {nom_poudre}", color='#b45309', fontsize=9, fontweight='bold', va='center')
+    else:
+        # État final : le sédiment s'est transformé en gaz ou inversement
+        np.random.seed(24)
+        for _ in range(25):
+            ax.add_patch(patches.Circle((np.random.uniform(1.4, 3.6), np.random.uniform(1.3, 4.2)), radius=0.05, fill=False, color='#475569', lw=0.9, zorder=5))
+
+# --- 4. CAS GAZ / GAZ (Double système de barbotage) ---
+def schema_gaz_gaz(ax, couleur_solution, nom_gaz1, nom_gaz2, est_final):
+    dessiner_contenant_becher(ax, couleur_solution)
+    # Deux tubes plongeurs distincts pour éviter les télescopages visuels
+    ax.plot([4.35, 3.0, 3.0], [3.5, 3.5, 1.8], color='#334155', lw=1.5, zorder=4)
+    ax.plot([0.6, 2.0, 2.0], [3.5, 3.5, 1.8], color='#334155', lw=1.5, zorder=4)
+    np.random.seed(12)
+    for _ in range(30):
+        ax.add_patch(patches.Circle((2.0 + np.random.normal(0, 0.12), 1.8 + np.random.uniform(0, 2.0)), radius=0.04, fill=False, color='#0891b2', lw=0.7, zorder=5))
+        ax.add_patch(patches.Circle((3.0 + np.random.normal(0, 0.12), 1.8 + np.random.uniform(0, 2.0)), radius=0.04, fill=False, color='#0284c7', lw=0.7, zorder=5))
+
+# --- 5. CAS SOLIDE / SOLIDE POUDRE (Mélange de sédiments au fond) ---
+def schema_solide_solide(ax, couleur_solution, nom_poudre1, hex_poudre1, nom_poudre2, hex_poudre2, est_final):
+    dessiner_contenant_becher(ax, couleur_solution)
+    # Rendu sous forme de strates sédimentaires réalistes au fond du bécher
+    ax.add_patch(patches.Polygon([[1.22, 1.01], [3.78, 1.01], [3.6, 1.25], [1.4, 1.25]], color=hex_poudre1, zorder=4))
+    ax.add_patch(patches.Polygon([[1.4, 1.25], [3.6, 1.25], [3.5, 1.5], [1.5, 1.5]], color=hex_poudre2, alpha=0.8, zorder=5))
+    ax.text(3.9, 1.2, f"{nom_poudre1} + {nom_poudre2}", color='#1e293b', fontsize=9, fontweight='bold', va='center')
+
+# --- 6. CAS LIQUIDE / LIQUIDE (Solutions pures limpides colorées) ---
+def schema_liquide_liquide(ax, couleur_solution, label_statut):
+    dessiner_contenant_becher(ax, couleur_solution)
+    ax.text(2.5, 2.5, label_statut, color='#0f172a', fontsize=10, ha='center', fontweight='bold', zorder=5)
+
+
 
 def afficher_atelier_bilan_verrouille(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 6 (Réaction d'oxydoréduction) sur deux colonnes."""
@@ -3354,90 +3451,50 @@ with tab6:
                         import matplotlib.patches as patches
                         import numpy as np
 
-                        # Extraction propre des états
+                        # Extraction propre des caractéristiques d'état depuis votre dictionnaire
                         _, s_ox_init, hex_ox_init, lbl_ox_init = t6_couleurs_especes.get(t6_reactif_ox_choisi, (t6_reactif_ox_choisi, "solution", "#e0f2fe", "Incolore"))
                         _, s_red_init, hex_red_init, lbl_red_init = t6_couleurs_especes.get(t6_reactif_red_choisi, (t6_reactif_red_choisi, "metal", "#94a3b8", "Métal"))
                         _, s_ox_fin, hex_ox_fin, lbl_ox_fin = t6_couleurs_especes.get(t6_prod_ox, (t6_prod_ox, "solution", "#e0f2fe", "Incolore"))
                         _, s_red_fin, hex_red_fin, lbl_red_fin = t6_couleurs_especes.get(t6_prod_red, (t6_prod_red, "solution", "#e0f2fe", "Incolore"))
 
-                        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+                        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 5))
+                        teinte_eau = "#e0f2fe"
 
-                        def dessiner_becher_systeme(ax, couleur_solution, est_final):
-                            # 1. Base aqueuse translucide de fond
-                            ax.add_patch(patches.Rectangle((1.2, 1.0), 2.6, 3.3, color=couleur_solution, alpha=0.7, zorder=1))
-                            ax.add_patch(patches.Ellipse((2.5, 4.3), 2.6, 0.4, color=couleur_solution, alpha=0.5, zorder=2))
-                            ax.add_patch(patches.Arc((2.5, 4.3), 2.6, 0.4, angle=0, theta1=0, theta2=180, color='#475569', lw=1, ls='--', zorder=3))
-
-                            pts_lame = [[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]]
-
-                            if not est_final:
-                                # =============================================================================
-                                # ÉTAT INITIAL : AFFICHAGE CUMULATIF DES DEUX RÉACTIFS
-                                # =============================================================================
-                                # Rendu du Réducteur (Métal ou Poudre)
-                                if s_red_init == "metal":
-                                    ax.add_patch(patches.Polygon(pts_lame, color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4))
-                                    ax.text(3.4, 5.5, f"Lame de {t6_reactif_red_choisi}\n(Métal)", color='#1e293b', fontsize=9, fontweight='bold')
-                                
-                                if s_red_init == "poudre" or t6_reactif_red_choisi == "S":
-                                    # La poudre jaune de Soufre est dessinée au fond (zorder=4)
-                                    ax.add_patch(patches.Polygon([[1.22, 1.01], [3.78, 1.01], [3.6, 1.35], [1.4, 1.35]], color=hex_red_init, edgecolor='#b45309', lw=1, zorder=4))
-                                    ax.text(3.9, 1.2, f"Poudre de {t6_reactif_red_choisi}\n({lbl_red_init})", color='#b45309', fontsize=9, fontweight='bold', va='center')
-
-                                # Rendu de l'Oxydant (si c'est un Gaz comme O3)
-                                if s_ox_init == "gaz":
-                                    # Ajout de la bouteille de gaz à droite
-                                    ax.add_patch(patches.Rectangle((4.2, 1.0), 0.5, 2.5, color='#475569', edgecolor='#1e293b', lw=1.2, zorder=4))
-                                    ax.plot([4.35, 3.0, 3.0], [3.5, 3.5, 1.8], color='#334155', lw=2, zorder=4)
-                                    # Nuage de bulles de gaz injecté au centre
-                                    np.random.seed(42)
-                                    for _ in range(20):
-                                        ax.add_patch(patches.Circle((3.0 + np.random.normal(0, 0.15), 1.8 + np.random.uniform(0, 1.8)), radius=np.random.uniform(0.03, 0.05), fill=False, color='#0891b2', lw=0.7, zorder=5))
-                                
-                                ax.text(1.3, 3.5, f"Solution :\n{t6_reactif_ox_choisi}\n({lbl_ox_init})", color='#1e3a8a', fontsize=9, va='center')
-
-                            else:
-                                # =============================================================================
-                                # ÉTAT FINAL : AFFICHAGE CUMULATIF DES PRODUITS FORMÉS
-                                # =============================================================================
-                                # 1. Si le support de départ était une lame métallique
-                                if s_red_init == "metal":
-                                    ax.add_patch(patches.Polygon(pts_lame, color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4))
-                                    if s_ox_fin == "metal":
-                                        dep = patches.Polygon(pts_lame, color=hex_ox_fin, edgecolor='#78350f', lw=1.2, zorder=5)
-                                        ax.add_patch(dep)
-                                        dep.set_clip_path(patches.Rectangle((1.0, 0.0), 3.0, 4.3, transform=ax.transData))
-                                        ax.text(3.4, 2.5, f"Dépôt de {t6_prod_ox}\n(Métal)", color='#78350f', fontsize=9, fontweight='bold')
-
-                                # 2. Si la réaction crée un nouveau précipité/poudre au fond (ex: Soufre produit)
-                                if s_ox_fin == "poudre" or t6_prod_ox == "S" or t6_prod_ox == "MnO2":
-                                    ax.add_patch(patches.Polygon([[1.22, 1.01], [3.78, 1.01], [3.6, 1.4], [1.4, 1.4]], color=hex_ox_fin, edgecolor='#b45309' if t6_prod_ox=="S" else '#1e293b', lw=1, zorder=5))
-                                    ax.text(3.9, 1.2, f"Précipité de {t6_prod_ox}\n({lbl_ox_fin})", color='#b45309' if t6_prod_ox=="S" else '#1e293b', fontsize=9, fontweight='bold', va='center')
-                                
-                                # 3. Si la réaction dégage un nouveau gaz (ex: Ozone produit)
-                                if s_ox_fin == "gaz" or s_red_fin == "gaz" or t6_prod_ox in ["O3", "H2", "NO2", "CO2"]:
-                                    np.random.seed(24)
-                                    for _ in range(30):
-                                        ax.add_patch(patches.Circle((np.random.uniform(1.4, 3.6), np.random.uniform(1.3, 4.2)), radius=np.random.uniform(0.04, 0.07), fill=False, color='#475569', lw=0.9, zorder=5))
-                                    ax.text(3.9, 3.0, "Dégagement\ngazeux (Bulles)", color='#475569', fontsize=9, fontweight='bold', va='center')
-
-                                ax.text(1.3, 2.5, "Solution finale\ntransformée", color='#1e293b', fontsize=9, va='center')
-
-                            # 6. Contour avant de la surface et flacon en verre
-                            ax.add_patch(patches.Arc((2.5, 4.3), 2.6, 0.4, angle=0, theta1=180, theta2=360, color='#1e293b', lw=1.5, zorder=6))
-                            ax.add_patch(patches.Polygon([[1.0, 5.0], [1.2, 5.0], [1.2, 1.0], [3.8, 1.0], [3.8, 5.0], [4.0, 5.0]], closed=False, fill=False, color='#1e293b', lw=2.5, zorder=7))
-                            ax.text(0.6, 4.5, "Bécher en verre", color='#334155', fontsize=8, rotation=90, va='center')
-                        # Bécher initial
-                        c_sol1 = hex_ox_init if s_ox_init == "solution" else "#e0f2fe"
-                        dessiner_becher_systeme(ax1, c_sol1, est_final=False)
+                        # --- AIGUILLAGE DU BÉCHER INITIAL (À GAUCHE) ---
+                        c_sol1 = hex_ox_init if s_ox_init == "solution" else teinte_eau
+                        
+                        if s_ox_init == "gaz" and s_red_init == "poudre":
+                            schema_gaz_solide(ax1, c_sol1, t6_reactif_ox_choisi, lbl_ox_init, t6_reactif_red_choisi, hex_red_init, est_final=False)
+                        elif s_ox_init == "gaz" and s_red_init == "metal":
+                            schema_gaz_metal(ax1, c_sol1, t6_reactif_ox_choisi, lbl_ox_init, t6_reactif_red_choisi, hex_red_init, est_final=False)
+                        elif s_ox_init == "solution" and s_red_init == "metal":
+                            schema_liquide_metal(ax1, c_sol1, t6_reactif_red_choisi, hex_red_init, t6_reactif_ox_choisi, lbl_ox_init, est_final=False)
+                        elif s_ox_init == "gaz" and s_red_init == "gaz":
+                            schema_gaz_gaz(ax1, c_sol1, t6_reactif_ox_choisi, t6_reactif_red_choisi, est_final=False)
+                        elif s_ox_init == "poudre" and s_red_init == "poudre":
+                            schema_solide_solide(ax1, c_sol1, t6_reactif_ox_choisi, hex_ox_init, t6_reactif_red_choisi, hex_red_init, est_final=False)
+                        else:
+                            schema_liquide_liquide(ax1, c_sol1, f"Mélange initial\n{t6_reactif_ox_choisi} + {t6_reactif_red_choisi}")
+                        
                         ax1.text(2.5, 0.3, "ÉTAT INITIAL", fontsize=12, fontweight='bold', ha='center')
                         ax1.set_xlim(0, 5.5)
                         ax1.set_ylim(0, 7)
                         ax1.axis('off')
 
-                        # Bécher final
-                        c_sol2 = hex_red_fin if s_red_fin == "solution" else (hex_ox_fin if s_ox_fin == "solution" else "#e0f2fe")
-                        dessiner_becher_systeme(ax2, c_sol2, est_final=True)
+                        # --- AIGUILLAGE DU BÉCHER FINAL (À DROITE) ---
+                        c_sol2 = hex_red_fin if s_red_fin == "solution" else (hex_ox_fin if s_ox_fin == "solution" else teinte_eau)
+                        
+                        if (s_ox_fin == "gaz" or s_red_fin == "gaz") and s_red_init == "metal":
+                            schema_gaz_metal(ax2, c_sol2, t6_prod_ox, lbl_ox_fin, t6_reactif_red_choisi, hex_red_init, est_final=True)
+                        elif s_ox_fin == "metal" and s_red_init == "metal":
+                            schema_liquide_metal(ax2, c_sol2, t6_reactif_red_choisi, hex_red_init, t6_reactif_ox_choisi, lbl_ox_init, est_final=True, nom_depot=t6_prod_ox, hex_depot=hex_ox_fin)
+                        elif s_ox_fin == "poudre" or t6_prod_ox in ["S", "MnO2"]:
+                            dessiner_contenant_becher(ax2, c_sol2)
+                            ax2.add_patch(patches.Polygon([[1.22, 1.01], [3.78, 1.01], [3.6, 1.4], [1.4, 1.4]], color=hex_ox_fin, edgecolor='#1e293b', lw=1, zorder=5))
+                            ax2.text(3.9, 1.2, f"Précipité de {t6_prod_ox}", color='#1e293b', fontsize=9, fontweight='bold', va='center')
+                        else:
+                            schema_liquide_liquide(ax2, c_sol2, "Solution finale\ntransformée")
+
                         ax2.text(2.5, 0.3, "ÉTAT FINAL", fontsize=12, fontweight='bold', ha='center')
                         ax2.set_xlim(0, 5.5)
                         ax2.set_ylim(0, 7)
