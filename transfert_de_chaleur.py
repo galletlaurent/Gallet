@@ -925,15 +925,15 @@ with tab2:
         with col_t21_h11:
             col_t21_h111, col_t21_h211 = st.columns(2)
             with col_t21_h111:
-                if os.path.exists("Galilée.jpg"):
+                if os.path.exists("Galilee.jpg"):
                     st.image(
-                        "Galilée.jpg",
+                        "Galilee.jpg",
                         caption="Galilée",
                         use_container_width=True,
                     )
                 else:
                     st.warning(
-                        "L'image 'Galilée.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
+                        "L'image 'Galilee.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
 
             with col_t21_h211:
                 if os.path.exists("thermoscope.jpg"):
@@ -962,15 +962,15 @@ with tab2:
                     )
 
             with col_t21_h411:
-                if os.path.exists("thermometre.jpg"):
+                if os.path.exists("mercure.jpg"):
                     st.image(
-                        "thermometre.jpg",
+                        "mercure.jpg",
                         caption="thermomètre à mercure",
                         use_container_width=True,
                     )
                 else:
                     st.warning(
-                        "L'image 'thermometre.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+                        "L'image 'mercure.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
                     )
 
 
