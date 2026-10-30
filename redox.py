@@ -2995,34 +2995,34 @@ with tab6:
 
             # Ligne 3 : Lancement du calcul basé sur les E0 de votre bibliothèque
 
-            if reactif_ox_choisi != "Choisir..." and reactif_red_choisi != "Choisir...":
-                st.write("")
-                if st.button(
-                    "TESTER LA RÉACTION CHIMIQUE SUR LE TERRAIN",
-                    key="btn_run_simulation_gamma_bibliotheque",
-                    use_container_width=True,
-                ):
-                    # CALCUL SÉCURISÉ UNIQUEMENT LORS DU CLIC : Extraction automatique des E0
-                    e0_cpl_A = float(bibliotheque_redox[cpl_selection_A]["E0"])
-                    e0_cpl_B = float(bibliotheque_redox[cpl_selection_B]["E0"])
+        if reactif_ox_choisi != "Choisir..." and reactif_red_choisi != "Choisir...":
+            st.write("")
+            if st.button(
+                "TESTER LA RÉACTION CHIMIQUE SUR LE TERRAIN",
+                key="btn_run_simulation_gamma_bibliotheque",
+                use_container_width=True,
+            ):
+                # CALCUL SÉCURISÉ UNIQUEMENT LORS DU CLIC : Extraction automatique des E0
+                e0_cpl_A = float(bibliotheque_redox[cpl_selection_A]["E0"])
+                e0_cpl_B = float(bibliotheque_redox[cpl_selection_B]["E0"])
 
-                    # Affectation des potentiels selon le réactif sélectionné
-                    e0_ox = e0_cpl_A if reactif_ox_choisi == ox_A else e0_cpl_B
-                    e0_red = e0_cpl_A if reactif_red_choisi == red_A else e0_cpl_B
+                # Affectation des potentiels selon le réactif sélectionné
+                e0_ox = e0_cpl_A if reactif_ox_choisi == ox_A else e0_cpl_B
+                e0_red = e0_cpl_A if reactif_red_choisi == red_A else e0_cpl_B
 
-                    # Application stricte de la règle du gamma direct
-                    if e0_ox > e0_red:
-                        st.success(
-                            f"RÉSULTAT : LA RÉACTION EST POSSIBLE !\n\n"
-                            f"L'oxydant choisi ({reactif_ox_choisi}) est placé au-dessus du réducteur choisi ({reactif_red_choisi}) sur l'échelle des potentiels.\n\n"
-                            f"La règle du gamma direct est respectée (E0 Ox = {e0_ox:.2f} V > E0 Red = {e0_red:.2f} V). Le transfert d'électrons est spontané."
-                        )
-                    else:
-                        st.error(
-                            f"RÉSULTAT : RÉACTION CHIMIQUE IMPOSSIBLE !\n\n"
-                            f"L'oxydant choisi ({reactif_ox_choisi}) se situe en dessous du réducteur choisi ({reactif_red_choisi}) sur l'échelle.\n\n"
-                            f"Le gamma est inversé (E0 Ox = {e0_ox:.2f} V <= E0 Red = {e0_red:.2f} V). Les deux réactifs sont stables et coexistent sans réagir."
-                        )
+                # Application stricte de la règle du gamma direct
+                if e0_ox > e0_red:
+                    st.success(
+                        f"RÉSULTAT : LA RÉACTION EST POSSIBLE !\n\n"
+                        f"L'oxydant choisi ({reactif_ox_choisi}) est placé au-dessus du réducteur choisi ({reactif_red_choisi}) sur l'échelle des potentiels.\n\n"
+                        f"La règle du gamma direct est respectée (E0 Ox = {e0_ox:.2f} V > E0 Red = {e0_red:.2f} V). Le transfert d'électrons est spontané."
+                    )
+                else:
+                    st.error(
+                        f"RÉSULTAT : RÉACTION CHIMIQUE IMPOSSIBLE !\n\n"
+                        f"L'oxydant choisi ({reactif_ox_choisi}) se situe en dessous du réducteur choisi ({reactif_red_choisi}) sur l'échelle.\n\n"
+                        f"Le gamma est inversé (E0 Ox = {e0_ox:.2f} V <= E0 Red = {e0_red:.2f} V). Les deux réactifs sont stables et coexistent sans réagir."
+                    )
     st.write("---")
 
 
