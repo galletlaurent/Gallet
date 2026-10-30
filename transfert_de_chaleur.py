@@ -613,7 +613,7 @@ with tab1:
             score_t1 = 0.0
             if "champs_therm1_clean" in st.session_state:
                 for ligne in st.session_state.champs_therm1_clean:
-                    enonce_t, choix_t, attendu_t, cle_t = ligne  # Déballage propre des 4 éléments du tuple
+                    enonce_t, choix_t, attendu_t, cle_t = ligne
                     saisie_t = st.session_state.get(f"{cle_t}_therm1_clean", "Choisir...")
                     if str(saisie_t).strip() == str(attendu_t).strip():
                         score_t1 += 1.0
@@ -625,7 +625,7 @@ with tab1:
             st.session_state.suite_verrouille_tab1_therm = True
             st.rerun()
 
-    # --- COMPILATION DU BILAN HTML SCELLÉ POUR LES TRANSFERTS THERMIQUES ---
+    # --- COMPILATION DU BILAN FICHIER HTML SCELLÉ ---
     if st.session_state.get("suite_verrouille_tab1_therm", False):
         from datetime import datetime
         scr1_t1 = st.session_state.get("score_suite1_therm_p1", 0.0)
@@ -679,21 +679,11 @@ with tab1:
         """
 
         if "ordre_quiz_tab1_therm_aleatoire" in st.session_state:
-            for num, q_item in enumerate(
-                st.session_state.ordre_quiz_tab1_therm_aleatoire, 1
-            ):
-                saisie = st.session_state.get(
-                    f"therm_at1_final_g_{q_item['id']}", "Choisir..."
-                )
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab1_therm_aleatoire, 1):
+                saisie = st.session_state.get(f"therm_at1_final_g_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
-                v_lbl = (
-                    "CORRECT"
-                    if str(saisie).strip() == str(attendu).strip()
-                    else "INCORRECT"
-                )
-                v_class = (
-                    "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                )
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
                 html_export_therm1 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
         html_export_therm1 += """
@@ -710,23 +700,13 @@ with tab1:
 
         if "champs_therm1_clean" in st.session_state:
             for num, ligne in enumerate(st.session_state.champs_therm1_clean, 1):
-                enonce_texte = ligne[0]
-                attendu_texte = ligne[2]
+                enonce_texte = ligne
+                attendu_texte = ligne
                 cle_variable = ligne[-1]
 
-                saisie_texte = st.session_state.get(
-                    f"{cle_variable}_therm1_clean", "Choisir..."
-                )
-                v_lbl_t = (
-                    "CORRECT"
-                    if str(saisie_texte).strip() == str(attendu_texte).strip()
-                    else "INCORRECT"
-                )
-                v_class_t = (
-                    "status-correct"
-                    if v_lbl_t == "CORRECT"
-                    else "status-incorrect"
-                )
+                saisie_texte = st.session_state.get(f"{cle_variable}_therm1_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
                 html_export_therm1 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
 
         html_export_therm1 += """
@@ -736,11 +716,11 @@ with tab1:
         </html>
         """
 
-        # Rendu du bouton de téléchargement natif pour le fichier HTML compilé
+        # Rendu du bouton de téléchargement natif pour le fichier HTML compilé (.html)
         st.download_button(
-            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 1",
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 1 (.HTML)",
             data=html_export_therm1,
-            file_name=preparer_nom_fichier("Atelier_1_Historique"),
+            file_name=preparer_nom_fichier("Atelier_1_Historique").replace(".txt", ".html"),
             mime="text/html",
             use_container_width=True,
         )
