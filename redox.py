@@ -3000,8 +3000,14 @@ with tab6:
                 use_container_width=True,
             ):
                 # CALCUL SÉCURISÉ UNIQUEMENT LORS DU CLIC : Extraction automatique des E0
-                e0_cpl_A = float(bibliotheque_redox[cpl_selection_A]["E0"])
-                e0_cpl_B = float(bibliotheque_redox[cpl_selection_B]["E0"])
+                couple_data_A = bibliotheque_redox[cpl_selection_A]
+                couple_data_B = bibliotheque_redox[cpl_selection_B]
+
+                val_E0_A = couple_data_A.get("E0") or couple_data_A.get("e0") or couple_data_A.get("E°")
+                val_E0_B = couple_data_B.get("E0") or couple_data_B.get("e0") or couple_data_B.get("E°")
+
+                e0_cpl_A = float(val_E0_A)
+                e0_cpl_B = float(val_E0_B)
 
                 # Affectation des potentiels selon le réactif sélectionné
                 e0_ox = e0_cpl_A if reactif_ox_choisi == ox_A else e0_cpl_B
