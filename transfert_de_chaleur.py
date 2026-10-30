@@ -1024,15 +1024,15 @@ with tab2:
                     )
 
             with col_t36_k2:
-                if os.path.exists("mercure.jpg"):
+                if os.path.exists("themokelvin.jpg"):
                     st.image(
-                        "mercure.jpg",
-                        caption="thermomètre à mercure",
+                        "themokelvin.jpg",
+                        caption="mesure et extrapolation pour trouver le 0K",
                         use_container_width=True
                     )
                 else:
                     st.warning(
-                        "L'image 'mercure.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+                        "L'image 'themokelvin.jpg.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
                     )
 
 
