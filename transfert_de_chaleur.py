@@ -941,31 +941,27 @@ with tab2:
 
     with img_col_gauche:
         # Affichage de l'image de gauche (Basse température)
-        st.image(
-            "froid.jpg", 
-            caption="État microscopique à basse température",
-            use_container_width=True
-        )
-        st.markdown(
-            "<p style='text-align: center; color: #475569; font-size: 13px;'>"
-            "Molécules ordonnées et quasi-immobiles<br>(Faible énergie cinétique)"
-            "</p>",
-            unsafe_allow_html=True
-        )
+        if os.path.exists("froid.jpg"):
+            st.image(
+                "froid.jpg",
+                caption="basse température faible vitesse",
+            )
+        else:
+            st.warning(
+                "L'image 'froid.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+            )
+
 
     with img_col_droite:
-        # Affichage de l'image de droite (Haute température)
-        st.image(
-            "chaud.jpg", 
-            caption="État microscopique à haute température",
-            use_container_width=True
-        )
-        st.markdown(
-            "<p style='text-align: center; color: #475569; font-size: 13px;'>"
-            "Molécules dispersées à haute vitesse<br>(Forte agitation thermique)"
-            "</p>",
-            unsafe_allow_html=True
-        )
+        if os.path.exists("chaud.jpg"):
+            st.image(
+                "chaud.jpg",
+                caption="haute température grande vitesse",
+            )
+        else:
+            st.warning(
+                "L'image 'chaud.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+            )
 
     st.write("---")
     st.subheader("Convertisseur interactif d'unités de température")
