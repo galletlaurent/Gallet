@@ -3241,16 +3241,25 @@ with tab6:
             "Le fer se fait oxyder en libérant 2 électrons, tandis que l'ion cuivre II se fait réduire en captant 2 électrons. "
             "Comme le nombre d'électrons échangés est identique (2 d'un côté, 2 de l'autre), l'addition est directe."
         )
+
+        st.latex(r"\text{Fe}\rightleftharpoons \text{Fe}^{2+} + 2e^- ")
+        st.latex(r"\text{Cu}^{2+} + 2e^- \rightleftharpoons \text{Cu}")
+                
         st.markdown("**Équation finale sans électrons libres :**")
         st.latex(
             r"\text{Fe (s)} + \text{Cu}^{2+}\text{ (aq)} \longrightarrow \text{Fe}^{2+}\text{ (aq)} + \text{Cu (s)}"
         )
 
         st.markdown("**Exemple classique : Fer métallique et ions Ag I**")
+        
         st.write(
             "Le fer se fait oxyder en libérant 2 électrons, tandis que l'ion argent I se fait réduire en captant 1 électron. "
             "Comme le nombre d'électrons échangés est idifférents (2 d'un côté, 1 de l'autre), l'addition n' est pas directe."
         )
+
+        st.latex(r"\text{Fe}\rightleftharpoons \text{Fe}^{2+} + 2e^- ")
+        st.latex(r"\text{Ag}^{+} + 2e^- \rightleftharpoons \text{Ag}")
+        
         st.markdown("**Équation finale sans électrons libres :**")
         st.latex(
             r"\text{ Fe (s)} + \text{2 Ag}^{+}\text{ (aq)} \longrightarrow \text{ Fe}^{2+}\text{ (aq)} + \text{2 Ag (s)}"
