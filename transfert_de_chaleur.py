@@ -185,23 +185,22 @@ def preparer_nom_fichier(nom_onglet):
     # Assemblage de la chaîne finale pour le téléchargement
     return f"{nom_propre}_{prenom_propre}_{classe_propre}_{date_texte}_{heure_actuelle}_{nom_onglet}.txt"
 
-
 onglets = st.tabs([
     "Identification",
     "Historique",
     "La température",
     "La chaleur",
-    "Les modes de transfert thermiques",
-    "Les conducteurs et les isolants thermiques ",
-    "La quantité de chaleur ",
+    "Les modes de transfert thermique",
+    "Les conducteurs et les isolants thermiques",
+    "La quantité de chaleur",
     "Coefficient de transmission thermique",
     "La résistance thermique",
-    "Transfert de chaleur à travers une paroie composé d'un seul matériau",
-    "Transfert de chaleur à travers une paroie composé de plusieurs matériaux",
-    "Application dans le domaine de la mainrtenance",
+    "Transfert de chaleur à travers une paroi composée d'un seul matériau",
+    "Transfert de chaleur à travers une paroi composée de plusieurs matériaux",
+    "Application dans le domaine de la maintenance",
     "Application dans le domaine des TP",
     "Application dans le domaine de la conduite routière",
-    "Application dans le domaine des géometre",    
+    "Application dans le domaine des géomètres",    
 ])
 
 tab0 = onglets[0] 
@@ -471,152 +470,96 @@ with tab0:
 
 
 with tab1:
-    st.header("Historique de la Chimie Redox")
+    st.header("Histoire et Découverte de la Thermique")
+    st.write(
+        "Découvrez comment l'humanité a compris la nature de la chaleur, passant d'un fluide imaginaire à une agitation microscopique :"
+    )
+
+    # =============================================================================
+    # SECTION HISTORIQUE ET SCIENTIFIQUES CLÉS
+    # =============================================================================
+    col_hist_1, col_hist_2 = st.columns(2)
     
-    st.subheader("Pourquoi ce nom ?")
-    st.write(
-        "Le mot **Oxydation** vient historiquement de l'**Oxygène**. "
-        "À la fin du 18e siècle, le chimiste Antoine Lavoisier étudie la combustion des corps dans l'air. "
-        "Il constate que la fixation d'oxygène sur un métal (comme le fer) produit de la rouille, appelée alors un oxyde. "
-        "À l'inverse, extraire l'oxygène d'un oxyde pour récupérer le métal pur a été nommé la **Réduction** (diminution de la masse de la matière)."
-    )
-
-
-    st.subheader("Comment la définition a-t-elle évolué ?")
-    st.write(
-        "Au fil des siècles, les chimistes ont observé des réactions totalement identiques "
-        "à la corrosion ou à la combustion, mais qui ne faisaient intervenir **aucun atome d'oxygène**."
-    )
-
-    st.info(
-        "Le grand virage scientifique a eu lieu au début du 20e siècle avec la découverte de l'électron "
-        "par J.J. Thomson (1897) et la théorie de la liaison chimique de Gilbert Lewis. "
-        "Les scientifiques ont compris que l'oxygène n'était qu'un intermédiaire. Le véritable moteur caché de la réaction, "
-        "c'est l'**échange d'électrons**."
-    )
-
-    st.subheader("Les travaux historiques marquants")
-
-    # --- SECTION LAVOISIER ---
-    st.markdown(
-        "- **1777 - Antoine Lavoisier :** Théorie de la combustion. Définition de l'oxydation par fixation de l'oxygène."
-    )
-    col_11, col_12 = st.columns(2)
-    with col_11:
-        if os.path.exists("Lavoisier.jpg"):
-            st.image("Lavoisier.jpg", caption="Antoine Lavoisier")
-        else:
-            st.warning("L'image 'Lavoisier.jpg' est introuvable.")
-    with col_12:
-        if os.path.exists("lavoisier _composition_de_air.jpg"):
-            st.image("lavoisier _composition_de_air.jpg", caption="En chauffant du mercure (seul métal à l’état liquide à température ordinaire, et à relativement faible température d’ébullition à 350 °C), Lavoisier voit apparaître des flocules rouges d’oxyde de mercure. L’oxygène de l’air de la cornue a réagi avec le mercure pour former l’oxyde : il ne reste plus dans l’air de la cornue que l’azote. Lavoisier remarque que cette substance n’est pas respirable : un animal ne peut y vivre (azote = a- zoos-, privatif de vie). Dans un second temps, Lavoisier fait chauffer les flocules rouges : c’est la réaction inverse, avec dégagement d’un gaz « éminemment respirable » (l’oxygène), qui ravive la flamme d’une bougie quasi éteinte")
-        else:
-            st.warning("L'image 'Lavoisier.jpg' est introuvable.")
-
-    # --- SECTION VOLTA ---
-
-    st.markdown(
-        "- **1800 - Alessandro Volta :** Invention de la première pile électrique (Cuivre / Zinc). Début de l'électrochimie."
-    )
-    col_13, col_14 = st.columns(2)
-    with col_13:
-        if os.path.exists("Volta.jpg"):
-            st.image("Volta.jpg", caption="Alessandro Volta")
-        else:
-            st.warning("L'image 'Volta.jpg' est introuvable.")
-    with col_14:
-        if os.path.exists("pile_volta.jpg"):
-            st.image("pile_volta.jpg", caption="pile volta")
-        else:
-            st.warning("L'image 'Volta.jpg' est introuvable.")
-            
-    st.markdown(
-        "- **1834 - Michael Faraday :** Établissement des lois de l'électrolyse, reliant la chimie à la quantité d'électricité.")
-    # --- SECTION FARADAY ---
-    col_15, col_16 = st.columns(2)
-    with col_15:
-        if os.path.exists("Faraday.jpg"):
-            st.image("Faraday.jpg", caption="Michael Faraday")
-        else:
-            st.warning("L'image 'Faraday.jpg' est introuvable.")
-    with col_16:
-        if os.path.exists("electrolyse.jpg"):
-            st.image("electrolyse.jpg", caption="Michael Faraday")
-        else:
-            st.warning("L'image 'Faraday.jpg' est introuvable.")
-
-    st.markdown(
-        "- **1920s - Extension moderne :** Définition définitive et universelle de l'oxydoréduction par transfert d'électrons."
-    )
-
-    st.divider()
-    st.subheader("Pourquoi cette étude dans vos filières ?")
-    st.write(
-        "Que ce soit pour lutter contre la corrosion des châssis (Transport), protéger les structures métalliques (Maintenance), "
-        "comprendre la dégradation du béton armé (Travaux Publics) ou préserver les repères topographiques extérieurs (Géomètres), "
-        "toutes ces problématiques découlent directement des découvertes de ces scientifiques."
-    )
-
-    # --- APPLICATIONS MÉTIERS (4 COLONNES) ---
-    col_17, col_18, col_19, col_20 = st.columns(4)
-    with col_17:
-        if os.path.exists("rouille_tp.jpg"):
-            st.image("rouille_tp.jpg", caption="dégradation du béton armé")
-        else:
-            st.warning("L'image 'rouille_tp.jpg' est introuvable.")
-
-    with col_18:
-        if os.path.exists("rouille_routier.jpg"):
-            st.image("rouille_routier.jpg", caption="corrosion des châssis")
-        else:
-            st.warning("L'image 'rouille_routier.jpg' est introuvable.")
-
-    with col_19:
-        if os.path.exists("rouille_mm.jpg"):
-            st.image("rouille_mm.jpg", caption="dégradation structure")
-        else:
-            st.warning("L'image 'rouille_mm.jpg' est introuvable.")
-
-    with col_20:
-        if os.path.exists("rouille_geo.jpg"):
-            st.image("rouille_geo.jpg", caption="repères topographiques")
-        else:
-            st.warning("L'image 'rouille_geo.jpg' est introuvable.")
-
-    st.divider()
-
-    st.write(
-        "Découvrez l'évolution de la science à travers cette mise en scène historique."
-    )
-
-    # --- SECTION CARICATURE ET TEXTE BLEU ---
-    col_graph_hist, col_bd_hist = st.columns(2)
-
-    with col_graph_hist:
+    with col_hist_1:
+        st.markdown("##### La théorie du « Calorique »")
         st.write(
-            "**La BD humoristique textuelle : La révolution invisible de l'électron**"
+            "Pendant longtemps, les scientifiques comme Antoine Lavoisier pensaient que la chaleur "
+            "était un fluide invisible et immatériel appelé le **calorique**. Selon cette théorie, "
+            "un corps chaud possédait simplement plus de ce fluide qu'un corps froid."
+        )
+        
+    with col_hist_2:
+        st.markdown("##### La révolution thermodynamique")
+        st.write(
+            "Au XIXe siècle, des physiciens comme James Prescott Joule et Sadi Carnot démontrent que "
+            "la chaleur n'est pas un fluide, mais une **forme d'énergie** liée à l'agitation des "
+            "atomes. C'est la naissance de la thermodynamique moderne, essentielle pour l'industrie, "
+            "le bâtiment et la maintenance."
         )
 
-        # Affichage du texte narratif dans l'encadré bleu d'information
-        st.info(
-            "**Case 1 :** Antoine Lavoisier, en perruque blanche dans son laboratoire de 1777, regarde un morceau de fer brûler sous une cloche de verre. Il note fièrement sur son cahier : 'Le fer s'associe avec l'oxygène de l'air pour devenir de la rouille. J'appelle cela l'oxydation ! C'est clair et limpide !'.\n\n"
-            "**Case 2 :** Un siècle plus tard, en 1897, le physicien J.J. Thomson observe ses tubes à rayons cathodiques avec une loupe. Il sursaute sur sa chaise en découvrant une particule minuscule et s'écrie : 'Eurêka ! Il y a des grains d'électricité négative encore plus petits que les atomes ! Je vais les appeler les électrons !'.\n\n"
-            "**Case 3 :** Réunion imaginaire au sommet de la chimie au début du 20e siècle. Gilbert Lewis montre un schéma à Lavoisier et lui explique : 'Mon cher Antoine, votre oxygène n'était qu'un intermédiaire ! Regardez de plus près : le fer rouille parce qu'il perd ses électrons. L'oxydation, c'est en réalité une fuite d'électrons !'.\n\n"
-            "**Case 4 :** Un atome de fer moderne, équipé d'un bouclier protecteur, regarde les molécules d'oxygène passer au loin sans pouvoir l'atteindre. Il affiche un grand sourire et s'exclame : 'Merci la science ! Maintenant qu'on connaît le secret de nos électrons, les ingénieurs nous protègent contre la corrosion !'."
+    st.write("---")
+
+    # =============================================================================
+    # BANDE DESSINÉE HUMORISTIQUE EN 4 CASES : LE DRAME DES CALORIES PERDUES
+    # =============================================================================
+    st.subheader("La BD humoristique textuelle : Le drame des calories perdues")
+    st.write(
+        "Suivez le mécanisme de la fuite thermique à travers les parois d'un bâtiment, "
+        "modélisé d'après l'illustration humoristique en 4 cas :"
+    )
+
+    # Configuration de la structure en 4 colonnes régulières (les 4 cases de la BD)
+    bd_case1, bd_col_fleche1, bd_case2, bd_col_fleche2, bd_case3, bd_col_fleche3, bd_case4 = st.columns([3, 0.5, 3, 0.5, 3, 0.5, 3])
+
+    with bd_case1:
+        st.info("**Cas 1 : L'Équilibre Idéal**")
+        st.markdown(
+            "Un groupe d'atomes à l'intérieur d'une maison chauffée est tranquillement installé. "
+            "Ils vibrent joyeusement ensemble.\n\n"
+            "« Tout va bien les gars, l'isolation est parfaite ! On reste bien au chaud ici ! »"
         )
 
-    with col_bd_hist:
-        if os.path.exists("historique_caricature.jpg"):
-            st.image(
-                "historique_caricature.jpg",
-                caption="Illustration humoristique du changement de modèle scientifique en 4 cases",
-                use_container_width=True,
-            )
-        else:
-            st.warning(
-                "L'image 'historique_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
-            )
+    with bd_col_fleche1:
+        st.write("")
+        st.write("")
+        st.subheader("->")
 
+    with bd_case2:
+        st.warning("**Cas 2 : L'Attaque du Froid**")
+        st.markdown(
+            "Une baisse brutale des températures survient à l'extérieur. L'air froid hivernal, très gourmand en énergie, "
+            "vient se coller contre la vitre de la paroi.\n\n"
+            "« Hé vous là-dedans ! Donnez-moi votre énergie ! Vos précieux joules m'intéressent grandement ! »"
+        )
+
+    with bd_col_fleche2:
+        st.write("")
+        st.write("")
+        st.subheader("->")
+
+    with bd_case3:
+        st.error("**Cas 3 : La Fuite Thermique**")
+        st.markdown(
+            "Les atomes de la paroi transmettent l'agitation de proche en proche. Les calories commencent "
+            "à traverser le matériau et à s'échapper du réseau.\n\n"
+            "« Oh non ! On subit un transfert par conduction ! On quitte la maison, "
+            "on se dissipe dehors ! C'est le refroidissement ! »"
+        )
+
+    with bd_col_fleche3:
+        st.write("")
+        st.write("")
+        st.subheader("->")
+
+    with bd_case4:
+        st.success("**Cas 4 : Le Pont Thermique**")
+        st.markdown(
+            "La chaleur s'est totalement évadée dans l'atmosphère froide. La pièce s'est refroidie, laissant "
+            "un gouffre énergétique sur la facture.\n\n"
+            "« Affaire classée ! Encore un système chauffé terrassé par notre pouvoir absorbant ! »"
+        )
+
+    st.write("---")
     if "suite_verrouille_tab1_redox" not in st.session_state:
         st.session_state.suite_verrouille_tab1_redox = False
     verrou_at1 = st.session_state.suite_verrouille_tab1_redox
