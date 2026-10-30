@@ -221,6 +221,178 @@ tab14 = onglets[14]
 
 
 
+
+def afficher_atelier_temperature_verrouille(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 2 (La température) sur deux colonnes."""
+    import random
+
+    # 1. BASE DE DONNÉES DU QUIZ TECHNIQUE ET HISTORIQUE DE LA TEMPÉRATURE
+    questions_therm2_sources = [
+        {
+            "id": "qt2_1",
+            "q": "Qui a inventé le premier instrument de mesure thermique de l'histoire, appelé le thermoscope ?",
+            "options": ["Galilée", "Anders Celsius", "Lord Kelvin"],
+            "rep": "Galilée",
+        },
+        {
+            "id": "qt2_2",
+            "q": "Quelle unité du Système International (SI) est l'unité légale et absolue de la température ?",
+            "options": ["Le Kelvin", "Le degré Celsius", "Le degré Fahrenheit"],
+            "rep": "Le Kelvin",
+        },
+        {
+            "id": "qt2_3",
+            "q": "Quelle température Celsius correspond exactement au zéro absolu (0 K) ?",
+            "options": ["-273,15 °C", "0 °C", "-100 °C"],
+            "rep": "-273,15 °C",
+        },
+        {
+            "id": "qt2_4",
+            "q": "Sur quel phénomène physique repose le fonctionnement des thermomètres analogiques à cadran ou à colonne ?",
+            "options": ["La dilatation thermique", "La fusion moléculaire", "La conduction électrique"],
+            "rep": "La dilatation thermique",
+        },
+        {
+            "id": "qt2_5",
+            "q": "Quelle température de référence fixe le point d'ébullition de l'eau pure sous une pression atmosphérique normale en échelle Celsius ?",
+            "options": ["100 °C", "0 °C", "32 °C"],
+            "rep": "100 °C",
+        },
+        {
+            "id": "qt2_6",
+            "q": "Pourquoi le mercure est-il aujourd'hui interdit dans la fabrication des thermomètres grand public ?",
+            "options": ["En raison de sa haute toxicité", "Parce qu'il ne se dilate pas assez", "Parce qu'il coûte trop cher à produire"],
+            "rep": "En raison de sa haute toxicité",
+        },
+        {
+            "id": "qt2_7",
+            "q": "Quel fluide coloré remplace très couramment le mercure dans les thermomètres domestiques classiques ?",
+            "options": ["L'alcool (Éthanol)", "L'huile de moteur", "L'eau distillée"],
+            "rep": "L'alcool (Éthanol)",
+        },
+        {
+            "id": "qt2_8",
+            "q": "Dans l'échelle Fahrenheit, à quelle valeur numérique correspond le point de fusion de la glace ?",
+            "options": ["32 °F", "0 °F", "100 °F"],
+            "rep": "32 °F",
+        },
+        {
+            "id": "qt2_9",
+            "q": "Au niveau microscopique, que mesure concrètement la température d'un corps ?",
+            "options": ["Le degré d'agitation de ses molécules", "La quantité totale de matière", "Le volume de son enveloppe externe"],
+            "rep": "Le degré d'agitation de ses molécules",
+        },
+        {
+            "id": "qt2_10",
+            "q": "Comment appelle-t-on le capteur électronique industriel qui utilise la variation de sa résistance avec la température (ex: Pt100) ?",
+            "options": ["Une thermistance", "Un thermocouple", "Un pyromètre optique"],
+            "rep": "Une thermistance",
+        },
+    ]
+
+    if "ordre_quiz_tab2_therm_aleatoire" not in st.session_state:
+        random.shuffle(questions_therm2_sources)
+        st.session_state.ordre_quiz_tab2_therm_aleatoire = questions_therm2_sources
+
+    # 2. BASE DE DONNÉES DU TEXTE À TROUS DE LA TEMPÉRATURE
+    if "champs_therm2_clean" not in st.session_state:
+        st.session_state.champs_therm2_clean = [
+            (
+                "1. Galilée a conçu le premier appareil de repérage nommé le ..........",
+                ["Choisir...", "thermoscope", "baromètre"],
+                "thermoscope",
+                "therm2_t1",
+            ),
+            (
+                "2. Le thermomètre à mercure a été stabilisé par le physicien ..........",
+                ["Choisir...", "Fahrenheit", "Celsius"],
+                "Fahrenheit",
+                "therm2_t2",
+            ),
+            (
+                "3. L'échelle centésimale fixant le zéro sur la glace fondante revient à ..........",
+                ["Choisir...", "Celsius", "Kelvin"],
+                "Celsius",
+                "therm2_t3",
+            ),
+            (
+                "4. Au niveau atomique, la température traduit le niveau d'.......... des particules.",
+                ["Choisir...", "agitation", "blocage"],
+                "agitation",
+                "therm2_t4",
+            ),
+            (
+                "5. L'absence totale de mouvement moléculaire définit le zéro ..........",
+                ["Choisir...", "absolu", "relatif"],
+                "absolu",
+                "therm2_t5",
+            ),
+            (
+                "6. Le fonctionnement d'un thermomètre mécanique classique utilise la ..........",
+                ["Choisir...", "dilatation", "compression"],
+                "dilatation",
+                "therm2_t6",
+            ),
+            (
+                "7. L'éthanol coloré est un liquide employé pour mesurer les températures ..........",
+                ["Choisir...", "domestiques", "industrielles"],
+                "domestiques",
+                "therm2_t7",
+            ),
+            (
+                "8. Pour passer des degrés Celsius aux Kelvins, on ajoute la valeur ..........",
+                ["Choisir...", "273,15", "100"],
+                "273,15",
+                "therm2_t8",
+            ),
+            (
+                "9. Un capteur industriel basé sur la soudure de deux métaux est un ..........",
+                ["Choisir...", "thermocouple", "pyromètre"],
+                "thermocouple",
+                "therm2_t9",
+            ),
+            (
+                "10. La mesure sans contact à distance d'un corps chaud utilise le rayonnement ..........",
+                ["Choisir...", "infrarouge", "ultraviolet"],
+                "infrarouge",
+                "therm2_t10",
+            ),
+        ]
+
+    # 3. RENDU DES DEUX COLONNES STREAMLIT
+    col_quiz, col_trous = st.columns(2)
+
+    with col_quiz:
+        st.markdown("##### Quiz Technique de l'Atelier 2 (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab2_therm_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox(
+                "",
+                options=["Choisir..."] + q_data["options"],
+                key=f"therm_at2_final_g_{q_data['id']}",
+                disabled=verrouille,
+                label_visibility="collapsed",
+            )
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 2 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_therm2_clean:
+            enonce, choix, cle = ligne[0], ligne[1], ligne[-1]
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt:
+                st.write(enonce)
+            with c_sel:
+                st.selectbox(
+                    "",
+                    choix,
+                    key=f"{cle}_therm2_clean",
+                    disabled=verrouille,
+                    label_visibility="collapsed",
+                )
+
+
+
+
 def afficher_atelier_histoire_verrouille(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 1 (Historique) sur deux colonnes."""
     import random
@@ -724,3 +896,342 @@ with tab1:
             mime="text/html",
             use_container_width=True,
         )
+
+
+
+with tab2:
+    st.header("La Température et la Mesure de l'Agitation Thermique")
+    st.write(
+        "Découvrez l'histoire des échelles de température, les inventeurs des premiers capteurs, "
+        "et observez en direct le phénomène physique de la dilatation volumique des fluides :"
+    )
+
+    # =============================================================================
+    # SECTION HISTORIQUE : LES ENCIENS MODÈLES ET LES HOMMES
+    # =============================================================================
+    col_t2_h1, col_t2_h2 = st.columns(2)
+    
+    with col_t2_h1:
+        st.markdown("##### Les Pionniers du Thermomètre")
+        st.write(
+            "**Galilée (1592) :** Il invente le thermoscope, un tube de verre où l'air se dilate et déplace de l'eau, "
+            "mais l'absence d'échelle graduée fixe empêche une mesure quantitative précise.\n\n"
+            "**Daniel Gabriel Fahrenheit (1714) :** Il révolutionne la métrologie en fabriquant le premier "
+            "thermomètre fiable à mercure. Il fixe son zéro en mélangeant de la glace, de l'eau et du sel d'ammonium."
+        )
+        
+    with col_t2_h2:
+        st.markdown("##### L'Évolution des Unités")
+        st.write(
+            "**Anders Celsius (1742) :** Il propose une échelle centésimale inversée (0 pour l'eau bouillante, 100 pour la glace), "
+            "remise dans le bon sens après sa mort : 0 degré pour la glace fondante et 100 degrés pour l'ébullition.\n\n"
+            "**Lord Kelvin (1848) :** Il définit l'échelle thermodynamique absolue. Le zéro absolu (-273,15 degrés Celsius) "
+            "représente l'état d'immobilisation totale de la matière."
+        )
+
+    st.write("---")
+
+    # =============================================================================
+    # SIMULATEUR DYNAMIQUE : DILATATION DES LIQUIDES THERMOMÉTRIQUES
+    # =============================================================================
+    st.subheader("Laboratoire Virtuel : Dilatation et choix du liquide de mesure")
+    st.write(
+        "Sélectionnez le fluide de votre choix et ajustez la température pour observer "
+        "la montée ou la descente de la colonne liquide dans le tube capillaire en verre :"
+    )
+
+    # Dictionnaire de configuration réelle des liquides thermométriques
+    fluides_thermiques = {
+        "Alcool coloré (Éthanol)": {
+            "couleur": "#ef4444", 
+            "usage": "Usage domestique standard. Utilisé pour les températures ambiantes et négatives.",
+            "min_t": -50, "max_t": 70
+        },
+        "Mercure (Historique)": {
+            "couleur": "#94a3b8", 
+            "usage": "Interdit aujourd'tui en raison de sa toxicité. Grande précision, large plage de mesure.",
+            "min_t": -35, "max_t": 350
+        },
+        "Huile minérale": {
+            "couleur": "#eab308", 
+            "usage": "Alternative écologique moderne pour les thermomètres de cuisine et de jardin.",
+            "min_t": -10, "max_t": 120
+        }
+    }
+
+    # Configuration des commandes par l'étudiant
+    col_param_1, col_param_2 = st.columns([1.1, 1.0])
+    
+    with col_param_1:
+        choix_fluide = st.selectbox(
+            "Sélectionnez le liquide thermométrique :",
+            list(fluides_thermiques.keys()),
+            key="t2_choix_liquide_dilatation"
+        )
+        
+        cfg_f = fluides_thermiques[choix_fluide]
+        
+        # Sélection de la température dynamique bridée selon les propriétés du fluide choisi
+        temperature_saisie = st.slider(
+            f"Ajustez la température (°C) :",
+            min_value=int(cfg_f["min_t"]),
+            max_value=int(cfg_f["max_t"]),
+            value=20,
+            step=1,
+            key="t2_slider_temperature"
+        )
+        
+    with col_param_2:
+        st.markdown("**Propriétés de laboratoire du fluide sélectionné :**")
+        st.info(f"**Application :** {cfg_f['usage']}\n\n**Plage d'état liquide sécurisée :** de {cfg_f['min_t']} °C à {cfg_f['max_t']} °C.")
+
+    # =============================================================================
+    # RENDU VISUEL SCIENTIFIQUE DU THERMOMÈTRE (MATPLOTLIB)
+    # =============================================================================
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+
+    fig, ax = plt.subplots(figsize=(6, 5))
+    
+    # 1. Dessin de la structure extérieure en verre du thermomètre
+    # Le réservoir sphérique en bas
+    ax.add_patch(patches.Circle((2.5, 1.2), radius=0.4, facecolor='#f8fafc', edgecolor='#1e293b', lw=2.5, zorder=1))
+    # Le tube capillaire vertical de mesure
+    ax.add_patch(patches.Rectangle((2.35, 1.2), 0.3, 4.8, facecolor='#f8fafc', edgecolor='#1e293b', lw=2.5, zorder=1))
+    
+    # 2. Calcul du niveau de dilatation linéaire (hauteur de la colonne)
+    # On normalise la température choisie entre 0% et 100% de la hauteur du tube
+    t_min_curseur = cfg_f["min_t"]
+    t_max_curseur = cfg_f["max_t"]
+    ratio = (temperature_saisie - t_min_curseur) / (t_max_curseur - t_min_curseur)
+    
+    # Hauteur minimale fixe du liquide = 1.2 (remplit le réservoir) + extension proportionnelle
+    hauteur_remplissage_capillaire = 0.2 + (ratio * 4.3)
+
+    # 3. Dessin du liquide en couleur réelle
+    # Remplissage du bulbe bas
+    ax.add_patch(patches.Circle((2.5, 1.2), radius=0.36, color=cfg_f["couleur"], zorder=2))
+    # Remplissage de la colonne de dilatation dans le capillaire
+    ax.add_patch(patches.Rectangle((2.39, 1.2), 0.22, hauteur_remplissage_capillaire, color=cfg_f["couleur"], zorder=2))
+
+    # 4. Tracé précis des graduations de l'échelle à droite du verre
+    for i in range(11):
+        # Positionnement des paliers de 0 à 10
+        pos_y = 1.4 + (i * 0.43)
+        val_temp_grad = t_min_curseur + i * (t_max_curseur - t_min_curseur) / 10
+        ax.plot([2.65, 2.75], [pos_y, pos_y], color='#1e293b', lw=1, zorder=3)
+        ax.text(2.85, pos_y, f"{int(val_temp_grad)} °C", color='#475569', fontsize=8, va='center', zorder=3)
+
+    # Graduations intermédiaires fines
+    for i in range(50):
+        pos_y_fine = 1.4 + (i * 0.086)
+        ax.plot([2.65, 2.70], [pos_y_fine, pos_y_fine], color='#64748b', lw=0.5, zorder=3)
+
+    # 5. Rendu textuel de la mesure actuelle
+    ax.text(1.5, 5.5, f"TEMPÉRATURE : {temperature_saisie} °C", color='#0f172a', fontsize=12, fontweight='bold', bbox=dict(boxstyle="round,pad=0.4", fc="#f1f5f9", ec="#cbd5e1", lw=1.5))
+    
+    # Ajustements géométriques des axes
+    ax.set_xlim(0.5, 4.5)
+    ax.set_ylim(0, 6.5)
+    ax.axis('off')
+
+    # Affichage propre dans Streamlit
+    st.write("")
+    st.pyplot(fig)
+    st.write("---")
+
+
+
+
+    st.write("---")
+    if "suite_verrouille_tab2_therm" not in st.session_state:
+        st.session_state.suite_verrouille_tab2_therm = False
+    verrou_at2 = st.session_state.suite_verrouille_tab2_therm
+
+    # Affichage du module de questions
+    afficher_atelier_temperature_verrouille(verrouille=verrou_at2)
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 2")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat2 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier sur la Température.",
+        key="check_certif_therm2_final_net",
+        disabled=verrou_at2,
+    )
+
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2",
+        key="btn_export_suite2_therm_official",
+        use_container_width=True,
+        disabled=verrou_at2,
+    ):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat2:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction du Quiz Technique (10 pts)
+            score_q2 = 0.0
+            if "ordre_quiz_tab2_therm_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab2_therm_aleatoire:
+                    saisie = st.session_state.get(f"therm_at2_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip():
+                        score_q2 += 1.0
+
+            # 2. Correction du Texte à trous (10 pts)
+            score_t2 = 0.0
+            if "champs_therm2_clean" in st.session_state:
+                for ligne in st.session_state.champs_therm2_clean:
+                    enonce_t, choix_t, attendu_t, cle_t = ligne
+                    saisie_t = st.session_state.get(f"{cle_t}_therm2_clean", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu_t).strip():
+                        score_t2 += 1.0
+
+            # 3. Sauvegarde définitive dans la session et rafraîchissement
+            st.session_state.score_suite2_therm_p1 = round(float(score_q2), 1)
+            st.session_state.score_suite2_therm_p2 = round(float(score_t2), 1)
+            st.session_state.score_final_suite2_therm = round(float(score_q2 + score_t2), 1)
+            st.session_state.suite_verrouille_tab2_therm = True
+            st.rerun()
+
+    # --- COMPILATION ET TÉLÉCHARGEMENT DU BILAN HTML SCELLÉ ---
+    if st.session_state.get("suite_verrouille_tab2_therm", False):
+        from datetime import datetime
+        scr1_t2 = st.session_state.get("score_suite2_therm_p1", 0.0)
+        scr2_t2 = st.session_state.get("score_suite2_therm_p2", 0.0)
+        tot_s_t2 = st.session_state.get("score_final_suite2_therm", 0.0)
+        timestamp_suite2 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER TEMPÉRATURE SCELLÉ | Note de session : {tot_s_t2:.1f} / 20")
+
+        html_export_therm2 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Température Thermique - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 20px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Physique Thermique</h1>
+                <p>Atelier 2 : Échelles de température, principes de mesure et capteurs</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite2}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t2:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t2:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse de Cours : <strong>{scr2_t2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 2 : <strong>{tot_s_t2:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab2_therm_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab2_therm_aleatoire, 1):
+                saisie = st.session_state.get(f"therm_at2_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_therm2 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_therm2 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_therm2_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_therm2_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+
+                saisie_texte = st.session_state.get(f"{cle_variable}_therm2_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_therm2 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_therm2 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        st.download_button(
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 2 (.HTML)",
+            data=html_export_therm2,
+            file_name=preparer_nom_fichier("Atelier_2_Temperature").replace(".txt", ".html"),
+            mime="text/html",
+            use_container_width=True,
+        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
