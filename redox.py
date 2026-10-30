@@ -3446,84 +3446,75 @@ with tab6:
                         st.latex(f"{c_ox_str}{t6_reactif_ox_choisi} + {c_red_str}{t6_reactif_red_choisi} \\longrightarrow {c_ox_str}{t6_prod_ox} + {c_red_str}{t6_prod_red}")
 
                         # --- RENDU GRAPHIQUE SCIENTIFIQUE DE HAUTE PRÉCISION ---
-                        # --- RENDU DE CHIMIE EXPERIMENTALE HAUTE FIDÉLITÉ ---
+                        # =============================================================================
                         import matplotlib.pyplot as plt
                         import matplotlib.patches as patches
                         import numpy as np
 
-                        # 1. Extraction et standardisation des états
-                        st_ox_i = str(t6_couleurs_especes.get(t6_reactif_ox_choisi, ["", "solution"])).strip().lower()
-                        st_red_i = str(t6_couleurs_especes.get(t6_reactif_red_choisi, ["", "metal"])).strip().lower()
-                        st_ox_f = str(t6_couleurs_especes.get(t6_prod_ox, ["", "solution"])).strip().lower()
-                        st_red_f = str(t6_couleurs_especes.get(t6_prod_red, ["", "solution"])).strip().lower()
+                        # 1. Extraction et standardisation stricte des états physiques réels
+                        st_ox_i = str(t6_couleurs_especes.get(t6_reactif_ox_choisi, ["", "solution"])[1]).strip().lower()
+                        st_red_i = str(t6_couleurs_especes.get(t6_reactif_red_choisi, ["", "metal"])[1]).strip().lower()
+                        st_ox_f = str(t6_couleurs_especes.get(t6_prod_ox, ["", "solution"])[1]).strip().lower()
+                        st_red_f = str(t6_couleurs_especes.get(t6_prod_red, ["", "solution"])[1]).strip().lower()
 
-                        # Récupération des couleurs
-                        hex_ox_init = t6_couleurs_especes.get(t6_reactif_ox_choisi, ["", "", "#e0f2fe"])
-                        hex_red_init = t6_couleurs_especes.get(t6_reactif_red_choisi, ["", "", "#94a3b8"])
-                        hex_ox_fin = t6_couleurs_especes.get(t6_prod_ox, ["", "", "#e0f2fe"])
-                        hex_red_fin = t6_couleurs_especes.get(t6_prod_red, ["", "", "#e0f2fe"])
+                        # Récupération sécurisée des codes couleur hexadécimaux
+                        hex_ox_init = t6_couleurs_especes.get(t6_reactif_ox_choisi, ["", "", "#e0f2fe"])[2]
+                        hex_red_init = t6_couleurs_especes.get(t6_reactif_red_choisi, ["", "", "#94a3b8"])[2]
+                        hex_ox_fin = t6_couleurs_especes.get(t6_prod_ox, ["", "", "#e0f2fe"])[2]
+                        hex_red_fin = t6_couleurs_especes.get(t6_prod_red, ["", "", "#e0f2fe"])[2]
+
+                        # Récupération des libellés textuels descriptifs
+                        lbl_ox_init = t6_couleurs_especes.get(t6_reactif_ox_choisi, ["", "", "", "Incolore"])[3]
+                        lbl_red_init = t6_couleurs_especes.get(t6_reactif_red_choisi, ["", "", "", "Métal"])[3]
+                        lbl_ox_fin = t6_couleurs_especes.get(t6_prod_ox, ["", "", "", "Incolore"])[3]
+                        lbl_red_fin = t6_couleurs_especes.get(t6_prod_red, ["", "", "", "Incolore"])[3]
 
                         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 5))
                         teinte_eau = "#e0f2fe"
 
-                        # --- CONSTRUCTEURS GRAPHIDUES DE VERRERIE REELLES ---
-                        def dessiner_becher_classique(ax, couleur_solution, texte_interne=""):
-                            ax.add_patch(patches.Rectangle((1.2, 1.0), 2.6, 3.3, color=couleur_solution, alpha=0.6, zorder=1))
-                            ax.add_patch(patches.Ellipse((2.5, 4.3), 2.6, 0.4, color=couleur_solution, alpha=0.4, zorder=2))
-                            ax.add_patch(patches.Arc((2.5, 4.3), 2.6, 0.4, angle=0, theta1=0, theta2=180, color='#475569', lw=1, ls='--', zorder=3))
-                            ax.add_patch(patches.Arc((2.5, 4.3), 2.6, 0.4, angle=0, theta1=180, theta2=360, color='#1e293b', lw=1.5, zorder=6))
-                            ax.add_patch(patches.Polygon([[1.2, 5.2], [1.2, 1.0], [3.8, 1.0], [3.8, 5.2]], closed=False, fill=False, color='#1e293b', lw=2.5, zorder=7))
-                            if texte_interne:
-                                ax.text(2.5, 2.5, texte_interne, color='#0f172a', fontsize=9.5, ha='center', fontweight='bold', zorder=8)
+                        # =============================================================================
+                        # ENCEINTE 1 : MODÉLISATION DE L'ÉTAT INITIAL (À GAUCHE)
+                        # =============================================================================
+                        # Choix du fluide de remplissage du contenant principal
+                        c_sol1 = hex_ox_init if st_ox_i == "solution" else teinte_eau
+                        
+                        # Rendu tridimensionnel du contenant principal (Bécher de réaction)
+                        ax1.add_patch(patches.Rectangle((1.2, 1.0), 2.6, 3.3, color=c_sol1, alpha=0.6, zorder=1))
+                        ax1.add_patch(patches.Ellipse((2.5, 4.3), 2.6, 0.4, color=c_sol1, alpha=0.4, zorder=2))
+                        ax1.add_patch(patches.Arc((2.5, 4.3), 2.6, 0.4, angle=0, theta1=0, theta2=180, color='#475569', lw=1, ls='--', zorder=3))
+                        ax1.add_patch(patches.Arc((2.5, 4.3), 2.6, 0.4, angle=0, theta1=180, theta2=360, color='#1e293b', lw=1.5, zorder=6))
+                        ax1.add_patch(patches.Polygon([[1.2, 5.2], [1.2, 1.0], [3.8, 1.0], [3.8, 5.2]], closed=False, fill=False, color='#1e293b', lw=2.5, zorder=7))
 
-                        def dessiner_bouteille_gaz_hermetique(ax, nom_gaz, color_gaz):
-                            # Corps de la bouteille métallique pressurisée
-                            ax.add_patch(patches.Rectangle((1.5, 1.0), 2.0, 4.2, color=color_gaz, alpha=0.8, edgecolor='#1e293b', lw=2, zorder=2))
-                            # Ogive supérieure de la bouteille
-                            ax.add_patch(patches.Ellipse((2.5, 5.2), 2.0, 0.8, color=color_gaz, alpha=0.8, edgecolor='#1e293b', lw=2, zorder=3))
-                            # Robinet / Détendeur en laiton
-                            ax.add_patch(patches.Rectangle((2.3, 5.5), 0.4, 0.5, color='#b45309', edgecolor='#1e293b', lw=1.5, zorder=4))
-                            ax.text(2.5, 3.0, f"BOUTEILLE DE GAZ\n⚠️ SOUS PRESSION\n\n{nom_gaz}", color='#1e293b' if color_gaz=='#fef08a' else 'white', fontsize=9, ha='center', fontweight='bold', zorder=5)
+                        # --- ÉLÉMENT RÉACTIF 1 : LE RÉDUCTEUR ---
+                        if st_red_i == "metal":
+                            # Rendu d'une barre métallique pleine inclinée à 15 degrés
+                            ax1.add_patch(patches.Polygon([[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]], color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4))
+                            ax1.text(3.4, 5.5, f"Lame de {t6_reactif_red_choisi}\n(Métal)", color='#1e293b', fontsize=9, fontweight='bold')
+                        elif st_red_i in ["poudre", "solide"]:
+                            # Rendu d'un sédiment sédimenté horizontalement au fond de la cuve
+                            ax1.add_patch(patches.Polygon([[1.22, 1.01], [3.78, 1.01], [3.6, 1.35], [1.4, 1.35]], color=hex_red_init, edgecolor='#b45309', lw=1, zorder=4))
+                            ax1.text(2.5, 1.15, f"Poudre de {t6_reactif_red_choisi}", color='#b45309', fontsize=9, fontweight='bold', ha='center', zorder=5)
 
-                        def dessiner_tube_degagement_recueil(ax, nom_gaz_degage, couleur_solution):
-                            # Tube à essais d'oxydation hermétique avec un bouchon
-                            ax.add_patch(patches.Rectangle((1.2, 1.0), 1.0, 4.5, color=couleur_solution, alpha=0.6, zorder=1))
-                            ax.add_patch(patches.Polygon([[1.2, 5.5], [1.2, 1.0], [2.2, 1.0], [2.2, 5.5]], closed=False, fill=False, color='#1e293b', lw=2.5, zorder=2))
-                            # Bouchon étanche en caoutchouc gris
-                            ax.add_patch(patches.Rectangle((1.15, 5.2), 1.1, 0.4, color='#64748b', zorder=3))
+                        # --- ÉLÉMENT RÉACTIF 2 : L'OXYDANT ---
+                        if st_ox_i == "gaz":
+                            # Rendu d'une bouteille de stockage sous pression décalée à l'extérieur droit du bécher
+                            ax1.add_patch(patches.Rectangle((4.3, 1.0), 0.6, 2.8, color='#334155', edgecolor='#1e293b', lw=1.5, zorder=4))
+                            ax1.add_patch(patches.Rectangle((4.45, 3.8), 0.3, 0.3, color='#64748b', edgecolor='#1e293b', zorder=4))
+                            ax1.text(4.6, 2.4, f"BOUTEILLE\n{t6_reactif_ox_choisi}", color='white', fontsize=7, ha='center', fontweight='bold', rotation=90)
                             
-                            # Tube de dégagement en verre coudé (le tuyau qui transfère le gaz)
-                            ax.plot([1.7, 1.7, 3.2, 3.2], [5.4, 6.0, 6.0, 2.5], color='#475569', lw=2, zorder=4)
+                            # Ligne du tube plongeur injectant le gaz verticalement au milieu du solvant liquide
+                            ax1.plot([4.45, 3.0, 3.0], [3.9, 3.9, 2.0], color='#475569', lw=2, zorder=4)
                             
-                            # Éprouvette à gaz de recueil retournée remplie d'eau au départ
-                            ax.add_patch(patches.Rectangle((2.8, 1.5), 0.8, 3.5, color='#e0f2fe', alpha=0.5, edgecolor='#1e293b', lw=2, zorder=5))
-                            
-                            # Bulles de gaz piégées qui s'accumulent en haut de l'éprouvette retournée
+                            # Génération statistique d'un nuage conique d'effervescence gazeuse locale
                             np.random.seed(42)
                             for _ in range(25):
-                                ax.add_patch(patches.Circle((3.2 + np.random.normal(0, 0.15), 4.2 + np.random.uniform(-0.5, 0.6)), radius=0.05, fill=False, color='#0369a1', lw=1, zorder=6))
-                            
-                            ax.text(1.7, 2.5, "Milieu\nRéactionnel", color='#1e293b', fontsize=8, ha='center')
-                            ax.text(3.2, 5.2, f"Recueil de {nom_gaz_degage}\n(Gaz pur isolé)", color='#0369a1', fontsize=9, fontweight='bold', ha='center')
-
-
-                        # =============================================================================
-                        # RENDU DE L'ÉTAT INITIAL (À GAUCHE)
-                        # =============================================================================
-                        if st_ox_i == "gaz" and st_red_i == "solution":
-                            # Si le réactif pur est un gaz isolé, on affiche sa bouteille industrielle
-                            dessiner_bouteille_gaz_hermetique(ax1, t6_reactif_ox_choisi, hex_ox_init)
+                                bx = 3.0 + np.random.normal(0, 0.12)
+                                by = 2.0 + np.random.uniform(0, 1.8)
+                                if 1.3 <= bx <= 3.7 and by <= 4.2:
+                                    ax1.add_patch(patches.Circle((bx, by), radius=0.04, fill=False, color='#0891b2', lw=0.8, zorder=5))
                         else:
-                            # Sinon, c'est une manipulation classique en bécher ouvert
-                            c_sol1 = hex_ox_init if st_ox_i == "solution" else teinte_eau
-                            dessiner_becher_classique(ax1, c_sol1)
-                            
-                            if st_red_i == "metal":
-                                ax1.add_patch(patches.Polygon([[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]], color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4))
-                                ax1.text(3.4, 5.5, f"Lame de {t6_reactif_red_choisi}\n(Métal)", color='#1e293b', fontsize=9, fontweight='bold')
-                            elif st_red_i in ["poudre", "solide"]:
-                                ax1.add_patch(patches.Polygon([[1.22, 1.01], [3.78, 1.01], [3.6, 1.45], [1.4, 1.45]], color=hex_red_init, edgecolor='#b45309', lw=1, zorder=4))
-                                ax1.text(2.5, 1.15, f"Poudre solide de {t6_reactif_red_choisi}", color='#b45309', fontsize=9, fontweight='bold', ha='center', zorder=5)
+                            # Affichage textuel descriptif de la nature de la phase aqueuse initiale
+                            ax1.text(1.3, 3.5, f"Solution de\n{t6_reactif_ox_choisi}\n({lbl_ox_init})", color='#1e3a8a', fontsize=9, va='center', fontweight='bold')
 
                         ax1.text(2.5, 0.2, "ÉTAT INITIAL", fontsize=12, fontweight='bold', ha='center')
                         ax1.set_xlim(0, 5.5)
@@ -3532,24 +3523,71 @@ with tab6:
 
 
                         # =============================================================================
-                        # RENDU DE L'ÉTAT FINAL (À DROITE)
+                        # ENCEINTE 2 : MODÉLISATION DE L'ÉTAT FINAL CUMULATIF (À DROITE)
                         # =============================================================================
-                        if st_ox_f == "gaz" or st_red_f == "gaz" or t6_prod_ox in ["O3", "H2", "NO2", "CO2", "SO2", "O2"]:
-                            # Le produit est un gaz : On affiche le montage de recueil sur cuve à eau
+                        # Condition structurale : Si un ou deux produits sont gazeux -> Montage étanche impératif
+                        si_produit_gaz = (st_ox_f == "gaz" or st_red_f == "gaz")
+
+                        if si_produit_gaz:
+                            # Rendu d'un flacon de réaction hermétiquement obturé par un opercule
                             c_sol2 = hex_red_fin if st_red_f == "solution" else (hex_ox_fin if st_ox_f == "solution" else teinte_eau)
-                            dessiner_tube_degagement_recueil(ax2, t6_prod_ox, c_sol2)
-                        else:
-                            # Le produit reste liquide ou solide : Le bécher standard suffit
-                            c_sol2 = hex_red_fin if st_red_f == "solution" else (hex_ox_fin if st_ox_f == "solution" else teinte_eau)
-                            dessiner_becher_classique(ax2, c_sol2)
+                            ax2.add_patch(patches.Rectangle((1.2, 1.0), 1.0, 4.5, color=c_sol2, alpha=0.6, zorder=1))
+                            ax2.add_patch(patches.Polygon([[1.2, 5.5], [1.2, 1.0], [2.2, 1.0], [2.2, 5.5]], closed=False, fill=False, color='#1e293b', lw=2.5, zorder=2))
+                            ax2.add_patch(patches.Rectangle((1.15, 5.2), 1.1, 0.4, color='#64748b', zorder=3)) # Bouchon étanche
                             
+                            # Initialisation des variables de repérage des gaz finaux pour le double recueil
+                            gaz_trouves = []
+                            if st_ox_f == "gaz": gaz_trouves.append((t6_prod_ox, '#0369a1'))
+                            if st_red_f == "gaz": gaz_trouves.append((t6_prod_red, '#b45309'))
+
+                            # Rendu dynamique des circuits de dérivation du verre de recueil (1 ou 2 éprouvettes)
+                            if len(gaz_trouves) >= 2:
+                                # CONFIGURATION A MULTIPLE GAZ (Ex: O2 + SO2) -> Double canalisation et double éprouvette
+                                ax2.plot([1.5, 1.5, 2.9, 2.9], [5.4, 6.2, 6.2, 2.5], color='#475569', lw=1.5, zorder=4)
+                                ax2.plot([1.9, 1.9, 4.4, 4.5], [5.4, 6.6, 6.5, 2.5], color='#334155', lw=1.5, zorder=4)
+                                
+                                # Rendu géométrique des deux éprouvettes de piégeage inversées
+                                ax2.add_patch(patches.Rectangle((2.5, 1.5), 0.8, 3.5, color='#e0f2fe', alpha=0.5, edgecolor='#1e293b', lw=1.5, zorder=5))
+                                ax2.add_patch(patches.Rectangle((4.0, 1.5), 0.8, 3.5, color='#e0f2fe', alpha=0.5, edgecolor='#1e293b', lw=1.5, zorder=5))
+                                
+                                # Distribution des bulles d'isolements gazeux
+                                np.random.seed(24)
+                                for _ in range(15):
+                                    ax2.add_patch(patches.Circle((2.85 + np.random.normal(0, 0.1), 4.4 + np.random.uniform(-0.3, 0.4)), radius=0.04, fill=False, color=gaz_trouves[0][1], lw=0.9, zorder=6))
+                                    ax2.add_patch(patches.Circle((4.35 + np.random.normal(0, 0.1), 4.4 + np.random.uniform(-0.3, 0.4)), radius=0.04, fill=False, color=gaz_trouves[1][1], lw=0.9, zorder=6))
+                                
+                                ax2.text(2.9, 5.2, f"Recueil de\n{gaz_trouves[0][0]}", color=gaz_trouves[0][1], fontsize=8, fontweight='bold', ha='center')
+                                ax2.text(4.4, 5.2, f"Recueil de\n{gaz_trouves[1][0]}", color=gaz_trouves[1][1], fontsize=8, fontweight='bold', ha='center')
+                            else:
+                            else:
+                                # CONFIGURATION A UN SEUL GAZ -> Une canalisation simple vers une unique éprouvette inversée
+                                ax2.plot([1.7, 1.7, 3.4, 3.2], [5.4, 6.2, 6.0, 2.5], color='#475569', lw=2, zorder=4)
+                                ax2.add_patch(patches.Rectangle((2.8, 1.5), 0.8, 3.5, color='#e0f2fe', alpha=0.5, edgecolor='#1e293b', lw=1.5, zorder=5))
+                                
+                                np.random.seed(24)
+                                nom_g_unique = gaz_trouves[0][0] if gaz_trouves else t6_prod_ox
+                                col_g_unique = gaz_trouves[0][1] if gaz_trouves else '#475569'
+                                for _ in range(25):
+                                    ax2.add_patch(patches.Circle((3.2 + np.random.normal(0, 0.12), 4.3 + np.random.uniform(-0.4, 0.4)), radius=0.05, fill=False, color=col_g_unique, lw=1, zorder=6))
+                                ax2.text(3.2, 5.2, f"Recueil de {nom_g_unique}\n(Gaz pur)", color=col_g_unique, fontsize=8.5, fontweight='bold', ha='center')
+
+                            ax2.text(1.7, 2.5, "Milieu\nRéactionnel", color='#1e293b', fontsize=8, ha='center', fontweight='bold')
+                        else:
+                            # Configuration classique hors production de gaz : Remplacement par un Bécher standard ouvert
+                            c_sol2 = hex_red_fin if st_red_f == "solution" else (hex_ox_fin if st_ox_f == "solution" else teinte_eau)
+                            dessiner_contenant_becher(ax2, c_sol2)
+                            ax2.text(1.3, 3.5, "Solution finale\ntransformée", color='#1e293b', fontsize=9, va='center', fontweight='bold', zorder=8)
+
+                            # --- PRODUIT 1 : ANALYSE DES SUPPORTS MÉTAUX ---
                             if st_red_i == "metal":
                                 ax2.add_patch(patches.Polygon([[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]], color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4))
                                 if st_ox_f == "metal":
                                     dep = patches.Polygon([[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]], color=hex_ox_fin, edgecolor='#78350f', lw=1.2, zorder=5)
                                     ax2.add_patch(dep)
                                     dep.set_clip_path(patches.Rectangle((1.0, 0.0), 3.0, 4.3, transform=ax2.transData))
+                                    ax2.text(3.4, 2.5, f"Dépôt de {t6_prod_ox}\n(Métal)", color='#78350f', fontsize=9, fontweight='bold')
 
+                            # --- PRODUIT 2 : ANALYSE DES PRÉCIPITÉS SÉDIMENTAIRES (S, MnO2...) ---
                             if st_ox_f in ["poudre", "solide"] and t6_prod_ox in ["S", "MnO2"]:
                                 ax2.add_patch(patches.Polygon([[1.22, 1.01], [3.78, 1.01], [3.6, 1.45], [1.4, 1.45]], color=hex_ox_fin, edgecolor='#1e293b', lw=1, zorder=5))
                                 ax2.text(2.5, 1.15, f"Précipité de {t6_prod_ox}", color='#1e293b', fontsize=9, fontweight='bold', ha='center', zorder=6)
@@ -3560,6 +3598,17 @@ with tab6:
                         ax2.axis('off')
 
                         st.pyplot(fig)
+
+
+
+
+
+
+
+
+
+
+                                
 
                     # Cas impossible : Le gamma est inversé (Un seul bloc else conservé)
                     else:
