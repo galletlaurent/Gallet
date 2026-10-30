@@ -3450,51 +3450,85 @@ with tab6:
                         import matplotlib.patches as patches
                         import numpy as np
 
-                        # EXTRACTION SÉCURISÉE DES PROPRIÉTÉS ET COULEURS DE CHAQUE ESPÈCE CHIMIQUE
-                        _, st_ox_i, hex_ox_init, lbl_ox_init = t6_couleurs_especes.get(t6_reactif_ox_choisi, (t6_reactif_ox_choisi, "solution", "#e0f2fe", "Incolore"))
-                        _, st_red_i, hex_red_init, lbl_red_init = t6_couleurs_especes.get(t6_reactif_red_choisi, (t6_reactif_red_choisi, "metal", "#94a3b8", "Métal"))
-                        _, st_ox_f, hex_ox_fin, lbl_ox_fin = t6_couleurs_especes.get(t6_prod_ox, (t6_prod_ox, "solution", "#e0f2fe", "Incolore"))
-                        _, st_red_f, hex_red_fin, lbl_red_fin = t6_couleurs_especes.get(t6_prod_red, (t6_prod_red, "solution", "#e0f2fe", "Incolore"))
+                        # 1. Extraction et standardisation des états physiques exacts du dictionnaire
+                        st_ox_i = str(t6_couleurs_especes.get(t6_reactif_ox_choisi, ["", "solution"])[1]).strip().lower()
+                        st_red_i = str(t6_couleurs_especes.get(t6_reactif_red_choisi, ["", "metal"])[1]).strip().lower()
+                        st_ox_f = str(t6_couleurs_especes.get(t6_prod_ox, ["", "solution"])[1]).strip().lower()
+                        st_red_f = str(t6_couleurs_especes.get(t6_prod_red, ["", "solution"])[1]).strip().lower()
 
-                        # Initialisation de la figure et de ses deux repères de dessin distincts ax1 et ax2
-                        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+                        # Récupération des codes couleur hexadécimaux
+                        hex_ox_init = t6_couleurs_especes.get(t6_reactif_ox_choisi, ["", "", "#e0f2fe"])[2]
+                        hex_red_init = t6_couleurs_especes.get(t6_reactif_red_choisi, ["", "", "#94a3b8"])[2]
+                        hex_ox_fin = t6_couleurs_especes.get(t6_prod_ox, ["", "", "#e0f2fe"])[2]
+                        hex_red_fin = t6_couleurs_especes.get(t6_prod_red, ["", "", "#e0f2fe"])[2]
+
+                        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 5))
                         teinte_eau = "#e0f2fe"
 
-                        # --- AIGUILLAGE DU BÉCHER INITIAL (À GAUCHE) ---
+                        # Fonction interne isolée pour générer la verrerie du bécher
+                        def dessiner_contenant_becher(ax, couleur_solution):
+                            ax.add_patch(patches.Rectangle((1.2, 1.0), 2.6, 3.3, color=couleur_solution, alpha=0.7, zorder=1))
+                            ax.add_patch(patches.Ellipse((2.5, 4.3), 2.6, 0.4, color=couleur_solution, alpha=0.5, zorder=2))
+                            ax.add_patch(patches.Arc((2.5, 4.3), 2.6, 0.4, angle=0, theta1=0, theta2=180, color='#475569', lw=1, ls='--', zorder=3))
+                            ax.add_patch(patches.Arc((2.5, 4.3), 2.6, 0.4, angle=0, theta1=180, theta2=360, color='#1e293b', lw=1.5, zorder=6))
+                            ax.add_patch(patches.Polygon([[1.0, 5.0], [1.2, 5.0], [1.2, 1.0], [3.8, 1.0], [3.8, 5.0], [4.0, 5.0]], closed=False, fill=False, color='#1e293b', lw=2.5, zorder=7))
+                            ax.text(0.6, 4.5, "Bécher en verre", color='#334155', fontsize=8, rotation=90, va='center')
+
+                        # --- DETECTEUR ET DESSIN DU BÉCHER INITIAL (À GAUCHE) ---
                         c_sol1 = hex_ox_init if st_ox_i == "solution" else teinte_eau
-                        
-                        if st_ox_i == "gaz" and st_red_i == "poudre":
-                            schema_gaz_solide(ax1, c_sol1, t6_reactif_ox_choisi, lbl_ox_init, t6_reactif_red_choisi, hex_red_init, est_final=False)
-                        elif st_ox_i == "gaz" and st_red_i == "metal":
-                            schema_gaz_metal(ax1, c_sol1, t6_reactif_ox_choisi, lbl_ox_init, t6_reactif_red_choisi, hex_red_init, est_final=False)
-                        elif st_ox_i == "solution" and st_red_i == "metal":
-                            schema_liquide_metal(ax1, c_sol1, t6_reactif_red_choisi, hex_red_init, t6_reactif_ox_choisi, lbl_ox_init, est_final=False)
-                        elif st_ox_i == "gaz" and st_red_i == "gaz":
-                            schema_gaz_gaz(ax1, c_sol1, t6_reactif_ox_choisi, t6_reactif_red_choisi, est_final=False)
-                        elif st_ox_i == "poudre" and st_red_i == "poudre":
-                            schema_solide_solide(ax1, c_sol1, t6_reactif_ox_choisi, hex_ox_init, t6_reactif_red_choisi, hex_red_init, est_final=False)
+                        dessiner_contenant_becher(ax1, c_sol1)
+
+                        # Dessin indépendant du réducteur au départ
+                        if st_red_i == "metal":
+                            ax1.add_patch(patches.Polygon([[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]], color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4))
+                            ax1.text(3.4, 5.5, f"Lame de {t6_reactif_red_choisi}", color='#1e293b', fontsize=9, fontweight='bold')
+                        elif st_red_i in ["poudre", "solide"]:
+                            ax1.add_patch(patches.Polygon([[1.22, 1.01], [3.78, 1.01], [3.6, 1.35], [1.4, 1.35]], color=hex_red_init, edgecolor='#b45309', lw=1, zorder=4))
+                            ax1.text(3.9, 1.2, f"Poudre de {t6_reactif_red_choisi}", color='#b45309', fontsize=9, fontweight='bold', va='center')
+
+                        # Dessin indépendant de l'oxydant au départ
+                        if st_ox_i == "gaz":
+                            ax1.add_patch(patches.Rectangle((4.2, 1.0), 0.5, 2.5, color='#475569', edgecolor='#1e293b', lw=1.2, zorder=4))
+                            ax1.plot([4.35, 2.5, 2.5], [3.5, 3.5, 2.0], color='#334155', lw=2, zorder=4)
+                            np.random.seed(42)
+                            for _ in range(20):
+                                ax1.add_patch(patches.Circle((2.5 + np.random.normal(0, 0.15), 2.0 + np.random.uniform(0, 1.8)), radius=0.04, fill=False, color='#0891b2', lw=0.7, zorder=5))
+                            ax1.text(4.4, 2.2, f"Bouteille {t6_reactif_ox_choisi}", color='white', fontsize=7, rotation=90, fontweight='bold')
                         else:
-                            schema_liquide_liquide(ax1, c_sol1, f"Mélange initial\n{t6_reactif_ox_choisi} + {t6_reactif_red_choisi}")
-                        
+                            ax1.text(1.3, 3.5, f"Solution :\n{t6_reactif_ox_choisi}", color='#1e3a8a', fontsize=9, va='center')
+
                         ax1.text(2.5, 0.3, "ÉTAT INITIAL", fontsize=12, fontweight='bold', ha='center')
                         ax1.set_xlim(0, 5.5)
                         ax1.set_ylim(0, 7)
                         ax1.axis('off')
 
-                        # --- AIGUILLAGE DU BÉCHER FINAL (À DROITE) ---
+
+                        # --- DETECTEUR ET DESSIN DU BÉCHER FINAL (À DROITE) ---
                         c_sol2 = hex_red_fin if st_red_f == "solution" else (hex_ox_fin if st_ox_f == "solution" else teinte_eau)
-                        
-                        if st_ox_f == "gaz" or st_red_f == "gaz" or t6_prod_ox in ["O3", "H2", "NO2", "CO2", "SO2"]:
-                            schema_gaz_metal(ax2, c_sol2, t6_prod_ox, lbl_ox_fin, t6_reactif_red_choisi, hex_red_init, est_final=True)
-                        elif st_ox_f == "metal" and st_red_i == "metal":
-                            schema_liquide_metal(ax2, c_sol2, t6_reactif_red_choisi, hex_red_init, t6_reactif_ox_choisi, lbl_ox_init, est_final=True, nom_depot=t6_prod_ox, hex_depot=hex_ox_fin)
-                        elif st_ox_f == "poudre" or t6_prod_ox in ["S", "MnO2"]:
-                            dessiner_contenant_becher(ax2, c_sol2)
+                        dessiner_contenant_becher(ax2, c_sol2)
+
+                        # Si le réducteur de départ était un métal, on maintient la lame support métallique
+                        if st_red_i == "metal":
+                            ax2.add_patch(patches.Polygon([[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]], color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4))
+                            if st_ox_f == "metal":
+                                dep = patches.Polygon([[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]], color=hex_ox_fin, edgecolor='#78350f', lw=1.2, zorder=5)
+                                ax2.add_patch(dep)
+                                dep.set_clip_path(patches.Rectangle((1.0, 0.0), 3.0, 4.3, transform=ax2.transData))
+                                ax2.text(3.4, 2.5, f"Dépôt de {t6_prod_ox}", color='#78350f', fontsize=9, fontweight='bold')
+
+                        # Si l'un des produits finaux précipite sous forme de poudre (S, MnO2...)
+                        if st_ox_f in ["poudre", "solide"] and t6_prod_ox in ["S", "MnO2"]:
                             ax2.add_patch(patches.Polygon([[1.22, 1.01], [3.78, 1.01], [3.6, 1.4], [1.4, 1.4]], color=hex_ox_fin, edgecolor='#1e293b', lw=1, zorder=5))
                             ax2.text(3.9, 1.2, f"Précipité de {t6_prod_ox}", color='#1e293b', fontsize=9, fontweight='bold', va='center')
-                        else:
-                            schema_liquide_liquide(ax2, c_sol2, "Solution finale\ntransformée")
 
+                        # Si la transformation produit un ou plusieurs gaz (Dégagement de bulles libres pur)
+                        if st_ox_f == "gaz" or st_red_f == "gaz":
+                            np.random.seed(24)
+                            for _ in range(35):
+                                ax2.add_patch(patches.Circle((np.random.uniform(1.4, 3.6), np.random.uniform(1.3, 4.2)), radius=np.random.uniform(0.04, 0.07), fill=False, color='#475569', lw=0.9, zorder=5))
+                            ax2.text(3.9, 3.0, "Dégagement\ngazeux (Bulles)", color='#475569', fontsize=9, fontweight='bold', va='center')
+
+                        ax2.text(1.3, 2.5, "Solution finale\ntransformée", color='#1e293b', fontsize=9, va='center')
                         ax2.text(2.5, 0.3, "ÉTAT FINAL", fontsize=12, fontweight='bold', ha='center')
                         ax2.set_xlim(0, 5.5)
                         ax2.set_ylim(0, 7)
