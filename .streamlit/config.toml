@@ -1,3 +1,4 @@
 [server]
 enableCORS = False
 enableXsr**f**Protection
+frameAncestors = ["*"]
