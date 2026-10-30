@@ -225,155 +225,153 @@ def afficher_atelier_histoire_verrouille(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 1 (Historique) sur deux colonnes."""
     import random
 
-    # 1. BASE DE DONNÉES DU QUIZ HISTORIQUE REDOX
-    questions_redox1_sources = [
+    # 1. BASE DE DONNÉES DU QUIZ HISTORIQUE THERMIQUE
+    questions_therm1_sources = [
         {
-            "id": "qr1",
-            "q": "Quel célèbre chimiste français du 18e siècle a lié pour la première fois l'oxydation à la fixation de l'oxygène ?",
+            "id": "qth1",
+            "q": "Quel célèbre chimiste français du 18e siècle considérait la chaleur comme un fluide immatériel nommé le calorique ?",
             "options": [
                 "Antoine Lavoisier",
-                "Louis Pasteur",
-                "Dmitri Mendeleïev",
+                "Sadi Carnot",
+                "James Prescott Joule",
             ],
             "rep": "Antoine Lavoisier",
         },
         {
-            "id": "qr2",
-            "q": "À la fin du 18e siècle, quel nom donnait-on au produit de la fixation de l'oxygène sur un métal comme le fer ?",
-            "options": ["Un oxyde", "Un sulfure", "Un hydrocarbure"],
-            "rep": "Un oxyde",
+            "id": "qth2",
+            "q": "Quelle grandeur physique Guillaume Amontons puis Lord Kelvin ont-ils théorisé en fixant l'absence totale d'agitation moléculaire ?",
+            "options": ["Le zéro absolu", "La capacité thermique", "Le flux de conduction"],
+            "rep": "Le zéro absolu",
         },
         {
-            "id": "qr3",
-            "q": "Que signifie historiquement le mot Réduction appliqué à un oxyde métallique ?",
+            "id": "qth3",
+            "q": "Quel ingénieur français a publié en 1824 l'ouvrage fondateur décrivant la puissance motrice du feu et le cycle des machines thermiques ?",
             "options": [
-                "Une diminution de la masse de matière",
-                "Une baisse de la température",
-                "Une réduction du volume de gaz",
+                "Sadi Carnot",
+                "Joseph Fourier",
+                "Anders Celsius",
             ],
-            "rep": "Une diminution de la masse de matière",
+            "rep": "Sadi Carnot",
         },
         {
-            "id": "qr4",
-            "q": "Quelle particule élémentaire, découverte à la fin du 19e siècle, a permis de redéfinir entièrement l'oxydoréduction ?",
-            "options": ["L'électron", "Le proton", "Le neutron"],
-            "rep": "L'électron",
+            "id": "qth4",
+            "q": "Quelle expérience célèbre de James Prescott Joule en 1843 a permis de lier définitivement le travail mécanique à la chaleur ?",
+            "options": ["L'expérience des palettes brassant l'eau", "L'invention du thermomètre à mercure", "La découverte du rayonnement infrarouge"],
+            "rep": "L'expérience des palettes brassant l'eau",
         },
         {
-            "id": "qr5",
-            "q": "Quel physicien britannique a découvert l'électron en 1897, ouvrant la voie au modèle électronique ?",
-            "options": ["J.J. Thomson", "Isaac Newton", "James Watt"],
-            "rep": "J.J. Thomson",
+            "id": "qth5",
+            "q": "Quel mathématicien et physicien français a formulé en 1822 la loi mathématique rigoureuse de la conduction thermique ?",
+            "options": ["Joseph Fourier", "Antoine Lavoisier", "Benjamin Thompson"],
+            "rep": "Joseph Fourier",
         },
         {
-            "id": "qr6",
-            "q": "Quel scientifique a proposé la théorie des liaisons chimiques par partage d'électrons au début du 20e siècle ?",
-            "options": ["Gilbert Lewis", "Walther Nernst", "Michael Faraday"],
-            "rep": "Gilbert Lewis",
+            "id": "qth6",
+            "q": "Quel astronome suédois a proposé en 1742 une échelle de température centésimale basée sur les points de fusion et d'ébullition de l'eau ?",
+            "options": ["Anders Celsius", "Daniel Gabriel Fahrenheit", "William John Macquorn Rankine"],
+            "rep": "Anders Celsius",
         },
         {
-            "id": "qr7",
-            "q": "En quelle année Alessandro Volta a-t-il inventé la première pile électrique associant le cuivre et le zinc ?",
-            "options": ["1800", "1750", "1850"],
-            "rep": "1800",
+            "id": "qth7",
+            "q": "En quelle année Lord Kelvin a-t-il proposé son échelle de température thermodynamique absolue commençant à zéro ?",
+            "options": ["1848", "1789", "1912"],
+            "rep": "1848",
         },
         {
-            "id": "qr8",
-            "q": "Quel savant a formalisé en 1834 les lois de l'électrolyse reliant la chimie à la quantité d'électricité ?",
-            "options": ["Michael Faraday", "Antoine Lavoisier", "J.J. Thomson"],
-            "rep": "Michael Faraday",
+            "id": "qth8",
+            "q": "Quel physicien germano-hollandais a perfectionné le thermomètre en utilisant du mercure et une échelle fixant la glace à 32 degrés ?",
+            "options": ["Daniel Gabriel Fahrenheit", "Anders Celsius", "William Thomson"],
+            "rep": "Daniel Gabriel Fahrenheit",
         },
         {
-            "id": "qr9",
-            "q": "Selon la définition moderne, que subit une entité chimique lors d'une oxydation ?",
+            "id": "qth9",
+            "q": "Selon la thermodynamique moderne, quelle est la nature microscopique de la chaleur ?",
             "options": [
-                "Une perte d'électrons",
-                "Un gain d'électrons",
-                "Une perte de protons",
+                "Une agitation désordonnée des atomes",
+                "Un fluide pesant circulant entre les corps",
+                "Un déplacement d'électrons libres",
             ],
-            "rep": "Une perte d'électrons",
+            "rep": "Une agitation désordonnée des atomes",
         },
         {
-            "id": "qr10",
-            "q": "Quelle grandeur physique (exprimée en Volts) permet aujourd'hui de classer le pouvoir des couples redox ?",
+            "id": "qth10",
+            "q": "Quelle unité du Système International (SI), officielle depuis 1948, mesure à la fois le travail, l'énergie et la quantité de chaleur ?",
             "options": [
-                "Le potentiel standard d'oxydoréduction",
-                "La conductivité thermique",
-                "La résistance ohmique",
+                "Le Joule",
+                "La Calorie",
+                "Le Watt",
             ],
-            "rep": "Le potentiel standard d'oxydoréduction",
+            "rep": "Le Joule",
         },
     ]
 
     # Initialisation de l'ordre aléatoire des questions dans la session Streamlit
-    if "ordre_quiz_tab1_redox_aleatoire" not in st.session_state:
-        random.shuffle(questions_redox1_sources)
-        st.session_state.ordre_quiz_tab1_redox_aleatoire = (
-            questions_redox1_sources
-        )
+    if "ordre_quiz_tab1_therm_aleatoire" not in st.session_state:
+        random.shuffle(questions_therm1_sources)
+        st.session_state.ordre_quiz_tab1_therm_aleatoire = questions_therm1_sources
 
-    # 2. BASE DE DONNÉES DU TEXTE À TROUS HISTORIQUE REDOX
-    if "champs_redox1_clean" not in st.session_state:
-        st.session_state.champs_redox1_clean = [
+    # 2. BASE DE DONNÉES DU TEXTE À TROUS HISTORIQUE THERMIQUE
+    if "champs_therm1_clean" not in st.session_state:
+        st.session_state.champs_therm1_clean = [
             (
-                "1. Au 18e siècle, Lavoisier associe l'oxydation à la fixation de l'..........",
-                ["Choisir...", "oxygène", "hydrogène"],
-                "oxygène",
-                "redox1_t1",
+                "1. Au 18e siècle, Lavoisier définit la chaleur comme un fluide appelé ..........",
+                ["Choisir...", "calorique", "phlogistique"],
+                "calorique",
+                "therm1_t1",
             ),
             (
-                "2. La transformation inverse qui extrait le métal pur s'appelle la ..........",
-                ["Choisir...", "réduction", "combustion"],
-                "réduction",
-                "redox1_t2",
+                "2. La révolution industrielle du 19e siècle repose sur les machines ..........",
+                ["Choisir...", "thermiques", "hydrauliques"],
+                "thermiques",
+                "therm1_t2",
             ),
             (
-                "3. La découverte scientifique majeure de 1897 concerne l'..........",
-                ["Choisir...", "électron", "neutron"],
-                "électron",
-                "redox1_t3",
+                "3. La découverte de Joule en 1843 montre que la chaleur est une ..........",
+                ["Choisir...", "énergie", "matière"],
+                "énergie",
+                "therm1_t3",
             ),
             (
-                "4. Le modèle moderne définit la réaction redox par un .......... de charge.",
-                ["Choisir...", "transfert", "blocage"],
-                "transfert",
-                "redox1_t4",
+                "4. Le modèle de Fourier décrit mathématiquement le transfert par ..........",
+                ["Choisir...", "conduction", "rayonnement"],
+                "conduction",
+                "therm1_t4",
             ),
             (
-                "5. L'invention de la première pile au cuivre et zinc en 1800 revient à ..........",
-                ["Choisir...", "Volta", "Faraday"],
-                "Volta",
-                "redox1_t5",
+                "5. L'échelle de température absolue basée sur le zéro absolu revient à ..........",
+                ["Choisir...", "Kelvin", "Celsius"],
+                "Kelvin",
+                "therm1_t5",
             ),
             (
-                "6. Une entité chimique qui perd un ou plusieurs électrons subit une ..........",
-                ["Choisir...", "oxydation", "nitration"],
-                "oxydation",
-                "redox1_t6",
+                "6. Un corps chaud dont les molécules s'agitent possède de l'énergie ..........",
+                ["Choisir...", "thermique", "potentielle"],
+                "thermique",
+                "therm1_t6",
             ),
             (
-                "7. L'étude quantitative des réactions liées au courant est l'..........",
-                ["Choisir...", "électrochimie", "thermodynamique"],
-                "électrochimie",
-                "redox1_t7",
+                "7. L'étude de la chaleur et de ses conversions en travail est la ..........",
+                ["Choisir...", "thermodynamique", "cinématique"],
+                "thermodynamique",
+                "therm1_t7",
             ),
             (
-                "8. Gilbert Lewis a mis en évidence le partage des électrons de ..........",
-                ["Choisir...", "valence", "noyau"],
-                "valence",
-                "redox1_t8",
+                "8. Sadi Carnot a mis en évidence le rendement maximal d'un ..........",
+                ["Choisir...", "cycle", "fluide"],
+                "cycle",
+                "therm1_t8",
             ),
             (
-                "9. La tendance d'un oxydant à capter des électrons se mesure en ..........",
-                ["Choisir...", "Volts", "Ampères"],
-                "Volts",
-                "redox1_t9",
+                "9. L'unité historique de la chaleur, avant le Joule, était la ..........",
+                ["Choisir...", "calorie", "frigorie"],
+                "calorie",
+                "therm1_t9",
             ),
             (
-                "10. La protection des métaux contre la rouille évite leur ..........",
-                ["Choisir...", "corrosion", "fusion"],
-                "corrosion",
-                "redox1_t10",
+                "10. La mesure de la température s'est développée grâce au ..........",
+                ["Choisir...", "thermomètre", "manomètre"],
+                "thermomètre",
+                "therm1_t10",
             ),
         ]
 
@@ -381,41 +379,34 @@ def afficher_atelier_histoire_verrouille(verrouille=False):
     col_quiz, col_trous = st.columns(2)
 
     with col_quiz:
-        st.markdown(
-            "##### Quiz Technique et Historique (10 questions - 10 pts)"
-        )
-        for idx, q_data in enumerate(
-            st.session_state.ordre_quiz_tab1_redox_aleatoire, 1
-        ):
+        st.markdown("##### Quiz Technique et Historique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab1_therm_aleatoire, 1):
             st.write(f"**{idx}.** {q_data['q']}")
             st.selectbox(
                 "",
                 options=["Choisir..."] + q_data["options"],
-                key=f"redox_at1_final_g_{q_data['id']}",
+                key=f"therm_at1_final_g_{q_data['id']}",
                 disabled=verrouille,
                 label_visibility="collapsed",
             )
 
     with col_trous:
-        st.markdown(
-            "##### Synthèse de l'Atelier 1 (Texte à trous - 10 cases - 10 pts)"
-        )
-        for ligne in st.session_state.champs_redox1_clean:
+        st.markdown("##### Synthèse de l'Atelier 1 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_therm1_clean:
             enonce, choix, cle = ligne[0], ligne[1], ligne[-1]
-            c_txt, c_sel = st.columns(
-                [0.65, 0.35], vertical_alignment="bottom"
-            )
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt:
                 st.write(enonce)
             with c_sel:
                 st.selectbox(
                     "",
                     choix,
-                    key=f"{cle}_redox1_clean",
+                    key=f"{cle}_therm1_clean",
                     disabled=verrouille,
                     label_visibility="collapsed",
                 )
 
+                
 with tab0:
     st.subheader("Identification de l'élève")
     st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
@@ -493,8 +484,7 @@ with tab1:
         if os.path.exists("Lavoisier.jpg"):
             st.image(
                 "Lavoisier.jpg",
-                caption="Antoine Lavoisier",
-                use_container_width=True,
+                caption="Antoine Lavoisier"
             )
         else:
             st.warning(
@@ -518,7 +508,6 @@ with tab1:
                 st.image(
                     "Joule.jpg",
                     caption="James Prescott Joule",
-                    use_container_width=True,
                 )
             else:
                 st.warning(
@@ -530,16 +519,12 @@ with tab1:
                 st.image(
                     "Carnot.jpg",
                     caption=" Sadi Carnot ",
-                    use_container_width=True,
                 )
             else:
                 st.warning(
                     "L'image 'chaleur_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
                 )
-                    
-
-
-                    
+                  
     st.write("---")
 
     # =============================================================================
@@ -585,11 +570,11 @@ with tab1:
             )
             
     st.write("---")
-    if "suite_verrouille_tab1_redox" not in st.session_state:
-        st.session_state.suite_verrouille_tab1_redox = False
-    verrou_at1 = st.session_state.suite_verrouille_tab1_redox
+    if "suite_verrouille_tab1_therm" not in st.session_state:
+        st.session_state.suite_verrouille_tab1_therm = False
+    verrou_at1 = st.session_state.suite_verrouille_tab1_therm
 
-    # Affichage du module de questions specifique a l'histoire de la chimie redox
+    # Affichage du module de questions spécifique à l'histoire de la thermique
     afficher_atelier_histoire_verrouille(verrouille=verrou_at1)
 
     st.write("---")
@@ -601,13 +586,13 @@ with tab1:
 
     case_certif_stat1 = st.checkbox(
         "Je certifie avoir complété les questions de l'Atelier Historique.",
-        key="check_certif_redox1_final_net",
+        key="check_certif_therm1_final_net",
         disabled=verrou_at1,
     )
 
     if st.button(
         "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1",
-        key="btn_export_suite1_redox_official",
+        key="btn_export_suite1_therm_official",
         use_container_width=True,
         disabled=verrou_at1,
     ):
@@ -616,45 +601,47 @@ with tab1:
         elif not case_certif_stat1:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # 1. Correction automatisée du Quiz
+            # 1. Correction automatisée du Quiz Technique
             score_q1 = 0.0
-            if "ordre_quiz_tab1_redox_aleatoire" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_tab1_redox_aleatoire:
-                    saisie = st.session_state.get(f"redox_at1_final_g_{q_item['id']}", "Choisir...")
+            if "ordre_quiz_tab1_therm_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab1_therm_aleatoire:
+                    saisie = st.session_state.get(f"therm_at1_final_g_{q_item['id']}", "Choisir...")
                     if str(saisie).strip() == str(q_item["rep"]).strip():
                         score_q1 += 1.0
 
             # 2. Correction automatisée sécurisée du Texte à trous
             score_t1 = 0.0
-            if "champs_redox1_clean" in st.session_state:
-                for ligne in st.session_state.champs_redox1_clean:
+            if "champs_therm1_clean" in st.session_state:
+                for ligne in st.session_state.champs_therm1_clean:
                     enonce_t, choix_t, attendu_t, cle_t = ligne  # Déballage propre des 4 éléments du tuple
-                    saisie_t = st.session_state.get(f"{cle_t}_redox1_clean", "Choisir...")
+                    saisie_t = st.session_state.get(f"{cle_t}_therm1_clean", "Choisir...")
                     if str(saisie_t).strip() == str(attendu_t).strip():
                         score_t1 += 1.0
 
-            # 3. Sauvegarde des scores et verrouillage
-            st.session_state.score_suite1_redox_p1 = round(float(score_q1), 1)
-            st.session_state.score_suite1_redox_p2 = round(float(score_t1), 1)
-            st.session_state.score_final_suite1_redox = round(float(score_q1 + score_t1), 1)
-            st.session_state.suite_verrouille_tab1_redox = True
+            # 3. Sauvegarde des scores et verrouillage automatique de la session
+            st.session_state.score_suite1_therm_p1 = round(float(score_q1), 1)
+            st.session_state.score_suite1_therm_p2 = round(float(score_t1), 1)
+            st.session_state.score_final_suite1_therm = round(float(score_q1 + score_t1), 1)
+            st.session_state.suite_verrouille_tab1_therm = True
             st.rerun()
-    # --- COMPILATION DU BILAN HTML SCELLÉ ---
-    if st.session_state.get("suite_verrouille_tab1_redox", False):
-        scr1_t1 = st.session_state.get("score_suite1_redox_p1", 0.0)
-        scr2_t1 = st.session_state.get("score_suite1_redox_p2", 0.0)
-        tot_s_t1 = st.session_state.get("score_final_suite1_redox", 0.0)
+
+    # --- COMPILATION DU BILAN HTML SCELLÉ POUR LES TRANSFERTS THERMIQUES ---
+    if st.session_state.get("suite_verrouille_tab1_therm", False):
+        from datetime import datetime
+        scr1_t1 = st.session_state.get("score_suite1_therm_p1", 0.0)
+        scr2_t1 = st.session_state.get("score_suite1_therm_p2", 0.0)
+        tot_s_t1 = st.session_state.get("score_final_suite1_therm", 0.0)
         timestamp_suite1 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
 
         st.success(
             f"ATELIER HISTORIQUE SCELLÉ | Note de session : {tot_s_t1:.1f} / 20"
         )
 
-        html_export_redox1 = f"""<!DOCTYPE html>
+        html_export_therm1 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Historique Oxydoreduction - {n_eleve}</title>
+            <title>Rapport Historique Thermique - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
@@ -669,8 +656,8 @@ with tab1:
         </head>
         <body>
             <div class="header-box">
-                <h1>Rapport d'Évaluation de Chimie</h1>
-                <p>Atelier 1 : Contexte historique de l'oxydoréduction et évolution des modèles</p>
+                <h1>Rapport d'Évaluation de Physique Thermique</h1>
+                <p>Atelier 1 : Contexte historique des transferts thermiques et évolution des modèles</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite1}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t1:.1f}</span> / 20</div>
@@ -691,12 +678,12 @@ with tab1:
                 <tbody>
         """
 
-        if "ordre_quiz_tab1_redox_aleatoire" in st.session_state:
+        if "ordre_quiz_tab1_therm_aleatoire" in st.session_state:
             for num, q_item in enumerate(
-                st.session_state.ordre_quiz_tab1_redox_aleatoire, 1
+                st.session_state.ordre_quiz_tab1_therm_aleatoire, 1
             ):
                 saisie = st.session_state.get(
-                    f"redox_at1_final_g_{q_item['id']}", "Choisir..."
+                    f"therm_at1_final_g_{q_item['id']}", "Choisir..."
                 )
                 attendu = q_item["rep"]
                 v_lbl = (
@@ -707,9 +694,9 @@ with tab1:
                 v_class = (
                     "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
                 )
-                html_export_redox1 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+                html_export_therm1 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_redox1 += """
+        html_export_therm1 += """
                 </tbody>
             </table>
             
@@ -721,14 +708,14 @@ with tab1:
                 <tbody>
         """
 
-        if "champs_redox1_clean" in st.session_state:
-            for num, ligne in enumerate(st.session_state.champs_redox1_clean, 1):
+        if "champs_therm1_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_therm1_clean, 1):
                 enonce_texte = ligne[0]
                 attendu_texte = ligne[2]
                 cle_variable = ligne[-1]
 
                 saisie_texte = st.session_state.get(
-                    f"{cle_variable}_redox1_clean", "Choisir..."
+                    f"{cle_variable}_therm1_clean", "Choisir..."
                 )
                 v_lbl_t = (
                     "CORRECT"
@@ -740,23 +727,20 @@ with tab1:
                     if v_lbl_t == "CORRECT"
                     else "status-incorrect"
                 )
-                html_export_redox1 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+                html_export_therm1 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
 
-        html_export_redox1 += """
+        html_export_therm1 += """
                 </tbody>
             </table>
         </body>
         </html>
         """
 
-        nom_fichier_html_redox1 = preparer_nom_fichier(
-            "Rapport_Histoire_Redox"
-        ).replace(".txt", ".html")
+        # Rendu du bouton de téléchargement natif pour le fichier HTML compilé
         st.download_button(
-            label="Télécharger le rapport d'évaluation officiel de l'Atelier 1 (.html)",
-            data=html_export_redox1,
-            file_name=nom_fichier_html_redox1,
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 1",
+            data=html_export_therm1,
+            file_name=preparer_nom_fichier("Atelier_1_Historique"),
             mime="text/html",
+            use_container_width=True,
         )
-
-
