@@ -2956,13 +2956,16 @@ with tab6:
         )
 
     # Ligne 2 : Choix des réactifs mis en contact
-    if cpl_selection_A != "Choisir..." and cpl_selection_B != "Choisir...":
+    if (
+        cpl_selection_A != "Choisir..."
+        and cpl_selection_B != "Choisir..."
+    ):
         if cpl_selection_A == cpl_selection_B:
             st.warning(
                 "Veuillez choisir deux couples distincts pour simuler un transfert d'électrons."
             )
         else:
-            # Séparation automatique pour isoler l'Oxydant (gauche) et le Réducteur (droite)
+            # Séparation automatique sécurisée puisque l'absence de "Choisir..." est garantie ici
             ox_A, red_A = cpl_selection_A.split(" / ")
             ox_B, red_B = cpl_selection_B.split(" / ")
 
