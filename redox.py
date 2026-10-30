@@ -3428,6 +3428,8 @@ with tab6:
                         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
 
                         def dessiner_becher_haute_precision(ax, couleur_solution, est_etat_final):
+                            import numpy as np
+
                             # 1. COUCHE ARRIÈRE : Le bloc de liquide du fond du bécher
                             liquide_fond = patches.Rectangle((1.2, 1.0), 2.6, 3.3, color=couleur_solution, alpha=0.7, zorder=1)
                             ax.add_patch(liquide_fond)
@@ -3438,24 +3440,59 @@ with tab6:
                             
                             # 3. COUCHE ARRIÈRE : La face cachée arrière de la surface (pointillés)
                             ax.add_patch(patches.Arc((2.5, 4.3), 2.6, 0.4, angle=0, theta1=0, theta2=180, color='#475569', lw=1, ls='--', zorder=3))
-                            
-                            # 4. COUCHE INTERMÉDIAIRE : La lame métallique ENTIÈRE et CONTINUE (Gris d'origine)
-                            # Dessinée d'un seul bloc du haut jusqu'au bas du bécher pour éviter toute cassure
+
+                            # Coordonnées universelles de la lame inclinée
                             pts_lame = [[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]]
-                            lame_globale = patches.Polygon(pts_lame, color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4)
-                            ax.add_patch(lame_globale)
-                            
-                            # 5. COUCHE INTERMÉDIAIRE : Le dépôt métallique (uniquement à l'état final)
-                            if est_etat_final and s_red_init == "solide" and s_ox_fin == "solide":
-                                # On redessine la même lame exacte mais avec la couleur du dépôt (ex: Orange/Marron)
-                                depot_global = patches.Polygon(pts_lame, color=hex_ox_fin, edgecolor='#78350f' if hex_ox_fin != "#a855f7" else '#7e22ce', lw=1.2, zorder=5)
-                                ax.add_patch(depot_global)
+
+                            # --- GESTION ADAPTATIVE DE L'ÉTAT PHYSIQUE DES ESPÈCES ---
+                            if not est_etat_final:
+                                # ÉTAT INITIAL : Analyse du réducteur introduit
+                                if s_red_init == "solide" and t6_reactif_red_choisi in ["Fe", "Cu", "Ag", "Zn", "Al", "Ni", "Co", "Pb", "Sn", "Hg", "Au", "Pt"]:
+                                    # C'est un vrai métal solide : On dessine la lame grise d'origine
+                                    lame_globale = patches.Polygon(pts_lame, color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4)
+                                    ax.add_patch(lame_globale)
+                                elif s_red_init == "solide" and t6_reactif_red_choisi == "S":
+                                    # Le soufre est une poudre : On dessine un dépôt de poudre jaune au fond du bécher
+                                    poudre_fond = patches.Polygon([[1.3, 1.0], [3.7, 1.0], [3.5, 1.3], [1.5, 1.3]], color=hex_red_init, alpha=0.9, zorder=4)
+                                    ax.add_patch(poudre_fond)
+                                elif s_ox_init == "gaz" or s_red_init == "gaz":
+                                    # Présence d'un gaz : On génère des bulles aléatoires dans la solution
+                                    np.random.seed(42)
+                                    for _ in range(15):
+                                        bx = np.random.uniform(1.4, 3.6)
+                                        by = np.random.uniform(1.2, 4.1)
+                                        bulle = patches.Circle((bx, by), radius=np.random.uniform(0.04, 0.08), fill=False, color='#94a3b8', lw=1, zorder=4)
+                                        ax.add_patch(bulle)
+                            else:
+                                # ÉTAT FINAL : Analyse des produits formés
+                                # 1. Si le réducteur de départ était une lame métallique solide
+                                if s_red_init == "solide" and t6_reactif_red_choisi in ["Fe", "Cu", "Ag", "Zn", "Al", "Ni", "Co", "Pb", "Sn", "Hg", "Au", "Pt"]:
+                                    # Dessin du support de la lame grise continue
+                                    lame_globale = patches.Polygon(pts_lame, color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4)
+                                    ax.add_patch(lame_globale)
+                                    
+                                    # Si le produit obtenu est lui aussi un métal solide (ex: Dépôt de Cuivre)
+                                    if s_ox_fin == "solide" and t6_prod_ox in ["Fe", "Cu", "Ag", "Zn", "Al", "Ni", "Co", "Pb", "Sn", "Hg", "Au", "Pt"]:
+                                        depot_global = patches.Polygon(pts_lame, color=hex_ox_fin, edgecolor='#78350f' if hex_ox_fin != "#a855f7" else '#7e22ce', lw=1.2, zorder=5)
+                                        ax.add_patch(depot_global)
+                                        # Le dépôt s'arrête net sous la ligne d'eau y=4.3
+                                        masque_immerge = patches.Rectangle((1.0, 0.0), 3.0, 4.3, transform=ax.transData)
+                                        depot_global.set_clip_path(masque_immerge)
+
+                                # 2. Si la réaction génère un précipité poudreux au fond (ex: S, MnO2)
+                                if s_ox_fin == "solide" and t6_prod_ox in ["S", "MnO2", "MnO3"]:
+                                    precipite = patches.Polygon([[1.3, 1.0], [3.7, 1.0], [3.5, 1.4], [1.5, 1.4]], color=hex_ox_fin, alpha=0.95, zorder=5)
+                                    ax.add_patch(precipite)
                                 
-                                # CORRECTIF TOTAL : On applique un masque rectangulaire invisible qui s'arrête pile à y=4.3
-                                # Tout ce qui dépasse de la solution (y > 4.3) est masqué automatiquement.
-                                # L'alignement est mathématiquement parfait avec la ligne d'eau.
-                                masque_immerge = patches.Rectangle((1.0, 0.0), 3.0, 4.3, transform=ax.transData)
-                                depot_global.set_clip_path(masque_immerge)
+                                # 3. Si la réaction génère un dégagement gazeux (ex: H2, NO2)
+                                if s_ox_fin == "gaz" or s_red_fin == "gaz" or t6_prod_ox in ["H2", "NO", "NO2", "CO2", "CH4", "SO2"]:
+                                    # Génération de bulles de gaz qui montent vers la surface
+                                    np.random.seed(24)
+                                    for _ in range(25):
+                                        bx = np.random.uniform(1.4, 3.6)
+                                        by = np.random.uniform(1.5, 4.3)
+                                        bulle = patches.Circle((bx, by), radius=np.random.uniform(0.03, 0.07), fill=False, color='#475569', lw=1, zorder=5)
+                                        ax.add_patch(bulle)
 
                             # 6. COUCHE AVANT : La face avant visible du contour de l'eau (arc continu de 180 à 360°)
                             ax.add_patch(patches.Arc((2.5, 4.3), 2.6, 0.4, angle=0, theta1=180, theta2=360, color='#1e293b', lw=1.5, zorder=6))
@@ -3464,8 +3501,7 @@ with tab6:
                             contours_verre = [
                                 [1.0, 5.0], [1.2, 5.0], [1.2, 1.0], [3.8, 1.0], [3.8, 5.0], [4.0, 5.0]
                             ]
-                            ax.add_patch(patches.Polygon(contours_verre, closed=False, fill=False, color='#1e293b', lw=2.5, zorder=7))
-                            
+                            ax.add_patch(patches.Polygon(contours_verre, closed=False, fill=False, color='#1e293b', lw=2.5, zorder=7))                            
                         # --- CONFIGURATION DU BÉCHER INITIAL (À GAUCHE) ---
                         col_sol_1 = hex_ox_init if s_ox_init == "solution" else teinte_eau_transparente
                         dessiner_becher_haute_precision(ax1, col_sol_1, est_etat_final=False)
