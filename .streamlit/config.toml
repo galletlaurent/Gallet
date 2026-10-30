@@ -1,4 +1,4 @@
 [server]
 enableCORS = false
 enableXsrfProtection = false
-frameAncestors = ["*"]
+frameAncestors = ["https://wix.com", "https://*.wixsite.com"]
