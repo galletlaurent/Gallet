@@ -2956,16 +2956,14 @@ with tab6:
         )
 
     # Ligne 2 : Choix des réactifs mis en contact
-    if (
-        cpl_selection_A != "Choisir..."
-        and cpl_selection_B != "Choisir..."
-    ):
+    if cpl_selection_A != "Choisir..." and cpl_selection_B != "Choisir...":
         if cpl_selection_A == cpl_selection_B:
             st.warning(
                 "Veuillez choisir deux couples distincts pour simuler un transfert d'électrons."
             )
-        else:
-            # Séparation automatique sécurisée puisque l'absence de "Choisir..." est garantie ici
+        # Vérification stricte que les chaînes contiennent bien le séparateur " / "
+        elif " / " in cpl_selection_A and " / " in cpl_selection_B:
+            # Séparation garantie sans erreur
             ox_A, red_A = cpl_selection_A.split(" / ")
             ox_B, red_B = cpl_selection_B.split(" / ")
 
