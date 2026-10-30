@@ -1050,13 +1050,14 @@ with tab2:
     # =============================================================================
     # CONFIGURATION DOUBLE COLONNE : TEXTE BLEU A GAUCHE / IMAGE ET GRAPHISME A DROITE
     # =============================================================================
-    col_gauche_texte_t2, col_droite_img_t2 = st.columns([1.1, 1.0])
+    col_gauche_texte_t2, col_droite_img_t2 = st.columns(2)
 
     with col_gauche_texte_t2:
-        # Bloc textuel informatif de couleur bleue (st.info)
-        st.info("### La BD humoristique textuelle : Le thermomètre en folie")
+        st.write(
+            "**La BD humoristique textuelle : Le thermomètre en folie**"
+        )
         
-        st.markdown(
+        st.info(
             "**Cas 1 :** À l'état initial, les molécules d'un fluide sont calmes et immobiles. "
             "Elles dorment paisiblement à la température de zéro absolu dans leur bulbe en verre : "
             "« Chut, aucun mouvement ici, l'immobilité thermodynamique est totale ! ».\n\n"
@@ -1065,7 +1066,7 @@ with tab2:
             "par le bras et injecte de l'énergie thermique en hurlant : "
             "« Debout là-dedans ! Donnez-moi vos mouvements ! Il est temps de vous agiter énergiquement ! ».\n\n"
             
-            "**Cas 3 :** Les molécules, excitées par le vol d'énergie, paniquent et commencent à vibrer "
+            "**Cas 3 :** Les molécules, excitées par l'apport d'énergie, paniquent et commencent à vibrer "
             "dans tous les sens. Manquant de place, elles poussent les parois du thermomètre : "
             "« Oh non ! On subit une augmentation de température ! On a trop de joules, "
             "il faut qu'on s'écarte, c'est la dilatation volumique ! ».\n\n"
@@ -1077,23 +1078,16 @@ with tab2:
         )
 
     with col_droite_img_t2:
-        st.write("")
-        st.markdown("##### Illustration humoristique du mécanisme de dilatation en 4 cas")
-        
-        # Grille interne pour simuler les 4 cases de la caricature (2 lignes de 2 colonnes)
-        grid_t2_l1_c1, grid_t2_l1_c2 = st.columns(2)
-        with grid_t2_l1_c1:
-            st.info("**Le Zéro Absolu**\n\n« Chut, aucun mouvement ici, l'immobilité thermodynamique est totale ! »")
-        with grid_t2_l1_c2:
-            st.warning("**L'Apport d'Énergie**\n\n« Debout là-dedans ! Donnez-moi vos mouvements ! Agitez-vous ! »")
-            
-        st.write("") # Espace entre les deux lignes de cases
-        
-        grid_t2_l2_c1, grid_t2_l2_c2 = st.columns(2)
-        with grid_t2_l2_c1:
-            st.error("**La Dilatation**\n\n« Oh non ! On subit une augmentation de température ! Il faut s'écarter ! »")
-        with grid_t2_l2_c2:
-            st.success("**L'Éclatement**\n\n« Affaire classée ! Encore un capteur terrassé par notre puissance cinétique ! »")
+        if os.path.exists("temperature_caricature.jpg"):
+            st.image(
+                "temperature_caricature.jpg",
+                caption="Illustration humoristique du mécanisme de dilatation thermique",
+                use_container_width=True,
+            )
+        else:
+            st.warning(
+                "L'image 'temperature_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+            )
     # =============================================================================
     # SIMULATEUR DYNAMIQUE : DILATATION DES LIQUIDES THERMOMÉTRIQUES
     # =============================================================================
