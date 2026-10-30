@@ -3005,24 +3005,24 @@ with tab6:
                 e0_red = e0_cpl_A if reactif_red_choisi == red_A else e0_cpl_B
 
                 st.write("")
-                if st.button(
-                    "TESTER LA RÉACTION CHIMIQUE SUR LE TERRAIN",
-                    key="btn_run_simulation_gamma_bibliotheque",
-                    use_container_width=True,
-                ):
-                    # Règle du gamma direct : Oxydant au potentiel le plus haut + Réducteur au potentiel le plus bas
-                    if e0_ox > e0_red:
-                        st.success(
-                            f"RÉSULTAT : LA RÉACTION EST POSSIBLE !\n\n"
-                            f"L'oxydant choisi ({reactif_ox_choisi}) est placé au-dessus du réducteur choisi ({reactif_red_choisi}) sur l'échelle des potentiels.\n\n"
-                            f"La règle du gamma direct est respectée (E0 Ox = {e0_ox:.2f} V > E0 Red = {e0_red:.2f} V). Le transfert d'électrons est spontané."
-                        )
-                    else:
-                        st.error(
-                            f"RÉSULTAT : RÉACTION CHIMIQUE IMPOSSIBLE !\n\n"
-                            f"L'oxydant choisi ({reactif_ox_choisi}) se situe en dessous du réducteur choisi ({reactif_red_choisi}) sur l'échelle.\n\n"
-                            f"Le gamma est inversé (E0 Ox = {e0_ox:.2f} V <= E0 Red = {e0_red:.2f} V). Les deux réactifs sont stables et coexistent sans réagir."
-                        )
+            if st.button(
+                "TESTER LA RÉACTION CHIMIQUE SUR LE TERRAIN",
+                key="btn_run_simulation_gamma_bibliotheque",
+                use_container_width=True,
+            ):
+                # Règle du gamma direct : Oxydant au potentiel le plus haut + Réducteur au potentiel le plus bas
+                if e0_ox > e0_red:
+                    st.success(
+                        f"RÉSULTAT : LA RÉACTION EST POSSIBLE !\n\n"
+                        f"L'oxydant choisi ({reactif_ox_choisi}) est placé au-dessus du réducteur choisi ({reactif_red_choisi}) sur l'échelle des potentiels.\n\n"
+                        f"La règle du gamma direct est respectée (E0 Ox = {e0_ox:.2f} V > E0 Red = {e0_red:.2f} V). Le transfert d'électrons est spontané."
+                    )
+                else:
+                    st.error(
+                        f"RÉSULTAT : RÉACTION CHIMIQUE IMPOSSIBLE !\n\n"
+                        f"L'oxydant choisi ({reactif_ox_choisi}) se situe en dessous du réducteur choisi ({reactif_red_choisi}) sur l'échelle.\n\n"
+                        f"Le gamma est inversé (E0 Ox = {e0_ox:.2f} V <= E0 Red = {e0_red:.2f} V). Les deux réactifs sont stables et coexistent sans réagir."
+                    )
     st.write("---")
 
 
