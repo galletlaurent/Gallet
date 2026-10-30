@@ -924,54 +924,54 @@ with tab2:
         
         with col_t21_h11:
             col_t21_h111, col_t21_h211 = st.columns(2)
-                with col_t21_h111:
-                    if os.path.exists("Galilée.jpg"):
-                        st.image(
-                            "Galilée.jpg",
-                            caption="Galilée",
-                            use_container_width=True,
-                        )
-                    else:
-                        st.warning(
-                            "L'image 'Galilée.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
+            with col_t21_h111:
+                if os.path.exists("Galilée.jpg"):
+                    st.image(
+                        "Galilée.jpg",
+                        caption="Galilée",
+                        use_container_width=True,
+                    )
+                else:
+                    st.warning(
+                        "L'image 'Galilée.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application.")
 
-                with col_t21_h211:
-                    if os.path.exists("thermoscope.jpg"):
-                        st.image(
-                            "thermoscope.jpg",
-                            caption="thermoscope de Galilée",
-                            use_container_width=True,
-                        )
-                    else:
-                        st.warning(
-                            "L'image 'thermoscope.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
-                        )
+            with col_t21_h211:
+                if os.path.exists("thermoscope.jpg"):
+                    st.image(
+                        "thermoscope.jpg",
+                        caption="thermoscope de Galilée",
+                        use_container_width=True,
+                    )
+                else:
+                    st.warning(
+                        "L'image 'thermoscope.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+                    )
 
         with col_t21_h21:
             col_t21_h311, col_t21_h411 = st.columns(2)
-                with col_t21_h311:
-                    if os.path.exists("Fahrenheit.jpg"):
-                        st.image(
-                            "Fahrenheit.jpg",
-                            caption="Daniel Gabriel Fahrenheit",
-                            use_container_width=True,
-                        )
-                    else:
-                        st.warning(
-                            "L'image 'Fahrenheit.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
-                        )
+            with col_t21_h311:
+                if os.path.exists("Fahrenheit.jpg"):
+                    st.image(
+                        "Fahrenheit.jpg",
+                        caption="Daniel Gabriel Fahrenheit",
+                        use_container_width=True,
+                    )
+                else:
+                    st.warning(
+                        "L'image 'Fahrenheit.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+                    )
 
-                with col_t21_h411:
-                    if os.path.exists("thermometre.jpg"):
-                        st.image(
-                            "thermometre.jpg",
-                            caption="thermomètre à mercure",
-                            use_container_width=True,
-                        )
-                    else:
-                        st.warning(
-                            "L'image 'thermometre.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
-                        )
+            with col_t21_h411:
+                if os.path.exists("thermometre.jpg"):
+                    st.image(
+                        "thermometre.jpg",
+                        caption="thermomètre à mercure",
+                        use_container_width=True,
+                    )
+                else:
+                    st.warning(
+                        "L'image 'thermometre.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+                    )
 
 
             
