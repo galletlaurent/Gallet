@@ -942,7 +942,7 @@ with tab2:
     with img_col_gauche:
         # Affichage de l'image de gauche (Basse température)
         st.image(
-            "froid.png", 
+            "froid.jpg", 
             caption="État microscopique à basse température",
             use_container_width=True
         )
@@ -956,7 +956,7 @@ with tab2:
     with img_col_droite:
         # Affichage de l'image de droite (Haute température)
         st.image(
-            "chaud.png", 
+            "chaud.jpg", 
             caption="État microscopique à haute température",
             use_container_width=True
         )
