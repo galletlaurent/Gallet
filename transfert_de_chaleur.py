@@ -502,63 +502,51 @@ with tab1:
     # =============================================================================
     # BANDE DESSINÉE HUMORISTIQUE EN 4 CASES : LE DRAME DES CALORIES PERDUES
     # =============================================================================
-    st.subheader("La BD humoristique textuelle : Le drame des calories perdues")
-    st.write(
-        "Suivez le mécanisme de la fuite thermique à travers les parois d'un bâtiment, "
-        "modélisé d'après l'illustration humoristique en 4 cas :"
-    )
+    col_gauche_texte, col_droite_img = st.columns([1.1, 1.0])
 
-    # Configuration de la structure en 4 colonnes régulières (les 4 cases de la BD)
-    bd_case1, bd_col_fleche1, bd_case2, bd_col_fleche2, bd_case3, bd_col_fleche3, bd_case4 = st.columns([3, 0.5, 3, 0.5, 3, 0.5, 3])
-
-    with bd_case1:
-        st.info("**Cas 1 : L'Équilibre Idéal**")
+    with col_gauche_texte:
+        # Bloc textuel informatif de couleur bleue (st.info)
+        st.info("### La BD humoristique textuelle : Le drame des calories perdues")
+        
         st.markdown(
-            "Un groupe d'atomes à l'intérieur d'une maison chauffée est tranquillement installé. "
-            "Ils vibrent joyeusement ensemble.\n\n"
-            "« Tout va bien les gars, l'isolation est parfaite ! On reste bien au chaud ici ! »"
+            "**Cas 1 :** Un groupe d'atomes à l'intérieur d'une maison chauffée est tranquillement installé "
+            "dans la structure de la paroi. Ils vibrent joyeusement ensemble et discutent avec leurs voisins : "
+            "« Tout va bien les gars, la parfaite cohésion est là, on forme un bloc d'isolation indestructible ! ».\n\n"
+            
+            "**Cas 2 :** Une baisse brutale des températures survient à l'extérieur. L'air froid hivernal, "
+            "très gourmand, attrape l'atome de la paroi par le bras et crie : "
+            "« Hé toi ! Donne-moi tes charges ! Tes précieux joules d'énergie m'intéressent grandement ! ».\n\n"
+            
+            "**Cas 3 :** L'atome de la paroi, dépouillé de son énergie de protection, commence à se refroidir "
+            "et à se détacher du réseau. Il panique en voyant sa température baisser : "
+            "« Oh non ! Je viens de subir un transfert thermique ! Je ne suis plus un atome chaud et agité, "
+            "je me transforme en conducteur froid ! C'est la liquéfaction ! ».\n\n"
+            
+            "**Cas 4 :** La chaleur évadée désormais flotte dans l'atmosphère froide sous forme de perte pure, "
+            "laissant un trou béant dans le bilan énergétique de la poutre. Les atomes de froid s'enfuient "
+            "en ricanant avec leur butin : "
+            "« Affaire classée ! Encore un système chauffé terrassé par notre pouvoir absorbant ! »."
         )
 
-    with bd_col_fleche1:
+    with col_droite_img:
+        # Partie graphique représentant la bande dessinée humoristique en 4 cases
         st.write("")
-        st.write("")
-        st.subheader("->")
-
-    with bd_case2:
-        st.warning("**Cas 2 : L'Attaque du Froid**")
-        st.markdown(
-            "Une baisse brutale des températures survient à l'extérieur. L'air froid hivernal, très gourmand en énergie, "
-            "vient se coller contre la vitre de la paroi.\n\n"
-            "« Hé vous là-dedans ! Donnez-moi votre énergie ! Vos précieux joules m'intéressent grandement ! »"
-        )
-
-    with bd_col_fleche2:
-        st.write("")
-        st.write("")
-        st.subheader("->")
-
-    with bd_case3:
-        st.error("**Cas 3 : La Fuite Thermique**")
-        st.markdown(
-            "Les atomes de la paroi transmettent l'agitation de proche en proche. Les calories commencent "
-            "à traverser le matériau et à s'échapper du réseau.\n\n"
-            "« Oh non ! On subit un transfert par conduction ! On quitte la maison, "
-            "on se dissipe dehors ! C'est le refroidissement ! »"
-        )
-
-    with bd_col_fleche3:
-        st.write("")
-        st.write("")
-        st.subheader("->")
-
-    with bd_case4:
-        st.success("**Cas 4 : Le Pont Thermique**")
-        st.markdown(
-            "La chaleur s'est totalement évadée dans l'atmosphère froide. La pièce s'est refroidie, laissant "
-            "un gouffre énergétique sur la facture.\n\n"
-            "« Affaire classée ! Encore un système chauffé terrassé par notre pouvoir absorbant ! »"
-        )
-
+        st.markdown("##### Illustration humoristique du mécanisme de fuite en 4 cas")
+        
+        # Grille interne pour simuler les 4 cases de l'image (2 lignes de 2 colonnes)
+        grid_l1_c1, grid_l1_c2 = st.columns(2)
+        with grid_l1_c1:
+            st.info("**La Structure Idéale**\n\n« Tout va bien les gars, la cohésion est parfaite, on forme un bloc indestructible ! »")
+        with grid_l1_c2:
+            st.warning("**L'Attaque du Froid**\n\n« Hé toi ! Donne-moi tes charges ! Tes joules m'intéressent grandement ! »")
+            
+        st.write("") # Espace entre les deux lignes de cases
+        
+        grid_l2_c1, grid_l2_c2 = st.columns(2)
+        with grid_l2_c1:
+            st.error("**Fuite & Dissipation**\n\n« Oh non ! Je viens de subir un transfert thermique ! Je me refroidis ! »")
+        with grid_l2_c2:
+            st.success("**Le Pont Thermique**\n\n« Affaire classée ! Encore un système terrassé par notre pouvoir absorbant ! »")
     st.write("---")
     if "suite_verrouille_tab1_redox" not in st.session_state:
         st.session_state.suite_verrouille_tab1_redox = False
