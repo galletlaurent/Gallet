@@ -3363,7 +3363,7 @@ with tab6:
                         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
 
                         def dessiner_becher_systeme(ax, couleur_solution, est_final):
-                            # Base aqueuse translucide
+                            # 1. Base aqueuse translucide de fond
                             ax.add_patch(patches.Rectangle((1.2, 1.0), 2.6, 3.3, color=couleur_solution, alpha=0.7, zorder=1))
                             ax.add_patch(patches.Ellipse((2.5, 4.3), 2.6, 0.4, color=couleur_solution, alpha=0.5, zorder=2))
                             ax.add_patch(patches.Arc((2.5, 4.3), 2.6, 0.4, angle=0, theta1=0, theta2=180, color='#475569', lw=1, ls='--', zorder=3))
@@ -3371,42 +3371,51 @@ with tab6:
                             pts_lame = [[2.1, 1.3], [2.7, 1.2], [3.2, 5.8], [2.6, 5.9]]
 
                             if not est_final:
-                                # ÉTAT INITIAL : Dessin du réducteur introduit
+                                # =============================================================================
+                                # ÉTAT INITIAL : AFFICHAGE CUMULATIF DES DEUX RÉACTIFS
+                                # =============================================================================
+                                # Rendu du Réducteur (Métal ou Poudre)
                                 if s_red_init == "metal":
                                     ax.add_patch(patches.Polygon(pts_lame, color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4))
                                     ax.text(3.4, 5.5, f"Lame de {t6_reactif_red_choisi}\n(Métal)", color='#1e293b', fontsize=9, fontweight='bold')
-                                elif s_red_init == "poudre":
-                                    # Le soufre solide au départ est déposé sous forme de sédiment poudreux jaune
-                                    ax.add_patch(patches.Polygon([[1.22, 1.01], [3.78, 1.01], [3.6, 1.4], [1.4, 1.4]], color=hex_red_init, edgecolor='#b45309', lw=1, zorder=4))
+                                
+                                if s_red_init == "poudre" or t6_reactif_red_choisi == "S":
+                                    # La poudre jaune de Soufre est dessinée au fond (zorder=4)
+                                    ax.add_patch(patches.Polygon([[1.22, 1.01], [3.78, 1.01], [3.6, 1.35], [1.4, 1.35]], color=hex_red_init, edgecolor='#b45309', lw=1, zorder=4))
                                     ax.text(3.9, 1.2, f"Poudre de {t6_reactif_red_choisi}\n({lbl_red_init})", color='#b45309', fontsize=9, fontweight='bold', va='center')
-                                elif s_ox_init == "gaz" or s_red_init == "gaz":
-                                    # Montage d'injection pour gaz
+
+                                # Rendu de l'Oxydant (si c'est un Gaz comme O3)
+                                if s_ox_init == "gaz":
+                                    # Ajout de la bouteille de gaz à droite
                                     ax.add_patch(patches.Rectangle((4.2, 1.0), 0.5, 2.5, color='#475569', edgecolor='#1e293b', lw=1.2, zorder=4))
                                     ax.plot([4.35, 3.0, 3.0], [3.5, 3.5, 1.8], color='#334155', lw=2, zorder=4)
+                                    # Nuage de bulles de gaz injecté au centre
                                     np.random.seed(42)
                                     for _ in range(20):
-                                        ax.add_patch(patches.Circle((3.0 + np.random.normal(0, 0.2), 1.8 + np.random.uniform(0, 2.0)), radius=np.random.uniform(0.03, 0.05), fill=False, color='#0891b2', lw=0.7, zorder=5))
+                                        ax.add_patch(patches.Circle((3.0 + np.random.normal(0, 0.15), 1.8 + np.random.uniform(0, 1.8)), radius=np.random.uniform(0.03, 0.05), fill=False, color='#0891b2', lw=0.7, zorder=5))
                                 
-                                ax.text(1.4, 2.5, f"Solution :\n{t6_reactif_ox_choisi}\n({lbl_ox_init})", color='#1e3a8a', fontsize=9, va='center')
+                                ax.text(1.3, 3.5, f"Solution :\n{t6_reactif_ox_choisi}\n({lbl_ox_init})", color='#1e3a8a', fontsize=9, va='center')
 
                             else:
-                                # ÉTAT FINAL : Dessin des produits de la réaction
+                                # =============================================================================
+                                # ÉTAT FINAL : AFFICHAGE CUMULATIF DES PRODUITS FORMÉS
+                                # =============================================================================
+                                # 1. Si le support de départ était une lame métallique
                                 if s_red_init == "metal":
-                                    lame_b = patches.Polygon(pts_lame, color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4)
-                                    ax.add_patch(lame_b)
+                                    ax.add_patch(patches.Polygon(pts_lame, color=hex_red_init, edgecolor='#475569', lw=1.2, zorder=4))
                                     if s_ox_fin == "metal":
                                         dep = patches.Polygon(pts_lame, color=hex_ox_fin, edgecolor='#78350f', lw=1.2, zorder=5)
                                         ax.add_patch(dep)
                                         dep.set_clip_path(patches.Rectangle((1.0, 0.0), 3.0, 4.3, transform=ax.transData))
                                         ax.text(3.4, 2.5, f"Dépôt de {t6_prod_ox}\n(Métal)", color='#78350f', fontsize=9, fontweight='bold')
 
-                                # Si le produit formé est une poudre/précipité (ex: Soufre solide généré)
-                                if s_ox_fin == "poudre":
+                                # 2. Si la réaction crée un nouveau précipité/poudre au fond (ex: Soufre produit)
+                                if s_ox_fin == "poudre" or t6_prod_ox == "S" or t6_prod_ox == "MnO2":
                                     ax.add_patch(patches.Polygon([[1.22, 1.01], [3.78, 1.01], [3.6, 1.4], [1.4, 1.4]], color=hex_ox_fin, edgecolor='#b45309' if t6_prod_ox=="S" else '#1e293b', lw=1, zorder=5))
                                     ax.text(3.9, 1.2, f"Précipité de {t6_prod_ox}\n({lbl_ox_fin})", color='#b45309' if t6_prod_ox=="S" else '#1e293b', fontsize=9, fontweight='bold', va='center')
                                 
-                                # Si un gaz se dégage
-                                if s_ox_fin == "gaz" or s_red_fin == "gaz":
+                                # 3. Si la réaction dégage un nouveau gaz (ex: Ozone produit)
+                                if s_ox_fin == "gaz" or s_red_fin == "gaz" or t6_prod_ox in ["O3", "H2", "NO2", "CO2"]:
                                     np.random.seed(24)
                                     for _ in range(30):
                                         ax.add_patch(patches.Circle((np.random.uniform(1.4, 3.6), np.random.uniform(1.3, 4.2)), radius=np.random.uniform(0.04, 0.07), fill=False, color='#475569', lw=0.9, zorder=5))
@@ -3414,11 +3423,10 @@ with tab6:
 
                                 ax.text(1.3, 2.5, "Solution finale\ntransformée", color='#1e293b', fontsize=9, va='center')
 
-                            # Arc avant de la surface et flacon en verre
+                            # 6. Contour avant de la surface et flacon en verre
                             ax.add_patch(patches.Arc((2.5, 4.3), 2.6, 0.4, angle=0, theta1=180, theta2=360, color='#1e293b', lw=1.5, zorder=6))
                             ax.add_patch(patches.Polygon([[1.0, 5.0], [1.2, 5.0], [1.2, 1.0], [3.8, 1.0], [3.8, 5.0], [4.0, 5.0]], closed=False, fill=False, color='#1e293b', lw=2.5, zorder=7))
-                            ax.text(0.6, 4.5, "Bécher\nen verre", color='#334155', fontsize=8, rotation=90, va='center')
-
+                            ax.text(0.6, 4.5, "Bécher en verre", color='#334155', fontsize=8, rotation=90, va='center')
                         # Bécher initial
                         c_sol1 = hex_ox_init if s_ox_init == "solution" else "#e0f2fe"
                         dessiner_becher_systeme(ax1, c_sol1, est_final=False)
