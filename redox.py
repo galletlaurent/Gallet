@@ -3570,6 +3570,7 @@ with tab6:
                                 for _ in range(25):
                                     ax2.add_patch(patches.Circle((3.2 + np.random.normal(0, 0.12), 4.3 + np.random.uniform(-0.4, 0.4)), radius=0.05, fill=False, color=col_g_unique, lw=1, zorder=6))
                                 ax2.text(3.2, 5.2, f"Recueil de {nom_g_unique}\n(Gaz pur)", color=col_g_unique, fontsize=8.5, fontweight='bold', ha='center')                                ax2.text(1.7, 2.5, "Milieu\nRéactionnel", color='#1e293b', fontsize=8, ha='center', fontweight='bold')
+                            ax2.text(1.7, 2.5, "Milieu\nRéactionnel", color='#1e293b', fontsize=8, ha='center', fontweight='bold')
                             else:
                                 # Configuration classique hors production de gaz : Remplacement par un Bécher standard ouvert
                                 c_sol2 = hex_red_fin if st_red_f == "solution" else (hex_ox_fin if st_ox_f == "solution" else teinte_eau)
