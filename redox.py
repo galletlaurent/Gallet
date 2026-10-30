@@ -3167,35 +3167,35 @@ with tab6:
                 e0_red = e0_cpl_A if reactif_red_choisi == red_A else e0_cpl_B
 
                 # Application stricte de la règle du gamma direct
-                    if e0_ox > e0_red:
-                        # 1. Identification automatique des couples pour l'affichage des demi-équations
-                        cpl_ox_parent = cpl_selection_A if reactif_ox_choisi == ox_A else cpl_selection_B
-                        cpl_red_parent = cpl_selection_A if reactif_red_choisi == red_A else cpl_selection_B
+                if e0_ox > e0_red:
+                    # 1. Identification automatique des couples pour l'affichage des demi-équations
+                    cpl_ox_parent = cpl_selection_A if reactif_ox_choisi == ox_A else cpl_selection_B
+                    cpl_red_parent = cpl_selection_A if reactif_red_choisi == red_A else cpl_selection_B
 
-                        # 2. Récupération des écritures LaTeX d'origine en milieu acide
-                        demi_equation_oxydant = bibliotheque_redox[cpl_ox_parent]["milieu_acide"]
-                        demi_equation_reducteur = bibliotheque_redox[cpl_red_parent]["milieu_acide"]
+                    # 2. Récupération des écritures LaTeX d'origine en milieu acide
+                    demi_equation_oxydant = bibliotheque_redox[cpl_ox_parent]["milieu_acide"]
+                    demi_equation_reducteur = bibliotheque_redox[cpl_red_parent]["milieu_acide"]
 
-                        # 3. Rendu du verdict de réussite standard
-                        st.success(
-                            f"RÉSULTAT : LA RÉACTION EST POSSIBLE !\n\n"
-                            f"L'oxydant choisi ({reactif_ox_choisi}) est placé au-dessus du réducteur choisi ({reactif_red_choisi}) sur l'échelle des potentiels.\n\n"
-                            f"La règle du gamma direct est respectée (E0 Ox = {e0_ox:.2f} V > E0 Red = {e0_red:.2f} V). Le transfert d'électrons est spontané."
-                        )
-                        
-                        # 4. Affichage structuré du mécanisme chimique et de l'équation équilibrée
-                        st.markdown("##### Mécanisme de transfert d'électrons")
-                        
-                        st.markdown("**Demi-réaction de réduction (l'oxydant capte les électrons) :**")
-                        st.latex(demi_equation_oxydant)
-                        
-                        st.markdown("**Demi-réaction d'oxydation (le réducteur cède les électrons) :**")
-                        st.latex(demi_equation_reducteur)
-                        
-                        st.markdown("**Équation bilan globale équilibrée :**")
-                        # Génération dynamique de l'équation bilan simplifiée pour l'élève
-                        st.latex(f"{reactif_ox_choisi} + {reactif_red_choisi} \\longrightarrow {bibliotheque_redox[cpl_ox_parent]['no_red'] if reactif_ox_choisi == ox_A else reactif_ox_choisi} + {ox_B if reactif_red_choisi == red_B else ox_A}")
-                        
+                    # 3. Rendu du verdict de réussite standard
+                    st.success(
+                        f"RÉSULTAT : LA RÉACTION EST POSSIBLE !\n\n"
+                        f"L'oxydant choisi ({reactif_ox_choisi}) est placé au-dessus du réducteur choisi ({reactif_red_choisi}) sur l'échelle des potentiels.\n\n"
+                        f"La règle du gamma direct est respectée (E0 Ox = {e0_ox:.2f} V > E0 Red = {e0_red:.2f} V). Le transfert d'électrons est spontané."
+                    )
+                    
+                    # 4. Affichage structuré du mécanisme chimique et de l'équation équilibrée
+                    st.markdown("##### Mécanisme de transfert d'électrons")
+                    
+                    st.markdown("**Demi-réaction de réduction (l'oxydant capte les électrons) :**")
+                    st.latex(demi_equation_oxydant)
+                    
+                    st.markdown("**Demi-réaction d'oxydation (le réducteur cède les électrons) :**")
+                    st.latex(demi_equation_reducteur)
+                    
+                    st.markdown("**Équation bilan globale équilibrée :**")
+                    # Génération dynamique de l'équation bilan simplifiée pour l'élève
+                    st.latex(f"{reactif_ox_choisi} + {reactif_red_choisi} \\longrightarrow {bibliotheque_redox[cpl_ox_parent]['no_red'] if reactif_ox_choisi == ox_A else reactif_ox_choisi} + {ox_B if reactif_red_choisi == red_B else ox_A}")
+                    
     st.write("---")
 
 
