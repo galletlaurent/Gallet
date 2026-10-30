@@ -3191,6 +3191,7 @@ with tab6:
                     t6_e0_red = t6_e0_cpl_A if t6_reactif_red_choisi == t6_red_A else t6_e0_cpl_B
 
                     # Cas thermodynamiquement possible : Règle du gamma direct validée
+
                     if t6_e0_ox > t6_e0_red:
                         t6_cpl_ox_parent = t6_cpl_A if t6_reactif_ox_choisi == t6_ox_A else t6_cpl_B
                         t6_cpl_red_parent = t6_cpl_A if t6_reactif_red_choisi == t6_red_A else t6_cpl_B
@@ -3213,14 +3214,30 @@ with tab6:
                         st.latex(t6_demi_red)
                         
                         st.markdown("**Équation bilan globale finale équilibrée :**")
+                        
+                        # Extraction des produits conjugués depuis la bibliothèque
                         t6_clean_ox_parent = t6_cpl_ox_parent.split(" (")[0]
                         t6_clean_red_parent = t6_cpl_red_parent.split(" (")[0]
                         
-                        t6_prod_ox = t6_clean_ox_parent.split(" / ")[1] if t6_reactif_ox_choisi == t6_ox_A else t6_clean_ox_parent.split(" / ")[1]
-                        t6_prod_red = t6_clean_red_parent.split(" / ")[0] if t6_reactif_red_choisi == t6_red_A else t6_clean_red_parent.split(" / ")[0]
+                        t6_prod_ox = t6_clean_ox_parent.split(" / ")[1]  # Le réducteur conjugué produit
+                        t6_prod_red = t6_clean_red_parent.split(" / ")[0]  # L'oxydant conjugué produit
                         
-                        st.latex(f"{t6_reactif_ox_choisi} + {t6_reactif_red_choisi} \\longrightarrow {t6_prod_ox} + {t6_prod_red}")
-                    
+                        # CALCUL DYNAMIQUE DES COEFFICIENTS D'ÉQUILIBRE
+                        ne_ox = int(bibliotheque_redox[t6_cpl_ox_parent]["electrons"])
+                        ne_red = int(bibliotheque_redox[t6_cpl_red_parent]["electrons"])
+                        
+                        # Simplification par le PGCD si les deux nombres d'électrons sont pairs (ex: 4 et 2)
+                        import math
+                        pgcd = math.gcd(ne_ox, ne_red)
+                        coef_ox = ne_red // pgcd
+                        coef_red = ne_ox // pgcd
+                        
+                        # Préparation des chaînes de texte pour masquer le coefficient "1" (plus propre en chimie)
+                        c_ox_txt = "" if coef_ox == 1 else f"{coef_ox}\,"
+                        c_red_txt = "" if coef_red == 1 else f"{coef_red}\,"
+                        
+                        # Rendu LaTeX parfait et rigoureusement équilibré
+                        st.latex(f"{c_ox_txt}{t6_reactif_ox_choisi} + {c_red_txt}{t6_reactif_red_choisi} \\longrightarrow {c_ox_txt}{t6_prod_ox} + {c_red_txt}{t6_prod_red}")
                     # Cas impossible : Le gamma est inversé
                     else:
                         st.error(
