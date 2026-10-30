@@ -3416,39 +3416,65 @@ with tab6:
                         import matplotlib.pyplot as plt
                         import matplotlib.patches as patches
 
-                        # Identification des types et couleurs depuis le dictionnaire local t6_couleurs_especes
-                        _, s_ox_init, hex_ox_init, lbl_ox_init = t6_couleurs_especes.get(t6_reactif_ox_choisi, (t6_reactif_ox_choisi, "solution", "#f8fafc", "Incolore"))
+                        teinte_eau_transparente = "#e0f2fe"
+
+                        # Identification des types et couleurs depuis le dictionnaire local
+                        _, s_ox_init, hex_ox_init, lbl_ox_init = t6_couleurs_especes.get(t6_reactif_ox_choisi, (t6_reactif_ox_choisi, "solution", teinte_eau_transparente, "Incolore"))
                         _, s_red_init, hex_red_init, lbl_red_init = t6_couleurs_especes.get(t6_reactif_red_choisi, (t6_reactif_red_choisi, "solide", "#94a3b8", "Gris"))
                         
-                        _, s_ox_fin, hex_ox_fin, lbl_ox_fin = t6_couleurs_especes.get(t6_prod_ox, (t6_prod_ox, "solution", "#f8fafc", "Incolore"))
-                        _, s_red_fin, hex_red_fin, lbl_red_fin = t6_couleurs_especes.get(t6_prod_red, (t6_prod_red, "solution", "#f8fafc", "Incolore"))
+                        _, s_ox_fin, hex_ox_fin, lbl_ox_fin = t6_couleurs_especes.get(t6_prod_ox, (t6_prod_ox, "solution", teinte_eau_transparente, "Incolore"))
+                        _, s_red_fin, hex_red_fin, lbl_red_fin = t6_couleurs_especes.get(t6_prod_red, (t6_prod_red, "solution", teinte_eau_transparente, "Incolore"))
 
-                        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9, 4.5))
+                        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9, 5))
 
-                        # --- BECHER 1 : ÉTAT INITIAL ---
-                        col_sol_1 = hex_ox_init if s_ox_init == "solution" else "#f8fafc"
-                        ax1.add_patch(patches.Rectangle((1, 1), 3, 3.5, color=col_sol_1, alpha=0.7))
-                        ax1.add_patch(patches.Polygon([[1, 4.5], [1, 1], [4, 1], [4, 4.5]], closed=False, fill=False, color='#1e293b', lw=2.5))
-                        if s_red_init == "solide":
-                            ax1.add_patch(patches.Rectangle((2.2, 1.8), 0.6, 4, color=hex_red_init, edgecolor='#475569', lw=1.5))
-                            ax1.text(2.5, 6.0, f"Lame de {t6_reactif_red_choisi}", color='#0f172a', fontsize=9, ha='center', fontweight='bold')
+                        # --- CONFIGURATION DU BÉCHER RÉALISTE ET DE LA LAME INCLINÉE ---
+                        def dessiner_becher_realiste(ax, couleur_solution, label_sol, est_etat_final):
+                            # 1. Fond du liquide (translucide)
+                            ax.add_patch(patches.Rectangle((1.2, 1.1), 2.6, 3.2, color=couleur_solution, alpha=0.6, zorder=1))
+                            
+                            # 2. Dessin de la lame métallique inclinée
+                            # Coordonnées des sommets pour l'inclinaison (x_bas_g, y_bas_g, x_haut_g, y_haut_g...)
+                            pts_lame = [[2.0, 1.3], [2.5, 1.2], [3.2, 5.8], [2.7, 5.9]]
+                            ax.add_patch(patches.Polygon(pts_lame, color=hex_red_init, edgecolor='#475569', lw=1.5, zorder=2))
+                            
+                            # Si c'est l'état final et qu'un dépôt solide s'est formé (ex: Cuivre rouge)
+                            if est_etat_final and s_red_init == "solide" and s_ox_fin == "solide":
+                                # Le dépôt rugueux se limite uniquement à la partie immergée (sous la ligne d'eau y=4.3)
+                                pts_depot = [[2.0, 1.3], [2.5, 1.2], [2.85, 4.3], [2.35, 4.3]]
+                                ax.add_patch(patches.Polygon(pts_depot, color=hex_ox_fin, edgecolor='#7c2d12', lw=1, hatch='//', alpha=0.9, zorder=3))
+                                ax.text(3.4, 2.5, f"Dépôt de {t6_prod_ox}\n({lbl_ox_fin})", color='#7c2d12', fontsize=9, fontweight='bold', va='center')
+
+                            # 3. Contour en verre du Bécher (avec le bec verseur en haut à gauche)
+                            contours_verre = [
+                                [1.0, 5.0], [1.2, 5.0], [1.2, 1.0], [3.8, 1.0], 
+                                [3.8, 5.0], [4.0, 5.0]
+                            ]
+                            ax.add_patch(patches.Polygon(contours_verre, closed=False, fill=False, color='#334155', lw=2.5, zorder=4))
+                            
+                            # Ellipse de surface du liquide pour la perspective
+                            surface_eau = patches.Ellipse((2.5, 4.3), 2.6, 0.3, color=couleur_solution, alpha=0.4, zorder=4)
+                            ax.add_patch(surface_eau)
+                            
+                            # Ligne de contour de la surface
+                            ax.add_patch(patches.Ellipse((2.5, 4.3), 2.6, 0.3, fill=False, color='#475569', lw=1, ls='--', zorder=5))
+
+                        # --- APPLICATION SUR LES DEUX BÉCHERS ---
+                        # Bécher Initial
+                        col_sol_1 = hex_ox_init if s_ox_init == "solution" else teinte_eau_transparente
+                        dessiner_becher_realiste(ax1, col_sol_1, lbl_ox_init, est_etat_final=False)
                         ax1.text(2.5, 0.4, "ÉTAT INITIAL", fontsize=11, fontweight='bold', ha='center')
-                        ax1.text(2.5, 2.5, f"Solution avec\n{t6_reactif_ox_choisi}\n({lbl_ox_init})", color='#0f172a', fontsize=9, ha='center')
+                        ax1.text(2.5, 3.2, f"{t6_reactif_ox_choisi}\n({lbl_ox_init})", color='#0f172a', fontsize=9.5, ha='center', zorder=6)
+                        if s_red_init == "solide":
+                            ax1.text(2.5, 6.2, f"Lame de {t6_reactif_red_choisi}", color='#0f172a', fontsize=9.5, ha='center')
                         ax1.set_xlim(0, 5)
                         ax1.set_ylim(0, 7)
                         ax1.axis('off')
 
-                        # --- BECHER 2 : ÉTAT FINAL ---
-                        col_sol_2 = hex_red_fin if s_red_fin == "solution" else (hex_ox_fin if s_ox_fin == "solution" else "#f8fafc")
-                        ax2.add_patch(patches.Rectangle((1, 1), 3, 3.5, color=col_sol_2, alpha=0.7))
-                        ax2.add_patch(patches.Polygon([[1, 4.5], [1, 1], [4, 1], [4, 4.5]], closed=False, fill=False, color='#1e293b', lw=2.5))
-                        if s_red_init == "solide":
-                            ax2.add_patch(patches.Rectangle((2.2, 1.8), 0.6, 4, color=hex_red_init, alpha=0.4, edgecolor='#94a3b8', lw=1))
-                            if s_ox_fin == "solide":
-                                ax2.add_patch(patches.Rectangle((2.15, 1.8), 0.7, 2.5, color=hex_ox_fin, edgecolor='#7c2d12', lw=1.5))
-                                ax2.text(2.5, 4.5, f"Dépôt de {t6_prod_ox}\n({lbl_ox_fin})", color='#7c2d12', fontsize=9, ha='center', fontweight='bold')
+                        # Bécher Final
+                        col_sol_2 = hex_red_fin if s_red_fin == "solution" else (hex_ox_fin if s_ox_fin == "solution" else teinte_eau_transparente)
+                        dessiner_becher_realiste(ax2, col_sol_2, lbl_ox_fin, est_etat_final=True)
                         ax2.text(2.5, 0.4, "ÉTAT FINAL", fontsize=11, fontweight='bold', ha='center')
-                        ax2.text(2.5, 2.5, f"Solution après\ntransformation", color='#0f172a', fontsize=9, ha='center')
+                        ax2.text(2.5, 3.2, "Solution finale\ntransformée", color='#0f172a', fontsize=9.5, ha='center', zorder=6)
                         ax2.set_xlim(0, 5)
                         ax2.set_ylim(0, 7)
                         ax2.axis('off')
