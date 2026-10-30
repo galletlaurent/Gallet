@@ -2963,63 +2963,66 @@ with tab6:
                 # Initialisation par défaut pour éviter les erreurs d'affectation
                 ox_A, red_A, ox_B, red_B = "", "", "", ""
                 
-                try:
-                    ox_A, red_A = cpl_selection_A.split(" / ")
-                    ox_B, red_B = cpl_selection_B.split(" / ")
-                    erreur_decoupage = False
-                except ValueError:
-                    erreur_decoupage = True
-
-                # Le rendu des menus s'affiche uniquement si le découpage a fonctionné à 100%
-                if not erreur_decoupage:
-                    st.write("")
-                    st.markdown("**Configuration des réactifs mélangés :**")
-                    col_mix_1, col_mix_2 = st.columns(2)
-
-                    with col_mix_1:
-                        reactif_ox_choisi = st.selectbox(
-                            "Sélectionnez l'oxydant introduit dans le système :",
-                            ["Choisir...", ox_A, ox_B],
-                            key="sim_bibliotheque_reactif_ox"
-                        )
-                    with col_mix_2:
-                        reactif_red_choisi = st.selectbox(
-                            "Sélectionnez le réducteur introduit dans le système :",
-                            ["Choisir...", red_A, red_B],
-                            key="sim_bibliotheque_reactif_red"
-                        )
-
-        # Ligne 3 : Lancement du calcul basé sur les E0 de votre bibliothèque
-        if reactif_ox_choisi != "Choisir..." and reactif_red_choisi != "Choisir...":
+            ox_A, red_A, ox_B, red_B = "", "", "", ""
+            reactif_ox_choisi = "Choisir..."
+            reactif_red_choisi = "Choisir..."
             
-            # Extraction automatique des E0 depuis votre structure de dictionnaire existante
-            e0_cpl_A = float(bibliotheque_redox[cpl_selection_A]["E0"])
-            e0_cpl_B = float(bibliotheque_redox[cpl_selection_B]["E0"])
+            try:
+                ox_A, red_A = cpl_selection_A.split(" / ")
+                ox_B, red_B = cpl_selection_B.split(" / ")
+                erreur_decoupage = False
+            except ValueError:
+                erreur_decoupage = True
 
-            # Affectation selon le réactif sélectionné
-            e0_ox = e0_cpl_A if reactif_ox_choisi == ox_A else e0_cpl_B
-            e0_red = e0_cpl_A if reactif_red_choisi == red_A else e0_cpl_B
+            # Le rendu des menus s'affiche uniquement si le découpage a fonctionné
+            if not erreur_decoupage:
+                st.write("")
+                st.markdown("**Configuration des réactifs mélangés :**")
+                col_mix_1, col_mix_2 = st.columns(2)
 
-            st.write("")
-            if st.button(
-                "TESTER LA RÉACTION CHIMIQUE SUR LE TERRAIN",
-                key="btn_run_simulation_gamma_bibliotheque",
-                use_container_width=True,
-            ):
-                # Règle du gamma direct : Oxydant au potentiel le plus haut + Réducteur au potentiel le plus bas
-                if e0_ox > e0_red:
-                    st.success(
-                        f"RÉSULTAT : LA RÉACTION EST POSSIBLE !\n\n"
-                        f"L'oxydant choisi ({reactif_ox_choisi}) est placé au-dessus du réducteur choisi ({reactif_red_choisi}) sur l'échelle des potentiels.\n\n"
-                        f"La règle du gamma direct est respectée (E0 Ox = {e0_ox:.2f} V > E0 Red = {e0_red:.2f} V). Le transfert d'électrons est spontané."
+                with col_mix_1:
+                    reactif_ox_choisi = st.selectbox(
+                        "Sélectionnez l'oxydant introduit dans le système :",
+                        ["Choisir...", ox_A, ox_B],
+                        key="sim_bibliotheque_reactif_ox"
                     )
-                else:
-                    st.error(
-                        f"RÉSULTAT : RÉACTION CHIMIQUE IMPOSSIBLE !\n\n"
-                        f"L'oxydant choisi ({reactif_ox_choisi}) se situe en dessous du réducteur choisi ({reactif_red_choisi}) sur l'échelle.\n\n"
-                        f"Le gamma est inversé (E0 Ox = {e0_ox:.2f} V <= E0 Red = {e0_red:.2f} V). Les deux réactifs sont stables et coexistent sans réagir."
+                with col_mix_2:
+                    reactif_red_choisi = st.selectbox(
+                        "Sélectionnez le réducteur introduit dans le système :",
+                        ["Choisir...", red_A, red_B],
+                        key="sim_bibliotheque_reactif_red"
                     )
 
+            # Ligne 3 : Lancement du calcul basé sur les E0 de votre bibliothèque
+            if reactif_ox_choisi != "Choisir..." and reactif_red_choisi != "Choisir...":
+                
+                # Extraction automatique des E0 depuis votre structure de dictionnaire existante
+                e0_cpl_A = float(bibliotheque_redox[cpl_selection_A]["E0"])
+                e0_cpl_B = float(bibliotheque_redox[cpl_selection_B]["E0"])
+
+                # Affectation selon le réactif sélectionné
+                e0_ox = e0_cpl_A if reactif_ox_choisi == ox_A else e0_cpl_B
+                e0_red = e0_cpl_A if reactif_red_choisi == red_A else e0_cpl_B
+
+                st.write("")
+                if st.button(
+                    "TESTER LA RÉACTION CHIMIQUE SUR LE TERRAIN",
+                    key="btn_run_simulation_gamma_bibliotheque",
+                    use_container_width=True,
+                ):
+                    # Règle du gamma direct : Oxydant au potentiel le plus haut + Réducteur au potentiel le plus bas
+                    if e0_ox > e0_red:
+                        st.success(
+                            f"RÉSULTAT : LA RÉACTION EST POSSIBLE !\n\n"
+                            f"L'oxydant choisi ({reactif_ox_choisi}) est placé au-dessus du réducteur choisi ({reactif_red_choisi}) sur l'échelle des potentiels.\n\n"
+                            f"La règle du gamma direct est respectée (E0 Ox = {e0_ox:.2f} V > E0 Red = {e0_red:.2f} V). Le transfert d'électrons est spontané."
+                        )
+                    else:
+                        st.error(
+                            f"RÉSULTAT : RÉACTION CHIMIQUE IMPOSSIBLE !\n\n"
+                            f"L'oxydant choisi ({reactif_ox_choisi}) se situe en dessous du réducteur choisi ({reactif_red_choisi}) sur l'échelle.\n\n"
+                            f"Le gamma est inversé (E0 Ox = {e0_ox:.2f} V <= E0 Red = {e0_red:.2f} V). Les deux réactifs sont stables et coexistent sans réagir."
+                        )
     st.write("---")
 
 
