@@ -212,6 +212,93 @@ tab8 = onglets[8]
 tab9 = onglets[9] 
 tab10 = onglets[10]
 
+    couleurs_especes = {
+        "F2": ("F2", "gaz", "#fef08a", "Jaune pâle (Gaz)"),
+        "F⁻": ("F⁻", "solution", "#f8fafc", "Incolore"),
+        "Cl2": ("Cl2", "gaz", "#bbf7d0", "Jaune-vert (Gaz)"),
+        "Cl⁻": ("Cl⁻", "solution", "#f8fafc", "Incolore"),
+        "Br2": ("Br2", "solution", "#b45309", "Orange/Brun"),
+        "Br⁻": ("Br⁻", "solution", "#f8fafc", "Incolore"),
+        "I2": ("I2", "solution", "#7c2d12", "Brun foncé"),
+        "I⁻": ("I⁻", "solution", "#f8fafc", "Incolore"),
+        "ClO⁻": ("ClO⁻", "solution", "#fef08a", "Jaune très clair"),
+        "ClO3⁻": ("ClO3⁻", "solution", "#f8fafc", "Incolore"),
+        "IO3⁻": ("IO3⁻", "solution", "#f8fafc", "Incolore"),
+        "O2": ("O2", "gaz", "#f8fafc", "Incolore (Gaz)"),
+        "H2O": ("H2O", "solution", "#f8fafc", "Incolore"),
+        "H2O2": ("H2O2", "solution", "#f8fafc", "Incolore"),
+        "H3O⁺": ("H3O⁺", "solution", "#f8fafc", "Incolore (Acide)"),
+        "H2": ("H2", "gaz", "#f8fafc", "Incolore (Gaz)"),
+        "S4O6²⁻": ("S4O6²⁻", "solution", "#f8fafc", "Incolore"),
+        "S2O3²⁻": ("S2O3²⁻", "solution", "#f8fafc", "Incolore"),
+        "SO4²⁻": ("SO4²⁻", "solution", "#f8fafc", "Incolore"),
+        "SO2": ("SO2", "gaz", "#f8fafc", "Incolore (Gaz)"),
+        "S": ("S", "solide", "#fbbf24", "Jaune (Précipité)"),
+        "H2S": ("H2S", "gaz", "#f8fafc", "Incolore (Gaz)"),
+        "NO3⁻": ("NO3⁻", "solution", "#f8fafc", "Incolore"),
+        "NO": ("NO", "gaz", "#f8fafc", "Incolore (Gaz)"),
+        "NO2": ("NO2", "gaz", "#b45309", "Roux (Gaz toxique)"),
+        "N2O": ("N2O", "gaz", "#f8fafc", "Incolore (Gaz)"),
+        "N2": ("N2", "gaz", "#f8fafc", "Incolore (Gaz)"),
+        "NH4⁺": ("NH4⁺", "solution", "#f8fafc", "Incolore"),
+        "MnO4⁻": ("MnO4⁻", "solution", "#a855f7", "Violet intense"),
+        "Mn²⁺": ("Mn²⁺", "solution", "#fee2e2", "Rose très pâle / Incolore"),
+        "MnO2": ("MnO2", "solide", "#1e293b", "Noir (Précipité)"),
+        "Cr2O7²⁻": ("Cr2O7²⁻", "solution", "#f97316", "Orange vif"),
+        "Cr³⁺": ("Cr³⁺", "solution", "#15803d", "Vert émeraude"),
+        "Fe³⁺": ("Fe³⁺", "solution", "#ca8a04", "Jaune-orangé / Rouille"),
+        "Fe²⁺": ("Fe²⁺", "solution", "#bbf7d0", "Vert pâle"),
+        "Fe": ("Fe", "solide", "#475569", "Gris fer (Métal)"),
+        "Cu²⁺": ("Cu²⁺", "solution", "#2563eb", "Bleu vif"),
+        "Cu⁺": ("Cu⁺", "solution", "#f8fafc", "Incolore"),
+        "Cu": ("Cu", "solide", "#b45309", "Rouge brique (Métal)"),
+        "Ag⁺": ("Ag⁺", "solution", "#f8fafc", "Incolore"),
+        "Ag": ("Ag", "solide", "#cbd5e1", "Gris argenté (Métal)"),
+        "Zn²⁺": ("Zn²⁺", "solution", "#f8fafc", "Incolore"),
+        "Zn": ("Zn", "solide", "#94a3b8", "Gris mat (Métal)"),
+        "Al³⁺": ("Al³⁺", "solution", "#f8fafc", "Incolore"),
+        "Al": ("Al", "solide", "#e2e8f0", "Gris blanc (Métal)"),
+        "Ni²⁺": ("Ni²⁺", "solution", "#10b981", "Vert pomme"),
+        "Ni": ("Ni", "solide", "#64748b", "Gris brillant (Métal)"),
+        "Co²⁺": ("Co²⁺", "solution", "#ec4899", "Rose carmin"),
+        "Co³⁺": ("Co³⁺", "solution", "#1e3a8a", "Bleu sombre"),
+        "Co": ("Co", "solide", "#475569", "Gris bleu (Métal)"),
+        "Pb²⁺": ("Pb²⁺", "solution", "#f8fafc", "Incolore"),
+        "Pb": ("Pb", "solide", "#64748b", "Gris bleu (Métal)"),
+        "PbO2": ("PbO2", "solide", "#78350f", "Brun/Noir (Solide)"),
+        "Sn²⁺": ("Sn²⁺", "solution", "#f8fafc", "Incolore"),
+        "Sn⁴⁺": ("Sn⁴⁺", "solution", "#f8fafc", "Incolore"),
+        "Sn": ("Sn", "solide", "#cbd5e1", "Gris blanc (Métal)"),
+        "Hg²⁺": ("Hg²⁺", "solution", "#f8fafc", "Incolore"),
+        "Hg": ("Hg", "solide", "#94a3b8", "Mercure liquide argenté"),
+        "Au³⁺": ("Au³⁺", "solution", "#eab308", "Jaune solution"),
+        "Au": ("Au", "solide", "#ca8a04", "Jaune or (Métal)"),
+        "Pt²⁺": ("Pt²⁺", "solution", "#ca8a04", "Brun clair"),
+        "Pt": ("Pt", "solide", "#cbd5e1", "Gris blanc précieux"),
+        "Ti³⁺": ("Ti³⁺", "solution", "#6366f1", "Violet"),
+        "Ti²⁺": ("Ti²⁺", "solution", "#3b82f6", "Vert/Bleu"),
+        "V³⁺": ("V³⁺", "solution", "#10b981", "Vert"),
+        "V²⁺": ("V²⁺", "solution", "#a855f7", "Violet"),
+        "CH3COOH": ("CH3COOH", "solution", "#f8fafc", "Incolore"),
+        "CH3CH2OH": ("CH3CH2OH", "solution", "#f8fafc", "Incolore"),
+        "CO2": ("CO2", "gaz", "#f8fafc", "Incolore (Gaz)"),
+        "H2C2O4": ("H2C2O4", "solution", "#f8fafc", "Incolore"),
+        "CH4": ("CH4", "gaz", "#f8fafc", "Incolore (Gaz)"),
+        "CH2O": ("CH2O", "solution", "#f8fafc", "Incolore"),
+        "CH3OH": ("CH3OH", "solution", "#f8fafc", "Incolore"),
+        "O3": ("O3", "gaz", "#38bdf8", "Bleu très pâle (Gaz)"),
+        "Fe(CN)6³⁻": ("Fe(CN)6³⁻", "solution", "#ca8a04", "Jaune"),
+        "Fe(CN)6⁴⁻": ("Fe(CN)6⁴⁻", "solution", "#eab308", "Jaune pâle"),
+        "Na⁺": ("Na⁺", "solution", "#f8fafc", "Incolore"),
+        "Na": ("Na", "solide", "#cbd5e1", "Gris sodium (Métal)"),
+        "K⁺": ("K⁺", "solution", "#f8fafc", "Incolore"),
+        "K": ("K", "solide", "#cbd5e1", "Gris potassium (Métal)"),
+        "Ca²⁺": ("Ca²⁺", "solution", "#f8fafc", "Incolore"),
+        "Ca": ("Ca", "solide", "#e2e8f0", "Gris blanc (Métal)"),
+        "Mg²⁺": ("Mg²⁺", "solution", "#f8fafc", "Incolore"),
+        "Mg": ("Mg", "solide", "#94a3b8", "Gris blanc (Métal)")
+    }
+
 
 bibliotheque_redox = {
     # --- HALOGÈNES ET DÉRIVÉS ---
@@ -3119,6 +3206,94 @@ with tab6:
     else:
         t6_liste_couples = []
 
+    # Dictionnaire de correspondance des couleurs pour le rendu du laboratoire virtuel (Matplotlib)
+    t6_couleurs_especes = {
+        "F2": ("F2", "gaz", "#fef08a", "Jaune pâle (Gaz)"),
+        "F⁻": ("F⁻", "solution", "#f8fafc", "Incolore"),
+        "Cl2": ("Cl2", "gaz", "#bbf7d0", "Jaune-vert (Gaz)"),
+        "Cl⁻": ("Cl⁻", "solution", "#f8fafc", "Incolore"),
+        "Br2": ("Br2", "solution", "#b45309", "Orange/Brun"),
+        "Br⁻": ("Br⁻", "solution", "#f8fafc", "Incolore"),
+        "I2": ("I2", "solution", "#7c2d12", "Brun foncé"),
+        "I⁻": ("I⁻", "solution", "#f8fafc", "Incolore"),
+        "ClO⁻": ("ClO⁻", "solution", "#fef08a", "Jaune très clair"),
+        "ClO3⁻": ("ClO3⁻", "solution", "#f8fafc", "Incolore"),
+        "IO3⁻": ("IO3⁻", "solution", "#f8fafc", "Incolore"),
+        "O2": ("O2", "gaz", "#f8fafc", "Incolore (Gaz)"),
+        "H2O": ("H2O", "solution", "#f8fafc", "Incolore"),
+        "H2O2": ("H2O2", "solution", "#f8fafc", "Incolore"),
+        "H3O⁺": ("H3O⁺", "solution", "#f8fafc", "Incolore (Acide)"),
+        "H2": ("H2", "gaz", "#f8fafc", "Incolore (Gaz)"),
+        "S4O6²⁻": ("S4O6²⁻", "solution", "#f8fafc", "Incolore"),
+        "S2O3²⁻": ("S2O3²⁻", "solution", "#f8fafc", "Incolore"),
+        "SO4²⁻": ("SO4²⁻", "solution", "#f8fafc", "Incolore"),
+        "SO2": ("SO2", "gaz", "#f8fafc", "Incolore (Gaz)"),
+        "S": ("S", "solide", "#fbbf24", "Jaune (Précipité)"),
+        "H2S": ("H2S", "gaz", "#f8fafc", "Incolore (Gaz)"),
+        "NO3⁻": ("NO3⁻", "solution", "#f8fafc", "Incolore"),
+        "NO": ("NO", "gaz", "#f8fafc", "Incolore (Gaz)"),
+        "NO2": ("NO2", "gaz", "#b45309", "Roux (Gaz toxique)"),
+        "N2O": ("N2O", "gaz", "#f8fafc", "Incolore (Gaz)"),
+        "N2": ("N2", "gaz", "#f8fafc", "Incolore (Gaz)"),
+        "NH4⁺": ("NH4⁺", "solution", "#f8fafc", "Incolore"),
+        "MnO4⁻": ("MnO4⁻", "solution", "#a855f7", "Violet intense"),
+        "Mn²⁺": ("Mn²⁺", "solution", "#fee2e2", "Rose très pâle / Incolore"),
+        "MnO2": ("MnO2", "solide", "#1e293b", "Noir (Précipité)"),
+        "Cr2O7²⁻": ("Cr2O7²⁻", "solution", "#f97316", "Orange vif"),
+        "Cr³⁺": ("Cr³⁺", "solution", "#15803d", "Vert émeraude"),
+        "Fe³⁺": ("Fe³⁺", "solution", "#ca8a04", "Jaune-orangé / Rouille"),
+        "Fe²⁺": ("Fe²⁺", "solution", "#bbf7d0", "Vert pâle"),
+        "Fe": ("Fe", "solide", "#475569", "Gris fer (Métal)"),
+        "Cu²⁺": ("Cu²⁺", "solution", "#2563eb", "Bleu vif"),
+        "Cu⁺": ("Cu⁺", "solution", "#f8fafc", "Incolore"),
+        "Cu": ("Cu", "solide", "#b45309", "Rouge brique (Métal)"),
+        "Ag⁺": ("Ag⁺", "solution", "#f8fafc", "Incolore"),
+        "Ag": ("Ag", "solide", "#cbd5e1", "Gris argenté (Métal)"),
+        "Zn²⁺": ("Zn²⁺", "solution", "#f8fafc", "Incolore"),
+        "Zn": ("Zn", "solide", "#94a3b8", "Gris mat (Métal)"),
+        "Al³⁺": ("Al³⁺", "solution", "#f8fafc", "Incolore"),
+        "Al": ("Al", "solide", "#e2e8f0", "Gris blanc (Métal)"),
+        "Ni²⁺": ("Ni²⁺", "solution", "#10b981", "Vert pomme"),
+        "Ni": ("Ni", "solide", "#64748b", "Gris brillant (Métal)"),
+        "Co²⁺": ("Co²⁺", "solution", "#ec4899", "Rose carmin"),
+        "Co³⁺": ("Co³⁺", "solution", "#1e3a8a", "Bleu sombre"),
+        "Co": ("Co", "solide", "#475569", "Gris bleu (Métal)"),
+        "Pb²⁺": ("Pb²⁺", "solution", "#f8fafc", "Incolore"),
+        "Pb": ("Pb", "solide", "#64748b", "Gris bleu (Métal)"),
+        "PbO2": ("PbO2", "solide", "#78350f", "Brun/Noir (Solide)"),
+        "Sn²⁺": ("Sn²⁺", "solution", "#f8fafc", "Incolore"),
+        "Sn⁴⁺": ("Sn⁴⁺", "solution", "#f8fafc", "Incolore"),
+        "Sn": ("Sn", "solide", "#cbd5e1", "Gris blanc (Métal)"),
+        "Hg²⁺": ("Hg²⁺", "solution", "#f8fafc", "Incolore"),
+        "Hg": ("Hg", "solide", "#94a3b8", "Mercure liquide argenté"),
+        "Au³⁺": ("Au³⁺", "solution", "#eab308", "Jaune solution"),
+        "Au": ("Au", "solide", "#ca8a04", "Jaune or (Métal)"),
+        "Pt²⁺": ("Pt²⁺", "solution", "#ca8a04", "Brun clair"),
+        "Pt": ("Pt", "solide", "#cbd5e1", "Gris blanc précieux"),
+        "Ti³⁺": ("Ti³⁺", "solution", "#6366f1", "Violet"),
+        "Ti²⁺": ("Ti²⁺", "solution", "#3b82f6", "Vert/Bleu"),
+        "V³⁺": ("V³⁺", "solution", "#10b981", "Vert"),
+        "V²⁺": ("V²⁺", "solution", "#a855f7", "Violet"),
+        "CH3COOH": ("CH3COOH", "solution", "#f8fafc", "Incolore"),
+        "CH3CH2OH": ("CH3CH2OH", "solution", "#f8fafc", "Incolore"),
+        "CO2": ("CO2", "gaz", "#f8fafc", "Incolore (Gaz)"),
+        "H2C2O4": ("H2C2O4", "solution", "#f8fafc", "Incolore"),
+        "CH4": ("CH4", "gaz", "#f8fafc", "Incolore (Gaz)"),
+        "CH2O": ("CH2O", "solution", "#f8fafc", "Incolore"),
+        "CH3OH": ("CH3OH", "solution", "#f8fafc", "Incolore"),
+        "O3": ("O3", "gaz", "#38bdf8", "Bleu très pâle (Gaz)"),
+        "Fe(CN)6³⁻": ("Fe(CN)6³⁻", "solution", "#ca8a04", "Jaune"),
+        "Fe(CN)6⁴⁻": ("Fe(CN)6⁴⁻", "solution", "#eab308", "Jaune pâle"),
+        "Na⁺": ("Na⁺", "solution", "#f8fafc", "Incolore"),
+        "Na": ("Na", "solide", "#cbd5e1", "Gris sodium (Métal)"),
+        "K⁺": ("K⁺", "solution", "#f8fafc", "Incolore"),
+        "K": ("K", "solide", "#cbd5e1", "Gris potassium (Métal)"),
+        "Ca²⁺": ("Ca²⁺", "solution", "#f8fafc", "Incolore"),
+        "Ca": ("Ca", "solide", "#e2e8f0", "Gris blanc (Métal)"),
+        "Mg²⁺": ("Mg²⁺", "solution", "#f8fafc", "Incolore"),
+        "Mg": ("Mg", "solide", "#94a3b8", "Gris blanc (Métal)")
+    }
+
     # Ligne 1 : Sélection des deux couples avec clés uniques pour le tab 6
     t6_col_1, t6_col_2 = st.columns(2)
     with t6_col_1:
@@ -3191,7 +3366,6 @@ with tab6:
                     t6_e0_red = t6_e0_cpl_A if t6_reactif_red_choisi == t6_red_A else t6_e0_cpl_B
 
                     # Cas thermodynamiquement possible : Règle du gamma direct validée
-
                     if t6_e0_ox > t6_e0_red:
                         t6_cpl_ox_parent = t6_cpl_A if t6_reactif_ox_choisi == t6_ox_A else t6_cpl_B
                         t6_cpl_red_parent = t6_cpl_A if t6_reactif_red_choisi == t6_red_A else t6_cpl_B
@@ -3226,7 +3400,7 @@ with tab6:
                         ne_ox = int(bibliotheque_redox[t6_cpl_ox_parent]["electrons"])
                         ne_red = int(bibliotheque_redox[t6_cpl_red_parent]["electrons"])
                         
-                        # Simplification par le PGCD si les deux nombres d'électrons sont pairs (ex: 4 et 2)
+                        # Simplification par le PGCD si les deux nombres d'électrons sont pairs
                         import math
                         pgcd = math.gcd(ne_ox, ne_red)
                         coef_ox = ne_red // pgcd
@@ -3238,6 +3412,50 @@ with tab6:
                         
                         # Rendu LaTeX parfait et rigoureusement équilibré
                         st.latex(f"{c_ox_txt}{t6_reactif_ox_choisi} + {c_red_txt}{t6_reactif_red_choisi} \\longrightarrow {c_ox_txt}{t6_prod_ox} + {c_red_txt}{t6_prod_red}")
+
+                        # --- RENDU DE LA CORRESPONDANCE ET SCHÉMAS COULEURS (MATPLOTLIB) ---
+                        import matplotlib.pyplot as plt
+                        import matplotlib.patches as patches
+
+                        # Identification des types et couleurs depuis le dictionnaire local t6_couleurs_especes
+                        _, s_ox_init, hex_ox_init, lbl_ox_init = t6_couleurs_especes.get(t6_reactif_ox_choisi, (t6_reactif_ox_choisi, "solution", "#f8fafc", "Incolore"))
+                        _, s_red_init, hex_red_init, lbl_red_init = t6_couleurs_especes.get(t6_reactif_red_choisi, (t6_reactif_red_choisi, "solide", "#94a3b8", "Gris"))
+                        
+                        _, s_ox_fin, hex_ox_fin, lbl_ox_fin = t6_couleurs_especes.get(t6_prod_ox, (t6_prod_ox, "solution", "#f8fafc", "Incolore"))
+                        _, s_red_fin, hex_red_fin, lbl_red_fin = t6_couleurs_especes.get(t6_prod_red, (t6_prod_red, "solution", "#f8fafc", "Incolore"))
+
+                        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9, 4.5))
+
+                        # --- BECHER 1 : ÉTAT INITIAL ---
+                        col_sol_1 = hex_ox_init if s_ox_init == "solution" else "#f8fafc"
+                        ax1.add_patch(patches.Rectangle((1, 1), 3, 3.5, color=col_sol_1, alpha=0.7))
+                        ax1.add_patch(patches.Polygon([[1, 4.5], [1, 1], [4, 1], [4, 4.5]], closed=False, fill=False, color='#1e293b', lw=2.5))
+                        if s_red_init == "solide":
+                            ax1.add_patch(patches.Rectangle((2.2, 1.8), 0.6, 4, color=hex_red_init, edgecolor='#475569', lw=1.5))
+                            ax1.text(2.5, 6.0, f"Lame de {t6_reactif_red_choisi}", color='#0f172a', fontsize=9, ha='center', fontweight='bold')
+                        ax1.text(2.5, 0.4, "ÉTAT INITIAL", fontsize=11, fontweight='bold', ha='center')
+                        ax1.text(2.5, 2.5, f"Solution avec\n{t6_reactif_ox_choisi}\n({lbl_ox_init})", color='#0f172a', fontsize=9, ha='center')
+                        ax1.set_xlim(0, 5)
+                        ax1.set_ylim(0, 7)
+                        ax1.axis('off')
+
+                        # --- BECHER 2 : ÉTAT FINAL ---
+                        col_sol_2 = hex_red_fin if s_red_fin == "solution" else (hex_ox_fin if s_ox_fin == "solution" else "#f8fafc")
+                        ax2.add_patch(patches.Rectangle((1, 1), 3, 3.5, color=col_sol_2, alpha=0.7))
+                        ax2.add_patch(patches.Polygon([[1, 4.5], [1, 1], [4, 1], [4, 4.5]], closed=False, fill=False, color='#1e293b', lw=2.5))
+                        if s_red_init == "solide":
+                            ax2.add_patch(patches.Rectangle((2.2, 1.8), 0.6, 4, color=hex_red_init, alpha=0.4, edgecolor='#94a3b8', lw=1))
+                            if s_ox_fin == "solide":
+                                ax2.add_patch(patches.Rectangle((2.15, 1.8), 0.7, 2.5, color=hex_ox_fin, edgecolor='#7c2d12', lw=1.5))
+                                ax2.text(2.5, 4.5, f"Dépôt de {t6_prod_ox}\n({lbl_ox_fin})", color='#7c2d12', fontsize=9, ha='center', fontweight='bold')
+                        ax2.text(2.5, 0.4, "ÉTAT FINAL", fontsize=11, fontweight='bold', ha='center')
+                        ax2.text(2.5, 2.5, f"Solution après\ntransformation", color='#0f172a', fontsize=9, ha='center')
+                        ax2.set_xlim(0, 5)
+                        ax2.set_ylim(0, 7)
+                        ax2.axis('off')
+
+                        st.pyplot(fig)
+
                     # Cas impossible : Le gamma est inversé
                     else:
                         st.error(
@@ -3245,8 +3463,9 @@ with tab6:
                             f"L'oxydant choisi ({t6_reactif_ox_choisi}) se situe en dessous du réducteur choisi ({t6_reactif_red_choisi}) sur l'échelle.\n\n"
                             f"Le gamma est inversé (E0 Ox = {t6_e0_ox:.2f} V <= E0 Red = {t6_e0_red:.2f} V). Les deux réactifs coexistent sans réagir."
                         )
-                        
+
     st.write("---")
+
 
     if "suite_verrouille_tab6_bilan" not in st.session_state:
         st.session_state.suite_verrouille_tab6_bilan = False
