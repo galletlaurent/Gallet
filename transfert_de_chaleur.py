@@ -478,7 +478,7 @@ with tab1:
     # =============================================================================
     # SECTION HISTORIQUE ET SCIENTIFIQUES CLÉS
     # =============================================================================
-    col_hist_1, col_hist_2 = st.columns(2)
+    col_hist_1, col_hist_img1 = st.columns(2)
     
     with col_hist_1:
         st.markdown("##### La théorie du « Calorique »")
@@ -487,7 +487,22 @@ with tab1:
             "était un fluide invisible et immatériel appelé le **calorique**. Selon cette théorie, "
             "un corps chaud possédait simplement plus de ce fluide qu'un corps froid."
         )
-        
+
+    with col_hist_img1:
+
+        if os.path.exists("Lavoisier.jpg"):
+            st.image(
+                "Lavoisier.jpg",
+                caption="Antoine Lavoisier",
+                use_container_width=True,
+            )
+        else:
+            st.warning(
+                "L'image 'chaleur_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+            )
+
+    col_hist_2, col_hist_img2 = st.columns(2)
+    
     with col_hist_2:
         st.markdown("##### La révolution thermodynamique")
         st.write(
@@ -496,7 +511,35 @@ with tab1:
             "atomes. C'est la naissance de la thermodynamique moderne, essentielle pour l'industrie, "
             "le bâtiment et la maintenance."
         )
+    with col_hist_img2:
+        col_hist_img21, col_hist_img22 = st.columns(2)
+        with col_hist_img21:
+            if os.path.exists("Joule.jpg"):
+                st.image(
+                    "Joule.jpg",
+                    caption="James Prescott Joule",
+                    use_container_width=True,
+                )
+            else:
+                st.warning(
+                    "L'image 'chaleur_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+                )
 
+        with col_hist_img22:
+            if os.path.exists("Carnot.jpg"):
+                st.image(
+                    "Carnot.jpg",
+                    caption=" Sadi Carnot ",
+                    use_container_width=True,
+                )
+            else:
+                st.warning(
+                    "L'image 'chaleur_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+                )
+                    
+
+
+                    
     st.write("---")
 
     # =============================================================================
