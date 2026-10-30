@@ -930,7 +930,198 @@ with tab2:
         )
 
     st.write("---")
+    st.subheader("Modélisation microscopique : À quoi correspond la température ?")
+    st.write(
+        "La température ne mesure pas une quantité de fluide, mais le degré d'agitation "
+        "cinétique désordonnée des particules au cœur de la matière :"
+    )
 
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+    import numpy as np
+
+    fig_micro, (ax_froid, ax_chaud) = plt.subplots(1, 2, figsize=(10, 4.5))
+
+    # --- ENCEINTE DROITE : ÉTAT FROID (Faible agitation, structure ordonnée) ---
+    # Conteneur
+    ax_froid.add_patch(patches.Rectangle((0, 0), 5, 5, facecolor='#f0fdfa', edgecolor='#1e293b', lw=2))
+    
+    # Génération d'un réseau régulier et calme (cristallin/solide-tiède)
+    np.random.seed(10)
+    for x in range(1, 5):
+        for y in range(1, 5):
+            # Très léger décalage pour simuler une vibration minime sur place
+            dx = np.random.uniform(-0.05, 0.05)
+            dy = np.random.uniform(-0.05, 0.05)
+            # Dessin de la molécule
+            ax_froid.add_patch(patches.Circle((x + dx, y + dy), radius=0.18, color='#0284c7', zorder=2))
+            # Petites flèches de vibration courtes
+            ax_froid.plot([x + dx - 0.2, x + dx - 0.1], [y + dy, y + dy], color='#64748b', lw=0.8)
+            ax_froid.plot([x + dx + 0.1, x + dx + 0.2], [y + dy, y + dy], color='#64748b', lw=0.8)
+
+    ax_froid.text(2.5, 4.5, "BASSE TEMPÉRATURE", color='#0369a1', fontsize=10, fontweight='bold', ha='center', bbox=dict(boxstyle="square,pad=0.3", fc="white", ec="#0369a1", lw=1))
+    ax_froid.text(2.5, -0.4, "Molécules ordonnées et quasi-immobiles\n(Faible énergie cinétique)", color='#475569', fontsize=9, ha='center')
+    ax_froid.set_xlim(-0.5, 5.5)
+    ax_froid.set_ylim(-0.5, 5.5)
+    ax_froid.axis('off')
+
+    # --- ENCEINTE GAUCHE : ÉTAT CHAUD (Forte agitation, désordre total) ---
+    # Conteneur
+    ax_chaud.add_patch(patches.Rectangle((0, 0), 5, 5, facecolor='#fff7ed', edgecolor='#1e293b', lw=2))
+    
+    # Génération de positions totalement aléatoires avec de grandes flèches de vitesse (vecteurs)
+    np.random.seed(42)
+    for _ in range(16):
+        cx = np.random.uniform(0.5, 4.5)
+        cy = np.random.uniform(0.5, 4.5)
+        # Direction aléatoire des vecteurs d'agitation
+        angle = np.random.uniform(0, 2 * np.pi)
+        vx = 0.4 * np.cos(angle)
+        vy = 0.4 * np.sin(angle)
+        
+        # Dessin de la molécule agitée
+        ax_chaud.add_patch(patches.Circle((cx, cy), radius=0.18, color='#ea580c', zorder=2))
+        # Flèches d'impact et de vitesse cinétique (longues et pointues)
+        ax_chaud.arrow(cx, cy, vx, vy, head_width=0.08, head_length=0.08, fc='#b45309', ec='#b45309', lw=1.2, zorder=3)
+
+    ax_chaud.text(2.5, 4.5, "HAUTE TEMPÉRATURE", color='#b45309', fontsize=10, fontweight='bold', ha='center', bbox=dict(boxstyle="square,pad=0.3", fc="white", ec="#b45309", lw=1))
+    ax_chaud.text(2.5, -0.4, "Molécules dispersées à haute vitesse\n(Forte agitation thermique)", color='#475569', fontsize=9, ha='center')
+    ax_chaud.set_xlim(-0.5, 5.5)
+    ax_chaud.set_ylim(-0.5, 5.5)
+    ax_chaud.axis('off')
+
+    st.pyplot(fig_micro)
+
+
+
+    st.write("---")
+    st.subheader("Convertisseur interactif d'unités de température")
+    st.write(
+        "Utilisez les commandes ci-dessous pour convertir une valeur d'une échelle à une autre "
+        "et observez les formules de transformation associées :"
+    )
+
+    # Grille de saisie à 3 colonnes pour configurer la conversion
+    conv_col1, conv_col2, conv_col3 = st.columns([1.0, 1.0, 1.2])
+
+    with conv_col1:
+        unite_source = st.selectbox(
+            "Unité de départ :",
+            ["Degré Celsius (°C)", "Kelvin (K)", "Degré Fahrenheit (°F)"],
+            key="t2_conv_unite_source"
+        )
+
+    with conv_col2:
+        valeur_saisie = st.number_input(
+            "Valeur à convertir :",
+            value=20.0,
+            step=0.5,
+            format="%.2f",
+            key="t2_conv_valeur_saisie"
+        )
+
+    with conv_col3:
+        unite_cible = st.selectbox(
+            "Unité d'arrivée :",
+            ["Degré Celsius (°C)", "Kelvin (K)", "Degré Fahrenheit (°F)"],
+            key="t2_conv_unite_cible"
+        )
+
+    # Initialisation des variables de calcul
+    resultat_conv = valeur_saisie
+    formule_latex = r"T_{\text{cible}} = T_{\text{source}}"
+
+    # Logique mathématique des conversions
+    if unite_source == "Degré Celsius (°C)":
+        if unite_cible == "Kelvin (K)":
+            resultat_conv = valeur_saisie + 273.15
+            formule_latex = r"T(\text{K}) = T(°\text{C}) + 273{,}15"
+        elif unite_cible == "Degré Fahrenheit (°F)":
+            resultat_conv = (valeur_saisie * 9/5) + 32
+            formule_latex = r"T(°\text{F}) = T(°\text{C}) \times \frac{9}{5} + 32"
+
+    elif unite_source == "Kelvin (K)":
+        # Sécurité pour le zéro absolu
+        if valeur_saisie < 0:
+            st.error("Erreur physique : Une température en Kelvin ne peut pas être négative (Zéro absolu).")
+        if unite_cible == "Degré Celsius (°C)":
+            resultat_conv = valeur_saisie - 273.15
+            formule_latex = r"T(°\text{C}) = T(\text{K}) - 273{,}15"
+        elif unite_cible == "Degré Fahrenheit (°F)":
+            resultat_conv = ((valeur_saisie - 273.15) * 9/5) + 32
+            formule_latex = r"T(°\text{F}) = (T(\text{K}) - 273{,}15) \times \frac{9}{5} + 32"
+
+    elif unite_source == "Degré Fahrenheit (°F)":
+        if unite_cible == "Degré Celsius (°C)":
+            resultat_conv = (valeur_saisie - 32) * 5/9
+            formule_latex = r"T(°\text{C}) = (T(°\text{F}) - 32) \times \frac{5}{9}"
+        elif unite_cible == "Kelvin (K)":
+            resultat_conv = ((valeur_saisie - 32) * 5/9) + 273.15
+            formule_latex = r"T(\text{K}) = (T(°\text{F}) - 32) \times \frac{5}{9} + 273{,}15"
+
+    # Affichage du résultat dans un encadré propre
+    if not (unite_source == "Kelvin (K)" and valeur_saisie < 0):
+        st.markdown("**Formule de conversion appliquée :**")
+        st.latex(formule_latex)
+        
+        # Boîte de résultat finale
+        st.markdown(
+            f"<div style='background-color: #f1f5f9; padding: 15px; border-radius: 6px; border-left: 4px solid #1e3a8a; font-size: 16px; font-weight: bold; color: #0f172a;'>"
+            f"Résultat de la conversion : {valeur_saisie:.2f} {unite_source.split(' (')[1][:-1]} = {resultat_conv:.2f} {unite_cible.split(' (')[1][:-1]}"
+            f"</div>",
+            unsafe_allow_width=True,
+            unsafe_allow_html=True
+        )
+
+    st.write("---")
+
+    # =============================================================================
+    # CONFIGURATION DOUBLE COLONNE : TEXTE BLEU A GAUCHE / IMAGE ET GRAPHISME A DROITE
+    # =============================================================================
+    col_gauche_texte_t2, col_droite_img_t2 = st.columns([1.1, 1.0])
+
+    with col_gauche_texte_t2:
+        # Bloc textuel informatif de couleur bleue (st.info)
+        st.info("### La BD humoristique textuelle : Le thermomètre en folie")
+        
+        st.markdown(
+            "**Cas 1 :** À l'état initial, les molécules d'un fluide sont calmes et immobiles. "
+            "Elles dorment paisiblement à la température de zéro absolu dans leur bulbe en verre : "
+            "« Chut, aucun mouvement ici, l'immobilité thermodynamique est totale ! ».\n\n"
+            
+            "**Cas 2 :** Une source de chaleur extérieure arrive soudainement. Le feu attrape les molécules "
+            "par le bras et injecte de l'énergie thermique en hurlant : "
+            "« Debout là-dedans ! Donnez-moi vos mouvements ! Il est temps de vous agiter énergiquement ! ».\n\n"
+            
+            "**Cas 3 :** Les molécules, excitées par le vol d'énergie, paniquent et commencent à vibrer "
+            "dans tous les sens. Manquant de place, elles poussent les parois du thermomètre : "
+            "« Oh non ! On subit une augmentation de température ! On a trop de joules, "
+            "il faut qu'on s'écarte, c'est la dilatation volumique ! ».\n\n"
+            
+            "**Cas 4 :** La colonne de liquide s'est violemment élevée le long du tube en verre, "
+            "brisant le sommet du thermomètre sous la pression de l'agitation. Les molécules de chaleur s'échappent "
+            "en ricanant : "
+            "« Affaire classée ! Encore un capteur en verre terrassé par notre puissance cinétique ! »."
+        )
+
+    with col_droite_img_t2:
+        st.write("")
+        st.markdown("##### Illustration humoristique du mécanisme de dilatation en 4 cas")
+        
+        # Grille interne pour simuler les 4 cases de la caricature (2 lignes de 2 colonnes)
+        grid_t2_l1_c1, grid_t2_l1_c2 = st.columns(2)
+        with grid_t2_l1_c1:
+            st.info("**Le Zéro Absolu**\n\n« Chut, aucun mouvement ici, l'immobilité thermodynamique est totale ! »")
+        with grid_t2_l1_c2:
+            st.warning("**L'Apport d'Énergie**\n\n« Debout là-dedans ! Donnez-moi vos mouvements ! Agitez-vous ! »")
+            
+        st.write("") # Espace entre les deux lignes de cases
+        
+        grid_t2_l2_c1, grid_t2_l2_c2 = st.columns(2)
+        with grid_t2_l2_c1:
+            st.error("**La Dilatation**\n\n« Oh non ! On subit une augmentation de température ! Il faut s'écarter ! »")
+        with grid_t2_l2_c2:
+            st.success("**L'Éclatement**\n\n« Affaire classée ! Encore un capteur terrassé par notre puissance cinétique ! »")
     # =============================================================================
     # SIMULATEUR DYNAMIQUE : DILATATION DES LIQUIDES THERMOMÉTRIQUES
     # =============================================================================
