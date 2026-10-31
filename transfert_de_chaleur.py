@@ -5365,10 +5365,15 @@ with tab10:
 
     st.write("---")
 
-    # Gestion de l'état de validation
+    # =============================================================================
+    # APPEL CRUCIAL DU MODULE DE RENDU DES QUESTIONNAIRES DYNAMIQUES
+    # =============================================================================
     if "suite_verrouille_tab10_tp" not in st.session_state:
         st.session_state.suite_verrouille_tab10_tp = False
     verrou_at10_tp = st.session_state.suite_verrouille_tab10_tp
+
+    # Cette ligne manquante déclenche l'affichage complet des questions et des trous
+    afficher_atelier_tp_dynamique(scen_tp, verrouille=verrou_at10_tp)
 
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 10")
