@@ -169,26 +169,27 @@ else:
         else:
             apps_recap = applications
 
-        # Grille à 5 colonnes pour serrer au maximum les vignettes sur la feuille A4
-        nb_colonnes = 5
-        cols = st.columns(nb_colonnes)
-        
-        for index, app in enumerate(apps_recap):
-            col_active = cols[index % nb_colonnes]
+        with st.container(key=f"grille_impression_{filtre_niveau.lower().replace(' ', '_')}"):
+            # Grille à 5 colonnes pour optimiser l'espace de la feuille A4
+            nb_colonnes = 5
+            cols = st.columns(nb_colonnes)
             
-            with col_active:
-                with st.container(border=True):
-                    st.markdown(f"<div style='text-align: center; font-weight: bold; min-height: 40px; font-size: 14px;'>{app['nom']}</div>", unsafe_allow_html=True)
-                    st.caption(f"{app['niveau']} | {app['theme']}")
-                    
-                    byte_im = generer_qrcode_image(app["url"])
-                    st.image(byte_im, use_container_width=True)
-                    
-                    nom_fichier = f"qrcode_{app['nom'].lower().replace(' ', '_')}.png"
-                    st.download_button(
-                        label="Télécharger",
-                        data=byte_im,
-                        file_name=nom_fichier,
-                        mime="image/png",
-                        key=f"dl_{index}"
-                    )
+            for index, app in enumerate(apps_recap):
+                col_active = cols[index % nb_colonnes]
+                
+                with col_active:
+                    with st.container(border=True):
+                        st.markdown(f"<div style='text-align: center; font-weight: bold; min-height: 40px; font-size: 14px;'>{app['nom']}</div>", unsafe_allow_html=True)
+                        st.caption(f"{app['niveau']} | {app['theme']}")
+                        
+                        byte_im = generer_qrcode_image(app["url"])
+                        st.image(byte_im, use_container_width=True)
+                        
+                        nom_fichier = f"qrcode_{app['nom'].lower().replace(' ', '_')}.png"
+                        st.download_button(
+                            label="Télécharger",
+                            data=byte_im,
+                            file_name=nom_fichier,
+                            mime="image/png",
+                            key=f"dl_{filtre_niveau.lower().replace(' ', '_')}_{index}"
+                        )
