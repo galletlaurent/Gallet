@@ -1638,7 +1638,49 @@ with tab3:
         "les expériences historiques et observez les transferts d'énergie en direct :"
     )
 
+    # =============================================================================
+    # 1. BANDE DESSINÉE HUMORISTIQUE : LE DRAME DES CALORIES PERDUES
+    # =============================================================================
+    col_gauche_texte_t3, col_droite_img_t3 = st.columns(2)
 
+    with col_gauche_texte_t3:  # Réutilisation de votre structure à deux colonnes symétriques
+        st.write(
+            "**La BD humoristique textuelle : Le drame des calories perdues**"
+        )
+        
+        st.info(
+            "**Cas 1 :** Un groupe d'atomes à l'intérieur d'une maison chauffée est tranquillement installé "
+            "dans la structure de la paroi. Ils vibrent joyeusement ensemble et discutent avec leurs voisins : "
+            "« Tout va bien les gars, la parfaite cohésion est là, on forme un bloc d'isolation indestructible ! ».\n\n"
+            
+            "**Cas 2 :** Une baisse brutale des températures survient à l'extérieur. L'air froid hivernal, "
+            "très gourmand, attrape l'atome de la paroi par le bras et crie : "
+            "« Hé toi ! Donne-moi tes charges ! Tes précieux joules d'énergie m'intéressent grandement ! ».\n\n"
+            
+            "**Cas 3 :** L'atome de la paroi, dépouillé de son énergie de protection, commence à se refroidir "
+            "et à se détacher du réseau. Il panique en voyant sa température baisser : "
+            "« Oh non ! Je viens de subir un transfert thermique ! Je ne suis plus un atome chaud et agité, "
+            "je me transforme en conducteur froid ! C'est la dissipation ! ».\n\n"
+            
+            "**Cas 4 :** La chaleur évadée désormais flotte dans l'atmosphère froide sous forme de perte pure, "
+            "laissant un trou béant dans le bilan énergétique de la poutre. Les atomes de froid s'enfuient "
+            "en ricanant avec leur butin : "
+            "« Affaire classée ! Encore un système chauffé terrassé par notre pouvoir absorbant ! »."
+        )
+
+    with col_droite_img_t3:
+        if os.path.exists("chaleur_caricature.jpg"):
+            st.image(
+                "chaleur_caricature.jpg",
+                caption="Illustration humoristique du drame des calories perdues",
+                use_container_width=True,
+            )
+        else:
+            st.warning(
+                "L'image 'chaleur_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+            )
+
+    st.write("---")
 
     # =============================================================================
     # 2. COURS HISTORIQUE : LES SAVANTS ET LES EXPÉRIENCES
