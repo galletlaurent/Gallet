@@ -219,72 +219,72 @@ tab12 = onglets[12]
 tab13 = onglets[13] 
 tab14 = onglets[14]
 
-def afficher_atelier_modes_verrouille(verrouille=False):
-    """Affiche le Quiz et le Texte à trous de l'onglet 4 (Les modes de transfert) sur deux colonnes."""
+def afficher_atelier_isolants_verrouille(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 5 (Les conducteurs et les isolants) sur deux colonnes."""
     import random
 
-    # 1. BASE DE DONNÉES DU QUIZ TECHNIQUE DES MODES DE TRANSFERT
-    questions_therm4_sources = [
-        {"id": "qt4_1", "q": "Quel mode de transfert thermique se propage sans aucun déplacement macroscopique de matière au sein des solides ?", "options": ["La conduction", "La convection", "Le rayonnement"], "rep": "La conduction"},
-        {"id": "qt4_2", "q": "Quel mécanisme de transfert de chaleur implique nécessairement un déplacement physique de matière fluide ?", "options": ["La convection", "La conduction", "Le rayonnement"], "rep": "La convection"},
-        {"id": "qt4_3", "q": "Quel scientifique français a formalisé en 1822 les lois mathématiques régissant la conduction de la chaleur ?", "options": ["Joseph Fourier", "Sadi Carnot", "Antoine Lavoisier"], "rep": "Joseph Fourier"},
-        {"id": "qt4_4", "q": "Quel mode de transfert peut se propager efficacement à travers le vide absolu de l'espace ?", "options": ["Le rayonnement", "La conduction", "La convection"], "rep": "Le rayonnement"},
-        {"id": "qt4_5", "q": "Quel type d'ondes électromagnétiques invisibles transporte l'énergie thermique lors d'un transfert par rayonnement ?", "options": ["Les ondes infrarouges", "Les rayons ultraviolets", "Les rayons X"], "rep": "Les ondes infrarouges"},
-        {"id": "qt4_6", "q": "Quel astronome a mis en évidence le rayonnement infrarouge en mesurant la température au-delà du spectre du prisme ?", "options": ["William Herschel", "Isaac Newton", "James Watt"], "rep": "William Herschel"},
-        {"id": "qt4_7", "q": "Dans une pièce chauffée par un radiateur, la montée de l'air chaud et la descente de l'air froid correspondent à :", "options": ["Des courants de convection", "Une conduction gazeuse", "Un rayonnement thermique"], "rep": "Des courants de convection"},
-        {"id": "qt4_8", "q": "La loi de Newton régit mathématiquement l'expression du flux thermique associé à quel mode ?", "options": ["La convection", "La conduction", "Le rayonnement"], "rep": "La convection"},
-        {"id": "qt4_9", "q": "La constante de Stefan-Boltzmann intervient dans le calcul du flux thermique de quel type de transfert ?", "options": ["Le rayonnement", "La conduction", "La convection"], "rep": "Le rayonnement"},
-        {"id": "qt4_10", "q": "Pourquoi les manches des poêles de cuisine sont-ils souvent fabriqués en bois ou en plastique ?", "options": ["Pour limiter le transfert par conduction", "Pour bloquer les courants de convection", "Pour réfléchir le rayonnement infrarouge"], "rep": "Pour limiter le transfert par conduction"}
+    # 1. BASE DE DONNÉES DU QUIZ TECHNIQUE DES CONDUCTEURS ET ISOLANTS
+    questions_therm5_sources = [
+        {"id": "qt5_1", "q": "Quelle lettre de l'alphabet grec désigne la conductivité thermique d'un matériau ?", "options": ["Lambda (λ)", "Phi (Φ)", "Rho (ρ)"], "rep": "Lambda (λ)"},
+        {"id": "qt5_2", "q": "Quelle est l'unité légale de la conductivité thermique dans le Système International ?", "options": ["W/(m.K)", "Joule/kg", "W/m²"], "rep": "W/(m.K)"},
+        {"id": "qt5_3", "q": "Parmi les matériaux suivants, lequel possède la conductivité thermique la plus élevée ?", "options": ["Le cuivre", "Le verre", "Le bois"], "rep": "Le cuivre"},
+        {"id": "qt5_4", "q": "Quelle est la valeur maximale limite du lambda pour qu'un matériau soit qualifié d'isolant thermique ?", "options": ["0,05 W/(m.K)", "1,0 W/(m.K)", "0,5 W/(m.K)"], "rep": "0,05 W/(m.K)"},
+        {"id": "qt5_5", "q": "Quel élément immobile, prisonnier des fibres ou des alvéoles, fait le pouvoir des isolants ?", "options": ["L'air", "L'eau", "Le vide"], "rep": "L'air"},
+        {"id": "qt5_6", "q": "Pourquoi les métaux sont-ils d'excellents conducteurs de chaleur ?", "options": ["En raison de la présence d'électrons libres", "Parce qu'ils ont une densité faible", "Parce qu'ils absorbent le rayonnement"], "rep": "En raison de la présence d'électrons libres"},
+        {"id": "qt5_7", "q": "La laine de verre et le polystyrène expansé sont des matériaux dits :", "options": ["Isolants thermiques", "Conducteurs thermiques", "Réfractaires purs"], "rep": "Isolants thermiques"},
+        {"id": "qt5_8", "q": "Si l'on double l'épaisseur d'un panneau isolant, qu'advient-il du flux de chaleur qui le traverse ?", "options": ["Il est divisé par deux", "Il est doublé", "Il reste strictement identique"], "rep": "Il est divisé par deux"},
+        {"id": "qt5_9", "q": "Quel isolant thermique naturel d'origine végétale est couramment utilisé en panneaux rigides ?", "options": ["Le liège expansé", "La laine de verre", "Le béton cellulaire"], "rep": "Le liège expansé"},
+        {"id": "qt5_10", "q": "Dans l'industrie, pour évacuer la chaleur d'un processeur, on utilise un dissipateur en :", "options": ["Aluminium", "Plastique PVC", "Bois de sapin"], "rep": "Aluminium"}
     ]
 
-    if "ordre_quiz_tab4_therm_aleatoire" not in st.session_state:
-        random.shuffle(questions_therm4_sources)
-        st.session_state.ordre_quiz_tab4_therm_aleatoire = questions_therm4_sources
+    if "ordre_quiz_tab5_therm_aleatoire" not in st.session_state:
+        random.shuffle(questions_therm5_sources)
+        st.session_state.ordre_quiz_tab5_therm_aleatoire = questions_therm5_sources
 
-    # 2. BASE DE DONNÉES DU TEXTE À TROUS DES MODES DE TRANSFERT
-    if "champs_therm4_clean" not in st.session_state:
-        st.session_state.champs_therm4_clean = [
-            ("1. La .......... transmet l'agitation atomique de proche en proche dans les solides.", ["Choisir...", "conduction", "convection"], "conduction", "therm4_t1"),
-            ("2. Le déplacement de matière au sein des fluides caractérise la ..........", ["Choisir...", "convection", "conduction"], "convection", "therm4_t2"),
-            ("3. Le rayonnement infrarouge ne nécessite aucun support de ..........", ["Choisir...", "matière", "température"], "matière", "therm4_t3"),
-            ("4. Joseph Fourier a établi la loi analytique de la .......... thermique.", ["Choisir...", "conduction", "convection"], "conduction", "therm4_t4"),
-            ("5. William Herschel a découvert le rayonnement invisible ..........", ["Choisir...", "infrarouge", "ultraviolet"], "infrarouge", "therm4_t5"),
-            ("6. La loi de Newton permet de modéliser l'échange par ..........", ["Choisir...", "convection", "rayonnement"], "convection", "therm4_t6"),
-            ("7. La propagation de l'énergie solaire à travers le vide s'effectue par ..........", ["Choisir...", "rayonnement", "conduction"], "rayonnement", "therm4_t7"),
-            ("8. L'agitation cinétique se transmet sans déplacement de particules lors de la ..........", ["Choisir...", "conduction", "convection"], "conduction", "therm4_t8"),
-            ("9. Le flux thermique s'exprime dans le Système International en ..........", ["Choisir...", "Watts", "Joules"], "Watts", "therm4_t9"),
-            ("10. La constante de Stefan-Boltzmann régit l'émission par ..........", ["Choisir...", "rayonnement", "conduction"], "rayonnement", "therm4_t10")
+    # 2. BASE DE DONNÉES DU TEXTE À TROUS DES CONDUCTEURS ET ISOLANTS
+    if "champs_therm5_clean" not in st.session_state:
+        st.session_state.champs_therm5_clean = [
+            ("1. La conductivité thermique est désignée par la lettre grecque ..........", ["Choisir...", "lambda", "phi"], "lambda", "therm5_t1"),
+            ("2. Les .......... possèdent une conductivité thermique élevée supérieure à 50 W/(m.K).", ["Choisir...", "métaux", "isolants"], "métaux", "therm5_t2"),
+            ("3. Un matériau est un isolant si son lambda est inférieur à .......... W/(m.K).", ["Choisir...", "0,05", "1,5"], "0,05", "therm5_t3"),
+            ("4. La laine de verre emprisonne de l'.......... immobile pour bloquer la conduction.", ["Choisir...", "air", "eau"], "air", "therm5_t4"),
+            ("5. Plus la valeur du lambda est faible, plus le matériau est ..........", ["Choisir...", "isolant", "conducteur"], "isolant", "therm5_t5"),
+            ("6. Le cuivre est un excellent .......... thermique utilisé dans les échangeurs.", ["Choisir...", "conducteur", "isolant"], "conducteur", "therm5_t6"),
+            ("7. Augmenter l'.......... d'une paroi permet de réduire le flux de chaleur perdu.", ["Choisir...", "épaisseur", "surface"], "épaisseur", "therm5_t7"),
+            ("8. L'unité de la conductivité thermique se note W/(m...........).", ["Choisir...", "K", "J"], "K", "therm5_t8"),
+            ("9. Le polystyrène expansé est un isolant thermique d'origine ..........", ["Choisir...", "synthétique", "animale"], "synthétique", "therm5_t9"),
+            ("10. Les électrons .......... permettent aux métaux de transmettre rapidement l'agitation.", ["Choisir...", "libres", "liés"], "libres", "therm5_t10")
         ]
 
-    # 3. RENDU BI-COLONNE SÉCURISÉ
+    # 3. RENDU DES DEUX COLONNES D'ÉVALUATION STREAMLIT
     col_quiz, col_trous = st.columns(2)
     
     with col_quiz:
-        st.markdown("##### Quiz Technique de l'Atelier 4 (10 questions - 10 pts)")
-        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab4_therm_aleatoire, 1):
+        st.markdown("##### Quiz Technique de l'Atelier 5 (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab5_therm_aleatoire, 1):
             st.write(f"**{idx}.** {q_data['q']}")
             st.selectbox(
-                "",
-                options=["Choisir..."] + q_data["options"],
-                key=f"therm_at4_final_g_{q_data['id']}",
-                disabled=verrouille,
+                "", 
+                options=["Choisir..."] + q_data["options"], 
+                key=f"therm_at5_final_g_{q_data['id']}", 
+                disabled=verrouille, 
                 label_visibility="collapsed"
             )
 
     with col_trous:
-        st.markdown("##### Synthèse de l'Atelier 4 (Texte à trous - 10 cases - 10 pts)")
-        for ligne in st.session_state.champs_therm4_clean:
-            # Extraction propre des 4 composants du tuple sans erreur d'indexation
+        st.markdown("##### Synthèse de l'Atelier 5 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_therm5_clean:
+            # Extraction explicite et sécurisée des 4 éléments du tuple pour éliminer le crash
             enonce, choix, attendu, cle = ligne
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-            with c_txt:
+            with c_txt: 
                 st.write(enonce)
-            with c_sel:
+            with c_sel: 
                 st.selectbox(
-                    "",
-                    choix,
-                    key=f"{cle}_therm4_clean",
-                    disabled=verrouille,
+                    "", 
+                    choix, 
+                    key=f"{cle}_therm5_clean", 
+                    disabled=verrouille, 
                     label_visibility="collapsed"
                 )
 
