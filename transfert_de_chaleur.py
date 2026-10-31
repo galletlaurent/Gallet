@@ -4616,7 +4616,7 @@ with tab9:
     # =============================================================================
     # 1. ENONCÉ DE L'EXERCICE ET BANDE DESSINÉE HUMORISTIQUE TEXTUELLE (DYNAMIQUE)
     # =============================================================================
-    col_gauche_bd, col_droite_img = st.columns(2)
+    col_gauche_bd, col_droite_cours = st.columns(2)  # Déclaration propre de col_droite_cours ici
 
     with col_gauche_bd:
         st.markdown("##### Enoncé de l'exercice et contexte")
@@ -4665,7 +4665,7 @@ with tab9:
                 "« Affaire classée ! La caméra confirme le rétablissement du flux. Le bureau retrouve son confort ! »"
             )
 
-    with col_droite_img:
+    with col_droite_cours:  # Utilisation de la même variable pour insérer la caricature et le cours
         st.markdown("##### Illustration caricaturale du cas")
         # Sélection de la caricature spécifique au scénario tiré
         if scen == "Électricité : Surchauffe de discontacteur":
