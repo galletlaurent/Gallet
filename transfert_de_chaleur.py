@@ -5185,7 +5185,7 @@ with tab10:
     # =============================================================================
     # 1. ENONCÉ DE L'EXERCICE ET CARICATURES ASSOCIÉES (DYNAMIQUE)
     # =============================================================================
-    col_gauche_bd_tp, col_droite_cours_tp = st.columns([0.3, 0.7])
+    col_gauche_bd_tp, col_droite_cours_tp = st.columns([0.3, 0.4])
 
     with col_gauche_bd_tp:
         st.markdown("##### Enoncé de l'exercice et contexte")
