@@ -11,27 +11,33 @@ st.set_page_config(page_title="Hub Maths-sciences", layout="wide")
 st.markdown("""
 <style>
 @media print {
+    /* Évite que le contenu soit coupé après la page 1 */
+    html, body, .main, .block-container, [data-testid="stVerticalBlock"] {
+        height: auto !important;
+        overflow: visible !important;
+        position: static !important;
+    }
+    
     /* Cache toute l'interface Streamlit globale */
     header, footer, [data-testid="stSidebar"], [data-testid="stHeader"] {
         display: none !important;
     }
+    
     /* Cache le titre du portail, la description et la barre de recherche */
     h1, p, .stTextInput, .stSelectbox, .stAlert, [data-testid="stTabs"] nav {
         display: none !important;
     }
-    /* Masque les boutons individuels de telechargement pour ne pas polluer la feuille */
+    
+    /* Masque les boutons individuels de téléchargement pour ne pas polluer la feuille */
     .stDownloadButton {
         display: none !important;
     }
-    /* Supprime les marges de l'application et force le fond blanc pour l'encre */
+    
+    /* Supprime les marges superflues pour maximiser l'espace A4 */
     .main .block-container {
         padding-top: 0rem !important;
         padding-bottom: 0rem !important;
         max-width: 100% !important;
-    }
-    /* Force l'affichage de l'onglet recapitulatif sur toute la largeur de la page imprimée */
-    div[data-testid="stVerticalBlock"] {
-        width: 100% !important;
     }
 }
 </style>
