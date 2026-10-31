@@ -37,9 +37,9 @@ applications = [
 
 
     
-    {"nom": "Proprietes algebriques du logarithme", "url": "https://streamlit.app", "niveau": "Tale", "theme": "Logarithmes"},
-    {"nom": "Le pH", "url": "https://gallet-2xkb5zlhdnonzmkahcmk3u.streamlit.app/", "niveau": "Tale", "theme": "Le pH"},  
-    {"nom": "Ajustement affine et moindres carres", "url": "https://streamlit.app", "niveau": "Tale", "theme": "Statistiques"}
+
+    {"nom": "Le pH", "url": "https://gallet-2xkb5zlhdnonzmkahcmk3u.streamlit.app/", "niveau": "Tale", "theme": "Le pH"}
+
 ]
 
 # 2. Barre de recherche globale
