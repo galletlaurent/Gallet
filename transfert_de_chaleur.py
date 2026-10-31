@@ -2176,26 +2176,20 @@ with tab4:
             col_t41_c1, col_t41_c2 = st.columns(2)
             with col_t41_c1:
                 if os.path.exists("Fourier.jpg"):
-                    st.image("Fourier.jpg", caption="Joseph Fourier", use_container_width=True)
+                    st.image("Fourier.jpg", caption="Joseph Fourier")
                 else:
                     st.warning("L'image 'Fourier.jpg' est introuvable.")
             with col_t41_c2:
                 if os.path.exists("conduction_lab.jpg"):
-                    st.image("conduction_lab.jpg", caption="Barre de conduction", use_container_width=True)
+                    st.image("conduction_lab.jpg", caption="Barre de conduction")
                 else:
                     st.warning("L'image 'conduction_lab.jpg' est introuvable.")
         with col_t41_h21:
-            col_t41_c3, col_t41_c4 = st.columns(2)
-            with col_t41_c3:
-                if os.path.exists("convection_mouv.jpg"):
-                    st.image("convection_mouv.jpg", caption="Cellules de convection", use_container_width=True)
-                else:
-                    st.warning("L'image 'convection_mouv.jpg' est introuvable.")
-            with col_t41_c4:
-                if os.path.exists("courants.jpg"):
-                    st.image("courants.jpg", caption="Flux de fluides", use_container_width=True)
-                else:
-                    st.warning("L'image 'courants.jpg' est introuvable.")
+            if os.path.exists("convection_mouv.jpg"):
+                st.image("convection_mouv.jpg", caption="Mouvement de convection")
+            else:
+                st.warning("L'image 'convection_mouv.jpg' est introuvable.")
+
             
     with col_t4_h2:
         st.markdown("##### La Découverte du Rayonnement Invisible")
@@ -2213,17 +2207,17 @@ with tab4:
             col_t42_c1, col_t42_c2 = st.columns(2)
             with col_t42_c1:
                 if os.path.exists("Herschel.jpg"):
-                    st.image("Herschel.jpg", caption="William Herschel", use_container_width=True)
+                    st.image("Herschel.jpg", caption="William Herschel")
                 else:
                     st.warning("L'image 'Herschel.jpg' est introuvable.")
             with col_t42_c2:
                 if os.path.exists("prismeherschel.jpg"):
-                    st.image("prismeherschel.jpg", caption="Expérience du prisme", use_container_width=True)
+                    st.image("prismeherschel.jpg", caption="Expérience du prisme")
                 else:
                     st.warning("L'image 'prismeherschel.jpg' est introuvable.")
         with col_t42_h32:
                 if os.path.exists("rayonnementsolaire.jpg"):
-                    st.image("rayonnementsolaire.jpg", caption="Rayonnement", use_container_width=True)
+                    st.image("rayonnementsolaire.jpg", caption="Rayonnement")
                 else:
                     st.warning("L'image 'rayonnementsolaire.jpg' est introuvable.")
 
