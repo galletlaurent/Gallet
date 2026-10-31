@@ -153,11 +153,11 @@ else:
                     if app["theme"] == theme:
                         afficher_app_avec_qrcode(app["nom"], app["url"])
 
-    # 4. PAGE COMPLÈTE RÉCAPITULATIVE DES QR CODES (Mosaïque)
+    # 4. PAGE COMPLÈTE RÉCAPITULATIVE DES QR CODES (Mosaïque avec option d'impression compacte)
     with onglet_recap:
         st.info("Page d'affichage de tous les QR Codes pour projection ou impression rapide.")
         
-        # Filtre par niveau optionnel dans le récapitulatif
+        # Filtre par niveau dans le récapitulatif
         filtre_niveau = st.selectbox("Filtrer le récapitulatif par niveau :", ["Tous les niveaux", "Seconde et CAP", "Première", "Terminale"])
         
         if filtre_niveau == "Seconde et CAP":
@@ -165,7 +165,7 @@ else:
         elif filtre_niveau == "Première":
             apps_recap = [app for app in applications if app["niveau"] == "1ere"]
         elif filtre_niveau == "Terminale":
-            apps_recap = [app for app in applications if app["safe_niveau" if False else "niveau"] == "Tale"]
+            apps_recap = [app for app in applications if app["niveau"] == "Tale"]
         else:
             apps_recap = applications
 
