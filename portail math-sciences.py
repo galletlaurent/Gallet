@@ -2,6 +2,8 @@
 
 import streamlit as st
 import urllib.parse
+import qrcode
+import io
 
 st.set_page_config(page_title="Hub Maths-sciences", layout="wide")
 
