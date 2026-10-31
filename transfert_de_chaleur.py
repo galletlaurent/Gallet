@@ -3786,13 +3786,15 @@ with tab7:
     st.markdown("**Détail des calculs de physique thermique (Maison de 130 m²) :**")
 
     st.markdown("1. Résistance thermique globale des parois ($R_{\\text{total}} = R_{si} + \\sum \\frac{e_i}{\\lambda_i} + R_{se}$) :")
-    expression_r = r"R_{\\text{total}} = 0{,}13"
+    expression_r = r"R_{\text{total}} = 0{,}13"
     for i in range(int(nb_couches)):
         mat_nom = list(catalogue_materiaux.keys())[st.session_state.get(f"t7_adv_mat_{i}", i)]
         l_val = catalogue_materiaux[mat_nom]
         ep_cm = st.session_state.get(f"t7_adv_ep_{i}", 10)
-        expression_r += rf" + \\frac{{{ep_cm/100:.3f}}}{{{l_val:.3f}}}"
-    expression_r += rf" + 0{,}04 = {r_total_global:.3f}\\text{{ m}}^2\\cdot\\text{{K}}/\\text{{W}}"
+        expression_r += rf" + \frac{{{ep_cm/100:.3f}}}{{{l_val:.3f}}}"
+    
+    # Correction de la ligne 3795 : Doublement des accolades autour de la virgule pour la syntaxe LaTeX
+    expression_r += rf" + 0{{,}}04 = {r_total_global:.3f}\text{{ m}}^2\cdot\text{{K}}/\text{{W}}"
     st.latex(expression_r)
 
     st.markdown("2. Puissance thermique instantanée perdue par l'enveloppe de 244 m² :")
