@@ -155,7 +155,7 @@ else:
 
     # 4. PAGE COMPLÈTE RÉCAPITULATIVE DES QR CODES (Mosaïque avec option d'impression compacte)
     with onglet_recap:
-        st.info("Page d'affichage de tous les QR Codes pour projection ou impression rapide.")
+        st.info("Page d'affichage de tous les QR Codes. Utilisez le raccourci clavier Ctrl + P pour imprimer de manière compacte.")
         
         # Filtre par niveau dans le récapitulatif
         filtre_niveau = st.selectbox("Filtrer le récapitulatif par niveau :", ["Tous les niveaux", "Seconde et CAP", "Première", "Terminale"])
@@ -169,9 +169,7 @@ else:
         else:
             apps_recap = applications
 
-        st.markdown('<button onclick="window.print()" style="padding: 10px 20px; font-weight: bold; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 20px;">Imprimer cette page d\'une manière compacte</button>', unsafe_allow_html=True)
-
-        # Creation d'une grille avec 5 colonnes pour optimiser l'espace A4
+        # Grille à 5 colonnes pour serrer au maximum les vignettes sur la feuille A4
         nb_colonnes = 5
         cols = st.columns(nb_colonnes)
         
@@ -183,11 +181,9 @@ else:
                     st.markdown(f"<div style='text-align: center; font-weight: bold; min-height: 40px; font-size: 14px;'>{app['nom']}</div>", unsafe_allow_html=True)
                     st.caption(f"{app['niveau']} | {app['theme']}")
                     
-                    # Generation de l'image du QR Code
                     byte_im = generer_qrcode_image(app["url"])
                     st.image(byte_im, use_container_width=True)
                     
-                    # Bouton individuel de telechargement
                     nom_fichier = f"qrcode_{app['nom'].lower().replace(' ', '_')}.png"
                     st.download_button(
                         label="Télécharger",
