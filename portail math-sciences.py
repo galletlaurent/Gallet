@@ -11,7 +11,7 @@ st.set_page_config(page_title="Hub Maths-sciences", layout="wide")
 st.markdown("""
 <style>
 @media print {
-    /* Libere absolument toutes les structures imbriquees de Streamlit pour l'impression */
+    /* Libere absolument toutes les structures de Streamlit */
     html, body, .main, .block-container, 
     [data-testid="stApp"], 
     [data-testid="stAppViewContainer"], 
@@ -24,13 +24,22 @@ st.markdown("""
         max-height: none !important;
         display: block !important;
     }
-    
-    /* Force la grille de colonnes a rester visible et fluide */
+    /* Cache le bouton Manage app de Streamlit a l'impression */
+    .stAppToolbar, [data-testid="stManageAppButton"] {
+        display: none !important;
+    }    
+    /* Force la grille de colonnes a rester fluide */
     [data-testid="stHorizontalBlock"] {
         height: auto !important;
         overflow: visible !important;
         display: flex !important;
         flex-wrap: wrap !important;
+    }
+
+    /* SECURITE MULTI-PAGES : Interdit de couper un QR Code ou un titre au milieu */
+    [data-testid="stColumn"] > div {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
     }
 
     /* Cache toute l'interface Streamlit globale */
@@ -48,7 +57,7 @@ st.markdown("""
         display: none !important;
     }
     
-    /* Supprime les marges superflues pour maximiser l'espace A4 */
+    /* Supprime les marges superflues pour maximiser l'espace */
     .main .block-container {
         padding-top: 0rem !important;
         padding-bottom: 0rem !important;
