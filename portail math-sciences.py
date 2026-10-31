@@ -7,54 +7,18 @@ import io
 
 st.set_page_config(page_title="Hub Maths-sciences", layout="wide")
 
-# Injection de styles CSS spécifiques pour le masquage à l'impression
-# Injection de styles CSS spécifiques pour l'impression propre
 st.markdown("""
 <style>
 @media print {
-    /* Libere absolument toutes les structures pour l'impression multi-pages */
-    html, body, .main, .block-container, 
-    [data-testid="stApp"], 
-    [data-testid="stAppViewContainer"], 
-    [data-testid="stVerticalBlock"], 
-    [data-testid="stVerticalBlockBorderWrapper"] {
-        height: auto !important;
-        overflow: visible !important;
-        position: static !important;
-        max-height: none !important;
-        display: block !important;
-    }
-    
-    /* Force la grille de colonnes a rester fluide */
-    [data-testid="stHorizontalBlock"] {
-        height: auto !important;
-        overflow: visible !important;
-        display: flex !important;
-        flex-wrap: wrap !important;
-    }
-
-    /* Force un saut de page propre apres chaque bloc de 25 */
-    .saut-de-page {
-        page-break-after: always !important;
-        break-after: page !important;
-        height: 0 !important;
-        display: block !important;
-    }
-
-    /* Evite de couper une vignette en deux au milieu */
-    [data-testid="stColumn"] > div {
-        break-inside: avoid !important;
-        page-break-inside: avoid !important;
-    }
-
-    /* Cache l'interface globale Streamlit et la case a cocher */
+    /* Cache toute l'interface globale Streamlit et les boutons système */
     header, footer, [data-testid="stSidebar"], [data-testid="stHeader"], .stAppDeployButton,
-    .stAppToolbar, [data-testid="stManageAppButton"], iframe, footer + div, .viewerBadge_v1, .stCheckbox {
+    .stAppToolbar, [data-testid="stManageAppButton"], iframe, footer + div, .viewerBadge_v1, .stCheckbox, .stRadio {
         display: none !important;
         visibility: hidden !important;
+        height: 0 !important;
     }
     
-    /* Cache les titres et les boites de selection */
+    /* Cache les titres, consignes et boîtes de sélection */
     h1, p, .stTextInput, .stSelectbox, .stAlert, [data-testid="stTabs"] nav {
         display: none !important;
     }
@@ -64,7 +28,7 @@ st.markdown("""
         display: none !important;
     }
     
-    /* Supprime les marges pour l'impression A4 */
+    /* Maximise l'espace sur la feuille A4 */
     .main .block-container {
         padding-top: 0.5cm !important;
         padding-bottom: 0.5cm !important;
@@ -119,6 +83,9 @@ applications = [
     {"nom": "Le pH", "url": "https://gallet-2xkb5zlhdnonzmkahcmk3u.streamlit.app/", "niveau": "Tale", "theme": "Le pH"}
 ]
 
+
+
+
 def generer_qrcode_image(url_app):
     qr = qrcode.QRCode(version=1, box_size=10, border=4)
     qr.add_data(url_app)
@@ -134,11 +101,11 @@ def afficher_app_avec_qrcode(nom_app, url_app):
         byte_im = generer_qrcode_image(url_app)
         st.image(byte_im, width=180)
 
-# INTERRUPTEUR DE MODE IMPRESSION
+# 2. INTERRUPTEUR DE MODE IMPRESSION
 mode_impression = st.checkbox("Activer le Mode Impression (Pour imprimer proprement vos planches de QR Codes en 5x5)")
 
 if mode_impression:
-    st.warning("Mode Impression activé. Faites Ctrl + P sur votre clavier pour lancer l'impression.")
+    st.warning("Mode Impression activé. Sélectionnez la feuille à imprimer ci-dessous puis faites Ctrl + P.")
     
     filtre_niveau = st.selectbox("Sélectionner le niveau à imprimer :", ["Tous les niveaux", "Seconde et CAP", "Première", "Terminale"])
     if filtre_niveau == "Seconde et CAP":
@@ -150,26 +117,37 @@ if mode_impression:
     else:
         apps_recap = applications
 
+    # PAGINATION MANUELLE VISUELLE
     taille_lot = 25
-    lots_applications = [apps_recap[i:i + taille_lot] for i in range(0, len(apps_recap), taille_lot)]
+    total_apps = len(apps_recap)
     
-    for num_lot, lot in enumerate(lots_applications):
-        with st.container(key=f"lot_brut_{num_lot}"):
-            nb_colonnes = 5
-            cols = st.columns(nb_colonnes)
-            for index, app in enumerate(lot):
-                col_active = cols[index % nb_colonnes]
-                with col_active:
-                    with st.container(border=True):
-                        st.markdown(f"<div style='text-align: center; font-weight: bold; min-height: 40px; font-size: 13px;'>{app['nom']}</div>", unsafe_allow_html=True)
-                        st.caption(f"{app['niveau']} | {app['theme']}")
-                        byte_im = generer_qrcode_image(app["url"])
-                        st.image(byte_im, use_container_width=True)
-        
-        if num_lot < len(lots_applications) - 1:
-            st.markdown('<div class="saut-de-page"></div>', unsafe_allow_html=True)
+    if total_apps > taille_lot:
+        page_selectionnee = st.radio(
+            "Sélectionnez la feuille à charger avant de faire Ctrl + P :",
+            ["Feuille 1 (Les 25 premiers QR Codes)", "Feuille 2 (Les QR Codes restants)"],
+            horizontal=True
+        )
+        if page_selectionnee == "Feuille 1 (Les 25 premiers QR Codes)":
+            lot_a_afficher = apps_recap[0:25]
+        else:
+            lot_a_afficher = apps_recap[25:]
+    else:
+        lot_a_afficher = apps_recap
+
+    # Affichage de la grille (Maximum 25 éléments à la fois sur l'écran)
+    nb_colonnes = 5
+    cols = st.columns(nb_colonnes)
+    for index, app in enumerate(lot_a_afficher):
+        col_active = cols[index % nb_colonnes]
+        with col_active:
+            with st.container(border=True):
+                st.markdown(f"<div style='text-align: center; font-weight: bold; min-height: 40px; font-size: 13px;'>{app['nom']}</div>", unsafe_allow_html=True)
+                st.caption(f"{app['niveau']} | {app['theme']}")
+                byte_im = generer_qrcode_image(app["url"])
+                st.image(byte_im, use_container_width=True)
 
 else:
+    # AFFICHAGE CLASSIQUE POUR LES ÉLÈVES
     recherche = st.text_input("Rechercher une application par mot-clé (ex: vecteur, dérivée, statistique...)", "")
 
     if recherche:
@@ -202,6 +180,7 @@ else:
             for theme in themes_1ere:
                 with st.expander(theme):
                     for app in apps_1ere:
+
                         if app["theme"] == theme:
                             afficher_app_avec_qrcode(app["nom"], app["url"])
 
@@ -214,12 +193,6 @@ else:
                     for app in apps_tale:
                         if app["theme"] == theme:
                             afficher_app_avec_qrcode(app["nom"], app["url"])
-
-
-
-
-
-
 
 
 
