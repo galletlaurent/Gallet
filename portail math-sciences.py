@@ -14,10 +14,9 @@ st.write("Bienvenue. Utilisez la barre de recherche globale ou parcourez les ong
 # 1. Base de donnees de vos applications (A completer avec vos 50 liens)
 # Structure : {"nom": "Nom affiche", "url": "Lien de l app", "niveau": "2nde" ou "1ere" ou "Tale", "theme": "Theme associe"}
 applications = [
-    {"nom": "Coordonnees d un vecteur", "url": "https://streamlit.app", "niveau": "2nde", "theme": "Geometrie"},
-    {"nom": "Calcul de longueurs et distances", "url": "https://streamlit.app", "niveau": "2nde", "theme": "Geometrie"},
-    {"nom": "Calcul de frequences statistiques", "url": "https://streamlit.app", "niveau": "2nde", "theme": "Statistiques"},
-    {"nom": "Arbres de probabilite conditionnelle", "url": "https://streamlit.app", "niveau": "2nde", "theme": "Probabilites"},
+    # Assurez-vous que la valeur de "niveau" correspond exactement au texte filtré ci-dessus
+    {"nom": "Coordonnees d un vecteur", "url": "https://...", "niveau": "2nde et CAP", "theme": "Geometrie"},
+    {"nom": "Calcul de pourcentages", "url": "https://...", "niveau": "2nde et CAP", "theme": "Statistiques"},
     
     {"nom": "Calcul du nombre derive graphiquement", "url": "https://streamlit.app", "niveau": "1ere", "theme": "Derivees"},
     {"nom": "Equation de la tangente a une courbe", "url": "https://streamlit.app", "niveau": "1ere", "theme": "Derivees"},
@@ -44,12 +43,14 @@ if recherche:
 
 else:
     # Si la recherche est vide, on affiche l organisation par onglets normaux
-    onglet_2nde et CAP, onglet_1ere, onglet_tale = st.tabs(["SECONDE BAC PRO ET CAP", "PREMIERE BAC PRO", "TERMINALE BAC PRO"])
+    onglet_2nde_CAP, onglet_1ere, onglet_tale = st.tabs(["SECONDE BAC PRO ET CAP", "PREMIERE BAC PRO", "TERMINALE BAC PRO"])
 
     # Affichage Seconde
-    with onglet_2nde:
+    with onglet_2nde_CAP:
         st.info("Applications dédiées au programme de Seconde et CAP.")
-        apps_2nde = [app for app in applications if app["niveau"] == "2nde et CAP"]
+        
+        # Correction ici : acceptation automatique de "2nde" OU de "CAP"
+        apps_2nde = [app for app in applications if app["niveau"] in ["2nde", "CAP"]]
         themes_2nde = set([app["theme"] for app in apps_2nde])
         
         for theme in themes_2nde:
