@@ -90,7 +90,9 @@ applications = [
     {"nom": "Le GNR", "url": "https://gallet-feturstpnya3ttgjvxauor.streamlit.app/", "niveau": "2nde", "theme": "Chimie"},
     {"nom": "L'intensité électrique", "url": "https://gallet-kzezbtr8bl6us9b2j2x6yq.streamlit.app/", "niveau": "2nde", "theme": "Electricité"},
     {"nom": "Modèle moléculaire", "url": "https://gallet-gubus3nzsnjigcweyvrapz.streamlit.app/", "niveau": "2nde", "theme": "Chimie"},
-
+    {"nom": "Les probabilités", "url": "https://gallet-l22zawjhgsrgvqhl2fgewi.streamlit.app/", "niveau": "2nde", "theme": "Statistiques et probabilités"},
+    {"nom": "Sécuirité électrique", "url": "https://gallet-ym9etxx9duoxagszgghzdc.streamlit.app/", "niveau": "2nde", "theme": "Electricité"},
+    {"nom": "Les statistiques à une variable", "url": "https://gallet-hxejhti7hs2mr4cqxmj4vr.streamlit.app/", "niveau": "2nde", "theme": "Statistiques et probabilités"},
 
      
     {"nom": "Concentration molaire", "url": "https://gallet-hjkhuxhwzuzcdgz6bcgbzy.streamlit.app/", "niveau": "1ere", "theme": "Chimie"},
@@ -111,8 +113,17 @@ applications = [
     {"nom": "Les caractéristiques d'un son", "url": "https://gallet-9jgaebu6y4zett7edtpvqk.streamlit.app/", "niveau": "1ere", "theme": "Acoustique"},
     {"nom": "Equilibre en rotation", "url": "https://gallet-ewwlykgfb5esjm3bh5cojw.streamlit.app/", "niveau": "1ere", "theme": "Mécanique"},
     {"nom": "Les vecteurs du plan", "url": "https://gallet-hl85fritysafgola2uxzc5.streamlit.app/", "niveau": "1ere", "theme": "Géométrie analytique"},
+    {"nom": "Les probabilités", "url": "https://gallet-l22zawjhgsrgvqhl2fgewi.streamlit.app/", "niveau": "1ere", "theme": "Statistiques et probabilités"},
+    {"nom": "Puissance et énergie électrique", "url": "https://gallet-cqcjyudoehrtkwjeqbauxf.streamlit.app/", "niveau": "1ere", "theme": "Electricité"},
+    {"nom": "Les suites", "url": "https://gallet-xtbeen25cxwxthhnhvvphb.streamlit.app/", "niveau": "1ere", "theme": "Analyse"},
+
+
      
     {"nom": "Archimède", "url": "https://gallet-2mzeqnw2v4g2cg5kbbtvue.streamlit.app/", "niveau": "Tale", "theme": "Mécanique"},
+    {"nom": "Transmission d'informations", "url": "https://gallet-f4h3xy92yepvnao6hkng3o.streamlit.app/", "niveau": "Tale", "theme": "Communication"},
+    {"nom": "Les suites", "url": "https://gallet-xtbeen25cxwxthhnhvvphb.streamlit.app/", "niveau": "Tale", "theme": "Analyse"},
+    {"nom": "Les probabilités", "url": "https://gallet-l22zawjhgsrgvqhl2fgewi.streamlit.app/", "niveau": "Tale", "theme": "Statistiques et probabilités"},
+    {"nom": "Les réactions d'oxydoréduction", "url": "https://gallet-r6wlc9yzn34rfwvsspjnm7.streamlit.app/", "niveau": "Tale", "theme": "Electrochimique"},    
     {"nom": "La propagation du son", "url": "https://gallet-9jgaebu6y4zett7edtpvqk.streamlit.app/", "niveau": "Tale", "theme": "Acoustique"},
     {"nom": "Le pH", "url": "https://gallet-2xkb5zlhdnonzmkahcmk3u.streamlit.app/", "niveau": "Tale", "theme": "Le pH"}
 ]
