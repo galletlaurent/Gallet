@@ -2612,7 +2612,7 @@ with tab5:
             col_t51_c1, col_t51_c2 = st.columns(2)
             with col_t51_c1:
                 if os.path.exists("cuivre.jpg"):
-                    st.image("cuivre.jpg", caption="Cuivre conducteur", use_container_width=True)
+                    st.image("cuivre.jpg", caption="Dissipateur cuivre", use_container_width=True)
                 else:
                     st.warning("L'image 'cuivre.jpg' est introuvable.")
             with col_t51_c2:
