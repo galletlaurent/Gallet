@@ -151,24 +151,30 @@ if mode_impression:
     else:
         apps_recap = applications
 
-    # PAGINATION MANUELLE VISUELLE
-    taille_lot = 25
+    taille_lot = 20  # Grille de 5 colonnes sur 4 lignes (Idéal pour éviter les coupures en bas de page A4)
     total_apps = len(apps_recap)
     
     if total_apps > taille_lot:
+        # Calcul automatique du nombre de pages nécessaires
+        import math
+        nb_pages = math.ceil(total_apps / taille_lot)
+        
+        # Création de la liste des choix de pages (Feuille 1, Feuille 2, Feuille 3...)
+        choix_pages = [f"Feuille {i+1} (Applications {i*taille_lot+1} à {min((i+1)*taille_lot, total_apps)})" for i in range(nb_pages)]
+        
         page_selectionnee = st.radio(
             "Sélectionnez la feuille à charger avant de faire Ctrl + P :",
-            ["Feuille 1 (Les 25 premiers QR Codes)", "Feuille 2 (Les QR Codes restants)"],
+            choix_pages,
             horizontal=True
         )
-        if page_selectionnee == "Feuille 1 (Les 25 premiers QR Codes)":
-            lot_a_afficher = apps_recap[0:25]
-        else:
-            lot_a_afficher = apps_recap[25:]
+        
+        # Récupération de l'index de la page sélectionnée pour découper la liste
+        index_page = choix_pages.index(page_selectionnee)
+        lot_a_afficher = apps_recap[index_page * taille_lot : (index_page + 1) * taille_lot]
     else:
         lot_a_afficher = apps_recap
 
-    # Affichage de la grille (Maximum 25 éléments à la fois sur l'écran)
+    # Affichage de la grille (Maximum 20 éléments à la fois sur l'écran pour tenir sur un A4 complet)
     nb_colonnes = 5
     cols = st.columns(nb_colonnes)
     for index, app in enumerate(lot_a_afficher):
@@ -179,7 +185,6 @@ if mode_impression:
                 st.caption(f"{app['niveau']} | {app['theme']}")
                 byte_im = generer_qrcode_image(app["url"])
                 st.image(byte_im, use_container_width=True)
-
 else:
     # AFFICHAGE CLASSIQUE POUR LES ÉLÈVES
     recherche = st.text_input("Rechercher une application par mot-clé (ex: vecteur, dérivée, statistique...)", "")
