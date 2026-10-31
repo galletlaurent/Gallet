@@ -5200,7 +5200,8 @@ with tab10:
                 "**Cas 4 : L'ouvrage pérenne.** La température est maîtrisée, le bloc durcit de manière parfaitement homogène : "
                 "« Affaire classée ! L'exothermie et la conduction ont été domptées, la structure est validée ! »"
             )
-
+        st.write("")
+        st.write("")
             texte_bd_bleu_tp = (
                 "**La BD humoristique : Le cœur brûlant du béton**\n\n"
                 "**Cas 1 :** Hydratation générale : « C'est la fête du ciment, les Joules se libèrent ! ».\n\n"
@@ -5222,7 +5223,8 @@ with tab10:
                 "**Cas 4 : Le pont sauvé.** Les fissures sont évitées, la peau du béton reste lisse et étanche : "
                 "« Affaire classée ! Les lois de la dilatation thermique ont été contenues à temps ! »"
             )
-
+        st.write("")
+        st.write("")
             texte_bd_bleu_tp = (
                 "**La BD humoristique : La peau du béton sous tension**\n\n"
                 "**Cas 1 :** Le tablier refroidit par l'extérieur : « Le cœur est brûlant mais ma peau est glacée ! ».\n\n"
@@ -5244,7 +5246,8 @@ with tab10:
                 "**Cas 4 : La résistance acquise.** Le béton a pris sa résistance mécanique sans subir l'action du gel : "
                 "« Affaire classée ! Les barrières isolantes ont protégé les réactions chimiques du ciment ! »"
             )
-
+        st.write("")
+        st.write("")
             texte_bd_bleu_tp = (
                 "**La BD humoristique : La bataille du zéro degré**\n\n"
                 "**Cas 1 :** Chute du thermomètre : « Sauvez les Watts, le gel attaque les fondations ! ».\n\n"
@@ -5266,7 +5269,8 @@ with tab10:
                 "**Cas 4 : Le massif scellé.** Les fondations maritimes ont durci correctement sous l'eau : "
                 "« Affaire classée ! L'équilibre entre le flux thermique perdu et la chimie du ciment a été trouvé ! »"
             )
-
+        st.write("")
+        st.write("")
             texte_bd_bleu_tp = (
                 "**La BD humoristique : L'océan pilleur de Joules**\n\n"
                 "**Cas 1 :** Immersion du béton sous l'eau : « Brrr, la mer commence à aspirer nos calories ! ».\n\n"
@@ -5310,13 +5314,13 @@ with tab10:
 
         # 1. Affichage supérieur : L'image réelle du cas (nom long)
         if os.path.exists(fichier_reel):
-            st.image(fichier_reel, caption=caption_reel, use_container_width=150)
+            st.image(fichier_reel, caption=caption_reel, use_container_width=True)
         else:
             st.caption(caption_reel)
 
         # 2. Affichage inférieur : L'image de la caricature (nom court)
         if os.path.exists(fichier_caricature):
-            st.image(fichier_caricature, caption=caption_caricature, use_container_width=150)
+            st.image(fichier_caricature, caption=caption_caricature, use_container_width=True)
         else:
             st.caption(caption_caricature)
 
