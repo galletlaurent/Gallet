@@ -7,6 +7,35 @@ import io
 
 st.set_page_config(page_title="Hub Maths-sciences", layout="wide")
 
+# Injection de styles CSS spécifiques pour le masquage à l'impression
+st.markdown("""
+<style>
+@media print {
+    /* Cache toute l'interface Streamlit globale */
+    header, footer, [data-testid="stSidebar"], [data-testid="stHeader"] {
+        display: none !important;
+    }
+    /* Cache le titre du portail, la description et la barre de recherche */
+    h1, p, .stTextInput, .stSelectbox, .stAlert, [data-testid="stTabs"] nav {
+        display: none !important;
+    }
+    /* Masque les boutons individuels de telechargement pour ne pas polluer la feuille */
+    .stDownloadButton {
+        display: none !important;
+    }
+    /* Supprime les marges de l'application et force le fond blanc pour l'encre */
+    .main .block-container {
+        padding-top: 0rem !important;
+        padding-bottom: 0rem !important;
+        max-width: 100% !important;
+    }
+    /* Force l'affichage de l'onglet recapitulatif sur toute la largeur de la page imprimée */
+    div[data-testid="stVerticalBlock"] {
+        width: 100% !important;
+    }
+}
+</style>
+""", unsafe_allow_html=True)
 st.title("Portail des Applications de Mathématiques et de sciences de M Laurent GALLET")
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
@@ -22,6 +51,10 @@ applications = [
     {"nom": "Equilibre", "url": "https://gallet-cr4ukp49u8usybpxsspkah.streamlit.app/", "niveau": "2nde", "theme": "Mécanique"},
     {"nom": "Les surfaces", "url": "https://gallet-quursprfackhldk38vbpcq.streamlit.app/", "niveau": "2nde", "theme": "Géométrie"},
     {"nom": "Le GNR", "url": "https://gallet-feturstpnya3ttgjvxauor.streamlit.app/", "niveau": "2nde", "theme": "Chimie"},
+    {"nom": "L'intensité électrique", "url": "https://gallet-kzezbtr8bl6us9b2j2x6yq.streamlit.app/", "niveau": "2nde", "theme": "Electricité"},
+    {"nom": "Modèle moléculaire", "url": "https://gallet-gubus3nzsnjigcweyvrapz.streamlit.app/", "niveau": "2nde", "theme": "Chimie"},
+
+
      
     {"nom": "Concentration molaire", "url": "https://gallet-hjkhuxhwzuzcdgz6bcgbzy.streamlit.app/", "niveau": "1ere", "theme": "Chimie"},
     {"nom": "Dosage du vinaigre", "url": "https://gallet-cnvqzzejzkeku7pm4j5puq.streamlit.app/", "niveau": "1ere", "theme": "Dosages"},
@@ -40,6 +73,7 @@ applications = [
     {"nom": "Archimède", "url": "https://gallet-2mzeqnw2v4g2cg5kbbtvue.streamlit.app/", "niveau": "1ere", "theme": "Mécanique"},
     {"nom": "Les caractéristiques d'un son", "url": "https://gallet-9jgaebu6y4zett7edtpvqk.streamlit.app/", "niveau": "1ere", "theme": "Acoustique"},
     {"nom": "Equilibre en rotation", "url": "https://gallet-ewwlykgfb5esjm3bh5cojw.streamlit.app/", "niveau": "1ere", "theme": "Mécanique"},
+    {"nom": "Les vecteurs du plan", "url": "https://gallet-hl85fritysafgola2uxzc5.streamlit.app/", "niveau": "1ere", "theme": "Géométrie analytique"},
      
     {"nom": "Archimède", "url": "https://gallet-2mzeqnw2v4g2cg5kbbtvue.streamlit.app/", "niveau": "Tale", "theme": "Mécanique"},
     {"nom": "La propagation du son", "url": "https://gallet-9jgaebu6y4zett7edtpvqk.streamlit.app/", "niveau": "Tale", "theme": "Acoustique"},
@@ -66,7 +100,7 @@ recherche = st.text_input("Rechercher une application par mot-clé (ex: vecteur,
 
 # 3. Logique de filtrage et d'affichage
 if recherche:
-    st.subheader("Résultats de la recherche")
+    st.subheader("Présultats de la recherche")
     resultats = [app for app in applications if recherche.lower() in app["nom"].lower() or recherche.lower() in app["theme"].lower()]
     
     if resultats:
@@ -78,7 +112,7 @@ if recherche:
         st.warning("Aucune application ne correspond à votre recherche.")
 
 else:
-    # Organisation par onglets normaux + Ajout de l'onglet Récapitulatif
+    # Organisation par onglets normaux + Onglet Récapitulatif
     onglet_2nde_CAP, onglet_1ere, onglet_tale, onglet_recap = st.tabs([
         "SECONDE BAC PRO ET CAP", 
         "PREMIERE BAC PRO", 
@@ -119,35 +153,46 @@ else:
                     if app["theme"] == theme:
                         afficher_app_avec_qrcode(app["nom"], app["url"])
 
-    # 4. NOUVEL ONGLET : PAGE COMPLÈTE RÉCAPITULATIVE DES QR CODES
+    # 4. PAGE COMPLÈTE RÉCAPITULATIVE DES QR CODES (Mosaïque)
     with onglet_recap:
         st.info("Page d'affichage de tous les QR Codes pour projection ou impression rapide.")
         
         # Filtre par niveau optionnel dans le récapitulatif
         filtre_niveau = st.selectbox("Filtrer le récapitulatif par niveau :", ["Tous les niveaux", "Seconde et CAP", "Première", "Terminale"])
         
-        # Choix des applications à afficher selon le filtre
         if filtre_niveau == "Seconde et CAP":
             apps_recap = [app for app in applications if app["niveau"] in ["2nde", "CAP"]]
         elif filtre_niveau == "Première":
             apps_recap = [app for app in applications if app["niveau"] == "1ere"]
         elif filtre_niveau == "Terminale":
-            apps_recap = [app for app in applications if app["niveau"] == "Tale"]
+            apps_recap = [app for app in applications if app["safe_niveau" if False else "niveau"] == "Tale"]
         else:
             apps_recap = applications
 
-        # Création d'une grille avec 4 colonnes pour aligner les QR codes
-        nb_colonnes = 4
+        st.markdown('<button onclick="window.print()" style="padding: 10px 20px; font-weight: bold; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 20px;">Imprimer cette page d\'une manière compacte</button>', unsafe_allow_html=True)
+
+        # Creation d'une grille avec 5 colonnes pour optimiser l'espace A4
+        nb_colonnes = 5
         cols = st.columns(nb_colonnes)
         
-        # Parcours de toutes les applications sélectionnées pour générer la grille
         for index, app in enumerate(apps_recap):
             col_active = cols[index % nb_colonnes]
             
             with col_active:
                 with st.container(border=True):
-                    st.markdown(f"<div style='text-align: center; font-weight: bold; min-height: 50px;'>{app['nom']}</div>", unsafe_allow_html=True)
-                    st.caption(f"Niveau : {app['niveau']} | {app['theme']}")
+                    st.markdown(f"<div style='text-align: center; font-weight: bold; min-height: 40px; font-size: 14px;'>{app['nom']}</div>", unsafe_allow_html=True)
+                    st.caption(f"{app['niveau']} | {app['theme']}")
                     
+                    # Generation de l'image du QR Code
                     byte_im = generer_qrcode_image(app["url"])
                     st.image(byte_im, use_container_width=True)
+                    
+                    # Bouton individuel de telechargement
+                    nom_fichier = f"qrcode_{app['nom'].lower().replace(' ', '_')}.png"
+                    st.download_button(
+                        label="Télécharger",
+                        data=byte_im,
+                        file_name=nom_fichier,
+                        mime="image/png",
+                        key=f"dl_{index}"
+                    )
