@@ -1750,14 +1750,13 @@ with tab3:
     st.write("---")
     st.subheader("Laboratoire Virtuel : Calorimétrie avancée et équilibres de phases")
     st.write(
-        "Configurez jusqu'à 5 fluides parmi une bibliothèque de 20 corps réels. Le moteur "
+        "Configurez jusqu'à 5 fluides parmi une bibliothèque de 24 corps réels. Le moteur "
         "de calcul intègre les capacités thermiques ainsi que les chaleurs latentes en cas "
         "de changement d'état (fusion, solidification, vaporisation) au cours du mélange :"
     )
 
-    # Référentiel thermodynamique rigoureux de 20 fluides réels (Unités SI)
-    # c: J/(kg.K) | rho: kg/L | T_fusion/T_ebullition: °C | L_fusion/L_vap: J/kg
-    bibliotheque_20_liquides = {
+    # DÉFINITION IMPÉRATIVE DU DICTIONNAIRE AVANT SON UTILISATION
+    bibliotheque_24_liquides = {
         "Eau pure": {"c": 4180, "rho": 1.00, "T_f": 0, "T_e": 100, "L_f": 334000, "L_v": 2260000, "col": "#bae6fd"},
         "Lait entier": {"c": 3890, "rho": 1.03, "T_f": -0.5, "T_e": 100.5, "L_f": 320000, "L_v": 2240000, "col": "#f8fafc"},
         "Bière standard": {"c": 4050, "rho": 1.01, "T_f": -2, "T_e": 95, "L_f": 310000, "L_v": 1900000, "col": "#fef08a"},
@@ -1790,7 +1789,7 @@ with tab3:
         max_value=5, 
         value=2, 
         step=1, 
-        key="t3_nb_liquides_melange_20"
+        key="t3_nb_liquides_melange_24"
     )
 
     volume_total = 0.0
@@ -1805,26 +1804,23 @@ with tab3:
     for i in range(nb_melanges):
         with colonnes_fluides[i]:
             st.markdown(f"**Fluide {i+1}**")
-            liq_nom = st.selectbox(f"Nature :", list(bibliotheque_24_liquides.keys()), key=f"t3_m20_nat_{i}")
-            liq_vol = st.slider(f"Volume (L) :", min_value=0.1, max_value=5.0, value=1.0, step=0.1, key=f"t3_m20_vol_{i}")
+            liq_nom = st.selectbox(f"Nature :", list(bibliotheque_24_liquides.keys()), key=f"t3_m24_nat_{i}")
+            liq_vol = st.slider(f"Volume (L) :", min_value=0.1, max_value=5.0, value=1.0, step=0.1, key=f"t3_m24_vol_{i}")
             
             p_therm = bibliotheque_24_liquides[liq_nom]
             
-            # Ajustement dynamique des limites du curseur selon les plages réelles d'état
             t_min_curseur = int(max(-220, p_therm["T_f"]))
             t_max_curseur = int(min(400, p_therm["T_e"]))
             if t_min_curseur >= t_max_curseur: 
                 t_min_curseur, t_max_curseur = t_max_curseur - 20, t_max_curseur + 20
                 
-            liq_temp = st.slider(f"Température (°C) :", min_value=t_min_curseur, max_value=t_max_curseur, value=int((t_min_curseur + t_max_curseur)/2), step=1, key=f"t3_m20_tmp_{i}")
+            liq_temp = st.slider(f"Température (°C) :", min_value=t_min_curseur, max_value=t_max_curseur, value=int((t_min_curseur + t_max_curseur)/2), step=1, key=f"t3_m24_tmp_{i}")
             
-            # CALCUL ET ATTRIBUTION RIGOUREUSE DE LA MASSE SANS FAUTE DE FRAPPE
             masse = liq_vol * p_therm["rho"]
             volume_total += liq_vol
             somme_m_c += (masse * p_therm["c"])
             somme_m_c_T += masse * p_therm["c"] * liq_temp
             
-            # Stockage propre dans le dictionnaire de suivi
             fluides_presents.append({
                 "nom": liq_nom, 
                 "vol": liq_vol, 
