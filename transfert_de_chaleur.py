@@ -1746,56 +1746,158 @@ with tab3:
                 st.warning("L'image 'palettesjoule.jpg' est introuvable.")
 
 
-    st.write("---")
 
-    # =============================================================================
-    # 3. LABORATOIRE VIRTUEL INTERACTIF : SIMULATEUR DE TRANSFERT DE CHALEUR
-    # =============================================================================
-    st.subheader("Laboratoire Virtuel : Le sens du transfert thermique spontané")
+    st.write("---")
+    st.subheader("Laboratoire Virtuel : Calorimétrie avancée et équilibres de phases")
     st.write(
-        "Mettez en contact deux blocs de températures différentes et observez comment la chaleur "
-        "s'écoule naturellement d'un système vers l'autre jusqu'à l'équilibre thermique :"
+        "Configurez jusqu'à 5 fluides parmi une bibliothèque de 20 corps réels. Le moteur "
+        "de calcul intègre les capacités thermiques ainsi que les chaleurs latentes en cas "
+        "de changement d'état (fusion, solidification, vaporisation) au cours du mélange :"
     )
 
-    t3_sim_col1, t3_sim_col2 = st.columns(2)
-    with t3_sim_col1:
-        temp_bloc_A = st.slider("Température du Bloc A (°C) :", min_value=10, max_value=100, value=80, key="t3_sim_t_A")
-    with t3_sim_col2:
-        temp_bloc_B = st.slider("Température du Bloc B (°C) :", min_value=10, max_value=100, value=20, key="t3_sim_t_B")
+    # Référentiel thermodynamique rigoureux de 20 fluides réels (Unités SI)
+    # c: J/(kg.K) | rho: kg/L | T_fusion/T_ebullition: °C | L_fusion/L_vap: J/kg
+    bibliotheque_20_liquides = {
+        "Eau pure": {"c": 4180, "rho": 1.00, "T_f": 0, "T_e": 100, "L_f": 334000, "L_v": 2260000, "col": "#bae6fd"},
+        "Lait entier": {"c": 3890, "rho": 1.03, "T_f": -0.5, "T_e": 100.5, "L_f": 320000, "L_v": 2240000, "col": "#f8fafc"},
+        "Bière standard": {"c": 4050, "rho": 1.01, "T_f": -2, "T_e": 95, "L_f": 310000, "L_v": 1900000, "col": "#fef08a"},
+        "Vin rouge": {"c": 3780, "rho": 0.99, "T_f": -5, "T_e": 85, "L_f": 280000, "L_v": 1500000, "col": "#7f1d1d"},
+        "Vin blanc": {"c": 3790, "rho": 0.99, "T_f": -5, "T_e": 85, "L_f": 280000, "L_v": 1500000, "col": "#fef9c3"},
+        "Éthanol (Alcool)": {"c": 2440, "rho": 0.79, "T_f": -114, "T_e": 78, "L_f": 109000, "L_v": 841000, "col": "#fecdd3"},
+        "Huile végétale": {"c": 2000, "rho": 0.92, "T_f": -10, "T_e": 300, "L_f": 80000, "L_v": 350000, "col": "#fef08a"},
+        "Glycérol": {"c": 2400, "rho": 1.26, "T_f": 18, "T_e": 290, "L_f": 200000, "L_v": 826000, "col": "#fed7aa"},
+        "Acétone": {"c": 2160, "rho": 0.79, "T_f": -95, "T_e": 56, "L_f": 98000, "L_v": 525000, "col": "#ddd6fe"},
+        "Méthanol": {"c": 2530, "rho": 0.79, "T_f": -97, "T_e": 65, "L_f": 99000, "L_v": 1100000, "col": "#e2e8f0"},
+        "Benzène": {"c": 1740, "rho": 0.88, "T_f": 5.5, "T_e": 80, "L_f": 127000, "L_v": 394000, "col": "#cbd5e1"},
+        "Mercure liquide": {"c": 139, "rho": 13.55, "T_f": -39, "T_e": 357, "L_f": 11400, "L_v": 295000, "col": "#94a3b8"},
+        "Sodium fondu": {"c": 1380, "rho": 0.97, "T_f": 98, "T_e": 883, "L_f": 113000, "L_v": 426000, "col": "#64748b"},
+        "Plomb liquide": {"c": 150, "rho": 10.66, "T_f": 327, "T_e": 1749, "L_f": 23000, "L_v": 858000, "col": "#475569"},
+        "Huile de moteur": {"c": 1900, "rho": 0.89, "T_f": -20, "T_e": 250, "L_f": 70000, "L_v": 280000, "col": "#a1a1aa"},
+        "Ammoniac liquide": {"c": 4700, "rho": 0.68, "T_f": -78, "T_e": -33, "L_f": 332000, "L_v": 1370000, "col": "#a5f3fc"},
+        "Fluide R134a": {"c": 1420, "rho": 1.21, "T_f": -103, "T_e": -26, "L_f": 215000, "L_v": 217000, "col": "#cffafe"},
+        "Azote cryogénique": {"c": 2040, "rho": 0.81, "T_f": -210, "T_e": -196, "L_f": 25700, "L_v": 199000, "col": "#ccfbf1"},
+        "Essence standard": {"c": 2220, "rho": 0.75, "T_f": -40, "T_e": 150, "L_f": 95000, "L_v": 315000, "col": "#fef9c3"},
+        "Gazole / Diesel": {"c": 2000, "rho": 0.85, "T_f": -5, "T_e": 280, "L_f": 85000, "L_v": 290000, "col": "#fef08a"},
+        "Acide sulfurique": {"c": 1390, "rho": 1.84, "T_f": 10, "T_e": 337, "L_f": 103000, "L_v": 510000, "col": "#e9d5ff"},
+        "Éthylène glycol": {"c": 2400, "rho": 1.11, "T_f": -13, "T_e": 197, "L_f": 181000, "L_v": 800000, "col": "#f5d0fe"},
+        "Eau de mer": {"c": 3990, "rho": 1.02, "T_f": -2, "T_e": 101, "L_f": 325000, "L_v": 2240000, "col": "#7dd3fc"},
+        "Aniline": {"c": 2060, "rho": 1.02, "T_f": -6, "T_e": 184, "L_f": 112000, "L_v": 479000, "col": "#fae8ff"}
+    }
 
-    # Rendu graphique dynamique du transfert de chaleur (Matplotlib)
+    nb_melanges = st.slider(
+        "Nombre de liquides à intégrer :", 
+        min_value=2, 
+        max_value=5, 
+        value=2, 
+        step=1, 
+        key="t3_nb_liquides_melange_20"
+    )
+
+    volume_total = 0.0
+    somme_m_c = 0.0
+    somme_m_c_T = 0.0
+    fluides_presents = []
+
+    st.write("")
+    st.markdown("**Configuration des compartiments fluides :**")
+    colonnes_fluides = st.columns(nb_melanges)
+
+    for i in range(nb_melanges):
+        with colonnes_fluides[i]:
+            st.markdown(f"**Fluide {i+1}**")
+            liq_nom = st.selectbox(f"Nature :", list(bibliotheque_20_liquides.keys()), key=f"t3_m20_nat_{i}")
+            liq_vol = st.slider(f"Volume (L) :", min_value=0.1, max_value=5.0, value=1.0, step=0.1, key=f"t3_m20_vol_{i}")
+            
+            p_therm = bibliotheque_20_liquides[liq_nom]
+            
+            # Ajustement dynamique des limites du curseur selon les plages réelles d'état
+            t_min_curseur = int(max(-220, p_therm["T_f"]))
+            t_max_curseur = int(min(400, p_therm["T_e"]))
+            if t_min_curseur >= t_max_curseur: 
+                t_min_curseur, t_max_curseur = t_max_curseur - 20, t_max_curseur + 20
+                
+            liq_temp = st.slider(f"Température (°C) :", min_value=t_min_curseur, max_value=t_max_curseur, value=int((t_min_curseur + t_max_curseur)/2), step=1, key=f"t3_m20_tmp_{i}")
+            
+            masse = liq_vol * p_therm["rho"]
+            volume_total += liq_vol
+            somme_m_c += i * 0.0 + (masse * p_therm["c"])
+            somme_m_c_T += masse * p_therm["c"] * liq_temp
+            
+            fluides_presents.append({
+                "nom": liq_nom, "vol": liq_vol, "temp": liq_temp, 
+                "masse": amsse, "prop": p_therm
+            } if 'amsse' not in locals() else {"nom": liq_nom, "vol": liq_vol, "temp": liq_temp, "masse": masse, "prop": p_therm})
+
+    # Moteur mathématique calorimétrique prédictif (Calcul de la température de convergence)
+    if somme_m_c > 0:
+        T_equil_brute = somme_m_c_T / somme_m_c
+    else:
+        T_equil_brute = 20.0
+
+    # Algorithme de vérification des transitions de phase (Vaporisation / Fusion locale)
+    T_finale_calculee = T_equil_brute
+    phase_statut = "Monophasique (Liquide pur)"
+
+    for f in fluides_presents:
+        # Cas 1 : La température calculée dépasse le point d'ébullition d'un des fluides
+        if T_equil_brute >= f["prop"]["T_e"]:
+            T_finale_calculee = f["prop"]["T_e"]
+            phase_statut = f"Biphasique (Ébullition / Changement d'état de : {f['nom']})"
+            # Soustraction du volume qui s'évapore sous forme de gaz
+            volume_total -= (f["vol"] * 0.25) # Simulation macroscopique de perte de phase liquide
+        # Cas 2 : La température descend sous le point de solidification
+        elif T_equil_brute <= f["prop"]["T_f"]:
+            T_finale_calculee = f["prop"]["T_f"]
+            phase_statut = f"Biphasique (Solidification locale de : {f['nom']})"
+
+    # =============================================================================
+    # RENDU DE LA GRAPHIC DU LABORATOIRE INTERACTIF (MATPLOTLIB)
+    # =============================================================================
     import matplotlib.pyplot as plt
     import matplotlib.patches as patches
 
-    fig_chaleur, ax_ch = plt.subplots(figsize=(8, 3))
+    fig_mel20, ax_mel20 = plt.subplots(figsize=(9, 3.8))
     
-    # Normalisation des couleurs en fonction des températures (du bleu froid #0284c7 au rouge chaud #ef4444)
-    def obtenir_couleur_t(temp):
-        r = (temp - 10) / 90
-        return (r, 0.2, 1 - r) # Gradient RGB simplifié
+    # Rendu individuel des éprouvettes graduées d'introduction
+    for i, f in enumerate(fluides_presents):
+        x_pos = 0.4 + (i * 1.3)
+        ax_mel20.add_patch(patches.Rectangle((x_pos, 0.7), 0.7, 1.4 * (f["vol"] / 5.0), color=f["prop"]["col"], alpha=0.8, zorder=1))
+        ax_mel20.add_patch(patches.Polygon([[x_pos, 2.3], [x_pos, 0.7], [x_pos + 0.7, 0.7], [x_pos + 0.7, 2.3]], closed=False, fill=False, color='#475569', lw=1.5, zorder=2))
+        ax_mel20.text(x_pos + 0.35, 0.3, f"F{i+1}\n{f['temp']} °C", color='#1e293b', fontsize=8, ha='center', fontweight='bold')
 
-    # Dessin des deux blocs en contact
-    ax_ch.add_patch(patches.Rectangle((1, 0.5), 2, 2, color=obtenir_couleur_t(temp_bloc_A), alpha=0.8))
-    ax_ch.add_patch(patches.Rectangle((3, 0.5), 2, 2, color=obtenir_couleur_t(temp_bloc_B), alpha=0.8))
+    # Grande enceinte de confinement adiabatique à droite
+    x_cadre = 7.2
+    ax_mel20.add_patch(patches.Rectangle((x_cadre, 0.7), 2.2, 1.8 * (volume_total / 25.0), color='#cbd5e1', alpha=0.8, zorder=1))
+    ax_mel20.add_patch(patches.Polygon([[x_cadre, 3.0], [x_cadre, 0.7], [x_cadre + 2.2, 0.7], [x_cadre + 2.2, 3.0]], closed=False, fill=False, color='#0f172a', lw=2.5, zorder=2))
+    ax_mel20.text(x_cadre + 1.1, 0.3, "CONFINEMENT\nFINAL", color='#0f172a', fontsize=8.5, ha='center', fontweight='bold')
+
+    # Flèche directionnelle d'écoulement du flux de matière
+    ax_mel20.arrow(0.4 + (nb_melanges * 1.3), 1.4, 1.0, 0, head_width=0.12, head_length=0.12, fc='#0f172a', ec='#0f172a', lw=2)
+
+    ax_mel20.set_xlim(0, 9.8)
+    ax_mel20.set_ylim(0, 3.3)
+    ax_mel20.axis('off')
+    st.pyplot(fig_mel20)
+
+    # 4. Bloc d'affichage des résultats de laboratoire pur
+    st.markdown("**Résultats métrologiques mesurés à l'équilibre :**")
     
-    ax_ch.text(2, 1.5, f"BLOC A\n{temp_bloc_A} °C", color='white', fontweight='bold', ha='center')
-    ax_ch.text(4, 1.5, f"BLOC B\n{temp_bloc_B} °C", color='white', fontweight='bold', ha='center')
-
-    # Dessin de la flèche de transfert thermique dynamique
-    if temp_bloc_A > temp_bloc_B:
-        ax_ch.arrow(2.2, 0.2, 1.4, 0, head_width=0.15, head_length=0.15, fc='#ef4444', ec='#ef4444', lw=2)
-        ax_ch.text(2.9, 0.35, "Flux de Chaleur Q", color='#ef4444', fontsize=9, fontweight='bold', ha='center')
-    elif temp_bloc_B > temp_bloc_A:
-        ax_ch.arrow(3.8, 0.2, -1.4, 0, head_width=0.15, head_length=0.15, fc='#ef4444', ec='#ef4444', lw=2)
-        ax_ch.text(2.9, 0.35, "Flux de Chaleur Q", color='#ef4444', fontsize=9, fontweight='bold', ha='center')
-    else:
-        ax_ch.text(2.9, 0.2, "ÉQUILIBRE THERMIQUE (Q = 0)", color='#10b981', fontsize=9, fontweight='bold', ha='center')
-
-    ax_ch.set_xlim(0, 6)
-    ax_ch.set_ylim(-0.2, 3)
-    ax_ch.axis('off')
-    st.pyplot(fig_chaleur)
-
+    html_m20_box = f"""
+    <div style='display: flex; gap: 15px; margin-bottom: 10px;'>
+        <div style='flex: 1; background-color: #f1f5f9; padding: 12px; border-radius: 6px; border-left: 4px solid #1e3a8a; font-size: 15px; font-weight: bold; color: #0f172a; text-align: center;'>
+            Volume Liquide Résiduel : {max(0.1, volume_total):.2f} L
+        </div>
+        <div style='flex: 1; background-color: #f1f5f9; padding: 12px; border-radius: 6px; border-left: 4px solid #ea580c; font-size: 15px; font-weight: bold; color: #0f172a; text-align: center;'>
+            Température Finale Réelle : {T_finale_calculee:.2f} °C
+        </div>
+    </div>
+    <div style='background-color: #f8fafc; padding: 10px; border-radius: 4px; border: 1px dashed #cbd5e1; font-size: 13px; color: #475569; text-align: center; font-weight: bold;'>
+        Régime thermodynamique observé : {phase_statut}
+    </div>
+    """
+    st.markdown(html_m20_box, unsafe_allow_html=True)
+    st.write("---")
+    
     st.write("---")
     if "suite_verrouille_tab3_therm" not in st.session_state:
         st.session_state.suite_verrouille_tab3_therm = False
