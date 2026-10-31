@@ -42,7 +42,10 @@ st.markdown("""
     [data-testid="stImage"] {
         margin-bottom: 2px !important;
     }
-
+    /* Cache le bouton Manage app de Streamlit a l'impression */
+    .stAppToolbar, [data-testid="stManageAppButton"] {
+        display: none !important;
+    }
     /* SECURITE MULTI-PAGES : Interdit de couper un QR Code ou un titre au milieu */
     [data-testid="stColumn"] > div {
         break-inside: avoid !important;
