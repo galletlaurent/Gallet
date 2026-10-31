@@ -1741,10 +1741,10 @@ with tab3:
                 else:
                     st.warning("L'image 'Joule.jpg' est introuvable.")
             with col_t32_c2:
-                if os.path.exists("palettes.jpg"):
-                    st.image("palettes.jpg", caption="Expérience des palettes", use_container_width=True)
+                if os.path.exists("palettesjoule.jpg"):
+                    st.image("palettesjoule.jpg", caption="Expérience des palettes", use_container_width=True)
                 else:
-                    st.warning("L'image 'palettes.jpg' est introuvable.")
+                    st.warning("L'image 'palettesjoule.jpg' est introuvable.")
         with col_t32_h32:
             col_t32_c3, col_t32_c4 = st.columns(2)
             with col_t32_c3:
