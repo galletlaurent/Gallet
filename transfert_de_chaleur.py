@@ -5201,7 +5201,8 @@ with tab10:
                 "« Affaire classée ! L'exothermie et la conduction ont été domptées, la structure est validée ! »"
             )
             for _ in range(20):
-            st.write("")            texte_bd_bleu_tp = (
+            st.write("")
+            texte_bd_bleu_tp = (
                 "**La BD humoristique : Le cœur brûlant du béton**\n\n"
                 "**Cas 1 :** Hydratation générale : « C'est la fête du ciment, les Joules se libèrent ! ».\n\n"
                 "**Cas 2 :** Blocage du flux : « Le béton conduit très mal, la chaleur sensible reste prisonnière au centre ! ».\n\n"
