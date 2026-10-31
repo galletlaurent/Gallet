@@ -3650,84 +3650,143 @@ with tab7:
     st.write("---")
 
     # =============================================================================
-    # 3. LABORATOIRE VIRTUEL INTERACTIF : ESTIMATEUR DU COEFFICIENT U
+    # LABORATOIRE VIRTUEL AVANCÉ : PAROI COMPOSÉE MULTICOUCHE ET BILAN SUR 24H
     # =============================================================================
-    st.subheader("Laboratoire Virtuel : Analyseur dynamique du coefficient de transmission U")
+    st.write("---")
+    st.subheader("Laboratoire Virtuel : Analyseur dynamique multicouche et bilan thermique sur 24h")
     st.write(
-        "Sélectionnez la nature de la paroi, modifiez son épaisseur en direct, puis observez "
-        "l'évolution du coefficient $U$ et le flux thermique surfacique traversant perdu :"
+        "Configurez votre paroi en superposant jusqu'à 3 couches de matériaux. Ajustez les températures "
+        "intérieure et extérieure pour évaluer la consommation d'énergie sur une journée ainsi que la vitesse de refroidissement :"
     )
 
     # Référentiel des conductivités thermiques lambda réelles
-    bibliotheque_u_parois = {
-        "Mur en béton armé banché": {"lambda": 2.3, "type": "Conducteur"},
-        "Brique de terre cuite pleine": {"lambda": 1.15, "type": "Moyen"},
-        "Bloc de béton de granulats (Parpaing)": {"lambda": 1.05, "type": "Moyen"},
-        "Verre de vitrage standard": {"lambda": 1.2, "type": "Conducteur"},
-        "Bois de construction (Résineux)": {"lambda": 0.13, "type": "Isolant moyen"},
-        "Panneau de laine de verre": {"lambda": 0.035, "type": "Isolant performant"},
-        "Mousse de polyuréthane rigide": {"lambda": 0.024, "type": "Isolant d'élite"}
+    catalogue_materiaux = {
+        "Mousse de polyuréthane (Isolant d'élite)": 0.024,
+        "Polystyrène expansé (PSE)": 0.032,
+        "Laine de verre (Isolant performant)": 0.035,
+        "Bois de sapin / résineux": 0.13,
+        "Brique de terre cuite creuse": 0.45,
+        "Béton de granulats (Parpaing)": 1.05,
+        "Brique pleine": 1.15,
+        "Verre standard": 1.2,
+        "Béton armé plein": 2.3
     }
 
-    t7_sim_mat = st.selectbox(
-        "Sélectionnez le matériau constituant la paroi :",
-        list(bibliotheque_u_parois.keys()),
-        key="t7_sim_choix_materiau"
-    )
+    # --- 1. CONFIGURATION DE L'ENVIRONNEMENT ET DE LA PIÈCE ---
+    col_env1, col_env2, col_env3 = st.columns(3)
+    with col_env1:
+        t_int_libre = st.slider("Température INTÉRIEURE désirée (°C) :", min_value=15, max_value=30, value=20, key="t7_adv_tint")
+    with col_env2:
+        t_ext_libre = st.slider("Température EXTÉRIEURE (°C) :", min_value=-20, max_value=20, value=0, key="t7_adv_text")
+    with col_env3:
+        surface_mur = st.slider("Surface totale des murs de la pièce (m²) :", min_value=10, max_value=100, value=40, key="t7_adv_surf")
 
-    lambda_paroi = bibliotheque_u_parois[t7_sim_mat]["lambda"]
+    # --- 2. CONFIGURATION DYNAMIQUE DES COUCHES ---
+    st.markdown("##### Composition de la paroi (de l'Intérieur vers l'Extérieur) :")
+    
+    nb_couches = st.radio("Nombre de couches composant la paroi :", [1, 2, 3], horizontal=True, key="t7_adv_nb_c")
+    
+    r_total_paroi = 0.0
+    epaisseurs_visuelles = []
+    couleurs_visuelles = ["#f8fafc", "#cbd5e1", "#94a3b8"]
+    labels_visuels = []
 
-    col_t7_p1, col_t7_p2 = st.columns(2)
-    with col_t7_p1:
-        t7_epaisseur = st.slider("Épaisseur de la paroi (e en centimètres) :", min_value=1, max_value=40, value=20, step=1, key="t7_sim_e")
-    with col_t7_p2:
-        t7_delta_t = st.slider("Écart de température intérieur/extérieur (dT en °C) :", min_value=5, max_value=50, value=25, key="t7_sim_dt")
+    # Génération dynamique des sélections selon le nombre de couches choisi
+    cols_c = st.columns(int(nb_couches))
+    
+    for i in range(int(nb_couches)):
+        with cols_c[i]:
+            st.markdown(f"**Couche {i+1}**")
+            mat_c = st.selectbox(
+                f"Matériau :", 
+                list(catalogue_materiaux.keys()), 
+                index=min(i * 2 + 2, len(catalogue_materiaux) - 1) if i > 0 else 6,
+                key=f"t7_adv_mat_{i}"
+            )
+            ep_c = st.slider(f"Épaisseur (cm) :", min_value=1, max_value=40, value=10, key=f"t7_adv_ep_{i}")
+            
+            lambda_c = catalogue_materiaux[mat_c]
+            e_m_c = ep_c / 100.0
+            r_c = e_m_c / lambda_c
+            r_total_paroi += r_c
+            
+            epaisseurs_visuelles.append(ep_c)
+            labels_visuels.append(f"{mat_c.split(' (')[0]}\n{ep_c} cm")
 
-    # Calcul des constantes physiques de transmission
-    e_m = t7_epaisseur / 100.0
-    u_global = lambda_paroi / e_m
+    # Résistances superficielles d'échange normalisées (Rsi + Rse = 0.17 m².K/W réglementaire)
+    r_total_global = r_total_paroi + 0.17
+    u_global_composé = 1.0 / r_total_global
+    delta_t_libre = t_int_libre - t_ext_libre
+    
+    # Calculs énergétiques
+    flux_surfacique_w = u_global_composé * delta_t_libre
+    puissance_totale_perdue_w = flux_surfacique_w * surface_mur
+    energie_24h_kwh = (puissance_totale_perdue_w * 24.0) / 1000.0
 
+    # Calcul dynamique de l'équilibre thermique
+    capacite_thermique_piece = 80000.0
+    if puissance_totale_perdue_w > 0:
+        tau_secondes = capacite_thermique_piece / (u_global_composé * surface_mur)
+        temps_equilibre_heures = (3.0 * tau_secondes) / 3600.0
+    else:
+        temps_equilibre_heures = 0.0
 
-    flux_surfacique_watts = u_global * t7_delta_t
-
-    # Rendu vectoriel dynamique de la paroi (Matplotlib)
+    # --- 3. RENDU GRAPHIQUE DES COUCHES SUPERPOSÉES ---
     import matplotlib.pyplot as plt
     import matplotlib.patches as patches
 
-    fig_u, ax_u = plt.subplots(figsize=(8.5, 2.5))
+    fig_multi, ax_mu = plt.subplots(figsize=(9, 3.0))
     
-    # Choix de la couleur selon la performance du coefficient U
-    if u_global > 5.0: 
-        couleur_flux = "#ef4444"
-    elif u_global > 1.0: 
-        couleur_flux = "#f97316"
-    else: 
-        couleur_flux = "#10b981"
+    # Dessin de la zone intérieure
+    ax_mu.add_patch(patches.Rectangle((0.0, 0.4), 1.5, 1.6, color="#ef4444", alpha=0.5))
+    ax_mu.text(0.75, 1.2, f"Intérieur\n{t_int_libre} °C", color="#b91c1c", fontweight="bold", ha="center", va="center", fontsize=9)
 
-    # Tracé des blocs géométriques de la paroi
-    ax_u.add_patch(patches.Rectangle((0.5, 0.4), 1.5, 1.5, facecolor='#fee2e2', alpha=0.6)) # Ambiance intérieure
-    largeur_mur_visuel = 0.5 + (t7_epaisseur / 40.0) * 2.0
-    ax_u.add_patch(patches.Rectangle((2.0, 0.4), largeur_mur_visuel, 1.5, facecolor='#cbd5e1', edgecolor='#0f172a', lw=1.5)) # Paroi
-    ax_u.add_patch(patches.Rectangle((2.0 + largeur_mur_visuel, 0.4), 1.5, 1.5, facecolor='#e0f2fe', alpha=0.6)) # Ambiance extérieure
+    # Dessin des couches successives
+    x_depart = 1.5
+    for idx, ep_cm in enumerate(epaisseurs_visuelles):
+        largeur_visuelle = 0.4 + (ep_cm / 40.0) * 1.2
+        ax_mu.add_patch(patches.Rectangle((x_depart, 0.4), largeur_visuelle, 1.6, facecolor=couleurs_visuelles[idx], edgecolor='#0f172a', lw=1.5))
+        ax_mu.text(x_depart + (largeur_visuelle / 2), 1.2, labels_visuels[idx], color='#0f172a', fontweight='bold', ha='center', va='center', fontsize=7.5)
+        x_depart += largeur_visuelle
 
-    ax_u.text(1.25, 1.15, "Intérieur", color='#b91c1c', fontweight='bold', ha='center', fontsize=9)
-    ax_u.text(2.0 + (largeur_mur_visuel / 2), 1.15, f"e = {t7_epaisseur} cm\n$\lambda$ = {lambda_paroi:.3f}", color='#0f172a', fontweight='bold', ha='center', fontsize=8)
-    ax_u.text(2.0 + largeur_mur_visuel + 0.75, 1.15, "Extérieur", color='#1d4ed8', fontweight='bold', ha='center', fontsize=9)
+    # Dessin de la zone extérieure
+    ax_mu.add_patch(patches.Rectangle((x_depart, 0.4), 1.5, 1.6, color="#3b82f6", alpha=0.5))
+    ax_mu.text(x_depart + 0.75, 1.2, f"Extérieur\n{t_ext_libre} °C", color="#1d4ed8", fontweight="bold", ha="center", va="center", fontsize=9)
 
-    # Dessin de la flèche indicatrice de fuite
-    epaisseur_fleche = min(15.0, max(1.5, flux_surfacique_watts / 100.0))
-    ax_u.arrow(1.0, 0.6, 2.5 + largeur_mur_visuel, 0, head_width=0.15, head_length=0.15, fc=couleur_flux, ec=couleur_flux, lw=epaisseur_fleche)
-    ax_u.text(2.0 + (largeur_mur_visuel / 2), 0.85, f"Flux : {flux_surfacique_watts:.1f} W/m²", color=couleur_flux, fontsize=9, fontweight='bold', ha='center')
+    # Flèche de déperdition globale
+    taille_fleche_adv = min(15.0, max(1.5, puissance_totale_perdue_w / 200.0)) if delta_t_libre > 0 else 1.2
+    ax_mu.arrow(0.5, 0.6, x_depart + 0.5, 0, head_width=0.15, head_length=0.15, fc='#475569', ec='#475569', lw=taille_fleche_adv)
 
-    ax_u.set_xlim(0, 7.5)
-    ax_u.set_ylim(0, 2.3)
-    ax_u.axis('off')
-    st.pyplot(fig_u)
+    ax_mu.set_xlim(-0.2, x_depart + 1.7)
+    ax_mu.set_ylim(0, 2.4)
+    ax_mu.axis('off')
+    st.pyplot(fig_multi)
 
-    # Démonstration textuelle du calcul
-    st.markdown("**Formule littérale et application numérique :**")
-    st.latex(rf"U = \frac{{\lambda}}{{e}} = \frac{{{lambda_paroi:.3f}}}{{{e_m:.3f}\text{{ m}}}} = {u_global:.2f}\quad\text{{W}} /(\text{{m}}^2\cdot\text{{K}})")
-    st.latex(rf"\Phi = U \times \Delta T = {u_global:.2f} \times {t7_delta_t} = {flux_surfacique_watts:.1f}\quad\text{{W}} /\text{{m}}^2")
+    # --- 4. PANNEAU DE RÉSULTATS ET SYNTHÈSE ÉNERGÉTIQUE ---
+    st.markdown("##### Bilan Énergétique Interactif (Loi de Fourier Multicouche) :")
+    
+    c_res1, c_res2, c_res3 = st.columns(3)
+    with c_res1:
+        st.metric(label="Coefficient Global U de la paroi", value=f"{u_global_composé:.3f} W/(m².K)")
+    with c_res2:
+        st.metric(label="Puissance instantanée perdue", value=f"{puissance_totale_perdue_w:.1f} Watts")
+    with c_res3:
+        st.metric(label="Résistance Thermique Totale R_tot", value=f"{r_total_global:.3f} m².K/W")
+
+    # Conteneur HTML nettoyé de tout emoji pour l'affichage final
+    html_bilan_24h = f"""
+    <div style="background-color: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 10px;">
+        <p style="margin: 0; font-size: 14px; color: #1e293b;">
+            <b>Énergie à dépenser sur 24 heures</b> pour maintenir la pièce à {t_int_libre}°C : 
+            <span style="color: #b91c1c; font-size: 16px; font-weight: bold;">{energie_24h_kwh:.2f} kWh</span>
+        </p>
+        <p style="margin: 8px 0 0 0; font-size: 14px; color: #1e293b;">
+            <b>Temps estimé pour atteindre l'équilibre thermique</b> avec l'extérieur (si arrêt du chauffage) : 
+            <span style="color: #1d4ed8; font-size: 16px; font-weight: bold;">{temps_equilibre_heures:.1f} heures</span>
+        </p>
+    </div>
+    """
+    st.markdown(html_bilan_24h, unsafe_allow_html=True)
     st.write("---")
 
     st.write("---")
