@@ -3699,8 +3699,8 @@ with tab7:
         # --- AUTRES MATÉRIAUX DE PAROI ---
         "Verre de vitrage standard": 1.20,
         "Lame d'air immobile (Théorique)": 0.026
+    }
     
-
     # --- 1. CONFIGURATION DE L'ENVIRONNEMENT DE LA MAISON DE 130 M² ---
     col_env1, col_env2 = st.columns(2)
     with col_env1:
