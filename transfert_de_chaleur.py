@@ -3656,16 +3656,50 @@ with tab7:
 
     # Référentiel des conductivités thermiques lambda réelles
     catalogue_materiaux = {
+        # --- ISOLANTS THERMIQUES INNOVANTS ET ÉCOLOGIQUES ---
         "Mousse de polyuréthane (Isolant d'élite)": 0.024,
+        "Polystyrène extrudé (XPS)": 0.029,
         "Polystyrène expansé (PSE)": 0.032,
-        "Laine de verre (Isolant performant)": 0.035,
+        "Isolant en fibre de coton (Coton recyclé / Métisse)": 0.039,
+        "Isolant en ouate de cellulose": 0.039,
+        "Laine de verre (Isolant minéral standard)": 0.035,
+        "Laine de roche en panneau": 0.038,
+        "Fibre de bois semi-rigide": 0.040,
+        "Liège expansé en plaque": 0.042,
+        "Film thermo-réflecteur mince (Isolant mince multicouche)": 0.033,
+        
+        # --- BOIS ET MATÉRIAUX BIOSSOURCÉS ---
         "Bois de sapin / résineux": 0.13,
-        "Brique de terre cuite creuse": 0.45,
-        "Béton de granulats (Parpaing)": 1.05,
-        "Brique pleine": 1.15,
-        "Verre standard": 1.2,
-        "Béton armé plein": 2.3
-    }
+        "Bois dur (Chêne / Hêtre)": 0.18,
+        "Panneau de particules (OSB / Contreplaqué)": 0.14,
+        "Béton de chanvre": 0.07,
+        
+        # --- BRIQUES ET BLOCS DE CONSTRUCTION ---
+        "Béton cellulaire (Siporex / Thermopierre)": 0.12,
+        "Brique de terre cuite creuse isolante (Monomur)": 0.14,
+        "Brique de terre cuite creuse standard": 0.45,
+        "Bloc de béton de granulats légers (Ponce)": 0.35,
+        "Bloc de béton de granulats (Parpaing creux)": 1.05,
+        "Brique de terre cuite pleine": 1.15,
+        "Brique de terre crue compressée (Adobe)": 1.00,
+        
+        # --- BÉTONS, LIANTS ET ENDUITS ---
+        "Béton de pierre ponce": 0.40,
+        "Plâtre / Plaque de plâtre (BA13)": 0.25,
+        "Enduit de façade extérieur (Mortier de ciment)": 1.15,
+        "Béton plein standard": 1.75,
+        "Béton armé plein (Forte densité)": 2.30,
+        
+        # --- ROCHES ET PIERRES NATURELLES ---
+        "Pierre calcaire tendre": 1.40,
+        "Ardoise de couverture": 2.20,
+        "Pierre calcaire dure (Pierre de taille)": 2.80,
+        "Granit / Grès massif": 3.00,
+        
+        # --- AUTRES MATÉRIAUX DE PAROI ---
+        "Verre de vitrage standard": 1.20,
+        "Lame d'air immobile (Théorique)": 0.026
+    
 
     # --- 1. CONFIGURATION DE L'ENVIRONNEMENT DE LA MAISON DE 130 M² ---
     col_env1, col_env2 = st.columns(2)
