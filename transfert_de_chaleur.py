@@ -221,25 +221,78 @@ tab14 = onglets[14]
 
 
 def afficher_atelier_isolants_verrouille(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 5 (Les conducteurs et les isolants) sur deux colonnes."""
     import random
 
+    # 1. BASE DE DONNÉES DU QUIZ TECHNIQUE DES CONDUCTEURS ET ISOLANTS
     questions_therm5_sources = [
-        {"id": "qt5_1", "q": "Quelle lettre de l'alphabet grec désigne la conductivité thermique d'un matériau ?", "options": ["Lambda (λ)", "Phi (Φ)", "Rho (ρ)"], "rep": "Lambda (λ)"},
-        {"id": "qt5_2", "q": "Quelle est l'unité légale de la conductivité thermique dans le Système International ?", "options": ["W/(m.K)", "Joule/kg", "W/m²"], "rep": "W/(m.K)"},
-        {"id": "qt5_3", "q": "Parmi les matériaux suivants, lequel possède la conductivité thermique la plus élevée ?", "options": ["Le cuivre", "Le verre", "Le bois"], "rep": "Le cuivre"},
-        {"id": "qt5_4", "q": "Quelle est la valeur maximale limite du lambda pour qu'un matériau soit qualifié d'isolant thermique ?", "options": ["0,05 W/(m.K)", "1,0 W/(m.K)", "0,5 W/(m.K)"], "rep": "0,05 W/(m.K)"},
-        {"id": "qt5_5", "q": "Quel élément immobile, prisonnier des fibres ou des alvéoles, fait le pouvoir des isolants ?", "options": ["L'air", "L'eau", "Le vide"], "rep": "L'air"},
-        {"id": "qt5_6", "q": "Pourquoi les métaux sont-ils d'excellents conducteurs de chaleur ?", "options": ["En raison de la présence d'électrons libres", "Parce qu'ils ont une densité faible", "Parce qu'ils absorbent le rayonnement"], "rep": "En raison de la présence d'électrons libres"},
-        {"id": "qt5_7", "q": "La laine de verre et le polystyrène expansé sont des matériaux dits :", "options": ["Isolants thermiques", "Conducteurs thermiques", "Réfractaires purs"], "rep": "Isolants thermiques"},
-        {"id": "qt5_8", "q": "Si l'on double l'épaisseur d'un panneau isolant, qu'advient-il du flux de chaleur qui le traverse ?", "options": ["Il est divisé par deux", "Il est doublé", "Il reste strictement identique"], "rep": "Il est divisé par deux"},
-        {"id": "qt5_9", "q": "Quel isolant thermique naturel d'origine végétale est couramment utilisé en panneaux rigides ?", "options": ["Le liège expansé", "La laine de verre", "Le béton cellulaire"], "rep": "Le liège expansé"},
-        {"id": "qt5_10", "q": "Dans l'industrie, pour évacuer la chaleur d'un processeur, on utilise un dissipateur en :", "options": ["Aluminium", "Plastique PVC", "Bois de sapin"], "rep": "Aluminium"}
+        {
+            "id": "qt5_1", 
+            "q": "Quelle lettre de l'alphabet grec désigne la conductivité thermique d'un matériau ?", 
+            "options": ["Lambda (λ)", "Phi (Φ)", "Rho (ρ)"], 
+            "rep": "Lambda (λ)"
+        },
+        {
+            "id": "qt5_2", 
+            "q": "Quelle est l'unité légale de la conductivité thermique dans le Système International ?", 
+            "options": ["W/(m.K)", "Joule/kg", "W/m²"], 
+            "rep": "W/(m.K)"
+        },
+        {
+            "id": "qt5_3", 
+            "q": "Parmi les matériaux suivants, lequel possède la conductivité thermique la plus élevée ?", 
+            "options": ["Le cuivre", "Le verre", "Le bois"], 
+            "rep": "Le cuivre"
+        },
+        {
+            "id": "qt5_4", 
+            "q": "Quelle est la valeur maximale limite du lambda pour qu'un matériau soit qualifié d'isolant thermique ?", 
+            "options": ["0,05 W/(m.K)", "1,0 W/(m.K)", "0,5 W/(m.K)"], 
+            "rep": "0,05 W/(m.K)"
+        },
+        {
+            "id": "qt5_5", 
+            "q": "Quel élément immobile, prisonnier des fibres ou des alvéoles, fait le pouvoir des isolants ?", 
+            "options": ["L'air", "L'eau", "Le vide"], 
+            "rep": "L'air"
+        },
+        {
+            "id": "qt5_6", 
+            "q": "Pourquoi les métaux sont-ils d'excellents conducteurs de chaleur ?", 
+            "options": ["En raison de la présence d'électrons libres", "Parce qu'ils ont une densité faible", "Parce qu'ils absorbent le rayonnement"], 
+            "rep": "En raison de la présence d'électrons libres"
+        },
+        {
+            "id": "qt5_7", 
+            "q": "La laine de verre et le polystyrène expansé sont des matériaux dits :", 
+            "options": ["Isolants thermiques", "Conducteurs thermiques", "Réfractaires purs"], 
+            "rep": "Isolants thermiques"
+        },
+        {
+            "id": "qt5_8", 
+            "q": "Si l'on double l'épaisseur d'un panneau isolant, qu'advient-il du flux de chaleur qui le traverse ?", 
+            "options": ["Il est divisé par deux", "Il est doublé", "Il reste strictement identique"], 
+            "rep": "Il est divisé par deux"
+        },
+        {
+            "id": "qt5_9", 
+            "q": "Quel isolant thermique naturel d'origine végétale est couramment utilisé en panneaux rigides ?", 
+            "options": ["Le liège expansé", "La laine de verre", "Le béton cellulaire"], 
+            "rep": "Le liège expansé"
+        },
+        {
+            "id": "qt5_10", 
+            "q": "Dans l'industrie, pour évacuer la chaleur d'un processeur, on utilise un dissipateur en :", 
+            "options": ["Aluminium", "Plastique PVC", "Bois de sapin"], 
+            "rep": "Aluminium"
+        }
     ]
 
     if "ordre_quiz_tab5_therm_aleatoire" not in st.session_state:
         random.shuffle(questions_therm5_sources)
         st.session_state.ordre_quiz_tab5_therm_aleatoire = questions_therm5_sources
 
+    # 2. BASE DE DONNÉES DU TEXTE À TROUS DES CONDUCTEURS ET ISOLANTS
     if "champs_therm5_clean" not in st.session_state:
         st.session_state.champs_therm5_clean = [
             ("1. La conductivité thermique est désignée par la lettre grecque ..........", ["Choisir...", "lambda", "phi"], "lambda", "therm5_t1"),
@@ -250,25 +303,40 @@ def afficher_atelier_isolants_verrouille(verrouille=False):
             ("6. Le cuivre est un excellent .......... thermique utilisé dans les échangeurs.", ["Choisir...", "conducteur", "isolant"], "conducteur", "therm5_t6"),
             ("7. Augmenter l'.......... d'une paroi permet de réduire le flux de chaleur perdu.", ["Choisir...", "épaisseur", "surface"], "épaisseur", "therm5_t7"),
             ("8. L'unité de la conductivité thermique se note W/(m...........).", ["Choisir...", "K", "J"], "K", "therm5_t8"),
-            ("9. Le polystyrène expansé is un isolant thermique d'origine ..........", ["Choisir...", "synthétique", "animale"], "synthétique", "therm5_t9"),
+            ("9. Le polystyrène expansé est un isolant thermique d'origine ..........", ["Choisir...", "synthétique", "animale"], "synthétique", "therm5_t9"),
             ("10. Les électrons .......... permettent aux métaux de transmettre rapidement l'agitation.", ["Choisir...", "libres", "liés"], "libres", "therm5_t10")
         ]
 
+    # 3. RENDU DES DEUX COLONNES D'ÉVALUATION STREAMLIT
     col_quiz, col_trous = st.columns(2)
+    
     with col_quiz:
         st.markdown("##### Quiz Technique de l'Atelier 5 (10 questions - 10 pts)")
         for idx, q_data in enumerate(st.session_state.ordre_quiz_tab5_therm_aleatoire, 1):
             st.write(f"**{idx}.** {q_data['q']}")
-            st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"therm_at5_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+            st.selectbox(
+                "", 
+                options=["Choisir..."] + q_data["options"], 
+                key=f"therm_at5_final_g_{q_data['id']}", 
+                disabled=verrouille, 
+                label_visibility="collapsed"
+            )
 
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 5 (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_therm5_clean:
             enonce, choix, attendu, cle = ligne
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-            with c_txt: st.write(enonce)
-            with c_sel: st.selectbox("", choix, key=f"{cle}_therm5_clean", disabled=verrouille, label_visibility="collapsed")
-
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox(
+                    "", 
+                    choix, 
+                    key=f"{cle}_therm5_clean", 
+                    disabled=verrouille, 
+                    label_visibility="collapsed"
+                )
 
 
 def afficher_atelier_modes_verrouille(verrouille=False):
@@ -2569,51 +2637,7 @@ with tab5:
         "que d'autres la bloquent, et découvrez la notion de conductivité thermique :"
     )
 
-    # =============================================================================
-    # 1. BANDE DESSINÉE HUMORISTIQUE : LE BOUCLIER CONTRE LE FROID
-    # =============================================================================
-    col_gauche_texte_t5, col_droite_img_t5 = st.columns(2)
 
-    with col_gauche_texte_t5:
-        st.write(
-            "**La BD humoristique textuelle : Le bouclier contre le froid**"
-        )
-        
-        st.info(
-            "**Cas 1 :** Au cœur d'une barre de cuivre, les électrons libres et les atomes sont collés les uns "
-            "aux autres. Dès qu'un joule arrive, ils se le passent à toute vitesse : "
-            "« Allez, ça file ! On est des conducteurs d'élite, la chaleur traverse à fond de train, "
-            "notre lambda est immense ! ».\n\n"
-            
-            "**Cas 2 :** Face à eux, dans un panneau de laine de roche, les molécules d'air sont piégées "
-            "dans des millions de petites alvéoles immobiles. La chaleur tente d'entrer : "
-            "« Oh non, impossible de passer ! Les atomes sont isolés et ne peuvent pas s'entrechoquer. "
-            "Le flux est totalement bloqué ! ».\n\n"
-            
-            "**Cas 3 :** Le froid hivernal arrive en force et percute la paroi extérieure de la maison. "
-            "Il se heurte à la couche isolante protectrice : "
-            "« Maudit matériau ! Mes calories ne peuvent pas s'échapper, l'isolant thermique fait office "
-            "de bouclier impénétrable ! ».\n\n"
-            
-            "**Cas 4 :** À l'intérieur, la température reste stable et douce sans consommer d'énergie. "
-            "Le système est protégé et le technicien sourit devant son bilan : "
-            "« Affaire classée ! Un bon choix de conductivité thermique a sauvé nos joules et préservé "
-            "le confort de l'habitation ! »."
-        )
-
-    with col_droite_img_t5:
-        if os.path.exists("isolant_caricature.jpg"):
-            st.image(
-                "isolant_caricature.jpg",
-                caption="Illustration humoristique du bouclier isolant",
-                use_container_width=True,
-            )
-        else:
-            st.warning(
-                "L'image 'isolant_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
-            )
-
-    st.write("---")
 
     # =============================================================================
     # 2. COURS TECHNIQUE : LA CONDUCTIVITÉ THERMIQUE (LAMBDA)
@@ -2694,6 +2718,51 @@ with tab5:
 
     st.write("---")
 
+    # =============================================================================
+    # 1. BANDE DESSINÉE HUMORISTIQUE : LE BOUCLIER CONTRE LE FROID
+    # =============================================================================
+    col_gauche_texte_t5, col_droite_img_t5 = st.columns(2)
+
+    with col_gauche_texte_t5:
+        st.write(
+            "**La BD humoristique textuelle : Le bouclier contre le froid**"
+        )
+        
+        st.info(
+            "**Cas 1 :** Au cœur d'une barre de cuivre, les électrons libres et les atomes sont collés les uns "
+            "aux autres. Dès qu'un joule arrive, ils se le passent à toute vitesse : "
+            "« Allez, ça file ! On est des conducteurs d'élite, la chaleur traverse à fond de train, "
+            "notre lambda est immense ! ».\n\n"
+            
+            "**Cas 2 :** Face à eux, dans un panneau de laine de roche, les molécules d'air sont piégées "
+            "dans des millions de petites alvéoles immobiles. La chaleur tente d'entrer : "
+            "« Oh non, impossible de passer ! Les atomes sont isolés et ne peuvent pas s'entrechoquer. "
+            "Le flux est totalement bloqué ! ».\n\n"
+            
+            "**Cas 3 :** Le froid hivernal arrive en force et percute la paroi extérieure de la maison. "
+            "Il se heurte à la couche isolante protectrice : "
+            "« Maudit matériau ! Mes calories ne peuvent pas s'échapper, l'isolant thermique fait office "
+            "de bouclier impénétrable ! ».\n\n"
+            
+            "**Cas 4 :** À l'intérieur, la température reste stable et douce sans consommer d'énergie. "
+            "Le système est protégé et le technicien sourit devant son bilan : "
+            "« Affaire classée ! Un bon choix de conductivité thermique a sauvé nos joules et préservé "
+            "le confort de l'habitation ! »."
+        )
+
+    with col_droite_img_t5:
+        if os.path.exists("isolant_caricature.jpg"):
+            st.image(
+                "isolant_caricature.jpg",
+                caption="Illustration humoristique du bouclier isolant",
+                use_container_width=True,
+            )
+        else:
+            st.warning(
+                "L'image 'isolant_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+            )
+
+    st.write("---")
     # =============================================================================
     # 3. LABORATOIRE VIRTUEL INTERACTIF : BANC D'ESSAI DES MATÉRIAUX
     # =============================================================================
