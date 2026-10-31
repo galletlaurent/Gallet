@@ -1732,31 +1732,19 @@ with tab3:
             "fournie engendre toujours une élévation prévisible de température, fixant l'unité de la chaleur (le Joule)."
         )
 
-        col_t32_h31, col_t32_h32 = st.columns(2)
-        with col_t32_h31:
-            col_t32_c1, col_t32_c2 = st.columns(2)
-            with col_t32_c1:
-                if os.path.exists("Joule.jpg"):
-                    st.image("Joule.jpg", caption="James Joule", use_container_width=True)
-                else:
-                    st.warning("L'image 'Joule.jpg' est introuvable.")
-            with col_t32_c2:
-                if os.path.exists("palettesjoule.jpg"):
-                    st.image("palettesjoule.jpg", caption="Expérience des palettes", use_container_width=True)
-                else:
-                    st.warning("L'image 'palettesjoule.jpg' est introuvable.")
-        with col_t32_h32:
-            col_t32_c3, col_t32_c4 = st.columns(2)
-            with col_t32_c3:
-                if os.path.exists("chaleur_unite.jpg"):
-                    st.image("chaleur_unite.jpg", caption="L'unité de l'énergie", use_container_width=True)
-                else:
-                    st.warning("L'image 'chaleur_unite.jpg' est introuvable.")
-            with col_t32_c4:
-                if os.path.exists("travail.jpg"):
-                    st.image("travail.jpg", caption="Conversion mécanique", use_container_width=True)
-                else:
-                    st.warning("L'image 'travail.jpg' est introuvable.")
+
+        col_t32_c1, col_t32_c2 = st.columns(2)
+        with col_t32_c1:
+            if os.path.exists("Joule.jpg"):
+                st.image("Joule.jpg", caption="James Joule", use_container_width=True)
+            else:
+                st.warning("L'image 'Joule.jpg' est introuvable.")
+        with col_t32_c2:
+            if os.path.exists("palettesjoule.jpg"):
+                st.image("palettesjoule.jpg", caption="Expérience des palettes", use_container_width=True)
+            else:
+                st.warning("L'image 'palettesjoule.jpg' est introuvable.")
+
 
     st.write("---")
 
