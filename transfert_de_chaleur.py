@@ -2747,18 +2747,22 @@ with tab5:
 
     lambda_choisi = catalogue_lambda[t5_sim_mat]
 
-    t5_col_s1, t5_col_s2 = st.columns(2)
-    with t5_col_s1:
-        t5_dt = st.slider("Écart de température intérieur/extérieur (dT en °C) :", min_value=10, max_value=60, value=30, key="t5_sim_dt")
-    with t5_col_s2:
-        t5_epaisseur = st.slider("Épaisseur de la plaque de test (e en centimètres) :", min_value=1, max_value=20, value=5, key="t5_sim_ep")
+    # CONFIGURATION DES TROIS CURSEURS SÉPARÉS
+    col_t5_p1, col_t5_p2, col_t5_p3 = st.columns(3)
+    
+    with col_t5_p1:
+        t_interieur = st.slider("Température INTÉRIEURE (Face chaude - °C) :", min_value=15, max_value=50, value=25, key="t5_sim_tin_libre")
+    with col_t5_p2:
+        t_exterieur = st.slider("Température EXTÉRIEURE (Face froide - °C) :", min_value=-20, max_value=15, value=5, key="t5_sim_tout_libre")
+    with col_t5_p3:
+        t5_epaisseur = st.slider("Épaisseur de la paroi (e - centimètres) :", min_value=1, max_value=40, value=10, key="t5_sim_ep_libre")
 
-    # Calcul rigoureux du flux conducteur surfacique selon la loi de Fourier
-    # Phi = lambda * A * dT / e. Ici on prend une surface unitaire A = 1 m²
+    # Calcul rigoureux du gradient de température (dT) et du flux selon la loi de Fourier
+    t5_dt = t_interieur - t_exterieur
     e_metres = t5_epaisseur / 100.0
     flux_surfacique = lambda_choisi * 1.0 * t5_dt / e_metres
 
-    # Rendu du schéma Matplotlib vectoriel
+    # Rendu du schéma Matplotlib vectoriel dynamique
     import matplotlib.pyplot as plt
     import matplotlib.patches as patches
 
@@ -2768,23 +2772,19 @@ with tab5:
     couleur_bloc_mat = "#94a3b8" if lambda_choisi > 1.0 else "#bae6fd"
     if lambda_choisi > 100: couleur_bloc_mat = "#fecdd3"
 
-    # Calcul de la température intérieure réelle basée sur l'écart (Extérieur fixe à 20°C + dT)
-    t_interieur_reelle = 20 + t5_dt
-
     # Dessin du banc d'essai
     ax_ba.add_patch(patches.Rectangle((0.5, 0.4), 1.2, 1.6, color="#ef4444", alpha=0.7)) # Côté chaud
     ax_ba.add_patch(patches.Rectangle((1.7, 0.4), 1.5, 1.6, color=couleur_bloc_mat, edgecolor='#1e293b', lw=1.5)) # Le matériau
     ax_ba.add_patch(patches.Rectangle((3.2, 0.4), 1.2, 1.6, color="#3b82f6", alpha=0.7)) # Côté froid
 
-    # AFFICHAGE DYNAMIQUE DE LA TEMPÉRATURE INTÉRIEURE AJUSTÉE
-    ax_ba.text(1.1, 1.2, f"Intérieur\n{t_interieur_reelle}°C", color="white", fontweight="bold", ha="center", va="center", fontsize=8)
+    # AFFICHAGE DYNAMIQUE DES DEUX TEMPÉRATURES LIBRES SUR LE SCHÉMA
+    ax_ba.text(1.1, 1.2, f"Intérieur\n{t_interieur}°C", color="white", fontweight="bold", ha="center", va="center", fontsize=8)
     
-    # EXTRACTION PROPRE DU NOM DU MATÉRIAU ET INTÉGRATION DYNAMIQUE DE L'ÉPAISSEUR CHOISIE
+    # Extraire proprement le nom court du matériau
     nom_court_mat = t5_sim_mat.split(" (")[0]
     ax_ba.text(2.45, 1.2, f"{nom_court_mat}\n{t5_epaisseur} cm\n$\lambda$ = {lambda_choisi:.3f}", color="#0f172a", fontweight="bold", ha="center", va="center", fontsize=8)
     
-    # AFFICHAGE DU CÔTÉ EXTÉRIEUR
-    ax_ba.text(3.8, 1.2, "Extérieur\n20°C", color="white", fontweight="bold", ha="center", va="center", fontsize=8)
+    ax_ba.text(3.8, 1.2, f"Extérieur\n{t_exterieur}°C", color="white", fontweight="bold", ha="center", va="center", fontsize=8)
 
     # Flèche de flux proportionnelle
     taille_fleche = min(12.0, max(1.5, flux_surfacique / 1000.0)) if lambda_choisi > 0.1 else 1.0
@@ -2796,13 +2796,22 @@ with tab5:
     ax_ba.axis('off')
     st.pyplot(fig_banc)
 
-    # Affichage textuel des résultats
-    st.markdown(
-        f"<div style='background-color: #f1f5f9; padding: 12px; border-radius: 6px; border-left: 4px solid #0f172a; font-size: 15px; font-weight: bold; color: #0f172a; text-align: center;'> "
-        f"Déperdition thermique mesurée : {flux_surfacique:.1f} Watts par mètre carré (W/m²)"
-        f"</div>",
-        unsafe_allow_html=True
+    # =============================================================================
+    # CALCUL ET AFFICHAGE DÉTAILLÉ DE LA DÉPERDITION THERMIQUE
+    # =============================================================================
+    st.markdown("**Calcul de la déperdition thermique surfacique :**")
+    st.latex(
+        r"\Phi = \frac{\lambda \times \Delta T}{e} = "
+        rf"\frac{{{lambda_choisi:.3f} \times ({t_interieur} - {t_exterieur})}}{{{e_metres:.3f}\text{{ m}}}}"
     )
+    
+    html_deperdition_box = (
+        f"<div style='background-color: #f1f5f9; padding: 15px; border-radius: 6px; "
+        f"border-left: 4px solid #0f172a; font-size: 16px; font-weight: bold; color: #0f172a; text-align: center;'>"
+        f"Déperdition thermique calculée : {flux_surfacique:.1f} Watts par mètre carré (W/m²)"
+        f"</div>"
+    )
+    st.markdown(html_deperdition_box, unsafe_allow_html=True)
     st.write("---")
 
     st.write("---")
