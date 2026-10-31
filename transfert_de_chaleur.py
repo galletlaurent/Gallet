@@ -219,6 +219,127 @@ tab12 = onglets[12]
 tab13 = onglets[13] 
 tab14 = onglets[14]
 
+
+
+def afficher_atelier_quantite_verrouille(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 6 (La quantité de chaleur) sur deux colonnes."""
+    import random
+
+    # # 1. BASE DE DONNÉES DU QUIZ TECHNIQUE DE LA QUANTITÉ DE CHALEUR
+    questions_therm6_sources = [
+        {
+            "id": "qt6_1", 
+            "q": "Quelle lettre majuscule symbolise la quantité de chaleur échangée ?", 
+            "options": ["Q", "W", "C"], 
+            "rep": "Q"
+        },
+        {
+            "id": "qt6_2", 
+            "q": "Dans l'équation calorimétrique sensible, quel terme représente l'écart de température (Tf - Ti) ?", 
+            "options": ["Delta T (ΔT)", "Lambda (λ)", "Alpha (α)"], 
+            "rep": "Delta T (ΔT)"
+        },
+        {
+            "id": "qt6_3", 
+            "q": "Quelle unité du Système International mesure de façon réglementaire la quantité de chaleur ?", 
+            "options": ["Le Joule", "La calorie", "Le Watt"], 
+            "rep": "Le Joule"
+        },
+        {
+            "id": "qt6_4", 
+            "q": "Comment appelle-t-on l'énergie thermique mise en jeu lors d'une simple variation de température sans transition de phase ?", 
+            "options": ["La chaleur sensible", "La chaleur latente", "Le flux conducteur"], 
+            "rep": "La chaleur sensible"
+        },
+        {
+            "id": "qt6_5", 
+            "q": "Quelle est la valeur approximative de la capacité thermique massique de l'eau liquide pure ?", 
+            "options": ["4 180 J/(kg.K)", "1 500 J/(kg.K)", "130 J/(kg.K)"], 
+            "rep": "4 180 J/(kg.K)"
+        },
+        {
+            "id": "qt6_6", 
+            "q": "Si un corps solide cède de la chaleur à son environnement, que fait sa température ?", 
+            "options": ["Elle diminue obligatoirement", "Elle augmente fortement", "Elle reste strictement constante"], 
+            "rep": "Elle diminue obligatoirement"
+        },
+        {
+            "id": "qt6_7", 
+            "q": "Quelle unité exprime la capacité thermique massique 'c' d'un corps ?", 
+            "options": ["J/(kg.K)", "J/kg", "Watt/m²"], 
+            "rep": "J/(kg.K)"
+        },
+        {
+            "id": "qt6_8", 
+            "q": "Parmi ces corps, lequel possède la plus petite capacité thermique massique, surchauffant au moindre apport ?", 
+            "options": ["Le plomb massif", "L'eau pure", "L'huile de cuisine"], 
+            "rep": "Le plomb massif"
+        },
+        {
+            "id": "qt6_9", 
+            "q": "Si l'on multiplie la masse d'un corps par deux, l'énergie nécessaire pour le chauffer d'un même écart est :", 
+            "options": ["Doublée", "Divisée par deux", "Strictement identique"], 
+            "rep": "Doublée"
+        },
+        {
+            "id": "qt6_10", 
+            "q": "L'appareil de laboratoire isolé thermiquement qui sert à mesurer ces transferts de chaleur est :", 
+            "options": ["Un calorimètre", "Un manomètre", "Un thermocouple"], 
+            "rep": "Un calorimètre"
+        }
+    ]
+
+    if "ordre_quiz_tab6_therm_aleatoire" not in st.session_state:
+        random.shuffle(questions_therm6_sources)
+        st.session_state.ordre_quiz_tab6_therm_aleatoire = questions_therm6_sources
+
+    # # 2. BASE DE DONNÉES DU TEXTE À TROUS DE LA QUANTITÉ DE CHALEUR
+    if "champs_therm6_clean" not in st.session_state:
+        st.session_state.champs_therm6_clean = [
+            ("1. La quantité de chaleur sensible est symbolisée par la lettre majuscule ..........", ["Choisir...", "Q", "T"], "Q", "therm6_t1"),
+            ("2. L'unité officielle de l'énergie thermique et de la chaleur est le ..........", ["Choisir...", "Joule", "Watt"], "Joule", "therm6_t2"),
+            ("3. Le chauffage d'un corps sans changement d'état mobilise de la chaleur ..........", ["Choisir...", "sensible", "latente"], "sensible", "therm6_t3"),
+            ("4. L'eau possède une .......... thermique massique extrêmement élevée de 4180 J/(kg.K).", ["Choisir...", "capacité", "conductivité"], "capacité", "therm6_t4"),
+            ("5. Le terme .......... T correspond à la soustraction de la température finale et initiale.", ["Choisir...", "Delta", "Alpha"], "Delta", "therm6_t5"),
+            ("6. Les métaux ont une capacité thermique très .......... et chauffent donc très vite.", ["Choisir...", "faible", "élevée"], "faible", "therm6_t6"),
+            ("7. Un corps qui se refroidit en cédant de l'énergie possède un signe Q ..........", ["Choisir...", "négatif", "positif"], "négatif", "therm6_t7"),
+            ("8. L'unité de la constante de capacité massique se note J/(kg...........).", ["Choisir...", "K", "W"], "K", "therm6_t8"),
+            ("9. Un doublement de la masse à chauffer implique une quantité de chaleur ..........", ["Choisir...", "doublée", "inchangée"], "doublée", "therm6_t9"),
+            ("10. Les mesures expérimentales de chaleurs s'effectuent dans un .......... de laboratoire.", ["Choisir...", "calorimètre", "thermomètre"], "calorimètre", "therm6_t10")
+        ]
+
+    # # 3. RENDU DES DEUX COLONNES D'ÉVALUATION STREAMLIT
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique de l'Atelier 6 (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab6_therm_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox(
+                "", 
+                options=["Choisir..."] + q_data["options"], 
+                key=f"therm_at6_final_g_{q_data['id']}", 
+                disabled=verrouille, 
+                label_visibility="collapsed"
+            )
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 6 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_therm6_clean:
+            enonce, choix, attendu, cle = ligne
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox(
+                    "", 
+                    choix, 
+                    key=f"{cle}_therm6_clean", 
+                    disabled=verrouille, 
+                    label_visibility="collapsed"
+                )
+
+
 def afficher_atelier_isolants_verrouille(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 5 (Les conducteurs et les isolants) sur deux colonnes."""
     import random
@@ -2968,10 +3089,375 @@ with tab5:
         )
 
 
+with tab6:
+    st.header("La Quantité de Chaleur et la Capacité Thermique")
+    
+    st.write(
+        "**Définition :** La quantité de chaleur sensible ($Q$, exprimée en Joules) absorbée ou cédée par un corps "
+        "lors d'une variation de température dépend de sa masse ($m$), de l'écart de température ($\Delta T$) "
+        "et d'une grandeur propre à sa nature chimique appelée la **capacité thermique massique** ($c$, exprimée en $\\text{J}/(\\text{kg}\\cdot\\text{K})$)."
+    )
 
+    # =============================================================================
+    # 1. BANDE DESSINÉE HUMORISTIQUE : LA SOIF DE JOULES DES ATOMES
+    # =============================================================================
+    col_gauche_texte_t6, col_droite_img_t4 = st.columns(2)
 
+    with col_gauche_texte_t6:
+        st.write(
+            "**La BD humoristique textuelle : La soif de joules des atomes**"
+        )
+        
+        st.info(
+            "**Cas 1 :** Un kilogramme d'eau pure dort paisiblement à 20 °C dans une casserole. "
+            "Ses atomes demandent énormément d'énergie pour daigner s'agiter d'un seul petit degré : "
+            "« Attention, on est l'eau ! Notre capacité thermique massique est gigantesque, il nous faut "
+            "4 180 Joules pour grimper de 1 °C, préparez les brûleurs ! ».\n\n"
+            
+            "**Cas 2 :** Juste à côté, un bloc d'un kilogramme de plomb reçoit la même flamme. "
+            "Ses atomes, beaucoup moins gourmands, s'excitent instantanément : "
+            "« Oh, c'est trop facile pour nous ! Avec notre petit $c$ de 130 Joules, la moindre étincelle "
+            "nous fait surchauffer, on grimpe en température à toute vitesse ! ».\n\n"
+            
+            "**Cas 3 :** L'enseignant jette un coup d'œil au thermomètre et prépare le calcul de l'énergie "
+            "totale reçue par le système en multipliant tout le monde : "
+            "« C'est l'heure de l'addition ! Masse, capacité et thermomètre, tout le monde s'aligne "
+            "dans l'équation magique $Q = m \cdot c \cdot \Delta T$ ! ».\n\n"
+            
+            "**Cas 4 :** L'énergie a été entièrement transférée, l'eau bout et le plomb est brûlant. "
+            "Le compteur de Joules s'arrête net sur la valeur exacte calculée : "
+            "« Affaire classée ! La matière a absorbé son quota exact de calories, les lois de la calorimétrie "
+            "ont encore frappé avec une précision atomique ! »."
+        )
 
+    with col_droite_img_t4:
+        if os.path.exists("quantite_caricature.jpg"):
+            st.image(
+                "quantite_caricature.jpg",
+                caption="Illustration humoristique de l'absorption thermique",
+                use_container_width=True,
+            )
+        else:
+            st.warning(
+                "L'image 'quantite_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+            )
 
+    st.write("---")
+
+    # =============================================================================
+    # 2. COURS HISTORIQUE ET TECHNIQUE : L'ÉQUATION FONCTIONNELLE
+    # =============================================================================
+    col_t6_h1, col_t6_h2 = st.columns(2)
+    
+    with col_t6_h1:
+        st.markdown("##### La Notion de Chaleur Sensible")
+        st.write(
+            "**L'Équation Fondamentale :** Lorsqu'un corps ne change pas d'état physique (il reste liquide ou solide), "
+            "l'apport de chaleur modifie sa température. On parle alors de **chaleur sensible**.\n\n"
+            "**L'influence de la nature chimique :** Chaque corps réagit différemment à l'apport d'énergie. "
+            "L'eau pure a une capacité thermique exceptionnellement élevée ($c = 4180\\text{ J}/(\\text{kg}\\cdot\\text{K})$), "
+            "ce qui en fait un excellent fluide caloporteur pour stocker ou transporter la chaleur dans les chauffages centraux."
+        )
+
+        col_t61_h11, col_t61_h21 = st.columns(2)
+        with col_t61_h11:
+            col_t61_c1, col_t61_c2 = st.columns(2)
+            with col_t61_c1:
+                if os.path.exists("eau_calorique.jpg"):
+                    st.image("eau_calorique.jpg", caption="Eau caloporteuse", use_container_width=True)
+                else:
+                    st.warning("L'image 'eau_calorique.jpg' est introuvable.")
+            with col_t61_c2:
+                if os.path.exists("cuve_stockage.jpg"):
+                    st.image("cuve_stockage.jpg", caption="Stockage thermique", use_container_width=True)
+                else:
+                    st.warning("L'image 'cuve_stockage.jpg' est introuvable.")
+        with col_t61_h21:
+            col_t61_c3, col_t61_c4 = st.columns(2)
+            with col_t61_c3:
+                if os.path.exists("chauffage_central.jpg"):
+                    st.image("chauffage_central.jpg", caption="Circuit de chauffage", use_container_width=True)
+                else:
+                    st.warning("L'image 'chauffage_central.jpg' est introuvable.")
+            with col_t61_c4:
+                if os.path.exists("inertie_sol.jpg"):
+                    st.image("inertie_sol.jpg", caption="Inertie des chapes", use_container_width=True)
+                else:
+                    st.warning("L'image 'inertie_sol.jpg' est introuvable.")
+            
+    with col_t6_h2:
+        st.markdown("##### Les Constantes des Solides et Métaux")
+        st.write(
+            "**Le comportement des métaux :** Contrairement à l'eau, les métaux possèdent des capacités thermiques "
+            "massiques très faibles (généralement inférieures à $900\\text{ J}/(\\text{kg}\\cdot\\text{K})$).\n\n"
+            "**Conséquence sur le thermomètre :** À cause de cette faible valeur, une toute petite quantité de "
+            "chaleur provoque une élévation de température fulgurante du métal. C'est pourquoi les ustensiles "
+            "de cuisine métalliques deviennent brûlants presque instantanément au contact d'une plaque de cuisson."
+        )
+
+        col_t62_h31, col_t62_h32 = st.columns(2)
+        with col_t62_h31:
+            col_t62_c1, col_t62_c2 = st.columns(2)
+            with col_t62_c1:
+                if os.path.exists("bloc_metal.jpg"):
+                    st.image("bloc_metal.jpg", caption="Inertie métallique", use_container_width=True)
+                else:
+                    st.warning("L'image 'bloc_metal.jpg' est introuvable.")
+            with col_t62_c2:
+                if os.path.exists("poele_cuisine.jpg"):
+                    st.image("poele_cuisine.jpg", caption="Ustensiles de cuisine", use_container_width=True)
+                else:
+                    st.warning("L'image 'poele_cuisine.jpg' est introuvable.")
+        with col_t62_h32:
+            col_t62_c3, col_t62_c4 = st.columns(2)
+            with col_t62_c3:
+                if os.path.exists("fusion_industrie.jpg"):
+                    st.image("fusion_industrie.jpg", caption="Chauffage industriel", use_container_width=True)
+                else:
+                    st.warning("L'image 'fusion_industrie.jpg' est introuvable.")
+            with col_t62_c4:
+                if os.path.exists("calculateur_j.jpg"):
+                    st.image("calculateur_j.jpg", caption="Mesure de l'énergie", use_container_width=True)
+                else:
+                    st.warning("L'image 'calculateur_j.jpg' est introuvable.")
+
+    st.write("---")
+
+    # =============================================================================
+    # 3. LABORATOIRE VIRTUEL INTERACTIF : ESTIMATEUR D'ÉNERGIE CHALEUR
+    # =============================================================================
+    st.subheader("Laboratoire Virtuel : Simulateur de calcul de quantité de chaleur")
+    st.write(
+        "Sélectionnez un corps, ajustez sa masse ainsi que ses températures initiale "
+        "et finale pour calculer en direct l'énergie thermique totale requise :"
+    )
+
+    # Référentiel des constantes c réelles
+    catalogue_capacites = {
+        "Eau pure (Fluide caloporteur haut de gamme)": 4180,
+        "Lait entier": 3890,
+        "Bière standard": 4050,
+        "Éthanol (Alcool pur)": 2440,
+        "Huile végétale de cuisine": 2000,
+        "Glace d'eau (-10°C)": 2100,
+        "Béton de construction": 880,
+        "Verre blanc": 840,
+        "Aluminium pur": 897,
+        "Acier doux standard": 450,
+        "Cuivre pur": 385,
+        "Plomb massif": 130
+    }
+
+    t6_sim_corps = st.selectbox(
+        "Sélectionnez le corps à chauffer ou refroidir :",
+        list(catalogue_capacites.keys()),
+        key="t6_sim_choix_corps"
+    )
+
+    c_physique = catalogue_capacites[t6_sim_corps]
+
+    col_t6_p1, col_t6_p2, col_t6_p3 = st.columns(3)
+    with col_t6_p1:
+        t6_masse = st.slider("Masse du corps à étudier (m en kg) :", min_value=0.1, max_value=10.0, value=1.0, step=0.1, key="t6_sim_m")
+    with col_t6_p2:
+        t6_t_init = st.slider("Température INITIALE (Ti en °C) :", min_value=-20, max_value=100, value=20, key="t6_sim_ti")
+    with col_t6_p3:
+        t6_t_final = st.slider("Température FINALE (Tf en °C) :", min_value=-20, max_value=100, value=60, key="t6_sim_tf")
+
+    # Calcul de la quantité de chaleur sensible
+    t6_delta_t = t6_t_final - t6_t_init
+    chaleur_joules = t6_masse * c_physique * t6_delta_t
+    chaleur_kilojoules = chaleur_joules / 1000.0
+
+    # Rendu du schéma Matplotlib vectoriel
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+
+    fig_quantite, ax_q = plt.subplots(figsize=(8.5, 2.5))
+    
+    # Couleur du contenant proportionnelle à la température finale
+    couleur_thermique = "#3b82f6" if t6_t_final < 25 else "#ef4444"
+    
+    # Dessin de l'enceinte de chauffage calorimétrique
+    ax_q.add_patch(patches.Rectangle((1.0, 0.4), 2.5, 1.5, facecolor='#f1f5f9', edgecolor='#1e293b', lw=2))
+    ax_q.add_patch(patches.Rectangle((1.2, 0.4), 2.1, 1.1 * (t6_masse / 10.0) + 0.2, color=couleur_thermique, alpha=0.6))
+    
+    # Extraction propre du nom du corps pour l'affichage textuel interne
+    nom_court_corps = t6_sim_corps.split(" (")[0]
+    ax_q.text(2.25, 1.1, f"{nom_court_corps}\n{t6_masse:.1f} kg", color='#0f172a', fontweight='bold', ha='center', fontsize=9)
+    
+    # Flèche d'apport ou de libération d'énergie (Flux de chaleur)
+    if chaleur_joules >= 0:
+        ax_q.arrow(4.5, 1.15, 1.2, 0, head_width=0.15, head_length=0.15, fc='#ef4444', ec='#ef4444', lw=2.5)
+        ax_q.text(5.1, 1.4, f"Chaleur absorbée\n+ {abs(chaleur_kilojoules):.1f} kJ", color='#b91c1c', fontsize=9, fontweight='bold', ha='center')
+    else:
+        ax_q.arrow(5.7, 1.15, -1.2, 0, head_width=0.15, head_length=0.15, fc='#3b82f6', ec='#3b82f6', lw=2.5)
+        ax_q.text(5.1, 1.4, f"Chaleur cédée\n- {abs(chaleur_kilojoules):.1f} kJ", color='#1d4ed8', fontsize=9, fontweight='bold', ha='center')
+
+    ax_q.set_xlim(0, 7.5)
+    ax_q.set_ylim(0, 2.3)
+    ax_q.axis('off')
+    st.pyplot(fig_quantite)
+
+    # Démonstration du calcul de l'équation physique
+    st.markdown("**Formule littérale et application numérique :**")
+    st.latex(
+        r"Q = m \times c \times (T_f - T_i) = "
+        rf"{t6_masse:.1f}\text{{ kg}} \times {c_physique} \times ({t6_t_final} - {t6_t_init}) = {chaleur_joules:,.1f}\text{{ Joules}}"
+    )
+
+    st.write("---")
+    if "suite_verrouille_tab6_therm" not in st.session_state:
+        st.session_state.suite_verrouille_tab6_therm = False
+    verrou_at6 = st.session_state.suite_verrouille_tab6_therm
+
+    # Affichage du module de questions spécifique à l'Atelier de la Quantité de Chaleur
+    afficher_atelier_quantite_verrouille(verrouille=verrou_at6)
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 6")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat6 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier sur la Quantité de Chaleur.",
+        key="check_certif_therm6_final_net",
+        disabled=verrou_at6,
+    )
+
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 6",
+        key="btn_export_suite6_therm_official",
+        use_container_width=True,
+        disabled=verrou_at6,
+    ):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat6:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction du Quiz Technique (10 pts)
+            score_q6 = 0.0
+            if "ordre_quiz_tab6_therm_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab6_therm_aleatoire:
+                    saisie = st.session_state.get(f"therm_at6_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip():
+                        score_q6 += 1.0
+
+            # 2. Correction du Texte à trous (10 pts)
+            score_t6 = 0.0
+            if "champs_therm6_clean" in st.session_state:
+                for ligne in st.session_state.champs_therm6_clean:
+                    enonce_t, choix_t, attendu_t, cle_t = ligne
+                    saisie_t = st.session_state.get(f"{cle_t}_therm6_clean", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu_t).strip():
+                        score_t6 += 1.0
+
+            # 3. Sauvegarde définitive dans la session et rafraîchissement
+            st.session_state.score_suite6_therm_p1 = round(float(score_q6), 1)
+            st.session_state.score_suite6_therm_p2 = round(float(score_t6), 1)
+            st.session_state.score_final_suite6_therm = round(float(score_q6 + score_t6), 1)
+            st.session_state.suite_verrouille_tab6_therm = True
+            st.st_rerun() if hasattr(st, "st_rerun") else st.rerun()
+
+    # --- COMPILATION ET TÉLÉCHARGEMENT DU BILAN HTML SCELLÉ ---
+    if st.session_state.get("suite_verrouille_tab6_therm", False):
+        from datetime import datetime
+        scr1_t6 = st.session_state.get("score_suite6_therm_p1", 0.0)
+        scr2_t6 = st.session_state.get("score_suite6_therm_p2", 0.0)
+        tot_s_t6 = st.session_state.get("score_final_suite6_therm", 0.0)
+        timestamp_suite6 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER QUANTITÉ DE CHALEUR SCELLÉ | Note de session : {tot_s_t6:.1f} / 20")
+
+        html_export_therm6 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Quantité de Chaleur - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 20px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Physique Thermique</h1>
+                <p>Atelier 6 : Formulation mathématique et calcul de la quantité de chaleur sensible</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite6}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t6:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t6:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse de Cours : <strong>{scr2_t6:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 6 : <strong>{tot_s_t6:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab6_therm_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab6_therm_aleatoire, 1):
+                saisie = st.session_state.get(f"therm_at6_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_therm6 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_therm6 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_therm6_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_therm6_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+
+                saisie_texte = st.session_state.get(f"{cle_variable}_therm6_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_therm6 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_therm6 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        st.download_button(
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 6 (.HTML)",
+            data=html_export_therm6,
+            file_name=preparer_nom_fichier("Atelier_6_Quantite_Chaleur").replace(".txt", ".html"),
+            mime="text/html",
+            use_container_width=True,
+        )
 
 
 
