@@ -5283,32 +5283,32 @@ with tab10:
     with col_droite_cours_tp:
         st.markdown("##### Illustration caricaturale du cas")
         if scen_tp == "Béton massif : Exothermie d'une pile de pont":
+            fichier_img_tp = "exothermipiledepont.jpg"
             caption_img_tp = "Caricature de l'accumulation de chaleur au cœur du béton massif"
-            if os.path.exists("exothermipiledepont.jpg"):
-                fichier_img_tp = "exothermipiledepont.jpg"
-            else:
-                fichier_img_tp = "tp_exothermie.jpg"
+            st.markdown("##### Illustration caricaturale du cas")
+            fichier_img_tp = "tp_exothermie.jpg"
+            caption_img_tp = "Caricature de l'accumulation de chaleur au cœur du béton massif"
 
         elif scen_tp == "Ouvrage d'art : Fissuration thermique de tablier":
+            fichier_img_tp = "Fissurationthermiquetablier.jpg"
             caption_img_tp = "Caricature des contraintes de traction sur la peau du béton"
-            if os.path.exists("Fissurationthermiquetablier.jpg"):
-                fichier_img_tp = "Fissurationthermiquetablier.jpg"
-            else:
-                fichier_img_tp = "tp_fissuration.jpg"
+            st.markdown("##### Illustration caricaturale du cas")
+            fichier_img_tp = "tp_fissuration.jpg"
+            caption_img_tp = "Caricature des contraintes de traction sur la peau du béton"
 
         elif scen_tp == "Viabilité hivernale : Coulage par temps de gel":
+            fichier_img_tp = "Coulagepartempsgel.jpg"
             caption_img_tp = "Caricature de la menace de solidification de l'eau dans le ciment"
-            if os.path.exists("Coulagepartempsgel.jpg"):
-                fichier_img_tp = "Coulagepartempsgel.jpg"
-            else:
-                fichier_img_tp = "tp_gel.jpg"
+            st.markdown("##### Illustration caricaturale du cas")
+            fichier_img_tp = "tp_gel.jpg"
+            caption_img_tp = "Caricature de la menace de solidification de l'eau dans le ciment"
 
         else:
+            fichier_img_tp = "Prisesousmarine.jpg"
             caption_img_tp = "Caricature de l'océan comme puits thermique infini"
-            if os.path.exists("Prisesousmarine.jpg"):
-                fichier_img_tp = "Prisesousmarine.jpg"
-            else:
-                fichier_img_tp = "tp_sous_marin.jpg"
+            st.markdown("##### Illustration caricaturale du cas")
+            fichier_img_tp = "tp_sous_marin.jpg"
+            caption_img_tp = "Caricature de l'océan comme puits thermique infini"
 
         # Affichage de l'image correspondante
         if os.path.exists(fichier_img_tp):
@@ -5316,6 +5316,8 @@ with tab10:
         else:
             st.caption(caption_img_tp)
             
+        # Rendu de la zone de texte descriptive d
+        st.info(texte_bd_bleu_tp)
     st.write("---")
 
     # =============================================================================
