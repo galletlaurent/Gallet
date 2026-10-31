@@ -5310,13 +5310,13 @@ with tab10:
 
         # 1. Affichage supérieur : L'image réelle du cas (nom long)
         if os.path.exists(fichier_reel):
-            st.image(fichier_reel, caption=caption_reel, use_container_width=300)
+            st.image(fichier_reel, caption=caption_reel, use_container_width=150)
         else:
             st.caption(caption_reel)
 
         # 2. Affichage inférieur : L'image de la caricature (nom court)
         if os.path.exists(fichier_caricature):
-            st.image(fichier_caricature, caption=caption_caricature, use_container_width=300)
+            st.image(fichier_caricature, caption=caption_caricature, use_container_width=150)
         else:
             st.caption(caption_caricature)
 
