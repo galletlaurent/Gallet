@@ -219,6 +219,57 @@ tab12 = onglets[12]
 tab13 = onglets[13] 
 tab14 = onglets[14]
 
+def afficher_atelier_modes_verrouille(verrouille=False):
+    import random
+
+    questions_therm4_sources = [
+        {"id": "qt4_1", "q": "Quel mode de transfert thermique se propage sans aucun déplacement macroscopique de matière au sein des solides ?", "options": ["La conduction", "La convection", "Le rayonnement"], "rep": "La conduction"},
+        {"id": "qt4_2", "q": "Quel mécanisme de transfert de chaleur implique nécessairement un déplacement physique de matière fluide ?", "options": ["La convection", "La conduction", "Le rayonnement"], "rep": "La convection"},
+        {"id": "qt4_3", "q": "Quel scientifique français a formalisé en 1822 les lois mathématiques régissant la conduction de la chaleur ?", "options": ["Joseph Fourier", "Sadi Carnot", "Antoine Lavoisier"], "rep": "Joseph Fourier"},
+        {"id": "qt4_4", "q": "Quel mode de transfert peut se propager efficacement à travers le vide absolu de l'espace ?", "options": ["Le rayonnement", "La conduction", "La convection"], "rep": "Le rayonnement"},
+        {"id": "qt4_5", "q": "Quel type d'ondes électromagnétiques invisibles transporte l'énergie thermique lors d'un transfert par rayonnement ?", "options": ["Les ondes infrarouges", "Les rayons ultraviolets", "Les rayons X"], "rep": "Les ondes infrarouges"},
+        {"id": "qt4_6", "q": "Quel astronome a mis en évidence le rayonnement infrarouge en mesurant la température au-delà du spectre du prisme ?", "options": ["William Herschel", "Isaac Newton", "James Watt"], "rep": "William Herschel"},
+        {"id": "qt4_7", "q": "Dans une pièce chauffée par un radiateur, la montée de l'air chaud et la descente de l'air froid correspondent à :", "options": ["Des courants de convection", "Une conduction gazeuse", "Un rayonnement thermique"], "rep": "Des courants de convection"},
+        {"id": "qt4_8", "q": "La loi de Newton régit mathématiquement l'expression du flux thermique associé à quel mode ?", "options": ["La convection", "La conduction", "Le rayonnement"], "rep": "La convection"},
+        {"id": "qt4_9", "q": "La constante de Stefan-Boltzmann intervient dans le calcul du flux thermique de quel type de transfert ?", "options": ["Le rayonnement", "La conduction", "La convection"], "rep": "Le rayonnement"},
+        {"id": "qt4_10", "q": "Pourquoi les manches des poêles de cuisine sont-ils souvent fabriqués en bois ou en plastique ?", "options": ["Pour limiter le transfert par conduction", "Pour bloquer les courants de convection", "Pour réfléchir le rayonnement infrarouge"], "rep": "Pour limiter le transfert par conduction"}
+    ]
+
+    if "ordre_quiz_tab4_therm_aleatoire" not in st.session_state:
+        random.shuffle(questions_therm4_sources)
+        st.session_state.ordre_quiz_tab4_therm_aleatoire = questions_therm4_sources
+
+    if "champs_therm4_clean" not in st.session_state:
+        st.session_state.champs_therm4_clean = [
+            ("1. La .......... transmet l'agitation atomique de proche en proche dans les solides.", ["Choisir...", "conduction", "convection"], "conduction", "therm4_t1"),
+            ("2. Le déplacement de matière au sein des fluides caractérise la ..........", ["Choisir...", "convection", "conduction"], "convection", "therm4_t2"),
+            ("3. Le rayonnement infrarouge ne nécessite aucun support de ..........", ["Choisir...", "matière", "température"], "matière", "therm4_t3"),
+            ("4. Joseph Fourier a établi la loi analytique de la .......... thermique.", ["Choisir...", "conduction", "convection"], "conduction", "therm4_t4"),
+            ("5. William Herschel a découvert le rayonnement invisible ..........", ["Choisir...", "infrarouge", "ultraviolet"], "infrarouge", "therm4_t5"),
+            ("6. La loi de Newton permet de modéliser l'échange par ..........", ["Choisir...", "convection", "rayonnement"], "convection", "therm4_t6"),
+            ("7. La propagation de l'énergie solaire à travers le vide s'effectue par ..........", ["Choisir...", "rayonnement", "conduction"], "rayonnement", "therm4_t7"),
+            ("8. L'agitation cinétique se transmet sans déplacement de particules lors de la ..........", ["Choisir...", "conduction", "convection"], "conduction", "therm4_t8"),
+            ("9. Le flux thermique s'exprime dans le Système International en ..........", ["Choisir...", "Watts", "Joules"], "Watts", "therm4_t9"),
+            ("10. La constante de Stefan-Boltzmann régit l'émission par ..........", ["Choisir...", "rayonnement", "conduction"], "rayonnement", "therm4_t10")
+        ]
+
+    col_quiz, col_trous = st.columns(2)
+    with col_quiz:
+        st.markdown("##### Quiz Technique de l'Atelier 4 (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab4_therm_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"therm_at4_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 4 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_therm4_clean:
+            enonce, choix, cle = ligne, ligne, ligne[-1]
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: st.write(enonce)
+            with c_sel: st.selectbox("", choix, key=f"{cle}_therm4_clean", disabled=verrouille, label_visibility="collapsed")
+
+
+
 def afficher_atelier_chaleur_verrouille(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 3 (La chaleur) sur deux colonnes."""
     import random
@@ -1940,6 +1991,8 @@ with tab3:
     
     # Rendu final sécurisé
     st.markdown(tableau_html, unsafe_allow_html=True)
+
+    
     st.write("---")
     if "suite_verrouille_tab3_therm" not in st.session_state:
         st.session_state.suite_verrouille_tab3_therm = False
@@ -2094,16 +2147,363 @@ with tab3:
         )
 
 
+with tab4:
+    st.header("Les Modes de Transfert Thermique")
+    st.write(
+        "Découvrez comment l'énergie thermique se déplace d'un point à un autre à travers "
+        "la matière ou le vide, et analysez les trois mécanismes fondamentaux :"
+    )
+
+    # =============================================================================
+    # 1. BANDE DESSINÉE HUMORISTIQUE : LA GRANDE ÉVASION DES CALORIES
+    # =============================================================================
+    col_gauche_texte_t4, col_droite_img_t4 = st.columns(2)
+
+    with col_gauche_texte_t4:
+        st.write(
+            "**La BD humoristique textuelle : La grande évasion des calories**"
+        )
+        
+        st.info(
+            "**Cas 1 :** Dans la poêle en cuivre, les atomes métalliques du manche reçoivent les coups "
+            "de boutoir des flammes du gaz. Ils se mettent à trépigner sur place : "
+            "« Attention les gars, ça chauffe par en bas ! Transmettez l'agitation de proche en proche "
+            "sans bouger de vos sièges, c'est la conduction ! ».\n\n"
+            
+            "**Cas 2 :** Dans la casserole d'eau, les molécules du fond deviennent légères en chauffant. "
+            "Elles montent en flèche vers la surface pendant que le liquide froid redescend : "
+            "« En route pour l'ascenseur thermique ! On transporte la matière en bandes organisées, "
+            "c'est la convection ! ».\n\n"
+            
+            "**Cas 3 :** À distance, les rayons du soleil traversent le vide spatial et viennent frapper "
+            "la peau. Aucun contact, aucun atome pour aider, mais les photons transportent le flux : "
+            "« Pas besoin de matière pour voyager ! On traverse le néant à la vitesse de la lumière, "
+            "c'est le rayonnement infrarouge ! ».\n\n"
+            
+            "**Cas 4 :** Toutes les énergies se sont dissipées dans l'environnement. Le feu s'éteint, "
+            "les flux s'arrêtent et le froid conclut la manœuvre : "
+            "« Affaire classée ! Les trois complices ont dispersé tous les joules du système, "
+            "l'équilibre des températures est scellé ! »."
+        )
+
+    with col_droite_img_t4:
+        if os.path.exists("transfert_caricature.jpg"):
+            st.image(
+                "transfert_caricature.jpg",
+                caption="Illustration humoristique des trois modes de transfert",
+                use_container_width=True,
+            )
+        else:
+            st.warning(
+                "L'image 'transfert_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+            )
+
+    st.write("---")
+
+    # =============================================================================
+    # 2. COURS HISTORIQUE : LES SCIENTIFIQUES ET LES RECHERCHES
+    # =============================================================================
+    col_t4_h1, col_t4_h2 = st.columns(2)
+    
+    with col_t4_h1:
+        st.markdown("##### La Formulation Mathématique du Flux")
+        st.write(
+            "**Joseph Fourier (1822) :** Ce mathématicien et physicien français publie sa célèbre "
+            "Théorie analytique de la chaleur. Il y formule la loi de la conduction thermique, "
+            "démontrant que le flux de chaleur est proportionnel au gradient de température.\n\n"
+            "**La Conduction Microscopique :** C'est le seul mode de transfert thermique capable de "
+            "s'effectuer au sein des solides de proche en proche, par transmission directe de "
+            "l'agitation cinétique entre les atomes, sans déplacement macroscopique de matière."
+        )
+
+        col_t41_h11, col_t41_h21 = st.columns(2)
+        with col_t41_h11:
+            col_t41_c1, col_t41_c2 = st.columns(2)
+            with col_t41_c1:
+                if os.path.exists("Fourier.jpg"):
+                    st.image("Fourier.jpg", caption="Joseph Fourier", use_container_width=True)
+                else:
+                    st.warning("L'image 'Fourier.jpg' est introuvable.")
+            with col_t41_c2:
+                if os.path.exists("conduction_lab.jpg"):
+                    st.image("conduction_lab.jpg", caption="Barre de conduction", use_container_width=True)
+                else:
+                    st.warning("L'image 'conduction_lab.jpg' est introuvable.")
+        with col_t41_h21:
+            col_t41_c3, col_t41_c4 = st.columns(2)
+            with col_t41_c3:
+                if os.path.exists("convection_mouv.jpg"):
+                    st.image("convection_mouv.jpg", caption="Cellules de convection", use_container_width=True)
+                else:
+                    st.warning("L'image 'convection_mouv.jpg' est introuvable.")
+            with col_t41_c4:
+                if os.path.exists("courants.jpg"):
+                    st.image("courants.jpg", caption="Flux de fluides", use_container_width=True)
+                else:
+                    st.warning("L'image 'courants.jpg' est introuvable.")
+            
+    with col_t4_h2:
+        st.markdown("##### La Découverte du Rayonnement Invisible")
+        st.write(
+            "**William Herschel (1800) :** En faisant passer la lumière solaire à travers un prisme, "
+            "cet astronome britannique mesure la température de chaque couleur. Il découvre que "
+            "la chaleur maximale se situe au-delà du rouge visible, mettant en évidence le rayonnement infrarouge.\n\n"
+            "**Le Rayonnement et la Convection :** Contrairement à la conduction, la convection implique "
+            "un déplacement de fluide (gaz ou liquide). Le rayonnement, quant à lui, est le seul mode "
+            "pouvant se propager dans le vide absolu sous forme d'ondes électromagnétiques."
+        )
+
+        col_t42_h31, col_t42_h32 = st.columns(2)
+        with col_t42_h31:
+            col_t42_c1, col_t42_c2 = st.columns(2)
+            with col_t42_c1:
+                if os.path.exists("Herschel.jpg"):
+                    st.image("Herschel.jpg", caption="William Herschel", use_container_width=True)
+                else:
+                    st.warning("L'image 'Herschel.jpg' est introuvable.")
+            with col_t42_c2:
+                if os.path.exists("prisme.jpg"):
+                    st.image("prisme.jpg", caption="Expérience du prisme", use_container_width=True)
+                else:
+                    st.warning("L'image 'prisme.jpg' est introuvable.")
+        with col_t42_h32:
+            col_t42_c3, col_t42_c4 = st.columns(2)
+            with col_t42_c3:
+                if os.path.exists("infrarouge.jpg"):
+                    st.image("infrarouge.jpg", caption="Spectre infrarouge", use_container_width=True)
+                else:
+                    st.warning("L'image 'infrarouge.jpg' est introuvable.")
+            with col_t42_c4:
+                if os.path.exists("vide_spatial.jpg"):
+                    st.image("vide_spatial.jpg", caption="Propagation dans le vide", use_container_width=True)
+                else:
+                    st.warning("L'image 'vide_spatial.jpg' est introuvable.")
+
+    st.write("---")
+
+    # =============================================================================
+    # 3. LABORATOIRE VIRTUEL INTERACTIF : SIMULATEUR DE FLUX THERMIQUE
+    # =============================================================================
+    st.subheader("Laboratoire Virtuel : Dynamique des trois modes de transfert")
+    st.write(
+        "Sélectionnez un mode de transfert et observez comment les paramètres physiques "
+        "modifient l'intensité du flux d'énergie transmis :"
+    )
+
+    t4_sim_mode = st.selectbox(
+        "Sélectionnez le mécanisme de transfert thermique à analyser :",
+        ["Conduction (Dans un solide)", "Convection (Déplacement de fluide)", "Rayonnement (Ondes infrarouges)"],
+        key="t4_sim_choix_mode"
+    )
+
+    t4_col_s1, t4_col_s2 = st.columns(2)
+
+    with t4_col_s1:
+        dt_temperature = st.slider("Écart de température (dT en °C) :", min_value=5, max_value=80, value=30, key="t4_sim_dt")
+    with t4_col_s2:
+        surface_echange = st.slider("Surface d'échange (A en m²) :", min_value=1.0, max_value=10.0, value=2.0, step=0.5, key="t4_sim_surface")
+
+    # Modélisation mathématique simplifiée du flux thermique nominal (en Watts)
+    if "Conduction" in t4_sim_mode:
+        flux_calcule = 1.5 * surface_echange * dt_temperature / 0.05  # Simulation avec lambda fixe, e=5cm
+        formule_loi = r"\Phi = \frac{\lambda \cdot A \cdot \Delta T}{e} \quad \text{(Loi de Fourier)}"
+        color_theme = "#0284c7"
+    elif "Convection" in t4_sim_mode:
+        flux_calcule = 15.0 * surface_echange * dt_temperature       # Simulation avec h=15 W/(m².K)
+        formule_loi = r"\Phi = h \cdot A \cdot \Delta T \quad \text{(Loi de Newton)}"
+        color_theme = "#10b981"
+    else:
+        flux_calcule = 5.67e-8 * surface_echange * ((dt_temperature + 273.15)**4 - 293.15**4) * 0.9 # Stefan-Boltzmann avec T_env=20°C, emiss=0.9
+        formule_loi = r"\Phi = \epsilon \cdot \sigma \cdot A \cdot (T_1^4 - T_2^4) \quad \text{(Loi de Stefan-Boltzmann)}"
+        color_theme = "#ea580c"
+
+    st.markdown("**Équation physique de référence appliquée au modèle :**")
+    st.latex(formule_loi)
+
+    # Rendu graphique dynamique du flux (Matplotlib vectoriel)
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+
+    fig_flux, ax_fl = plt.subplots(figsize=(8, 2.5))
+    
+    # Représentation de l'enceinte de flux
+    ax_fl.add_patch(patches.Rectangle((0.5, 0.5), 1.5, 1.5, color="#ef4444", alpha=0.7))
+    ax_fl.add_patch(patches.Rectangle((5.0, 0.5), 1.5, 1.5, color="#3b82f6", alpha=0.7))
+    
+    ax_fl.text(1.25, 1.25, "Source\nChaude", color="white", fontweight="bold", ha="center", va="center")
+    ax_fl.text(5.75, 1.25, "Milieu\nFroid", color="white", fontweight="bold", ha="center", va="center")
+
+    epaisseur_fleche = min(12.0, max(1.5, flux_calcule / 150.0))
+    ax_fl.arrow(2.2, 1.25, 2.5, 0, head_width=0.25, head_length=0.25, fc=color_theme, ec=color_theme, lw=epaisseur_fleche)
+    ax_fl.text(3.45, 1.6, r"Flux thermique $\Phi$", color=color_theme, fontsize=10, fontweight="bold", ha="center")
+
+    ax_fl.set_xlim(0, 7.2)
+    ax_fl.set_ylim(0, 2.5)
+    ax_fl.axis('off')
+    st.pyplot(fig_flux)
+
+    # Affichage du résultat numérique dans un conteneur HTML stylisé
+    html_flux_box = f"""
+    <div style='background-color: #f1f5f9; padding: 15px; border-radius: 6px; border-left: 4px solid {color_theme}; font-size: 16px; font-weight: bold; color: #0f172a; text-align: center;'>
+        Puissance thermique transférée : {abs(flux_calcule):.1f} Watts (W)
+    </div>
+    """
+    st.markdown(html_flux_box, unsafe_allow_html=True)
 
 
 
+    st.write("---")
+    if "suite_verrouille_tab4_therm" not in st.session_state:
+        st.session_state.suite_verrouille_tab4_therm = False
+    verrou_at4 = st.session_state.suite_verrouille_tab4_therm
 
+    # Affichage du module de questions spécifique à l'Atelier des Modes de Transfert
+    afficher_atelier_modes_verrouille(verrouille=verrou_at4)
 
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 4")
 
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
+    case_certif_stat4 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier sur les Modes de Transfert.",
+        key="check_certif_therm4_final_net",
+        disabled=verrou_at4,
+    )
 
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4",
+        key="btn_export_suite4_therm_official",
+        use_container_width=True,
+        disabled=verrou_at4,
+    ):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat4:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction du Quiz Technique (10 pts)
+            score_q4 = 0.0
+            if "ordre_quiz_tab4_therm_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab4_therm_aleatoire:
+                    saisie = st.session_state.get(f"therm_at4_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip():
+                        score_q4 += 1.0
 
+            # 2. Correction du Texte à trous (10 pts)
+            score_t4 = 0.0
+            if "champs_therm4_clean" in st.session_state:
+                for ligne in st.session_state.champs_therm4_clean:
+                    enonce_t, choix_t, attendu_t, cle_t = ligne
+                    saisie_t = st.session_state.get(f"{cle_t}_therm4_clean", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu_t).strip():
+                        score_t4 += 1.0
 
+            # 3. Sauvegarde définitive dans la session et rafraîchissement
+            st.session_state.score_suite4_therm_p1 = round(float(score_q4), 1)
+            st.session_state.score_suite4_therm_p2 = round(float(score_t4), 1)
+            st.session_state.score_final_suite4_therm = round(float(score_q4 + score_t4), 1)
+            st.session_state.suite_verrouille_tab4_therm = True
+            st.rerun()
+
+    # --- COMPILATION ET TÉLÉCHARGEMENT DU BILAN HTML SCELLÉ ---
+    if st.session_state.get("suite_verrouille_tab4_therm", False):
+        from datetime import datetime
+        scr1_t4 = st.session_state.get("score_suite4_therm_p1", 0.0)
+        scr2_t4 = st.session_state.get("score_suite4_therm_p2", 0.0)
+        tot_s_t4 = st.session_state.get("score_final_suite4_therm", 0.0)
+        timestamp_suite4 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER MODES DE TRANSFERT SCELLÉ | Note de session : {tot_s_t4:.1f} / 20")
+
+        html_export_therm4 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Modes de Transfert - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 20px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Physique Thermique</h1>
+                <p>Atelier 4 : Analyse de la conduction, de la convection et du rayonnement électromagnétique</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite4}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t4:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t4:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse de Cours : <strong>{scr2_t4:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 4 : <strong>{tot_s_t4:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab4_therm_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab4_therm_aleatoire, 1):
+                saisie = st.session_state.get(f"therm_at4_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_therm4 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_therm4 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_therm4_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_therm4_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+
+                saisie_texte = st.session_state.get(f"{cle_variable}_therm4_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_therm4 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_therm4 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        st.download_button(
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 4 (.HTML)",
+            data=html_export_therm4,
+            file_name=preparer_nom_fichier("Atelier_4_Modes_Transfert").replace(".txt", ".html"),
+            mime="text/html",
+            use_container_width=True,
+        )
 
 
 
