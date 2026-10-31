@@ -11,12 +11,10 @@ st.set_page_config(page_title="Hub Maths-sciences", layout="wide")
 st.markdown("""
 <style>
 @media print {
-    /* Libere absolument toutes les structures de Streamlit */
+    /* Libere les structures globales */
     html, body, .main, .block-container, 
     [data-testid="stApp"], 
     [data-testid="stAppViewContainer"], 
-    [data-testid="stVerticalBlock"], 
-    [data-testid="stVerticalBlockBorderWrapper"],
     .stTabs, [data-testid="stTabContent"] {
         height: auto !important;
         overflow: visible !important;
@@ -25,47 +23,48 @@ st.markdown("""
         display: block !important;
     }
     
-    /* Force la grille de colonnes a rester fluide */
+    /* Force la grille horizontale en mode fluide */
     [data-testid="stHorizontalBlock"] {
-        height: auto !important;
-        overflow: visible !important;
         display: flex !important;
         flex-wrap: wrap !important;
+        height: auto !important;
+        overflow: visible !important;
     }
 
-    /* Force un saut de page propre apres chaque lot de 25 */
-    .saut-de-page {
-        page-break-after: always !important;
-        break-after: page !important;
+    /* VERROUILLAGE DES DIMENSIONS : Empêche le tassement vertical */
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        min-height: 4.8cm !important; /* Hauteur minimale stricte pour bloquer 5 lignes par page max */
+        height: 4.8cm !important;
+        margin-bottom: 0.3cm !important;
     }
 
-    /* SECURITE INTERNE : Evite de couper une vignette en deux */
+    /* Empeche de couper un cadre en deux sur la pliure */
     [data-testid="stColumn"] > div {
         break-inside: avoid !important;
         page-break-inside: avoid !important;
     }
 
-    /* Cache toute l'interface Streamlit globale et les boutons systeme */
+    /* Cache l'interface globale Streamlit */
     header, footer, [data-testid="stSidebar"], [data-testid="stHeader"], .stAppDeployButton,
     .stAppToolbar, [data-testid="stManageAppButton"], iframe, footer + div, .viewerBadge_v1 {
         display: none !important;
         visibility: hidden !important;
     }
     
-    /* Cache le titre du portail, la description et la barre de recherche */
+    /* Cache les titres et barres de recherche */
     h1, p, .stTextInput, .stSelectbox, .stAlert, [data-testid="stTabs"] nav {
         display: none !important;
     }
     
-    /* Masque les boutons individuels de téléchargement pour l'impression */
+    /* Cache les boutons de téléchargement */
     .stDownloadButton {
         display: none !important;
     }
     
-    /* Supprime les marges superflues pour maximiser l'espace A4 */
+    /* Ajustement des marges A4 */
     .main .block-container {
-        padding-top: 0.5rem !important;
-        padding-bottom: 0.5rem !important;
+        padding-top: 0.5cm !important;
+        padding-bottom: 0.5cm !important;
         max-width: 100% !important;
         margin: 0 !important;
     }
