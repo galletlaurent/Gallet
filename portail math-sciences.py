@@ -10,7 +10,41 @@ st.set_page_config(page_title="Hub Maths-sciences", layout="wide")
 st.markdown("""
 <style>
 @media print {
-    /* Cache toute l'interface globale Streamlit et les boutons système */
+    /* Libère les structures globales */
+    html, body, .main, .block-container, 
+    [data-testid="stApp"], 
+    [data-testid="stAppViewContainer"], 
+    [data-testid="stVerticalBlock"], 
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        height: auto !important;
+        overflow: visible !important;
+        position: static !important;
+        max-height: none !important;
+        display: block !important;
+    }
+    
+    /* Force la grille de colonnes à rester fluide */
+    [data-testid="stHorizontalBlock"] {
+        height: auto !important;
+        overflow: visible !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+    }
+
+    /* COMPACTION DES VIGNETTES : Réduit l'espace pour faire remonter la 5ème ligne */
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        margin-bottom: 2px !important;
+        padding: 4px !important;
+    }
+    
+    /* Réduit la taille des images des QR Codes pour qu'elles tiennent sur la feuille */
+    [data-testid="stImage"] img {
+        max-height: 2.6cm !important;
+        width: auto !important;
+        margin: 0 auto !important;
+    }
+
+    /* Cache toute l'interface Streamlit globale et les boutons système */
     header, footer, [data-testid="stSidebar"], [data-testid="stHeader"], .stAppDeployButton,
     .stAppToolbar, [data-testid="stManageAppButton"], iframe, footer + div, .viewerBadge_v1, .stCheckbox, .stRadio {
         display: none !important;
@@ -18,8 +52,8 @@ st.markdown("""
         height: 0 !important;
     }
     
-    /* Cache les titres, consignes et boîtes de sélection */
-    h1, p, .stTextInput, .stSelectbox, .stAlert, [data-testid="stTabs"] nav {
+    /* Cache les titres et les zones de sélection */
+    h1, p, .stTextInput, .stSelectbox, .stAlert {
         display: none !important;
     }
     
@@ -28,10 +62,10 @@ st.markdown("""
         display: none !important;
     }
     
-    /* Maximise l'espace sur la feuille A4 */
+    /* Optimise les marges de la feuille A4 */
     .main .block-container {
-        padding-top: 0.5cm !important;
-        padding-bottom: 0.5cm !important;
+        padding-top: 0.2cm !important;
+        padding-bottom: 0.2cm !important;
         max-width: 100% !important;
         margin: 0 !important;
     }
