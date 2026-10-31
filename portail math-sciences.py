@@ -44,13 +44,22 @@ applications = [
     {"nom": "Le pH", "url": "https://gallet-2xkb5zlhdnonzmkahcmk3u.streamlit.app/", "niveau": "Tale", "theme": "Le pH"}
 ]
 
-# Fonction pour generer l'image du QR code de maniere dynamique
 def afficher_app_avec_qrcode(nom_app, url_app):
     st.markdown(f"**[{nom_app}]({url_app})**")
     with st.expander(f"Afficher le QR Code pour : {nom_app}"):
-        url_encodee = urllib.parse.quote_plus(url_app)
-        qr_url = f"https://googleapis.com{url_encodee}"
-        st.image(qr_url, width=200)
+        # Generation du QR Code sous forme d'objet image
+        qr = qrcode.QRCode(version=1, box_size=10, border=4)
+        qr.add_data(url_app)
+        qr.make(fit=True)
+        img = qr.make_image(fill_color="black", back_color="white")
+        
+        # Conversion de l'image en flux d'octets pour Streamlit
+        buf = io.BytesIO()
+        img.save(buf, format="PNG")
+        byte_im = buf.getvalue()
+        
+        # Affichage de l'image PNG generee
+        st.image(byte_im, width=200)
 
 # 2. Barre de recherche globale
 recherche = st.text_input("Rechercher une application par mot-clé (ex: vecteur, dérivée, statistique...)", "")
