@@ -3786,30 +3786,23 @@ with tab7:
     st.markdown("**Détail des calculs de physique thermique (Maison de 130 m²) :**")
 
     st.markdown("1. Résistance thermique globale des parois ($R_{\\text{total}} = R_{si} + \\sum \\frac{e_i}{\\lambda_i} + R_{se}$) :")
-    expression_r = r"R_{\text{total}} = 0{,}13"
+    expression_r = "R_{\\text{total}} = 0{,}13"
     for i in range(int(nb_couches)):
         mat_nom = list(catalogue_materiaux.keys())[st.session_state.get(f"t7_adv_mat_{i}", i)]
         l_val = catalogue_materiaux[mat_nom]
         ep_cm = st.session_state.get(f"t7_adv_ep_{i}", 10)
         expression_r += rf" + \frac{{{ep_cm/100:.3f}}}{{{l_val:.3f}}}"
-    
-    # Correction de la ligne 3795 : Doublement des accolades autour de la virgule pour la syntaxe LaTeX
     expression_r += rf" + 0{{,}}04 = {r_total_global:.3f}\text{{ m}}^2\cdot\text{{K}}/\text{{W}}"
     st.latex(expression_r)
 
     st.markdown("2. Puissance thermique instantanée perdue par l'enveloppe de 244 m² :")
-    st.latex(
-        rf"\\Phi = U \\times A \\times (T_{\\text{{intérieur}}} - T_{\\text{{extérieur}}}) = "
-        rf"{u_global_composé:.3f} \\times {surface_enveloppe_totale} \\times ({t_int_libre} - {t_ext_libre}) = {puissance_totale_perdue_w:.1f}\\text{{ Watts}}"
-    )
+    # Utilisation de simples barres obliques pour le code LaTeX standardisé en Python
+    formule_phi = rf"\Phi = U \times A \times (T_{{\text{{intérieur}}}} - T_{{\text{{extérieur}}}}) = {u_global_composé:.3f} \times {surface_enveloppe_totale} \times ({t_int_libre} - {t_ext_libre}) = {puissance_totale_perdue_w:.1f}\text{{ Watts}}"
+    st.latex(formule_phi)
 
     st.markdown("3. Énergie totale consommée pour compenser les pertes sur une journée de 24 heures :")
-    st.latex(
-        rf"E_{{24\\text{{h}}}} = \\frac{{\\Phi \\times 24\\text{{ h}}}}{{1000}} = "
-        rf"\\frac{{{puissance_totale_perdue_w:.1f} \\times 24}}{{1000}} = {energie_24h_kwh:.2f}\\text{{ kWh}}"
-    )
-    st.write("---")
-
+    formule_e = rf"E_{{24\text{{h}}}} = \frac{{\Phi \times 24\text{{ h}}}}{{1000}} = \frac{{{puissance_totale_perdue_w:.1f} \times 24}}{{1000}} = {energie_24h_kwh:.2f}\text{{ kWh}}"
+    st.latex(formule_e)
     st.write("---")
     if "suite_verrouille_tab7_therm" not in st.session_state:
         st.session_state.suite_verrouille_tab7_therm = False
