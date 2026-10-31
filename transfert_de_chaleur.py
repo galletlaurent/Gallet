@@ -215,6 +215,142 @@ tab10 = onglets[10]
 tab11 = onglets[11] 
 tab12 = onglets[12]
 
+
+Voici la définition complète de la fonction afficher_atelier_tp_dynamique pour l'onglet tab10 (Travaux Publics).
+Elle sépare et adapte dynamiquement la base de données du Quiz (10 questions) et du Texte à trous (10 phrases) selon le scénario précis extrait par le bouton de tirage au sort, assurant une cohérence scientifique et métier parfaite pour chaque cas :
+python
+def afficher_atelier_tp_dynamique(scenario_actif_tp, verrouille=False):
+    import random
+
+    # =============================================================================
+    # ADAPTATION DYNAMIQUE DES QUESTIONS SELON LE SCÉNARIO TP ACTIF
+    # =============================================================================
+    if scenario_actif_tp == "Béton massif : Exothermie d'une pile de pont":
+        questions_sources_tp = [
+            {"id": "tp9_e1", "q": "Comment qualifie-t-on la libération d'énergie provoquée par l'hydratation chimique du ciment ?", "options": ["Exothermique", "Endothermique", "Isotherme"], "rep": "Exothermique"},
+            {"id": "tp9_e2", "q": "Quelle est l'unité de mesure de la quantité d'énergie dégagée par kg de liant ?", "options": ["kJ/kg", "W/(m.K)", "J/K"], "rep": "kJ/kg"},
+            {"id": "tp9_e3", "q": "Pourquoi la chaleur s'accumule-t-elle au cœur des éléments de béton massifs ?", "options": ["Car la conductivité thermique lambda du béton est faible", "Car le béton est un métal pur", "Car le coffrage insère de l'électricité"], "rep": "Car la conductivité thermique lambda du béton est faible"},
+            {"id": "tp9_e4", "q": "Quel constituant du béton frais réagit avec l'eau pour engendrer ce flux de chaleur ?", "options": ["Le ciment", "Le sable", "Les adjuvants plastifiants"], "rep": "Le ciment"},
+            {"id": "tp9_e5", "q": "Quel dispositif tubulaire interne permet d'extraire activement les calories du massif ?", "options": ["Un réseau de tubes de refroidissement à eau glacée", "Un manomètre", "Un extracteur d'air"], "rep": "Un réseau de tubes de refroidissement à eau glacée"},
+            {"id": "tp9_e6", "q": "Dans quel type de structure le risque lié au pic exothermique est-il le plus critique ?", "options": ["Un barrage ou une pile de pont massive", "Un linteau de porte unitaire", "Une bordure de chaussée"], "rep": "Un barrage ou une pile de pont massive"},
+            {"id": "tp9_e7", "q": "Si l'on augmente la quantité de ciment par m³ de béton, la quantité d'énergie dégagée sera :", "options": ["Plus élevée", "Plus faible", "Strictement identique"], "rep": "Plus élevée"},
+            {"id": "tp9_e8", "q": "La chaleur emmagasinée temporairement au centre du bloc augmente sa chaleur :", "options": ["Sensible", "Latente de fusion", "Latente de vaporisation"], "rep": "Sensible"},
+            {"id": "tp9_e9", "q": "L'évacuation de la chaleur vers l'extérieur du coffrage métallique se fait par :", "options": ["Conduction solide", "Changement d'état", "Sublimation"], "rep": "Conduction solide"},
+            {"id": "tp9_e10", "q": "Pour réduire le dégagement thermique initial, la maintenance utilise des ciments dits :", "options": ["À basse chaleur d'hydratation (de type CEM III ou IV)", "Accélérés à haute résistance", "Alumineux"], "rep": "À basse chaleur d'hydratation (de type CEM III ou IV)"}
+        ]
+        trous_sources_tp = [
+            ("1. La réaction chimique liant l'eau au ciment est de nature ..........", ["Choisir...", "exothermique", "endothermique"], "exothermique", "therm10_tp1"),
+            ("2. Le béton frais présente une .......... conductivité lambda qui emprisonne le flux.", ["Choisir...", "faible", "forte"], "faible", "therm10_tp2"),
+            ("3. L'énergie sensible accumulée engendre une hausse de .......... au centre.", ["Choisir...", "température", "résistance"], "température", "therm10_tp3"),
+            ("4. La chaleur dégagée par le ciment est quantifiée en kJ par ..........", ["Choisir...", "kilogramme", "Kelvin"], "kilogramme", "therm10_tp4"),
+            ("5. Ce phénomène critique concerne les pièces de béton de volume ..........", ["Choisir...", "massif", "mince"], "massif", "therm10_tp5"),
+            ("6. L'extraction des calories s'effectue via un circuit de tubes d'..........", ["Choisir...", "eau", "air"], "eau", "therm10_tp6"),
+            ("7. Ajuster le dosage en liant permet de modérer le .......... thermique global.", ["Choisir...", "flux", "volume"], "flux", "therm10_tp7"),
+            ("8. Les liants d'élite à prise lente limitent la cinétique de l'..........", ["Choisir...", "exothermie", "conduction"], "exothermie", "therm10_tp8"),
+            ("9. La quantité de chaleur s'évacue lentement à travers les parois par ..........", ["Choisir...", "conduction", "fusion"], "conduction", "therm10_tp9"),
+            ("10. Ce contrôle thermique prévient les défauts de cohésion de la ..........", ["Choisir...", "structure", "peinture"], "structure", "therm10_tp10")
+        ]
+    elif scenario_actif_tp == "Ouvrage d'art : Fissuration thermique de tablier":
+        questions_sources_tp = [
+            {"id": "tp9_f1", "q": "Quel écart thermique maximal cœur/surface tolère-t-on pour éviter la fissuration du béton ?", "options": ["20 °C", "5 °C", "50 °C"], "rep": "20 °C"},
+            {"id": "tp9_f2", "q": "Les contraintes mécaniques induites par un fort gradient de température sont des contraintes de :", "options": ["Traction", "Compression", "Torsion"], "rep": "Traction"},
+            {"id": "tp9_f3", "q": "Si le gradient thermique mesuré sur le tablier atteint 25 °C, que se passe-t-il sur la peau du béton ?", "options": ["Des micro-fissures de traction apparaissent", "Le béton se liquéfie", "La résistance mécanique double"], "rep": "Des micro-fissures de traction apparaissent"},
+            {"id": "tp9_f4", "q": "Quelle action permet de réduire l'écart de température en réchauffant la surface du béton ?", "options": ["Le déploiement de matelas ou bâches isolantes", "L'arrosage intensif à l'eau glacée", "La dépose immédiate des coffrages"], "rep": "Le déploiement de matelas ou bâches isolantes"},
+            {"id": "tp9_f5", "q": "Le calcul de l'allongement ou du raccourcissement du tablier sous l'effet du climat dépend du :", "options": ["Coefficient de dilatation linéaire de l'acier et du béton", "Coefficient de conductivité de l'air", "Changement d'état latent"], "rep": "Coefficient de dilatation linéaire de l'acier et du béton"},
+            {"id": "tp9_f6", "q": "Quelle saison présente le risque le plus aigu de fort gradient thermique pour un jeune tablier ?", "options": ["L'hiver (nuit glaciale)", "L'été (canicule)", "Le printemps doux"], "rep": "L'hiver (nuit glaciale)"},
+            {"id": "tp9_f7", "q": "L'isoler en surface à l'aide de matelas de cure revient mathématiquement à :", "options": ["Augmenter la résistance thermique R en surface", "Réduire l'épaisseur totale", "Augmenter le lambda du matériau"], "rep": "Augmenter la résistance thermique R en surface"},
+            {"id": "tp9_f8", "q": "Un profil thermique lissé et aplati supprime les contraintes de :", "options": ["Traction thermique", "Compression hydraulique", "Torsion mécanique"], "rep": "Traction thermique"},
+            {"id": "tp9_f9", "q": "La mesure des gradients thermiques par thermocouples noyés dans l'ouvrage constitue un contrôle :", "options": ["Non destructif", "Curatif structurel", "Correctif après rupture"], "rep": "Non destructif"},
+            {"id": "tp9_f10", "q": "Quelle enveloppe protectrice permet de lisser la température superficielle du béton ?", "options": ["La bâche de cure isolante", "Le coffrage en tôle nue ventilée", "Une couche de peinture hydrofuge"], "rep": "La bâche de cure isolante"}
+        ]
+        trous_sources_tp = [
+            ("1. Un écart thermique excessif crée des contraintes de .......... mécanique.", ["Choisir...", "traction", "compression"], "traction", "therm10_tp1"),
+            ("2. Le seuil de vigilance à ne pas dépasser pour le gradient est fixé à .......... °C.", ["Choisir...", "20", "50"], "20", "therm10_tp2"),
+            ("3. Les fissures superficielles altèrent l'.......... et la durabilité du tablier.", ["Choisir...", "étanchéité", "couleur"], "étanchéité", "therm10_tp3"),
+            ("4. Déployer des matelas de cure permet d'apporter une .......... thermique de surface.", ["Choisir...", "résistance", "conductivité"], "résistance", "therm10_tp4"),
+            ("5. Cette barrière isolante R freine le .......... calorifique perdu vers l'air gelé.", ["Choisir...", "flux", "volume"], "flux", "therm10_tp5"),
+            ("6. Le lissage des températures supprime la cassure de la courbe du .......... thermique.", ["Choisir...", "profil", "fluide"], "profil", "therm10_tp6"),
+            ("7. La surveillance des ponts thermiques d'ouvrages est un diagnostic non ..........", ["Choisir...", "destructif", "conforme"], "destructif", "therm10_tp7"),
+            ("8. Les variations géométriques de la structure découlent de la .......... linéaire.", ["Choisir...", "dilatation", "fusion"], "dilatation", "therm10_tp8"),
+            ("9. Les Watts perdus à travers la peau du béton s'expriment en ..........", ["Choisir...", "Watts", "Joules"], "Watts", "therm10_tp9"),
+            ("10. Maîtriser ces gradients garantit la parfaite tenue mécanique du ..........", ["Choisir...", "béton", "sol"], "béton", "therm10_tp10")
+        ]
+    elif scenario_actif_tp == "Viabilité hivernale : Coulage par temps de gel":
+        questions_sources_tp = [
+            {"id": "tp9_g1", "q": "Quel risque majeur pèse sur l'eau du béton frais lors d'un coulage par température négative ?", "options": ["Le gel (changement d'état en glace)", "Une évaporation instantanée", "Une ébullition précoce"], "rep": "Le gel (changement d'état en glace)"},
+            {"id": "tp9_g2", "q": "À quelle température précise s'effectue la transition latente de solidification de l'eau ?", "options": ["0 °C", "100 °C", "20 °C"], "rep": "0 °C"},
+            {"id": "tp9_g3", "q": "Si l'eau du béton gèle avant la fin de la prise, la matrice du ciment se retrouve :", "options": ["Détruite par éclatement cristallin", "Renforcée de moitié", "Strictement inchangée"], "rep": "Détruite par éclatement cristallin"},
+            {"id": "tp9_g4", "q": "Quelle forme d'énergie doit-on apporter sur le chantier pour maintenir la masse au-dessus de 5 °C ?", "options": ["De la chaleur sensible via des brûleurs", "De la chaleur latente de fusion", "Un flux conducteur inversé"], "rep": "De la chaleur sensible via des brûleurs"},
+            {"id": "tp9_g5", "q": "Pour isoler des fondations coulées par temps de gel, on déploie des bâches à forte :", "options": ["Résistance thermique R", "Conductivité lambda", "Transmission superficielle"], "rep": "Résistance thermique R"},
+            {"id": "tp9_g6", "q": "La transformation de l'eau liquide en cristaux de glace rigides est une :", "options": ["Solidification (libération de chaleur latente)", "Fusion thermique", "Vaporisation"], "rep": "Solidification (libération de chaleur latente)"},
+            {"id": "tp9_g7", "q": "Pour accélérer la cinétique chimique et contrer le gel, la maintenance du chantier ajoute :", "options": ["Un adjuvant accélérateur de prise", "Un retardateur", "De l'eau glacée"], "rep": "Un adjuvant accélérateur de prise"},
+            {"id": "tp9_g8", "q": "L'unité de mesure du flux thermique perdu en surface à travers les bâches est :", "options": ["Le Watt par mètre carré (W/m²)", "Le Joule par kg", "Le Pascal"], "rep": "Le Watt par mètre carré (W/m²)"},
+            {"id": "tp9_g9", "q": "Une bâche isolante performante se caractérise par une conductivité lambda :", "options": ["La plus faible possible proche de zéro", "Supérieure à celle de l'acier", "Identique à celle du cuivre"], "rep": "La plus faible possible proche de zéro"},
+            {"id": "tp9_g10", "q": "Quelle température minimale doit conserver le béton pendant sa cure hivernale ?", "options": ["5 °C", "-5 °C", "50 °C"], "rep": "5 °C"}
+        ]
+        trous_sources_tp = [
+            ("1. Le gel de l'eau correspond à une transition de phase appelée ..........", ["Choisir...", "solidification", "fusion"], "solidification", "therm10_tp1"),
+            ("2. Cette transition latente destructrice s'opère à la température fixe de .......... °C.", ["Choisir...", "0", "20"], "0", "therm10_tp2"),
+            ("3. L'expansion volumique de la glace brise le réseau .......... du ciment.", ["Choisir...", "cristallin", "liquide"], "cristallin", "therm10_tp3"),
+            ("4. Les matelas de cure opposent une forte .......... thermique R au froid.", ["Choisir...", "résistance", "conductivité"], "résistance", "therm10_tp4"),
+            ("5. La bâche isolante performante possède un coefficient .......... très bas.", ["Choisir...", "lambda", "U"], "lambda", "therm10_tp5"),
+            ("6. Le flux thermique perdu en surface se comptabilise en Watts par ..........", ["Choisir...", "mètre carré", "Kelvin"], "mètre carré", "therm10_tp6"),
+            ("7. Apporter de l'énergie à l'aide de radiants augmente la chaleur .......... du bloc.", ["Choisir...", "sensible", "latente"], "sensible", "therm10_tp7"),
+            ("8. Pour maintenir la cinétique chimique, le béton doit rester au-dessus de .......... °C.", ["Choisir...", "5", "0"], "5", "therm10_tp8"),
+            ("9. Un adjuvant .......... de durcissement aide à contrer l'effet de l'hiver.", ["Choisir...", "accélérateur", "retardateur"], "accélérateur", "therm10_tp9"),
+            ("10. Protéger la cure hivernale garantit la bonne prise finale du ..........", ["Choisir...", "béton", "sol"], "béton", "therm10_tp10")
+        ]
+    else: # Prise sous-marine et flux conducteur
+        questions_sources_tp = [
+            {"id": "m9_s1", "q": "Pourquoi l'eau de mer refroidit-elle si rapidement les parois extérieures du bloc ?", "options": ["Car elle possède une gigantesque capacité thermique massique", "Car elle est un isolant parfait", "Car elle subit une solidification instantanée"], "rep": "Car elle possède une gigantesque capacité thermique massique"},
+            {"id": "m9_s2", "q": "L'océan absorbant le flux thermique sans monter en température se comporte comme :", "options": ["Un puits thermique infini", "Une source exothermique", "Un calorimètre isolé"], "rep": "Un puits thermique infini"},
+            {"id": "m9_s3", "q": "Comment qualifie-t-on le flux de chaleur cédé par la paroi du béton à l'eau en mouvement ?", "options": ["Un flux convectif et conducteur", "Un rayonnement ultraviolet", "Une transition de phase latente"], "rep": "Un flux convectif et conducteur"},
+            {"id": "m9_s4", "q": "Quel impact majeur un refroidissement sous-marin trop rapide a-t-il sur le jeune béton ?", "options": ["Il ralentit ou bloque la cinétique chimique de prise", "Il augmente sa résistance au cœur", "Il annule l'exothermie"], "rep": "Il ralentit ou bloque la cinétique chimique de prise"},
+            {"id": "m9_s5", "q": "Quel adjuvant permet de contrer ce pillage calorifique en accélérant le durcissement ?", "options": ["Un accélérateur de prise", "Un retardateur de prise", "Un entraîneur d'air"], "rep": "Un accélérateur de prise"},
+            {"id": "m9_s6", "q": "L'unité réglementaire du flux thermique total dissipé dans la mer est :", "options": ["Le Watt (W)", "Le Joule (J)", "Le Kelvin (K)"], "rep": "Le Watt (W)"},
+            {"id": "m9_s7", "q": "La chaleur libérée par le ciment au cœur du massif immergé augmente sa chaleur :", "options": ["Sensible", "Latente de fusion", "Latente de vaporisation"], "rep": "Sensible"},
+            {"id": "m9_s8", "q": "La vitesse à laquelle les calories migrent du cœur chaud vers la face immergée dépend de la :", "options": ["Conductivité thermique lambda du béton", "Salinité de l'eau de mer", "Viscosité du fluide"], "rep": "Conductivité thermique lambda du béton"},
+            {"id": "m9_s9", "q": "Quelle formule permet d'évaluer la puissance thermique instantanée perdue dans l'eau ?", "options": ["Phi = U.A.dT", "Phi = m.c.dT", "Phi = e / lambda"], "rep": "Phi = U.A.dT"},
+            {"id": "m9_s10", "q": "Le contrôle de l'homogénéité du durcissement des fondations maritimes est un diagnostic :", "options": ["Non destructif", "Curatif d'urgence", "Correctif"], "rep": "Non destructif"}
+        ]
+        trous_sources_tp = [
+            ("1. L'eau de mer se comporte comme un .......... thermique infini face au bloc chaud.", ["Choisir...", "puits", "source"], "puits", "therm10_tp1"),
+            ("2. Cela découle de sa gigantesque .......... thermique massique.", ["Choisir...", "capacité", "conductivité"], "capacité", "therm10_tp2"),
+            ("3. Le fluide en mouvement absorbe l'énergie de surface par ..........", ["Choisir...", "convection", "sublimation"], "convection", "therm10_tp3"),
+            ("4. Ce pillage de calories perturbe la cinétique de la .......... chimique du ciment.", ["Choisir...", "réaction", "fusion"], "réaction", "therm10_tp4"),
+            ("5. Les calories se déplacent au sein du massif par .......... unitaire.", ["Choisir...", "conduction", "changement d'état"], "conduction", "therm10_tp5"),
+            ("6. Pour contrer ce flux perdu, on intègre un adjuvant .......... de prise au malaxage.", ["Choisir...", "accélérateur", "retardateur"], "accélérateur", "therm10_tp6"),
+            ("7. La chaleur issue de l'exothermie fait monter la chaleur .......... interne.", ["Choisir...", "sensible", "latente"], "sensible", "therm10_tp7"),
+            ("8. La puissance thermique instantanée transmise à l'océan se comptabilise en ..........", ["Choisir...", "Watts", "Joules"], "Watts", "therm10_tp8"),
+            ("9. La vitesse de transfert interne est dictée par la conductivité .......... du béton.", ["Choisir...", "lambda", "R"], "lambda", "therm10_tp9"),
+            ("10. Ce suivi garantit la parfaite cristallisation des fondations du .......... d'art.", ["Choisir...", "ouvrage", "sol"], "ouvrage", "therm10_tp10")
+        ]
+
+    # Sécurisation du stockage technique dans la session pour l'évaluation active
+    if "ordre_quiz_tab10_tp_aleatoire" not in st.session_state:
+        st.session_state.ordre_quiz_tab10_tp_aleatoire = questions_sources_tp
+    if "champs_therm10_tp_clean" not in st.session_state:
+        st.session_state.champs_therm10_tp_clean = trous_sources_tp
+
+    # Rendu des deux colonnes d'évaluation Streamlit
+    col_q_tp, col_t_tp = st.columns(2)
+    with col_q_tp:
+        st.markdown("##### Quiz Spécifique au Scénario TP (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab10_tp_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"therm_at10_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_t_tp:
+        st.markdown("##### Synthèse de l'Atelier 10 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_therm10_tp_clean:
+            enonce, choix, attendu, cle = ligne
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: st.write(enonce)
+            with c_sel: st.selectbox("", choix, key=f"{cle}_therm10_tp_clean", disabled=verrouille, label_visibility="collapsed")
+
+
+
+
 def afficher_atelier_maintenance_dynamique(scenario_actif, verrouille=False):
     import random
 
@@ -4981,13 +5117,405 @@ with tab9:
         )
 
 
+with tab10:
+    st.header("Application dans le Domaine des Travaux Publics")
+    
+    # BANQUE DE DONNÉES DES 4 SCÉNARIOS DES TRAVAUX PUBLICS
+    if "scenario_tp_choisi" not in st.session_state:
+        st.session_state.scenario_tp_choisi = "Béton massif : Exothermie d'une pile de pont"
 
+    # Système de tirage au sort par bouton
+    col_tirage_tp, col_statut_tp = st.columns([0.4, 0.6], vertical_alignment="center")
+    with col_tirage_tp:
+        if st.button("TIRER UN EXERCICE DE TP AU HASARD", key="btn_tirage_hasard_t10", use_container_width=True):
+            liste_scenarios_tp = [
+                "Béton massif : Exothermie d'une pile de pont",
+                "Ouvrage d'art : Fissuration thermique de tablier",
+                "Viabilité hivernale : Coulage par temps de gel",
+                "Génie civil : Prise sous-marine et flux conducteur"
+            ]
+            import random
+            actuel_tp = st.session_state.scenario_tp_choisi
+            possibles_tp = [s for s in liste_scenarios_tp if s != actuel_tp]
+            st.session_state.scenario_tp_choisi = random.choice(possibles_tp)
+            # Réinitialisation des ordres de quiz pour forcer le recalcul lié au nouveau scénario
+            if "ordre_quiz_tab10_tp_aleatoire" in st.session_state:
+                del st.session_state.ordre_quiz_tab10_tp_aleatoire
+            if "champs_therm10_tp_clean" in st.session_state:
+                del st.session_state.champs_therm10_tp_clean
+            st.rerun()
 
+    scen_tp = st.session_state.scenario_tp_choisi
+    st.success(f"Exercice de TP actif affecté : {scen_tp}")
+    st.write("---")
 
+    # =============================================================================
+    # DÉFINITION TECHNIQUE ADAPTATIVE DE L'ATELIER 10 (TRAVAUX PUBLICS)
+    # =============================================================================
+    if scen_tp == "Béton massif : Exothermie d'une pile de pont":
+        def_scen_tp = (
+            "Lors du coulage de structures massives en **Travaux Publics**, la réaction d'hydratation du ciment "
+            "libère une quantité importante d'énergie thermique. Le béton frais agissant comme un isolant capacitif, "
+            "la chaleur s'accumule au cœur du bloc. Ce phénomène exothermique crée un fort gradient de température "
+            "avec la surface extérieure. L'analyse des transferts de chaleur permet de dimensionner les systèmes "
+            "de refroidissement par tubes d'eau intégrés."
+        )
+    elif scen_tp == "Ouvrage d'art : Fissuration thermique de tablier":
+        def_scen_tp = (
+            "Sur les **chantiers d'ouvrages d'art**, le coulage d'un tablier de pont en béton armé est soumis à de fortes "
+            "contraintes thermomécaniques. L'écart de température ($\Delta T$) entre le cœur chaud en cure et la surface "
+            "refroidie par l'air ambiant engendre des contraintes de traction. Si ce gradient thermique dépasse la valeur "
+            "critique de 20 °C, des fissures structurelles apparaissent, menaçant l'étanchéité et la durabilité de l'ouvrage."
+        )
+    elif scen_tp == "Viabilité hivernale : Coulage par temps de gel":
+        def_scen_tp = (
+            "Le coulage du béton par **temps de gel** constitue un défi thermique pour le conducteur de travaux. Si l'eau "
+            "présente dans le béton frais gèle avant la fin de la prise, son changement d'état en glace détruit la matrice "
+            "cristalline du ciment. La maintenance du chantier impose l'utilisation de bâches isolantes d'une forte "
+            "résistance thermique ($R$) et l'apport de chaleur sensible via des brûleurs pour maintenir le béton au-dessus de 5 °C."
+        )
+    else: # Prise sous-marine et flux conducteur
+        def_scen_tp = (
+            "Pour les fondations d'ouvrages maritimes, le bétonnage **sous-marin** nécessite de maîtriser le flux thermique "
+            "conducteur cédé à l'eau environnante. L'eau de mer possède une capacité thermique massique gigantesque, "
+            "agissant comme un puits thermique infini. Un refroidissement trop rapide de la paroi extérieure du bloc de béton "
+            "perturbe la cinétique chimique de prise, exigeant l'adjonction d'adjuvants accélérateurs de durcissement."
+        )
 
+    st.write(f"**Définition et contexte du cas :** {def_scen_tp}")
+    st.write("---")
 
+    # =============================================================================
+    # 1. ENONCÉ DE L'EXERCICE ET CARICATURES ASSOCIÉES (DYNAMIQUE)
+    # =============================================================================
+    col_gauche_bd_tp, col_droite_cours_tp = st.columns(2)
 
+    with col_gauche_bd_tp:
+        st.markdown("##### Enoncé de l'exercice et contexte")
+        if scen_tp == "Béton massif : Exothermie d'une pile de pont":
+            st.info(
+                "**Cas 1 : Le grand coulage.** Des tonnes de béton frais remplissent le coffrage d'une pile de pont : "
+                "« C'est parti ! Le ciment s'hydrate et commence à libérer ses Joules chimiques au cœur du bloc massif ! ».\n\n"
+                "**Cas 2 : La surchauffe interne.** La conductivité thermique du béton étant faible, la chaleur sensible s'accumule : "
+                "« Le centre du bloc atteint 65 °C alors que la surface est à 15 °C. Le gradient de température s'accentue ! ».\n\n"
+                "**Cas 3 : La parade de l'ingénieur.** Le conducteur de travaux active un réseau de tubes d'eau glacée : "
+                "« On extrait activement les calories pour aplanir le profil thermique et sauver la cohésion du béton ! ».\n\n"
+                "**Cas 4 : L'ouvrage pérenne.** La température est maîtrisée, le bloc durcit de manière parfaitement homogène : "
+                "« Affaire classée ! L'exothermie et la conduction ont été domptées, la structure est validée ! »"
+            )
+        elif scen_tp == "Ouvrage d'art : Fissuration thermique de tablier":
+            st.info(
+                "**Cas 1 : La cure du tablier.** Le tablier de pont vient d'être coulé en pleine nuit d'hiver : "
+                "« La réaction commence ! Le cœur monte en température tandis que l'air glacial refroidit la surface ! ».\n\n"
+                "**Cas 2 : Le seuil critique.** L'ingénieur mesure l'écart thermique entre l'intérieur et l'extérieur : "
+                "« L'écart dépasse les 25 °C ! Des contraintes de traction thermique apparaissent sur la peau du béton ! ».\n\n"
+                "**Cas 3 : La bâche thermique.** Les ouvriers déploient immédiatement des matelas isolants sur le tablier : "
+                "« En augmentant la résistance R en surface, on freine le flux perdu et on réduit le gradient destructeur ! ».\n\n"
+                "**Cas 4 : Le pont sauvé.** Les fissures sont évitées, la peau du béton reste lisse et étanche : "
+                "« Affaire classée ! Les lois de la dilatation thermique ont été contenues à temps ! »"
+            )
+        elif scen_tp == "Viabilité hivernale : Coulage par temps de gel":
+            st.info(
+                "**Cas 1 : L'assaut du gel.** Le thermomètre du chantier descend à -5 °C pendant le coulage des fondations : "
+                "« Alerte, les Joules s'échappent ! Si l'eau gèle, le réseau cristallin du ciment sera brisé ! ».\n\n"
+                "**Cas 2 : La menace du changement d'état.** Les molécules d'eau s'approchent du point de solidification : "
+                "« À 0 °C, on va libérer notre chaleur latente pour devenir des cristaux de glace destructeurs ! ».\n\n"
+                "**Cas 3 : Le chauffage de cure.** L'équipe déploie des radiants thermiques et des bâches isolantes : "
+                "« On apporte de la chaleur sensible pour maintenir la masse au-dessus de 5 °C et mener la prise à terme ! ».\n\n"
+                "**Cas 4 : La résistance acquise.** Le béton a pris sa résistance mécanique sans subir l'action du gel : "
+                "« Affaire classée ! Les barrières isolantes ont protégé les réactions chimiques du ciment ! »"
+            )
+        else: # Prise sous-marine et flux conducteur
+            st.info(
+                "**Cas 1 : L'immersion.** Le béton est coulé au tube plongeur dans l'eau froide de l'océan : "
+                "« Quel choc ! L'océan nous entoure et commence à piller nos précieuses calories d'hydratation ! ».\n\n"
+                "**Cas 2 : Le puits thermique.** L'eau de mer absorbe le flux sans monter en température : "
+                "« Ma capacité thermique massique est gigantesque ! Je refroidis la peau extérieure du bloc en un éclair ! ».\n\n"
+                "**Cas 3 : L'accélérateur de prise.** L'ingénieur ajoute un adjuvant accélérateur au mélange : "
+                "« On booste la cinétique chimique pour dégager les Joules plus vite que le flux conducteur perdu dans la mer ! ».\n\n"
+                "**Cas 4 : Le massif scellé.** Les fondations maritimes ont durci correctement sous l'eau : "
+                "« Affaire classée ! L'équilibre entre le flux thermique perdu et la chimie du ciment a été trouvé ! »"
+            )
 
+    # =============================================================================
+    # 2. COURS TECHNIQUE ET CARICATURE EN FOND BLEU (DYNAMIQUE)
+    # =============================================================================
+    with col_droite_cours_tp:
+        st.markdown("##### Illustration caricaturale du cas")
+        if scen_tp == "Béton massif : Exothermie d'une pile de pont":
+            fichier_img_tp = "tp_exothermie.jpg"
+            caption_img_tp = "Caricature de l'accumulation de chaleur au cœur du béton massif"
+            texte_bd_bleu_tp = (
+                "**La BD humoristique : Le cœur brûlant du béton**\n\n"
+                "**Cas 1 :** Hydratation générale : « C'est la fête du ciment, les Joules se libèrent ! ».\n"
+
+                "**Cas 2 :** Blocage du flux : « Le béton conduit très mal, la chaleur sensible reste prisonnière au centre ! ».\n"
+                "**Cas 3 :** Activation des tubes d'eau : « On pompe les calories pour aplatir la courbe thermique ! ».\n"
+                "**Cas 4 :** Durcissement réussi : « Affaire classée, la pile de pont est solide et sans fissure ! »"
+            )
+        elif scen_tp == "Ouvrage d'art : Fissuration thermique de tablier":
+            fichier_img_tp = "tp_fissuration.jpg"
+            caption_img_tp = "Caricature des contraintes de traction sur la peau du béton"
+            texte_bd_bleu_tp = (
+                "**La BD humoristique : La peau du béton sous tension**\n\n"
+                "**Cas 1 :** Le tablier refroidit par l'extérieur : « Le cœur est brûlant mais ma peau est glacée ! ».\n"
+                "**Cas 2 :** Écart de 25 °C : « Le gradient thermique tire trop fort, les micro-fissures arrivent ! ».\n"
+                "**Cas 3 :** Pose des matelas isolants : « On augmente la résistance R pour réchauffer la surface ! ».\n"
+                "**Cas 4 :** Profil lissé : « Affaire classée, les contraintes de traction thermique ont capitulé ! »"
+            )
+        elif scen_tp == "Viabilité hivernale : Coulage par temps de gel":
+            fichier_img_tp = "tp_gel.jpg"
+            caption_img_tp = "Caricature de la menace de solidification de l'eau dans le ciment"
+            texte_bd_bleu_tp = (
+                "**La BD humoristique : La bataille du zéro degré**\n\n"
+                "**Cas 1 :** Chute du thermomètre : « Sauvez les Watts, le gel attaque les fondations ! ».\n"
+                "**Cas 2 :** Solidification latente : « À 0 °C, l'eau veut se changer en glace et briser les cristaux ! ».\n"
+                "**Cas 3 :** Allumage des radiants : « Apport de chaleur sensible immédiat sous les bâches R ! ».\n"
+                "**Cas 4 :** Prise sécurisée : « Affaire classée, le réseau cristallin du ciment est intact ! »"
+            )
+        else:
+            fichier_img_tp = "tp_sous_marin.jpg"
+            caption_img_tp = "Caricature de l'océan comme puits thermique infini"
+            texte_bd_bleu_tp = (
+                "**La BD humoristique : L'océan pilleur de Joules**\n\n"
+                "**Cas 1 :** Immersion du béton sous l'eau : « Brrr, la mer commence à aspirer nos calories ! ».\n"
+                "**Cas 2 :** Capacité thermique géante : « Je suis l'océan, j'absorbe votre flux sans broncher ! ».\n"
+                "**Cas 3 :** Adjuvant accélérateur : « On accélère la chimie pour produire du Joule plus vite que la fuite ! ».\n"
+                "**Cas 4 :** Prise sous-marine validée : « Affaire classée, les fondations maritimes sont scellées ! »"
+            )
+
+        # Affichage de l'image correspondante
+        if os.path.exists(fichier_img_tp):
+            st.image(fichier_img_tp, caption=caption_img_tp, use_container_width=True)
+        else:
+            st.caption(caption_img_tp)
+            
+        # Rendu de la zone de texte descriptive d
+        st.info(texte_bd_bleu_tp)
+    st.write("---")
+
+    # =============================================================================
+    # 3. LABORATOIRE VIRTUEL INTERACTIF (DYNAMIQUE ET SANS EMOJI)
+    # =============================================================================
+    st.subheader("Laboratoire Virtuel : Simulateur de calculs thermiques en Génie Civil")
+    
+    col_p1_tp, col_p2_tp = st.columns(2)
+    if scen_tp == "Béton massif : Exothermie d'une pile de pont":
+        with col_p1_tp:
+            dosage_ciment = st.slider("Dosage en ciment du béton (kg/m³) :", min_value=250, max_value=450, value=350, step=10, key="l10_tp_p1")
+            exothermie_ciment = st.slider("Chaleur d'hydratation du liant (kJ/kg) :", min_value=150, max_value=350, value=260, step=10, key="l10_tp_p2")
+        
+        energie_degagee_mj = (dosage_ciment * exothermie_ciment) / 1000.0
+        elevation_temp = energie_degagee_mj * 1000.0 / (2400 * 1.0) # Densité ~2400 kg/m³, Cp ~1 kJ/kg.K
+        
+        st.metric(label="Énergie thermique libérée par l'exothermie", value=f"{energie_degagee_mj:.1f} MJ/m³")
+        st.latex(rf"Q_{{\text{{chimique}}}} = \frac{{m_{{\text{{ciment}}}} \times q_{\text{{hydratation}}}}}{{1000}} = \frac{{{dosage_ciment} \times {exothermie_ciment}}}{{1000}} = {energie_degagee_mj:.1f}\text{{ MJ/m³}}")
+        st.info(f"Élévation de température théorique au cœur du massif : +{elevation_temp:.1f} °C")
+
+    elif scen_tp == "Ouvrage d'art : Fissuration thermique de tablier":
+        with col_p1_tp:
+            temp_coeur = st.slider("Température mesurée au cœur du tablier (°C) :", min_value=30, max_value=75, value=58, key="l10_tp_p1_f")
+            temp_peau = st.slider("Température de la surface extérieure (°C) :", min_value=5, max_value=30, value=12, key="l10_tp_p2_f")
+        
+        gradient_paroi = temp_coeur - temp_peau
+        st.metric(label="Gradient thermique cœur / surface (dT)", value=f"{gradient_paroi:.1f} °C")
+        st.latex(rf"\Delta T_{{\text{{gradient}}}} = T_{{\text{{cœur}}}} - T_{{\text{{surface}}}} = {temp_coeur} - {temp_peau} = {gradient_paroi:.1f}\text{{ °C}}")
+        
+        if gradient_paroi > 20.0:
+            st.error("Risque de fissuration élevé : Le gradient thermique dépasse le seuil critique de 20 °C. Pose d'isolants requise.")
+        else:
+            st.success("Structure sécurisée : Le gradient de température est inférieur au seuil critique de 20 °C.")
+
+    elif scen_tp == "Viabilité hivernale : Coulage par temps de gel":
+        with col_p1_tp:
+            epaisseur_bache = st.slider("Épaisseur du matelas isolant de cure (e en cm) :", min_value=1, max_value=10, value=4, key="l10_tp_p1_g")
+            t_exterieure_gel = st.slider("Température de l'air extérieur (°C) :", min_value=-15, max_value=5, value=-4, key="l10_tp_p2_g")
+        
+        lambda_bache = 0.038
+        r_bache = (epaisseur_bache / 100.0) / lambda_bache
+        flux_perdu_surface = (5 - t_exterieure_gel) / (r_bache + 0.17)
+        
+        st.metric(label="Résistance thermique de la barrière R", value=f"{r_bache:.3f} m².K/W")
+        st.latex(rf"R = \frac{{e}}{{\lambda}} = \frac{{{epaisseur_bache/100:.3f}}}{{{lambda_bache:.3f}}} = {r_bache:.3f}\text{{ m²}}\cdot\text{{K/W}}")
+        st.info(f"Flux thermique de déperdition surfacique : {flux_perdu_surface:.1f} W/m²")
+
+    else: # Prise sous-marine
+        with col_p1_tp:
+            surface_immersion = st.slider("Surface du bloc de fondation exposée à la mer (m²) :", min_value=5, max_value=80, value=30, key="l10_tp_p1_s")
+            t_mer = st.slider("Température de l'eau de mer (°C) :", min_value=4, max_value=18, value=11, key="l10_tp_p2_s")
+        
+        u_paroi_eau = 5.5
+        flux_mer_w = u_paroi_eau * surface_immersion * (35 - t_mer)
+        
+        st.metric(label="Flux thermique conducteur cédé à l'océan", value=f"{flux_mer_w:.1f} Watts")
+        st.latex(rf"\Phi = U \times A \times \Delta T = 5{{,}}5 \times {surface_immersion} \times (35 - {t_mer}) = {flux_mer_w:.1f}\text{{ W}}")
+        st.info("L'eau de mer agit comme un puits thermique infini en raison de sa gigantesque capacité volumique.")
+
+    with col_p2_tp:
+        import matplotlib.pyplot as plt
+        import matplotlib.patches as patches
+        fig_tp, ax_tp = plt.subplots(figsize=(6, 2.5))
+        ax_tp.add_patch(patches.Rectangle((0.5, 0.4), 3.0, 1.4, facecolor='#e2e8f0', edgecolor='#0f172a', lw=1.5))
+        ax_tp.add_patch(patches.Circle((2.0, 1.1), 0.4, facecolor='#bfdbfe', edgecolor='#1e3a8a', lw=1.5))
+        ax_tp.text(2.0, 1.1, "Ouvrage", color='#1e3a8a', fontweight='bold', ha='center', va='center', fontsize=9)
+        ax_tp.text(4.2, 1.1, "Banc d'essai\nGénie Civil\nTP", color='#0f172a', fontweight='bold', fontsize=9)
+        ax_tp.set_xlim(0, 6.0)
+        ax_tp.set_ylim(0, 2.2)
+        ax_tp.axis('off')
+        st.pyplot(fig_tp)
+
+    st.write("---")
+
+    # Gestion de l'état de validation
+    if "suite_verrouille_tab10_tp" not in st.session_state:
+        st.session_state.suite_verrouille_tab10_tp = False
+    verrou_at10_tp = st.session_state.suite_verrouille_tab10_tp
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 10")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat10 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier d'application des Travaux Publics.",
+        key="check_certif_therm10_tp_net",
+        disabled=verrou_at10_tp,
+    )
+
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 10",
+        key="btn_export_suite10_tp_official",
+        use_container_width=True,
+        disabled=verrou_at10_tp,
+    ):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat10:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction du Quiz (10 pts)
+            score_q10 = 0.0
+            if "ordre_quiz_tab10_tp_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab10_tp_aleatoire:
+                    saisie = st.session_state.get(f"therm_at10_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip():
+                        score_q10 += 1.0
+
+            # 2. Correction du Texte à trous (10 pts)
+            score_t10 = 0.0
+            if "champs_therm10_tp_clean" in st.session_state:
+                for ligne in st.session_state.champs_therm10_tp_clean:
+                    enonce_t, choix_t, attendu_t, cle_t = ligne
+                    saisie_t = st.session_state.get(f"{cle_t}_therm10_tp_clean", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu_t).strip():
+                        score_t10 += 1.0
+
+            # 3. Sauvegarde définitive dans la session et rafraîchissement
+            st.session_state.score_suite10_tp_p1 = round(float(score_q10), 1)
+            st.session_state.score_suite10_tp_p2 = round(float(score_t10), 1)
+            st.session_state.score_final_suite10_tp = round(float(score_q10 + score_t10), 1)
+            st.session_state.suite_verrouille_tab10_tp = True
+            st.rerun()
+
+    # --- COMPILATION ET TÉLÉCHARGEMENT DU BILAN HTML SCELLÉ ---
+    if st.session_state.get("suite_verrouille_tab10_tp", False):
+        from datetime import datetime
+        scr1_t10 = st.session_state.get("score_suite10_tp_p1", 0.0)
+        scr2_t10 = st.session_state.get("score_suite10_tp_p2", 0.0)
+        tot_s_t10 = st.session_state.get("score_final_suite10_tp", 0.0)
+        timestamp_suite10 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER TRAVAUX PUBLICS SCELLÉ | Note de session : {tot_s_t10:.1f} / 20")
+
+        html_export_therm10 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Application TP - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 20px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Physique Thermique</h1>
+                <p>Atelier 10 : Application technologique au domaine des Travaux Publics (Ouvrages d'art)</p>
+                <p>Scénario résolu : {scen_tp}</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite10}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t10:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t10:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse de Cours : <strong>{scr2_t10:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 10 : <strong>{tot_s_t10:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab10_tp_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab10_tp_aleatoire, 1):
+                saisie = st.session_state.get(f"therm_at10_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_therm10 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_therm10 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_therm10_tp_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_therm10_tp_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+
+                saisie_texte = st.session_state.get(f"{cle_variable}_therm10_tp_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_therm10 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_therm10 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        st.download_button(
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 10 (.HTML)",
+            data=html_export_therm10,
+            file_name=preparer_nom_fichier("Atelier_10_Application_TP").replace(".txt", ".html"),
+            mime="text/html",
+            use_container_width=True,
+        )
 
 
 
