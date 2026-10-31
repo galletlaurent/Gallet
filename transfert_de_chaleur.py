@@ -5306,7 +5306,9 @@ with tab10:
         elevation_temp = energie_degagee_mj * 1000.0 / (2400 * 1.0) # Densité ~2400 kg/m³, Cp ~1 kJ/kg.K
         
         st.metric(label="Énergie thermique libérée par l'exothermie", value=f"{energie_degagee_mj:.1f} MJ/m³")
-        st.latex(rf"Q_{{\text{{chimique}}}} = \frac{{m_{{\text{{ciment}}}} \times q_{\text{{hydratation}}}}}{{1000}} = \frac{{{dosage_ciment} \times {exothermie_ciment}}}{{1000}} = {energie_degagee_mj:.1f}\text{{ MJ/m³}}")
+        # Utilisation de simples barres obliques pour le code LaTeX standardisé en Python sans couper la ligne
+        formule_q = rf"Q_{{\text{{chimique}}}} = \frac{{m_{{\text{{ciment}}}} \times q_{{\text{{hydratation}}}}}}{{1000}} = \frac{{{dosage_ciment} \times {exothermie_ciment}}}{{1000}} = {energie_degagee_mj:.1f}\text{{ MJ/m³}}"
+        st.latex(formule_q)
         st.info(f"Élévation de température théorique au cœur du massif : +{elevation_temp:.1f} °C")
 
     elif scen_tp == "Ouvrage d'art : Fissuration thermique de tablier":
