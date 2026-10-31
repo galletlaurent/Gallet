@@ -219,6 +219,60 @@ tab12 = onglets[12]
 tab13 = onglets[13] 
 tab14 = onglets[14]
 
+
+    def afficher_atelier_monocouche_verrouille(verrouille=False):
+        import random
+
+        # 1. BASE DE DONNÉES DU QUIZ TECHNIQUE DE L'ATELIER 9
+        questions_therm9_sources = [
+            {"id": "qt9_1", "q": "Quelle loi physique fondamentale régit le transfert de chaleur par conduction à travers une paroi ?", "options": ["La loi de Fourier", "La loi de Newton", "La loi de Stefan"], "rep": "La loi de Fourier"},
+            {"id": "qt9_2", "q": "Comment évolue le flux thermique traversant si l'on double la surface de la paroi simple ?", "options": ["Il est doublé", "Il est divisé par deux", "Il reste identique"], "rep": "Il est doublé"},
+            {"id": "qt9_3", "q": "Quelle est l'unité de mesure du flux thermique total dans le Système International ?", "options": ["Le Watt", "Le Joule", "Le Pascal"], "rep": "Le Watt"},
+            {"id": "qt9_4", "q": "Comment varie l'évolution de la température à l'intérieur d'un matériau unique et homogène ?", "options": ["De façon linéaire et rectiligne", "De façon parabolique", "Par paliers horizontaux successifs"], "rep": "De façon linéaire et rectiligne"},
+            {"id": "qt9_5", "q": "Si l'on multiplie l'épaisseur d'une paroi homogène par deux, qu'advient-il du flux perdu ?", "options": ["Il est divisé par deux", "Il est multiplié par deux", "Il augmente au carré"], "rep": "Il est divisé par deux"},
+            {"id": "qt9_6", "q": "Dans l'équation de la conduction unitaire, que représente le terme désigné par la lettre 'A' ?", "options": ["La surface d'échange en m²", "L'épaisseur de la paroi", "L'écart thermique"], "rep": "La surface d'échange en m²"},
+            {"id": "qt9_7", "q": "Quel paramètre se trouve au dénominateur dans l'expression littérale du flux conducteur unitaire ?", "options": ["L'épaisseur de la couche (e)", "La conductivité (lambda)", "La surface (A)"], "rep": "L'épaisseur de la couche (e)"},
+            {"id": "qt9_8", "q": "Si la pente du profil de température dans le mur est forte, cela signifie que le matériau est :", "options": ["Peu conducteur (Plutôt isolant)", "Extrêmement conducteur", "Un métal pur"], "rep": "Peu conducteur (Plutôt isolant)"},
+            {"id": "qt9_9", "q": "Le flux thermique se déplace spontanément depuis :", "options": ["La face la plus chaude vers la face la plus froide", "La face froide vers la face chaude", "Le milieu extérieur vers l'intérieur"], "rep": "La face la plus chaude vers la face la plus froide"},
+            {"id": "qt10_10", "q": "Pour calculer le flux à travers une paroi simple, la formule correcte à appliquer est :", "options": ["Phi = (lambda * A * dT) / e", "Phi = (e * A * dT) / lambda", "Phi = lambda * e * A * dT"], "rep": "Phi = (lambda * A * dT) / e"}
+        ]
+
+        if "ordre_quiz_tab9_therm_aleatoire" not in st.session_state:
+            random.shuffle(questions_therm9_sources)
+            st.session_state.ordre_quiz_tab9_therm_aleatoire = questions_therm9_sources
+
+        # 2. BASE DE DONNÉES DU TEXTE À TROUS DE L'ATELIER 9
+        if "champs_therm9_clean" not in st.session_state:
+            st.session_state.champs_therm9_clean = [
+                ("1. Le transfert conducteur à travers un matériau unitaire suit la loi de ..........", ["Choisir...", "Fourier", "Newton"], "Fourier", "therm9_t1"),
+                ("2. Le flux thermique total traversant une paroi plane s'exprime en ..........", ["Choisir...", "Watts", "Joules"], "Watts", "therm9_t2"),
+                ("3. À l'intérieur d'un seul matériau homogène, le profil thermique est ..........", ["Choisir...", "linéaire", "courbe"], "linéaire", "therm9_t3"),
+                ("4. Doubler la surface de la paroi monocouche conduit à un flux thermique ..........", ["Choisir...", "doublé", "diminué"], "doublé", "therm9_t4"),
+                ("5. Le flux est inversement proportionnel à l'.......... de la paroi étudiée.", ["Choisir...", "épaisseur", "surface"], "épaisseur", "therm9_t5"),
+                ("6. La chaleur se propage toujours de la face la plus .......... vers la plus froide.", ["Choisir...", "chaude", "froide"], "chaude", "therm9_t6"),
+                ("7. Dans la formule littérale, la constante lambda désigne la .......... thermique.", ["Choisir...", "conductivité", "résistance"], "conductivité", "therm9_t7"),
+                ("8. Augmenter l'épaisseur du matériau permet d'accroître la résistance ..........", ["Choisir...", "R", "U"], "R", "therm9_t8"),
+                ("9. Une forte pente de température traduit un matériau plutôt ..........", ["Choisir...", "isolant", "conducteur"], "isolant", "therm9_t9"),
+                ("10. Si l'écart thermique dT augmente, les déperditions totales de Watts ..........", ["Choisir...", "augmentent", "diminuent"], "augmentent", "therm9_t10")
+            ]
+
+        col_quiz, col_trous = st.columns(2)
+        with col_quiz:
+            st.markdown("##### Quiz Technique de l'Atelier 9 (10 questions - 10 pts)")
+            for idx, q_data in enumerate(st.session_state.ordre_quiz_tab9_therm_aleatoire, 1):
+                st.write(f"**{idx}.** {q_data['q']}")
+                st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"therm_at9_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+        with col_trous:
+            st.markdown("##### Synthèse de l'Atelier 9 (Texte à trous - 10 cases - 10 pts)")
+            for ligne in st.session_state.champs_therm9_clean:
+                enonce, choix, attendu, cle = ligne
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: st.write(enonce)
+                with c_sel: st.selectbox("", choix, key=f"{cle}_therm9_clean", disabled=verrouille, label_visibility="collapsed")
+
+
+
 def afficher_atelier_transmission_verrouille(verrouille=False):
     import random
 
@@ -4244,9 +4298,158 @@ with tab8:
     st.latex(rf"E_{{24\text{{h}}}} = \frac{{\Phi \times 24\text{{ h}}}}{{1000}} = \frac{{{flux_pont_w:.1f} \times 24}}{{1000}} = {energie_perdue_24h_kwh:.2f}\text{{ kWh}}")
     st.write("---")
 
+    if "suite_verrouille_tab9_therm" not in st.session_state:
+        st.session_state.suite_verrouille_tab9_therm = False
+    verrou_at9 = st.session_state.suite_verrouille_tab9_therm
 
+    # Affichage opérationnel des questions
+    afficher_atelier_monocouche_verrouille(verrouille=verrou_at9)
 
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 9")
 
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat9 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier sur la Paroi Monocouche.",
+        key="check_certif_therm9_final_net",
+        disabled=verrou_at9,
+    )
+
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 9",
+        key="btn_export_suite9_therm_official",
+        use_container_width=True,
+        disabled=verrou_at9,
+    ):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat9:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction du Quiz Technique (10 pts)
+            score_q9 = 0.0
+            if "ordre_quiz_tab9_therm_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab9_therm_aleatoire:
+                    saisie = st.session_state.get(f"therm_at9_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip():
+                        score_q9 += 1.0
+
+            # 2. Correction du Texte à trous (10 pts)
+            score_t9 = 0.0
+            if "champs_therm9_clean" in st.session_state:
+                for ligne in st.session_state.champs_therm9_clean:
+                    enonce_t, choix_t, attendu_t, cle_t = ligne
+                    saisie_t = st.session_state.get(f"{cle_t}_therm9_clean", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu_t).strip():
+                        score_t9 += 1.0
+
+            # 3. Sauvegarde définitive dans la session et rafraîchissement
+            st.session_state.score_suite9_therm_p1 = round(float(score_q9), 1)
+            st.session_state.score_suite9_therm_p2 = round(float(score_t9), 1)
+            st.session_state.score_final_suite9_therm = round(float(score_q9 + score_t9), 1)
+            st.session_state.suite_verrouille_tab9_therm = True
+            st.st_rerun() if hasattr(st, "st_rerun") else st.rerun()
+
+    # --- COMPILATION ET TÉLÉCHARGEMENT DU BILAN HTML SCELLÉ ---
+    if st.session_state.get("suite_verrouille_tab9_therm", False):
+        from datetime import datetime
+        scr1_t9 = st.session_state.get("score_suite9_therm_p1", 0.0)
+        scr2_t9 = st.session_state.get("score_suite9_therm_p2", 0.0)
+        tot_s_t9 = st.session_state.get("score_final_suite9_therm", 0.0)
+        timestamp_suite9 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER PAROI MONOCOUCHE SCELLÉ | Note de session : {tot_s_t9:.1f} / 20")
+
+        html_export_therm9 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Paroi Monocouche - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 20px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Physique Thermique</h1>
+                <p>Atelier 9 : Analyse mathématique et calcul du flux conducteur à travers une paroi monocouche simple</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite9}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t9:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t9:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse de Cours : <strong>{scr2_t9:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 9 : <strong>{tot_s_t9:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab9_therm_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab9_therm_aleatoire, 1):
+                saisie = st.session_state.get(f"therm_at9_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_therm9 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_therm9 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_therm9_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_therm9_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+
+                saisie_texte = st.session_state.get(f"{cle_variable}_therm9_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_therm9 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_therm9 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        st.download_button(
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 9 (.HTML)",
+            data=html_export_therm9,
+            file_name=preparer_nom_fichier("Atelier_9_Paroi_Monocouche").replace(".txt", ".html"),
+            mime="text/html",
+            use_container_width=True,
+        )
 
 
 
