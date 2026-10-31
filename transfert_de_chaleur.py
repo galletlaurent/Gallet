@@ -195,8 +195,6 @@ onglets = st.tabs([
     "La quantité de chaleur",
     "Coefficient de transmission thermique",
     "La résistance thermique",
-    "Transfert de chaleur à travers une paroi composée d'un seul matériau",
-    "Transfert de chaleur à travers une paroi composée de plusieurs matériaux",
     "Application dans le domaine de la maintenance",
     "Application dans le domaine des TP",
     "Application dans le domaine de la conduite routière",
@@ -216,8 +214,138 @@ tab9 = onglets[9]
 tab10 = onglets[10]
 tab11 = onglets[11] 
 tab12 = onglets[12]
-tab13 = onglets[13] 
-tab14 = onglets[14]
+
+def afficher_atelier_maintenance_dynamique(scenario_actif, verrouille=False):
+    import random
+
+    # =============================================================================
+    # ADAPTATION DYNAMIQUE DES QUESTIONS SELON LE SCÉNARIO DE MAINTENANCE ACTIVE
+    # =============================================================================
+    if scenario_actif == "Électricité : Surchauffe de discontacteur":
+        questions_sources = [
+            {"id": "m9_e1", "q": "Quel effet physique produit un dégagement de chaleur lors du passage d'un courant dans une résistance ?", "options": ["L'effet Joule", "L'effet Fourier", "L'effet Seebeck"], "rep": "L'effet Joule"},
+            {"id": "m9_e2", "q": "Quelle formule régit la puissance dissipée dans une borne défectueuse de résistance R ?", "options": ["P = R.I²", "P = U / I", "P = R.I"], "rep": "P = R.I²"},
+            {"id": "m9_e3", "q": "Quelle anomalie mécanique sur une borne électrique provoque l'augmentation de la résistance de contact ?", "options": ["Le desserrage des vis de fixation", "Un serrage trop puissant", "La présence de graisse conductrice"], "rep": "Le desserrage des vis de fixation"},
+            {"id": "m9_e4", "q": "Quelle valeur limite de température ne doit pas être franchie sur un raccordement en cuivre ?", "options": ["80 °C", "35 °C", "150 °C"], "rep": "80 °C"},
+            {"id": "m9_e5", "q": "Quelle action de maintenance permet d'éliminer définitivement ce type de point chaud ?", "options": ["Le resserrage au couple des connexions", "L'augmentation de la ventilation", "Le remplacement du disjoncteur"], "rep": "Le resserrage au couple des connexions"},
+            {"id": "m9_e6", "q": "Si l'intensité du courant électrique est multipliée par deux, la puissance dissipée est :", "options": ["Multipliée par quatre", "Doublée", "Divisée par deux"], "rep": "Multipliée par quatre"},
+            {"id": "m9_e7", "q": "La thermographie infrarouge capte des ondes lumineuses qui sont :", "options": ["Invisibles à l'œil nu", "Visibles au microscope", "Des rayons ultraviolets"], "rep": "Invisibles à l'œil nu"},
+            {"id": "m9_e8", "q": "Un point chaud permanent non traité dans une armoire présente un risque majeur de :", "options": ["Départ d'incendie", "Surtension atmosphérique", "Baisse de tension immédiate"], "rep": "Départ d'incendie"},
+            {"id": "m9_e9", "q": "Le diagnostic thermique réalisé avant toute panne s'inscrit dans la maintenance :", "options": ["Préventive conditionnelle", "Curative urgente", "Corrective différée"], "rep": "Préventive conditionnelle"},
+            {"id": "m9_e10", "q": "Quel paramètre de l'image thermographique indique la sévérité du défaut de serrage ?", "options": ["L'écart de température avec les phases saines", "La taille physique du bouton", "La marque de la caméra"], "rep": "L'écart de température avec les phases saines"}
+        ]
+        trous_sources = [
+            ("1. Le desserrage d'une borne crée une .......... de contact anormale.", ["Choisir...", "résistance", "conductivité"], "résistance", "therm9_m1"),
+            ("2. Le dégagement de chaleur induit par le courant répond à l'effet ..........", ["Choisir...", "Joule", "Fourier"], "Joule", "therm9_m2"),
+            ("3. La puissance thermique évolue proportionnellement au .......... de l'intensité.", ["Choisir...", "carré", "double"], "carré", "therm9_m3"),
+            ("4. La caméra thermique intercepte le rayonnement .......... émis par la borne.", ["Choisir...", "infrarouge", "ultraviolet"], "infrarouge", "therm9_m4"),
+            ("5. Un raccordement défectueux se traduit à l'écran par un .......... chaud.", ["Choisir...", "point", "palier"], "point", "therm9_m5"),
+            ("6. Traiter ce problème avant la rupture s'appelle la maintenance ..........", ["Choisir...", "préventive", "curative"], "préventive", "therm9_m6"),
+            ("7. Le resserrage des bornes permet de faire .......... la température du contact.", ["Choisir...", "chuter", "monter"], "chuter", "therm9_m7"),
+            ("8. Le seuil critique pour une connexion électrique courante est fixé à .......... °C.", ["Choisir...", "80", "40"], "80", "therm9_m8"),
+            ("9. L'échauffement non maîtrisé engendre un risque d'.......... de l'armoire.", ["Choisir...", "incendie", "surtension"], "incendie", "therm9_m9"),
+            ("10. La thermographie est un outil d'inspection non .......... très performant.", ["Choisir...", "destructif", "conforme"], "destructif", "therm9_m10")
+        ]
+    elif scenario_actif == "Mécanique : Échauffement de roulement":
+        questions_sources = [
+            {"id": "m9_m1", "q": "Quelle est la cause primaire de l'échauffement de ce composant ?", "options": ["Le frottement par manque de lubrification", "Une vitesse excessive du vent", "Une conductivité trop élevée"], "rep": "Le frottement par manque de lubrification"},
+            {"id": "m9_m2", "q": "La transformation de l'énergie mécanique en chaleur au niveau des billes est un transfert par :", "options": ["Friction cinétique", "Rayonnement pur", "Chaleur latente"], "rep": "Friction cinétique"},
+            {"id": "m9_m3", "q": "Quel composant d'étanchéité défaillant provoque généralement la fuite de la graisse ?", "options": ["Le joint à lèvre", "La bague interne", "La cage de maintien"], "rep": "Le joint à lèvre"},
+            {"id": "m9_m4", "q": "Quelle opération de maintenance mécanique permet de recréer le film protecteur ?", "options": ["Le graissage périodique", "Le lavage à haute pression", "La mise en peinture"], "rep": "Le graissage périodique"},
+            {"id": "m9_m5", "q": "Si le corps métallique atteint 95 °C en fonctionnement stabilisé, la situation est :", "options": ["Une anomalie critique", "Un fonctionnement normal", "Un sous-régime thermique"], "rep": "Une anomalie critique"},
+            {"id": "m9_m6", "q": "L'élévation thermique d'un palier mécanique est mesurable sans contact par :", "options": ["Une caméra infrarouge", "Un manomètre de pression", "Un anémomètre"], "rep": "Une caméra infrarouge"},
+            {"id": "m9_m7", "q": "Le phénomène destructeur provoqué par le blocage des billes surchauffées s'appelle :", "options": ["Le grippage mécanique", "L'embouage sédimentaire", "La condensation"], "rep": "Le grippage mécanique"},
+            {"id": "m9_m8", "q": "Suivre l'évolution thermique du boîtier pour planifier l'arrêt d'usine relève de la maintenance :", "options": ["Prédictive", "Curative d'urgence", "Corrective fortuite"], "rep": "Prédictive"},
+            {"id": "m9_m9", "q": "La conductivité thermique de l'acier favorise la migration de la chaleur vers :", "options": ["Le corps externe du palier", "L'axe central creux", "Les pales du ventilateur"], "rep": "Le corps externe du palier"},
+            {"id": "m9_m10", "q": "Quel est le risque ultime si l'échauffement du roulement mécanique est ignoré ?", "options": ["La casse de l'arbre par blocage net", "Une augmentation du rendement", "Une baisse des frottements"], "rep": "La casse de l'arbre par blocage net"}
+        ]
+        trous_sources = [
+            ("1. La perte de graisse engendre un .......... intense entre les billes d'acier.", ["Choisir...", "frottement", "glissement"], "frottement", "therm9_m1"),
+            ("2. L'énergie mécanique se convertit en un flux de .......... parasite.", ["Choisir...", "chaleur", "tension"], "chaleur", "therm9_m2"),
+            ("3. La défaillance structurelle du .......... provoque la fuite de lubrifiant.", ["Choisir...", "joint", "carter"], "joint", "therm9_m3"),
+            ("4. Cette surchauffe localisée est visible via la thermographie ..........", ["Choisir...", "infrarouge", "visuelle"], "infrarouge", "therm9_m4"),
+            ("5. Le manque de graisse présente un risque immédiat de .......... de l'arbre.", ["Choisir...", "grippage", "lavage"], "grippage", "therm9_m5"),
+            ("6. Surveiller la dérive de température qualifie la maintenance ..........", ["Choisir...", "prédictive", "curative"], "prédictive", "therm9_m6"),
+            ("7. Ajouter un fluide .......... permet de restaurer le film de protection.", ["Choisir...", "lubrifiant", "isolant"], "lubrifiant", "therm9_m7"),
+            ("8. Une valeur stabilisée à 95 °C constitue un signal .......... pour l'organe.", ["Choisir...", "critique", "conforme"], "critique", "therm9_m8"),
+            ("9. Les calories se déplacent au sein des bagues par .......... thermique.", ["Choisir...", "conduction", "convection"], "conduction", "therm9_m9"),
+            ("10. Ce contrôle évite la rupture .......... de l'ensemble de la transmission.", ["Choisir...", "brutale", "programmée"], "brutale", "therm9_m10")
+        ]
+    elif scenario_actif == "Réseaux : Dysfonctionnement de purgeur vapeur":
+        questions_sources = [
+            {"id": "m9_v1", "q": "Quelle anomalie thermographique caractérise un purgeur vapeur bloqué ouvert ?", "options": ["L'absence de saut thermique amont/aval", "Un refroidissement complet de l'organe", "Un givrage de surface"], "rep": "L'absence de saut thermique amont/aval"},
+            {"id": "m9_v2", "q": "Quelle forme d'énergie s'échappe en masse lors de la fuite directe de vapeur ?", "options": ["La chaleur latente de vaporisation", "La chaleur sensible de fusion", "L'énergie potentielle"], "rep": "La chaleur latente de vaporisation"},
+            {"id": "m9_v3", "q": "La valeur nominale de la chaleur latente de vaporisation de l'eau pure est de :", "options": ["2 260 kJ/kg", "334 kJ/kg", "4180 J/kg"], "rep": "2 260 kJ/kg"},
+            {"id": "m9_v4", "q": "Quel est le rôle principal d'un purgeur fonctionnel sur un réseau de vapeur ?", "options": ["Évacuer les condensats et piéger la vapeur", "Augmenter la pression du gaz", "Chauffer les canalisations"], "rep": "Évacuer les condensats et piéger la vapeur"},
+            {"id": "m9_v5", "q": "Une fuite de vapeur prolongée engendre directement à la chaudière :", "options": ["Une surconsommation massive de combustible", "Une augmentation du rendement global", "Une baisse du débit d'eau"], "rep": "Une surconsommation massive de combustible"},
+            {"id": "m9_v6", "q": "Le transfert thermique perdu à travers le panache de vapeur s'effectue par :", "options": ["Convection et changement d'état", "Conduction métallique pure", "Rayonnement laser"], "rep": "Convection et changement d'état"},
+            {"id": "m9_v7", "q": "Comment l'opérateur valide-t-on l'efficacité du remplacement du purgeur ?", "options": ["En mesurant le rétablissement de l'écart thermique", "En comptant le nombre de vis", "En coupant définitivement l'eau"], "rep": "En mesurant le rétablissement de l'écart thermique"},
+            {"id": "m9_v8", "q": "La comptabilisation des pertes énergétiques sur 24 heures s'exprime en :", "options": ["kWatts-heures (kWh)", "Watts par seconde", "Joules par Kelvin"], "rep": "kWatts-heures (kWh)"},
+            {"id": "m9_v9", "q": "Le contrôle non destructif des purgeurs par ultrasons ou infrarouge relève de la :", "options": ["Maintenance préventive", "Maintenance curative tardive", "Maintenance corrective différée"], "rep": "Maintenance préventive"},
+            {"id": "m9_v10", "q": "Un purgeur bloqué fermé (bloquant les condensats) provoquerait en amont :", "options": ["Un refroidissement de la ligne et des coups de bélier", "Une hausse de température", "Une vaporisation instantanée"], "rep": "Un refroidissement de la ligne et des coups de bélier"}
+        ]
+        trous_sources = [
+            ("1. Un purgeur défaillant laisse échapper la .......... calorifique en continu.", ["Choisir...", "vapeur", "eau"], "vapeur", "therm9_m1"),
+            ("2. Le gaz emporte avec lui sa chaleur .......... de vaporisation colossale.", ["Choisir...", "latente", "sensible"], "latente", "therm9_m2"),
+            ("3. La constante Lv pour l'eau pure s'élève à .......... kJ/kg.", ["Choisir...", "2260", "334"], "2260", "therm9_m3"),
+            ("4. L'absence d'écart de température indique que le clapet reste ..........", ["Choisir...", "ouvert", "fermé"], "ouvert", "therm9_m4"),
+            ("5. La détection du dysfonctionnement se fait par caméra .......... sans contact.", ["Choisir...", "thermique", "optique"], "thermique", "therm9_m5"),
+            ("6. Le gaspillage de fluide engendre une surconsommation de ..........", ["Choisir...", "combustible", "matière"], "combustible", "therm9_m6"),
+            ("7. Remplacer la cartouche permet de bloquer et .......... l'énergie en amont.", ["Choisir...", "conserver", "dissiper"], "conserver", "therm9_m7"),
+            ("8. L'évaluation des pertes journalières se calcule sur une durée de .......... heures.", ["Choisir...", "24", "12"], "24", "therm9_m8"),
+            ("9. Inspecter les réseaux thermiques sans démontage est un diagnostic non ..........", ["Choisir...", "destructif", "isolant"], "destructif", "therm9_m9"),
+            ("10. Un purgeur sain doit obligatoirement piéger la vapeur et évacuer l'.......... liquide.", ["Choisir...", "eau", "air"], "eau", "therm9_m10")
+        ]
+    else:  # Embouage de radiateur central
+        questions_sources = [
+            {"id": "m9_r1", "q": "Quel sédiment obstrue la circulation interne des réseaux de chauffage ?", "options": ["Les boues d'oxydes métalliques", "Le calcaire de tartre pur", "Des résidus de graisse liquide"], "rep": "Les boues d'oxydes métalliques"},
+            {"id": "m9_r2", "q": "Quel impact physique direct l'accumulation de boues a-t-elle sur la paroi ?", "options": ["Elle crée une résistance thermique parasite", "Elle augmente le coefficient U", "Elle annule l'épaisseur"], "rep": "Elle crée une résistance thermique parasite"},
+            {"id": "m9_r3", "q": "Quelle signature visuelle révèle un radiateur emboué à la caméra thermique ?", "options": ["Un haut chaud et un bas totalement froid", "Une surface uniformément brûlante", "Un gradient horizontal parfait"], "rep": "Un haut chaud et un bas totalement froid"},
+            {"id": "m9_r4", "q": "L'encrassement interne provoque l'effondrement de quel coefficient global ?", "options": ["Le coefficient de transmission U", "La conductivité lambda du fluide", "L'émissivité radiative"], "rep": "Le coefficient de transmission U"},
+            {"id": "m9_r5", "q": "L'opération technique consistant à nettoyer et rincer le circuit s'appelle :", "options": ["Le désembouage hydrodynamique", "Le calorifugeage des tubes", "La purge d'air"], "rep": "Le désembouage hydrodynamique"},
+            {"id": "m9_r6", "q": "La réduction de la zone d'échange active du radiateur dégrade le transfert par :", "options": ["Convection et rayonnement", "Conduction solide pure", "Changement d'état latent"], "rep": "Convection et rayonnement"},
+            {"id": "m9_r7", "q": "Les dépôts de boues métalliques s'accumulent prioritairement dans quelle zone ?", "options": ["La partie inférieure (le fond)", "La vanne d'entrée haute", "Le purgeur d'air"], "rep": "La partie inférieure (le fond)"},
+            {"id": "m9_r8", "q": "Un radiateur emboué induit directement pour les occupants de la pièce :", "options": ["Une perte de confort par baisse de puissance émise", "Une surchauffe spontanée", "Une émanation de gaz"], "rep": "Une perte de confort par baisse de puissance émise"},
+            {"id": "m9_r9", "q": "Quelle est l'unité légale du coefficient de transmission U impacté par la boue ?", "options": ["W/(m².K)", "W/(m.K)", "Joule/kg"], "rep": "W/(m².K)"},
+            {"id": "m9_r10", "q": "Vérifier la bonne répartition de la chaleur sur les parois s'inscrit dans la maintenance :", "options": ["Préventive", "Curative urgente", "Corrective fortuite"], "rep": "Préventive"}
+        ]
+        trous_sources = [
+            ("1. L'accumulation d'oxydes crée des .......... au fond du corps de chauffe.", ["Choisir...", "boues", "bulles"], "boues", "therm9_m1"),
+            ("2. Ce dépôt sédimentaire agit comme un .......... thermique parasite.", ["Choisir...", "isolant", "conducteur"], "isolant", "therm9_m2"),
+            ("3. La présence de boue fait augmenter la .......... globale du composant.", ["Choisir...", "résistance", "conductivité"], "résistance", "therm9_m3"),
+            ("4. En conséquence, le coefficient de transmission .......... U s'effondre.", ["Choisir...", "global", "unitaire"], "global", "therm9_m4"),
+            ("5. La caméra thermique met en relief un défaut d'.......... de surface.", ["Choisir...", "homogénéité", "conduction"], "homogénéité", "therm9_m5"),
+            ("6. Le bas du radiateur reste .......... en raison du manque de débit d'eau.", ["Choisir...", "froid", "chaud"], "froid", "therm9_m6"),
+            ("7. La pompe de nettoyage effectue un .......... complet du réseau de tubes.", ["Choisir...", "désembouage", "calorifugeage"], "désembouage", "therm9_m7"),
+            ("8. L'évacuation des sédiments permet de libérer la surface d'.......... active.", ["Choisir...", "échange", "conduction"], "échange", "therm9_m8"),
+            ("9. Le radiateur retrouve ainsi son émission nominale exprimée en ..........", ["Choisir...", "Watts", "Joules"], "Watts", "therm9_m9"),
+            ("10. Ce type de diagnostic infrarouge planifié relève de la maintenance ..........", ["Choisir...", "préventive", "curative"], "préventive", "therm9_m10")
+        ]
+
+    # Sécurisation du stockage dans la session pour l'évaluation active
+    if "ordre_quiz_tab9_maint_aleatoire" not in st.session_state:
+        st.session_state.ordre_quiz_tab9_maint_aleatoire = questions_sources
+    if "champs_therm9_maint_clean" not in st.session_state:
+        st.session_state.champs_therm9_maint_clean = trous_sources
+
+    col_quiz, col_trous = st.columns(2)
+    with col_quiz:
+        st.markdown("##### Quiz Technique de l'Atelier (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab9_maint_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"therm_at9_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 9 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_therm9_maint_clean:
+            enonce, choix, attendu, cle = ligne
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: st.write(enonce)
+            with c_sel: st.selectbox("", choix, key=f"{cle}_therm9_maint_clean", disabled=verrouille, label_visibility="collapsed")
+
+
+
+
 
 
 def afficher_atelier_monocouche_verrouille(verrouille=False):
@@ -4452,8 +4580,404 @@ with tab8:
         )
 
 
+with tab9:
+    st.header("Application dans le Domaine de la Maintenance")
+    
+    # BANQUE DE DONNÉES DES 4 SCÉNARIOS DE MAINTENANCE
+    if "scenario_maintenance_choisi" not in st.session_state:
+        st.session_state.scenario_maintenance_choisi = "Électricité : Surchauffe de discontacteur"
 
+    # Système de tirage au sort par bouton
+    col_tirage, col_statut = st.columns([0.4, 0.6], vertical_alignment="center")
+    with col_tirage:
+        if st.button("TIRER UN EXERCICE DE MAINTENANCE AU HASARD", key="btn_tirage_hasard_t9", use_container_width=True):
+            liste_scenarios = [
+                "Électricité : Surchauffe de discontacteur",
+                "Mécanique : Échauffement de roulement",
+                "Réseaux : Dysfonctionnement de purgeur vapeur",
+                "Thermique : Embouage de radiateur central"
+            ]
+            import random
+            # On s'assure de changer de scénario pour le tirage
+            actuel = st.session_state.scenario_maintenance_choisi
+            possibles = [s for s in liste_scenarios if s != actuel]
+            st.session_state.scenario_maintenance_choisi = random.choice(possibles)
+            # Réinitialisation des ordres de quiz pour forcer le recalcul lié au nouveau scénario
+            if "ordre_quiz_tab9_maint_aleatoire" in st.session_state:
+                del st.session_state.ordre_quiz_tab9_maint_aleatoire
+            if "champs_therm9_maint_clean" in st.session_state:
+                del st.session_state.champs_therm9_maint_clean
+            st.rerun()
 
+    scen = st.session_state.scenario_maintenance_choisi
+    st.success(f"Exercice actif affecté : {scen}")
+    st.write("---")
+
+    # =============================================================================
+    # 1. ENONCÉ DE L'EXERCICE ET BANDE DESSINÉE HUMORISTIQUE TEXTUELLE (DYNAMIQUE)
+    # =============================================================================
+    col_gauche_bd, col_droite_img = st.columns(2)
+
+    with col_gauche_bd:
+        st.markdown("##### Enoncé de l'exercice et contexte")
+        if scen == "Électricité : Surchauffe de discontacteur":
+            st.info(
+                "**Cas 1 : L'alerte invisible.** Les connexions d'un discontacteur triphasé se desserrent sous l'effet des vibrations d'une machine : "
+                "« Attention, le courant passe mal ! La résistance de contact grimpe, les Joules s'accumulent à l'intérieur ! ».\n\n"
+                "**Cas 2 : L'œil de l'expert.** Le technicien inspecte l'armoire à la caméra thermique : "
+                "« Un point rouge vif apparaît à plus de 85 °C sur la phase 2. Le profil met en évidence un défaut critique ! ».\n\n"
+                "**Cas 3 : L'action corrective.** L'opérateur coupe le secteur, ouvre le coffret et resserre les bornes : "
+                "« En éliminant cette résistance parasite, la puissance dissipée s'effondre et on évite le sinistre ! ».\n\n"
+                "**Cas 4 : Le verdict.** L'armoire est remise sous tension, la caméra affiche une température normale de 35 °C : "
+                "« Affaire classée ! La thermographie a sauvé la chaîne de production d'un arrêt coûteux ! »"
+            )
+        elif scen == "Mécanique : Échauffement de roulement":
+            st.info(
+                "**Cas 1 : La friction masquée.** Le joint d'étanchéité d'un roulement à billes de moteur rompt, entraînant une fuite de graisse : "
+                "« À l'aide, on tourne à sec ! Le frottement mécanique augmente, nos bagues surchauffent ! ».\n\n"
+                "**Cas 2 : Le scan thermique.** Lors de sa ronde préventive, le technicien vise le palier de transmission : "
+                "« L'arbre dissipe un flux thermique anormal de friction, le capot atteint 95 °C ! ».\n\n"
+                "**Cas 3 : La lubrification.** Le technicien procède au remplacement du roulement et fait l'appoint de lubrifiant : "
+                "« On remplace la pièce endommagée et on restaure le film d'huile pour stopper la création de chaleur ! ».\n\n"
+                "**Cas 4 : La regulation.** Le moteur redémarre, le palier se stabilise durablement sous le seuil de vigilance : "
+                "« Affaire classée ! L'analyse thermographique a empêché le grippage destructeur de l'arbre ! »"
+            )
+        elif scen == "Réseaux : Dysfonctionnement de purgeur vapeur":
+            st.info(
+                "**Cas 1 : Le blocus interne.** Sur une ligne de vapeur haute pression, un purgeur se bloque en position ouverte : "
+                "« Quelle passoire ! La vapeur s'échappe directement vers le réseau de condensats sans donner ses Joules latents ! ».\n\n"
+                "**Cas 2 : Le relevé amont-aval.** Le technicien de membrane mesure les températures à l'entrée et à la sortie de l'organe : "
+                "« Pas de saut thermique ! L'amont et l'aval sont identiques à 140 °C, le purgeur fuit à plein canal ! ».\n\n"
+                "**Cas 3 : Le remplacement.** La vanne d'isolement est fermée, le technicien installe une cartouche neuve : "
+                "« On remplace l'élément de régulation défaillant pour piéger la vapeur et conserver l'énergie ! ».\n\n"
+                "**Cas 4 : L'économie.** Le réseau est rouvert, le saut thermique attendu réapparaît instantanément : "
+                "« Affaire classée ! Le flux perdu est stoppé, le rendement de la chaudière remonte en flèche ! »"
+            )
+        else: # Embouage de radiateur central
+            st.info(
+                "**Cas 1 : La sédimentation.** Les oxydes métalliques s'accumulent au fond d'un radiateur en acier d'un bureau : "
+                "« On étouffe ici ! Les boues créent une couche sédimentaire opaque qui bloque la convection de l'eau ! ».\n\n"
+                "**Cas 2 : La thermographie de surface.** L'expert scanne la face avant de l'émetteur de chaleur : "
+                "« C'est flagrant ! Le haut du radiateur est chaud à 60 °C tandis que la moitié inférieure reste glaciale à 22 °C ! ».\n\n"
+                "**Cas 3 : L'action de désembouage.** Une pompe hydrodynamique injecte un produit nettoyant dans le circuit : "
+                "« On décape et on rince le réseau pour évacuer les boues et restaurer la surface active d'échange ! ».\n\n"
+                "**Cas 4 : Le confort restauré.** Le radiateur présente à nouveau une température homogène et diffuse ses Watts : "
+                "« Affaire classée ! La caméra confirme le rétablissement du flux. Le bureau retrouve son confort ! »"
+            )
+
+    with col_droite_img:
+        st.markdown("##### Illustration caricaturale du cas")
+        # Sélection de la caricature spécifique au scénario tiré
+        if scen == "Électricité : Surchauffe de discontacteur":
+            fichier_img = "maintenance_elec.jpg"
+            caption_img = "Caricature d'une borne électrique en surchauffe par effet Joule"
+            texte_bd_bleu = (
+                "**La BD humoristique : La révolte du discontacteur**\n\n"
+                "**Cas 1 :** Les vis se desserrent. La borne crie : « Ça coince ici, la résistance monte ! ».\n"
+                "**Cas 2 :** L'infrarouge s'active : « Alerte au point chaud, la phase 2 passe au rouge vif ! ».\n"
+                "**Cas 3 :** Le tournevis intervient : « On resserre tout au couple, la puissance s'effondre ! ».\n"
+                "**Cas 4 :** Retour au calme à 35 °C : « Affaire classée, l'incendie est évité avec succès ! »"
+            )
+        elif scen == "Mécanique : Échauffement de roulement":
+            fichier_img = "maintenance_meca.jpg"
+            caption_img = "Caricature d'un roulement mécanique subissant d'intenses frottements"
+            texte_bd_bleu = (
+                "**La BD humoristique : Les billes en surchauffe**\n\n"
+                "**Cas 1 :** Plus de graisse dans la cage : « Au secours, on tourne à sec, le métal frotte ! ».\n"
+                "**Cas 2 :** Le boîtier monte à 95 °C : « La friction cinétique nous transforme en radiateur ! ».\n"
+                "**Cas 3 :** Injection de lubrifiant neuf : « Le film d'huile est restauré, la chaleur capitule ! ».\n"
+                "**Cas 4 :** L'arbre tourne sans un bruit : « Affaire classée, le grippage mécanique est maté ! »"
+            )
+        elif scen == "Réseaux : Dysfonctionnement de purgeur vapeur":
+            fichier_img = "maintenance_vapeur.jpg"
+            caption_img = "Caricature de la fuite de chaleur latente sur un purgeur bloqué"
+            texte_bd_bleu = (
+                "**La BD humoristique : La fuite des Joules latents**\n\n"
+                "**Cas 1 :** Le clapet reste bloqué ouvert : « C'est les vacances, tout le monde dehors ! ».\n"
+                "**Cas 2 :** La vapeur s'échappe en direct : « On file sans donner notre chaleur latente de vaporisation ! ».\n"
+                "**Cas 3 :** Pose d'une cartouche neuve : « Clapet verrouillé, la vapeur est prise au piège ! ».\n"
+                "**Cas 4 :** Le saut thermique réapparaît : « Affaire classée, les économies d'énergie sont validées ! »"
+            )
+        else:
+            fichier_img = "maintenance_radiateur.jpg"
+            caption_img = "Caricature d'une paroi de radiateur obstruée par les sédiments"
+            texte_bd_bleu = (
+                "**La BD humoristique : L'étouffement du radiateur**\n\n"
+                "**Cas 1 :** Les boues se déposent au fond : « On s'installe ici et on bloque tout le monde ! ».\n"
+                "**Cas 2 :** Le bas reste gelé à 22 °C : « La résistance sédimentaire fait chuter le coefficient U ! ».\n"
+                "**Cas 3 :** Rinçage à la pompe hydrodynamique : « Fin de la grève, les sédiments sont évacués ! ».\n"
+                "**Cas 4 :** Chaleur homogène dans tout le bureau : « Affaire classée, le flux thermique a repris sa course ! »"
+            )
+
+        # Affichage de l'image
+        if os.path.exists(fichier_img):
+            st.image(fichier_img, caption=caption_img, use_container_width=True)
+        else:
+            st.caption(caption_img)
+            
+        # Affichage de l'énoncé textuel humoristique dans un fond bleu (st.info) comme d'habitude
+        st.info(texte_bd_bleu)
+
+    # =============================================================================
+    # 2. COURS TECHNIQUE ET MINIATURES (DYNAMIQUE)
+    # =============================================================================
+    with col_droite_cours:
+        st.markdown("##### Base de connaissances techniques")
+        if scen == "Électricité : Surchauffe de discontacteur":
+            st.write(
+                "Un mauvais serrage augmente la résistance électrique de contact ($R$). Au passage du courant ($I$), "
+                "la puissance thermique dissipée par effet Joule répond à l'équation $P = R \\cdot I^2$. "
+                "Cette chaleur se transmet par conduction aux éléments voisins, provoquant la fusion des isolants plastiques."
+            )
+        elif scen == "Mécanique : Échauffement de roulement":
+            st.write(
+                "Le manque de lubrifiant détruit le film d'huile protecteur. Le contact direct métal-métal génère un "
+                "frottement intense. L'énergie mécanique se convertit en flux de chaleur parasite. La température grimpe "
+                "jusqu'au point de recuit de l'acier, causant la rupture brutale de la transmission."
+            )
+        elif scen == "Réseaux : Dysfonctionnement de purgeur vapeur":
+            st.write(
+                "Un purgeur de vapeur doit évacuer l'eau condensée tout en bloquant la vapeur calorifique. S'il fuit, "
+                "la vapeur s'échappe en emportant sa chaleur latente de vaporisation ($L_v = 2260\\text{ kJ/kg}$). "
+                "Cela crée une perte financière massive par gaspillage de combustible à la chaudière."
+            )
+        else: # Embouage de radiateur central
+            st.write(
+                "L'embouage réduit le débit d'eau chaude circulante et crée une couche isolante interne de faible conductivité "
+                "thermique. La résistance thermique de la paroi augmente localement, ce qui fait chuter le coefficient "
+                "de transmission global ($U$) de l'appareil. Le radiateur ne parvient plus à chauffer la pièce."
+            )
+
+        col_mini_1, col_mini_2 = st.columns(2)
+        with col_mini_1:
+            if os.path.exists("maint_tech_1.jpg"): st.image("maint_tech_1.jpg", use_container_width=True)
+            else: st.caption("Image diagnostic infrarouge")
+        with col_mini_2:
+            if os.path.exists("maint_tech_2.jpg"): st.image("maint_tech_2.jpg", use_container_width=True)
+            else: st.caption("Image intervention maintenance")
+
+    st.write("---")
+
+    # =============================================================================
+    # 3. LABORATOIRE VIRTUEL INTERACTIF (DYNAMIQUE)
+    # =============================================================================
+    st.subheader("Laboratoire Virtuel : Simulateur de mesures de maintenance")
+    
+    col_p1, col_p2 = st.columns(2)
+    if scen == "Électricité : Surchauffe de discontacteur":
+        with col_p1:
+            val_i = st.slider("Intensité du courant électrique (I en Ampères) :", min_value=10, max_value=80, value=32, key="l9_m_i")
+            val_r = st.slider("Résistance parasite de contact (R en Ohms) :", min_value=0.01, max_value=0.40, value=0.12, step=0.01, key="l9_m_r")
+        
+        puissance_calculee = val_r * (val_i ** 2)
+        temp_borne = 25 + (puissance_calculee * 0.4)
+             st.metric(label="Puissance dissipée par effet Joule", value=f"{puissance_calculee:.1f} Watts")
+            st.latex(rf"P = R \times I^2 = {val_r:.2f} \times {val_i}^2 = {puissance_calculee:.1f}\text{{ W}}")
+            st.info(f"Température mesurée sur la borne : {temp_borne:.1f} °C (Seuil critique à 80 °C)")
+
+    elif scen == "Mécanique : Échauffement de roulement":
+        with col_p1:
+            vitesse_rpm = st.slider("Vitesse de rotation de l'arbre (tr/min) :", min_value=500, max_value=3000, value=1500, step=100, key="l9_m_rpm")
+            coeff_frot = st.slider("Coefficient de frottement (Défaut de graisse) :", min_value=0.01, max_value=0.20, value=0.15, step=0.01, key="l9_m_f")
+        
+        puissance_calculee = vitesse_rpm * coeff_frot * 0.5
+        temp_palier = 20 + (puissance_calculee * 0.3)
+        
+        st.metric(label="Puissance thermique de friction dégagée", value=f"{puissance_calculee:.1f} Watts")
+        st.latex(rf"P_{{\text{{friction}}}} = k \times \omega \times f = {puissance_calculee:.1f}\text{{ W}}")
+        st.info(f"Température du boîtier de roulement : {temp_palier:.1f} °C (Seuil de vigilance à 65 °C)")
+
+    elif scen == "Réseaux : Dysfonctionnement de purgeur vapeur":
+        with col_p1:
+            debit_fuite = st.slider("Débit de fuite de vapeur (kg/h) :", min_value=0.5, max_value=10.0, value=2.0, step=0.5, key="l9_m_db")
+        
+        puissance_calculee = (debit_fuite / 3600.0) * 2260000.0
+        perte_24h_kwh = (puissance_calculee * 24.0) / 1000.0
+        
+        st.metric(label="Débit de fuite énergétique instantané", value=f"{puissance_calculee:.1f} Watts")
+        st.latex(rf"\Phi = \dot{{m}} \times L_v = {puissance_calculee:.1f}\text{{ W}}")
+        st.info(f"Perte totale accumulée sur une journée de 24 heures : {perte_24h_kwh:.1f} kWh")
+
+    else: # Embouage de radiateur central
+        with col_p1:
+            pourcent_embouage = st.slider("Taux d'embouage du radiateur (%) :", min_value=0, max_value=80, value=40, step=5, key="l9_m_emb")
+        
+        puissance_nominale = 2000.0
+        puissance_calculee = puissance_nominale * (1 - (pourcent_embouage / 100.0))
+        surface_perdue = 1.8 * (pourcent_embouage / 100.0)
+        
+        st.metric(label="Puissance d'émission thermique réelle du radiateur", value=f"{puissance_calculee:.1f} Watts")
+        st.latex(rf"P_{{\text{{réelle}}} = P_{{\text{{nominale}}}} \times (1 - \eta_{{\text{{embouage}}}}) = {puissance_calculee:.1f}\text{{ W}}")
+        st.info(f"Surface de transfert rendue totalement inactive par les boues : {surface_perdue:.2f} m²")
+
+    with col_p2:
+        # Rendu Matplotlib générique unifié pour le banc d'essai de maintenance
+        import matplotlib.pyplot as plt
+        import matplotlib.patches as patches
+        fig_m, ax_m = plt.subplots(figsize=(6, 2.5))
+        couleur_diag = "#ef4444" if puissance_calculee > 800 else "#10b981"
+        ax_m.add_patch(patches.Rectangle((0.5, 0.4), 3.0, 1.4, facecolor='#cbd5e1', edgecolor='#0f172a', lw=1.5))
+        ax_m.add_patch(patches.Rectangle((1.5, 0.7), 1.0, 0.8, facecolor=couleur_diag, alpha=0.8))
+        ax_m.text(2.0, 1.1, "Zone Cible", color='white', fontweight='bold', ha='center', va='center', fontsize=9)
+        ax_m.text(4.2, 1.1, f"Signal capté :\n{puissance_calculee:.1f} W", color='#0f172a', fontweight='bold', fontsize=9)
+        ax_m.set_xlim(0, 6.0)
+        ax_m.set_ylim(0, 2.2)
+        ax_m.axis('off')
+        st.pyplot(fig_m)
+
+    st.write("---")       
+    if "suite_verrouille_tab9_maint" not in st.session_state:
+        st.session_state.suite_verrouille_tab9_maint = False
+    verrou_at9 = st.session_state.suite_verrouille_tab9_maint
+
+    # Affichage opérationnel des questions spécifiques adaptées au cas de maintenance tiré
+    afficher_atelier_maintenance_dynamique(scen, verrouille=verrou_at9)
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 9")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat9 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier d'application de la Maintenance.",
+        key="check_certif_therm9_maint_net",
+        disabled=verrou_at9,
+    )
+
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 9",
+        key="btn_export_suite9_maint_official",
+        use_container_width=True,
+        disabled=verrou_at9,
+    ):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat9:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction du Quiz Technique (10 pts)
+            score_q9 = 0.0
+            if "ordre_quiz_tab9_maint_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab9_maint_aleatoire:
+                    saisie = st.session_state.get(f"therm_at9_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip():
+                        score_q9 += 1.0
+
+            # 2. Correction du Texte à trous (10 pts)
+            score_t9 = 0.0
+            if "champs_therm9_maint_clean" in st.session_state:
+                for ligne in st.session_state.champs_therm9_maint_clean:
+                    enonce_t, choix_t, attendu_t, cle_t = ligne
+                    saisie_t = st.session_state.get(f"{cle_t}_therm9_maint_clean", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu_t).strip():
+                        score_t9 += 1.0
+
+            # 3. Sauvegarde définitive dans la session et rafraîchissement
+            st.session_state.score_suite9_maint_p1 = round(float(score_q9), 1)
+            st.session_state.score_suite9_maint_p2 = round(float(score_t9), 1)
+            st.session_state.score_final_suite9_maint = round(float(score_q9 + score_t9), 1)
+            st.session_state.suite_verrouille_tab9_maint = True
+            st.st_rerun() if hasattr(st, "st_rerun") else st.rerun()
+
+    # --- COMPILATION ET TÉLÉCHARGEMENT DU BILAN HTML SCELLÉ ---
+    if st.session_state.get("suite_verrouille_tab9_maint", False):
+        from datetime import datetime
+        scr1_t9 = st.session_state.get("score_suite9_maint_p1", 0.0)
+        scr2_t9 = st.session_state.get("score_suite9_maint_p2", 0.0)
+        tot_s_t9 = st.session_state.get("score_final_suite9_maint", 0.0)
+        timestamp_suite9 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER MAINTENANCE SCELLÉ | Note de session : {tot_s_t9:.1f} / 20")
+
+        html_export_therm9 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Application Maintenance - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 20px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Physique Thermique</h1>
+                <p>Atelier 9 : Application technologique et relevés thermographiques au domaine de la Maintenance</p>
+                <p>Scénario résolu : {scen}</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite9}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t9:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t9:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse de Cours : <strong>{scr2_t9:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 9 : <strong>{tot_s_t9:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab9_maint_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab9_maint_aleatoire, 1):
+                saisie = st.session_state.get(f"therm_at9_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_therm9 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_therm9 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_therm9_maint_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_therm9_maint_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+
+                saisie_texte = st.session_state.get(f"{cle_variable}_therm9_maint_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_therm9 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_therm9 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        st.download_button(
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 9 (.HTML)",
+            data=html_export_therm9,
+            file_name=preparer_nom_fichier("Atelier_9_Application_Maintenance").replace(".txt", ".html"),
+            mime="text/html",
+            use_container_width=True,
+        )
 
 
 
