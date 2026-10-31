@@ -5281,7 +5281,6 @@ with tab10:
     # 2. COURS TECHNIQUE ET CARICATURE EN FOND BLEU (DYNAMIQUE)
     # =============================================================================
     with col_droite_cours_tp:
-        st.markdown("##### Illustration caricaturale du cas")
         if scen_tp == "Béton massif : Exothermie d'une pile de pont":
             fichier_img_tp = "exothermipiledepont.jpg"
             caption_img_tp = "Caricature de l'accumulation de chaleur au cœur du béton massif"
@@ -5315,9 +5314,8 @@ with tab10:
             st.image(fichier_img_tp, caption=caption_img_tp, use_container_width=True)
         else:
             st.caption(caption_img_tp)
+
             
-        # Rendu de la zone de texte descriptive d
-        st.info(texte_bd_bleu_tp)
     st.write("---")
 
     # =============================================================================
