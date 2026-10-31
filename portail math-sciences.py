@@ -93,7 +93,7 @@ applications = [
     {"nom": "Les probabilités", "url": "https://gallet-l22zawjhgsrgvqhl2fgewi.streamlit.app/", "niveau": "2nde", "theme": "Statistiques et probabilités"},
     {"nom": "Sécuirité électrique", "url": "https://gallet-ym9etxx9duoxagszgghzdc.streamlit.app/", "niveau": "2nde", "theme": "Electricité"},
     {"nom": "Les statistiques à une variable", "url": "https://gallet-hxejhti7hs2mr4cqxmj4vr.streamlit.app/", "niveau": "2nde", "theme": "Statistiques et probabilités"},
-
+    {"nom": "Transfert de chaleur", "url": "https://gallet-5vvtefzmd69lns9qv7nebv.streamlit.app/", "niveau": "2nde", "theme": "Thermodynamique"},
      
     {"nom": "Concentration molaire", "url": "https://gallet-hjkhuxhwzuzcdgz6bcgbzy.streamlit.app/", "niveau": "1ere", "theme": "Chimie"},
     {"nom": "Dosage du vinaigre", "url": "https://gallet-cnvqzzejzkeku7pm4j5puq.streamlit.app/", "niveau": "1ere", "theme": "Dosages"},
