@@ -38,7 +38,7 @@ st.markdown("""
         page-break-after: always !important;
         break-after: page !important;
         height: 0 !important;
-        st.markdown: none !important;
+        display: block !important;
     }
 
     /* Evite de couper une vignette en deux au milieu */
@@ -55,7 +55,7 @@ st.markdown("""
     }
     
     /* Cache les titres et les boites de selection */
-    h1, p, .stTextInput, .stSelectbox, .stAlert {
+    h1, p, .stTextInput, .stSelectbox, .stAlert, [data-testid="stTabs"] nav {
         display: none !important;
     }
     
@@ -119,7 +119,6 @@ applications = [
     {"nom": "Le pH", "url": "https://gallet-2xkb5zlhdnonzmkahcmk3u.streamlit.app/", "niveau": "Tale", "theme": "Le pH"}
 ]
 
-
 def generer_qrcode_image(url_app):
     qr = qrcode.QRCode(version=1, box_size=10, border=4)
     qr.add_data(url_app)
@@ -135,12 +134,11 @@ def afficher_app_avec_qrcode(nom_app, url_app):
         byte_im = generer_qrcode_image(url_app)
         st.image(byte_im, width=180)
 
-# INTERRUPTEUR DE MODE IMPRESSION (Placé tout en haut)
+# INTERRUPTEUR DE MODE IMPRESSION
 mode_impression = st.checkbox("Activer le Mode Impression (Pour imprimer proprement vos planches de QR Codes en 5x5)")
 
-# BLOC FONCTIONNEL POUR LE MODE IMPRESSION (Sans onglets st.tabs)
 if mode_impression:
-    st.warning("Mode Impression activé. Faites Ctrl + P sur votre clavier pour lancer l'impression des pages de QR Codes.")
+    st.warning("Mode Impression activé. Faites Ctrl + P sur votre clavier pour lancer l'impression.")
     
     filtre_niveau = st.selectbox("Sélectionner le niveau à imprimer :", ["Tous les niveaux", "Seconde et CAP", "Première", "Terminale"])
     if filtre_niveau == "Seconde et CAP":
@@ -152,7 +150,6 @@ if mode_impression:
     else:
         apps_recap = applications
 
-    # Découpage par lots de 25
     taille_lot = 25
     lots_applications = [apps_recap[i:i + taille_lot] for i in range(0, len(apps_recap), taille_lot)]
     
@@ -172,7 +169,6 @@ if mode_impression:
         if num_lot < len(lots_applications) - 1:
             st.markdown('<div class="saut-de-page"></div>', unsafe_allow_html=True)
 
-# BLOC NORMAL POUR LES ÉLÈVES (Affichage classique avec onglets)
 else:
     recherche = st.text_input("Rechercher une application par mot-clé (ex: vecteur, dérivée, statistique...)", "")
 
@@ -218,13 +214,6 @@ else:
                     for app in apps_tale:
                         if app["theme"] == theme:
                             afficher_app_avec_qrcode(app["nom"], app["url"])
-
-
-
-
-
-
-
 
 
 
