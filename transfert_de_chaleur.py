@@ -2217,10 +2217,10 @@ with tab4:
                 else:
                     st.warning("L'image 'Herschel.jpg' est introuvable.")
             with col_t42_c2:
-                if os.path.exists("prisme.jpg"):
-                    st.image("prisme.jpg", caption="Expérience du prisme", use_container_width=True)
+                if os.path.exists("prismeherschel.jpg"):
+                    st.image("prismeherschel.jpg", caption="Expérience du prisme", use_container_width=True)
                 else:
-                    st.warning("L'image 'prisme.jpg' est introuvable.")
+                    st.warning("L'image 'prismeherschel.jpg' est introuvable.")
         with col_t42_h32:
             col_t42_c3, col_t42_c4 = st.columns(2)
             with col_t42_c3:
@@ -2282,8 +2282,6 @@ with tab4:
 
     st.write("---")
 
-
-    
     # =============================================================================
     # 3. LABORATOIRE VIRTUEL INTERACTIF : SIMULATEUR DE FLUX THERMIQUE
     # =============================================================================
