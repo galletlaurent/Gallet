@@ -8,14 +8,16 @@ import io
 st.set_page_config(page_title="Hub Maths-sciences", layout="wide")
 
 # Injection de styles CSS spécifiques pour le masquage à l'impression
+# Injection de styles CSS spécifiques pour l'impression propre
 st.markdown("""
 <style>
 @media print {
-    /* Libere les structures globales */
+    /* Libere absolument toutes les structures pour l'impression multi-pages */
     html, body, .main, .block-container, 
     [data-testid="stApp"], 
     [data-testid="stAppViewContainer"], 
-    .stTabs, [data-testid="stTabContent"] {
+    [data-testid="stVerticalBlock"], 
+    [data-testid="stVerticalBlockBorderWrapper"] {
         height: auto !important;
         overflow: visible !important;
         position: static !important;
@@ -23,45 +25,46 @@ st.markdown("""
         display: block !important;
     }
     
-    /* Force la grille horizontale en mode fluide */
+    /* Force la grille de colonnes a rester fluide */
     [data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        flex-wrap: wrap !important;
         height: auto !important;
         overflow: visible !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
     }
 
-    /* VERROUILLAGE DES DIMENSIONS : Empêche le tassement vertical */
-    [data-testid="stVerticalBlockBorderWrapper"] {
-        min-height: 4.8cm !important; /* Hauteur minimale stricte pour bloquer 5 lignes par page max */
-        height: 4.8cm !important;
-        margin-bottom: 0.3cm !important;
+    /* Force un saut de page propre apres chaque bloc de 25 */
+    .saut-de-page {
+        page-break-after: always !important;
+        break-after: page !important;
+        height: 0 !important;
+        st.markdown: none !important;
     }
 
-    /* Empeche de couper un cadre en deux sur la pliure */
+    /* Evite de couper une vignette en deux au milieu */
     [data-testid="stColumn"] > div {
         break-inside: avoid !important;
         page-break-inside: avoid !important;
     }
 
-    /* Cache l'interface globale Streamlit */
+    /* Cache l'interface globale Streamlit et la case a cocher */
     header, footer, [data-testid="stSidebar"], [data-testid="stHeader"], .stAppDeployButton,
-    .stAppToolbar, [data-testid="stManageAppButton"], iframe, footer + div, .viewerBadge_v1 {
+    .stAppToolbar, [data-testid="stManageAppButton"], iframe, footer + div, .viewerBadge_v1, .stCheckbox {
         display: none !important;
         visibility: hidden !important;
     }
     
-    /* Cache les titres et barres de recherche */
-    h1, p, .stTextInput, .stSelectbox, .stAlert, [data-testid="stTabs"] nav {
+    /* Cache les titres et les boites de selection */
+    h1, p, .stTextInput, .stSelectbox, .stAlert {
         display: none !important;
     }
     
-    /* Cache les boutons de téléchargement */
+    /* Masque les boutons de téléchargement */
     .stDownloadButton {
         display: none !important;
     }
     
-    /* Ajustement des marges A4 */
+    /* Supprime les marges pour l'impression A4 */
     .main .block-container {
         padding-top: 0.5cm !important;
         padding-bottom: 0.5cm !important;
@@ -117,7 +120,6 @@ applications = [
 ]
 
 
-# Fonction utilitaire pour generer l'image du QR Code en memoire
 def generer_qrcode_image(url_app):
     qr = qrcode.QRCode(version=1, box_size=10, border=4)
     qr.add_data(url_app)
@@ -133,132 +135,89 @@ def afficher_app_avec_qrcode(nom_app, url_app):
         byte_im = generer_qrcode_image(url_app)
         st.image(byte_im, width=180)
 
-# 2. Barre de recherche globale
-recherche = st.text_input("Rechercher une application par mot-clé (ex: vecteur, dérivée, statistique...)", "")
+# INTERRUPTEUR DE MODE IMPRESSION (Placé tout en haut)
+mode_impression = st.checkbox("Activer le Mode Impression (Pour imprimer proprement vos planches de QR Codes en 5x5)")
 
-# 3. Logique de filtrage et d'affichage
-if recherche:
-    st.subheader("Résultats de la recherche")
-    resultats = [app for app in applications if recherche.lower() in app["nom"].lower() or recherche.lower() in app["theme"].lower()]
+# BLOC FONCTIONNEL POUR LE MODE IMPRESSION (Sans onglets st.tabs)
+if mode_impression:
+    st.warning("Mode Impression activé. Faites Ctrl + P sur votre clavier pour lancer l'impression des pages de QR Codes.")
     
-    if resultats:
-        for app in resultats:
-            afficher_app_avec_qrcode(app["nom"], app["url"])
-            st.write(f"Niveau : {app['niveau']} | Thème : {app['theme']}")
-            st.markdown("---")
+    filtre_niveau = st.selectbox("Sélectionner le niveau à imprimer :", ["Tous les niveaux", "Seconde et CAP", "Première", "Terminale"])
+    if filtre_niveau == "Seconde et CAP":
+        apps_recap = [app for app in applications if app["niveau"] in ["2nde", "CAP"]]
+    elif filtre_niveau == "Première":
+        apps_recap = [app for app in applications if app["niveau"] == "1ere"]
+    elif filtre_niveau == "Terminale":
+        apps_recap = [app for app in applications if app["niveau"] == "Tale"]
     else:
-        st.warning("Aucune application ne correspond à votre recherche.")
+        apps_recap = applications
 
+    # Découpage par lots de 25
+    taille_lot = 25
+    lots_applications = [apps_recap[i:i + taille_lot] for i in range(0, len(apps_recap), taille_lot)]
+    
+    for num_lot, lot in enumerate(lots_applications):
+        with st.container(key=f"lot_brut_{num_lot}"):
+            nb_colonnes = 5
+            cols = st.columns(nb_colonnes)
+            for index, app in enumerate(lot):
+                col_active = cols[index % nb_colonnes]
+                with col_active:
+                    with st.container(border=True):
+                        st.markdown(f"<div style='text-align: center; font-weight: bold; min-height: 40px; font-size: 13px;'>{app['nom']}</div>", unsafe_allow_html=True)
+                        st.caption(f"{app['niveau']} | {app['theme']}")
+                        byte_im = generer_qrcode_image(app["url"])
+                        st.image(byte_im, use_container_width=True)
+        
+        if num_lot < len(lots_applications) - 1:
+            st.markdown('<div class="saut-de-page"></div>', unsafe_allow_html=True)
+
+# BLOC NORMAL POUR LES ÉLÈVES (Affichage classique avec onglets)
 else:
-    # Organisation par onglets normaux + Onglet Récapitulatif
-    onglet_2nde_CAP, onglet_1ere, onglet_tale, onglet_recap = st.tabs([
-        "SECONDE BAC PRO ET CAP", 
-        "PREMIERE BAC PRO", 
-        "TERMINALE BAC PRO", 
-        "RECAPITULATIF QR CODES"
-    ])
+    recherche = st.text_input("Rechercher une application par mot-clé (ex: vecteur, dérivée, statistique...)", "")
 
-    # Affichage Seconde et CAP
-    with onglet_2nde_CAP:
-        st.info("Applications dédiées au programme de Seconde et CAP.")
-        apps_2nde = [app for app in applications if app["niveau"] in ["2nde", "CAP"]]
-        themes_2nde = sorted(list(set([app["theme"] for app in apps_2nde])))
-        for theme in themes_2nde:
-            with st.expander(theme):
-                for app in apps_2nde:
-                    if app["theme"] == theme:
-                        afficher_app_avec_qrcode(app["nom"], app["url"])
-
-    # Affichage Premiere
-    with onglet_1ere:
-        st.info("Applications dédiées au programme de Première.")
-        apps_1ere = [app for app in applications if app["niveau"] == "1ere"]
-        themes_1ere = sorted(list(set([app["theme"] for app in apps_1ere])))
-        for theme in themes_1ere:
-            with st.expander(theme):
-                for app in apps_1ere:
-                    if app["theme"] == theme:
-                        afficher_app_avec_qrcode(app["nom"], app["url"])
-
-    # Affichage Terminale
-    with onglet_tale:
-        st.info("Applications dédiées au programme de Terminale.")
-        apps_tale = [app for app in applications if app["niveau"] == "Tale"]
-        themes_tale = sorted(list(set([app["theme"] for app in apps_tale])))
-        for theme in themes_tale:
-            with st.expander(theme):
-                for app in apps_tale:
-                    if app["theme"] == theme:
-                        afficher_app_avec_qrcode(app["nom"], app["url"])
-    with onglet_recap:
-        st.info("Page récapitulative. Utilisez Ctrl + P pour imprimer par lots de 25 QR codes par page.")
-        
-        filtre_niveau = st.selectbox("Filtrer le récapitulatif par niveau :", ["Tous les niveaux", "Seconde et CAP", "Première", "Terminale"])
-        
-        if filtre_niveau == "Seconde et CAP":
-            apps_recap = [app for app in applications if app["niveau"] in ["2nde", "CAP"]]
-        elif filtre_niveau == "Première":
-            apps_recap = [app for app in applications if app["niveau"] == "1ere"]
-        elif filtre_niveau == "Terminale":
-            apps_recap = [app for app in applications if app["niveau"] == "Tale"]
+    if recherche:
+        st.subheader("Résultats de la recherche")
+        resultats = [app for app in applications if recherche.lower() in app["nom"].lower() or recherche.lower() in app["theme"].lower()]
+        if resultats:
+            for app in resultats:
+                afficher_app_avec_qrcode(app["nom"], app["url"])
+                st.write(f"Niveau : {app['niveau']} | Thème : {app['theme']}")
+                st.markdown("---")
         else:
-            apps_recap = applications
+            st.warning("Aucune application ne correspond à votre recherche.")
+    else:
+        onglet_2nde_CAP, onglet_1ere, onglet_tale = st.tabs(["SECONDE BAC PRO ET CAP", "PREMIERE BAC PRO", "TERMINALE BAC PRO"])
 
-        # On decoupe la liste en sous-groupes de 25 applications maximum
-        taille_lot = 25
-        lots_applications = [apps_recap[i:i + taille_lot] for i in range(0, len(apps_recap), taille_lot)]
-        
-        # On parcourt chaque lot de 25
-        for num_lot, lot in enumerate(lots_applications):
-            
-            # Conteneur principal pour ce bloc de 25
-            with st.container(key=f"lot_impression_{num_lot}"):
-                nb_colonnes = 5
-                cols = st.columns(nb_colonnes)
-                
-                # Remplissage de la grille 5x5 pour le lot en cours
-                for index, app in enumerate(lot):
-                    col_active = cols[index % nb_colonnes]
-                    
-                    with col_active:
-                        with st.container(border=True):
-                            st.markdown(f"<div style='text-align: center; font-weight: bold; min-height: 40px; font-size: 13px;'>{app['nom']}</div>", unsafe_allow_html=True)
-                            st.caption(f"{app['niveau']} | {app['theme']}")
-                            
-                            byte_im = generer_qrcode_image(app["url"])
-                            st.image(byte_im, use_container_width=True)
-                            
-                            nom_fichier = f"qrcode_{app['nom'].lower().replace(' ', '_')}.png"
-                            st.download_button(
-                                label="Télécharger",
-                                data=byte_im,
-                                file_name=nom_fichier,
-                                mime="image/png",
-                                key=f"dl_lot_{num_lot}_{index}"
-                            )
-            
-            # Si ce n'est pas le tout dernier bloc, on injecte un saut de page pour l'imprimante
-            if num_lot < len(lots_applications) - 1:
-                st.markdown('<div class="saut-de-page"></div>', unsafe_allow_html=True)
+        with onglet_2nde_CAP:
+            st.info("Applications dédiées au programme de Seconde et CAP.")
+            apps_2nde = [app for app in applications if app["niveau"] in ["2nde", "CAP"]]
+            themes_2nde = sorted(list(set([app["theme"] for app in apps_2nde])))
+            for theme in themes_2nde:
+                with st.expander(theme):
+                    for app in apps_2nde:
+                        if app["theme"] == theme:
+                            afficher_app_avec_qrcode(app["nom"], app["url"])
 
+        with onglet_1ere:
+            st.info("Applications dédiées au programme de Première.")
+            apps_1ere = [app for app in applications if app["niveau"] == "1ere"]
+            themes_1ere = sorted(list(set([app["theme"] for app in apps_1ere])))
+            for theme in themes_1ere:
+                with st.expander(theme):
+                    for app in apps_1ere:
+                        if app["theme"] == theme:
+                            afficher_app_avec_qrcode(app["nom"], app["url"])
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        with onglet_tale:
+            st.info("Applications dédiées au programme de Terminale.")
+            apps_tale = [app for app in applications if app["niveau"] == "Tale"]
+            themes_tale = sorted(list(set([app["theme"] for app in apps_tale])))
+            for theme in themes_tale:
+                with st.expander(theme):
+                    for app in apps_tale:
+                        if app["theme"] == theme:
+                            afficher_app_avec_qrcode(app["nom"], app["url"])
 
 
 
