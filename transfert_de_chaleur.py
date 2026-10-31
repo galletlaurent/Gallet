@@ -3648,12 +3648,10 @@ with tab7:
             )
 
     st.write("---")
-
-    st.write("---")
-    st.subheader("Laboratoire Virtuel : Analyseur dynamique multicouche et bilan thermique sur 24h")
+    st.subheader("Laboratoire Virtuel : Analyseur dynamique multicouche - Maison individuelle de 130 m²")
     st.write(
-        "Configurez votre paroi en superposant jusqu'à 3 couches de matériaux. Ajustez les températures "
-        "intérieure et extérieure pour évaluer la consommation d'énergie sur une journée ainsi que la vitesse de refroidissement :"
+        "Modélisez les déperditions thermiques globales d'une maison de plein pied de 130 m² au sol. "
+        "Ajustez la composition des parois et les températures pour évaluer la puissance requise et l'énergie consommée sur 24h :"
     )
 
     # Référentiel des conductivités thermiques lambda réelles
@@ -3669,28 +3667,32 @@ with tab7:
         "Béton armé plein": 2.3
     }
 
-    # --- 1. CONFIGURATION DE L'ENVIRONNEMENT ET DE LA PIÈCE ---
-    col_env1, col_env2, col_env3 = st.columns(3)
+    # --- 1. CONFIGURATION DE L'ENVIRONNEMENT DE LA MAISON DE 130 M² ---
+    col_env1, col_env2 = st.columns(2)
     with col_env1:
-        t_int_libre = st.slider("Température INTÉRIEURE désirée (°C) :", min_value=15, max_value=30, value=20, key="t7_adv_tint")
+        t_int_libre = st.slider("Température INTÉRIEURE désirée dans la maison (°C) :", min_value=15, max_value=30, value=20, key="t7_adv_tint")
     with col_env2:
-        t_ext_libre = st.slider("Température EXTÉRIEURE (°C) :", min_value=-20, max_value=20, value=0, key="t7_adv_text")
-    with col_env3:
-        surface_mur = st.slider("Surface totale des murs de la pièce (m²) :", min_value=10, max_value=100, value=40, key="t7_adv_surf")
+        t_ext_libre = st.slider("Température EXTÉRIEURE hivernale (°C) :", min_value=-20, max_value=20, value=0, key="t7_adv_text")
+
+    # Modélisation géométrique d'une maison carrée de plein pied de 130 m² (côtés de ~11.4m, hauteur sous plafond 2.5m)
+    # Surface enveloppe déperditive = Murs périphériques (11.4 * 4 * 2.5 = 114 m²) + Toiture de plein pied (130 m²) = 244 m²
+    surface_enveloppe_totale = 244.0
+
+    st.info(
+        "Caractéristiques structurelles de l'habitation : Maison de plein pied d'une surface habitable de 130 m². "
+        "La surface totale développée des parois en contact avec l'extérieur (murs et toiture) est estimée à 244 m²."
+    )
 
     # --- 2. CONFIGURATION DYNAMIQUE DES COUCHES ---
-    st.markdown("##### Composition de la paroi (de l'Intérieur vers l'Extérieur) :")
-    
-    nb_couches = st.radio("Nombre de couches composant la paroi :", [1, 2, 3], index=2, horizontal=True, key="t7_adv_nb_c")
+    st.markdown("##### Composition des parois de l'enveloppe (de l'Intérieur vers l'Extérieur) :")
+    nb_couches = st.radio("Nombre de couches constituant la paroi :", [1, 2, 3], index=2, horizontal=True, key="t7_adv_nb_c")
     
     r_total_paroi = 0.0
     epaisseurs_visuelles = []
     couleurs_visuelles = ["#f8fafc", "#cbd5e1", "#94a3b8"]
     labels_visuels = []
 
-    # Génération dynamique des sélections selon le nombre de couches choisi
     cols_c = st.columns(int(nb_couches))
-    
     for i in range(int(nb_couches)):
         with cols_c[i]:
             st.markdown(f"**Couche {i+1}**")
@@ -3708,38 +3710,35 @@ with tab7:
             r_total_paroi += r_c
             
             epaisseurs_visuelles.append(ep_c)
-            # Résolution du bug graphique de superposition : Affichage de l'index de la couche au lieu du texte long
             labels_visuels.append(f"Couche {i+1}\n{ep_c} cm")
 
-    # Résistances superficielles d'échange normalisées (Rsi + Rse = 0.17 m².K/W réglementaire)
+    # Échanges superficiels réglementaires (Rsi + Rse = 0.17 m².K/W)
     r_total_global = r_total_paroi + 0.17
     u_global_composé = 1.0 / r_total_global
     delta_t_libre = t_int_libre - t_ext_libre
     
-    # Calculs énergétiques
+    # Calculs de flux et d'énergie pour la structure de 130 m²
     flux_surfacique_w = u_global_composé * delta_t_libre
-    puissance_totale_perdue_w = flux_surfacique_w * surface_mur
+    puissance_totale_perdue_w = flux_surfacique_w * surface_enveloppe_totale
     energie_24h_kwh = (puissance_totale_perdue_w * 24.0) / 1000.0
 
-    # Calcul dynamique de l'équilibre thermique
-    capacite_thermique_piece = 80000.0
+    # Constante de temps d'équilibre thermique de la maison de 130 m² (Inertie globale air + cloisons ~ 780 000 J/K)
+    capacite_thermique_maison = 780000.0
     if puissance_totale_perdue_w > 0:
-        tau_secondes = capacite_thermique_piece / (u_global_composé * surface_mur)
+        tau_secondes = capacite_thermique_maison / (u_global_composé * surface_enveloppe_totale)
         temps_equilibre_heures = (3.0 * tau_secondes) / 3600.0
     else:
         temps_equilibre_heures = 0.0
 
-    # --- 3. RENDU GRAPHIQUE DES COUCHES SUPERPOSÉES ---
+    # --- 3. RENDU GRAPHIQUE DES COUCHES ---
     import matplotlib.pyplot as plt
     import matplotlib.patches as patches
 
     fig_multi, ax_mu = plt.subplots(figsize=(9, 3.0))
     
-    # Dessin de la zone intérieure
     ax_mu.add_patch(patches.Rectangle((0.0, 0.4), 1.5, 1.6, color="#ef4444", alpha=0.5))
-    ax_mu.text(0.75, 1.2, f"Intérieur\n{t_int_libre} °C", color="#b91c1c", fontweight="bold", ha="center", va="center", fontsize=9)
+    ax_mu.text(0.75, 1.2, f"Maison\n{t_int_libre} °C", color="#b91c1c", fontweight="bold", ha="center", va="center", fontsize=9)
 
-    # Dessin des couches successives
     x_depart = 1.5
     for idx, ep_cm in enumerate(epaisseurs_visuelles):
         largeur_visuelle = 0.4 + (ep_cm / 40.0) * 1.2
@@ -3747,12 +3746,10 @@ with tab7:
         ax_mu.text(x_depart + (largeur_visuelle / 2), 1.2, labels_visuels[idx], color='#0f172a', fontweight='bold', ha='center', va='center', fontsize=8)
         x_depart += largeur_visuelle
 
-    # Dessin de la zone extérieure
     ax_mu.add_patch(patches.Rectangle((x_depart, 0.4), 1.5, 1.6, color="#3b82f6", alpha=0.5))
     ax_mu.text(x_depart + 0.75, 1.2, f"Extérieur\n{t_ext_libre} °C", color="#1d4ed8", fontweight="bold", ha="center", va="center", fontsize=9)
 
-    # Flèche de déperdition globale
-    taille_fleche_adv = min(15.0, max(1.5, puissance_totale_perdue_w / 200.0)) if delta_t_libre > 0 else 1.2
+    taille_fleche_adv = min(15.0, max(1.5, puissance_totale_perdue_w / 500.0)) if delta_t_libre > 0 else 1.2
     ax_mu.arrow(0.5, 0.6, x_depart + 0.5, 0, head_width=0.15, head_length=0.15, fc='#475569', ec='#475569', lw=taille_fleche_adv)
 
     ax_mu.set_xlim(-0.2, x_depart + 1.7)
@@ -3760,31 +3757,55 @@ with tab7:
     ax_mu.axis('off')
     st.pyplot(fig_multi)
 
-    # --- 4. PANNEAU DE RÉSULTATS ET SYNTHÈSE ÉNERGÉTIQUE ---
-    st.markdown("##### Bilan Énergétique Interactif (Loi de Fourier Multicouche) :")
-    
+    # --- 4. PANNEAU DES MESURES DYNAMIQUES ET METRICS ---
+    st.markdown("##### Bilan Énergétique Global de l'Habitation :")
     c_res1, c_res2, c_res3 = st.columns(3)
     with c_res1:
-        st.metric(label="Coefficient Global U de la paroi", value=f"{u_global_composé:.3f} W/(m².K)")
+        st.metric(label="Coefficient Global U de l'enveloppe", value=f"{u_global_composé:.3f} W/(m².K)")
     with c_res2:
-        st.metric(label="Puissance instantanée perdue", value=f"{puissance_totale_perdue_w:.1f} Watts")
+        st.metric(label="Déperdition de puissance instantanée", value=f"{puissance_totale_perdue_w:.1f} Watts")
     with c_res3:
         st.metric(label="Résistance Thermique Totale R_tot", value=f"{r_total_global:.3f} m².K/W")
 
-    # Conteneur HTML pour l'affichage final des calculs de consommation et d'équilibre thermique
+    # Conteneur des résultats de déperdition journalière et temps de refroidissement
     html_bilan_24h = f"""
     <div style="background-color: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 10px;">
         <p style="margin: 0; font-size: 14px; color: #1e293b;">
-            <b>Énergie à dépenser sur 24 heures</b> pour maintenir la pièce à {t_int_libre}°C : 
+            <b>Énergie nécessaire sur une journée de 24 heures</b> pour maintenir la maison à {t_int_libre}°C : 
             <span style="color: #b91c1c; font-size: 16px; font-weight: bold;">{energie_24h_kwh:.2f} kWh</span>
         </p>
         <p style="margin: 8px 0 0 0; font-size: 14px; color: #1e293b;">
-            <b>Temps estimé pour atteindre l'équilibre thermique</b> avec l'extérieur (si arrêt du chauffage) : 
+            <b>Temps estimé pour atteindre l'équilibre avec l'extérieur</b> (si coupure totale du chauffage) : 
             <span style="color: #1d4ed8; font-size: 16px; font-weight: bold;">{temps_equilibre_heures:.1f} heures</span>
         </p>
     </div>
     """
     st.markdown(html_bilan_24h, unsafe_allow_html=True)
+
+    # --- 5. DÉTAIL DES ÉQUATIONS DE TRANSMISSION ET APPLICATIONS NUMÉRIQUES ---
+    st.markdown("**Détail des calculs de physique thermique (Maison de 130 m²) :**")
+
+    st.markdown("1. Résistance thermique globale des parois ($R_{\\text{total}} = R_{si} + \\sum \\frac{e_i}{\\lambda_i} + R_{se}$) :")
+    expression_r = r"R_{\\text{total}} = 0{,}13"
+    for i in range(int(nb_couches)):
+        mat_nom = list(catalogue_materiaux.keys())[st.session_state.get(f"t7_adv_mat_{i}", i)]
+        l_val = catalogue_materiaux[mat_nom]
+        ep_cm = st.session_state.get(f"t7_adv_ep_{i}", 10)
+        expression_r += rf" + \\frac{{{ep_cm/100:.3f}}}{{{l_val:.3f}}}"
+    expression_r += rf" + 0{,}04 = {r_total_global:.3f}\\text{{ m}}^2\\cdot\\text{{K}}/\\text{{W}}"
+    st.latex(expression_r)
+
+    st.markdown("2. Puissance thermique instantanée perdue par l'enveloppe de 244 m² :")
+    st.latex(
+        rf"\\Phi = U \\times A \\times (T_{\\text{{intérieur}}} - T_{\\text{{extérieur}}}) = "
+        rf"{u_global_composé:.3f} \\times {surface_enveloppe_totale} \\times ({t_int_libre} - {t_ext_libre}) = {puissance_totale_perdue_w:.1f}\\text{{ Watts}}"
+    )
+
+    st.markdown("3. Énergie totale consommée pour compenser les pertes sur une journée de 24 heures :")
+    st.latex(
+        rf"E_{{24\\text{{h}}}} = \\frac{{\\Phi \\times 24\\text{{ h}}}}{{1000}} = "
+        rf"\\frac{{{puissance_totale_perdue_w:.1f} \\times 24}}{{1000}} = {energie_24h_kwh:.2f}\\text{{ kWh}}"
+    )
     st.write("---")
 
     st.write("---")
