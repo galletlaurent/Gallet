@@ -11,47 +11,40 @@ st.set_page_config(page_title="Hub Maths-sciences", layout="wide")
 st.markdown("""
 <style>
 @media print {
-    /* Libere absolument toutes les structures de Streamlit */
-    html, body, .main, .block-container, 
+    /* 1. On detruit completement la boite rigide de Streamlit pour retrouver un flux de page normal */
+    html, body, .main, .block-container,
     [data-testid="stApp"], 
     [data-testid="stAppViewContainer"], 
     [data-testid="stVerticalBlock"], 
     [data-testid="stVerticalBlockBorderWrapper"],
     .stTabs, [data-testid="stTabContent"] {
+        display: block !important;
         height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
         overflow: visible !important;
         position: static !important;
-        max-height: none !important;
-        display: block !important;
     }
     
-    /* Force la grille de colonnes a rester visible et fluide */
+    /* 2. On laisse les lignes de QR codes se repartir librement sur plusieurs pages */
     [data-testid="stHorizontalBlock"] {
-        height: auto !important;
-        overflow: visible !important;
         display: flex !important;
         flex-wrap: wrap !important;
+        height: auto !important;
+        overflow: visible !important;
     }
 
-    /* REDUCTION DE LA TAILLE POUR TOUT REMONTER : Gagne les centimètres manquants en bas */
-    [data-testid="stVerticalBlockBorderWrapper"] {
-        transform: scale(0.9) !important; /* Reduit legerement la taille globale de chaque vignette (90%) */
-        transform-origin: top center !important;
-        margin-bottom: -15px !important;   /* Resserre l'espace vertical disponible entre les lignes */
-    }
-
-    /* SECURITE MULTI-PAGES : Interdit de couper un QR Code ou un titre au milieu */
+    /* 3. SECURITE : Interdiction absolue de couper un QR code ou une vignette en deux */
     [data-testid="stColumn"] > div {
         break-inside: avoid !important;
         page-break-inside: avoid !important;
     }
 
-    /* MASQUAGE COMPLET DU BOUTON DE BAS DE PAGE : Enleve definitivement le bouton systeme */
+    /* Cache toute l'interface globale, les barres et le bouton Manage app */
     header, footer, [data-testid="stSidebar"], [data-testid="stHeader"], .stAppDeployButton,
     .stAppToolbar, [data-testid="stManageAppButton"], iframe, footer + div, .viewerBadge_v1 {
         display: none !important;
         visibility: hidden !important;
-        height: 0 !important;
     }
     
     /* Cache le titre du portail, la description et la barre de recherche */
@@ -64,10 +57,10 @@ st.markdown("""
         display: none !important;
     }
     
-    /* Supprime les marges superflues pour maximiser l'espace A4 */
+    /* Marges de la feuille */
     .main .block-container {
-        padding-top: 0rem !important;
-        padding-bottom: 0rem !important;
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
         max-width: 100% !important;
         margin: 0 !important;
     }
