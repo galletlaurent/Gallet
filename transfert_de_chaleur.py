@@ -4771,9 +4771,9 @@ with tab9:
         
         puissance_calculee = val_r * (val_i ** 2)
         temp_borne = 25 + (puissance_calculee * 0.4)
-            st.metric(label="Puissance dissipée par effet Joule", value=f"{puissance_calculee:.1f} Watts")
-            st.latex(rf"P = R \times I^2 = {val_r:.2f} \times {val_i}^2 = {puissance_calculee:.1f}\text{{ W}}")
-            st.info(f"Température mesurée sur la borne : {temp_borne:.1f} °C (Seuil critique à 80 °C)")
+        st.metric(label="Puissance dissipée par effet Joule", value=f"{puissance_calculee:.1f} Watts")
+        st.latex(rf"P = R \times I^2 = {val_r:.2f} \times {val_i}^2 = {puissance_calculee:.1f}\text{{ W}}")
+        st.info(f"Température mesurée sur la borne : {temp_borne:.1f} °C (Seuil critique à 80 °C)")
 
     elif scen == "Mécanique : Échauffement de roulement":
         with col_p1:
