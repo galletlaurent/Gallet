@@ -219,7 +219,57 @@ tab12 = onglets[12]
 tab13 = onglets[13] 
 tab14 = onglets[14]
 
+    def afficher_atelier_transmission_verrouille(verrouille=False):
+        import random
 
+        # 1. BASE DE DONNÉES DU QUIZ TECHNIQUE DU COEFFICIENT U
+        questions_therm7_sources = [
+            {"id": "qt7_1", "q": "Quelle lettre majuscule désigne le coefficient de transmission thermique global ?", "options": ["U", "R", "K"], "rep": "U"},
+            {"id": "qt7_2", "q": "Quelle est l'unité légale du coefficient de transmission thermique globale dans le SI ?", "options": ["W/(m².K)", "W/(m.K)", "J/kg"], "rep": "W/(m².K)"},
+            {"id": "qt7_3", "q": "Comment évolue la valeur du coefficient U d'une paroi si l'on augmente son isolation ?", "options": ["Elle diminue", "Elle augmente", "Elle reste inchangée"], "rep": "Elle diminue"},
+            {"id": "qt7_4", "q": "Quelle relation lie mathématiquement le coefficient U à la résistance thermique totale R ?", "options": ["U = 1 / R", "U = R * e", "U = lambda / R"], "rep": "U = 1 / R"},
+            {"id": "qt7_5", "q": "Pour concevoir un bâtiment performant de type passif, que doit viser la valeur du coefficient U ?", "options": ["Une valeur la plus faible possible proche de zéro", "Une valeur supérieure à 5", "Une valeur identique à celle du cuivre"], "rep": "Une valeur la plus faible possible proche de zéro"},
+            {"id": "qt7_6", "q": "Quel vitrage possède le coefficient de transmission thermique U le plus catastrophique (le plus élevé) ?", "options": ["Le simple vitrage de 4 mm", "Le double vitrage Argon", "Le triple vitrage isolant"], "rep": "Le simple vitrage de 4 mm"},
+            {"id": "qt7_7", "q": "Si le coefficient U d'une paroi vaut 2 W/(m².K) et que dT = 10°C, quel est le flux perdu par m² ?", "options": ["20 W/m²", "5 W/m²", "0,2 W/m²"], "rep": "20 W/m²"},
+            {"id": "qt7_8", "q": "La formule du coefficient de transmission thermique U pour une paroi simple s'exprime par :", "options": ["U = lambda / e", "U = e / lambda", "U = 1 / lambda"], "rep": "U = lambda / e"},
+            {"id": "qt7_9", "q": "Quel appareil de mesure permet de visualiser à distance les déperditions liées à un fort coefficient U ?", "options": ["Une caméra thermique infrarouge", "Un manomètre différentiel", "Un pyromètre optique"], "rep": "Une caméra thermique infrarouge"},
+            {"id": "qt7_10", "q": "Quel phénomène inconfortable de surface apparaît en hiver sur un mur ayant un fort coefficient U ?", "options": ["Le phénomène de paroi froide et de condensation", "Une surchauffe spontanée", "Une émission d'ondes de rayonnement ultraviolet"], "rep": "Le phénomène de paroi froide et de condensation"}
+        ]
+
+        if "ordre_quiz_tab7_therm_aleatoire" not in st.session_state:
+            random.shuffle(questions_therm7_sources)
+            st.session_state.ordre_quiz_tab7_therm_aleatoire = questions_therm7_sources
+
+        # 2. BASE DE DONNÉES DU TEXTE À TROUS DU COEFFICIENT U
+        if "champs_therm7_clean" not in st.session_state:
+            st.session_state.champs_therm7_clean = [
+                ("1. Le coefficient de transmission thermique global se note avec la lettre ..........", ["Choisir...", "U", "R"], "U", "therm7_t1"),
+                ("2. L'unité légale du coefficient de transmission s'exprime en W/(m²...........).", ["Choisir...", "K", "J"], "K", "therm7_t2"),
+                ("3. Le coefficient U est inversement proportionnel à la .......... thermique totale.", ["Choisir...", "résistance", "surface"], "résistance", "therm7_t3"),
+                ("4. Un bâtiment hautement isolé possède des parois avec un U très ..........", ["Choisir...", "faible", "élevé"], "faible", "therm7_t4"),
+                ("5. La formule analytique pour calculer une paroi monocouche est U = .......... / e.", ["Choisir...", "lambda", "R"], "lambda", "therm7_t5"),
+                ("6. Une vieille fenêtre simple vitrage engendre des déperditions de chaleur ..........", ["Choisir...", "élevées", "nulles"], "élevées", "therm7_t6"),
+                ("7. Réduire la valeur du coefficient U permet de bloquer le .......... perdu.", ["Choisir...", "flux", "volume"], "flux", "therm7_t7"),
+                ("8. Multiplier l'épaisseur d'isolant par deux permet de diviser par deux le coefficient ..........", ["Choisir...", "U", "R"], "U", "therm7_t8"),
+                ("9. Le béton banché nu présente une valeur de transmission thermique très ..........", ["Choisir...", "élevée", "basse"], "élevée", "therm7_t9"),
+                ("10. La réglementation environnementale RE2020 impose de limiter le coefficient ..........", ["Choisir...", "U", "lambda"], "U", "therm7_t10")
+            ]
+
+        # 3. RENDU DES DEUX COLONNES D'ÉVALUATION STREAMLIT
+        col_quiz, col_trous = st.columns(2)
+        with col_quiz:
+            st.markdown("##### Quiz Technique de l'Atelier 7 (10 questions - 10 pts)")
+            for idx, q_data in enumerate(st.session_state.ordre_quiz_tab7_therm_aleatoire, 1):
+                st.write(f"**{idx}.** {q_data['q']}")
+                st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"therm_at7_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+        with col_trous:
+            st.markdown("##### Synthèse de l'Atelier 7 (Texte à trous - 10 cases - 10 pts)")
+            for ligne in st.session_state.champs_therm7_clean:
+                enonce, choix, attendu, cle = ligne
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: st.write(enonce)
+                with c_sel: st.selectbox("", choix, key=f"{cle}_therm7_clean", disabled=verrouille, label_visibility="collapsed")
 
 def afficher_atelier_quantite_verrouille(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 6 (La quantité de chaleur) sur deux colonnes."""
@@ -3459,11 +3509,379 @@ with tab6:
             use_container_width=True,
         )
 
+with tab7:
+    st.header("Le Coefficient de Transmission Thermique (U)")
+    
+    # =============================================================================
+    # DÉFINITION TECHNIQUE DE L'ATELIER 7
+    # =============================================================================
+    st.write(
+        "**Définition :** Le **coefficient de transmission thermique** (noté $U$ et exprimé en Watts par mètre carré-Kelvin, $\\text{W}/(\\text{m}^2\\cdot\\text{K})$) "
+        "caractérise la performance thermique globale d'une paroi ou d'une structure. Il indique la quantité de chaleur "
+        "qui traverse une surface de $1\\text{ m}^2$ de cette paroi pour un écart de température de $1\\text{ degré}$ entre l'intérieur et l'extérieur.\n\n"
+        "Pour une paroi simple d'épaisseur $e$ (en mètres) et de conductivité thermique $\lambda$, il est inversement proportionnel à sa résistance :"
+    )
+    st.latex(r"U = \frac{1}{R_t} = \frac{\lambda}{e}")
+    st.write("---")
 
 
+    # =============================================================================
+    # 2. COURS TECHNIQUE : L'INTERPRÉTATION DU COEFFICIENT U
+    # =============================================================================
+    col_t7_h1, col_t7_h2 = st.columns(2)
+    
+    with col_t7_h1:
+        st.markdown("##### Les Parois à Fort Coefficient U")
+        st.write(
+            "**Une structure dissipative :** Un coefficient $U$ élevé indique qu'un matériau laisse "
+            "librement passer le flux thermique. C'est le cas des matériaux denses non isolés (béton banché, vitrages simples, tôles métalliques).\n\n"
+            "**Conséquences directes :** Ces parois génèrent d'importantes déperditions de chaleur en hiver. "
+            "Elles provoquent également le phénomène inconfortable de 'paroi froide', où la surface intérieure des murs "
+            "est glaciale, ce qui favorise la condensation de l'humidité ambiante."
+        )
+
+        col_t71_h11, col_t71_h21 = st.columns(2)
+        with col_t71_h11:
+            col_t71_c1, col_t71_c2 = st.columns(2)
+            with col_t71_c1:
+                if os.path.exists("passoire_thermique.jpg"):
+                    st.image("passoire_thermique.jpg", caption="Paroi dissipative", use_container_width=True)
+                else:
+                    st.warning("L'image 'passoire_thermique.jpg' est introuvable.")
+            with col_t71_c2:
+                if os.path.exists("simple_vitrage.jpg"):
+                    st.image("simple_vitrage.jpg", caption="Simple vitrage nu", use_container_width=True)
+                else:
+                    st.warning("L'image 'simple_vitrage.jpg' est introuvable.")
+        with col_t71_h21:
+            col_t71_c3, col_t71_c4 = st.columns(2)
+            with col_t71_c3:
+                if os.path.exists("condensation_mur.jpg"):
+                    st.image("condensation_mur.jpg", caption="Condensation de surface", use_container_width=True)
+                else:
+                    st.warning("L'image 'condensation_mur.jpg' est introuvable.")
+            with col_t71_c4:
+                if os.path.exists("beton_nu.jpg"):
+                    st.image("beton_nu.jpg", caption="Mur en béton plein", use_container_width=True)
+                else:
+                    st.warning("L'image 'beton_nu.jpg' est introuvable.")
+            
+    with col_t7_h2:
+        st.markdown("##### Les Parois à Faible Coefficient U")
+        st.write(
+            "**L'objectif de performance (RE2020) :** Pour concevoir des bâtiments économes en énergie, "
+            "les ingénieurs cherchent à abaisser au maximum la valeur de $U$. Les murs extérieurs actuels visent "
+            "généralement un $U \\le 0,22\\text{ W}/(\\text{m}^2\\cdot\\text{K})$.\n\n"
+            "**Comment y parvenir :** Cela nécessite d'associer des matériaux de structure à de fortes épaisseurs "
+            "d'isolants performants (laine minérale, polyuréthane). Réduire le coefficient $U$ permet de maintenir "
+            "la chaleur à l'intérieur et de supprimer les ponts thermiques structurels."
+        )
+
+        col_t72_h31, col_t72_h32 = st.columns(2)
+        with col_t72_h31:
+            col_t72_c1, col_t72_c2 = st.columns(2)
+            with col_t72_c1:
+                if os.path.exists("isolation_exterieure.jpg"):
+                    st.image("isolation_exterieure.jpg", caption="Pose d'un isolant", use_container_width=True)
+                else:
+                    st.warning("L'image 'isolation_exterieure.jpg' est introuvable.")
+            with col_t72_c2:
+                if os.path.exists("re2020_batiment.jpg"):
+                    st.image("re2020_batiment.jpg", caption="Bâtiment basse conso", use_container_width=True)
+                else:
+                    st.warning("L'image 're2020_batiment.jpg' est introuvable.")
+        with col_t72_h32:
+            col_t72_c3, col_t72_c4 = st.columns(2)
+            with col_t72_c3:
+                if os.path.exists("camera_thermique.jpg"):
+                    st.image("camera_thermique.jpg", caption="Contrôle infrarouge", use_container_width=True)
+                else:
+                    st.warning("L'image 'camera_thermique.jpg' est introuvable.")
+            with col_t72_c4:
+                if os.path.exists("double_vitrage_performance.jpg"):
+                    st.image("double_vitrage_performance.jpg", caption="Vitrage isolant", use_container_width=True)
+                else:
+                    st.warning("L'image 'double_vitrage_performance.jpg' est introuvable.")
+
+    st.write("---")
+
+    # =============================================================================
+    # 1. BANDE DESSINÉE HUMORISTIQUE EN 4 CASES : LA FUITE DES WATTS
+    # =============================================================================
+    col_gauche_texte_t7, col_droite_img_t7 = st.columns(2)
+
+    with col_gauche_texte_t7:
+        st.write(
+            "**La BD humoristique textuelle : La fuite des Watts**"
+        )
+        
+        st.info(
+            "**Cas 1 : Le passoire thermique.** Une vieille vitre simple vitrage de 4 mm sépare le salon chauffé du jardin gelé. "
+            "Les calories s'approchent en courant du vitrage : "
+            "« Chic alors ! Regardez ce coefficient $U$ immense de 5,8 W/(m².K) ! C'est une véritable autoroute, "
+            "on va s'échapper vers l'extérieur sans aucun effort ! ».\n\n"
+            
+            "**Cas 2 : Le barrage du double vitrage.** Juste à côté, un double vitrage moderne à isolation renforcée barre la route : "
+            "« Halte-là, les Joules ! Notre coefficient $U$ a été rabaissé à seulement 1,1 W/(m².K). "
+            "La fuite est coupée, vous restez sagement à l'intérieur pour chauffer la maison ! ».\n\n"
+            
+            "**Cas 3 : L'analyse de l'expert.** Le technicien de maintenance examine la façade à la caméra thermique : "
+            "« Plus la valeur du coefficient $U$ est proche de zéro, plus la paroi est performante et retient l'énergie. "
+            "C'est la règle d'or de la rénovation énergétique ! ».\n\n"
+            
+            "**Cas 4 : Le triomphe de l'isolation.** Grâce aux parois à faible émission, la facture de chauffage s'effondre. "
+            "Le compteur d'énergie se stabilise : "
+            "« Affaire classée ! Le contrôle du coefficient de transmission a dompté le flux perdu. "
+            "Les calories sont sous haute surveillance ! »."
+        )
+
+    with col_droite_img_t7:
+        if os.path.exists("transmission_caricature.jpg"):
+            st.image(
+                "transmission_caricature.jpg",
+                caption="Illustration humoristique du coefficient de transmission thermique global",
+                use_container_width=True,
+            )
+        else:
+            st.warning(
+                "L'image 'transmission_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+            )
+
+    st.write("---")
+
+    # =============================================================================
+    # 3. LABORATOIRE VIRTUEL INTERACTIF : ESTIMATEUR DU COEFFICIENT U
+    # =============================================================================
+    st.subheader("Laboratoire Virtuel : Analyseur dynamique du coefficient de transmission U")
+    st.write(
+        "Sélectionnez la nature de la paroi, modifiez son épaisseur en direct, puis observez "
+        "l'évolution du coefficient $U$ et le flux thermique surfacique traversant perdu :"
+    )
+
+    # Référentiel des conductivités thermiques lambda réelles
+    bibliotheque_u_parois = {
+        "Mur en béton armé banché": {"lambda": 2.3, "type": "Conducteur"},
+        "Brique de terre cuite pleine": {"lambda": 1.15, "type": "Moyen"},
+        "Bloc de béton de granulats (Parpaing)": {"lambda": 1.05, "type": "Moyen"},
+        "Verre de vitrage standard": {"lambda": 1.2, "type": "Conducteur"},
+        "Bois de construction (Résineux)": {"lambda": 0.13, "type": "Isolant moyen"},
+        "Panneau de laine de verre": {"lambda": 0.035, "type": "Isolant performant"},
+        "Mousse de polyuréthane rigide": {"lambda": 0.024, "type": "Isolant d'élite"}
+    }
+
+    t7_sim_mat = st.selectbox(
+        "Sélectionnez le matériau constituant la paroi :",
+        list(bibliotheque_u_parois.keys()),
+        key="t7_sim_choix_materiau"
+    )
+
+    lambda_paroi = bibliotheque_u_parois[t7_sim_mat]["lambda"]
+
+    col_t7_p1, col_t7_p2 = st.columns(2)
+    with col_t7_p1:
+        t7_epaisseur = st.slider("Épaisseur de la paroi (e en centimètres) :", min_value=1, max_value=40, value=20, step=1, key="t7_sim_e")
+    with col_t7_p2:
+        t7_delta_t = st.slider("Écart de température intérieur/extérieur (dT en °C) :", min_value=5, max_value=50, value=25, key="t7_sim_dt")
+
+    # Calcul des constantes physiques de transmission
+    e_m = t7_epaisseur / 100.0
+    u_global = lambda_paroi / e_m
 
 
+    flux_surfacique_watts = u_global * t7_delta_t
 
+    # Rendu vectoriel dynamique de la paroi (Matplotlib)
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+
+    fig_u, ax_u = plt.subplots(figsize=(8.5, 2.5))
+    
+    # Choix de la couleur selon la performance du coefficient U
+    if u_global > 5.0: 
+        couleur_flux = "#ef4444"
+    elif u_global > 1.0: 
+        couleur_flux = "#f97316"
+    else: 
+        couleur_flux = "#10b981"
+
+    # Tracé des blocs géométriques de la paroi
+    ax_u.add_patch(patches.Rectangle((0.5, 0.4), 1.5, 1.5, facecolor='#fee2e2', alpha=0.6)) # Ambiance intérieure
+    largeur_mur_visuel = 0.5 + (t7_epaisseur / 40.0) * 2.0
+    ax_u.add_patch(patches.Rectangle((2.0, 0.4), largeur_mur_visuel, 1.5, facecolor='#cbd5e1', edgecolor='#0f172a', lw=1.5)) # Paroi
+    ax_u.add_patch(patches.Rectangle((2.0 + largeur_mur_visuel, 0.4), 1.5, 1.5, facecolor='#e0f2fe', alpha=0.6)) # Ambiance extérieure
+
+    ax_u.text(1.25, 1.15, "Intérieur", color='#b91c1c', fontweight='bold', ha='center', fontsize=9)
+    ax_u.text(2.0 + (largeur_mur_visuel / 2), 1.15, f"e = {t7_epaisseur} cm\n$\lambda$ = {lambda_paroi:.3f}", color='#0f172a', fontweight='bold', ha='center', fontsize=8)
+    ax_u.text(2.0 + largeur_mur_visuel + 0.75, 1.15, "Extérieur", color='#1d4ed8', fontweight='bold', ha='center', fontsize=9)
+
+    # Dessin de la flèche indicatrice de fuite
+    epaisseur_fleche = min(15.0, max(1.5, flux_surfacique_watts / 100.0))
+    ax_u.arrow(1.0, 0.6, 2.5 + largeur_mur_visuel, 0, head_width=0.15, head_length=0.15, fc=couleur_flux, ec=couleur_flux, lw=epaisseur_fleche)
+    ax_u.text(2.0 + (largeur_mur_visuel / 2), 0.85, f"Flux : {flux_surfacique_watts:.1f} W/m²", color=couleur_flux, fontsize=9, fontweight='bold', ha='center')
+
+    ax_u.set_xlim(0, 7.5)
+    ax_u.set_ylim(0, 2.3)
+    ax_u.axis('off')
+    st.pyplot(fig_u)
+
+    # Démonstration textuelle du calcul
+    st.markdown("**Formule littérale et application numérique :**")
+    st.latex(rf"U = \frac{{\lambda}}{{e}} = \frac{{{lambda_paroi:.3f}}}{{{e_m:.3f}\text{{ m}}}} = {u_global:.2f}\quad\text{{W}} /(\text{{m}}^2\cdot\text{{K}})")
+    st.latex(rf"\Phi = U \times \Delta T = {u_global:.2f} \times {t7_delta_t} = {flux_surfacique_watts:.1f}\quad\text{{W}} /\text{{m}}^2")
+    st.write("---")
+
+    st.write("---")
+    if "suite_verrouille_tab7_therm" not in st.session_state:
+        st.session_state.suite_verrouille_tab7_therm = False
+    verrou_at7 = st.session_state.suite_verrouille_tab7_therm
+
+    # Affichage du module de questions spécifique à l'Atelier du Coefficient de Transmission
+    afficher_atelier_transmission_verrouille(verrouille=verrou_at7)
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 7")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat7 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier sur le Coefficient de Transmission.",
+        key="check_certif_therm7_final_net",
+        disabled=verrou_at7,
+    )
+
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 7",
+        key="btn_export_suite7_therm_official",
+        use_container_width=True,
+        disabled=verrou_at7,
+    ):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat7:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction du Quiz Technique (10 pts)
+            score_q7 = 0.0
+            if "ordre_quiz_tab7_therm_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab7_therm_aleatoire:
+                    saisie = st.session_state.get(f"therm_at7_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip():
+                        score_q7 += 1.0
+
+            # 2. Correction du Texte à trous (10 pts)
+            score_t7 = 0.0
+            if "champs_therm7_clean" in st.session_state:
+                for ligne in st.session_state.champs_therm7_clean:
+                    enonce_t, choix_t, attendu_t, cle_t = ligne
+                    saisie_t = st.session_state.get(f"{cle_t}_therm7_clean", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu_t).strip():
+                        score_t7 += 1.0
+
+            # 3. Sauvegarde définitive dans la session et rafraîchissement
+            st.session_state.score_suite7_therm_p1 = round(float(score_q7), 1)
+            st.session_state.score_suite7_therm_p2 = round(float(score_t7), 1)
+            st.session_state.score_final_suite7_therm = round(float(score_q7 + score_t7), 1)
+            st.session_state.suite_verrouille_tab7_therm = True
+            st.rerun()
+
+    # --- COMPILATION ET TÉLÉCHARGEMENT DU BILAN HTML SCELLÉ ---
+    if st.session_state.get("suite_verrouille_tab7_therm", False):
+        from datetime import datetime
+        scr1_t7 = st.session_state.get("score_suite7_therm_p1", 0.0)
+        scr2_t7 = st.session_state.get("score_suite7_therm_p2", 0.0)
+        tot_s_t7 = st.session_state.get("score_final_suite7_therm", 0.0)
+        timestamp_suite7 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER COEFFICIENT DE TRANSMISSION SCELLÉ | Note de session : {tot_s_t7:.1f} / 20")
+
+        html_export_therm7 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Coefficient Transmission - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 20px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Physique Thermique</h1>
+                <p>Atelier 7 : Analyse et calcul du coefficient de transmission thermique global U</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite7}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t7:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t7:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse de Cours : <strong>{scr2_t7:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 7 : <strong>{tot_s_t7:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab7_therm_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab7_therm_aleatoire, 1):
+                saisie = st.session_state.get(f"therm_at7_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_therm7 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_therm7 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_therm7_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_therm7_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+
+                saisie_texte = st.session_state.get(f"{cle_variable}_therm7_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_therm7 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_therm7 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        st.download_button(
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 7 (.HTML)",
+            data=html_export_therm7,
+            file_name=preparer_nom_fichier("Atelier_7_Transmission_Thermique").replace(".txt", ".html"),
+            mime="text/html",
+            use_container_width=True,
+        )
 
 
 
