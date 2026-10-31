@@ -3788,7 +3788,8 @@ with tab7:
     st.markdown("1. Résistance thermique globale des parois ($R_{\\text{total}} = R_{si} + \\sum \\frac{e_i}{\\lambda_i} + R_{se}$) :")
     expression_r = "R_{\\text{total}} = 0{,}13"
     for i in range(int(nb_couches)):
-        mat_nom = list(catalogue_materiaux.keys())[st.session_state.get(f"t7_adv_mat_{i}", i)]
+        # Sécurisation du calcul : récupération directe de la chaîne de caractères sélectionnée dans l'interface
+        mat_nom = st.session_state.get(f"t7_adv_mat_{i}", list(catalogue_materiaux.keys())[4])
         l_val = catalogue_materiaux[mat_nom]
         ep_cm = st.session_state.get(f"t7_adv_ep_{i}", 10)
         expression_r += rf" + \frac{{{ep_cm/100:.3f}}}{{{l_val:.3f}}}"
@@ -3804,6 +3805,8 @@ with tab7:
     formule_e = rf"E_{{24\text{{h}}}} = \frac{{\Phi \times 24\text{{ h}}}}{{1000}} = \frac{{{puissance_totale_perdue_w:.1f} \times 24}}{{1000}} = {energie_24h_kwh:.2f}\text{{ kWh}}"
     st.latex(formule_e)
     st.write("---")
+
+    
     if "suite_verrouille_tab7_therm" not in st.session_state:
         st.session_state.suite_verrouille_tab7_therm = False
     verrou_at7 = st.session_state.suite_verrouille_tab7_therm
