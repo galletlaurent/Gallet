@@ -3098,51 +3098,6 @@ with tab6:
         "et d'une grandeur propre à sa nature chimique appelée la **capacité thermique massique** ($c$, exprimée en $\\text{J}/(\\text{kg}\\cdot\\text{K})$)."
     )
 
-    # =============================================================================
-    # 1. BANDE DESSINÉE HUMORISTIQUE : LA SOIF DE JOULES DES ATOMES
-    # =============================================================================
-    col_gauche_texte_t6, col_droite_img_t4 = st.columns(2)
-
-    with col_gauche_texte_t6:
-        st.write(
-            "**La BD humoristique textuelle : La soif de joules des atomes**"
-        )
-        
-        st.info(
-            "**Cas 1 :** Un kilogramme d'eau pure dort paisiblement à 20 °C dans une casserole. "
-            "Ses atomes demandent énormément d'énergie pour daigner s'agiter d'un seul petit degré : "
-            "« Attention, on est l'eau ! Notre capacité thermique massique est gigantesque, il nous faut "
-            "4 180 Joules pour grimper de 1 °C, préparez les brûleurs ! ».\n\n"
-            
-            "**Cas 2 :** Juste à côté, un bloc d'un kilogramme de plomb reçoit la même flamme. "
-            "Ses atomes, beaucoup moins gourmands, s'excitent instantanément : "
-            "« Oh, c'est trop facile pour nous ! Avec notre petit $c$ de 130 Joules, la moindre étincelle "
-            "nous fait surchauffer, on grimpe en température à toute vitesse ! ».\n\n"
-            
-            "**Cas 3 :** L'enseignant jette un coup d'œil au thermomètre et prépare le calcul de l'énergie "
-            "totale reçue par le système en multipliant tout le monde : "
-            "« C'est l'heure de l'addition ! Masse, capacité et thermomètre, tout le monde s'aligne "
-            "dans l'équation magique $Q = m \cdot c \cdot \Delta T$ ! ».\n\n"
-            
-            "**Cas 4 :** L'énergie a été entièrement transférée, l'eau bout et le plomb est brûlant. "
-            "Le compteur de Joules s'arrête net sur la valeur exacte calculée : "
-            "« Affaire classée ! La matière a absorbé son quota exact de calories, les lois de la calorimétrie "
-            "ont encore frappé avec une précision atomique ! »."
-        )
-
-    with col_droite_img_t4:
-        if os.path.exists("quantite_caricature.jpg"):
-            st.image(
-                "quantite_caricature.jpg",
-                caption="Illustration humoristique de l'absorption thermique",
-                use_container_width=True,
-            )
-        else:
-            st.warning(
-                "L'image 'quantite_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
-            )
-
-    st.write("---")
 
     # =============================================================================
     # 2. COURS HISTORIQUE ET TECHNIQUE : L'ÉQUATION FONCTIONNELLE
@@ -3221,8 +3176,53 @@ with tab6:
                 else:
                     st.warning("L'image 'calculateur_j.jpg' est introuvable.")
 
-    st.write("---")
 
+
+    # =============================================================================
+    # 1. BANDE DESSINÉE HUMORISTIQUE : LA SOIF DE JOULES DES ATOMES
+    # =============================================================================
+    col_gauche_texte_t6, col_droite_img_t4 = st.columns(2)
+
+    with col_gauche_texte_t6:
+        st.write(
+            "**La BD humoristique textuelle : La soif de joules des atomes**"
+        )
+        
+        st.info(
+            "**Cas 1 :** Un kilogramme d'eau pure dort paisiblement à 20 °C dans une casserole. "
+            "Ses atomes demandent énormément d'énergie pour daigner s'agiter d'un seul petit degré : "
+            "« Attention, on est l'eau ! Notre capacité thermique massique est gigantesque, il nous faut "
+            "4 180 Joules pour grimper de 1 °C, préparez les brûleurs ! ».\n\n"
+            
+            "**Cas 2 :** Juste à côté, un bloc d'un kilogramme de plomb reçoit la même flamme. "
+            "Ses atomes, beaucoup moins gourmands, s'excitent instantanément : "
+            "« Oh, c'est trop facile pour nous ! Avec notre petit $c$ de 130 Joules, la moindre étincelle "
+            "nous fait surchauffer, on grimpe en température à toute vitesse ! ».\n\n"
+            
+            "**Cas 3 :** L'enseignant jette un coup d'œil au thermomètre et prépare le calcul de l'énergie "
+            "totale reçue par le système en multipliant tout le monde : "
+            "« C'est l'heure de l'addition ! Masse, capacité et thermomètre, tout le monde s'aligne "
+            "dans l'équation magique $Q = m \cdot c \cdot \Delta T$ ! ».\n\n"
+            
+            "**Cas 4 :** L'énergie a été entièrement transférée, l'eau bout et le plomb est brûlant. "
+            "Le compteur de Joules s'arrête net sur la valeur exacte calculée : "
+            "« Affaire classée ! La matière a absorbé son quota exact de calories, les lois de la calorimétrie "
+            "ont encore frappé avec une précision atomique ! »."
+        )
+
+    with col_droite_img_t4:
+        if os.path.exists("quantite_caricature.jpg"):
+            st.image(
+                "quantite_caricature.jpg",
+                caption="Illustration humoristique de l'absorption thermique",
+                use_container_width=True,
+            )
+        else:
+            st.warning(
+                "L'image 'quantite_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+            )
+
+    st.write("---")
     # =============================================================================
     # 3. LABORATOIRE VIRTUEL INTERACTIF : ESTIMATEUR D'ÉNERGIE CHALEUR
     # =============================================================================
