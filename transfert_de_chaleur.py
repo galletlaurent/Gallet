@@ -219,7 +219,174 @@ tab12 = onglets[12]
 tab13 = onglets[13] 
 tab14 = onglets[14]
 
+def afficher_atelier_chaleur_verrouille(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 3 (La chaleur) sur deux colonnes."""
+    import random
 
+    # # 1. BASE DE DONNÉES DU QUIZ TECHNIQUE ET HISTORIQUE DE LA CHALEUR
+    questions_therm3_sources = [
+        {
+            "id": "qt3_1",
+            "q": "Quelle est la définition scientifique exacte de la chaleur ?",
+            "options": ["Un transfert d'énergie thermique entre deux corps", "Le degré d'agitation interne des molécules", "Un fluide immatériel pesable"],
+            "rep": "Un transfert d'énergie thermique entre deux corps",
+        },
+        {
+            "id": "qt3_2",
+            "q": "Quelle unité historique mesurait la quantité de chaleur nécessaire pour élever d'un degré un gramme d'eau ?",
+            "options": ["La calorie", "Le Joule", "Le Watt"],
+            "rep": "La calorie",
+        },
+        {
+            "id": "qt3_3",
+            "q": "Quel savant a mis en évidence la chaleur latente lors de la fusion de la glace ?",
+            "options": ["Joseph Black", "James Watt", "Joseph Fourier"],
+            "rep": "Joseph Black",
+        },
+        {
+            "id": "qt3_4",
+            "q": "Quelle lettre majuscule symbolise universellement la quantité de chaleur dans les équations physiques ?",
+            "options": ["Q", "T", "W"],
+            "rep": "Q",
+        },
+        {
+            "id": "qt3_5",
+            "q": "Dans quelle expérience Joule a-t-il lié le travail mécanique à l'élévation de température ?",
+            "options": ["L'expérience des palettes brassant l'eau", "L'observation du forage des canons", "L'invention de la machine à feu"],
+            "rep": "L'expérience des palettes brassant l'eau",
+        },
+        {
+            "id": "qt3_6",
+            "q": "Comment qualifie-t-on un transfert de chaleur s'effectuant à température constante lors d'un changement d'état ?",
+            "options": ["Un transfert de chaleur latente", "Un transfert de chaleur sensible", "Un flux par conduction pure"],
+            "rep": "Un transfert de chaleur latente",
+        },
+        {
+            "id": "qt3_7",
+            "q": "Que subit la température d'un corps pur lors d'un apport de chaleur sensible sans changement d'état ?",
+            "options": ["Elle augmente obligatoirement", "Elle reste strictement constante", "Elle diminue de moitié"],
+            "rep": "Elle augmente obligatoirement",
+        },
+        {
+            "id": "qt3_8",
+            "q": "Quel physicien a réfuté le fluide calorique en observant la chaleur produite par le frottement mécanique lors du forage de canons ?",
+            "options": ["Comte Rumford", "Antoine Lavoisier", "Sadi Carnot"],
+            "rep": "Comte Rumford",
+        },
+        {
+            "id": "qt3_9",
+            "q": "Lorsque deux corps en contact atteignent la même température, le transfert thermique global est :",
+            "options": ["Strictement nul (Équilibre)", "Infini et instantané", "Uniquement descendant"],
+            "rep": "Strictement nul (Équilibre)",
+        },
+        {
+            "id": "qt3_10",
+            "q": "La formule reliant la chaleur sensible à la masse et à la capacité thermique s'exprime par :",
+            "options": ["Q = m.c.(Tf - Ti)", "Q = m.L", "Q = U.A.dT"],
+            "rep": "Q = m.c.(Tf - Ti)",
+        }
+    ]
+
+    # Initialisation de l'ordre aléatoire des questions du Quiz
+    if "ordre_quiz_tab3_therm_aleatoire" not in st.session_state:
+        random.shuffle(questions_therm3_sources)
+        st.session_state.ordre_quiz_tab3_therm_aleatoire = questions_therm3_sources
+
+    # # 2. BASE DE DONNÉES DU TEXTE À TROUS DE LA CHALEUR
+    if "champs_therm3_clean" not in st.session_state:
+        st.session_state.champs_therm3_clean = [
+            (
+                "1. La chaleur désigne un .......... d'énergie entre deux systèmes.",
+                ["Choisir...", "transfert", "fluide"],
+                "transfert",
+                "therm3_t1",
+            ),
+            (
+                "2. L'unité légale de la quantité de chaleur est le ..........",
+                ["Choisir...", "Joule", "Calorie"],
+                "Joule",
+                "therm3_t2",
+            ),
+            (
+                "3. Joseph Black a découvert la chaleur .......... liée aux changements d'état.",
+                ["Choisir...", "latente", "sensible"],
+                "latente",
+                "therm3_t3",
+            ),
+            (
+                "4. L'élévation de température d'un corps sans changement d'état met en jeu de la chaleur ..........",
+                ["Choisir...", "sensible", "latente"],
+                "sensible",
+                "therm3_t4",
+            ),
+            (
+                "5. L'expérience des .......... de Joule a prouvé la conservation de l'énergie.",
+                ["Choisir...", "palettes", "vitres"],
+                "palettes",
+                "therm3_t5",
+            ),
+            (
+                "6. La chaleur se déplace spontanément du corps chaud vers le corps ..........",
+                ["Choisir...", "froid", "isole"],
+                "froid",
+                "therm3_t6",
+            ),
+            (
+                "7. Le symbole mathématique de la quantité de chaleur est la lettre ..........",
+                ["Choisir...", "Q", "W"],
+                "Q",
+                "therm3_t7",
+            ),
+            (
+                "8. Le Comte Rumford a réfuté le calorique en forant des ..........",
+                ["Choisir...", "canons", "tuyaux"],
+                "canons",
+                "therm3_t8",
+            ),
+            (
+                "9. L'absence de transfert thermique entre deux corps en contact indique l'.......... thermique.",
+                ["Choisir...", "équilibre", "blocage"],
+                "équilibre",
+                "therm3_t9",
+            ),
+            (
+                "10. La constante 'c' de l'équation correspond à la .......... thermique massique.",
+                ["Choisir...", "capacité", "conductivité"],
+                "capacité",
+                "therm3_t10",
+            ),
+        ]
+
+    # # 3. RENDU DES DEUX COLONNES STREAMLIT
+    col_quiz, col_trous = st.columns(2)
+
+    with col_quiz:
+        st.markdown("##### Quiz Technique de l'Atelier 3 (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab3_therm_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox(
+                "",
+                options=["Choisir..."] + q_data["options"],
+                key=f"therm_at3_final_g_{q_data['id']}",
+                disabled=verrouille,
+                label_visibility="collapsed",
+            )
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 3 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_therm3_clean:
+            enonce, choix, cle = ligne[0], ligne[1], ligne[-1]
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt:
+                st.write(enonce)
+            with c_sel:
+                st.selectbox(
+                    "",
+                    choix,
+                    key=f"{cle}_therm3_clean",
+                    disabled=verrouille,
+                    label_visibility="collapsed",
+                )
 
 
 def afficher_atelier_temperature_verrouille(verrouille=False):
@@ -1464,10 +1631,335 @@ with tab2:
 
 
 
+with tab3:
+    st.header("La Chaleur et le Transfert d'Énergie Thermique")
+    st.write(
+        "Comprenez la différence fondamentale entre la température et la chaleur, découvrez "
+        "les expériences historiques et observez les transferts d'énergie en direct :"
+    )
 
+    # =============================================================================
+    # 1. BANDE DESSINÉE HUMORISTIQUE : LE DRAME DES CALORIES PERDUES
+    # =============================================================================
+    col_gauche_texte_t3, col_droite_img_t3 = st.columns(2)
 
+    with col_gauche_texte_t2:  # Réutilisation de votre structure à deux colonnes symétriques
+        st.write(
+            "**La BD humoristique textuelle : Le drame des calories perdues**"
+        )
+        
+        st.info(
+            "**Cas 1 :** Un groupe d'atomes à l'intérieur d'une maison chauffée est tranquillement installé "
+            "dans la structure de la paroi. Ils vibrent joyeusement ensemble et discutent avec leurs voisins : "
+            "« Tout va bien les gars, la parfaite cohésion est là, on forme un bloc d'isolation indestructible ! ».\n\n"
+            
+            "**Cas 2 :** Une baisse brutale des températures survient à l'extérieur. L'air froid hivernal, "
+            "très gourmand, attrape l'atome de la paroi par le bras et crie : "
+            "« Hé toi ! Donne-moi tes charges ! Tes précieux joules d'énergie m'intéressent grandement ! ».\n\n"
+            
+            "**Cas 3 :** L'atome de la paroi, dépouillé de son énergie de protection, commence à se refroidir "
+            "et à se détacher du réseau. Il panique en voyant sa température baisser : "
+            "« Oh non ! Je viens de subir un transfert thermique ! Je ne suis plus un atome chaud et agité, "
+            "je me transforme en conducteur froid ! C'est la dissipation ! ».\n\n"
+            
+            "**Cas 4 :** La chaleur évadée désormais flotte dans l'atmosphère froide sous forme de perte pure, "
+            "laissant un trou béant dans le bilan énergétique de la poutre. Les atomes de froid s'enfuient "
+            "en ricanant avec leur butin : "
+            "« Affaire classée ! Encore un système chauffé terrassé par notre pouvoir absorbant ! »."
+        )
 
+    with col_droite_img_t3:
+        if os.path.exists("chaleur_caricature.jpg"):
+            st.image(
+                "chaleur_caricature.jpg",
+                caption="Illustration humoristique du drame des calories perdues",
+                use_container_width=True,
+            )
+        else:
+            st.warning(
+                "L'image 'chaleur_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+            )
 
+    st.write("---")
+
+    # =============================================================================
+    # 2. COURS HISTORIQUE : LES SAVANTS ET LES EXPÉRIENCES
+    # =============================================================================
+    col_t3_h1, col_t3_h2 = st.columns(2)
+    
+    with col_t3_h1:
+        st.markdown("##### Les Pionniers de la Quantification")
+        st.write(
+            "**Joseph Black (1761) :** Ce médecin écossais découvre la chaleur latente. Il remarque "
+            "que l'apport de chaleur pour faire fondre de la glace n'augmente pas sa température tant "
+            "que la fusion n'est pas totale. Il introduit ainsi la distinction entre intensité (température) et quantité (chaleur).\n\n"
+            "**Benjamin Thompson / Comte Rumford (1798) :** En observant le forage des canons, il démontre "
+            "que le frottement mécanique produit une quantité de chaleur infinie. Il assène le premier coup fatal à la théorie du fluide calorique."
+        )
+
+        col_t31_h11, col_t31_h21 = st.columns(2)
+        with col_t31_h11:
+            col_t31_c1, col_t31_c2 = st.columns(2)
+            with col_t31_c1:
+                if os.path.exists("Black.jpg"):
+                    st.image("Black.jpg", caption="Joseph Black", use_container_width=True)
+                else:
+                    st.warning("L'image 'Black.jpg' est introuvable.")
+            with col_t31_c2:
+                if os.path.exists("calorimetre.jpg"):
+                    st.image("calorimetre.jpg", caption="Calorimètre historique", use_container_width=True)
+                else:
+                    st.warning("L'image 'calorimetre.jpg' est introuvable.")
+        with col_t31_h21:
+            col_t31_c3, col_t31_c4 = st.columns(2)
+            with col_t31_c3:
+                if os.path.exists("Rumford.jpg"):
+                    st.image("Rumford.jpg", caption="Comte Rumford", use_container_width=True)
+                else:
+                    st.warning("L'image 'Rumford.jpg' est introuvable.")
+            with col_t31_c4:
+                if os.path.exists("canon.jpg"):
+                    st.image("canon.jpg", caption="Forage des canons", use_container_width=True)
+                else:
+                    st.warning("L'image 'canon.jpg' est introuvable.")
+            
+    with col_t3_h2:
+        st.markdown("##### L'Équivalent Mécanique de la Chaleur")
+        st.write(
+            "**James Prescott Joule (1843) :** Grâce à sa célèbre expérience de la cuve munie de palettes en rotation "
+            "actionnées par la chute de masses, il établit une équivalence stricte entre le travail mécanique et la chaleur.\n\n"
+            "**L'Établissement du Joule :** Ses mesures rigoureuses prouvent qu'une quantité de travail mécanique "
+            "fournie engendre toujours une élévation prévisible de température, fixant l'unité de la chaleur (le Joule)."
+        )
+
+        col_t32_h31, col_t32_h32 = st.columns(2)
+        with col_t32_h31:
+            col_t32_c1, col_t32_c2 = st.columns(2)
+            with col_t32_c1:
+                if os.path.exists("Joule.jpg"):
+                    st.image("Joule.jpg", caption="James Joule", use_container_width=True)
+                else:
+                    st.warning("L'image 'Joule.jpg' est introuvable.")
+            with col_t32_c2:
+                if os.path.exists("palettes.jpg"):
+                    st.image("palettes.jpg", caption="Expérience des palettes", use_container_width=True)
+                else:
+                    st.warning("L'image 'palettes.jpg' est introuvable.")
+        with col_t32_h32:
+            col_t32_c3, col_t32_c4 = st.columns(2)
+            with col_t32_c3:
+                if os.path.exists("chaleur_unite.jpg"):
+                    st.image("chaleur_unite.jpg", caption="L'unité de l'énergie", use_container_width=True)
+                else:
+                    st.warning("L'image 'chaleur_unite.jpg' est introuvable.")
+            with col_t32_c4:
+                if os.path.exists("travail.jpg"):
+                    st.image("travail.jpg", caption="Conversion mécanique", use_container_width=True)
+                else:
+                    st.warning("L'image 'travail.jpg' est introuvable.")
+
+    st.write("---")
+
+    # =============================================================================
+    # 3. LABORATOIRE VIRTUEL INTERACTIF : SIMULATEUR DE TRANSFERT DE CHALEUR
+    # =============================================================================
+    st.subheader("Laboratoire Virtuel : Le sens du transfert thermique spontané")
+    st.write(
+        "Mettez en contact deux blocs de températures différentes et observez comment la chaleur "
+        "s'écoule naturellement d'un système vers l'autre jusqu'à l'équilibre thermique :"
+    )
+
+    t3_sim_col1, t3_sim_col2 = st.columns(2)
+    with t3_sim_col1:
+        temp_bloc_A = st.slider("Température du Bloc A (°C) :", min_value=10, max_value=100, value=80, key="t3_sim_t_A")
+    with t3_sim_col2:
+        temp_bloc_B = st.slider("Température du Bloc B (°C) :", min_value=10, max_value=100, value=20, key="t3_sim_t_B")
+
+    # Rendu graphique dynamique du transfert de chaleur (Matplotlib)
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+
+    fig_chaleur, ax_ch = plt.subplots(figsize=(8, 3))
+    
+    # Normalisation des couleurs en fonction des températures (du bleu froid #0284c7 au rouge chaud #ef4444)
+    def obtenir_couleur_t(temp):
+        r = (temp - 10) / 90
+        return (r, 0.2, 1 - r) # Gradient RGB simplifié
+
+    # Dessin des deux blocs en contact
+    ax_ch.add_patch(patches.Rectangle((1, 0.5), 2, 2, color=obtenir_couleur_t(temp_bloc_A), alpha=0.8))
+    ax_ch.add_patch(patches.Rectangle((3, 0.5), 2, 2, color=obtenir_couleur_t(temp_bloc_B), alpha=0.8))
+    
+    ax_ch.text(2, 1.5, f"BLOC A\n{temp_bloc_A} °C", color='white', fontweight='bold', ha='center')
+    ax_ch.text(4, 1.5, f"BLOC B\n{temp_bloc_B} °C", color='white', fontweight='bold', ha='center')
+
+    # Dessin de la flèche de transfert thermique dynamique
+    if temp_bloc_A > temp_bloc_B:
+        ax_ch.arrow(2.2, 0.2, 1.4, 0, head_width=0.15, head_length=0.15, fc='#ef4444', ec='#ef4444', lw=2)
+        ax_ch.text(2.9, 0.35, "Flux de Chaleur Q", color='#ef4444', fontsize=9, fontweight='bold', ha='center')
+    elif temp_bloc_B > temp_bloc_A:
+        ax_ch.arrow(3.8, 0.2, -1.4, 0, head_width=0.15, head_length=0.15, fc='#ef4444', ec='#ef4444', lw=2)
+        ax_ch.text(2.9, 0.35, "Flux de Chaleur Q", color='#ef4444', fontsize=9, fontweight='bold', ha='center')
+    else:
+        ax_ch.text(2.9, 0.2, "ÉQUILIBRE THERMIQUE (Q = 0)", color='#10b981', fontsize=9, fontweight='bold', ha='center')
+
+    ax_ch.set_xlim(0, 6)
+    ax_ch.set_ylim(-0.2, 3)
+    ax_ch.axis('off')
+    st.pyplot(fig_chaleur)
+
+    st.write("---")
+    if "suite_verrouille_tab3_therm" not in st.session_state:
+        st.session_state.suite_verrouille_tab3_therm = False
+    verrou_at3 = st.session_state.suite_verrouille_tab3_therm
+
+    # Affichage du module de questions spécifique à l'Atelier de la Chaleur
+    afficher_atelier_chaleur_verrouille(verrouille=verrou_at3)
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 3")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat3 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier sur la Chaleur.",
+        key="check_certif_therm3_final_net",
+        disabled=verrou_at3,
+    )
+
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3",
+        key="btn_export_suite3_therm_official",
+        use_container_width=True,
+        disabled=verrou_at3,
+    ):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat3:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction du Quiz Technique (10 pts)
+            score_q3 = 0.0
+            if "ordre_quiz_tab3_therm_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab3_therm_aleatoire:
+                    saisie = st.session_state.get(f"therm_at3_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip():
+                        score_q3 += 1.0
+
+            # 2. Correction du Texte à trous (10 pts)
+            score_t3 = 0.0
+            if "champs_therm3_clean" in st.session_state:
+                for ligne in st.session_state.champs_therm3_clean:
+                    enonce_t, choix_t, attendu_t, cle_t = ligne
+                    saisie_t = st.session_state.get(f"{cle_t}_therm3_clean", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu_t).strip():
+                        score_t3 += 1.0
+
+            # 3. Sauvegarde définitive dans la session et rafraîchissement
+            st.session_state.score_suite3_therm_p1 = round(float(score_q3), 1)
+            st.session_state.score_suite3_therm_p2 = round(float(score_t3), 1)
+            st.session_state.score_final_suite3_therm = round(float(score_q3 + score_t3), 1)
+            st.session_state.suite_verrouille_tab3_therm = True
+            st.rerun()
+
+    # --- COMPILATION ET TÉLÉCHARGEMENT DU BILAN HTML SCELLÉ ---
+    if st.session_state.get("suite_verrouille_tab3_therm", False):
+        from datetime import datetime
+        scr1_t3 = st.session_state.get("score_suite3_therm_p1", 0.0)
+        scr2_t3 = st.session_state.get("score_suite3_therm_p2", 0.0)
+        tot_s_t3 = st.session_state.get("score_final_suite3_therm", 0.0)
+        timestamp_suite3 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER CHALEUR SCELLÉ | Note de session : {tot_s_t3:.1f} / 20")
+
+        html_export_therm3 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Chaleur Thermique - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 20px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Physique Thermique</h1>
+                <p>Atelier 3 : Principes fondamentaux, équivalence mécanique et calcul de la chaleur</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t3:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t3:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse de Cours : <strong>{scr2_t3:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 3 : <strong>{tot_s_t3:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab3_therm_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab3_therm_aleatoire, 1):
+                saisie = st.session_state.get(f"therm_at3_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_therm3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_therm3 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_therm3_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_therm3_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+
+                saisie_texte = st.session_state.get(f"{cle_variable}_therm3_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_therm3 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_therm3 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        st.download_button(
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 3 (.HTML)",
+            data=html_export_therm3,
+            file_name=preparer_nom_fichier("Atelier_3_Chaleur").replace(".txt", ".html"),
+            mime="text/html",
+            use_container_width=True,
+        )
 
 
 
