@@ -219,81 +219,6 @@ tab12 = onglets[12]
 tab13 = onglets[13] 
 tab14 = onglets[14]
 
-def afficher_atelier_isolants_verrouille(verrouille=False):
-    """Affiche le Quiz et le Texte à trous de l'onglet 5 (Les conducteurs et les isolants) sur deux colonnes."""
-    import random
-
-    # 1. BASE DE DONNÉES DU QUIZ TECHNIQUE DES CONDUCTEURS ET ISOLANTS
-    questions_therm5_sources = [
-        {"id": "qt5_1", "q": "Quelle lettre de l'alphabet grec désigne la conductivité thermique d'un matériau ?", "options": ["Lambda (λ)", "Phi (Φ)", "Rho (ρ)"], "rep": "Lambda (λ)"},
-        {"id": "qt5_2", "q": "Quelle est l'unité légale de la conductivité thermique dans le Système International ?", "options": ["W/(m.K)", "Joule/kg", "W/m²"], "rep": "W/(m.K)"},
-        {"id": "qt5_3", "q": "Parmi les matériaux suivants, lequel possède la conductivité thermique la plus élevée ?", "options": ["Le cuivre", "Le verre", "Le bois"], "rep": "Le cuivre"},
-        {"id": "qt5_4", "q": "Quelle est la valeur maximale limite du lambda pour qu'un matériau soit qualifié d'isolant thermique ?", "options": ["0,05 W/(m.K)", "1,0 W/(m.K)", "0,5 W/(m.K)"], "rep": "0,05 W/(m.K)"},
-        {"id": "qt5_5", "q": "Quel élément immobile, prisonnier des fibres ou des alvéoles, fait le pouvoir des isolants ?", "options": ["L'air", "L'eau", "Le vide"], "rep": "L'air"},
-        {"id": "qt5_6", "q": "Pourquoi les métaux sont-ils d'excellents conducteurs de chaleur ?", "options": ["En raison de la présence d'électrons libres", "Parce qu'ils ont une densité faible", "Parce qu'ils absorbent le rayonnement"], "rep": "En raison de la présence d'électrons libres"},
-        {"id": "qt5_7", "q": "La laine de verre et le polystyrène expansé sont des matériaux dits :", "options": ["Isolants thermiques", "Conducteurs thermiques", "Réfractaires purs"], "rep": "Isolants thermiques"},
-        {"id": "qt5_8", "q": "Si l'on double l'épaisseur d'un panneau isolant, qu'advient-il du flux de chaleur qui le traverse ?", "options": ["Il est divisé par deux", "Il est doublé", "Il reste strictement identique"], "rep": "Il est divisé par deux"},
-        {"id": "qt5_9", "q": "Quel isolant thermique naturel d'origine végétale est couramment utilisé en panneaux rigides ?", "options": ["Le liège expansé", "La laine de verre", "Le béton cellulaire"], "rep": "Le liège expansé"},
-        {"id": "qt5_10", "q": "Dans l'industrie, pour évacuer la chaleur d'un processeur, on utilise un dissipateur en :", "options": ["Aluminium", "Plastique PVC", "Bois de sapin"], "rep": "Aluminium"}
-    ]
-
-    if "ordre_quiz_tab5_therm_aleatoire" not in st.session_state:
-        random.shuffle(questions_therm5_sources)
-        st.session_state.ordre_quiz_tab5_therm_aleatoire = questions_therm5_sources
-
-    # 2. BASE DE DONNÉES DU TEXTE À TROUS DES CONDUCTEURS ET ISOLANTS
-    if "champs_therm5_clean" not in st.session_state:
-        st.session_state.champs_therm5_clean = [
-            ("1. La conductivité thermique est désignée par la lettre grecque ..........", ["Choisir...", "lambda", "phi"], "lambda", "therm5_t1"),
-            ("2. Les .......... possèdent une conductivité thermique élevée supérieure à 50 W/(m.K).", ["Choisir...", "métaux", "isolants"], "métaux", "therm5_t2"),
-            ("3. Un matériau est un isolant si son lambda est inférieur à .......... W/(m.K).", ["Choisir...", "0,05", "1,5"], "0,05", "therm5_t3"),
-            ("4. La laine de verre emprisonne de l'.......... immobile pour bloquer la conduction.", ["Choisir...", "air", "eau"], "air", "therm5_t4"),
-            ("5. Plus la valeur du lambda est faible, plus le matériau est ..........", ["Choisir...", "isolant", "conducteur"], "isolant", "therm5_t5"),
-            ("6. Le cuivre est un excellent .......... thermique utilisé dans les échangeurs.", ["Choisir...", "conducteur", "isolant"], "conducteur", "therm5_t6"),
-            ("7. Augmenter l'.......... d'une paroi permet de réduire le flux de chaleur perdu.", ["Choisir...", "épaisseur", "surface"], "épaisseur", "therm5_t7"),
-            ("8. L'unité de la conductivité thermique se note W/(m...........).", ["Choisir...", "K", "J"], "K", "therm5_t8"),
-            ("9. Le polystyrène expansé est un isolant thermique d'origine ..........", ["Choisir...", "synthétique", "animale"], "synthétique", "therm5_t9"),
-            ("10. Les électrons .......... permettent aux métaux de transmettre rapidement l'agitation.", ["Choisir...", "libres", "liés"], "libres", "therm5_t10")
-        ]
-
-    # 3. RENDU DES DEUX COLONNES D'ÉVALUATION STREAMLIT
-    col_quiz, col_trous = st.columns(2)
-    
-    with col_quiz:
-        st.markdown("##### Quiz Technique de l'Atelier 5 (10 questions - 10 pts)")
-        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab5_therm_aleatoire, 1):
-            st.write(f"**{idx}.** {q_data['q']}")
-            st.selectbox(
-                "", 
-                options=["Choisir..."] + q_data["options"], 
-                key=f"therm_at5_final_g_{q_data['id']}", 
-                disabled=verrouille, 
-                label_visibility="collapsed"
-            )
-
-    with col_trous:
-        st.markdown("##### Synthèse de l'Atelier 5 (Texte à trous - 10 cases - 10 pts)")
-        for ligne in st.session_state.champs_therm5_clean:
-            # Extraction explicite des 4 éléments du tuple pour éliminer les défaillances de structure
-            enonce_texte = ligne[0]
-            choix_possibles = ligne[1]
-            solution_attendue = ligne[2]
-            cle_variable = ligne[3]
-            
-            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-            with c_txt: 
-                st.write(enonce_texte)
-            with c_sel: 
-                # Alignement rigoureux de la clé avec le dictionnaire de correction automatique
-                st.selectbox(
-                    "", 
-                    choix_possibles, 
-                    key=f"{cle_variable}_therm5_clean", 
-                    disabled=verrouille, 
-                    label_visibility="collapsed"
-                )
-
-
 def afficher_atelier_modes_verrouille(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 4 (Les modes de transfert) sur deux colonnes."""
     import random
@@ -2432,77 +2357,79 @@ with tab4:
     """
     st.markdown(html_flux_box, unsafe_allow_html=True)
 
-    st.write("---")
-    if "suite_verrouille_tab5_therm" not in st.session_state:
-        st.session_state.suite_verrouille_tab5_therm = False
-    verrou_at5 = st.session_state.suite_verrouille_tab5_therm
 
-    # Affichage du module de questions spécifique à l'Atelier des Conducteurs et Isolants
-    afficher_atelier_isolants_verrouille(verrouille=verrou_at5)
 
     st.write("---")
-    st.subheader("Synthèse et validation de l'Atelier 5")
+    if "suite_verrouille_tab4_therm" not in st.session_state:
+        st.session_state.suite_verrouille_tab4_therm = False
+    verrou_at4 = st.session_state.suite_verrouille_tab4_therm
+
+    # Affichage du module de questions spécifique à l'Atelier des Modes de Transfert
+    afficher_atelier_modes_verrouille(verrouille=verrou_at4)
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 4")
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    case_certif_stat5 = st.checkbox(
-        "Je certifie avoir complété les questions de l'Atelier sur les Conducteurs et Isolants.",
-        key="check_certif_therm5_final_net",
-        disabled=verrou_at5,
+    case_certif_stat4 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier sur les Modes de Transfert.",
+        key="check_certif_therm4_final_net",
+        disabled=verrou_at4,
     )
 
     if st.button(
-        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5",
-        key="btn_export_suite5_therm_official",
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4",
+        key="btn_export_suite4_therm_official",
         use_container_width=True,
-        disabled=verrou_at5,
+        disabled=verrou_at4,
     ):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif not case_certif_stat5:
+        elif not case_certif_stat4:
             st.error("Action refusée : Cochez la case de certification.")
         else:
             # 1. Correction du Quiz Technique (10 pts)
-            score_q5 = 0.0
-            if "ordre_quiz_tab5_therm_aleatoire" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_tab5_therm_aleatoire:
-                    saisie = st.session_state.get(f"therm_at5_final_g_{q_item['id']}", "Choisir...")
+            score_q4 = 0.0
+            if "ordre_quiz_tab4_therm_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab4_therm_aleatoire:
+                    saisie = st.session_state.get(f"therm_at4_final_g_{q_item['id']}", "Choisir...")
                     if str(saisie).strip() == str(q_item["rep"]).strip():
-                        score_q5 += 1.0
+                        score_q4 += 1.0
 
             # 2. Correction du Texte à trous (10 pts)
-            score_t5 = 0.0
-            if "champs_therm5_clean" in st.session_state:
-                for ligne in st.session_state.champs_therm5_clean:
+            score_t4 = 0.0
+            if "champs_therm4_clean" in st.session_state:
+                for ligne in st.session_state.champs_therm4_clean:
                     enonce_t, choix_t, attendu_t, cle_t = ligne
-                    saisie_t = st.session_state.get(f"{cle_t}_therm5_clean", "Choisir...")
+                    saisie_t = st.session_state.get(f"{cle_t}_therm4_clean", "Choisir...")
                     if str(saisie_t).strip() == str(attendu_t).strip():
-                        score_t5 += 1.0
+                        score_t4 += 1.0
 
             # 3. Sauvegarde définitive dans la session et rafraîchissement
-            st.session_state.score_suite5_therm_p1 = round(float(score_q5), 1)
-            st.session_state.score_suite5_therm_p2 = round(float(score_t5), 1)
-            st.session_state.score_final_suite5_therm = round(float(score_q5 + score_t5), 1)
-            st.session_state.suite_verrouille_tab5_therm = True
-            st.st_rerun() if hasattr(st, "st_rerun") else st.rerun()
+            st.session_state.score_suite4_therm_p1 = round(float(score_q4), 1)
+            st.session_state.score_suite4_therm_p2 = round(float(score_t4), 1)
+            st.session_state.score_final_suite4_therm = round(float(score_q4 + score_t4), 1)
+            st.session_state.suite_verrouille_tab4_therm = True
+            st.rerun()
 
     # --- COMPILATION ET TÉLÉCHARGEMENT DU BILAN HTML SCELLÉ ---
-    if st.session_state.get("suite_verrouille_tab5_therm", False):
+    if st.session_state.get("suite_verrouille_tab4_therm", False):
         from datetime import datetime
-        scr1_t5 = st.session_state.get("score_suite5_therm_p1", 0.0)
-        scr2_t5 = st.session_state.get("score_suite5_therm_p2", 0.0)
-        tot_s_t5 = st.session_state.get("score_final_suite5_therm", 0.0)
-        timestamp_suite5 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        scr1_t4 = st.session_state.get("score_suite4_therm_p1", 0.0)
+        scr2_t4 = st.session_state.get("score_suite4_therm_p2", 0.0)
+        tot_s_t4 = st.session_state.get("score_final_suite4_therm", 0.0)
+        timestamp_suite4 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
 
-        st.success(f"ATELIER CONDUCTEURS ET ISOLANTS SCELLÉ | Note de session : {tot_s_t5:.1f} / 20")
+        st.success(f"ATELIER MODES DE TRANSFERT SCELLÉ | Note de session : {tot_s_t4:.1f} / 20")
 
-        html_export_therm5 = f"""<!DOCTYPE html>
+        html_export_therm4 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Conducteurs Isolants - {n_eleve}</title>
+            <title>Rapport Modes de Transfert - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
@@ -2518,17 +2445,17 @@ with tab4:
         <body>
             <div class="header-box">
                 <h1>Rapport d'Évaluation de Physique Thermique</h1>
-                <p>Atelier 5 : Analyse de la conductivité thermique, des conducteurs et des isolants</p>
+                <p>Atelier 4 : Analyse de la conduction, de la convection et du rayonnement électromagnétique</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite5}</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t5:.1f}</span> / 20</div>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite4}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t4:.1f}</span> / 20</div>
             </div>
             
             <div class="sub-title">Récapitulatif des Notes Générées</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
-                Note obtenue au Quiz Technique : <strong>{scr1_t5:.1f} / 10</strong><br>
-                Note obtenue à la Synthèse de Cours : <strong>{scr2_t5:.1f} / 10</strong><br>
-                Note Totale de l'Atelier 5 : <strong>{tot_s_t5:.1f} / 20</strong>
+                Note obtenue au Quiz Technique : <strong>{scr1_t4:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse de Cours : <strong>{scr2_t4:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 4 : <strong>{tot_s_t4:.1f} / 20</strong>
             </p>
             
             <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
@@ -2539,15 +2466,15 @@ with tab4:
                 <tbody>
         """
 
-        if "ordre_quiz_tab5_therm_aleatoire" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz_tab5_therm_aleatoire, 1):
-                saisie = st.session_state.get(f"therm_at5_final_g_{q_item['id']}", "Choisir...")
+        if "ordre_quiz_tab4_therm_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab4_therm_aleatoire, 1):
+                saisie = st.session_state.get(f"therm_at4_final_g_{q_item['id']}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_therm5 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+                html_export_therm4 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_therm5 += """
+        html_export_therm4 += """
                 </tbody>
             </table>
             
@@ -2559,18 +2486,18 @@ with tab4:
                 <tbody>
         """
 
-        if "champs_therm5_clean" in st.session_state:
-            for num, ligne in enumerate(st.session_state.champs_therm5_clean, 1):
+        if "champs_therm4_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_therm4_clean, 1):
                 enonce_texte = ligne[0]
                 attendu_texte = ligne[2]
                 cle_variable = ligne[-1]
 
-                saisie_texte = st.session_state.get(f"{cle_variable}_therm5_clean", "Choisir...")
+                saisie_texte = st.session_state.get(f"{cle_variable}_therm4_clean", "Choisir...")
                 v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
                 v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
-                html_export_therm5 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+                html_export_therm4 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
 
-        html_export_therm5 += """
+        html_export_therm4 += """
                 </tbody>
             </table>
         </body>
@@ -2578,12 +2505,15 @@ with tab4:
         """
 
         st.download_button(
-            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 5 (.HTML)",
-            data=html_export_therm5,
-            file_name=preparer_nom_fichier("Atelier_5_Conducteurs_Isolants").replace(".txt", ".html"),
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 4 (.HTML)",
+            data=html_export_therm4,
+            file_name=preparer_nom_fichier("Atelier_4_Modes_Transfert").replace(".txt", ".html"),
             mime="text/html",
             use_container_width=True,
         )
+
+
+
 
 with tab5:
     st.header("Les Conducteurs et les Isolants Thermiques")
@@ -2591,8 +2521,6 @@ with tab5:
         "Comprenez pourquoi certains matériaux transmettent instantanément la chaleur alors "
         "que d'autres la bloquent, et découvrez la notion de conductivité thermique :"
     )
-
-
 
     # =============================================================================
     # 2. COURS TECHNIQUE : LA CONDUCTIVITÉ THERMIQUE (LAMBDA)
@@ -2949,6 +2877,16 @@ with tab5:
             mime="text/html",
             use_container_width=True,
         )
+
+
+
+
+
+
+
+
+
+
 
 
 
