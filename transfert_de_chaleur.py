@@ -5281,7 +5281,7 @@ with tab10:
     # 2. COURS TECHNIQUE ET CARICATURE EN FOND BLEU (DYNAMIQUE)
     # =============================================================================
     with col_droite_cours_tp:
-        st.markdown("##### Illustration caricaturale du cas")
+        st.markdown("##### Illustration du cas")
         
         # Initialisation des deux variables d'images pour chaque scénario
         if scen_tp == "Béton massif : Exothermie d'une pile de pont":
