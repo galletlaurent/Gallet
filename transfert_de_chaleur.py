@@ -220,56 +220,56 @@ tab13 = onglets[13]
 tab14 = onglets[14]
 
 
-    def afficher_atelier_monocouche_verrouille(verrouille=False):
-        import random
+def afficher_atelier_monocouche_verrouille(verrouille=False):
+    import random
 
-        # 1. BASE DE DONNÉES DU QUIZ TECHNIQUE DE L'ATELIER 9
-        questions_therm9_sources = [
-            {"id": "qt9_1", "q": "Quelle loi physique fondamentale régit le transfert de chaleur par conduction à travers une paroi ?", "options": ["La loi de Fourier", "La loi de Newton", "La loi de Stefan"], "rep": "La loi de Fourier"},
-            {"id": "qt9_2", "q": "Comment évolue le flux thermique traversant si l'on double la surface de la paroi simple ?", "options": ["Il est doublé", "Il est divisé par deux", "Il reste identique"], "rep": "Il est doublé"},
-            {"id": "qt9_3", "q": "Quelle est l'unité de mesure du flux thermique total dans le Système International ?", "options": ["Le Watt", "Le Joule", "Le Pascal"], "rep": "Le Watt"},
-            {"id": "qt9_4", "q": "Comment varie l'évolution de la température à l'intérieur d'un matériau unique et homogène ?", "options": ["De façon linéaire et rectiligne", "De façon parabolique", "Par paliers horizontaux successifs"], "rep": "De façon linéaire et rectiligne"},
-            {"id": "qt9_5", "q": "Si l'on multiplie l'épaisseur d'une paroi homogène par deux, qu'advient-il du flux perdu ?", "options": ["Il est divisé par deux", "Il est multiplié par deux", "Il augmente au carré"], "rep": "Il est divisé par deux"},
-            {"id": "qt9_6", "q": "Dans l'équation de la conduction unitaire, que représente le terme désigné par la lettre 'A' ?", "options": ["La surface d'échange en m²", "L'épaisseur de la paroi", "L'écart thermique"], "rep": "La surface d'échange en m²"},
-            {"id": "qt9_7", "q": "Quel paramètre se trouve au dénominateur dans l'expression littérale du flux conducteur unitaire ?", "options": ["L'épaisseur de la couche (e)", "La conductivité (lambda)", "La surface (A)"], "rep": "L'épaisseur de la couche (e)"},
-            {"id": "qt9_8", "q": "Si la pente du profil de température dans le mur est forte, cela signifie que le matériau est :", "options": ["Peu conducteur (Plutôt isolant)", "Extrêmement conducteur", "Un métal pur"], "rep": "Peu conducteur (Plutôt isolant)"},
-            {"id": "qt9_9", "q": "Le flux thermique se déplace spontanément depuis :", "options": ["La face la plus chaude vers la face la plus froide", "La face froide vers la face chaude", "Le milieu extérieur vers l'intérieur"], "rep": "La face la plus chaude vers la face la plus froide"},
-            {"id": "qt10_10", "q": "Pour calculer le flux à travers une paroi simple, la formule correcte à appliquer est :", "options": ["Phi = (lambda * A * dT) / e", "Phi = (e * A * dT) / lambda", "Phi = lambda * e * A * dT"], "rep": "Phi = (lambda * A * dT) / e"}
+    # 1. BASE DE DONNÉES DU QUIZ TECHNIQUE DE L'ATELIER 9
+    questions_therm9_sources = [
+        {"id": "qt9_1", "q": "Quelle loi physique fondamentale régit le transfert de chaleur par conduction à travers une paroi ?", "options": ["La loi de Fourier", "La loi de Newton", "La loi de Stefan"], "rep": "La loi de Fourier"},
+        {"id": "qt9_2", "q": "Comment évolue le flux thermique traversant si l'on double la surface de la paroi simple ?", "options": ["Il est doublé", "Il est divisé par deux", "Il reste identique"], "rep": "Il est doublé"},
+        {"id": "qt9_3", "q": "Quelle est l'unité de mesure du flux thermique total dans le Système International ?", "options": ["Le Watt", "Le Joule", "Le Pascal"], "rep": "Le Watt"},
+        {"id": "qt9_4", "q": "Comment varie l'évolution de la température à l'intérieur d'un matériau unique et homogène ?", "options": ["De façon linéaire et rectiligne", "De façon parabolique", "Par paliers horizontaux successifs"], "rep": "De façon linéaire et rectiligne"},
+        {"id": "qt9_5", "q": "Si l'on multiplie l'épaisseur d'une paroi homogène par deux, qu'advient-il du flux perdu ?", "options": ["Il est divisé par deux", "Il est multiplié par deux", "Il augmente au carré"], "rep": "Il est divisé par deux"},
+        {"id": "qt9_6", "q": "Dans l'équation de la conduction unitaire, que représente le terme désigné par la lettre 'A' ?", "options": ["La surface d'échange en m²", "L'épaisseur de la paroi", "L'écart thermique"], "rep": "La surface d'échange en m²"},
+        {"id": "qt9_7", "q": "Quel paramètre se trouve au dénominateur dans l'expression littérale du flux conducteur unitaire ?", "options": ["L'épaisseur de la couche (e)", "La conductivité (lambda)", "La surface (A)"], "rep": "L'épaisseur de la couche (e)"},
+        {"id": "qt9_8", "q": "Si la pente du profil de température dans le mur est forte, cela signifie que le matériau est :", "options": ["Peu conducteur (Plutôt isolant)", "Extrêmement conducteur", "Un métal pur"], "rep": "Peu conducteur (Plutôt isolant)"},
+        {"id": "qt9_9", "q": "Le flux thermique se déplace spontanément depuis :", "options": ["La face la plus chaude vers la face la plus froide", "La face froide vers la face chaude", "Le milieu extérieur vers l'intérieur"], "rep": "La face la plus chaude vers la face la plus froide"},
+        {"id": "qt10_10", "q": "Pour calculer le flux à travers une paroi simple, la formule correcte à appliquer est :", "options": ["Phi = (lambda * A * dT) / e", "Phi = (e * A * dT) / lambda", "Phi = lambda * e * A * dT"], "rep": "Phi = (lambda * A * dT) / e"}
+    ]
+
+    if "ordre_quiz_tab9_therm_aleatoire" not in st.session_state:
+        random.shuffle(questions_therm9_sources)
+        st.session_state.ordre_quiz_tab9_therm_aleatoire = questions_therm9_sources
+
+    # 2. BASE DE DONNÉES DU TEXTE À TROUS DE L'ATELIER 9
+    if "champs_therm9_clean" not in st.session_state:
+        st.session_state.champs_therm9_clean = [
+            ("1. Le transfert conducteur à travers un matériau unitaire suit la loi de ..........", ["Choisir...", "Fourier", "Newton"], "Fourier", "therm9_t1"),
+            ("2. Le flux thermique total traversant une paroi plane s'exprime en ..........", ["Choisir...", "Watts", "Joules"], "Watts", "therm9_t2"),
+            ("3. À l'intérieur d'un seul matériau homogène, le profil thermique est ..........", ["Choisir...", "linéaire", "courbe"], "linéaire", "therm9_t3"),
+            ("4. Doubler la surface de la paroi monocouche conduit à un flux thermique ..........", ["Choisir...", "doublé", "diminué"], "doublé", "therm9_t4"),
+            ("5. Le flux est inversement proportionnel à l'.......... de la paroi étudiée.", ["Choisir...", "épaisseur", "surface"], "épaisseur", "therm9_t5"),
+            ("6. La chaleur se propage toujours de la face la plus .......... vers la plus froide.", ["Choisir...", "chaude", "froide"], "chaude", "therm9_t6"),
+            ("7. Dans la formule littérale, la constante lambda désigne la .......... thermique.", ["Choisir...", "conductivité", "résistance"], "conductivité", "therm9_t7"),
+            ("8. Augmenter l'épaisseur du matériau permet d'accroître la résistance ..........", ["Choisir...", "R", "U"], "R", "therm9_t8"),
+            ("9. Une forte pente de température traduit un matériau plutôt ..........", ["Choisir...", "isolant", "conducteur"], "isolant", "therm9_t9"),
+            ("10. Si l'écart thermique dT augmente, les déperditions totales de Watts ..........", ["Choisir...", "augmentent", "diminuent"], "augmentent", "therm9_t10")
         ]
 
-        if "ordre_quiz_tab9_therm_aleatoire" not in st.session_state:
-            random.shuffle(questions_therm9_sources)
-            st.session_state.ordre_quiz_tab9_therm_aleatoire = questions_therm9_sources
+    col_quiz, col_trous = st.columns(2)
+    with col_quiz:
+        st.markdown("##### Quiz Technique de l'Atelier 9 (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab9_therm_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"therm_at9_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
 
-        # 2. BASE DE DONNÉES DU TEXTE À TROUS DE L'ATELIER 9
-        if "champs_therm9_clean" not in st.session_state:
-            st.session_state.champs_therm9_clean = [
-                ("1. Le transfert conducteur à travers un matériau unitaire suit la loi de ..........", ["Choisir...", "Fourier", "Newton"], "Fourier", "therm9_t1"),
-                ("2. Le flux thermique total traversant une paroi plane s'exprime en ..........", ["Choisir...", "Watts", "Joules"], "Watts", "therm9_t2"),
-                ("3. À l'intérieur d'un seul matériau homogène, le profil thermique est ..........", ["Choisir...", "linéaire", "courbe"], "linéaire", "therm9_t3"),
-                ("4. Doubler la surface de la paroi monocouche conduit à un flux thermique ..........", ["Choisir...", "doublé", "diminué"], "doublé", "therm9_t4"),
-                ("5. Le flux est inversement proportionnel à l'.......... de la paroi étudiée.", ["Choisir...", "épaisseur", "surface"], "épaisseur", "therm9_t5"),
-                ("6. La chaleur se propage toujours de la face la plus .......... vers la plus froide.", ["Choisir...", "chaude", "froide"], "chaude", "therm9_t6"),
-                ("7. Dans la formule littérale, la constante lambda désigne la .......... thermique.", ["Choisir...", "conductivité", "résistance"], "conductivité", "therm9_t7"),
-                ("8. Augmenter l'épaisseur du matériau permet d'accroître la résistance ..........", ["Choisir...", "R", "U"], "R", "therm9_t8"),
-                ("9. Une forte pente de température traduit un matériau plutôt ..........", ["Choisir...", "isolant", "conducteur"], "isolant", "therm9_t9"),
-                ("10. Si l'écart thermique dT augmente, les déperditions totales de Watts ..........", ["Choisir...", "augmentent", "diminuent"], "augmentent", "therm9_t10")
-            ]
-
-        col_quiz, col_trous = st.columns(2)
-        with col_quiz:
-            st.markdown("##### Quiz Technique de l'Atelier 9 (10 questions - 10 pts)")
-            for idx, q_data in enumerate(st.session_state.ordre_quiz_tab9_therm_aleatoire, 1):
-                st.write(f"**{idx}.** {q_data['q']}")
-                st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"therm_at9_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
-
-        with col_trous:
-            st.markdown("##### Synthèse de l'Atelier 9 (Texte à trous - 10 cases - 10 pts)")
-            for ligne in st.session_state.champs_therm9_clean:
-                enonce, choix, attendu, cle = ligne
-                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-                with c_txt: st.write(enonce)
-                with c_sel: st.selectbox("", choix, key=f"{cle}_therm9_clean", disabled=verrouille, label_visibility="collapsed")
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 9 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_therm9_clean:
+            enonce, choix, attendu, cle = ligne
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: st.write(enonce)
+            with c_sel: st.selectbox("", choix, key=f"{cle}_therm9_clean", disabled=verrouille, label_visibility="collapsed")
 
 
 
