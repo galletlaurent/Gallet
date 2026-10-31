@@ -18,7 +18,7 @@ applications = [
     {"nom": "Coordonnees d un vecteur", "url": "https://...", "niveau": "2nde et CAP", "theme": "Geometrie"},
     {"nom": "Calcul de pourcentages", "url": "https://...", "niveau": "2nde et CAP", "theme": "Statistiques"},
     
-    {"nom": "Calcul du nombre derive graphiquement", "url": "https://streamlit.app", "niveau": "1ere", "theme": "Derivees"},
+    {"nom": "Dosage du vinaigre", "url": "https://gallet-cnvqzzejzkeku7pm4j5puq.streamlit.app/", "niveau": "1ere", "theme": "Derivees"},
     {"nom": "Equation de la tangente a une courbe", "url": "https://streamlit.app", "niveau": "1ere", "theme": "Derivees"},
     {"nom": "Suites arithmetiques et geometriques", "url": "https://streamlit.app", "niveau": "1ere", "theme": "Suites"},
     
