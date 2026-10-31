@@ -1706,10 +1706,10 @@ with tab3:
                 else:
                     st.warning("L'image 'Black.jpg' est introuvable.")
             with col_t31_c2:
-                if os.path.exists("calorimetre.jpg"):
-                    st.image("calorimetre.jpg", caption="Calorimètre historique", use_container_width=True)
+                if os.path.exists("calorimetreblack.jpg"):
+                    st.image("calorimetreblack.jpg", caption="Calorimètre historique", use_container_width=True)
                 else:
-                    st.warning("L'image 'calorimetre.jpg' est introuvable.")
+                    st.warning("L'image 'calorimetreblack.jpg' est introuvable.")
         with col_t31_h21:
             col_t31_c3, col_t31_c4 = st.columns(2)
             with col_t31_c3:
