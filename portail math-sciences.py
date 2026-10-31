@@ -11,15 +11,30 @@ st.set_page_config(page_title="Hub Maths-sciences", layout="wide")
 st.markdown("""
 <style>
 @media print {
-    /* Évite que le contenu soit coupé après la page 1 */
-    html, body, .main, .block-container, [data-testid="stVerticalBlock"] {
+    /* Libere absolument toutes les structures imbriquees de Streamlit pour l'impression */
+    html, body, .main, .block-container, 
+    [data-testid="stApp"], 
+    [data-testid="stAppViewContainer"], 
+    [data-testid="stVerticalBlock"], 
+    [data-testid="stVerticalBlockBorderWrapper"],
+    .stTabs, [data-testid="stTabContent"] {
         height: auto !important;
         overflow: visible !important;
         position: static !important;
+        max-height: none !important;
+        display: block !important;
     }
     
+    /* Force la grille de colonnes a rester visible et fluide */
+    [data-testid="stHorizontalBlock"] {
+        height: auto !important;
+        overflow: visible !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+    }
+
     /* Cache toute l'interface Streamlit globale */
-    header, footer, [data-testid="stSidebar"], [data-testid="stHeader"] {
+    header, footer, [data-testid="stSidebar"], [data-testid="stHeader"], .stAppDeployButton {
         display: none !important;
     }
     
@@ -28,7 +43,7 @@ st.markdown("""
         display: none !important;
     }
     
-    /* Masque les boutons individuels de téléchargement pour ne pas polluer la feuille */
+    /* Masque les boutons individuels de téléchargement pour l'impression */
     .stDownloadButton {
         display: none !important;
     }
@@ -38,6 +53,7 @@ st.markdown("""
         padding-top: 0rem !important;
         padding-bottom: 0rem !important;
         max-width: 100% !important;
+        margin: 0 !important;
     }
 }
 </style>
