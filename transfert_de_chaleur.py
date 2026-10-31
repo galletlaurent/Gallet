@@ -5201,7 +5201,7 @@ with tab10:
                 "« Affaire classée ! L'exothermie et la conduction ont été domptées, la structure est validée ! »"
             )
             for _ in range(20):
-            st.write("")
+                st.write("")
             texte_bd_bleu_tp = (
                 "**La BD humoristique : Le cœur brûlant du béton**\n\n"
                 "**Cas 1 :** Hydratation générale : « C'est la fête du ciment, les Joules se libèrent ! ».\n\n"
@@ -5224,7 +5224,7 @@ with tab10:
                 "« Affaire classée ! Les lois de la dilatation thermique ont été contenues à temps ! »"
             )
             for _ in range(20):
-            st.write("")
+                st.write("")
             texte_bd_bleu_tp = (
                 "**La BD humoristique : La peau du béton sous tension**\n\n"
                 "**Cas 1 :** Le tablier refroidit par l'extérieur : « Le cœur est brûlant mais ma peau est glacée ! ».\n\n"
@@ -5247,7 +5247,7 @@ with tab10:
                 "« Affaire classée ! Les barrières isolantes ont protégé les réactions chimiques du ciment ! »"
             )
             for _ in range(20):
-            st.write("")
+                st.write("")
             texte_bd_bleu_tp = (
                 "**La BD humoristique : La bataille du zéro degré**\n\n"
                 "**Cas 1 :** Chute du thermomètre : « Sauvez les Watts, le gel attaque les fondations ! ».\n\n"
@@ -5270,7 +5270,7 @@ with tab10:
                 "« Affaire classée ! L'équilibre entre le flux thermique perdu et la chimie du ciment a été trouvé ! »"
             )
             for _ in range(20):
-            st.write("")
+                st.write("")
             texte_bd_bleu_tp = (
                 "**La BD humoristique : L'océan pilleur de Joules**\n\n"
                 "**Cas 1 :** Immersion du béton sous l'eau : « Brrr, la mer commence à aspirer nos calories ! ».\n\n"
