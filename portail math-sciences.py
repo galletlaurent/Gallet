@@ -117,6 +117,8 @@ applications = [
     {"nom": "Le pH", "url": "https://gallet-2xkb5zlhdnonzmkahcmk3u.streamlit.app/", "niveau": "Tale", "theme": "Le pH"}
 ]
 
+
+# Fonction utilitaire pour generer l'image du QR Code en memoire
 def generer_qrcode_image(url_app):
     qr = qrcode.QRCode(version=1, box_size=10, border=4)
     qr.add_data(url_app)
@@ -137,7 +139,7 @@ recherche = st.text_input("Rechercher une application par mot-clé (ex: vecteur,
 
 # 3. Logique de filtrage et d'affichage
 if recherche:
-    st.subheader("Présultats de la recherche")
+    st.subheader("Résultats de la recherche")
     resultats = [app for app in applications if recherche.lower() in app["nom"].lower() or recherche.lower() in app["theme"].lower()]
     
     if resultats:
@@ -189,12 +191,9 @@ else:
                 for app in apps_tale:
                     if app["theme"] == theme:
                         afficher_app_avec_qrcode(app["nom"], app["url"])
-
-    # 4. PAGE COMPLÈTE RÉCAPITULATIVE DES QR CODES (Mosaïque avec option d'impression compacte)
     with onglet_recap:
-        st.info("Page d'affichage de tous les QR Codes. Utilisez le raccourci clavier Ctrl + P pour imprimer de manière compacte.")
+        st.info("Page récapitulative. Utilisez Ctrl + P pour imprimer par lots de 25 QR codes par page.")
         
-        # Filtre par niveau dans le récapitulatif
         filtre_niveau = st.selectbox("Filtrer le récapitulatif par niveau :", ["Tous les niveaux", "Seconde et CAP", "Première", "Terminale"])
         
         if filtre_niveau == "Seconde et CAP":
@@ -206,27 +205,75 @@ else:
         else:
             apps_recap = applications
 
-        with st.container(key=f"grille_impression_{filtre_niveau.lower().replace(' ', '_')}"):
-            # Grille à 5 colonnes pour optimiser l'espace de la feuille A4
-            nb_colonnes = 5
-            cols = st.columns(nb_colonnes)
+        # On decoupe la liste en sous-groupes de 25 applications maximum
+        taille_lot = 25
+        lots_applications = [apps_recap[i:i + taille_lot] for i in range(0, len(apps_recap), taille_lot)]
+        
+        # On parcourt chaque lot de 25
+        for num_lot, lot in enumerate(lots_applications):
             
-            for index, app in enumerate(apps_recap):
-                col_active = cols[index % nb_colonnes]
+            # Conteneur principal pour ce bloc de 25
+            with st.container(key=f"lot_impression_{num_lot}"):
+                nb_colonnes = 5
+                cols = st.columns(nb_colonnes)
                 
-                with col_active:
-                    with st.container(border=True):
-                        st.markdown(f"<div style='text-align: center; font-weight: bold; min-height: 40px; font-size: 14px;'>{app['nom']}</div>", unsafe_allow_html=True)
-                        st.caption(f"{app['niveau']} | {app['theme']}")
+                # Remplissage de la grille 5x5 pour le lot en cours
+                for index, app in enumerate(lot):
+                    col_active = cols[index % nb_colonnes]
+                    
+                    with col_active:
+                        with st.container(border=True):
+                            st.markdown(f"<div style='text-align: center; font-weight: bold; min-height: 40px; font-size: 13px;'>{app['nom']}</div>", unsafe_allow_html=True)
+                            st.caption(f"{app['niveau']} | {app['theme']}")
+                            
+                            byte_im = generer_qrcode_image(app["url"])
+                            st.image(byte_im, use_container_width=True)
+                            
+                            nom_fichier = f"qrcode_{app['nom'].lower().replace(' ', '_')}.png"
+                            st.download_button(
+                                label="Télécharger",
+                                data=byte_im,
+                                file_name=nom_fichier,
+                                mime="image/png",
+                                key=f"dl_lot_{num_lot}_{index}"
+                            )
+            
+            # Si ce n'est pas le tout dernier bloc, on injecte un saut de page pour l'imprimante
+            if num_lot < len(lots_applications) - 1:
+                st.markdown('<div class="saut-de-page"></div>', unsafe_allow_html=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                         
-                        byte_im = generer_qrcode_image(app["url"])
-                        st.image(byte_im, use_container_width=True)
-                        
-                        nom_fichier = f"qrcode_{app['nom'].lower().replace(' ', '_')}.png"
-                        st.download_button(
-                            label="Télécharger",
-                            data=byte_im,
-                            file_name=nom_fichier,
-                            mime="image/png",
-                            key=f"dl_{filtre_niveau.lower().replace(' ', '_')}_{index}"
-                        )
