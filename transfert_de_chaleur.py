@@ -219,162 +219,62 @@ tab12 = onglets[12]
 tab13 = onglets[13] 
 tab14 = onglets[14]
 
-def afficher_atelier_chaleur_verrouille(verrouille=False):
-    """Affiche le Quiz et le Texte à trous de l'onglet 3 (La chaleur) sur deux colonnes."""
+def afficher_atelier_modes_verrouille(verrouille=False):
+    """Affiche le Quiz et le Texte à trous de l'onglet 4 (Les modes de transfert) sur deux colonnes."""
     import random
 
-    # 1. BASE DE DONNÉES DU QUIZ TECHNIQUE ET HISTORIQUE DE LA CHALEUR
-    questions_therm3_sources = [
-        {
-            "id": "qt3_1",
-            "q": "Quelle est la définition scientifique exacte de la chaleur ?",
-            "options": ["Un transfert d'énergie thermique entre deux corps", "Le degré d'agitation interne des molécules", "Un fluide immatériel pesable"],
-            "rep": "Un transfert d'énergie thermique entre deux corps",
-        },
-        {
-            "id": "qt3_2",
-            "q": "Quelle unité historique mesurait la quantité de chaleur nécessaire pour élever d'un degré un gramme d'eau ?",
-            "options": ["La calorie", "Le Joule", "Le Watt"],
-            "rep": "La calorie",
-        },
-        {
-            "id": "qt3_3",
-            "q": "Quel savant a mis en évidence la chaleur latente lors de la fusion de la glace ?",
-            "options": ["Joseph Black", "James Watt", "Joseph Fourier"],
-            "rep": "Joseph Black",
-        },
-        {
-            "id": "qt3_4",
-            "q": "Quelle lettre majuscule symbolise universellement la quantité de chaleur dans les équations physiques ?",
-            "options": ["Q", "T", "W"],
-            "rep": "Q",
-        },
-        {
-            "id": "qt3_5",
-            "q": "Dans quelle expérience Joule a-t-il lié le travail mécanique à l'élévation de température ?",
-            "options": ["L'expérience des palettes brassant l'eau", "L'observation du forage des canons", "L'invention de la machine à feu"],
-            "rep": "L'expérience des palettes brassant l'eau",
-        },
-        {
-            "id": "qt3_6",
-            "q": "Comment qualifie-t-on un transfert de chaleur s'effectuant à température constante lors d'un changement d'état ?",
-            "options": ["Un transfert de chaleur latente", "Un transfert de chaleur sensible", "Un flux par conduction pure"],
-            "rep": "Un transfert de chaleur latente",
-        },
-        {
-            "id": "qt3_7",
-            "q": "Que subit la température d'un corps pur lors d'un apport de chaleur sensible sans changement d'état ?",
-            "options": ["Elle augmente obligatoirement", "Elle reste strictement constante", "Elle diminue de moitié"],
-            "rep": "Elle augmente obligatoirement",
-        },
-        {
-            "id": "qt3_8",
-            "q": "Quel physicien a réfuté le fluide calorique en observant la chaleur produite par le frottement mécanique lors du forage de canons ?",
-            "options": ["Comte Rumford", "Antoine Lavoisier", "Sadi Carnot"],
-            "rep": "Comte Rumford",
-        },
-        {
-            "id": "qt3_9",
-            "q": "Lorsque deux corps en contact atteignent la même température, le transfert thermique global est :",
-            "options": ["Strictement nul (Équilibre)", "Infini et instantané", "Uniquement descendant"],
-            "rep": "Strictement nul (Équilibre)",
-        },
-        {
-            "id": "qt3_10",
-            "q": "La formule reliant la chaleur sensible à la masse et à la capacité thermique s'exprime par :",
-            "options": ["Q = m.c.(Tf - Ti)", "Q = m.L", "Q = U.A.dT"],
-            "rep": "Q = m.c.(Tf - Ti)",
-        }
+    # 1. BASE DE DONNÉES DU QUIZ TECHNIQUE DES MODES DE TRANSFERT
+    questions_therm4_sources = [
+        {"id": "qt4_1", "q": "Quel mode de transfert thermique se propage sans aucun déplacement macroscopique de matière au sein des solides ?", "options": ["La conduction", "La convection", "Le rayonnement"], "rep": "La conduction"},
+        {"id": "qt4_2", "q": "Quel mécanisme de transfert de chaleur implique nécessairement un déplacement physique de matière fluide ?", "options": ["La convection", "La conduction", "Le rayonnement"], "rep": "La convection"},
+        {"id": "qt4_3", "q": "Quel scientifique français a formalisé en 1822 les lois mathématiques régissant la conduction de la chaleur ?", "options": ["Joseph Fourier", "Sadi Carnot", "Antoine Lavoisier"], "rep": "Joseph Fourier"},
+        {"id": "qt4_4", "q": "Quel mode de transfert peut se propager efficacement à travers le vide absolu de l'espace ?", "options": ["Le rayonnement", "La conduction", "La convection"], "rep": "Le rayonnement"},
+        {"id": "qt4_5", "q": "Quel type d'ondes électromagnétiques invisibles transporte l'énergie thermique lors d'un transfert par rayonnement ?", "options": ["Les ondes infrarouges", "Les rayons ultraviolets", "Les rayons X"], "rep": "Les ondes infrarouges"},
+        {"id": "qt4_6", "q": "Quel astronome a mis en évidence le rayonnement infrarouge en mesurant la température au-delà du spectre du prisme ?", "options": ["William Herschel", "Isaac Newton", "James Watt"], "rep": "William Herschel"},
+        {"id": "qt4_7", "q": "Dans une pièce chauffée par un radiateur, la montée de l'air chaud et la descente de l'air froid correspondent à :", "options": ["Des courants de convection", "Une conduction gazeuse", "Un rayonnement thermique"], "rep": "Des courants de convection"},
+        {"id": "qt4_8", "q": "La loi de Newton régit mathématiquement l'expression du flux thermique associé à quel mode ?", "options": ["La convection", "La conduction", "Le rayonnement"], "rep": "La convection"},
+        {"id": "qt4_9", "q": "La constante de Stefan-Boltzmann intervient dans le calcul du flux thermique de quel type de transfert ?", "options": ["Le rayonnement", "La conduction", "La convection"], "rep": "Le rayonnement"},
+        {"id": "qt4_10", "q": "Pourquoi les manches des poêles de cuisine sont-ils souvent fabriqués en bois ou en plastique ?", "options": ["Pour limiter le transfert par conduction", "Pour bloquer les courants de convection", "Pour réfléchir le rayonnement infrarouge"], "rep": "Pour limiter le transfert par conduction"}
     ]
 
-    # Initialisation de l'ordre aléatoire des questions du Quiz
-    if "ordre_quiz_tab3_therm_aleatoire" not in st.session_state:
-        random.shuffle(questions_therm3_sources)
-        st.session_state.ordre_quiz_tab3_therm_aleatoire = questions_therm3_sources
+    if "ordre_quiz_tab4_therm_aleatoire" not in st.session_state:
+        random.shuffle(questions_therm4_sources)
+        st.session_state.ordre_quiz_tab4_therm_aleatoire = questions_therm4_sources
 
-    # 2. BASE DE DONNÉES DU TEXTE À TROUS DE LA CHALEUR
-    if "champs_therm3_clean" not in st.session_state:
-        st.session_state.champs_therm3_clean = [
-            (
-                "1. La chaleur désigne un .......... d'énergie entre deux systèmes.",
-                ["Choisir...", "transfert", "fluide"],
-                "transfert",
-                "therm3_t1",
-            ),
-            (
-                "2. L'unité légale de la quantité de chaleur est le ..........",
-                ["Choisir...", "Joule", "Calorie"],
-                "Joule",
-                "therm3_t2",
-            ),
-            (
-                "3. Joseph Black a découvert la chaleur .......... liée aux changements d'état.",
-                ["Choisir...", "latente", "sensible"],
-                "latente",
-                "therm3_t3",
-            ),
-            (
-                "4. L'élévation de température d'un corps sans changement d'état met en jeu de la chaleur ..........",
-                ["Choisir...", "sensible", "latente"],
-                "sensible",
-                "therm3_t4",
-            ),
-            (
-                "5. L'expérience des .......... de Joule a prouvé la conservation de l'énergie.",
-                ["Choisir...", "palettes", "vitres"],
-                "palettes",
-                "therm3_t5",
-            ),
-            (
-                "6. La chaleur se déplace spontanément du corps chaud vers le corps ..........",
-                ["Choisir...", "froid", "isole"],
-                "froid",
-                "therm3_t6",
-            ),
-            (
-                "7. Le symbole mathématique de la quantité de chaleur est la lettre ..........",
-                ["Choisir...", "Q", "W"],
-                "Q",
-                "therm3_t7",
-            ),
-            (
-                "8. Le Comte Rumford a réfuté le calorique en forant des ..........",
-                ["Choisir...", "canons", "tuyaux"],
-                "canons",
-                "therm3_t8",
-            ),
-            (
-                "9. L'absence de transfert thermique entre deux corps en contact indique l'.......... thermique.",
-                ["Choisir...", "équilibre", "blocage"],
-                "équilibre",
-                "therm3_t9",
-            ),
-            (
-                "10. La constante 'c' de l'équation correspond à la .......... thermique massique.",
-                ["Choisir...", "capacité", "conductivité"],
-                "capacité",
-                "therm3_t10",
-            ),
+    # 2. BASE DE DONNÉES DU TEXTE À TROUS DES MODES DE TRANSFERT
+    if "champs_therm4_clean" not in st.session_state:
+        st.session_state.champs_therm4_clean = [
+            ("1. La .......... transmet l'agitation atomique de proche en proche dans les solides.", ["Choisir...", "conduction", "convection"], "conduction", "therm4_t1"),
+            ("2. Le déplacement de matière au sein des fluides caractérise la ..........", ["Choisir...", "convection", "conduction"], "convection", "therm4_t2"),
+            ("3. Le rayonnement infrarouge ne nécessite aucun support de ..........", ["Choisir...", "matière", "température"], "matière", "therm4_t3"),
+            ("4. Joseph Fourier a établi la loi analytique de la .......... thermique.", ["Choisir...", "conduction", "convection"], "conduction", "therm4_t4"),
+            ("5. William Herschel a découvert le rayonnement invisible ..........", ["Choisir...", "infrarouge", "ultraviolet"], "infrarouge", "therm4_t5"),
+            ("6. La loi de Newton permet de modéliser l'échange par ..........", ["Choisir...", "convection", "rayonnement"], "convection", "therm4_t6"),
+            ("7. La propagation de l'énergie solaire à travers le vide s'effectue par ..........", ["Choisir...", "rayonnement", "conduction"], "rayonnement", "therm4_t7"),
+            ("8. L'agitation cinétique se transmet sans déplacement de particules lors de la ..........", ["Choisir...", "conduction", "convection"], "conduction", "therm4_t8"),
+            ("9. Le flux thermique s'exprime dans le Système International en ..........", ["Choisir...", "Watts", "Joules"], "Watts", "therm4_t9"),
+            ("10. La constante de Stefan-Boltzmann régit l'émission par ..........", ["Choisir...", "rayonnement", "conduction"], "rayonnement", "therm4_t10")
         ]
 
-    # 3. RENDU DES DEUX COLONNES D'ÉVALUATION
+    # 3. RENDU BI-COLONNE SÉCURISÉ
     col_quiz, col_trous = st.columns(2)
-
+    
     with col_quiz:
-        st.markdown("##### Quiz Technique de l'Atelier 3 (10 questions - 10 pts)")
-        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab3_therm_aleatoire, 1):
+        st.markdown("##### Quiz Technique de l'Atelier 4 (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab4_therm_aleatoire, 1):
             st.write(f"**{idx}.** {q_data['q']}")
             st.selectbox(
                 "",
                 options=["Choisir..."] + q_data["options"],
-                key=f"therm_at3_final_g_{q_data['id']}",
+                key=f"therm_at4_final_g_{q_data['id']}",
                 disabled=verrouille,
                 label_visibility="collapsed"
             )
 
     with col_trous:
-        st.markdown("##### Synthèse de l'Atelier 3 (Texte à trous - 10 cases - 10 pts)")
-        for ligne in st.session_state.champs_therm3_clean:
+        st.markdown("##### Synthèse de l'Atelier 4 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_therm4_clean:
+            # Extraction propre des 4 composants du tuple sans erreur d'indexation
             enonce, choix, attendu, cle = ligne
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt:
@@ -383,7 +283,7 @@ def afficher_atelier_chaleur_verrouille(verrouille=False):
                 st.selectbox(
                     "",
                     choix,
-                    key=f"{cle}_therm3_clean",
+                    key=f"{cle}_therm4_clean",
                     disabled=verrouille,
                     label_visibility="collapsed"
                 )
