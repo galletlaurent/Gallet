@@ -219,57 +219,57 @@ tab12 = onglets[12]
 tab13 = onglets[13] 
 tab14 = onglets[14]
 
-    def afficher_atelier_transmission_verrouille(verrouille=False):
-        import random
+def afficher_atelier_transmission_verrouille(verrouille=False):
+    import random
 
-        # 1. BASE DE DONNÉES DU QUIZ TECHNIQUE DU COEFFICIENT U
-        questions_therm7_sources = [
-            {"id": "qt7_1", "q": "Quelle lettre majuscule désigne le coefficient de transmission thermique global ?", "options": ["U", "R", "K"], "rep": "U"},
-            {"id": "qt7_2", "q": "Quelle est l'unité légale du coefficient de transmission thermique globale dans le SI ?", "options": ["W/(m².K)", "W/(m.K)", "J/kg"], "rep": "W/(m².K)"},
-            {"id": "qt7_3", "q": "Comment évolue la valeur du coefficient U d'une paroi si l'on augmente son isolation ?", "options": ["Elle diminue", "Elle augmente", "Elle reste inchangée"], "rep": "Elle diminue"},
-            {"id": "qt7_4", "q": "Quelle relation lie mathématiquement le coefficient U à la résistance thermique totale R ?", "options": ["U = 1 / R", "U = R * e", "U = lambda / R"], "rep": "U = 1 / R"},
-            {"id": "qt7_5", "q": "Pour concevoir un bâtiment performant de type passif, que doit viser la valeur du coefficient U ?", "options": ["Une valeur la plus faible possible proche de zéro", "Une valeur supérieure à 5", "Une valeur identique à celle du cuivre"], "rep": "Une valeur la plus faible possible proche de zéro"},
-            {"id": "qt7_6", "q": "Quel vitrage possède le coefficient de transmission thermique U le plus catastrophique (le plus élevé) ?", "options": ["Le simple vitrage de 4 mm", "Le double vitrage Argon", "Le triple vitrage isolant"], "rep": "Le simple vitrage de 4 mm"},
-            {"id": "qt7_7", "q": "Si le coefficient U d'une paroi vaut 2 W/(m².K) et que dT = 10°C, quel est le flux perdu par m² ?", "options": ["20 W/m²", "5 W/m²", "0,2 W/m²"], "rep": "20 W/m²"},
-            {"id": "qt7_8", "q": "La formule du coefficient de transmission thermique U pour une paroi simple s'exprime par :", "options": ["U = lambda / e", "U = e / lambda", "U = 1 / lambda"], "rep": "U = lambda / e"},
-            {"id": "qt7_9", "q": "Quel appareil de mesure permet de visualiser à distance les déperditions liées à un fort coefficient U ?", "options": ["Une caméra thermique infrarouge", "Un manomètre différentiel", "Un pyromètre optique"], "rep": "Une caméra thermique infrarouge"},
-            {"id": "qt7_10", "q": "Quel phénomène inconfortable de surface apparaît en hiver sur un mur ayant un fort coefficient U ?", "options": ["Le phénomène de paroi froide et de condensation", "Une surchauffe spontanée", "Une émission d'ondes de rayonnement ultraviolet"], "rep": "Le phénomène de paroi froide et de condensation"}
+    # 1. BASE DE DONNÉES DU QUIZ TECHNIQUE DU COEFFICIENT U
+    questions_therm7_sources = [
+        {"id": "qt7_1", "q": "Quelle lettre majuscule désigne le coefficient de transmission thermique global ?", "options": ["U", "R", "K"], "rep": "U"},
+        {"id": "qt7_2", "q": "Quelle est l'unité légale du coefficient de transmission thermique globale dans le SI ?", "options": ["W/(m².K)", "W/(m.K)", "J/kg"], "rep": "W/(m².K)"},
+        {"id": "qt7_3", "q": "Comment évolue la valeur du coefficient U d'une paroi si l'on augmente son isolation ?", "options": ["Elle diminue", "Elle augmente", "Elle reste inchangée"], "rep": "Elle diminue"},
+        {"id": "qt7_4", "q": "Quelle relation lie mathématiquement le coefficient U à la résistance thermique totale R ?", "options": ["U = 1 / R", "U = R * e", "U = lambda / R"], "rep": "U = 1 / R"},
+        {"id": "qt7_5", "q": "Pour concevoir un bâtiment performant de type passif, que doit viser la valeur du coefficient U ?", "options": ["Une valeur la plus faible possible proche de zéro", "Une valeur supérieure à 5", "Une valeur identique à celle du cuivre"], "rep": "Une valeur la plus faible possible proche de zéro"},
+        {"id": "qt7_6", "q": "Quel vitrage possède le coefficient de transmission thermique U le plus catastrophique (le plus élevé) ?", "options": ["Le simple vitrage de 4 mm", "Le double vitrage Argon", "Le triple vitrage isolant"], "rep": "Le simple vitrage de 4 mm"},
+        {"id": "qt7_7", "q": "Si le coefficient U d'une paroi vaut 2 W/(m².K) et que dT = 10°C, quel est le flux perdu par m² ?", "options": ["20 W/m²", "5 W/m²", "0,2 W/m²"], "rep": "20 W/m²"},
+        {"id": "qt7_8", "q": "La formule du coefficient de transmission thermique U pour une paroi simple s'exprime par :", "options": ["U = lambda / e", "U = e / lambda", "U = 1 / lambda"], "rep": "U = lambda / e"},
+        {"id": "qt7_9", "q": "Quel appareil de mesure permet de visualiser à distance les déperditions liées à un fort coefficient U ?", "options": ["Une caméra thermique infrarouge", "Un manomètre différentiel", "Un pyromètre optique"], "rep": "Une caméra thermique infrarouge"},
+        {"id": "qt7_10", "q": "Quel phénomène inconfortable de surface apparaît en hiver sur un mur ayant un fort coefficient U ?", "options": ["Le phénomène de paroi froide et de condensation", "Une surchauffe spontanée", "Une émission d'ondes de rayonnement ultraviolet"], "rep": "Le phénomène de paroi froide et de condensation"}
+    ]
+
+    if "ordre_quiz_tab7_therm_aleatoire" not in st.session_state:
+        random.shuffle(questions_therm7_sources)
+        st.session_state.ordre_quiz_tab7_therm_aleatoire = questions_therm7_sources
+
+    # 2. BASE DE DONNÉES DU TEXTE À TROUS DU COEFFICIENT U
+    if "champs_therm7_clean" not in st.session_state:
+        st.session_state.champs_therm7_clean = [
+            ("1. Le coefficient de transmission thermique global se note avec la lettre ..........", ["Choisir...", "U", "R"], "U", "therm7_t1"),
+            ("2. L'unité légale du coefficient de transmission s'exprime en W/(m²...........).", ["Choisir...", "K", "J"], "K", "therm7_t2"),
+            ("3. Le coefficient U est inversement proportionnel à la .......... thermique totale.", ["Choisir...", "résistance", "surface"], "résistance", "therm7_t3"),
+            ("4. Un bâtiment hautement isolé possède des parois avec un U très ..........", ["Choisir...", "faible", "élevé"], "faible", "therm7_t4"),
+            ("5. La formule analytique pour calculer une paroi monocouche est U = .......... / e.", ["Choisir...", "lambda", "R"], "lambda", "therm7_t5"),
+            ("6. Une vieille fenêtre simple vitrage engendre des déperditions de chaleur ..........", ["Choisir...", "élevées", "nulles"], "élevées", "therm7_t6"),
+            ("7. Réduire la valeur du coefficient U permet de bloquer le .......... perdu.", ["Choisir...", "flux", "volume"], "flux", "therm7_t7"),
+            ("8. Multiplier l'épaisseur d'isolant par deux permet de diviser par deux le coefficient ..........", ["Choisir...", "U", "R"], "U", "therm7_t8"),
+            ("9. Le béton banché nu présente une valeur de transmission thermique très ..........", ["Choisir...", "élevée", "basse"], "élevée", "therm7_t9"),
+            ("10. La réglementation environnementale RE2020 impose de limiter le coefficient ..........", ["Choisir...", "U", "lambda"], "U", "therm7_t10")
         ]
 
-        if "ordre_quiz_tab7_therm_aleatoire" not in st.session_state:
-            random.shuffle(questions_therm7_sources)
-            st.session_state.ordre_quiz_tab7_therm_aleatoire = questions_therm7_sources
+    # 3. RENDU DES DEUX COLONNES D'ÉVALUATION STREAMLIT
+    col_quiz, col_trous = st.columns(2)
+    with col_quiz:
+        st.markdown("##### Quiz Technique de l'Atelier 7 (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab7_therm_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"therm_at7_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
 
-        # 2. BASE DE DONNÉES DU TEXTE À TROUS DU COEFFICIENT U
-        if "champs_therm7_clean" not in st.session_state:
-            st.session_state.champs_therm7_clean = [
-                ("1. Le coefficient de transmission thermique global se note avec la lettre ..........", ["Choisir...", "U", "R"], "U", "therm7_t1"),
-                ("2. L'unité légale du coefficient de transmission s'exprime en W/(m²...........).", ["Choisir...", "K", "J"], "K", "therm7_t2"),
-                ("3. Le coefficient U est inversement proportionnel à la .......... thermique totale.", ["Choisir...", "résistance", "surface"], "résistance", "therm7_t3"),
-                ("4. Un bâtiment hautement isolé possède des parois avec un U très ..........", ["Choisir...", "faible", "élevé"], "faible", "therm7_t4"),
-                ("5. La formule analytique pour calculer une paroi monocouche est U = .......... / e.", ["Choisir...", "lambda", "R"], "lambda", "therm7_t5"),
-                ("6. Une vieille fenêtre simple vitrage engendre des déperditions de chaleur ..........", ["Choisir...", "élevées", "nulles"], "élevées", "therm7_t6"),
-                ("7. Réduire la valeur du coefficient U permet de bloquer le .......... perdu.", ["Choisir...", "flux", "volume"], "flux", "therm7_t7"),
-                ("8. Multiplier l'épaisseur d'isolant par deux permet de diviser par deux le coefficient ..........", ["Choisir...", "U", "R"], "U", "therm7_t8"),
-                ("9. Le béton banché nu présente une valeur de transmission thermique très ..........", ["Choisir...", "élevée", "basse"], "élevée", "therm7_t9"),
-                ("10. La réglementation environnementale RE2020 impose de limiter le coefficient ..........", ["Choisir...", "U", "lambda"], "U", "therm7_t10")
-            ]
-
-        # 3. RENDU DES DEUX COLONNES D'ÉVALUATION STREAMLIT
-        col_quiz, col_trous = st.columns(2)
-        with col_quiz:
-            st.markdown("##### Quiz Technique de l'Atelier 7 (10 questions - 10 pts)")
-            for idx, q_data in enumerate(st.session_state.ordre_quiz_tab7_therm_aleatoire, 1):
-                st.write(f"**{idx}.** {q_data['q']}")
-                st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"therm_at7_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
-
-        with col_trous:
-            st.markdown("##### Synthèse de l'Atelier 7 (Texte à trous - 10 cases - 10 pts)")
-            for ligne in st.session_state.champs_therm7_clean:
-                enonce, choix, attendu, cle = ligne
-                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-                with c_txt: st.write(enonce)
-                with c_sel: st.selectbox("", choix, key=f"{cle}_therm7_clean", disabled=verrouille, label_visibility="collapsed")
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 7 (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_therm7_clean:
+            enonce, choix, attendu, cle = ligne
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: st.write(enonce)
+            with c_sel: st.selectbox("", choix, key=f"{cle}_therm7_clean", disabled=verrouille, label_visibility="collapsed")
 
 def afficher_atelier_quantite_verrouille(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 6 (La quantité de chaleur) sur deux colonnes."""
