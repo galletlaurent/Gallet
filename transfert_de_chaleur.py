@@ -1805,10 +1805,10 @@ with tab3:
     for i in range(nb_melanges):
         with colonnes_fluides[i]:
             st.markdown(f"**Fluide {i+1}**")
-            liq_nom = st.selectbox(f"Nature :", list(bibliotheque_20_liquides.keys()), key=f"t3_m20_nat_{i}")
+            liq_nom = st.selectbox(f"Nature :", list(bibliotheque_24_liquides.keys()), key=f"t3_m20_nat_{i}")
             liq_vol = st.slider(f"Volume (L) :", min_value=0.1, max_value=5.0, value=1.0, step=0.1, key=f"t3_m20_vol_{i}")
             
-            p_therm = bibliotheque_20_liquides[liq_nom]
+            p_therm = bibliotheque_24_liquides[liq_nom]
             
             # Ajustement dynamique des limites du curseur selon les plages réelles d'état
             t_min_curseur = int(max(-220, p_therm["T_f"]))
@@ -1818,15 +1818,20 @@ with tab3:
                 
             liq_temp = st.slider(f"Température (°C) :", min_value=t_min_curseur, max_value=t_max_curseur, value=int((t_min_curseur + t_max_curseur)/2), step=1, key=f"t3_m20_tmp_{i}")
             
+            # CALCUL ET ATTRIBUTION RIGOUREUSE DE LA MASSE SANS FAUTE DE FRAPPE
             masse = liq_vol * p_therm["rho"]
             volume_total += liq_vol
-            somme_m_c += i * 0.0 + (masse * p_therm["c"])
+            somme_m_c += (masse * p_therm["c"])
             somme_m_c_T += masse * p_therm["c"] * liq_temp
             
+            # Stockage propre dans le dictionnaire de suivi
             fluides_presents.append({
-                "nom": liq_nom, "vol": liq_vol, "temp": liq_temp, 
-                "masse": amsse, "prop": p_therm
-            } if 'amsse' not in locals() else {"nom": liq_nom, "vol": liq_vol, "temp": liq_temp, "masse": masse, "prop": p_therm})
+                "nom": liq_nom, 
+                "vol": liq_vol, 
+                "temp": liq_temp, 
+                "masse": masse, 
+                "prop": p_therm
+            })
 
     # Moteur mathématique calorimétrique prédictif (Calcul de la température de convergence)
     if somme_m_c > 0:
