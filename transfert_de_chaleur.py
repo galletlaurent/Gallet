@@ -3708,8 +3708,8 @@ with tab7:
     with col_env2:
         t_ext_libre = st.slider("Température EXTÉRIEURE hivernale (°C) :", min_value=-20, max_value=20, value=0, key="t7_adv_text")
 
-    # Modélisation géométrique d'une maison carrée de plein pied de 130 m² (côtés de ~11.4m, hauteur sous plafond 2.5m)
-    # Surface enveloppe déperditive = Murs périphériques (11.4 * 4 * 2.5 = 114 m²) + Toiture de plein pied (130 m²) = 244 m²
+    # Modélisation géométrique d'une maison de plein pied de 130 m² (hauteur sous plafond 2.5m)
+    # Surface enveloppe déperditive = Murs périphériques (114 m²) + Toiture de plein pied (130 m²) = 244 m²
     surface_enveloppe_totale = 244.0
 
     st.info(
@@ -3717,34 +3717,40 @@ with tab7:
         "La surface totale développée des parois en contact avec l'extérieur (murs et toiture) est estimée à 244 m²."
     )
 
-    # --- 2. CONFIGURATION DYNAMIQUE DES COUCHES ---
+    # --- 2. CONFIGURATION DYNAMIQUE JUSQU'À 6 COUCHES ---
     st.markdown("##### Composition des parois de l'enveloppe (de l'Intérieur vers l'Extérieur) :")
-    nb_couches = st.radio("Nombre de couches constituant la paroi :", [1, 2, 3], index=2, horizontal=True, key="t7_adv_nb_c")
+    nb_couches = st.radio("Nombre de couches constituant la paroi :", [1, 2, 3, 4, 5, 6], index=2, horizontal=True, key="t7_adv_nb_c")
     
     r_total_paroi = 0.0
     epaisseurs_visuelles = []
-    couleurs_visuelles = ["#f8fafc", "#cbd5e1", "#94a3b8"]
+    # Palette de couleurs étendue pour différencier jusqu'à 6 couches de manière esthétique
+    couleurs_visuelles = ["#f8fafc", "#cbd5e1", "#e2e8f0", "#94a3b8", "#64748b", "#475569"]
     labels_visuels = []
 
-    cols_c = st.columns(int(nb_couches))
-    for i in range(int(nb_couches)):
-        with cols_c[i]:
-            st.markdown(f"**Couche {i+1}**")
-            mat_c = st.selectbox(
-                f"Matériau :", 
-                list(catalogue_materiaux.keys()), 
-                index=min(i * 2 + 2, len(catalogue_materiaux) - 1) if i > 0 else 4,
-                key=f"t7_adv_mat_{i}"
-            )
-            ep_c = st.slider(f"Épaisseur (cm) :", min_value=1, max_value=40, value=20 if i < 2 else 2, key=f"t7_adv_ep_{i}")
-            
-            lambda_c = catalogue_materiaux[mat_c]
-            e_m_c = ep_c / 100.0
-            r_c = e_m_c / lambda_c
-            r_total_paroi += r_c
-            
-            epaisseurs_visuelles.append(ep_c)
-            labels_visuels.append(f"Couche {i+1}\n{ep_c} cm")
+    # Génération en grilles dynamiques de 3 colonnes pour gérer proprement l'affichage de 6 lignes de curseurs
+    lignes_boutons = int(np.ceil(int(nb_couches) / 3))
+    for l in range(lignes_boutons):
+        cols_c = st.columns(3)
+        for idx_col in range(3):
+            i = l * 3 + idx_col
+            if i < int(nb_couches):
+                with cols_c[idx_col]:
+                    st.markdown(f"**Couche {i+1}**")
+                    mat_c = st.selectbox(
+                        f"Matériau :", 
+                        list(catalogue_materiaux.keys()), 
+                        index=min(i * 2 + 3, len(catalogue_materiaux) - 1) if i > 0 else 5,
+                        key=f"t7_adv_mat_{i}"
+                    )
+                    ep_c = st.slider(f"Épaisseur (cm) :", min_value=1, max_value=40, value=15 if i < 2 else 2, key=f"t7_adv_ep_{i}")
+                    
+                    lambda_c = catalogue_materiaux[mat_c]
+                    e_m_c = ep_c / 100.0
+                    r_c = e_m_c / lambda_c
+                    r_total_paroi += r_c
+                    
+                    epaisseurs_visuelles.append(ep_c)
+                    labels_visuels.append(f"Couche {i+1}\n{ep_c} cm")
 
     # Échanges superficiels réglementaires (Rsi + Rse = 0.17 m².K/W)
     r_total_global = r_total_paroi + 0.17
@@ -3756,7 +3762,7 @@ with tab7:
     puissance_totale_perdue_w = flux_surfacique_w * surface_enveloppe_totale
     energie_24h_kwh = (puissance_totale_perdue_w * 24.0) / 1000.0
 
-    # Constante de temps d'équilibre thermique de la maison de 130 m² (Inertie globale air + cloisons ~ 780 000 J/K)
+    # Constante de temps d'équilibre thermique de la maison de 130 m²
     capacite_thermique_maison = 780000.0
     if puissance_totale_perdue_w > 0:
         tau_secondes = capacite_thermique_maison / (u_global_composé * surface_enveloppe_totale)
@@ -3764,20 +3770,21 @@ with tab7:
     else:
         temps_equilibre_heures = 0.0
 
-    # --- 3. RENDU GRAPHIQUE DES COUCHES ---
+    # --- 3. RENDU GRAPHIQUE DES 6 COUCHES ---
     import matplotlib.pyplot as plt
     import matplotlib.patches as patches
 
-    fig_multi, ax_mu = plt.subplots(figsize=(9, 3.0))
+    fig_multi, ax_mu = plt.subplots(figsize=(10, 3.0))
     
     ax_mu.add_patch(patches.Rectangle((0.0, 0.4), 1.5, 1.6, color="#ef4444", alpha=0.5))
     ax_mu.text(0.75, 1.2, f"Maison\n{t_int_libre} °C", color="#b91c1c", fontweight="bold", ha="center", va="center", fontsize=9)
 
     x_depart = 1.5
     for idx, ep_cm in enumerate(epaisseurs_visuelles):
-        largeur_visuelle = 0.4 + (ep_cm / 40.0) * 1.2
+        # Adaptation proportionnelle de l'échelle horizontale pour faire tenir proprement 6 couches à l'écran
+        largeur_visuelle = 0.3 + (ep_cm / 40.0) * 0.8
         ax_mu.add_patch(patches.Rectangle((x_depart, 0.4), largeur_visuelle, 1.6, facecolor=couleurs_visuelles[idx], edgecolor='#0f172a', lw=1.5))
-        ax_mu.text(x_depart + (largeur_visuelle / 2), 1.2, labels_visuels[idx], color='#0f172a', fontweight='bold', ha='center', va='center', fontsize=8)
+        ax_mu.text(x_depart + (largeur_visuelle / 2), 1.2, labels_visuels[idx], color='#0f172a', fontweight='bold', ha='center', va='center', fontsize=7.5)
         x_depart += largeur_visuelle
 
     ax_mu.add_patch(patches.Rectangle((x_depart, 0.4), 1.5, 1.6, color="#3b82f6", alpha=0.5))
@@ -3801,7 +3808,6 @@ with tab7:
     with c_res3:
         st.metric(label="Résistance Thermique Totale R_tot", value=f"{r_total_global:.3f} m².K/W")
 
-    # Conteneur des résultats de déperdition journalière et temps de refroidissement
     html_bilan_24h = f"""
     <div style="background-color: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 10px;">
         <p style="margin: 0; font-size: 14px; color: #1e293b;">
@@ -3817,13 +3823,12 @@ with tab7:
     st.markdown(html_bilan_24h, unsafe_allow_html=True)
 
     # --- 5. DÉTAIL DES ÉQUATIONS DE TRANSMISSION ET APPLICATIONS NUMÉRIQUES ---
-    st.markdown("**Détail des calculs de physique thermique (Maison de 130 m²) :**")
+    st.markdown("**Détail des calculs de physique thermique (Maison de 130 m² - Multicouche) :**")
 
     st.markdown("1. Résistance thermique globale des parois ($R_{\\text{total}} = R_{si} + \\sum \\frac{e_i}{\\lambda_i} + R_{se}$) :")
     expression_r = "R_{\\text{total}} = 0{,}13"
     for i in range(int(nb_couches)):
-        # Sécurisation du calcul : récupération directe de la chaîne de caractères sélectionnée dans l'interface
-        mat_nom = st.session_state.get(f"t7_adv_mat_{i}", list(catalogue_materiaux.keys())[4])
+        mat_nom = st.session_state.get(f"t7_adv_mat_{i}", list(catalogue_materiaux.keys())[5])
         l_val = catalogue_materiaux[mat_nom]
         ep_cm = st.session_state.get(f"t7_adv_ep_{i}", 10)
         expression_r += rf" + \frac{{{ep_cm/100:.3f}}}{{{l_val:.3f}}}"
@@ -3831,7 +3836,6 @@ with tab7:
     st.latex(expression_r)
 
     st.markdown("2. Puissance thermique instantanée perdue par l'enveloppe de 244 m² :")
-    # Utilisation de simples barres obliques pour le code LaTeX standardisé en Python
     formule_phi = rf"\Phi = U \times A \times (T_{{\text{{intérieur}}}} - T_{{\text{{extérieur}}}}) = {u_global_composé:.3f} \times {surface_enveloppe_totale} \times ({t_int_libre} - {t_ext_libre}) = {puissance_totale_perdue_w:.1f}\text{{ Watts}}"
     st.latex(formule_phi)
 
@@ -3840,6 +3844,7 @@ with tab7:
     st.latex(formule_e)
     st.write("---")
 
+    
     
     if "suite_verrouille_tab7_therm" not in st.session_state:
         st.session_state.suite_verrouille_tab7_therm = False
