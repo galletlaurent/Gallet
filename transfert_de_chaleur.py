@@ -2222,17 +2222,11 @@ with tab4:
                 else:
                     st.warning("L'image 'prismeherschel.jpg' est introuvable.")
         with col_t42_h32:
-            col_t42_c3, col_t42_c4 = st.columns(2)
-            with col_t42_c3:
-                if os.path.exists("infrarouge.jpg"):
-                    st.image("infrarouge.jpg", caption="Spectre infrarouge", use_container_width=True)
+                if os.path.exists("rayonnementsolaire.jpg"):
+                    st.image("rayonnementsolaire.jpg", caption="Rayonnement", use_container_width=True)
                 else:
-                    st.warning("L'image 'infrarouge.jpg' est introuvable.")
-            with col_t42_c4:
-                if os.path.exists("vide_spatial.jpg"):
-                    st.image("vide_spatial.jpg", caption="Propagation dans le vide", use_container_width=True)
-                else:
-                    st.warning("L'image 'vide_spatial.jpg' est introuvable.")
+                    st.warning("L'image 'rayonnementsolaire.jpg' est introuvable.")
+
 
     st.write("---")
 
