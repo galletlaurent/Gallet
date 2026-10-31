@@ -46,22 +46,20 @@ applications = [
     {"nom": "Le pH", "url": "https://gallet-2xkb5zlhdnonzmkahcmk3u.streamlit.app/", "niveau": "Tale", "theme": "Le pH"}
 ]
 
+def generer_qrcode_image(url_app):
+    qr = qrcode.QRCode(version=1, box_size=10, border=4)
+    qr.add_data(url_app)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    return buf.getvalue()
+
 def afficher_app_avec_qrcode(nom_app, url_app):
     st.markdown(f"**[{nom_app}]({url_app})**")
     with st.expander(f"Afficher le QR Code pour : {nom_app}"):
-        # Generation du QR Code sous forme d'objet image
-        qr = qrcode.QRCode(version=1, box_size=10, border=4)
-        qr.add_data(url_app)
-        qr.make(fit=True)
-        img = qr.make_image(fill_color="black", back_color="white")
-        
-        # Conversion de l'image en flux d'octets pour Streamlit
-        buf = io.BytesIO()
-        img.save(buf, format="PNG")
-        byte_im = buf.getvalue()
-        
-        # Affichage de l'image PNG generee
-        st.image(byte_im, width=200)
+        byte_im = generer_qrcode_image(url_app)
+        st.image(byte_im, width=180)
 
 # 2. Barre de recherche globale
 recherche = st.text_input("Rechercher une application par mot-clé (ex: vecteur, dérivée, statistique...)", "")
@@ -80,44 +78,76 @@ if recherche:
         st.warning("Aucune application ne correspond à votre recherche.")
 
 else:
-    # Organisation par onglets normaux
-    onglet_2nde_CAP, onglet_1ere, onglet_tale = st.tabs(["SECONDE BAC PRO ET CAP", "PREMIERE BAC PRO", "TERMINALE BAC PRO"])
+    # Organisation par onglets normaux + Ajout de l'onglet Récapitulatif
+    onglet_2nde_CAP, onglet_1ere, onglet_tale, onglet_recap = st.tabs([
+        "SECONDE BAC PRO ET CAP", 
+        "PREMIERE BAC PRO", 
+        "TERMINALE BAC PRO", 
+        "RECAPITULATIF QR CODES"
+    ])
 
     # Affichage Seconde et CAP
     with onglet_2nde_CAP:
         st.info("Applications dédiées au programme de Seconde et CAP.")
         apps_2nde = [app for app in applications if app["niveau"] in ["2nde", "CAP"]]
         themes_2nde = sorted(list(set([app["theme"] for app in apps_2nde])))
-        
         for theme in themes_2nde:
             with st.expander(theme):
                 for app in apps_2nde:
                     if app["theme"] == theme:
                         afficher_app_avec_qrcode(app["nom"], app["url"])
-                        st.markdown(" ")
 
     # Affichage Premiere
     with onglet_1ere:
         st.info("Applications dédiées au programme de Première.")
         apps_1ere = [app for app in applications if app["niveau"] == "1ere"]
         themes_1ere = sorted(list(set([app["theme"] for app in apps_1ere])))
-        
         for theme in themes_1ere:
             with st.expander(theme):
                 for app in apps_1ere:
                     if app["theme"] == theme:
                         afficher_app_avec_qrcode(app["nom"], app["url"])
-                        st.markdown(" ")
 
     # Affichage Terminale
     with onglet_tale:
         st.info("Applications dédiées au programme de Terminale.")
         apps_tale = [app for app in applications if app["niveau"] == "Tale"]
         themes_tale = sorted(list(set([app["theme"] for app in apps_tale])))
-        
         for theme in themes_tale:
             with st.expander(theme):
                 for app in apps_tale:
                     if app["theme"] == theme:
                         afficher_app_avec_qrcode(app["nom"], app["url"])
-                        st.markdown(" ")
+
+    # 4. NOUVEL ONGLET : PAGE COMPLÈTE RÉCAPITULATIVE DES QR CODES
+    with onglet_recap:
+        st.info("Page d'affichage de tous les QR Codes pour projection ou impression rapide.")
+        
+        # Filtre par niveau optionnel dans le récapitulatif
+        filtre_niveau = st.selectbox("Filtrer le récapitulatif par niveau :", ["Tous les niveaux", "Seconde et CAP", "Première", "Terminale"])
+        
+        # Choix des applications à afficher selon le filtre
+        if filtre_niveau == "Seconde et CAP":
+            apps_recap = [app for app in applications if app["niveau"] in ["2nde", "CAP"]]
+        elif filtre_niveau == "Première":
+            apps_recap = [app for app in applications if app["niveau"] == "1ere"]
+        elif filtre_niveau == "Terminale":
+            apps_recap = [app for app in applications if app["niveau"] == "Tale"]
+        else:
+            apps_recap = applications
+
+        # Création d'une grille avec 4 colonnes pour aligner les QR codes
+        nb_colonnes = 4
+        cols = st.columns(nb_colonnes)
+        
+        # Parcours de toutes les applications sélectionnées pour générer la grille
+        for index, app in enumerate(apps_recap):
+            col_active = cols[index % nb_colonnes]
+            
+            with col_active:
+                with st.container(border=True):
+                    st.markdown(f"<div style='text-align: center; font-weight: bold; min-height: 50px;'>{app['nom']}</div>", unsafe_allow_html=True)
+                    st.caption(f"Niveau : {app['niveau']} | {app['theme']}")
+                    
+                    byte_im = generer_qrcode_image(app["url"])
+                    st.image(byte_im, use_container_width=True)
