@@ -1835,24 +1835,42 @@ with tab3:
     else:
         T_equil_brute = 20.0
 
-    # Algorithme de vérification des transitions de phase (Vaporisation / Fusion locale)
+    # Algorithme de vérification des transitions de phase et calcul de la composition finale
     T_finale_calculee = T_equil_brute
-    phase_statut = "Monophasique (Liquide pur)"
+    phase_statut = "Monophasique (Mélange liquide limpide)"
+    
+    # On va stocker le volume de chaque liquide restant sous forme liquide à la fin
+    composition_finale = []
+    volume_liquide_total_final = 0.0
 
+    # Détection des paliers d'ébullition ou de solidification
     for f in fluides_presents:
-        # Cas 1 : La température calculée dépasse le point d'ébullition d'un des fluides
+        vol_liquide_restant = f["vol"]
+        etat_composant_final = "Liquide"
+        
+        # Cas où le mélange est trop chaud pour le fluide : Vaporisation
         if T_equil_brute >= f["prop"]["T_e"]:
             T_finale_calculee = f["prop"]["T_e"]
-            phase_statut = f"Biphasique (Ébullition / Changement d'état de : {f['nom']})"
-            # Soustraction du volume qui s'évapore sous forme de gaz
-            volume_total -= (f["vol"] * 0.25) # Simulation macroscopique de perte de phase liquide
-        # Cas 2 : La température descend sous le point de solidification
+            phase_statut = "Biphasique (Ébullition et présence de gaz)"
+            vol_liquide_restant = 0.0
+            etat_composant_final = "Totalement évaporé (Gaz)"
+        
+        # Cas où le mélange est trop froid pour le fluide : Solidification
         elif T_equil_brute <= f["prop"]["T_f"]:
             T_finale_calculee = f["prop"]["T_f"]
-            phase_statut = f"Biphasique (Solidification locale de : {f['nom']})"
+            phase_statut = "Biphasique (Précipité solide / Solidification)"
+            etat_composant_final = "Solidifié (Glace / Cristal)"
+            
+        volume_liquide_total_final += vol_liquide_restant
+        composition_finale.append({
+            "nom": f["nom"],
+            "vol_initial": f["vol"],
+            "vol_final": vol_liquide_restant,
+            "etat": etat_composant_final
+        })
 
     # =============================================================================
-    # RENDU DE LA GRAPHIC DU LABORATOIRE INTERACTIF (MATPLOTLIB)
+    # RENDU DE LA GRAPHIQUE DU LABORATOIRE INTERACTIF (MATPLOTLIB)
     # =============================================================================
     import matplotlib.pyplot as plt
     import matplotlib.patches as patches
@@ -1868,7 +1886,7 @@ with tab3:
 
     # Grande enceinte de confinement adiabatique à droite
     x_cadre = 7.2
-    ax_mel20.add_patch(patches.Rectangle((x_cadre, 0.7), 2.2, 1.8 * (volume_total / 25.0), color='#cbd5e1', alpha=0.8, zorder=1))
+    ax_mel20.add_patch(patches.Rectangle((x_cadre, 0.7), 2.2, 1.8 * (volume_liquide_total_final / 25.0) if volume_liquide_total_final > 0 else 0.1, color='#cbd5e1', alpha=0.8, zorder=1))
     ax_mel20.add_patch(patches.Polygon([[x_cadre, 3.0], [x_cadre, 0.7], [x_cadre + 2.2, 0.7], [x_cadre + 2.2, 3.0]], closed=False, fill=False, color='#0f172a', lw=2.5, zorder=2))
     ax_mel20.text(x_cadre + 1.1, 0.3, "CONFINEMENT\nFINAL", color='#0f172a', fontsize=8.5, ha='center', fontweight='bold')
 
@@ -1884,19 +1902,50 @@ with tab3:
     st.markdown("**Résultats métrologiques mesurés à l'équilibre :**")
     
     html_m20_box = f"""
-    <div style='display: flex; gap: 15px; margin-bottom: 10px;'>
+    <div style='display: flex; gap: 15px; margin-bottom: 15px;'>
         <div style='flex: 1; background-color: #f1f5f9; padding: 12px; border-radius: 6px; border-left: 4px solid #1e3a8a; font-size: 15px; font-weight: bold; color: #0f172a; text-align: center;'>
-            Volume Liquide Résiduel : {max(0.1, volume_total):.2f} L
+            Volume Liquide Résiduel : {volume_liquide_total_final:.2f} L
         </div>
         <div style='flex: 1; background-color: #f1f5f9; padding: 12px; border-radius: 6px; border-left: 4px solid #ea580c; font-size: 15px; font-weight: bold; color: #0f172a; text-align: center;'>
             Température Finale Réelle : {T_finale_calculee:.2f} °C
         </div>
     </div>
-    <div style='background-color: #f8fafc; padding: 10px; border-radius: 4px; border: 1px dashed #cbd5e1; font-size: 13px; color: #475569; text-align: center; font-weight: bold;'>
+    <div style='background-color: #f8fafc; padding: 10px; border-radius: 4px; border: 1px dashed #cbd5e1; font-size: 13px; color: #475569; text-align: center; font-weight: bold; margin-bottom: 15px;'>
         Régime thermodynamique observé : {phase_statut}
     </div>
     """
     st.markdown(html_m20_box, unsafe_allow_html=True)
+
+    # --- TABLEAU DE COMPOSITION DÉTAILLÉ SANS ÉMOJI ---
+    st.markdown("**Analyse qualitative de la solution finale :**")
+    
+    # Construction d'un tableau HTML propre
+    tableau_html = """
+    <table style='width: 100%; border-collapse: collapse; background-color: white; font-size: 13px; text-align: left;'>
+        <thead>
+            <tr style='background-color: #0f172a; color: white;'>
+                <th style='padding: 8px;'>Nom du fluide</th>
+                <th style='padding: 8px;'>Volume initial</th>
+                <th style='padding: 8px;'>Volume sous forme liquide à la fin</th>
+                <th style='padding: 8px;'>État physique final</th>
+            </tr>
+        </thead>
+        <tbody>
+    """
+    
+    for c in composition_finale:
+        style_ligne = "style='color: #ef4444; font-weight: bold;'" if "évaporé" in c["etat"] else ""
+        tableau_html += f"""
+            <tr style='border-bottom: 1px solid #e2e8f0;'>
+                <td style='padding: 8px;'>{c['nom']}</td>
+                <td style='padding: 8px;'>{c['vol_initial']:.1f} L</td>
+                <td style='padding: 8px;'>{c['vol_final']:.1f} L</td>
+                <td style='padding: 8px;' {style_ligne}>{c['etat']}</td>
+            </tr>
+        """
+        
+    tableau_html += "</tbody></table>"
+    st.markdown(tableau_html, unsafe_allow_html=True)
     st.write("---")
     
     st.write("---")
