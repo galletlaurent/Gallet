@@ -15,14 +15,30 @@ st.write("Bienvenue. Utilisez la barre de recherche globale ou parcourez les ong
 # Structure : {"nom": "Nom affiche", "url": "Lien de l app", "niveau": "2nde" ou "1ere" ou "Tale", "theme": "Theme associe"}
 applications = [
     # Assurez-vous que la valeur de "niveau" correspond exactement au texte filtré ci-dessus
-    {"nom": "Coordonnees d un vecteur", "url": "https://...", "niveau": "2nde et CAP", "theme": "Geometrie"},
-    {"nom": "Calcul de pourcentages", "url": "https://...", "niveau": "2nde et CAP", "theme": "Statistiques"},
-    
-    {"nom": "Dosage du vinaigre", "url": "https://gallet-cnvqzzejzkeku7pm4j5puq.streamlit.app/", "niveau": "1ere", "theme": "Derivees"},
-    {"nom": "Equation de la tangente a une courbe", "url": "https://streamlit.app", "niveau": "1ere", "theme": "Derivees"},
-    {"nom": "Suites arithmetiques et geometriques", "url": "https://streamlit.app", "niveau": "1ere", "theme": "Suites"},
+    {"nom": "Centre de gravité", "url": "https://gallet-2a4zeklerrjrjxnxtap4hi.streamlit.app/", "niveau": "2nde et CAP", "theme": "Mécanique"},
+    {"nom": "Concentration massique", "url": "https://gallet-nrfrpirw9ug39kesvvhzbm.streamlit.app/", "niveau": "2nde et CAP", "theme": "Chimie"},
+    {"nom": "Concentration massique", "url": "https://gallet-nrfrpirw9ug39kesvvhzbm.streamlit.app/", "niveau": "2nde et CAP", "theme": "Chimie"},
+    {"nom": "Le pH", "url": "https://gallet-2xkb5zlhdnonzmkahcmk3u.streamlit.app/", "niveau": "2nde et CAP", "theme": "Le pH"},
+
+    {"nom": "Concentration molaire", "url": "https://https://gallet-hjkhuxhwzuzcdgz6bcgbzy.streamlit.app//", "niveau": "1ere", "theme": "Chimie"},
+    {"nom": "Dosage du vinaigre", "url": "https://gallet-cnvqzzejzkeku7pm4j5puq.streamlit.app/", "niveau": "1ere", "theme": "Dosages"},
+    {"nom": "Dosage de l'aspirine", "url": "https://gallet-pjzvshvljnxmclc5gu7pog.streamlit.app/", "niveau": "1ere", "theme": "Dosages"},
+    {"nom": "Dosage de l'eau oxygénée", "url": "https://gallet-eey6ai4fdzqu8ebpzekuck.streamlit.app//", "niveau": "1ere", "theme": "Dosages"},
+    {"nom": "Dosage de l'hydrazine", "url": "https://gallet-z35dnirce4hiv2khzfphb8.streamlit.app/", "niveau": "1ere", "theme": "Dosages"},
+    {"nom": "Dosage de la dureté de l'eau", "url": "https://gallet-cznmv37ujadksvptwdxeuz.streamlit.app/", "niveau": "1ere", "theme": "Dosages"},
+    {"nom": "Dosage du lait", "url": "https://gallet-feahuy25zmovt3qce4vf34.streamlit.app/", "niveau": "1ere", "theme": "Dosages"},
+    {"nom": "Dosage d'une huile", "url": "https://gallet-vpydhmebcktmmlt2pbbbtp.streamlit.app/", "niveau": "1ere", "theme": "Dosages"},
+    {"nom": "Dosage de la vitamine C", "url": "https://gallet-cark2tuk7yfemq93qqoan4.streamlit.app/", "niveau": "1ere", "theme": "Dosages"},
+    {"nom": "Dosage des ions chlorure", "url": "https://gallet-fyfgnfq2jyudca8xo2ztuv.streamlit.app/", "niveau": "1ere", "theme": "Dosages"},
+    {"nom": "Dosage du dioxyde de soufre", "url": "https://gallet-itvb7kcysrpcuxfrgttwle.streamlit.app/", "niveau": "1ere", "theme": "Dosages"},
+    {"nom": "Dosage du javel", "url": "https://gallet-rzry8qnwveczjbgcvcmwb2.streamlit.app/", "niveau": "1ere", "theme": "Dosages"},
+    {"nom": "Dosage général", "url": "https://gallet-faznqoc3cgdrhuydemsfpx.streamlit.app/", "niveau": "1ere", "theme": "Dosages"},
+    {"nom": "Le pH", "url": "https://gallet-2xkb5zlhdnonzmkahcmk3u.streamlit.app/", "niveau": "1ere", "theme": "Le pH"},    
+
+
     
     {"nom": "Proprietes algebriques du logarithme", "url": "https://streamlit.app", "niveau": "Tale", "theme": "Logarithmes"},
+    {"nom": "Le pH", "url": "https://gallet-2xkb5zlhdnonzmkahcmk3u.streamlit.app/", "niveau": "Tale", "theme": "Le pH"},  
     {"nom": "Ajustement affine et moindres carres", "url": "https://streamlit.app", "niveau": "Tale", "theme": "Statistiques"}
 ]
 
