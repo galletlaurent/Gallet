@@ -35,7 +35,7 @@ st.markdown("""
 
     /* REDUCTION DE LA TAILLE POUR TOUT REMONTER : Gagne les centimètres manquants en bas */
     [data-testid="stVerticalBlockBorderWrapper"] {
-        transform: scale(0.94) !important; /* Reduit legerement la taille globale de chaque vignette (94%) */
+        transform: scale(0.9) !important; /* Reduit legerement la taille globale de chaque vignette (90%) */
         transform-origin: top center !important;
         margin-bottom: -15px !important;   /* Resserre l'espace vertical disponible entre les lignes */
     }
