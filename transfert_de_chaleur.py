@@ -1916,38 +1916,32 @@ with tab3:
     """
     st.markdown(html_m20_box, unsafe_allow_html=True)
 
-    # --- TABLEAU DE COMPOSITION DÉTAILLÉ SANS ÉMOJI ---
     st.markdown("**Analyse qualitative de la solution finale :**")
     
-    # Construction d'un tableau HTML propre
-    tableau_html = """
-    <table style='width: 100%; border-collapse: collapse; background-color: white; font-size: 13px; text-align: left;'>
-        <thead>
-            <tr style='background-color: #0f172a; color: white;'>
-                <th style='padding: 8px;'>Nom du fluide</th>
-                <th style='padding: 8px;'>Volume initial</th>
-                <th style='padding: 8px;'>Volume sous forme liquide à la fin</th>
-                <th style='padding: 8px;'>État physique final</th>
-            </tr>
-        </thead>
-        <tbody>
-    """
+    # Initialisation de la structure de la table sans retours à la ligne indentés
+    tableau_html = "<table style='width: 100%; border-collapse: collapse; background-color: white; font-size: 13px; text-align: left;'>"
+    tableau_html += "<thead><tr style='background-color: #0f172a; color: white;'>"
+    tableau_html += "<th style='padding: 8px;'>Nom du fluide</th>"
+    tableau_html += "<th style='padding: 8px;'>Volume initial</th>"
+    tableau_html += "<th style='padding: 8px;'>Volume sous forme liquide à la fin</th>"
+    tableau_html += "<th style='padding: 8px;'>État physique final</th>"
+    tableau_html += "</tr></thead><tbody>"
     
     for c in composition_finale:
-        style_ligne = "style='color: #ef4444; font-weight: bold;'" if "évaporé" in c["etat"] else ""
-        tableau_html += f"""
-            <tr style='border-bottom: 1px solid #e2e8f0;'>
-                <td style='padding: 8px;'>{c['nom']}</td>
-                <td style='padding: 8px;'>{c['vol_initial']:.1f} L</td>
-                <td style='padding: 8px;'>{c['vol_final']:.1f} L</td>
-                <td style='padding: 8px;' {style_ligne}>{c['etat']}</td>
-            </tr>
-        """
+        style_ligne = "color: #ef4444; font-weight: bold;" if "évaporé" in c["etat"] else ""
+        
+        # Ajout des lignes de manière parfaitement continue pour éviter l'interprétation bloc de code de Streamlit
+        tableau_html += f"<tr style='border-bottom: 1px solid #e2e8f0;'>"
+        tableau_html += f"<td style='padding: 8px;'>{c['nom']}</td>"
+        tableau_html += f"<td style='padding: 8px;'>{c['vol_initial']:.1f} L</td>"
+        tableau_html += f"<td style='padding: 8px;'>{c['vol_final']:.1f} L</td>"
+        tableau_html += f"<td style='padding: 8px; {style_ligne}'>{c['etat']}</td>"
+        tableau_html += f"</tr>"
         
     tableau_html += "</tbody></table>"
-    st.markdown(tableau_html, unsafe_allow_html=True)
-    st.write("---")
     
+    # Rendu final sécurisé
+    st.markdown(tableau_html, unsafe_allow_html=True)
     st.write("---")
     if "suite_verrouille_tab3_therm" not in st.session_state:
         st.session_state.suite_verrouille_tab3_therm = False
