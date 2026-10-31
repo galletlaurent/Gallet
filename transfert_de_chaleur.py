@@ -4136,75 +4136,138 @@ with tab8:
     st.write("---")
 
     # =============================================================================
-    # 3. LABORATOIRE VIRTUEL INTERACTIF : BANQUET D'ESSAI DES COEFFICIENTS R
+    # 3. LABORATOIRE VIRTUEL : CHOIX LIBRE DU MATÉRIAU ET DES TEMPÉRATURES
     # =============================================================================
-    st.subheader("Laboratoire Virtuel : Analyseur dynamique de la résistance thermique R")
+    st.subheader("Laboratoire Virtuel : Analyseur dynamique de la résistance d'opposition")
     st.write(
-        "Sélectionnez un matériau, puis modifiez son épaisseur pour observez en temps réel "
-        "l'évolution de sa résistance thermique $R$ et du flux de chaleur bloqué :"
+        "Sélectionnez le matériau à tester, définissez librement les températures intérieure et extérieure, "
+        "puis faites varier l'épaisseur pour observer l'évolution de la résistance et du flux bloqué :"
     )
 
-    bibliotheque_r_parois = {
-        "Béton armé plein": {"lambda": 2.3, "color": "#94a3b8"},
-        "Brique de terre cuite": {"lambda": 1.15, "color": "#f97316"},
-        "Parpaing standard": {"lambda": 1.05, "color": "#cbd5e1"},
-        "Verre de vitrage": {"lambda": 1.2, "color": "#bae6fd"},
-        "Bois de construction": {"lambda": 0.13, "color": "#b45309"},
-        "Laine de verre": {"lambda": 0.035, "color": "#fef08a"},
-        "Mousse de polyuréthane": {"lambda": 0.024, "color": "#fed7aa"}
+    # Référentiel complet des 30 matériaux (Isolants coton, ouate et structure)
+    catalogue_complet_r = {
+        "Mousse de polyuréthane (Isolant d'élite)": 0.024,
+        "Polystyrène extrudé (XPS)": 0.029,
+        "Polystyrène expansé (PSE)": 0.032,
+        "Isolant en fibre de coton (Coton recyclé / Métisse)": 0.039,
+        "Isolant en ouate de cellulose": 0.039,
+        "Laine de verre (Isolant minéral standard)": 0.035,
+        "Laine de roche en panneau": 0.038,
+        "Fibre de bois semi-rigide": 0.040,
+        "Liège expansé en plaque": 0.042,
+        "Film thermo-réflecteur mince (Multicouche)": 0.033,
+        "Bois de sapin / résineux": 0.130,
+        "Béton cellulaire (Siporex / Thermopierre)": 0.120,
+        "Brique de terre cuite creuse standard": 0.450,
+        "Bloc de béton de granulats (Parpaing creux)": 1.050,
+        "Brique de terre cuite pleine": 1.150,
+        "Plâtre / Plaque de plâtre (BA13)": 0.250,
+        "Enduit de façade extérieur (Mortier)": 1.150,
+        "Béton armé plein (Forte densité)": 2.300
     }
 
-    t8_sim_mat = st.selectbox(
-        "Sélectionnez le matériau à étudier :",
-        list(bibliotheque_r_parois.keys()),
-        key="t8_sim_choix_materiau"
+    # Choix libre du matériau pour l'Atelier 8
+    t8_mat_choisi = st.selectbox(
+        "Sélectionnez le matériau de la paroi unitaire à étudier :", 
+        list(catalogue_complet_r.keys()), 
+        index=3, 
+        key="t8_sim_mat_libre"
     )
+    lambda_r = catalogue_complet_r[t8_mat_choisi]
 
-    lambda_r = bibliotheque_r_parois[t8_sim_mat]["lambda"]
-    color_r = bibliotheque_r_parois[t8_sim_mat]["color"]
+    # Commandes curseurs de réglage libres (Matière, Températures et Surface)
+    col_b8_1, col_b8_2, col_b8_3 = st.columns(3)
+    with col_b8_1:
+        t8_ep_cm = st.slider("Épaisseur de la couche (e en cm) :", min_value=1, max_value=40, value=12, key="t8_sim_ep_libre")
+    with col_b8_2:
+        t_int_t8 = st.slider("Température de la face INTÉRIEURE (°C) :", min_value=15, max_value=35, value=21, key="t8_sim_tint_libre")
+    with col_b8_3:
+        t_ext_t8 = st.slider("Température de la face EXTÉRIEURE (°C) :", min_value=-20, max_value=20, value=-2, key="t8_sim_text_libre")
 
-    col_t8_p1, col_t8_p2 = st.columns(2)
-    with col_t8_p1:
-        t8_epaisseur = st.slider("Épaisseur du matériau (e en centimètres) :", min_value=1, max_value=40, value=15, step=1, key="t8_sim_e")
-    with col_t8_p2:
-        t8_delta_t = st.slider("Écart de température appliqué (dT en °C) :", min_value=5, max_value=50, value=25, key="t8_sim_dt")
+    surface_pont_t8 = st.slider("Surface totale de la paroi étudiée (m²) :", min_value=5.0, max_value=100.0, value=30.0, step=1.0, key="t8_sim_surf_libre")
 
-    # Calcul des constantes physiques de la résistance
-    e_m_r = t8_epaisseur / 100.0
-    r_calcule = e_m_r / lambda_r
-    flux_perdu_r = t8_delta_t / r_calcule
+    # Calculs physiques de résistance et de flux sur 24h
+    e_m_r = t8_ep_cm / 100.0
+    r_seul = e_m_r / lambda_r
+    r_total_global = r_seul + 0.17  # Intégration des coefficients d'échange d'ambiance Rsi + Rse
+    t8_dt = t_int_t8 - t_ext_t8
+    flux_pont_w = (t8_dt / r_total_global) * surface_pont_t8
+    energie_perdue_24h_kwh = (flux_pont_w * 24.0) / 1000.0
 
-    # Rendu vectoriel dynamique de la paroi (Matplotlib)
+    # Rendu graphique dynamique sans superposition
     import matplotlib.pyplot as plt
     import matplotlib.patches as patches
 
-    fig_r, ax_r = plt.subplots(figsize=(8.5, 2.5))
+    fig_r_local, ax_rl = plt.subplots(figsize=(8.5, 2.5))
     
-    # Tracé géométrique
-    ax_r.add_patch(patches.Rectangle((0.5, 0.4), 1.5, 1.5, facecolor='#fee2e2', alpha=0.5)) # Chaud
-    largeur_mur_visuel_r = 0.5 + (t8_epaisseur / 40.0) * 2.0
-    ax_r.add_patch(patches.Rectangle((2.0, 0.4), largeur_mur_visuel_r, 1.5, facecolor=color_r, edgecolor='#0f172a', lw=1.5)) # Mur
-    ax_r.add_patch(patches.Rectangle((2.0 + largeur_mur_visuel_r, 0.4), 1.5, 1.5, facecolor='#e0f2fe', alpha=0.5)) # Froid
+    ax_rl.add_patch(patches.Rectangle((0.5, 0.4), 1.5, 1.5, facecolor='#fee2e2', alpha=0.6))  # Intérieur chaud
+    width_rupteur = 0.5 + (t8_ep_cm / 40.0) * 1.5
+    ax_rl.add_patch(patches.Rectangle((2.0, 0.4), width_rupteur, 1.5, facecolor='#fef08a' if lambda_r < 0.05 else '#cbd5e1', edgecolor='#0f172a', lw=1.5))
+    ax_rl.add_patch(patches.Rectangle((2.0 + width_rupteur, 0.4), 1.5, 1.5, facecolor='#e0f2fe', alpha=0.6))  # Extérieur froid
 
-    ax_r.text(1.25, 1.15, "Intérieur", color='#b91c1c', fontweight='bold', ha='center', fontsize=9)
-    ax_r.text(2.0 + (largeur_mur_visuel_r / 2), 1.15, f"e = {t8_epaisseur} cm\n$\lambda$ = {lambda_r:.3f}", color='#0f172a', fontweight='bold', ha='center', fontsize=8)
-    ax_r.text(2.0 + largeur_mur_visuel_r + 0.75, 1.15, "Extérieur", color='#1d4ed8', fontweight='bold', ha='center', fontsize=9)
+    ax_rl.text(1.25, 1.15, f"Intérieur\n{t_int_t8} °C", color='#b91c1c', fontweight='bold', ha='center', va='center', fontsize=9)
+    ax_rl.text(2.0 + (width_rupteur / 2), 1.15, f"R-Barrière\n{t8_ep_cm} cm", color='#0f172a', fontweight='bold', ha='center', va='center', fontsize=8)
+    ax_rl.text(2.0 + width_rupteur + 0.75, 1.15, f"Extérieur\n{t_ext_t8} °C", color='#1d4ed8', fontweight='bold', ha='center', va='center', fontsize=9)
 
-    # Indicateur de transfert proportionnel
-    taille_fleche_r = min(15.0, max(1.5, flux_perdu_r / 100.0))
-    ax_r.arrow(1.0, 0.6, 2.5 + largeur_mur_visuel_r, 0, head_width=0.15, head_length=0.15, fc='#475569', ec='#475569', lw=taille_fleche_r)
-    ax_r.text(2.0 + (largeur_mur_visuel_r / 2), 0.85, f"R = {r_calcule:.3f} m².K/W", color='#0f172a', fontsize=9, fontweight='bold', ha='center')
+    lw_fleche_r = min(15.0, max(1.5, flux_pont_w / 100.0)) if t8_dt > 0 else 1.2
+    ax_rl.arrow(1.0, 0.6, 2.5 + width_rupteur, 0, head_width=0.15, head_length=0.15, fc='#475569', ec='#475569', lw=lw_fleche_r)
 
-    ax_r.set_xlim(0, 7.5)
-    ax_r.set_ylim(0, 2.3)
-    ax_r.axis('off')
-    st.pyplot(fig_r)
+    ax_rl.set_xlim(0, 7.5)
+    ax_rl.set_ylim(0, 2.3)
+    ax_rl.axis('off')
+    st.pyplot(fig_r_local)
 
-    # Démonstration textuelle du calcul
-    st.markdown("**Formule littérale et application numérique :**")
-    st.latex(rf"R = \frac{{e}}{{\lambda}} = \frac{{{e_m_r:.3f}\text{{ m}}}}{{{lambda_r:.3f}}} = {r_calcule:.3f}\quad\text{{m}}^2\cdot\text{{K}}/\text{{W}}")
-    st.latex(rf"\Phi = \frac{{\Delta T}}{{R}} = \frac{{{t8_delta_t}}}{{{r_calcule:.3f}}} = {flux_perdu_r:.1f}\quad\text{{W}} /\text{{m}}^2")
+    # Affichage des metrics
+    c_m1, c_m2, c_m3 = st.columns(3)
+    with c_m1:
+        st.metric(label="Résistance Thermique Globale (R_tot)", value=f"{r_total_global:.3f} m².K/W")
+    with c_res2:
+        st.metric(label="Déperdition de puissance instantanée", value=f"{flux_pont_w:.1f} Watts")
+    with c_m3:
+        st.metric(label="Conductivité lambda du matériau", value=f"{lambda_r:.3f} W/(m.K)")
+
+    # Synthèse énergétique sur 24 heures sans emoji
+    html_synth_r = f"""
+    <div style="background-color: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid #e2e8f0; margin-top: 10px;">
+        <p style="margin: 0; font-size: 14px; color: #1e293b;">
+            <b>Énergie thermique totale dissipée en 24 heures</b> sous cet écart de température : 
+            <span style="color: #b91c1c; font-size: 15px; font-weight: bold;">{energie_perdue_24h_kwh:.2f} kWh</span>
+        </p>
+    </div>
+    """
+    st.markdown(html_synth_r, unsafe_allow_html=True)
+
+    # Détail des applications numériques avec correction des accolades pour f-string
+    st.markdown("**Démonstration des calculs de résistance d'opposition :**")
+    st.latex(rf"R_{{\text{{matériau}}}} = \frac{{e}}{{\lambda}} = \frac{{{e_m_r:.3f}\text{{ m}}}}{{{lambda_r:.3f}}} = {r_seul:.3f}\quad\text{{m}}^2\cdot\text{{K}}/\text{{W}}")
+    st.latex(rf"\Phi = \frac{{\Delta T \times A}}{{R_{{\text{{total}}}}}} = \frac{{{t8_dt} \times {surface_pont_t8}}}{{{r_total_global:.3f}}} = {flux_pont_w:.1f}\text{{ Watts}}")
+    st.latex(rf"E_{{24\text{{h}}}} = \frac{{\Phi \times 24\text{{ h}}}}{{1000}} = \frac{{{flux_pont_w:.1f} \times 24}}{{1000}} = {energie_perdue_24h_kwh:.2f}\text{{ kWh}}")
     st.write("---")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
