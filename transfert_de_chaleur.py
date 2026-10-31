@@ -5281,39 +5281,44 @@ with tab10:
     # 2. COURS TECHNIQUE ET CARICATURE EN FOND BLEU (DYNAMIQUE)
     # =============================================================================
     with col_droite_cours_tp:
+        st.markdown("##### Illustration caricaturale du cas")
+        
+        # Initialisation des deux variables d'images pour chaque scénario
         if scen_tp == "Béton massif : Exothermie d'une pile de pont":
-            fichier_img_tp = "exothermipiledepont.jpg"
-            caption_img_tp = "Caricature de l'accumulation de chaleur au cœur du béton massif"
-            st.markdown("##### Illustration caricaturale du cas")
-            fichier_img_tp = "tp_exothermie.jpg"
-            caption_img_tp = "Caricature de l'accumulation de chaleur au cœur du béton massif"
+            fichier_reel = "exothermipiledepont.jpg"
+            fichier_caricature = "tp_exothermie.jpg"
+            caption_reel = "Image réelle : Suivi de la pile de pont"
+            caption_caricature = "Caricature de l'accumulation de chaleur au cœur du béton massif"
 
         elif scen_tp == "Ouvrage d'art : Fissuration thermique de tablier":
-            fichier_img_tp = "Fissurationthermiquetablier.jpg"
-            caption_img_tp = "Caricature des contraintes de traction sur la peau du béton"
-            st.markdown("##### Illustration caricaturale du cas")
-            fichier_img_tp = "tp_fissuration.jpg"
-            caption_img_tp = "Caricature des contraintes de traction sur la peau du béton"
+            fichier_reel = "Fissurationthermiquetablier.jpg"
+            fichier_caricature = "tp_fissuration.jpg"
+            caption_reel = "Image réelle : Mesure du tablier d'ouvrage d'art"
+            caption_caricature = "Caricature des contraintes de traction sur la peau du béton"
 
         elif scen_tp == "Viabilité hivernale : Coulage par temps de gel":
-            fichier_img_tp = "Coulagepartempsgel.jpg"
-            caption_img_tp = "Caricature de la menace de solidification de l'eau dans le ciment"
-            st.markdown("##### Illustration caricaturale du cas")
-            fichier_img_tp = "tp_gel.jpg"
-            caption_img_tp = "Caricature de la menace de solidification de l'eau dans le ciment"
+            fichier_reel = "Coulagepartempsgel.jpg"
+            fichier_caricature = "tp_gel.jpg"
+            caption_reel = "Image réelle : Chantier hivernal sous protection thermique"
+            caption_caricature = "Caricature de la menace de solidification de l'eau dans le ciment"
 
         else:
-            fichier_img_tp = "Prisesousmarine.jpg"
-            caption_img_tp = "Caricature de l'océan comme puits thermique infini"
-            st.markdown("##### Illustration caricaturale du cas")
-            fichier_img_tp = "tp_sous_marin.jpg"
-            caption_img_tp = "Caricature de l'océan comme puits thermique infini"
+            fichier_reel = "Prisesousmarine.jpg"
+            fichier_caricature = "tp_sous_marin.jpg"
+            caption_reel = "Image réelle : Coulage de fondation en milieu maritime"
+            caption_caricature = "Caricature de l'océan comme puits thermique infini"
 
-        # Affichage de l'image correspondante
-        if os.path.exists(fichier_img_tp):
-            st.image(fichier_img_tp, caption=caption_img_tp, use_container_width=True)
+        # 1. Affichage supérieur : L'image réelle du cas (nom long)
+        if os.path.exists(fichier_reel):
+            st.image(fichier_reel, caption=caption_reel, use_container_width=True)
         else:
-            st.caption(caption_img_tp)
+            st.caption(caption_reel)
+
+        # 2. Affichage inférieur : L'image de la caricature (nom court)
+        if os.path.exists(fichier_caricature):
+            st.image(fichier_caricature, caption=caption_caricature, use_container_width=True)
+        else:
+            st.caption(caption_caricature)
 
             
     st.write("---")
