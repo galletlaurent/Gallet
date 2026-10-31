@@ -25,7 +25,7 @@ st.markdown("""
         display: block !important;
     }
     
-    /* Force la grille de colonnes a rester fluide */
+    /* Force la grille de colonnes a rester visible et fluide */
     [data-testid="stHorizontalBlock"] {
         height: auto !important;
         overflow: visible !important;
@@ -33,28 +33,25 @@ st.markdown("""
         flex-wrap: wrap !important;
     }
 
-    /* OPTIMISATION DE L'ESPACE : Reduit les marges internes des boites pour tout remonter */
-    [data-testid="stElementContainer"] div[data-testid="stVerticalBlockBorderWrapper"] > div {
-        padding: 4px !important;
+    /* REDUCTION DE LA TAILLE POUR TOUT REMONTER : Gagne les centimètres manquants en bas */
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        transform: scale(0.94) !important; /* Reduit legerement la taille globale de chaque vignette (94%) */
+        transform-origin: top center !important;
+        margin-bottom: -15px !important;   /* Resserre l'espace vertical disponible entre les lignes */
     }
-    
-    /* Reduit la taille des marges sous les images des QR Codes */
-    [data-testid="stImage"] {
-        margin-bottom: 2px !important;
-    }
-    /* Cache le bouton Manage app de Streamlit a l'impression */
-    .stAppToolbar, [data-testid="stManageAppButton"] {
-        display: none !important;
-    }
+
     /* SECURITE MULTI-PAGES : Interdit de couper un QR Code ou un titre au milieu */
     [data-testid="stColumn"] > div {
         break-inside: avoid !important;
         page-break-inside: avoid !important;
     }
 
-    /* Cache toute l'interface Streamlit globale et les boutons systeme */
-    header, footer, [data-testid="stSidebar"], [data-testid="stHeader"], .stAppDeployButton, .stAppToolbar, [data-testid="stManageAppButton"] {
+    /* MASQUAGE COMPLET DU BOUTON DE BAS DE PAGE : Enleve definitivement le bouton systeme */
+    header, footer, [data-testid="stSidebar"], [data-testid="stHeader"], .stAppDeployButton,
+    .stAppToolbar, [data-testid="stManageAppButton"], iframe, footer + div, .viewerBadge_v1 {
         display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
     }
     
     /* Cache le titre du portail, la description et la barre de recherche */
