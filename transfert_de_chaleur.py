@@ -4807,9 +4807,10 @@ with tab9:
         surface_perdue = 1.8 * (pourcent_embouage / 100.0)
         
         st.metric(label="Puissance d'émission thermique réelle du radiateur", value=f"{puissance_calculee:.1f} Watts")
-        st.latex(rf"P_{{\text{{réelle}}} = P_{{\text{{nominale}}}} \times (1 - \eta_{{\text{{embouage}}}}) = {puissance_calculee:.1f}\text{{ W}}")
+        # Correction de l'accolade fermante sur \text{réelle}
+        st.latex(rf"P_{{\text{{réelle}}}} = P_{{\text{{nominale}}}} \times (1 - \eta_{{\text{{embouage}}}}) = {puissance_calculee:.1f}\text{{ W}}")
         st.info(f"Surface de transfert rendue totalement inactive par les boues : {surface_perdue:.2f} m²")
-
+        
     with col_p2:
         # Rendu Matplotlib générique unifié pour le banc d'essai de maintenance
         import matplotlib.pyplot as plt
