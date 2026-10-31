@@ -5200,6 +5200,15 @@ with tab10:
                 "**Cas 4 : L'ouvrage pérenne.** La température est maîtrisée, le bloc durcit de manière parfaitement homogène : "
                 "« Affaire classée ! L'exothermie et la conduction ont été domptées, la structure est validée ! »"
             )
+
+            texte_bd_bleu_tp = (
+                "**La BD humoristique : Le cœur brûlant du béton**\n\n"
+                "**Cas 1 :** Hydratation générale : « C'est la fête du ciment, les Joules se libèrent ! ».\n"
+
+                "**Cas 2 :** Blocage du flux : « Le béton conduit très mal, la chaleur sensible reste prisonnière au centre ! ».\n"
+                "**Cas 3 :** Activation des tubes d'eau : « On pompe les calories pour aplatir la courbe thermique ! ».\n"
+                "**Cas 4 :** Durcissement réussi : « Affaire classée, la pile de pont est solide et sans fissure ! »"
+            )
         elif scen_tp == "Ouvrage d'art : Fissuration thermique de tablier":
             st.info(
                 "**Cas 1 : La cure du tablier.** Le tablier de pont vient d'être coulé en pleine nuit d'hiver : "
@@ -5211,6 +5220,14 @@ with tab10:
                 "**Cas 4 : Le pont sauvé.** Les fissures sont évitées, la peau du béton reste lisse et étanche : "
                 "« Affaire classée ! Les lois de la dilatation thermique ont été contenues à temps ! »"
             )
+            texte_bd_bleu_tp = (
+                "**La BD humoristique : La peau du béton sous tension**\n\n"
+                "**Cas 1 :** Le tablier refroidit par l'extérieur : « Le cœur est brûlant mais ma peau est glacée ! ».\n"
+                "**Cas 2 :** Écart de 25 °C : « Le gradient thermique tire trop fort, les micro-fissures arrivent ! ».\n"
+                "**Cas 3 :** Pose des matelas isolants : « On augmente la résistance R pour réchauffer la surface ! ».\n"
+                "**Cas 4 :** Profil lissé : « Affaire classée, les contraintes de traction thermique ont capitulé ! »"
+            )
+            
         elif scen_tp == "Viabilité hivernale : Coulage par temps de gel":
             st.info(
                 "**Cas 1 : L'assaut du gel.** Le thermomètre du chantier descend à -5 °C pendant le coulage des fondations : "
@@ -5221,6 +5238,14 @@ with tab10:
                 "« On apporte de la chaleur sensible pour maintenir la masse au-dessus de 5 °C et mener la prise à terme ! ».\n\n"
                 "**Cas 4 : La résistance acquise.** Le béton a pris sa résistance mécanique sans subir l'action du gel : "
                 "« Affaire classée ! Les barrières isolantes ont protégé les réactions chimiques du ciment ! »"
+            )
+
+            texte_bd_bleu_tp = (
+                "**La BD humoristique : La bataille du zéro degré**\n\n"
+                "**Cas 1 :** Chute du thermomètre : « Sauvez les Watts, le gel attaque les fondations ! ».\n"
+                "**Cas 2 :** Solidification latente : « À 0 °C, l'eau veut se changer en glace et briser les cristaux ! ».\n"
+                "**Cas 3 :** Allumage des radiants : « Apport de chaleur sensible immédiat sous les bâches R ! ».\n"
+                "**Cas 4 :** Prise sécurisée : « Affaire classée, le réseau cristallin du ciment est intact ! »"
             )
         else: # Prise sous-marine et flux conducteur
             st.info(
@@ -5234,45 +5259,6 @@ with tab10:
                 "« Affaire classée ! L'équilibre entre le flux thermique perdu et la chimie du ciment a été trouvé ! »"
             )
 
-    # =============================================================================
-    # 2. COURS TECHNIQUE ET CARICATURE EN FOND BLEU (DYNAMIQUE)
-    # =============================================================================
-    with col_droite_cours_tp:
-        st.markdown("##### Illustration caricaturale du cas")
-        if scen_tp == "Béton massif : Exothermie d'une pile de pont":
-            fichier_img_tp = "tp_exothermie.jpg"
-            caption_img_tp = "Caricature de l'accumulation de chaleur au cœur du béton massif"
-            texte_bd_bleu_tp = (
-                "**La BD humoristique : Le cœur brûlant du béton**\n\n"
-                "**Cas 1 :** Hydratation générale : « C'est la fête du ciment, les Joules se libèrent ! ».\n"
-
-                "**Cas 2 :** Blocage du flux : « Le béton conduit très mal, la chaleur sensible reste prisonnière au centre ! ».\n"
-                "**Cas 3 :** Activation des tubes d'eau : « On pompe les calories pour aplatir la courbe thermique ! ».\n"
-                "**Cas 4 :** Durcissement réussi : « Affaire classée, la pile de pont est solide et sans fissure ! »"
-            )
-        elif scen_tp == "Ouvrage d'art : Fissuration thermique de tablier":
-            fichier_img_tp = "tp_fissuration.jpg"
-            caption_img_tp = "Caricature des contraintes de traction sur la peau du béton"
-            texte_bd_bleu_tp = (
-                "**La BD humoristique : La peau du béton sous tension**\n\n"
-                "**Cas 1 :** Le tablier refroidit par l'extérieur : « Le cœur est brûlant mais ma peau est glacée ! ».\n"
-                "**Cas 2 :** Écart de 25 °C : « Le gradient thermique tire trop fort, les micro-fissures arrivent ! ».\n"
-                "**Cas 3 :** Pose des matelas isolants : « On augmente la résistance R pour réchauffer la surface ! ».\n"
-                "**Cas 4 :** Profil lissé : « Affaire classée, les contraintes de traction thermique ont capitulé ! »"
-            )
-        elif scen_tp == "Viabilité hivernale : Coulage par temps de gel":
-            fichier_img_tp = "tp_gel.jpg"
-            caption_img_tp = "Caricature de la menace de solidification de l'eau dans le ciment"
-            texte_bd_bleu_tp = (
-                "**La BD humoristique : La bataille du zéro degré**\n\n"
-                "**Cas 1 :** Chute du thermomètre : « Sauvez les Watts, le gel attaque les fondations ! ».\n"
-                "**Cas 2 :** Solidification latente : « À 0 °C, l'eau veut se changer en glace et briser les cristaux ! ».\n"
-                "**Cas 3 :** Allumage des radiants : « Apport de chaleur sensible immédiat sous les bâches R ! ».\n"
-                "**Cas 4 :** Prise sécurisée : « Affaire classée, le réseau cristallin du ciment est intact ! »"
-            )
-        else:
-            fichier_img_tp = "tp_sous_marin.jpg"
-            caption_img_tp = "Caricature de l'océan comme puits thermique infini"
             texte_bd_bleu_tp = (
                 "**La BD humoristique : L'océan pilleur de Joules**\n\n"
                 "**Cas 1 :** Immersion du béton sous l'eau : « Brrr, la mer commence à aspirer nos calories ! ».\n"
@@ -5280,6 +5266,39 @@ with tab10:
                 "**Cas 3 :** Adjuvant accélérateur : « On accélère la chimie pour produire du Joule plus vite que la fuite ! ».\n"
                 "**Cas 4 :** Prise sous-marine validée : « Affaire classée, les fondations maritimes sont scellées ! »"
             )
+
+    # =============================================================================
+    # 2. COURS TECHNIQUE ET CARICATURE EN FOND BLEU (DYNAMIQUE)
+    # =============================================================================
+    with col_droite_cours_tp:
+        st.markdown("##### Illustration caricaturale du cas")
+        if scen_tp == "Béton massif : Exothermie d'une pile de pont":
+            fichier_img_tp = "exothermipiledepont.jpg"
+            caption_img_tp = "Caricature de l'accumulation de chaleur au cœur du béton massif"
+            
+            fichier_img_tp = "tp_exothermie.jpg"
+            caption_img_tp = "Caricature de l'accumulation de chaleur au cœur du béton massif"
+
+        elif scen_tp == "Ouvrage d'art : Fissuration thermique de tablier":
+            fichier_img_tp = "Fissurationthermiquetablier.jpg"
+            caption_img_tp = "Caricature des contraintes de traction sur la peau du béton"
+            
+            fichier_img_tp = "tp_fissuration.jpg"
+            caption_img_tp = "Caricature des contraintes de traction sur la peau du béton"
+
+        elif scen_tp == "Viabilité hivernale : Coulage par temps de gel":
+            fichier_img_tp = "Coulagepartempsgel.jpg"
+            caption_img_tp = "Caricature de la menace de solidification de l'eau dans le ciment"
+            
+            fichier_img_tp = "tp_gel.jpg"
+            caption_img_tp = "Caricature de la menace de solidification de l'eau dans le ciment"
+
+        else:
+            fichier_img_tp = "Prisesousmarine.jpg"
+            caption_img_tp = "Caricature de l'océan comme puits thermique infini"
+            
+            fichier_img_tp = "tp_sous_marin.jpg"
+            caption_img_tp = "Caricature de l'océan comme puits thermique infini"
 
         # Affichage de l'image correspondante
         if os.path.exists(fichier_img_tp):
