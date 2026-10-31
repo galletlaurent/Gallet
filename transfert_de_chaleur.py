@@ -226,66 +226,16 @@ def afficher_atelier_isolants_verrouille(verrouille=False):
 
     # 1. BASE DE DONNÉES DU QUIZ TECHNIQUE DES CONDUCTEURS ET ISOLANTS
     questions_therm5_sources = [
-        {
-            "id": "qt5_1", 
-            "q": "Quelle lettre de l'alphabet grec désigne la conductivité thermique d'un matériau ?", 
-            "options": ["Lambda (λ)", "Phi (Φ)", "Rho (ρ)"], 
-            "rep": "Lambda (λ)"
-        },
-        {
-            "id": "qt5_2", 
-            "q": "Quelle est l'unité légale de la conductivité thermique dans le Système International ?", 
-            "options": ["W/(m.K)", "Joule/kg", "W/m²"], 
-            "rep": "W/(m.K)"
-        },
-        {
-            "id": "qt5_3", 
-            "q": "Parmi les matériaux suivants, lequel possède la conductivité thermique la plus élevée ?", 
-            "options": ["Le cuivre", "Le verre", "Le bois"], 
-            "rep": "Le cuivre"
-        },
-        {
-            "id": "qt5_4", 
-            "q": "Quelle est la valeur maximale limite du lambda pour qu'un matériau soit qualifié d'isolant thermique ?", 
-            "options": ["0,05 W/(m.K)", "1,0 W/(m.K)", "0,5 W/(m.K)"], 
-            "rep": "0,05 W/(m.K)"
-        },
-        {
-            "id": "qt5_5", 
-            "q": "Quel élément immobile, prisonnier des fibres ou des alvéoles, fait le pouvoir des isolants ?", 
-            "options": ["L'air", "L'eau", "Le vide"], 
-            "rep": "L'air"
-        },
-        {
-            "id": "qt5_6", 
-            "q": "Pourquoi les métaux sont-ils d'excellents conducteurs de chaleur ?", 
-            "options": ["En raison de la présence d'électrons libres", "Parce qu'ils ont une densité faible", "Parce qu'ils absorbent le rayonnement"], 
-            "rep": "En raison de la présence d'électrons libres"
-        },
-        {
-            "id": "qt5_7", 
-            "q": "La laine de verre et le polystyrène expansé sont des matériaux dits :", 
-            "options": ["Isolants thermiques", "Conducteurs thermiques", "Réfractaires purs"], 
-            "rep": "Isolants thermiques"
-        },
-        {
-            "id": "qt5_8", 
-            "q": "Si l'on double l'épaisseur d'un panneau isolant, qu'advient-il du flux de chaleur qui le traverse ?", 
-            "options": ["Il est divisé par deux", "Il est doublé", "Il reste strictement identique"], 
-            "rep": "Il est divisé par deux"
-        },
-        {
-            "id": "qt5_9", 
-            "q": "Quel isolant thermique naturel d'origine végétale est couramment utilisé en panneaux rigides ?", 
-            "options": ["Le liège expansé", "La laine de verre", "Le béton cellulaire"], 
-            "rep": "Le liège expansé"
-        },
-        {
-            "id": "qt5_10", 
-            "q": "Dans l'industrie, pour évacuer la chaleur d'un processeur, on utilise un dissipateur en :", 
-            "options": ["Aluminium", "Plastique PVC", "Bois de sapin"], 
-            "rep": "Aluminium"
-        }
+        {"id": "qt5_1", "q": "Quelle lettre de l'alphabet grec désigne la conductivité thermique d'un matériau ?", "options": ["Lambda (λ)", "Phi (Φ)", "Rho (ρ)"], "rep": "Lambda (λ)"},
+        {"id": "qt5_2", "q": "Quelle est l'unité légale de la conductivité thermique dans le Système International ?", "options": ["W/(m.K)", "Joule/kg", "W/m²"], "rep": "W/(m.K)"},
+        {"id": "qt5_3", "q": "Parmi les matériaux suivants, lequel possède la conductivité thermique la plus élevée ?", "options": ["Le cuivre", "Le verre", "Le bois"], "rep": "Le cuivre"},
+        {"id": "qt5_4", "q": "Quelle est la valeur maximale limite du lambda pour qu'un matériau soit qualifié d'isolant thermique ?", "options": ["0,05 W/(m.K)", "1,0 W/(m.K)", "0,5 W/(m.K)"], "rep": "0,05 W/(m.K)"},
+        {"id": "qt5_5", "q": "Quel élément immobile, prisonnier des fibres ou des alvéoles, fait le pouvoir des isolants ?", "options": ["L'air", "L'eau", "Le vide"], "rep": "L'air"},
+        {"id": "qt5_6", "q": "Pourquoi les métaux sont-ils d'excellents conducteurs de chaleur ?", "options": ["En raison de la présence d'électrons libres", "Parce qu'ils ont une densité faible", "Parce qu'ils absorbent le rayonnement"], "rep": "En raison de la présence d'électrons libres"},
+        {"id": "qt5_7", "q": "La laine de verre et le polystyrène expansé sont des matériaux dits :", "options": ["Isolants thermiques", "Conducteurs thermiques", "Réfractaires purs"], "rep": "Isolants thermiques"},
+        {"id": "qt5_8", "q": "Si l'on double l'épaisseur d'un panneau isolant, qu'advient-il du flux de chaleur qui le traverse ?", "options": ["Il est divisé par deux", "Il est doublé", "Il reste strictement identique"], "rep": "Il est divisé par deux"},
+        {"id": "qt5_9", "q": "Quel isolant thermique naturel d'origine végétale est couramment utilisé en panneaux rigides ?", "options": ["Le liège expansé", "La laine de verre", "Le béton cellulaire"], "rep": "Le liège expansé"},
+        {"id": "qt5_10", "q": "Dans l'industrie, pour évacuer la chaleur d'un processeur, on utilise un dissipateur en :", "options": ["Aluminium", "Plastique PVC", "Bois de sapin"], "rep": "Aluminium"}
     ]
 
     if "ordre_quiz_tab5_therm_aleatoire" not in st.session_state:
@@ -330,10 +280,11 @@ def afficher_atelier_isolants_verrouille(verrouille=False):
             with c_txt: 
                 st.write(enonce)
             with c_sel: 
+                # Sécurisation complète de la clé pour éviter tout conflit DuplicateWidgetID à la ligne 317
                 st.selectbox(
                     "", 
                     choix, 
-                    key=f"{cle}_therm5_clean", 
+                    key=f"{cle}_clean_t5", 
                     disabled=verrouille, 
                     label_visibility="collapsed"
                 )
