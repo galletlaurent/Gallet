@@ -11,36 +11,41 @@ st.set_page_config(page_title="Hub Maths-sciences", layout="wide")
 st.markdown("""
 <style>
 @media print {
-    /* 1. On detruit completement la boite rigide de Streamlit pour retrouver un flux de page normal */
-    html, body, .main, .block-container,
+    /* Libere absolument toutes les structures de Streamlit */
+    html, body, .main, .block-container, 
     [data-testid="stApp"], 
     [data-testid="stAppViewContainer"], 
     [data-testid="stVerticalBlock"], 
     [data-testid="stVerticalBlockBorderWrapper"],
     .stTabs, [data-testid="stTabContent"] {
-        display: block !important;
         height: auto !important;
-        min-height: 0 !important;
-        max-height: none !important;
         overflow: visible !important;
         position: static !important;
+        max-height: none !important;
+        display: block !important;
     }
     
-    /* 2. On laisse les lignes de QR codes se repartir librement sur plusieurs pages */
+    /* Force la grille de colonnes a rester fluide */
     [data-testid="stHorizontalBlock"] {
-        display: flex !important;
-        flex-wrap: wrap !important;
         height: auto !important;
         overflow: visible !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
     }
 
-    /* 3. SECURITE : Interdiction absolue de couper un QR code ou une vignette en deux */
+    /* Force un saut de page propre apres chaque lot de 25 */
+    .saut-de-page {
+        page-break-after: always !important;
+        break-after: page !important;
+    }
+
+    /* SECURITE INTERNE : Evite de couper une vignette en deux */
     [data-testid="stColumn"] > div {
         break-inside: avoid !important;
         page-break-inside: avoid !important;
     }
 
-    /* Cache toute l'interface globale, les barres et le bouton Manage app */
+    /* Cache toute l'interface Streamlit globale et les boutons systeme */
     header, footer, [data-testid="stSidebar"], [data-testid="stHeader"], .stAppDeployButton,
     .stAppToolbar, [data-testid="stManageAppButton"], iframe, footer + div, .viewerBadge_v1 {
         display: none !important;
@@ -57,16 +62,17 @@ st.markdown("""
         display: none !important;
     }
     
-    /* Marges de la feuille */
+    /* Supprime les marges superflues pour maximiser l'espace A4 */
     .main .block-container {
-        padding-top: 1rem !important;
-        padding-bottom: 1rem !important;
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
         max-width: 100% !important;
         margin: 0 !important;
     }
 }
 </style>
 """, unsafe_allow_html=True)
+
 st.title("Portail des Applications de Mathématiques et de sciences de M Laurent GALLET")
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
