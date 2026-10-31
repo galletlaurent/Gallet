@@ -3999,10 +3999,212 @@ with tab7:
         )
 
 
+with tab8:
+    st.header("La Résistance Thermique (R)")
+    
+    # =============================================================================
+    # DÉFINITION TECHNIQUE DE L'ATELIER 8
+    # =============================================================================
+    st.write(
+        "**Définition :** La **résistance thermique** (notée $R$ ou $R_t$, exprimée en mètres carrés-Kelvin par Watt, $\\text{m}^2\\cdot\\text{K}/\\text{W}$) "
+        "caractérise la capacité d'une paroi matérielle à s'opposer au passage du flux de chaleur. "
+        "Plus la valeur de la résistance thermique est grande, plus la paroi ralentit le transfert d'énergie et s'avère isolante.\n\n"
+        "Pour une couche de matériau unique, elle dépend directement de son épaisseur $e$ (en mètres) et de sa conductivité thermique $\lambda$ :"
+    )
+    st.latex(r"R = \frac{e}{\lambda}")
+    st.write("---")
 
 
+    # =============================================================================
+    # 2. COURS TECHNIQUE : L'IMPORTANCE DU COEFFICIENT R
+    # =============================================================================
+    col_t8_h1, col_t8_h2 = st.columns(2)
+    
+    with col_t8_h1:
+        st.markdown("##### Les Faibles Résistances Thermiques")
+        st.write(
+            "**Une paroi passive :** Lorsque la valeur de $R$ est proche de zéro, la paroi n'oppose quasiment aucun "
+            "obstacle à la chaleur. C'est le cas typique des métaux ou d'un simple vitrage mince.\n\n"
+            "**Conséquences industrielles :** Une faible résistance thermique est recherchée lorsqu'on souhaite "
+            "transférer ou dissiper de l'énergie au maximum (fond de poêle en cuivre, tubes de chaudière, dissipateurs thermiques de composants électroniques)."
+        )
+
+        col_t81_h11, col_t81_h21 = st.columns(2)
+        with col_t81_h11:
+            col_t81_c1, col_t81_c2 = st.columns(2)
+            with col_t81_c1:
+                if os.path.exists("faible_r.jpg"):
+                    st.image("faible_r.jpg", caption="Paroi non isolante", use_container_width=True)
+                else:
+                    st.warning("L'image 'faible_r.jpg' est introuvable.")
+            with col_t81_c2:
+                if os.path.exists("dissipateur_circuit.jpg"):
+                    st.image("dissipateur_circuit.jpg", caption="Refroidissement rapide", use_container_width=True)
+                else:
+                    st.warning("L'image 'dissipateur_circuit.jpg' est introuvable.")
+        with col_t81_h21:
+            col_t81_c3, col_t81_c4 = st.columns(2)
+            with col_t81_c3:
+                if os.path.exists("metal_chaud.jpg"):
+                    st.image("metal_chaud.jpg", caption="Ustensile conducteur", use_container_width=True)
+                else:
+                    st.warning("L'image 'metal_chaud.jpg' est introuvable.")
+            with col_t81_c4:
+                if os.path.exists("tuyau_chaudiere.jpg"):
+                    st.image("tuyau_chaudiere.jpg", caption="Échangeur efficace", use_container_width=True)
+                else:
+                    st.warning("L'image 'tuyau_chaudiere.jpg' est introuvable.")
+            
+    with col_t8_h2:
+        st.markdown("##### Les Fortes Résistances Thermiques")
+        st.write(
+            "**La barrière isolante :** Dans l'isolation des bâtiments, on recherche les valeurs de $R$ les plus "
+            "grandes possibles. Les normes modernes exigent souvent un $R \\ge 4$ pour les murs et $R \\ge 7$ pour les combles.\n\n"
+            "**Le choix des matériaux :** Pour maximiser $R$, on utilise des isolants de faible conductivité "
+            "(laine de roche, polystyrène) et on applique de fortes épaisseurs (généralement de 15 à 30 cm) afin d'allonger le chemin thermique des calories."
+        )
+
+        col_t82_h31, col_t82_h32 = st.columns(2)
+        with col_t82_h31:
+            col_t82_c1, col_t82_c2 = st.columns(2)
+            with col_t82_c1:
+                if os.path.exists("forte_resistance.jpg"):
+                    st.image("forte_resistance.jpg", caption="Forte épaisseur isolante", use_container_width=True)
+                else:
+                    st.warning("L'image 'forte_resistance.jpg' est introuvable.")
+            with col_t82_c2:
+                if os.path.exists("isolation_combles.jpg"):
+                    st.image("isolation_combles.jpg", caption="Combles protégés", use_container_width=True)
+                else:
+                    st.warning("L'image 'isolation_combles.jpg' est introuvable.")
+        with col_t82_h32:
+            col_t82_c3, col_t82_c4 = st.columns(2)
+            with col_t82_c3:
+                if os.path.exists("laine_roche_panneau.jpg"):
+                    st.image("laine_roche_panneau.jpg", caption="Panneau de laine", use_container_width=True)
+                else:
+                    st.warning("L'image 'laine_roche_panneau.jpg' est introuvable.")
+            with col_t82_c4:
+                if os.path.exists("confort_interieur.jpg"):
+                    st.image("confort_interieur.jpg", caption="Maison économe", use_container_width=True)
+                else:
+                    st.warning("L'image 'confort_interieur.jpg' est introuvable.")
+
+    st.write("---")
 
 
+    # =============================================================================
+    # 1. BANDE DESSINÉE HUMORISTIQUE EN 4 CASES : LE LABYRINTHE DES JOULES
+    # =============================================================================
+    col_gauche_texte_t8, col_droite_img_t8 = st.columns(2)
+
+    with col_gauche_texte_t8:
+        st.write(
+            "**La BD humoristique textuelle : Le labyrinthe des Joules**"
+        )
+        
+        st.info(
+            "**Cas 1 : L'obstacle invisible.** Les calories se ruent à l'assaut d'un panneau d'isolant de forte épaisseur : "
+            "« Attention les gars, freinez des quatre fers ! Devant nous se dresse une résistance thermique $R$ immense de 5 m².K/W, "
+            "on va s'épuiser avant même d'avoir traversé le premier tiers de la paroi ! ».\n\n"
+            
+            "**Cas 2 : Le piège de l'épaisseur.** Les Joules tentent de forcer le passage mais se retrouvent englués : "
+            "« C'est un véritable labyrinthe ! Plus l'épaisseur grandit, plus le coefficient $R$ augmente et nous retient prisonniers. "
+            "La conduction n'a plus aucune force ici, battons en retraite ! ».\n\n"
+            
+            "**Cas 3 : Le diagnostic de l'ingénieur.** L'ingénieur en génie climatique ajuste l'épaisseur sur son plan : "
+            "« C'est mathématique ! Pour maximiser la résistance thermique et bloquer le flux traversant, "
+            "il suffit d'augmenter l'épaisseur $e$ ou de choisir un matériau au $\lambda$ minuscule. ».\n\n"
+            
+            "**Cas 4 : La victoire de la barrière.** La maison garde sa chaleur sans effort tout l'hiver : "
+            "« Affaire classée ! La résistance thermique a dressé un rempart infranchissable. "
+            "Vos précieux Joules restent bien au chaud à la maison ! »."
+        )
+
+    with col_droite_img_t8:
+        if os.path.exists("resistance_caricature.jpg"):
+            st.image(
+                "resistance_caricature.jpg",
+                caption="Illustration humoristique du pouvoir d'opposition de la résistance thermique",
+                use_container_width=True,
+            )
+        else:
+            st.warning(
+                "L'image 'resistance_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+            )
+
+    st.write("---")
+
+    # =============================================================================
+    # 3. LABORATOIRE VIRTUEL INTERACTIF : BANQUET D'ESSAI DES COEFFICIENTS R
+    # =============================================================================
+    st.subheader("Laboratoire Virtuel : Analyseur dynamique de la résistance thermique R")
+    st.write(
+        "Sélectionnez un matériau, puis modifiez son épaisseur pour observez en temps réel "
+        "l'évolution de sa résistance thermique $R$ et du flux de chaleur bloqué :"
+    )
+
+    bibliotheque_r_parois = {
+        "Béton armé plein": {"lambda": 2.3, "color": "#94a3b8"},
+        "Brique de terre cuite": {"lambda": 1.15, "color": "#f97316"},
+        "Parpaing standard": {"lambda": 1.05, "color": "#cbd5e1"},
+        "Verre de vitrage": {"lambda": 1.2, "color": "#bae6fd"},
+        "Bois de construction": {"lambda": 0.13, "color": "#b45309"},
+        "Laine de verre": {"lambda": 0.035, "color": "#fef08a"},
+        "Mousse de polyuréthane": {"lambda": 0.024, "color": "#fed7aa"}
+    }
+
+    t8_sim_mat = st.selectbox(
+        "Sélectionnez le matériau à étudier :",
+        list(bibliotheque_r_parois.keys()),
+        key="t8_sim_choix_materiau"
+    )
+
+    lambda_r = bibliotheque_r_parois[t8_sim_mat]["lambda"]
+    color_r = bibliotheque_r_parois[t8_sim_mat]["color"]
+
+    col_t8_p1, col_t8_p2 = st.columns(2)
+    with col_t8_p1:
+        t8_epaisseur = st.slider("Épaisseur du matériau (e en centimètres) :", min_value=1, max_value=40, value=15, step=1, key="t8_sim_e")
+    with col_t8_p2:
+        t8_delta_t = st.slider("Écart de température appliqué (dT en °C) :", min_value=5, max_value=50, value=25, key="t8_sim_dt")
+
+    # Calcul des constantes physiques de la résistance
+    e_m_r = t8_epaisseur / 100.0
+    r_calcule = e_m_r / lambda_r
+    flux_perdu_r = t8_delta_t / r_calcule
+
+    # Rendu vectoriel dynamique de la paroi (Matplotlib)
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+
+    fig_r, ax_r = plt.subplots(figsize=(8.5, 2.5))
+    
+    # Tracé géométrique
+    ax_r.add_patch(patches.Rectangle((0.5, 0.4), 1.5, 1.5, facecolor='#fee2e2', alpha=0.5)) # Chaud
+    largeur_mur_visuel_r = 0.5 + (t8_epaisseur / 40.0) * 2.0
+    ax_r.add_patch(patches.Rectangle((2.0, 0.4), largeur_mur_visuel_r, 1.5, facecolor=color_r, edgecolor='#0f172a', lw=1.5)) # Mur
+    ax_r.add_patch(patches.Rectangle((2.0 + largeur_mur_visuel_r, 0.4), 1.5, 1.5, facecolor='#e0f2fe', alpha=0.5)) # Froid
+
+    ax_r.text(1.25, 1.15, "Intérieur", color='#b91c1c', fontweight='bold', ha='center', fontsize=9)
+    ax_r.text(2.0 + (largeur_mur_visuel_r / 2), 1.15, f"e = {t8_epaisseur} cm\n$\lambda$ = {lambda_r:.3f}", color='#0f172a', fontweight='bold', ha='center', fontsize=8)
+    ax_r.text(2.0 + largeur_mur_visuel_r + 0.75, 1.15, "Extérieur", color='#1d4ed8', fontweight='bold', ha='center', fontsize=9)
+
+    # Indicateur de transfert proportionnel
+    taille_fleche_r = min(15.0, max(1.5, flux_perdu_r / 100.0))
+    ax_r.arrow(1.0, 0.6, 2.5 + largeur_mur_visuel_r, 0, head_width=0.15, head_length=0.15, fc='#475569', ec='#475569', lw=taille_fleche_r)
+    ax_r.text(2.0 + (largeur_mur_visuel_r / 2), 0.85, f"R = {r_calcule:.3f} m².K/W", color='#0f172a', fontsize=9, fontweight='bold', ha='center')
+
+    ax_r.set_xlim(0, 7.5)
+    ax_r.set_ylim(0, 2.3)
+    ax_r.axis('off')
+    st.pyplot(fig_r)
+
+    # Démonstration textuelle du calcul
+    st.markdown("**Formule littérale et application numérique :**")
+    st.latex(rf"R = \frac{{e}}{{\lambda}} = \frac{{{e_m_r:.3f}\text{{ m}}}}{{{lambda_r:.3f}}} = {r_calcule:.3f}\quad\text{{m}}^2\cdot\text{{K}}/\text{{W}}")
+    st.latex(rf"\Phi = \frac{{\Delta T}}{{R}} = \frac{{{t8_delta_t}}}{{{r_calcule:.3f}}} = {flux_perdu_r:.1f}\quad\text{{W}} /\text{{m}}^2")
+    st.write("---")
 
 
 
