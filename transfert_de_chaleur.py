@@ -219,7 +219,6 @@ tab12 = onglets[12]
 tab13 = onglets[13] 
 tab14 = onglets[14]
 
-
 def afficher_atelier_isolants_verrouille(verrouille=False):
     """Affiche le Quiz et le Texte à trous de l'onglet 5 (Les conducteurs et les isolants) sur deux colonnes."""
     import random
@@ -275,16 +274,21 @@ def afficher_atelier_isolants_verrouille(verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier 5 (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_therm5_clean:
-            enonce, choix, attendu, cle = ligne
+            # Extraction explicite des 4 éléments du tuple pour éliminer les défaillances de structure
+            enonce_texte = ligne[0]
+            choix_possibles = ligne[1]
+            solution_attendue = ligne[2]
+            cle_variable = ligne[3]
+            
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
-                st.write(enonce)
+                st.write(enonce_texte)
             with c_sel: 
-                # Sécurisation complète de la clé pour éviter tout conflit DuplicateWidgetID à la ligne 317
+                # Alignement rigoureux de la clé avec le dictionnaire de correction automatique
                 st.selectbox(
                     "", 
-                    choix, 
-                    key=f"{cle}_clean_t5", 
+                    choix_possibles, 
+                    key=f"{cle_variable}_therm5_clean", 
                     disabled=verrouille, 
                     label_visibility="collapsed"
                 )
