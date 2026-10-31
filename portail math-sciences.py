@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import streamlit as st
+import urllib.parse
 
 st.set_page_config(page_title="Hub Maths-sciences", layout="wide")
 
@@ -11,12 +12,15 @@ st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Cr�
 st.write("Bienvenue. Utilisez la barre de recherche globale ou parcourez les onglets par niveau.")
 
 # 1. Base de donnees de vos applications
-# Les valeurs de "niveau" sont harmonisees ("2nde", "CAP", "1ere", "Tale") pour correspondre aux filtres automatiques
 applications = [
     {"nom": "Centre de gravité", "url": "https://gallet-2a4zeklerrjrjxnxtap4hi.streamlit.app/", "niveau": "2nde", "theme": "Mécanique"},
     {"nom": "Concentration massique", "url": "https://gallet-nrfrpirw9ug39kesvvhzbm.streamlit.app/", "niveau": "2nde", "theme": "Chimie"},
     {"nom": "Le pH", "url": "https://gallet-2xkb5zlhdnonzmkahcmk3u.streamlit.app/", "niveau": "2nde", "theme": "Le pH"},
-
+    {"nom": "Le son", "url": "https://gallet-9jgaebu6y4zett7edtpvqk.streamlit.app/", "niveau": "2nde", "theme": "Acoustique"},
+    {"nom": "Equilibre", "url": "https://gallet-cr4ukp49u8usybpxsspkah.streamlit.app/", "niveau": "2nde", "theme": "Mécanique"},
+    {"nom": "Les surfaces", "url": "https://gallet-quursprfackhldk38vbpcq.streamlit.app/", "niveau": "2nde", "theme": "Géométrie"},
+    {"nom": "Le GNR", "url": "https://gallet-feturstpnya3ttgjvxauor.streamlit.app/", "niveau": "2nde", "theme": "Chimie"},
+     
     {"nom": "Concentration molaire", "url": "https://gallet-hjkhuxhwzuzcdgz6bcgbzy.streamlit.app/", "niveau": "1ere", "theme": "Chimie"},
     {"nom": "Dosage du vinaigre", "url": "https://gallet-cnvqzzejzkeku7pm4j5puq.streamlit.app/", "niveau": "1ere", "theme": "Dosages"},
     {"nom": "Dosage de l'aspirine", "url": "https://gallet-pjzvshvljnxmclc5gu7pog.streamlit.app/", "niveau": "1ere", "theme": "Dosages"},
@@ -31,9 +35,22 @@ applications = [
     {"nom": "Dosage du javel", "url": "https://gallet-rzry8qnwveczjbgcvcmwb2.streamlit.app/", "niveau": "1ere", "theme": "Dosages"},
     {"nom": "Dosage général", "url": "https://gallet-faznqoc3cgdrhuydemsfpx.streamlit.app/", "niveau": "1ere", "theme": "Dosages"},
     {"nom": "Le pH", "url": "https://gallet-2xkb5zlhdnonzmkahcmk3u.streamlit.app/", "niveau": "1ere", "theme": "Le pH"},    
-
+    {"nom": "Archimède", "url": "https://gallet-2mzeqnw2v4g2cg5kbbtvue.streamlit.app/", "niveau": "1ere", "theme": "Mécanique"},
+    {"nom": "Les caractéristiques d'un son", "url": "https://gallet-9jgaebu6y4zett7edtpvqk.streamlit.app/", "niveau": "1ere", "theme": "Acoustique"},
+    {"nom": "Equilibre en rotation", "url": "https://gallet-ewwlykgfb5esjm3bh5cojw.streamlit.app/", "niveau": "1ere", "theme": "Mécanique"},
+     
+    {"nom": "Archimède", "url": "https://gallet-2mzeqnw2v4g2cg5kbbtvue.streamlit.app/", "niveau": "Tale", "theme": "Mécanique"},
+    {"nom": "La propagation du son", "url": "https://gallet-9jgaebu6y4zett7edtpvqk.streamlit.app/", "niveau": "Tale", "theme": "Acoustique"},
     {"nom": "Le pH", "url": "https://gallet-2xkb5zlhdnonzmkahcmk3u.streamlit.app/", "niveau": "Tale", "theme": "Le pH"}
 ]
+
+# Fonction pour generer l'image du QR code de maniere dynamique
+def afficher_app_avec_qrcode(nom_app, url_app):
+    st.markdown(f"**[{nom_app}]({url_app})**")
+    with st.expander(f"Afficher le QR Code pour : {nom_app}"):
+        url_encodee = urllib.parse.quote_plus(url_app)
+        qr_url = f"https://googleapis.com{url_encodee}"
+        st.image(qr_url, width=200)
 
 # 2. Barre de recherche globale
 recherche = st.text_input("Rechercher une application par mot-clé (ex: vecteur, dérivée, statistique...)", "")
@@ -45,7 +62,9 @@ if recherche:
     
     if resultats:
         for app in resultats:
-            st.markdown(f"**[{app['nom']}]({app['url']})** — Niveau : {app['niveau']} | Thème : {app['theme']}")
+            afficher_app_avec_qrcode(app["nom"], app["url"])
+            st.write(f"Niveau : {app['niveau']} | Thème : {app['theme']}")
+            st.markdown("---")
     else:
         st.warning("Aucune application ne correspond à votre recherche.")
 
@@ -63,7 +82,8 @@ else:
             with st.expander(theme):
                 for app in apps_2nde:
                     if app["theme"] == theme:
-                        st.markdown(f"[{app['nom']}]({app['url']})")
+                        afficher_app_avec_qrcode(app["nom"], app["url"])
+                        st.markdown(" ")
 
     # Affichage Premiere
     with onglet_1ere:
@@ -75,7 +95,8 @@ else:
             with st.expander(theme):
                 for app in apps_1ere:
                     if app["theme"] == theme:
-                        st.markdown(f"[{app['nom']}]({app['url']})")
+                        afficher_app_avec_qrcode(app["nom"], app["url"])
+                        st.markdown(" ")
 
     # Affichage Terminale
     with onglet_tale:
@@ -87,4 +108,5 @@ else:
             with st.expander(theme):
                 for app in apps_tale:
                     if app["theme"] == theme:
-                        st.markdown(f"[{app['nom']}]({app['url']})")
+                        afficher_app_avec_qrcode(app["nom"], app["url"])
+                        st.markdown(" ")
