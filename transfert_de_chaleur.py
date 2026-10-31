@@ -216,9 +216,6 @@ tab11 = onglets[11]
 tab12 = onglets[12]
 
 
-Voici la définition complète de la fonction afficher_atelier_tp_dynamique pour l'onglet tab10 (Travaux Publics).
-Elle sépare et adapte dynamiquement la base de données du Quiz (10 questions) et du Texte à trous (10 phrases) selon le scénario précis extrait par le bouton de tirage au sort, assurant une cohérence scientifique et métier parfaite pour chaque cas :
-python
 def afficher_atelier_tp_dynamique(scenario_actif_tp, verrouille=False):
     import random
 
