@@ -2764,19 +2764,29 @@ with tab5:
 
     fig_banc, ax_ba = plt.subplots(figsize=(8, 2.5))
     
-    # Couleur du bloc centrale proportionnelle au caractère isolant (Bleu isolant, Orange conducteur)
+    # Couleur du bloc central proportionnelle au caractère isolant (Bleu isolant, Rouge conducteur)
     couleur_bloc_mat = "#94a3b8" if lambda_choisi > 1.0 else "#bae6fd"
     if lambda_choisi > 100: couleur_bloc_mat = "#fecdd3"
+
+    # Calcul de la température intérieure réelle basée sur l'écart (Extérieur fixe à 20°C + dT)
+    t_interieur_reelle = 20 + t5_dt
 
     # Dessin du banc d'essai
     ax_ba.add_patch(patches.Rectangle((0.5, 0.4), 1.2, 1.6, color="#ef4444", alpha=0.7)) # Côté chaud
     ax_ba.add_patch(patches.Rectangle((1.7, 0.4), 1.5, 1.6, color=couleur_bloc_mat, edgecolor='#1e293b', lw=1.5)) # Le matériau
     ax_ba.add_patch(patches.Rectangle((3.2, 0.4), 1.2, 1.6, color="#3b82f6", alpha=0.7)) # Côté froid
 
-    ax_ba.text(1.1, 1.2, f"Intérieur\n{t5_dt + 20}°C", color="white", fontweight="bold", ha="center", va="center", fontsize=8)
-    ax_ba.text(2.45, 1.2, f"{t5_sim_mat.split(' (')[0]}\n$\lambda$ = {lambda_choisi:.3f}", color="#0f172a", fontweight="bold", ha="center", va="center", fontsize=8)
-    ax_ba.text(3.8, 1.2, f"Extérieur\n20°C", color="white", fontweight="bold", ha="center", va="center", fontsize=8)
+    # AFFICHAGE DYNAMIQUE DE LA TEMPÉRATURE INTÉRIEURE AJUSTÉE
+    ax_ba.text(1.1, 1.2, f"Intérieur\n{t_interieur_reelle}°C", color="white", fontweight="bold", ha="center", va="center", fontsize=8)
+    
+    # EXTRACTION PROPRE DU NOM DU MATÉRIAU ET INTÉGRATION DYNAMIQUE DE L'ÉPAISSEUR CHOISIE
+    nom_court_mat = t5_sim_mat.split(" (")[0]
+    ax_ba.text(2.45, 1.2, f"{nom_court_mat}\n{t5_epaisseur} cm\n$\lambda$ = {lambda_choisi:.3f}", color="#0f172a", fontweight="bold", ha="center", va="center", fontsize=8)
+    
+    # AFFICHAGE DU CÔTÉ EXTÉRIEUR
+    ax_ba.text(3.8, 1.2, "Extérieur\n20°C", color="white", fontweight="bold", ha="center", va="center", fontsize=8)
 
+    # Flèche de flux proportionnelle
     taille_fleche = min(12.0, max(1.5, flux_surfacique / 1000.0)) if lambda_choisi > 0.1 else 1.0
     ax_ba.arrow(4.6, 1.2, 1.5, 0, head_width=0.2, head_length=0.2, fc="#475569", ec="#475569", lw=taille_fleche)
     ax_ba.text(5.3, 1.5, "Flux traversant", color="#475569", fontsize=9, fontweight="bold", ha="center")
