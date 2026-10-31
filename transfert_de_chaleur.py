@@ -3649,9 +3649,6 @@ with tab7:
 
     st.write("---")
 
-    # =============================================================================
-    # LABORATOIRE VIRTUEL AVANCÉ : PAROI COMPOSÉE MULTICOUCHE ET BILAN SUR 24H
-    # =============================================================================
     st.write("---")
     st.subheader("Laboratoire Virtuel : Analyseur dynamique multicouche et bilan thermique sur 24h")
     st.write(
@@ -3684,7 +3681,7 @@ with tab7:
     # --- 2. CONFIGURATION DYNAMIQUE DES COUCHES ---
     st.markdown("##### Composition de la paroi (de l'Intérieur vers l'Extérieur) :")
     
-    nb_couches = st.radio("Nombre de couches composant la paroi :", [1, 2, 3], horizontal=True, key="t7_adv_nb_c")
+    nb_couches = st.radio("Nombre de couches composant la paroi :", [1, 2, 3], index=2, horizontal=True, key="t7_adv_nb_c")
     
     r_total_paroi = 0.0
     epaisseurs_visuelles = []
@@ -3700,10 +3697,10 @@ with tab7:
             mat_c = st.selectbox(
                 f"Matériau :", 
                 list(catalogue_materiaux.keys()), 
-                index=min(i * 2 + 2, len(catalogue_materiaux) - 1) if i > 0 else 6,
+                index=min(i * 2 + 2, len(catalogue_materiaux) - 1) if i > 0 else 4,
                 key=f"t7_adv_mat_{i}"
             )
-            ep_c = st.slider(f"Épaisseur (cm) :", min_value=1, max_value=40, value=10, key=f"t7_adv_ep_{i}")
+            ep_c = st.slider(f"Épaisseur (cm) :", min_value=1, max_value=40, value=20 if i < 2 else 2, key=f"t7_adv_ep_{i}")
             
             lambda_c = catalogue_materiaux[mat_c]
             e_m_c = ep_c / 100.0
@@ -3711,7 +3708,8 @@ with tab7:
             r_total_paroi += r_c
             
             epaisseurs_visuelles.append(ep_c)
-            labels_visuels.append(f"{mat_c.split(' (')[0]}\n{ep_c} cm")
+            # Résolution du bug graphique de superposition : Affichage de l'index de la couche au lieu du texte long
+            labels_visuels.append(f"Couche {i+1}\n{ep_c} cm")
 
     # Résistances superficielles d'échange normalisées (Rsi + Rse = 0.17 m².K/W réglementaire)
     r_total_global = r_total_paroi + 0.17
@@ -3746,7 +3744,7 @@ with tab7:
     for idx, ep_cm in enumerate(epaisseurs_visuelles):
         largeur_visuelle = 0.4 + (ep_cm / 40.0) * 1.2
         ax_mu.add_patch(patches.Rectangle((x_depart, 0.4), largeur_visuelle, 1.6, facecolor=couleurs_visuelles[idx], edgecolor='#0f172a', lw=1.5))
-        ax_mu.text(x_depart + (largeur_visuelle / 2), 1.2, labels_visuels[idx], color='#0f172a', fontweight='bold', ha='center', va='center', fontsize=7.5)
+        ax_mu.text(x_depart + (largeur_visuelle / 2), 1.2, labels_visuels[idx], color='#0f172a', fontweight='bold', ha='center', va='center', fontsize=8)
         x_depart += largeur_visuelle
 
     # Dessin de la zone extérieure
@@ -3773,7 +3771,7 @@ with tab7:
     with c_res3:
         st.metric(label="Résistance Thermique Totale R_tot", value=f"{r_total_global:.3f} m².K/W")
 
-    # Conteneur HTML nettoyé de tout emoji pour l'affichage final
+    # Conteneur HTML pour l'affichage final des calculs de consommation et d'équilibre thermique
     html_bilan_24h = f"""
     <div style="background-color: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 10px;">
         <p style="margin: 0; font-size: 14px; color: #1e293b;">
