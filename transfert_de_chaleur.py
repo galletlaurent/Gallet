@@ -2154,51 +2154,6 @@ with tab4:
         "la matière ou le vide, et analysez les trois mécanismes fondamentaux :"
     )
 
-    # =============================================================================
-    # 1. BANDE DESSINÉE HUMORISTIQUE : LA GRANDE ÉVASION DES CALORIES
-    # =============================================================================
-    col_gauche_texte_t4, col_droite_img_t4 = st.columns(2)
-
-    with col_gauche_texte_t4:
-        st.write(
-            "**La BD humoristique textuelle : La grande évasion des calories**"
-        )
-        
-        st.info(
-            "**Cas 1 :** Dans la poêle en cuivre, les atomes métalliques du manche reçoivent les coups "
-            "de boutoir des flammes du gaz. Ils se mettent à trépigner sur place : "
-            "« Attention les gars, ça chauffe par en bas ! Transmettez l'agitation de proche en proche "
-            "sans bouger de vos sièges, c'est la conduction ! ».\n\n"
-            
-            "**Cas 2 :** Dans la casserole d'eau, les molécules du fond deviennent légères en chauffant. "
-            "Elles montent en flèche vers la surface pendant que le liquide froid redescend : "
-            "« En route pour l'ascenseur thermique ! On transporte la matière en bandes organisées, "
-            "c'est la convection ! ».\n\n"
-            
-            "**Cas 3 :** À distance, les rayons du soleil traversent le vide spatial et viennent frapper "
-            "la peau. Aucun contact, aucun atome pour aider, mais les photons transportent le flux : "
-            "« Pas besoin de matière pour voyager ! On traverse le néant à la vitesse de la lumière, "
-            "c'est le rayonnement infrarouge ! ».\n\n"
-            
-            "**Cas 4 :** Toutes les énergies se sont dissipées dans l'environnement. Le feu s'éteint, "
-            "les flux s'arrêtent et le froid conclut la manœuvre : "
-            "« Affaire classée ! Les trois complices ont dispersé tous les joules du système, "
-            "l'équilibre des températures est scellé ! »."
-        )
-
-    with col_droite_img_t4:
-        if os.path.exists("transfert_caricature.jpg"):
-            st.image(
-                "transfert_caricature.jpg",
-                caption="Illustration humoristique des trois modes de transfert",
-                use_container_width=True,
-            )
-        else:
-            st.warning(
-                "L'image 'transfert_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
-            )
-
-    st.write("---")
 
     # =============================================================================
     # 2. COURS HISTORIQUE : LES SCIENTIFIQUES ET LES RECHERCHES
@@ -2281,6 +2236,54 @@ with tab4:
 
     st.write("---")
 
+    # =============================================================================
+    # 1. BANDE DESSINÉE HUMORISTIQUE : LA GRANDE ÉVASION DES CALORIES
+    # =============================================================================
+    col_gauche_texte_t4, col_droite_img_t4 = st.columns(2)
+
+    with col_gauche_texte_t4:
+        st.write(
+            "**La BD humoristique textuelle : La grande évasion des calories**"
+        )
+        
+        st.info(
+            "**Cas 1 :** Dans la poêle en cuivre, les atomes métalliques du manche reçoivent les coups "
+            "de boutoir des flammes du gaz. Ils se mettent à trépigner sur place : "
+            "« Attention les gars, ça chauffe par en bas ! Transmettez l'agitation de proche en proche "
+            "sans bouger de vos sièges, c'est la conduction ! ».\n\n"
+            
+            "**Cas 2 :** Dans la casserole d'eau, les molécules du fond deviennent légères en chauffant. "
+            "Elles montent en flèche vers la surface pendant que le liquide froid redescend : "
+            "« En route pour l'ascenseur thermique ! On transporte la matière en bandes organisées, "
+            "c'est la convection ! ».\n\n"
+            
+            "**Cas 3 :** À distance, les rayons du soleil traversent le vide spatial et viennent frapper "
+            "la peau. Aucun contact, aucun atome pour aider, mais les photons transportent le flux : "
+            "« Pas besoin de matière pour voyager ! On traverse le néant à la vitesse de la lumière, "
+            "c'est le rayonnement infrarouge ! ».\n\n"
+            
+            "**Cas 4 :** Toutes les énergies se sont dissipées dans l'environnement. Le feu s'éteint, "
+            "les flux s'arrêtent et le froid conclut la manœuvre : "
+            "« Affaire classée ! Les trois complices ont dispersé tous les joules du système, "
+            "l'équilibre des températures est scellé ! »."
+        )
+
+    with col_droite_img_t4:
+        if os.path.exists("transfert_caricature.jpg"):
+            st.image(
+                "transfert_caricature.jpg",
+                caption="Illustration humoristique des trois modes de transfert",
+                use_container_width=True,
+            )
+        else:
+            st.warning(
+                "L'image 'transfert_caricature.jpg' est introuvable. Placez l'illustration générée dans le répertoire de l'application."
+            )
+
+    st.write("---")
+
+
+    
     # =============================================================================
     # 3. LABORATOIRE VIRTUEL INTERACTIF : SIMULATEUR DE FLUX THERMIQUE
     # =============================================================================
