@@ -5747,7 +5747,7 @@ with tab11:
         else:
             st.caption(caption_reel)
 
-        # Ajout de 20 lignes d'espacement pour pousser les éléments suivants vers le bas
+        # Ajout d'espacement pour pousser les éléments suivants vers le bas
         for _ in range(20):
             st.write("")
         
@@ -5760,8 +5760,10 @@ with tab11:
     st.write("---")
 
     st.subheader("Laboratoire Virtuel : Simulateur de thermodynamique routière")
-    
+
     col_p1_cr, col_p2_cr = st.columns(2)
+
+    # --- SCÉNARIO 1 : FREINS ---
     if scen_cr == "Sécurité : Échauffement des freins de poids lourd":
         with col_p1_cr:
             vitesse_camion = st.slider("Vitesse initiale du poids lourd (km/h) :", min_value=30, max_value=90, value=60, key="l11_cr_p1")
@@ -5775,11 +5777,12 @@ with tab11:
             st.latex(formule_cr)
             st.info("Cette énergie immense doit être dissipée par conduction et convection pour éviter l'ébullition des freins.")
 
-        elif scen_cr == "Mécanique : Surchauffe moteur en côte":
-            with col_p1_cr:
-                pente_route = st.slider("Pente de la route subie (%) :", min_value=2, max_value=12, value=7, key="l11_cr_p1_m")
-                regime_moteur = st.slider("Régime de rotation moteur (tr/min) :", min_value=1000, max_value=2500, value=2100, step=100, key="l11_cr_p2_m")
-            
+    # --- SCÉNARIO 2 : MOTEUR ---
+    elif scen_cr == "Mécanique : Surchauffe moteur en côte":
+        with col_p1_cr:
+            pente_route = st.slider("Pente de la route subie (%) :", min_value=2, max_value=12, value=7, key="l11_cr_p1_m")
+            regime_moteur = st.slider("Régime de rotation moteur (tr/min) :", min_value=1000, max_value=2500, value=2100, step=100, key="l11_cr_p2_m")
+        
             puissance_calculee = pente_route * regime_moteur * 0.1
             temp_liquide = 80 + (puissance_calculee * 0.05)
             
@@ -5792,40 +5795,41 @@ with tab11:
             else:
                 st.success(f"Température régulée : Fluide stable à {temp_liquide:.1f} °C.")
               
-        # Le elif est maintenant parfaitement aligné avec le "if" parent de niveau supérieur, sans code bloquant au-dessus
-        elif scen_cr == "Confort : Climatisation de cabine et flux de paroi":
-            with col_p1_cr:
-                t_exterieure_soleil = st.slider("Température de la tôle au soleil (°C) :", min_value=25, max_value=60, value=45, key="l11_cr_p1_c")
-                epaisseur_isolant_cab = st.slider("Épaisseur de la garniture de cabine (e en cm) :", min_value=1, max_value=8, value=3, key="l11_cr_p2_c")
+    # --- SCÉNARIO 3 : CLIMATISATION ---
+    elif scen_cr == "Confort : Climatisation de cabine et flux de paroi":
+        with col_p1_cr:
+            t_exterieure_soleil = st.slider("Température de la tôle au soleil (°C) :", min_value=25, max_value=60, value=45, key="l11_cr_p1_c")
+            epaisseur_isolant_cab = st.slider("Épaisseur de la garniture de cabine (e en cm) :", min_value=1, max_value=8, value=3, key="l11_cr_p2_c")
+        
+            lambda_cab = 0.040
+            r_cab = (epaisseur_isolant_cab / 100.0) / lambda_cab
+            puissance_calculee = (t_exterieure_soleil - 21) / (r_cab + 0.17)
             
-                lambda_cab = 0.040
-                r_cab = (epaisseur_isolant_cab / 100.0) / lambda_cab
-                puissance_calculee = (t_exterieure_soleil - 21) / (r_cab + 0.17)
-                
-                st.metric(label="Flux thermique conducteur entrant", value=f"{puissance_calculee:.1f} W/m²")
-                formule_clim = rf"\Phi = \frac{{T_{{\text{{tôle}}}}} - T_{{\text{{consigne}}}}}}{{R}} = \frac{{{t_exterieure_soleil} - 21}}{{{r_cab + 0.17:.3f}}} = {puissance_calculee:.1f}\text{{ W/m²}}"
-                st.latex(formule_clim)
-                st.info("Le groupe frigorifique doit extraire ce flux surfacique continu pour maintenir la cabine fraîche.")
+            st.metric(label="Flux thermique conducteur entrant", value=f"{puissance_calculee:.1f} W/m²")
+            formule_clim = rf"\Phi = \frac{{T_{{\text{{tôle}}}}} - T_{{\text{{consigne}}}}}}{{R}} = \frac{{{t_exterieure_soleil} - 21}}{{{r_cab + 0.17:.3f}}} = {puissance_calculee:.1f}\text{{ W/m²}}"
+            st.latex(formule_clim)
+            st.info("Le groupe frigorifique doit extraire ce flux surfacique continu pour maintenir la cabine fraîche.")
 
-    else: # Pneumatiques
+    # --- SCÉNARIO 4 : PNEUMATIQUES ---
+    else: 
         with col_p1_cr:
             temp_initiale_pneu = st.slider("Température initiale interne de l'air (°C) :", min_value=15, max_value=90, value=50, key="l11_cr_p1_p")
             pression_froide = st.slider("Pression de gonflage initiale à 20°C (bars) :", min_value=6.0, max_value=9.0, value=8.5, step=0.1, key="l11_cr_p2_p")
         
-        # Loi de Gay-Lussac simplifiée P1/T1 = P2/T2 avec T en Kelvin
-        t1_k = 20 + 273.15
-        t2_k = temp_initiale_pneu + 273.15
-        puissance_calculee = pression_froide * (t2_k / t1_k)
-        
-        st.metric(label="Pression interne résultante à chaud", value=f"{puissance_calculee:.2f} bars")
-        formule_cr = rf"P_{\text{{chaud}}} = P_{\text{{froid}}} \cdot \frac{{T_{\text{{chaud}}}}}{{{t1_k:.1f}}} = {pression_froide} \cdot \frac{{{t2_k:.1f}}}{{{t1_k:.1f}}} = {puissance_calculee:.2f}\text{{ bars}}"
-        st.latex(formule_cr)
-        
-        if puissance_calculee > 9.8:
-            st.error("Risque d'éclatement : La dilatation thermique de l'air engendre une surpression dangereuse.")
-        else:
-            st.info("L'élévation de pression découle de l'agitation thermique moléculaire de l'air confiné.")
-
+            # Loi de Gay-Lussac simplifiée P1/T1 = P2/T2 avec T en Kelvin
+            t1_k = 20 + 273.15
+            t2_k = temp_initiale_pneu + 273.15
+            puissance_calculee = pression_froide * (t2_k / t1_k)
+            
+            st.metric(label="Pression interne résultante à chaud", value=f"{puissance_calculee:.2f} bars")
+            formule_cr = rf"P_{\text{{chaud}}} = P_{\text{{froid}}} \cdot \frac{{T_{\text{{chaud}}}}}{{{t1_k:.1f}}} = {pression_froide} \cdot \frac{{{t2_k:.1f}}}{{{t1_k:.1f}}} = {puissance_calculee:.2f}\text{{ bars}}"
+            st.latex(formule_cr)
+            
+            if puissance_calculee > 9.8:
+                st.error("Risque d'éclatement : La dilatation thermique de l'air engendre une surpression dangereuse.")
+            else:
+                st.info("L'élévation de pression découle de l'agitation thermique moléculaire de l'air confiné.")
+                
     with col_p2_cr:
         import matplotlib.pyplot as plt
         import matplotlib.patches as patches
