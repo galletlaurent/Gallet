@@ -6193,12 +6193,6 @@ with tab11:
     if "suite_verrouille_tab11_cr" not in st.session_state:
         st.session_state.suite_verrouille_tab11_cr = False
     verrou_at11_cr = st.session_state.suite_verrouille_tab11_cr
-
-    # Sécurité d'initialisation pour éviter le NameError du quiz ou scénario
-    if "scen_cr" not in locals() and "scen_cr" not in globals():
-        scen_cr = st.session_state.get("scenario_actuel_tab11", "Chauffeur routier : Camion Frigorifique")
-
-    # Cette ligne affiche vos questions et trous dédiés aux routiers (Atelier 11)
     afficher_atelier_routier_dynamique(scen_cr, verrouille=verrou_at11_cr, prefixe="at11")
 
     st.write("---")
