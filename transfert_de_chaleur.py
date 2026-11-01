@@ -5806,7 +5806,11 @@ with tab11:
             puissance_calculee = (t_exterieure_soleil - 21) / (r_cab + 0.17)
             
             st.metric(label="Flux thermique conducteur entrant", value=f"{puissance_calculee:.1f} W/m²")
-            formule_clim = rf"\Phi = \frac{{T_{{\text{{tôle}}}}} - T_{{\text{{consigne}}}}}}{{R}} = \frac{{{t_exterieure_soleil} - 21}}{{{r_cab + 0.17:.3f}}} = {puissance_calculee:.1f}\text{{ W/m²}}"
+            t_tole = r"T_{\text{tôle}}"
+            t_cons = r"T_{\text{consigne}}"
+            unite = r"\text{ W/m²}"
+
+            formule_clim = rf"\Phi = \frac{{{t_tole} - {t_cons}}}{{R}} = \frac{{{t_exterieure_soleil} - 21}}{{{r_cab + 0.17:.3f}}} = {puissance_calculee:.1f}{unite}"
             st.latex(formule_clim)
             st.info("Le groupe frigorifique doit extraire ce flux surfacique continu pour maintenir la cabine fraîche.")
 
