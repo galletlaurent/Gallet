@@ -216,7 +216,7 @@ tab11 = onglets[11]
 tab12 = onglets[12]
 
 
-def afficher_atelier_geometre_solution_finale(scenario_actif_geo, verrouille=False):
+def afficher_atelier_geometre_dynamique(scenario_actif_geo, verrouille=False):
     import random
 
     if scenario_actif_geo == "Topographie : Dilatation de ruban d'acier au soleil":
