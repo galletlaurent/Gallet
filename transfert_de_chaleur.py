@@ -6025,10 +6025,10 @@ with tab11:
 
     # Sécurité d'initialisation pour éviter le NameError du quiz ou scénario
     if "scen_cr" not in locals() and "scen_cr" not in globals():
-        scen_cr = st.session_state.get("scenario_actuel_tab11", "Scénario non défini")
+        scen_cr = st.session_state.get("scenario_actuel_tab11", "Chauffeur routier : Camion Frigorifique")
 
-    # Cette ligne affiche vos questions et trous de l'Atelier 11
-    afficher_atelier_tp_dynamique(scen_cr, verrouille=verrou_at11_cr)
+    # Cette ligne affiche vos questions et trous dédiés aux routiers (Atelier 11)
+    afficher_atelier_routier_dynamique(scen_cr, verrouille=verrou_at11_cr, prefixe="at11")
 
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 11")
@@ -6056,8 +6056,7 @@ with tab11:
         else:
             # 1. Correction du Quiz (10 pts)
             score_q11 = 0.0
-            # Changement critique : on sécurise la présence de la variable pour éviter le crash
-            ordre_quiz_11 = st.session_state.get("ordre_quiz_tab11_cr_aleatoire", [])
+            ordre_quiz_11 = st.session_state.get("ordre_quiz_at11_aleatoire", [])
             for q_item in ordre_quiz_11:
                 saisie = st.session_state.get(f"therm_at11_final_g_{q_item['id']}", "Choisir...")
                 if str(saisie).strip() == str(q_item["rep"]).strip():
@@ -6065,10 +6064,10 @@ with tab11:
 
             # 2. Correction du Texte à trous (10 pts)
             score_t11 = 0.0
-            champs_t11 = st.session_state.get("champs_therm11_cr_clean", [])
+            champs_t11 = st.session_state.get("champs_therm_at11_clean", [])
             for ligne in champs_t11:
                 enonce_t, choix_t, attendu_t, cle_t = ligne
-                saisie_t = st.session_state.get(f"{cle_t}_therm11_cr_clean", "Choisir...")
+                saisie_t = st.session_state.get(f"{cle_t}_thermat11_clean", "Choisir...")
                 if str(saisie_t).strip() == str(attendu_t).strip():
                     score_t11 += 1.0
 
@@ -6131,7 +6130,7 @@ with tab11:
                 <tbody>
         """
 
-        ordre_quiz_11 = st.session_state.get("ordre_quiz_tab11_cr_aleatoire", [])
+        ordre_quiz_11 = st.session_state.get("ordre_quiz_at11_aleatoire", [])
         for num, q_item in enumerate(ordre_quiz_11, 1):
             saisie = st.session_state.get(f"therm_at11_final_g_{q_item['id']}", "Choisir...")
             attendu = q_item["rep"]
@@ -6151,13 +6150,13 @@ with tab11:
                 <tbody>
         """
 
-        champs_t11 = st.session_state.get("champs_therm11_cr_clean", [])
+        champs_t11 = st.session_state.get("champs_therm_at11_clean", [])
         for num, ligne in enumerate(champs_t11, 1):
             enonce_texte = ligne[0]
             attendu_texte = ligne[2]
             cle_variable = ligne[-1]
 
-            saisie_texte = st.session_state.get(f"{cle_variable}_therm11_cr_clean", "Choisir...")
+            saisie_texte = st.session_state.get(f"{cle_variable}_thermat11_clean", "Choisir...")
             v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
             v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
             html_export_therm11 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
@@ -6169,7 +6168,6 @@ with tab11:
         </html>
         """
 
-        # Intégration propre du bouton de téléchargement validé juste avant
         st.download_button(
             label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 11 (.HTML)",
             data=html_export_therm11,
@@ -6177,5 +6175,4 @@ with tab11:
             mime="text/html",
             use_container_width=True,
         )
-
 
