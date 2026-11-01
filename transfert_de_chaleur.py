@@ -6618,35 +6618,7 @@ with tab12:
         st.pyplot(fig_geo)
 
     st.write("---")
-    col_q_geo, col_t_geo = st.columns(2)
-    with col_q_geo:
-        st.markdown("##### Quiz Spécifique au Scénario Géomètre (10 questions - 10 pts)")
-        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab12_geo_aleatoire, 1):
-            st.write(f"**{idx}.** {q_data['q']}")
-            st.selectbox(
-                "", 
-                options=["Choisir..."] + q_data["options"], 
-                key=f"therm_at12_final_g_{q_data['id']}", 
-                disabled=verrou_at12_geo, 
-                label_visibility="collapsed"
-            )
-
-    with col_t_geo:
-        st.markdown("##### Synthèse de l'Atelier 12 (Texte à trous - 10 cases - 10 pts)")
-        for ligne in st.session_state.champs_therm12_geo_clean:
-            enonce, choix, attendu, cle = ligne
-            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-            with c_txt: 
-                st.write(enonce)
-            with c_sel: 
-                st.selectbox(
-                    "", 
-                    choix, 
-                    key=f"{cle}_therm12_geo_clean", 
-                    disabled=verrou_at12_geo, 
-                    label_visibility="collapsed"
-                )
-
+  
     # =============================================================================
     # GESTION DU VERROUILLAGE ET APPEL DU MODULE D'ÉVALUATION DE L'ATELIER 12
     # =============================================================================
