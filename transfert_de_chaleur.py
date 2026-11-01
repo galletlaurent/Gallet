@@ -6665,7 +6665,6 @@ with tab11:
         scen_cr = st.session_state.get("scenario_actuel_tab11", "Chauffeur routier : Camion Frigorifique")
 
     # Cette ligne affiche vos questions et trous dédiés aux routiers (Atelier 11)
-    afficher_atelier_routier_dynamique(scen_cr, verrouille=verrou_at11_cr, prefixe="at11")
 
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 11")
