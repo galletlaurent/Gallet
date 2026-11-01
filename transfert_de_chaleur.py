@@ -5791,7 +5791,11 @@ with tab11:
         if temp_liquide > 100.0:
             st.error(f"Surchauffe critique : Température du fluide estimée à {temp_liquide:.1f} °C. Risque de rupture du joint de culasse.")
         else:
-            st.success(f"Température régulée : Fluide stable à {temp_liquide:.1f} °C.")    elif scen_cr == "Confort : Climatisation de cabine et flux de paroi":
+            st.success(f"Température régulée : Fluide stable à {temp_liquide:.1f} °C.")
+          
+        # Le elif est maintenant parfaitement aligné avec le "if" parent de niveau supérieur
+        elif scen_cr == "Confort : Climatisation de cabine et flux de paroi":
+            # Votre code pour la climatisation ici
         with col_p1_cr:
             t_exterieure_soleil = st.slider("Température de la tôle au soleil (°C) :", min_value=25, max_value=60, value=45, key="l11_cr_p1_c")
             epaisseur_isolant_cab = st.slider("Épaisseur de la garniture de cabine (e en cm) :", min_value=1, max_value=8, value=3, key="l11_cr_p2_c")
