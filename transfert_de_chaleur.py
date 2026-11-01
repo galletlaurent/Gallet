@@ -6648,10 +6648,21 @@ with tab12:
                 )
 
     # =============================================================================
-    # 5. VALIDATION, NOTATION SUR 20 ET EXPORTATION HTML SCELLÉE
+    # GESTION DU VERROUILLAGE ET APPEL DU MODULE D'ÉVALUATION DE L'ATELIER 12
     # =============================================================================
+    if "suite_verrouille_tab12_geo" not in st.session_state:
+        st.session_state.suite_verrouille_tab12_geo = False
+    verrou_at12_geo = st.session_state.suite_verrouille_tab12_geo
+
+    # C'est cet appel UNIQUE qui va créer les variables en session et afficher le Quiz + Trous
+    afficher_atelier_geometre_dynamique(scen_geo, verrouille=verrou_at12_geo)
+
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 12")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_stat12 = st.checkbox(
         "Je certifie avoir complété les questions de l'Atelier d'application des Géomètres.",
@@ -6670,20 +6681,30 @@ with tab12:
         elif not case_certif_stat12:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Quiz (10 pts)
+            # 1. Correction du Quiz (10 pts) - Sécurisée contre le KeyError
             score_q12 = 0.0
             if "ordre_quiz_tab12_geo_aleatoire" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_tab12_geo_aleatoire:
-                    saisie = st.session_state.get(f"therm_at12_final_g_{q_item['id']}", "Choisir...")
+                    # Correction dynamique pour correspondre exactement aux clés générées par la fonction
+                    # On cherche la clé avec la structure : therm_at12_final_g_geo_[id]_[idx]
+                    saisie = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"therm_at12_final_g_geo_{q_item['id']}_"):
+                            saisie = st.session_state[k]
+                            break
                     if str(saisie).strip() == str(q_item["rep"]).strip():
                         score_q12 += 1.0
 
-            # Texte à trous (10 pts)
+            # 2. Correction du Texte à trous (10 pts) - Sécurisée contre le KeyError
             score_t12 = 0.0
             if "champs_therm12_geo_clean" in st.session_state:
                 for ligne in st.session_state.champs_therm12_geo_clean:
                     enonce_t, choix_t, attendu_t, cle_t = ligne
-                    saisie_t = st.session_state.get(f"{cle_t}_therm12_geo_clean", "Choisir...")
+                    saisie_t = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"{cle_t}_geo_clean_"):
+                            saisie_t = st.session_state[k]
+                            break
                     if str(saisie_t).strip() == str(attendu_t).strip():
                         score_t12 += 1.0
 
