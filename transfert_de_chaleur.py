@@ -3484,7 +3484,7 @@ with tab6:
             col_t61_c1, col_t61_c2 = st.columns(2)
             with col_t61_c1:
                 if os.path.exists("eau_calorique.jpg"):
-                    st.image("eau_calorique.jpg", caption="Eau caloporteuse", use_container_width=True)
+                    st.image("eau_calorique.jpg", caption="Fluide caloporteuse", use_container_width=True)
                 else:
                     st.warning("L'image 'eau_calorique.jpg' est introuvable.")
             with col_t61_c2:
@@ -3525,7 +3525,7 @@ with tab6:
                     st.warning("L'image 'bloc_metal.jpg' est introuvable.")
             with col_t62_c2:
                 if os.path.exists("poele_cuisine.jpg"):
-                    st.image("poele_cuisine.jpg", caption="Ustensiles de cuisine", use_container_width=True)
+                    st.image("poele_cuisine.jpg", caption="Poele de chauffage", use_container_width=True)
                 else:
                     st.warning("L'image 'poele_cuisine.jpg' est introuvable.")
         with col_t62_h32:
@@ -5200,7 +5200,7 @@ with tab10:
                 "**Cas 4 : L'ouvrage pérenne.** La température est maîtrisée, le bloc durcit de manière parfaitement homogène : "
                 "« Affaire classée ! L'exothermie et la conduction ont été domptées, la structure est validée ! »"
             )
-            for _ in range(18):
+            for _ in range(19):
                 st.write("")
             texte_bd_bleu_tp = (
                 "**La BD humoristique : Le cœur brûlant du béton**\n\n"
@@ -5223,7 +5223,7 @@ with tab10:
                 "**Cas 4 : Le pont sauvé.** Les fissures sont évitées, la peau du béton reste lisse et étanche : "
                 "« Affaire classée ! Les lois de la dilatation thermique ont été contenues à temps ! »"
             )
-            for _ in range(18):
+            for _ in range(19):
                 st.write("")
             texte_bd_bleu_tp = (
                 "**La BD humoristique : La peau du béton sous tension**\n\n"
@@ -5246,7 +5246,7 @@ with tab10:
                 "**Cas 4 : La résistance acquise.** Le béton a pris sa résistance mécanique sans subir l'action du gel : "
                 "« Affaire classée ! Les barrières isolantes ont protégé les réactions chimiques du ciment ! »"
             )
-            for _ in range(28):
+            for _ in range(19):
                 st.write("")
             texte_bd_bleu_tp = (
                 "**La BD humoristique : La bataille du zéro degré**\n\n"
@@ -5269,7 +5269,7 @@ with tab10:
                 "**Cas 4 : Le massif scellé.** Les fondations maritimes ont durci correctement sous l'eau : "
                 "« Affaire classée ! L'équilibre entre le flux thermique perdu et la chimie du ciment a été trouvé ! »"
             )
-            for _ in range(18):
+            for _ in range(19):
                 st.write("")
             texte_bd_bleu_tp = (
                 "**La BD humoristique : L'océan pilleur de Joules**\n\n"
