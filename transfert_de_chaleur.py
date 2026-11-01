@@ -244,7 +244,7 @@ def afficher_atelier_routier_dynamique(scenario_actif_cr, verrouille=False, pref
             ("6. Le coefficient de conductivité thermique de la mousse est très ............. .", ["Choisir...", "faible", "élevé", "infini"], "faible", "at11_c1_t6"),
             ("7. La face interne de la paroi reste fraîche grâce à l'effet de la ............. .", ["Choisir...", "climatisation", "conduction", "chauffe"], "climatisation", "at11_c1_t7"),
             ("8. L'échange convectif de l'air sur l'autoroute dépend de la ............. du camion.", ["Choisir...", "vitesse", "couleur", "hauteur"], "vitesse", "at11_c1_t8"),
-            ("9. La chaleur surfacique s'exprime rigoureusement en ............. .", ["Choisir...", "W/m²", "W/m.K", "Joules"], "W/m²"], "at11_c1_t9"),
+            ("9. La chaleur surfacique s'exprime rigoureusement en ............. .", ["Choisir...", "W/m²", "W/m.K", "Joules"], "W/m²", "at11_c1_t9"),
             ("10. Ce type d'étude thermique correspond à un régime supposé ............. .", ["Choisir...", "stationnaire", "transitoire", "instable"], "stationnaire", "at11_c1_t10")
         ]
 
