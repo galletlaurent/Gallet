@@ -5826,7 +5826,12 @@ with tab11:
             puissance_calculee = pression_froide * (t2_k / t1_k)
             
             st.metric(label="Pression interne résultante à chaud", value=f"{puissance_calculee:.2f} bars")
-            formule_cr = rf"P_{\text{{chaud}}} = P_{\text{{froid}}} \cdot \frac{{T_{\text{{chaud}}}}}{{{t1_k:.1f}}} = {pression_froide} \cdot \frac{{{t2_k:.1f}}}{{{t1_k:.1f}}} = {puissance_calculee:.2f}\text{{ bars}}"
+            p_chaud = r"P_{\text{chaud}}"
+            p_froid = r"P_{\text{froid}}"
+            t_chaud = r"T_{\text{chaud}}"
+            unite = r"\text{ bars}"
+
+            formule_cr = rf"{p_chaud} = {p_froid} \cdot \frac{{{t_chaud}}}{{{t1_k:.1f}}} = {pression_froide} \cdot \frac{{{t2_k:.1f}}}{{{t1_k:.1f}}} = {puissance_calculee:.2f}{unite}"
             st.latex(formule_cr)
             
             if puissance_calculee > 9.8:
