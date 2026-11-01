@@ -233,7 +233,7 @@ def afficher_atelier_douze_dynamique(scenario_actif_at12, verrouille=False, pref
             {"id": "at12_c1_e7", "q": "Quel accessoire doit être parfaitement verticalisé au-dessus du point grâce à une nacelle ou une canne plumb ?", "options": ["Le prisme porte-voyant", "Le trépied de la station", "Le plomb optique"], "rep": "Le prisme porte-voyant"},
             {"id": "at12_c1_e8", "q": "La correction liée à la courbure de la Terre et à la déviation des rayons lumineux s'appelle la correction de...", "options": ["Niveau et réfraction", "Collimation", "Tourillonnement"], "rep": "Niveau et réfraction"},
             {"id": "at12_c1_e9", "q": "Pour le calcul des coordonnées planométriques, la projection officielle en France métropolitaine est le...", "options": ["Lambert-93", "Mercator", "UTM Zone 32"], "rep": "Lambert-93"},
-            {"id": "at12_c1_e10", "q": "L'action de caler l'axe principal du tachéomètre à la verticale à l'aide de la compensation électronique s'appelle...", "options": ["La mise en station", "Le calage de l'embase", "Le pivotement'], "rep": "La mise en station"}
+            {"id": "at12_c1_e10", "q": "L'action de caler l'axe principal du tachéomètre à la verticale à l'aide de la compensation électronique s'appelle...", "options": ["La mise en station", "Le calage de l'embase", "Le pivotement"], "rep": "La mise en station"}
         ]
         trous_sources_at12 = [
             ("1. Le géomètre réalise la mise en station du tachéomètre à l'aide du plomb ............. .", ["Choisir...", "optique", "mécanique", "sphérique"], "optique", "at12_c1_t1"),
