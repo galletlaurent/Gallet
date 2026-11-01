@@ -5775,39 +5775,37 @@ with tab11:
         st.latex(formule_cr)
         st.info("Cette énergie immense doit être dissipée par conduction et convection pour éviter l'ébullition des freins.")
 
-    elif scen_cr == "Mécanique : Surchauffe moteur en côte":
-        with col_p1_cr:
-            pente_route = st.slider("Pente de la route subie (%) :", min_value=2, max_value=12, value=7, key="l11_cr_p1_m")
-            regime_moteur = st.slider("Régime de rotation moteur (tr/min) :", min_value=1000, max_value=2500, value=2100, step=100, key="l11_cr_p2_m")
-        
-        puissance_calculee = pente_route * regime_moteur * 0.1
-        temp_liquide = 80 + (puissance_calculee * 0.05)
-        
-        st.metric(label="Flux thermique généré à évacuer", value=f"{puissance_calculee:.1f} Watts")
-        # Isolement de la formule sur une seule ligne physique continue pour neutraliser l'erreur d'interprétation
-        formule_moteur = rf"\Phi_{{\text{{moteur}}}} = k \cdot \text{{Pente}} \cdot N = {puissance_calculee:.1f}\text{{ W}}"
-        st.latex(formule_moteur)
-        
-        if temp_liquide > 100.0:
-            st.error(f"Surchauffe critique : Température du fluide estimée à {temp_liquide:.1f} °C. Risque de rupture du joint de culasse.")
-        else:
-            st.success(f"Température régulée : Fluide stable à {temp_liquide:.1f} °C.")
-          
-        # Le elif est maintenant parfaitement aligné avec le "if" parent de niveau supérieur
+        elif scen_cr == "Mécanique : Surchauffe moteur en côte":
+            with col_p1_cr:
+                pente_route = st.slider("Pente de la route subie (%) :", min_value=2, max_value=12, value=7, key="l11_cr_p1_m")
+                regime_moteur = st.slider("Régime de rotation moteur (tr/min) :", min_value=1000, max_value=2500, value=2100, step=100, key="l11_cr_p2_m")
+            
+            puissance_calculee = pente_route * regime_moteur * 0.1
+            temp_liquide = 80 + (puissance_calculee * 0.05)
+            
+            st.metric(label="Flux thermique généré à évacuer", value=f"{puissance_calculee:.1f} Watts")
+            formule_moteur = rf"\Phi_{{\text{{moteur}}}} = k \cdot \text{{Pente}} \cdot N = {puissance_calculee:.1f}\text{{ W}}"
+            st.latex(formule_moteur)
+            
+            if temp_liquide > 100.0:
+                st.error(f"Surchauffe critique : Température du fluide estimée à {temp_liquide:.1f} °C. Risque de rupture du joint de culasse.")
+            else:
+                st.success(f"Température régulée : Fluide stable à {temp_liquide:.1f} °C.")
+              
+        # Le elif est maintenant parfaitement aligné avec le "if" parent de niveau supérieur, sans code bloquant au-dessus
         elif scen_cr == "Confort : Climatisation de cabine et flux de paroi":
-            # Votre code pour la climatisation ici
-        with col_p1_cr:
-            t_exterieure_soleil = st.slider("Température de la tôle au soleil (°C) :", min_value=25, max_value=60, value=45, key="l11_cr_p1_c")
-            epaisseur_isolant_cab = st.slider("Épaisseur de la garniture de cabine (e en cm) :", min_value=1, max_value=8, value=3, key="l11_cr_p2_c")
-        
-        lambda_cab = 0.040
-        r_cab = (epaisseur_isolant_cab / 100.0) / lambda_cab
-        puissance_calculee = (t_exterieure_soleil - 21) / (r_cab + 0.17)
-        
-        st.metric(label="Flux thermique conducteur entrant", value=f"{puissance_calculee:.1f} W/m²")
-        formule_cr = rf"\Phi = \frac{{T_{\text{{tôle}}} - T_{\text{{consigne}}}}}{{R}} = \frac{{{t_exterieure_soleil} - 21}}{{{r_cab + 0.17:.3f}}} = {puissance_calculee:.1f}\text{{ W/m²}}"
-        st.latex(formule_cr)
-        st.info("Le groupe frigorifique doit extraire ce flux surfacique continu pour maintenir la cabine fraîche.")
+            with col_p1_cr:
+                t_exterieure_soleil = st.slider("Température de la tôle au soleil (°C) :", min_value=25, max_value=60, value=45, key="l11_cr_p1_c")
+                epaisseur_isolant_cab = st.slider("Épaisseur de la garniture de cabine (e en cm) :", min_value=1, max_value=8, value=3, key="l11_cr_p2_c")
+            
+            lambda_cab = 0.040
+            r_cab = (epaisseur_isolant_cab / 100.0) / lambda_cab
+            puissance_calculee = (t_exterieure_soleil - 21) / (r_cab + 0.17)
+            
+            st.metric(label="Flux thermique conducteur entrant", value=f"{puissance_calculee:.1f} W/m²")
+            formule_clim = rf"\Phi = \frac{{T_{{\text{{tôle}}}}} - T_{{\text{{consigne}}}}}}{{R}} = \frac{{{t_exterieure_soleil} - 21}}{{{r_cab + 0.17:.3f}}} = {puissance_calculee:.1f}\text{{ W/m²}}"
+            st.latex(formule_clim)
+            st.info("Le groupe frigorifique doit extraire ce flux surfacique continu pour maintenir la cabine fraîche.")
 
     else: # Pneumatiques
         with col_p1_cr:
