@@ -6719,8 +6719,6 @@ with tab11:
 
             # 3. Sauvegarde définitive dans la session et rafraîchissement
             st.session_state.score_suite11_cr_p1 = round(float(score_q11), 1)
-            st.session_state.score_suite11_cr_p2 = round(floa
-
             st.session_state.score_suite11_cr_p2 = round(float(score_t11), 1)
             st.session_state.score_final_suite11_cr = round(float(score_q11 + score_t11), 1)
             st.session_state.suite_verrouille_tab11_cr = True
