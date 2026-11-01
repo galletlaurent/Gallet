@@ -309,18 +309,6 @@ def afficher_atelier_routier_dynamique(scenario_actif_cr, verrouille=False, pref
     # CAS 4 : ROUTIER - CITERNE ALUMINIUM
     # =============================================================================
     elif scenario_actif_cr == "Chauffeur routier : Citerne Aluminium":
-        questions_sources_cr = [
-            {"id": "cr_c4_e1", "q": "Une surface en aluminium poli possède...", "options": ["Une faible émissivité", "Une forte émissivité", "Une résistance thermique infinie"], "rep": "Une faible émissivité"},
-            {"id": "cr_c4_e2", "q": "Si la vitesse du vent augmente autour de la citerne, quel coefficient augmente ?", "options": ["Le coefficient de convection h", "La conductivité lambda", "L'émissivité de surface"], "rep": "Le coefficient de convection h"},
-            {"id": "cr_c4_e3", "q": "Pourquoi l'aluminium brillant s'échauffe-t-il moins au soleil que l'acier noir ?", "options": ["Il réfléchit la majorité du rayonnement", "Il absorbe toutes les longueurs d'ondes", "Il ne possède aucune conductivité"], "rep": "Il réfléchit la majorité du rayonnement"},
-            {"id": "cr_c4_e4", "q": "Le pouvoir de réflexion d'une surface métallique brillante s'appelle...", "options": ["La réflectivité (ou albedo)", "L'absorptivité", "La transmissivité"], "rep": "La réflectivité (ou albedo)"},
-            {"id": "cr_c4_e5", "q": "Une faible émissivité implique que le corps émet très peu de rayonnement...", "options": ["Infrarouge thermique", "Ultraviolet", "Visible"], "rep": "Infrarouge thermique"},
-            {"id": "cr_c4_e6", "q": "La conductivité thermique de l'aluminium pur comparée à celle de l'acier est...", "options": ["Nettement plus élevée", "Beaucoup plus faible", "Strictement équivalente"], "rep": "Nettement plus élevée"},
-            {"id": "cr_c4_e7", "q": "Le flux thermique net absorbé par la tôle d'aluminium brillante est...", "options": ["Fortement réduit", "Maximal", "Strictement nul"], "rep": "Fortement réduit"},
-            {"id": "cr_c4_e8", "q": "Le transfert thermique de l'aluminium vers l'air interne se fait par convection...", "options": ["Superficielle interne", "Conductive solide", "Rayonnante par le vide"], "rep": "Superficielle interne"},
-            {"id": "cr_c4_e9", "q": "L'isolation complémentaire reste nécessaire car l'aluminium seul n'a pas de...", "options": ["Résistance d'épaisseur", "Conductivité", "Masse volumique"], "rep": "Résistance d'épaisseur"},
-            {"id": "cr_c4_e10", "q": "La tôle au soleil reste moins chaude que l'acier noir grâce à...", "options": ["Sa faible absorptivité solaire", "Sa couleur sombre", "Sa forte résistance interne"], "rep": "Sa faible absorptivité solaire"}
-        ]
         trous_sources_cr = [
             ("1. L'aluminium poli présente une très ............. émissivité thermique.", ["Choisir...", "faible", "forte", "parfaite"], "faible", "at11_c4_t1"),
             ("2. Sa surface brillante ............. une grande partie du rayonnement solaire.", ["Choisir...", "réfléchit", "absorbe", "transmet"], "réfléchit", "at11_c4_t2"),
@@ -333,7 +321,16 @@ def afficher_atelier_routier_dynamique(scenario_actif_cr, verrouille=False, pref
             ("9. La constante de Stefan intervient dans le calcul du flux de ............. .", ["Choisir...", "rayonnement", "convection", "conduction"], "rayonnement", "at11_c4_t9"),
             ("10. Un métal poli possède un coefficient d'absorption solaire très ............. .", ["Choisir...", "bas", "élevé", "infini"], "bas", "at11_c4_t10")
         ]
+        
+    # Sécurité d'initialisation si la chaîne de caractères transmise comporte une variante d'écriture
+    else:
+        # On charge par défaut le premier cas pour éviter que le script ne lève un crash d'exécution
+        return afficher_atelier_routier_dynamique("Chauffeur routier : Camion Frigorifique", verrouille, prefixe)
 
+    # =============================================================================
+    # RENDU DE L'INTERFACE GRAPHIQUE STREAMLIT (BOUCLES FINALES)
+    # =============================================================================
+    import streamlit as st
     cle_ordre_quiz = f"ordre_quiz_{prefixe}_aleatoire"
     if cle_ordre_quiz not in st.session_state:
         random.shuffle(questions_sources_cr)
