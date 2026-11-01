@@ -6565,21 +6565,19 @@ with tab11:
     st.subheader("Laboratoire Virtuel : Simulateur de thermodynamique routière")
 
     col_p1_cr, col_p2_cr = st.columns(2)
-
-    # --- SCÉNARIO 1 : FREINS ---
     if scen_cr == "Sécurité : Échauffement des freins de poids lourd":
         with col_p1_cr:
-            vitesse_camion = st.slider("Vitesse initiale du poids lourd (km/h) :", min_value=30, max_value=90, value=60, key="l11_cr_p1")
-            masse_camion = st.slider("Masse totale en charge du véhicule (tonnes) :", min_value=10, max_value=44, value=40, key="l11_cr_p2")
+            # Clés renommées de manière unique pour interdire tout conflit d'élément double
+            vitesse_camion = st.slider("Vitesse initiale du poids lourd (km/h) :", min_value=30, max_value=90, value=60, key="l11_cr_p1_freins")
+            masse_camion = st.slider("Masse totale en charge du véhicule (tonnes) :", min_value=10, max_value=44, value=40, key="l11_cr_p2_freins")
         
             v_ms_cr = vitesse_camion / 3.6
             puissance_calculee = 0.5 * (masse_camion * 1000.0) * (v_ms_cr ** 2) / 1000.0
-            
+        
             st.metric(label="Énergie cinétique totale convertie en chaleur", value=f"{puissance_calculee:,.0f} kJ")
             formule_cr = rf"E_c = \frac{{1}}{{2}} \cdot m \cdot v^2 = \frac{{1}}{{2}} \cdot ({masse_camion} \times 1000) \cdot ({v_ms_cr:.2f})^2 = {puissance_calculee:,.0f}\text{{ kJ}}"
             st.latex(formule_cr)
             st.info("Cette énergie immense doit être dissipée par conduction et convection pour éviter l'ébullition des freins.")
-
     # --- SCÉNARIO 2 : MOTEUR ---
     elif scen_cr == "Mécanique : Surchauffe moteur en côte":
         with col_p1_cr:
