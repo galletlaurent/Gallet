@@ -6361,7 +6361,7 @@ with tab11:
 
     col_tirage_cr, col_statut_cr = st.columns([0.4, 0.6], vertical_alignment="center")
     with col_tirage_cr:
-        if st.button("TIRER UN EXERCICE DE CONDUITE AU HASARD", key="btn_tirage_hasard_t11", use_container_width=True):
+        if st.button("TIRER UN EXERCICE DE CONDUITE AU HASARD", key="btn_tirage_hasard_t11_officiel", use_container_width=True):
             liste_scenarios_cr = [
                 "Sécurité : Échauffement des freins de poids lourd",
                 "Mécanique : Surchauffe moteur en côte",
@@ -6373,7 +6373,7 @@ with tab11:
             possibles_cr = [s for s in liste_scenarios_cr if s != actuel_cr]
             st.session_state.scenario_conduite_choisi = random.choice(possibles_cr)
             
-            # Réinitialisation des ordres de quiz pour forcer le recalcul lié au nouveau scénario
+            # Réinitialisation des ordres de quiz pour forcer le recalcul
             if "ordre_quiz_tab11_cr_aleatoire" in st.session_state:
                 del st.session_state.ordre_quiz_tab11_cr_aleatoire
             if "champs_therm11_cr_clean" in st.session_state:
