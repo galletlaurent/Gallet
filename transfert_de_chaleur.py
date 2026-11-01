@@ -7057,14 +7057,14 @@ with tab12:
         tassement_micro = (temps_exposition * flux_solaire_w) / 60000.0
         
         st.metric(label="Tassement différentiel estimé de la pointe", value=f"{tassement_micro:.2f} mm")
-        formule_geo = rf"S_{\text{{tassement}}} = k \cdot \Phi_{\text{{solaire}}} \cdot t = {tassement_micro:.2f}\text{{ mm}}"
-        st.latex(formule_geo)
+        # Isolement de la formule sur une seule ligne physique propre pour neutraliser le bug d'interprétation de Python
+        formule_tassement = rf"S_{{\text{{tassement}}}} = k \cdot \Phi_{{\text{{solaire}}}} \cdot t = {tassement_micro:.2f}\text{{ mm}}"
+        st.latex(formule_tassement)
         
         if tassement_micro > 0.5:
             st.error("Défaut d'alignement : Le tassement rompt la verticalité de l'axe de la station totale.")
         else:
             st.success("Stabilité conforme : L'inclinaison reste dans les tolérances compensées par l'appareil.")
-
     else: # Étalonnage de mires invar
         with col_p1_geo:
             temp_vehicule = st.slider("Température de stockage dans le véhicule (°C) :", min_value=20, max_value=50, value=45, key="l12_geo_p1_m")
