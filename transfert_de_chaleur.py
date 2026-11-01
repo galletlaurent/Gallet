@@ -214,155 +214,134 @@ tab9 = onglets[9]
 tab10 = onglets[10]
 tab11 = onglets[11] 
 tab12 = onglets[12]
+    def afficher_atelier_geometre_solution_finale(scenario_actif_geo, verrouille=False):
+        import random
 
-def afficher_atelier_geometre_dynamique(scenario_actif_geo, verrouille=False):
-    import random
-    import streamlit as st
-
-    # =============================================================================
-    # CAS 1 : GÉOMÈTRE - DILATATION DE RUBAN D'ACIER AU SOLEIL
-    # =============================================================================
-    if scenario_actif_geo == "Topographie : Dilatation de ruban d'acier au soleil":
-        q_geo_source = [
-            {"id": "geo9_e1", "q": "Quel phénomène physique provoque l'allongement d'un ruban d'arpentage lorsqu'il chauffe ?", "options": ["La dilatation thermique linéaire", "La conduction fluide", "La transition de phase latente"], "rep": "La dilatation thermique linéaire"},
-            {"id": "geo9_e2", "q": "À quelle température réglementaire de référence sont étalonnés les rubans de topographie ?", "options": ["20 °C", "0 °C", "100 °C"], "rep": "20 °C"},
-            {"id": "geo9_e3", "q": "Quel alliage métallique stable possède un coefficient de dilatation presque nul ?", "options": ["L'Invar (Fer-Nickel)", "Le laiton jaune", "L'acier à haute limite"], "rep": "L'Invar (Fer-Nickel)"},
-            {"id": "geo9_e4", "q": "Comment le soleil transmet-il principalement son énergie thermique au ruban posé au sol ?", "options": ["Par rayonnement électromagnétique", "Par conduction gazeuse", "Par convection forcée"], "rep": "Par rayonnement électromagnétique"},
-            {"id": "geo9_e5", "q": "Le vent soufflant sur le terrain refroidit le ruban en augmentant le transfert par :", "options": ["Convection forcée", "Conduction pure", "Chaleur latente"], "rep": "Convection forcée"},
-            {"id": "geo9_e6", "q": "Quelle est l'unité du coefficient de dilatation thermique linéaire alpha ?", "options": ["°C⁻¹ (ou K⁻¹)", "Joule/kg", "Watt/m²"], "rep": "°C⁻¹ (ou K⁻¹)"},
-            {"id": "geo9_e7", "q": "Si un ruban s'échauffe sur le terrain, sa longueur réelle devient :", "options": ["Plus grande que sa longueur nominale", "Plus petite que sa longueur nominale", "Strictement identique"], "rep": "Plus grande que sa longueur nominale"},
-            {"id": "geo9_e8", "q": "Une erreur millimétrique non corrigée liée à la météo lors d'un arpentage est une erreur :", "options": ["Systématique", "Aléatoire", "Accidentelle"], "rep": "Systématique"},
-            {"id": "geo9_e9", "q": "La quantité d'énergie absorbée par le ruban d'acier dépend de son coefficient :", "options": ["L'absorptivité ou émissivité", "La conductivité lambda", "La chaleur massique"], "rep": "L'absorptivité ou émissivité"},
-            {"id": "geo9_e10", "q": "Pour s'affranchir complètement de la dilatation du ruban, le topographe moderne utilise :", "options": ["Un tachéomètre à mesure électronique de distance (EDM)", "Une chaîne d'arpenteur en fonte", "Un odomètre mécanique"], "rep": "Un tachéomètre à mesure électronique de distance (EDM)"}
-        ]
-        t_geo_source = [
-            ("1. La hausse de température engendre la .......... thermique linéaire de l'acier.", ["Choisir...", "dilatation", "contraction"], "dilatation", "therm12_geo1"),
-            ("2. Les rubans de précision sont étalonnés en usine à la température de .......... °C.", ["Choisir...", "20", "0"], "20", "therm12_geo2"),
-            ("3. Le soleil transmet sa chaleur au ruban topographique par .......... .", ["Choisir...", "rayonnement", "conduction"], "rayonnement", "therm12_geo3"),
-            ("4. L'alliage de référence à dilatation quasi nulle est l'.......... .", ["Choisir...", "Invar", "Acier"], "Invar", "therm12_geo4"),
-            ("5. L'action refroidissante du vent correspond à un flux de .......... forcée.", ["Choisir...", "convection", "conduction"], "convection", "therm12_geo5"),
-            ("6. L'allongement du ruban crée une erreur de mesure brute .......... .", ["Choisir...", "systématique", "accidentelle"], "systématique", "therm12_geo6"),
-            ("7. La chaleur absorbée fait augmenter la température .......... du métal.", ["Choisir...", "sensible", "latente"], "sensible", "therm12_geo7"),
-            ("8. Le coefficient de dilatation linéaire s'exprime en Kelvin puissance .......... .", ["Choisir...", "-1", "2"], "-1", "therm12_geo8"),
-            ("9. Si le ruban est plus long que prévu, la distance lue est .......... .", ["Choisir...", "faussée", "exacte"], "faussée", "therm12_geo9"),
-            ("10. Les ondes des stations totales s'affranchissent de la dilatation du .......... .", ["Choisir...", "ruban", "prisme"], "ruban", "therm12_geo10")
-        ]
-
-    # =============================================================================
-    # CAS 2 : GÉOMÈTRE - MESURE LASER ET RÉFRACTION ATMOSPHÉRIQUE
-    # =============================================================================
-    elif scenario_actif_geo == "Géomatique : Mesure laser et réfraction atmosphérique":
-        q_geo_source = [
-            {"id": "geo9_l1", "q": "Quel effet le gradient thermique vertical de l'air a-t-il sur le faisceau laser de l'EDM ?", "options": ["Il courbe sa trajectoire par réfraction", "Il augmente sa fréquence optique", "Il annule sa puissance lumineuse"], "rep": "Il courbe sa trajectoire par réfraction"},
-            {"id": "geo9_l2", "q": "Quelle grandeur physique de l'atmosphère modifie la vitesse de propagation du faisceau laser ?", "options": ["La densité optique de l'air liée à sa température", "La conductivité thermique du sol", "L'émissivité du prisme réflecteur"], "rep": "La densité optique de l'air liée à sa température"},
-            {"id": "geo9_l3", "q": "Pour corriger l'erreur de réfraction, le capteur de la station mesure la pression en :", "options": ["Hectopascals (hPa) ou millibars", "Watts", "Newtons"], "rep": "Hectopascals (hPa) ou millibars"},
-            {"id": "geo9_l4", "q": "Le flux thermique ascendant qui s'échappe du bitume chaud à la mi-journée relève de la :", "options": ["Convection thermique naturelle", "Conduction solide pure", "Transition latente"], "rep": "Convection thermique naturelle"},
-            {"id": "geo9_l5", "q": "La courbure du rayon lumineux dans une atmosphère thermiquement instable est appelée :", "options": ["La réfraction atmosphérique", "La réflexion totale", "La diffraction d'interface"], "rep": "La réfraction atmosphérique"},
-            {"id": "geo9_l6", "q": "Quelle formule de correction applique-t-on couramment dans le logiciel de la station (en ppm) ?", "options": ["La formule d'indice de Barrel et Sears", "La loi de Fourier", "La constante de Stefan-Boltzmann"], "rep": "La formule d'indice de Barrel et Sears"},
-            {"id": "geo9_l7", "q": "Si l'air traversé devient plus chaud et moins dense, la vitesse de la lumière laser :", "options": ["Augmente infimement", "Diminue fortement", "Reste strictement inchangée"], "rep": "Augmente infimement"},
-            {"id": "geo9_l8", "q": "L'erreur sur la distance mesurée induite par cette variation de célérité est une erreur :", "options": ["Systématique dépendante du climat", "Aléatoire accidentelle", "Strictement nulle"], "rep": "Systématique dépendante du climat"},
-            {"id": "geo9_l9", "q": "À quelle température standard de l'air l'indice de réfraction est-il calé sur 0 ppm ?", "options": ["15 °C", "0 °C", "25 °C"], "rep": "15 °C"},
-            {"id": "geo9_l10", "q": "Les turbulences visuelles observées au-dessus du sol surchauffé traduisent des micro-variations de :", "options": ["Flux de masse et de température de l'air", "Pression hydrostatique", "Résistance électrique"], "rep": "Flux de masse et de température de l'air"}
-        ]
-        t_geo_source = [
-            ("1. Le goudron surchauffé modifie l'indice de .......... de l'air de surface.", ["Choisir...", "réfraction", "conduction", "fusion"], "réfraction", "therm12_geo1"),
-            ("2. L'air chaud ascendant modifie la vitesse du faisceau .......... de visée.", ["Choisir...", "laser", "optique", "sonore"], "laser", "therm12_geo2"),
-            ("3. La pression atmosphérique requise pour recaler l'EDM s'exprime en .......... .", ["Choisir...", "Hectopascals", "Watts", "Joules"], "Hectopascals", "therm12_geo3"),
-            ("4. Le flux thermique montant du bitume chaud crée un régime de .......... .", ["Choisir...", "convection", "conduction", "rayonnement"], "convection", "therm12_geo4"),
-            ("5. La déviation du signal optique fausse le calcul du temps de .......... .", ["Choisir...", "vol", "pose", "prise"], "vol", "therm12_geo5"),
-            ("6. Entrer les données climatiques permet d'appliquer la correction en .......... .", ["Choisir...", "ppm", "mètres", "degrés"], "ppm", "therm12_geo6"),
-            ("7. La température de référence atmosphérique est fixée par convention à .......... °C.", ["Choisir...", "15", "20", "0"], "15", "therm12_geo7"),
-            ("8. L'instabilité optique est maximale lors des journées à fort .......... solaire.", ["Choisir...", "rayonnement", "gel", "vent"], "rayonnement", "therm12_geo8"),
-            ("9. La trajectoire rectiligne du rayon se retrouve .......... par le gradient d'air.", ["Choisir...", "courbée", "accélérée", "stoppée"], "courbée", "therm12_geo9"),
-            ("10. Ce type d'erreur environnementale doit être corrigé lors des levés de haute .......... .", ["Choisir...", "précision", "vitesse", "densité"], "précision", "therm12_geo10")
-        ]
-
-    # =============================================================================
-    # CAS 3 : GÉOMÈTRE - STABILISATION DE TRÉPIED SUR SOL GELÉ
-    # =============================================================================
-    elif scenario_actif_geo == "Implantation : Stabilisation de trépied sur sol gelé":
-        q_geo_source = [
-            {"id": "geo9_t1", "q": "La transition de phase subie par la glace qui fond sous le trépied s'appelle la :", "options": ["Fusion (absorption de chaleur latente)", "Solidification", "Vaporisation"], "rep": "Fusion (absorption de chaleur latente)"},
-            {"id": "geo9_t1", "q": "La transition de phase subie par la glace qui fond sous le trépied s'appelle la :", "options": ["Fusion (absorption de chaleur latente)", "Solidification", "Vaporisation"], "rep": "Fusion (absorption de chaleur latente)"},
-            {"id": "geo9_t2", "q": "Le transfert thermique descendant à travers les jambes métalliques du trépied est de la :", "options": ["Conduction solide", "Convection naturelle", "Sublimation"], "rep": "Conduction solide"},
-            {"id": "geo9_t3", "q": "Le désalignement de la bulle électronique du tachéomètre découle d'un tassement :", "options": ["Différentiel causé par la liquéfaction locale", "Uniforme structurel", "Magnétique"], "rep": "Tassement différentiel causé par la liquéfaction locale"},
-            {"id": "geo9_t4", "q": "Pourquoi la jambe en aluminium noir transmet-elle plus de calories qu'une jambe en bois ?", "options": ["Car sa conductivité thermique lambda est nettement plus élevée", "Car elle est plus lourde", "Car elle isole le sol"], "rep": "Car sa conductivité thermique lambda est nettement plus élevée"},
-            {"id": "geo9_t5", "q": "Quelle quantité d'énergie absorbe la glace au sol pendant son changement d'état à 0°C ?", "options": ["Sa chaleur latente de fusion (334 kJ/kg)", "Sa chaleur sensible unitaire", "Zéro calorie"], "rep": "Sa chaleur latente de fusion (334 kJ/kg)"},
-            {"id": "geo9_t6", "q": "L'alarme interne de la station qui détecte la perte de verticalité est :", "options": ["Le compensateur électronique d'axe", "Le prisme optique", "Le plomb optique"], "rep": "Le compensateur électronique d'axe"},
-            {"id": "geo9_t7", "q": "Quel flux initial déclenche l'échauffement de la structure métallique noire ?", "options": ["Le rayonnement solaire direct", "La convection du vent", "La conduction du trépied"], "rep": "Le rayonnement solaire direct"},
-            {"id": "geo9_t8", "q": "Pour empêcher ce phénomène de dérive thermique sur sol gelé, l'expert recommande :", "options": ["D'utiliser un trépied en bois ou en fibre de verre peu conducteur", "De peindre le trépied en noir brillant", "D'arroser le sol d'eau chaude"], "rep": "D'utiliser un trépied en bois ou en fibre de verre peu conducteur"},
-            {"id": "geo9_t9", "q": "La perte de nivellement de l'appareil invalide la précision de la mesure :", "options": ["Des angles horizontaux et verticaux (implantation faussée)", "Le poids de la station", "La couleur de la mire"], "rep": "Des angles horizontaux et verticaux (implantation faussée)"},
-            {"id": "geo9_t10", "q": "Un sol gelé qui se liquéfie localement perd quelle caractéristique mécanique ?", "options": ["Sa capacité de portance ou de résistance mécanique", "Sa couleur d'origine", "Sa masse volumique"], "rep": "Sa capacité de portance ou de résistance mécanique"}
-        ]
-        t_geo_source = [
-            ("1. La métamorphose de la glace en eau sous la pointe est une .......... latente de fusion.", ["Choisir...", "transition", "conduction", "friction"], "transition", "therm12_geo1"),
-            ("2. Les calories descendent le long des pieds métalliques par .......... .", ["Choisir...", "conduction", "convection", "sublimation"], "conduction", "therm12_geo3"),
-            ("3. Un tassement .......... d'un seul pied rompt la verticalité de l'axe unitaire.", ["Choisir...", "différentiel", "uniforme", "statique"], "différentiel", "therm12_geo5"),
-            ("4. L'élévation de température découle du .......... solaire absorbé par le métal.", ["Choisir...", "rayonnement", "flux", "vent"], "rayonnement", "therm12_geo4"),
-            ("5. La perte de calage d'axe est signalée par le .......... électronique.", ["Choisir...", "compensateur", "laser", "prisme"], "compensateur", "therm12_geo5"),
-            ("6. Le bois présente un lambda plus .......... que l'aluminium face au flux.", ["Choisir...", "faible", "élevé", "égal"], "faible", "therm12_geo6"),
-            ("7. La liquéfaction locale détruit l'ancrage de la .......... du trépied au sol.", ["Choisir...", "pointe", "vis", "bulle"], "pointe", "therm12_geo7"),
-            ("8. L'apport thermique s'opère à la température fixe de .......... °C au niveau de la glace.", ["Choisir...", "0", "20", "100"], "0", "therm12_geo8"),
-            ("9. Ce glissement imperceptible fausse l'.......... d'axes sur le chantier.", ["Choisir...", "implantation", "étalonnage", "calcul"], "implantation", "therm12_geo9"),
-            ("10. Protéger l'embase du soleil maintient le sol dans un état .......... stable.", ["Choisir...", "gelé", "liquide", "chaud"], "gelé", "therm12_geo10")
-        ]
-    # =============================================================================
-    # CAS 4 : GÉOMÈTRE - ÉTALONNAGE DE MIRES INVAR ET FLUX THERMIQUE
-    # =============================================================================
+        if scenario_actif_geo == "Topographie : Dilatation de ruban d'acier au soleil":
+            q_geo_source = [
+                {"id": "geo9_e1", "q": "Quel phénomène physique provoque l'allongement d'un ruban d'arpentage lorsqu'il chauffe ?", "options": ["La dilatation thermique linéaire", "La conduction fluide", "La transition de phase latente"], "rep": "La dilatation thermique linéaire"},
+                {"id": "geo9_e2", "q": "À quelle température réglementaire de référence sont étalonnés les rubans de topographie ?", "options": ["20 °C", "0 °C", "100 °C"], "rep": "20 °C"},
+                {"id": "geo9_e3", "q": "Quel alliage métallique stable possède un coefficient de dilatation presque nul ?", "options": ["L'Invar (Fer-Nickel)", "Le laiton jaune", "L'acier à haute limite"], "rep": "L'Invar (Fer-Nickel)"},
+                {"id": "geo9_e4", "q": "Comment le soleil transmet-il principalement son énergie thermique au ruban posé au sol ?", "options": ["Par rayonnement électromagnétique", "Par conduction gazeuse", "Par convection forcée"], "rep": "Par rayonnement électromagnétique"},
+                {"id": "geo9_e5", "q": "Le vent soufflant sur le terrain refroidit le ruban en augmentant le transfert par :", "options": ["Convection forcée", "Conduction pure", "Chaleur latente"], "rep": "Convection forcée"},
+                {"id": "geo9_e6", "q": "Quelle est l'unité du coefficient de dilatation thermique linéaire alpha ?", "options": ["°C⁻¹ (ou K⁻¹)", "Joule/kg", "Watt/m²"], "rep": "°C⁻¹ (ou K⁻¹)"},
+                {"id": "geo9_e7", "q": "Si un ruban s'échauffe sur le terrain, sa longueur réelle devient :", "options": ["Plus grande que sa longueur nominale", "Plus petite que sa longueur nominale", "Strictement identique"], "rep": "Plus grande que sa longueur nominale"},
+                {"id": "geo9_e8", "q": "Une erreur millimétrique non corrigée liée à la météo lors d'un arpentage est une erreur :", "options": ["Systématique", "Aléatoire", "Accidentelle"], "rep": "Systématique"},
+                {"id": "geo9_e9", "q": "La quantité d'énergie absorbée par le ruban d'acier dépend de son coefficient :", "options": ["L'absorptivité ou émissivité", "La conductivité lambda", "La chaleur massique"], "rep": "L'absorptivité ou émissivité"},
+                {"id": "geo9_e10", "q": "Pour s'affranchir complètement de la dilatation du ruban, le topographe moderne utilise :", "options": ["Un tachéomètre à mesure électronique de distance (EDM)", "Une chaîne d'arpenteur en fonte", "Un odomètre mécanique"], "rep": "Un tachéomètre à mesure électronique de distance (EDM)"}
+            ]
+            t_geo_source = [
+                ("1. La hausse de température engendre la .......... thermique linéaire de l'acier.", ["Choisir...", "dilatation", "contraction"], "dilatation", "therm12_geo1"),
+                ("2. Les rubans de précision sont étalonnés en usine à la température de .......... °C.", ["Choisir...", "20", "0"], "20", "therm12_geo2"),
+                ("3. Le soleil transmet sa chaleur au ruban topographique par .......... .", ["Choisir...", "rayonnement", "conduction"], "rayonnement", "therm12_geo3"),
+                ("4. L'alliage de référence à dilatation quasi nulle est l'.......... .", ["Choisir...", "Invar", "Acier"], "Invar", "therm12_geo4"),
+                ("5. L'action refroidissante du vent correspond à un flux de .......... forcée.", ["Choisir...", "convection", "conduction"], "convection", "therm12_geo5"),
+                ("6. L'allongement du ruban crée une erreur de mesure brute .......... .", ["Choisir...", "systématique", "accidentelle"], "systématique", "therm12_geo6"),
+                ("7. La chaleur absorbée fait augmenter la température .......... du métal.", ["Choisir...", "sensible", "latente"], "sensible", "therm12_geo7"),
+                ("8. Le coefficient de dilatation linéaire s'exprime en Kelvin puissance .......... .", ["Choisir...", "-1", "2"], "-1", "therm12_geo8"),
+                ("9. Si le ruban est plus long que prévu, la distance lue est .......... .", ["Choisir...", "faussée", "exacte"], "faussée", "therm12_geo9"),
+                ("10. Les ondes des stations totales s'affranchissent de la dilatation du .......... .", ["Choisir...", "ruban", "prisme"], "ruban", "therm12_geo10")
+            ]
+        elif scenario_actif_geo == "Géomatique : Mesure laser et réfraction atmosphérique":
+            q_geo_source = [
+                {"id": "geo9_l1", "q": "Quel effet le gradient thermique vertical de l'air a-t-il sur le faisceau laser de l'EDM ?", "options": ["Il courbe sa trajectoire par réfraction", "Il augmente sa fréquence optique", "Il annule sa puissance lumineuse"], "rep": "Il courbe sa trajectoire par réfraction"},
+                {"id": "geo9_l2", "q": "Quelle grandeur physique de l'atmosphère modifie la vitesse de propagation du faisceau laser ?", "options": ["La densité optique de l'air liée à sa température", "La conductivité thermique du sol", "L'émissivité du prisme réflecteur"], "rep": "La densité optique de l'air liée à sa température"},
+                {"id": "geo9_l3", "q": "Pour corriger l'erreur de réfraction, le capteur de la station mesure la pression en :", "options": ["Hectopascals (hPa) ou millibars", "Watts", "Newtons"], "rep": "Hectopascals (hPa) ou millibars"},
+                {"id": "geo9_l4", "q": "Le flux thermique ascendant qui s'échappe du bitume chaud à la mi-journée relève de la :", "options": ["Convection thermique naturelle", "Conduction solide pure", "Transition latente"], "rep": "Convection thermique naturelle"},
+                {"id": "geo9_l5", "q": "La courbure du rayon lumineux dans une atmosphère thermiquement instable est appelée :", "options": ["La réfraction atmosphérique", "La réflexion totale", "La diffraction d'interface"], "rep": "La réfraction atmosphérique"},
+                {"id": "geo9_l6", "q": "Quelle formule de correction applique-t-on couramment dans le logiciel de la station (en ppm) ?", "options": ["La formule d'indice de Barrel et Sears", "La loi de Fourier", "La constante de Stefan-Boltzmann"], "rep": "La formule d'indice de Barrel et Sears"},
+                {"id": "geo9_l7", "q": "Si l'air traversé devient plus chaud et moins dense, la vitesse de la lumière laser :", "options": ["Augmente infimement", "Diminue fortement", "Reste strictement inchangée"], "rep": "Augmente infimement"},
+                {"id": "geo9_l8", "q": "L'erreur sur la distance mesurée induite par cette variation de célérité est une erreur :", "options": ["Systématique dépendante du climat", "Aléatoire accidentelle", "Strictement nulle"], "rep": "Systématique dépendante du climat"},
+                {"id": "geo9_l9", "q": "À quelle température standard de l'air l'indice de réfraction est-il calé sur 0 ppm ?", "options": ["15 °C", "0 °C", "25 °C"], "rep": "15 °C"},
+                {"id": "geo9_l10", "q": "Les turbulences visuelles observées au-dessus du sol surchauffé traduisent des micro-variations de :", "options": ["Flux de masse et de température de l'air", "Pression hydrostatique", "Résistance électrique"], "rep": "Flux de masse et de température de l'air"}
+            ]
+            t_geo_source = [
+                ("1. Le goudron surchauffé modifie l'indice de .......... de l'air de surface.", ["Choisir...", "réfraction", "conduction", "fusion"], "réfraction", "therm12_geo1"),
+                ("2. L'air chaud ascendant modifie la vitesse du faisceau .......... de visée.", ["Choisir...", "laser", "optique", "sonore"], "laser", "therm12_geo2"),
+                ("3. La pression atmosphérique requise pour recaler l'EDM s'exprime en .......... .", ["Choisir...", "Hectopascals", "Watts", "Joules"], "Hectopascals", "therm12_geo3"),
+                ("4. Le flux thermique montant du bitume chaud crée un régime de .......... .", ["Choisir...", "convection", "conduction", "rayonnement"], "convection", "therm12_geo4"),
+                ("5. La déviation du signal optique fausse le calcul du temps de .......... .", ["Choisir...", "vol", "pose", "prise"], "vol", "therm12_geo5"),
+                ("6. Entrer les données climatiques permet d'appliquer la correction en .......... .", ["Choisir...", "ppm", "mètres", "degrés"], "ppm", "therm12_geo6"),
+                ("7. La température de référence atmosphérique est fixée par convention à .......... °C.", ["Choisir...", "15", "20", "0"], "15", "therm12_geo7"),
+                ("8. L'instabilité optique est maximale lors des journées à fort .......... solaire.", ["Choisir...", "rayonnement", "gel", "vent"], "rayonnement", "therm12_geo8"),
+                ("9. La trajectoire rectiligne du rayon se retrouve .......... par le gradient d'air.", ["Choisir...", "courbée", "accélérée", "stoppée"], "courbée", "therm12_geo9"),
+                ("10. Ce type d'erreur environnementale doit être corrigé lors des levés de haute .......... .", ["Choisir...", "précision", "vitesse", "densité"], "précision", "therm12_geo10")
+            ]
+        elif scenario_actif_geo == "Implantation : Stabilisation de trépied sur sol gelé":
+            q_geo_source = [
+                {"id": "geo9_t1", "q": "La transition de phase subie par la glace qui fond sous le trépied s'appelle la :", "options": ["Fusion (absorption de chaleur latente)", "Solidification", "Vaporisation"], "rep": "Fusion (absorption de chaleur latente)"},
+                {"id": "geo9_t2", "q": "Le transfert thermique descendant à travers les jambes métalliques du trépied est de la :", "options": ["Conduction solide", "Convection naturelle", "Sublimation"], "rep": "Conduction solide"},
+                {"id": "geo9_t3", "q": "Le désalignement de la bulle électronique du tachéomètre découle d'un tassement :", "options": ["Différentiel causé par la liquéfaction locale", "Uniforme structurel", "Magnétique"], "rep": "Tassement différentiel causé par la liquéfaction locale"},
+                {"id": "geo9_t4", "q": "Pourquoi la jambe en aluminium noir transmet-elle plus de calories qu'une jambe en bois ?", "options": ["Car sa conductivité thermique lambda est nettement plus élevée", "Car elle isole le sol", "Car elle est plus lourde"], "rep": "Car sa conductivité thermique lambda est nettement plus élevée"},
+                {"id": "geo9_t5", "q": "Quelle quantité d'énergie absorbe la glace au sol pendant son changement d'état à 0°C ?", "options": ["Sa chaleur latente de fusion (334 kJ/kg)", "Sa chaleur sensible unitaire", "Zéro calorie"], "rep": "Sa chaleur latente de fusion (334 kJ/kg)"},
+                {"id": "geo9_t6", "q": "L'alarme interne de la station qui détecte la perte de verticalité est :", "options": ["Le compensateur électronique d'axe", "Le prisme optique", "Le plomb optique"], "rep": "Le compensateur électronique d'axe"},
+                {"id": "geo9_t7", "q": "Quel flux initial déclenche l'échauffement de la structure métallique noire ?", "options": ["Le rayonnement solaire direct", "La convection du vent", "La conduction du trépied"], "rep": "Le rayonnement solaire direct"},
+                {"id": "geo9_t8", "q": "Pour empêcher ce phénomène de dérive thermique sur sol gelé, l'expert recommande :", "options": ["D'utiliser un trépied en bois ou en fibre de verre peu conducteur", "De peindre le trépied en noir brillant", "D'arroser le sol d'eau chaude"], "rep": "D'utiliser un trépied en bois ou en fibre de verre peu conducteur"},
+                {"id": "geo9_t9", "q": "La perte de niveau de l'appareil invalide la précision de la mesure :", "options": ["Des angles horizontaux et verticaux (implantation faussée)", "Le poids de la station", "La couleur de la mire"], "rep": "Des angles horizontaux et verticaux (implantation faussée)"},
+                {"id": "geo9_t10", "q": "Un sol gelé qui se liquéfie localement perd quelle caractéristique mécanique ?", "options": ["Sa capacité de portance ou de résistance mécanique", "Sa couleur d'origine", "Sa masse volumique"], "rep": "Sa capacité de portance ou de résistance mécanique"}
+            ]
+            t_geo_source = [
+                ("1. La métamorphose de la glace en eau sous la pointe est une .......... latente de fusion.", ["Choisir...", "transition", "conduction", "friction"], "transition", "therm12_geo1"),
+                ("2. Les calories descendent le long des pieds métalliques par .......... .", ["Choisir...", "conduction", "convection", "sublimation"], "conduction", "therm12_geo3"),
+                ("3. Un tassement .......... d'un seul pied rompt la verticalité de l'axe unitaire.", ["Choisir...", "différentiel", "uniforme", "statique"], "différentiel", "therm12_geo5"),
+                ("4. L'élévation de température découle du .......... solaire absorbé par le métal.", ["Choisir...", "rayonnement", "flux", "vent"], "rayonnement", "therm12_geo4"),
+                ("5. La perte de calage d'axe est signalée par le .......... électronique.", ["Choisir...", "compensateur", "laser", "prisme"], "compensateur", "therm12_geo5"),
+                ("6. Le bois présente un lambda plus .......... que l'aluminium face au flux.", ["Choisir...", "faible", "élevé", "égal"], "faible", "therm12_geo6"),
+                ("7. La liquéfaction locale détruit l'ancrage de la .......... du trépied au sol.", ["Choisir...", "pointe", "vis", "bulle"], "pointe", "therm12_geo7"),
+                ("8. L'apport thermique s'opère à la température fixe de .......... °C au niveau de la glace.", ["Choisir...", "0", "20", "100"], "0", "therm12_geo8"),
+                ("9. Ce glissement imperceptible fausse l'.......... d'axes sur le chantier.", ["Choisir...", "implantation", "étalonnage", "calcul"], "implantation", "therm12_geo9"),
+                ("10. Protéger l'embase du soleil maintient le sol dans un état .......... stable.", ["Choisir...", "gelé", "liquide", "chaud"], "gelé", "therm12_geo10")
+            ]
     else:
         q_geo_source = [
             {"id": "geo9_m1", "q": "Une mire Invar stockée dans un véhicule en plein été subit une augmentation de sa chaleur :", "options": ["Sensible", "Latente de vaporisation", "Chimique"], "rep": "Sensible"},
-            {"id": "geo9_m2", "q": "L'Invar présente un coefficient de expansion thermique linéaire par rapport à l'acier :", "options": ["Environ dix fois plus faible (0.0000012 K⁻¹)", "Dix fois plus élevé", "Parfaitement identique"], "rep": "Environ dix fois plus faible (0.0000012 K⁻¹)"},
+            {"id": "geo9_m2", "q": "L'Invar présente un coefficient de expansion thermique linéaire par rapport à l'acier :", "options": ["Environ dix fois plus faible (1.2e-6 K⁻¹)", "Dix fois plus élevé", "Parfaitement identique"], "rep": "Environ dix fois plus faible (1.2e-6 K⁻¹)"},
             {"id": "geo9_m3", "q": "Quelle température fixe constitue la référence internationale en métrologie pour l'étalonnage ?", "options": ["20 °C", "0 °C", "15 °C"], "rep": "20 °C"},
             {"id": "geo9_m4", "q": "Le transfert thermique subi par la mire stockée contre la paroi chaude du véhicule est de la :", "options": ["Conduction thermique solide", "Convection forcée", "Sublimation"], "rep": "Conduction thermique solide"},
             {"id": "geo9_m5", "q": "Pour effectuer un nivellement d'ordre infra-millimétrique, la mire Invar doit subir :", "options": ["Une acclimatation thermique stationnaire", "Un échauffement aux brûleurs", "Un séchage sous vide"], "rep": "Une acclimatation thermique stationnaire"},
-            {"id": "geo9_m6", "q": "L'unité légale exprimant la variation géométrique par mètre et par Kelvin (alpha) is :", "options": ["K⁻¹ ou °C⁻¹", "J/kg.K", "W/m.K"], "rep": "K⁻¹ ou °C⁻¹"},
+            {"id": "geo9_m6", "q": "L'unité légale exprimant la variation géométrique par mètre et par Kelvin (alpha) est :", "options": ["K⁻¹ ou °C⁻¹", "J/kg.K", "W/m.K"], "rep": "K⁻¹ ou °C⁻¹"},
             {"id": "geo9_m7", "q": "L'alliage Invar, assurant la haute précision des mires de nivellement, est composé de :", "options": ["Fer et Nickel", "Cuivre et Zinc", "Aluminium et Silicium"], "rep": "Fer et Nickel"},
             {"id": "geo9_m8", "q": "Une erreur induite par le non-respect de la température de référence de la mire est une erreur :", "options": ["Systématique à corriger par calcul", "Strictement accidentelle aléatoire", "Impossible à détecter"], "rep": "Systématique à corriger par calcul"},
             {"id": "geo9_m9", "q": "L'évacuation des calories de la mire lors de son retour en salle climatisée suit un régime :", "options": ["Transitoire thermique", "Strictement stationnaire", "Isotherme permanent"], "rep": "Transitoire thermique"},
             {"id": "geo9_m10", "q": "La très haute stabilité dimensionnelle de l'Invar permet de s'affranchir des dérives lors du calcul :", "options": ["Des altitudes et dénivelés de précision", "De la pression de l'air", "De l'indice de réfraction"], "rep": "Des altitudes et dénivelés de précision"}
         ]
         t_geo_source = [
-            ("1. L'Invar maintient sa géométrie fine grâce à sa très haute .......... structurale.", ["Choisir...", "stabilité", "conductivité", "porosité"], "stabilité", "therm12_geo8"),
-            ("2. L'échauffement des mires dans la voiture augmente leur chaleur .......... .", ["Choisir...", "sensible", "latente", "fusion"], "sensible", "therm12_geo9"),
-            ("3. Effectuer les mesures après stabilisation garantit un résultat .......... .", ["Choisir...", "infra-millimétrique", "faussé", "nul"], "infra-millimétrique", "therm12_geo10"),
-            ("4. La température officielle exigée pour caler la mire est de .......... °C.", ["Choisir...", "20", "15", "0"], "20", "therm12_geo4"),
-            ("5. La carrosserie surchauffée transmet son énergie interne par .......... de contact.", ["Choisir...", "conduction", "convection", "changement d'état"], "conduction", "therm12_geo5"),
-            ("6. Le coefficient alpha linéaire de cet alliage est dix fois plus .......... que l'acier.", ["Choisir...", "faible", "élevé", "variable"], "faible", "therm12_geo6"),
-            ("7. La dérive de graduation perturbe la métrologie des .......... d'altitude.", ["Choisir...", "dénivelés", "pression", "angles"], "dénivelés", "therm12_geo7"),
-            ("8. Le retour à l'équilibre en salle climatisée correspond à un régime .......... .", ["Choisir...", "transitoire", "stationnaire", "instable"], "transitoire", "therm12_geo8"),
-            ("9. L'alliage métallique de précision associe principalement le fer au .......... .", ["Choisir...", "nickel", "cuivre", "plomb"], "nickel", "therm12_geo9"),
-            ("10. Ce soin métrologique strict élimine toute fausse note sur le plan de .......... .", ["Choisir...", "nivellement", "vissage", "visée"], "nivellement", "therm12_geo10")
+            ("1. L'Invar maintient sa géométrie fine grâce à sa très haute .......... structurale.", ["Choisir...", "stabilité", "conductivité", "porosité"], "stabilité", "therm12_geo_m1"),
+            ("2. L'échauffement des mires dans la voiture augmente leur chaleur .......... .", ["Choisir...", "sensible", "latente", "fusion"], "sensible", "therm12_geo_m2"),
+            ("3. Effectuer les mesures après stabilisation garantit un résultat .......... .", ["Choisir...", "infra-millimétrique", "faussé", "nul"], "infra-millimétrique", "therm12_geo_m3"),
+            ("4. La température officielle exigée pour caler la mire est de .......... °C.", ["Choisir...", "20", "15", "0"], "20", "therm12_geo_m4"),
+            ("5. La carrosserie surchauffée transmet son énergie interne par .......... de contact.", ["Choisir...", "conduction", "convection", "changement d'état"], "conduction", "therm12_geo_m5"),
+            ("6. Le coefficient alpha linéaire de cet alliage est dix fois plus .......... que l'acier.", ["Choisir...", "faible", "élevé", "variable"], "faible", "therm12_geo_m6"),
+            ("7. La dérive de graduation perturbe la métrologie des .......... d'altitude.", ["Choisir...", "dénivelés", "pression", "angles"], "dénivelés", "therm12_geo_m7"),
+            ("8. Le retour à l'équilibre en salle climatisée correspond à un régime .......... .", ["Choisir...", "transitoire", "stationnaire", "instable"], "transitoire", "therm12_geo_m8"),
+            ("9. L'alliage métallique de précision associe principalement le fer au .......... .", ["Choisir...", "nickel", "cuivre", "plomb"], "nickel", "therm12_geo_m9"),
+            ("10. Ce soin métrologique strict élimine toute fausse note sur le plan de .......... .", ["Choisir...", "nivellement", "vissage", "visée"], "nivellement", "therm12_geo_m10")
         ]
 
-    # =============================================================================
-    # GESTION ET LOCK DU STOCKAGE DANS LA SESSION
-    # =============================================================================
-    if "ordre_quiz_tab12_geo_aleatoire" not in st.session_state:
-        st.session_state.ordre_quiz_tab12_geo_aleatoire = q_geo_source
-    if "champs_therm12_geo_clean" not in st.session_state:
-        st.session_state.champs_therm12_geo_clean = t_geo_source
+    # Sauvegarde des listes de questions/trous choisies dans le session_state
+    st.session_state.ordre_quiz_tab12_geo_aleatoire = q_geo_source
+    st.session_state.champs_therm12_geo_clean = t_geo_source
 
     # =============================================================================
-    # RENDU VISUEL SUR DEUX COLONNES D'ÉVALUATION STREAMLIT
+    # RENDU DES COMPOSANTS AVEC CLÉS UNIQUES ET PROTÉGÉES (MOTEUR BI-COLONNE)
     # =============================================================================
     col_q_geo, col_t_geo = st.columns(2)
     
     with col_q_geo:
-        st.markdown("##### Quiz Spécifique au Scénario Géomètre (10 questions - 10 pts)")
+        st.markdown("##### Quiz Technique du Scénario Géomètre (10 questions - 10 pts)")
         for idx, q_data in enumerate(st.session_state.ordre_quiz_tab12_geo_aleatoire, 1):
             st.write(f"**{idx}.** {q_data['q']}")
             st.selectbox(
                 "", 
                 options=["Choisir..."] + q_data["options"], 
-                key=f"therm_at12_final_g_{q_data['id']}", 
+                key=f"unique_widget_geo_q_{idx}", 
                 disabled=verrouille, 
                 label_visibility="collapsed"
             )
 
     with col_t_geo:
         st.markdown("##### Synthèse de l'Atelier 12 (Texte à trous - 10 cases - 10 pts)")
-        for ligne in st.session_state.champs_therm12_geo_clean:
+        for idx, ligne in enumerate(st.session_state.champs_therm12_geo_clean, 1):
             enonce, choix, attendu, cle = ligne
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
@@ -371,10 +350,11 @@ def afficher_atelier_geometre_dynamique(scenario_actif_geo, verrouille=False):
                 st.selectbox(
                     "", 
                     choix, 
-                    key=f"sec_tab12_geo_t_{cle}_{idx}", 
+                    key=f"unique_widget_geo_t_{idx}", 
                     disabled=verrouille, 
                     label_visibility="collapsed"
                 )
+
 
             
 
@@ -6619,15 +6599,11 @@ with tab12:
 
     st.write("---")
   
-    # =============================================================================
-    # GESTION DU VERROUILLAGE ET APPEL DU MODULE D'ÉVALUATION DE L'ATELIER 12
-    # =============================================================================
-    # Gestion de l'état de verrouillage
     if "suite_verrouille_tab12_geo" not in st.session_state:
         st.session_state.suite_verrouille_tab12_geo = False
     verrou_at12_geo = st.session_state.suite_verrouille_tab12_geo
 
-    # Affichage opérationnel des questions et textes à trous dynamiques indexés
+    # Appel de la fonction d'affichage bi-colonne (Quiz + Texte à trous)
     afficher_atelier_geometre_dynamique(scen_geo, verrouille=verrou_at12_geo)
 
     st.write("---")
@@ -6654,39 +6630,33 @@ with tab12:
         elif not case_certif_stat12:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # 1. Correction du Quiz (10 pts) - Recherche indexée anti-KeyError
+            # 1. Correction directe indexée du Quiz (10 pts)
             score_q12 = 0.0
             if "ordre_quiz_tab12_geo_aleatoire" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_tab12_geo_aleatoire:
-                    saisie = "Choisir..."
-                    for k in st.session_state.keys():
-                        if k.startswith(f"sec_tab12_geo_q_{q_item['id']}_"):
-                            saisie = st.session_state[k]
-                            break
+                for idx, q_item in enumerate(st.session_state.ordre_quiz_tab12_geo_aleatoire, 1):
+                    saisie = st.session_state.get(f"unique_widget_geo_q_{idx}", "Choisir...")
                     if str(saisie).strip() == str(q_item["rep"]).strip():
                         score_q12 += 1.0
 
-            # 2. Correction du Texte à trous (10 pts) - Recherche indexée anti-KeyError
+            # 2. Correction directe indexée du Texte à trous (10 pts)
             score_t12 = 0.0
             if "champs_therm12_geo_clean" in st.session_state:
-                for ligne in st.session_state.champs_therm12_geo_clean:
+                for idx, ligne in enumerate(st.session_state.champs_therm12_geo_clean, 1):
                     enonce_t, choix_t, attendu_t, cle_t = ligne
-                    saisie_t = "Choisir..."
-                    for k in st.session_state.keys():
-                        if k.startswith(f"sec_tab12_geo_t_{cle_t}_"):
-                            saisie_t = st.session_state[k]
-                            break
+                    saisie_t = st.session_state.get(f"unique_widget_geo_t_{idx}", "Choisir...")
                     if str(saisie_t).strip() == str(attendu_t).strip():
                         score_t12 += 1.0
 
-            # 3. Sauvegarde et rafraîchissement
+            # Sauvegarde définitive des notes de l'élève en session
             st.session_state.score_suite12_geo_p1 = round(float(score_q12), 1)
             st.session_state.score_suite12_geo_p2 = round(float(score_t12), 1)
             st.session_state.score_final_suite12_geo = round(float(score_q12 + score_t12), 1)
             st.session_state.suite_verrouille_tab12_geo = True
             st.rerun()
 
-    # --- COMPILATION ET TÉLÉCHARGEMENT DU RAPPORT SCELLÉ HTML ---
+    # =============================================================================
+    # COMPILATION ET EXPORTATION SÉCURISÉE DU RAPPORT HTML INDIVIDUEL
+    # =============================================================================
     if st.session_state.get("suite_verrouille_tab12_geo", False):
         from datetime import datetime
         scr1_t12 = st.session_state.get("score_suite12_geo_p1", 0.0)
@@ -6716,7 +6686,7 @@ with tab12:
         <body>
             <div class="header-box">
                 <h1>Rapport d'Évaluation de Physique Thermique</h1>
-                <p>Atelier 12 : Application technologique et corrections physiques au domaine des Géomètres-Experts</p>
+                <p>Atelier 12 : Application technologique au domaine des Géomètres-Experts</p>
                 <p>Scénario résolu : {scen_geo}</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite12}</p>
@@ -6739,16 +6709,12 @@ with tab12:
         """
 
         if "ordre_quiz_tab12_geo_aleatoire" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz_tab12_geo_aleatoire, 1):
-                saisie = "Choisir..."
-                for k in st.session_state.keys():
-                    if k.startswith(f"sec_tab12_geo_q_{q_item['id']}_"):
-                        saisie = st.session_state[k]
-                        break
+            for idx, q_item in enumerate(st.session_state.ordre_quiz_tab12_geo_aleatoire, 1):
+                saisie = st.session_state.get(f"unique_widget_geo_q_{idx}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_therm12 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+                html_export_therm12 += f"<tr><td>{idx}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
         html_export_therm12 += """
                 </tbody>
@@ -6763,16 +6729,12 @@ with tab12:
         """
 
         if "champs_therm12_geo_clean" in st.session_state:
-            for num, ligne in enumerate(st.session_state.champs_therm12_geo_clean, 1):
+            for idx, ligne in enumerate(st.session_state.champs_therm12_geo_clean, 1):
                 enonce_texte, choix_texte, attendu_texte, cle_variable = ligne
-                saisie_texte = "Choisir..."
-                for k in st.session_state.keys():
-                    if k.startswith(f"sec_tab12_geo_t_{cle_variable}_"):
-                        saisie_texte = st.session_state[k]
-                        break
+                saisie_texte = st.session_state.get(f"unique_widget_geo_t_{idx}", "Choisir...")
                 v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
                 v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
-                html_export_therm12 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+                html_export_therm12 += f"<tr><td>{idx}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
 
         html_export_therm12 += """
                 </tbody>
@@ -6788,33 +6750,6 @@ with tab12:
             mime="text/html",
             use_container_width=True,
         )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
