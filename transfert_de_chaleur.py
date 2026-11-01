@@ -6035,8 +6035,6 @@ with tab11:
         </body>
         </html>
         """
-
-        st.download_button(
         st.download_button(
             label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 11 (.HTML)",
             data=html_export_therm11,
