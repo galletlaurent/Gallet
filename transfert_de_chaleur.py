@@ -384,143 +384,143 @@ def afficher_atelier_routier_dynamique(scenario_actif_cr, verrouille=False, pref
     import streamlit as st
 
     # =============================================================================
-    # CAS 1 : ROUTIER - CAMION FRIGORIFIQUE
+    # CONFIGURATION DES QUESTIONS SELON LE SCÉNARIO ACTIF
     # =============================================================================
-    if scenario_actif_cr == "Chauffeur routier : Camion Frigorifique":
+    if scenario_actif_cr == "Sécurité : Échauffement des freins de poids lourd":
         questions_sources_cr = [
-            {"id": "cr_c1_e1", "q": "Quelle est l'utilité principale de la mousse isolante de la cabine ?", "options": ["Augmenter la résistance thermique globale", "Amplifier le rayonnement thermique", "Générer un courant de convection interne"], "rep": "Augmenter la résistance thermique globale"},
-            {"id": "cr_c1_e2", "q": "Le flux de chaleur traverse l'épaisseur de la tôle et de la mousse isolante par...", "options": ["Conduction", "Convection naturelle", "Rayonnement infrarouge pur"], "rep": "Conduction"},
-            {"id": "cr_c1_e3", "q": "Que devient la résistance thermique si on double l'épaisseur du panneau isolant ?", "options": ["Elle double", "Elle diminue de moitié", "Elle reste strictement identique"], "rep": "Elle double"},
-            {"id": "cr_c1_e4", "q": "Quelle unité exprime le flux thermique surfacique traversant la paroi ?", "options": ["W/m²", "W", "J/kg"], "rep": "W/m²"},
-            {"id": "cr_c1_e5", "q": "Le maintien de la consigne intérieure à 21°C face aux apports extérieurs représente un transfert...", "options": ["Du milieu chaud vers le milieu froid", "Du milieu froid vers le milieu chaud", "Totalement stationnaire et nul"], "rep": "Du milieu chaud vers le milieu froid"},
-            {"id": "cr_c1_e6", "q": "La couche d'air externe fixée à la carrosserie crée une résistance d'échange dite de...", "options": ["Convection superficielle", "Conduction solide", "Rayonnement pur"], "rep": "Convection superficielle"},
-            {"id": "cr_c1_e7", "q": "Quel paramètre matériau caractérise l'aptitude de la mousse à conduire la chaleur ?", "options": ["La conductivité thermique lambda", "L'émissivité surfacique", "La capacité thermique massique"], "rep": "La conductivité thermique lambda"},
-            {"id": "cr_c1_e8", "q": "L'apport d'énergie initial du soleil sur la face externe de la tôle se fait par...", "options": ["Rayonnement", "Conduction solide", "Convection forcée"], "rep": "Rayonnement"},
-            {"id": "cr_c1_e9", "q": "Pour minimiser le flux entrant, la conductivité lambda de l'isolant doit être...", "options": ["La plus faible possible", "La plus élevée possible", "Infinie"], "rep": "La plus faible possible"},
-            {"id": "cr_c1_e10", "q": "Le brassage de l'air par le système de climatisation interne de la cabine relève de la...", "options": ["Convection forcée", "Convection naturelle", "Conduction pure"], "rep": "Convection forcée"}
+            {"id": "cr_fr_e1", "q": "En quelle forme d'énergie le système de freinage convertit-il l'énergie cinétique du poids lourd ?", "options": ["En énergie thermique (chaleur)", "En énergie potentielle", "En courant électrique"], "rep": "En énergie thermique (chaleur)"},
+            {"id": "cr_fr_e2", "q": "Quel terme technique désigne la perte d'efficacité des freins provoquée par une surchauffe excessive ?", "options": ["Le fading", "L'aquaplaning", "Le patinage"], "rep": "Le fading"},
+            {"id": "cr_fr_e3", "q": "Comment la chaleur migre-t-elle de la piste de friction vers le moyeu central de la roue ?", "options": ["Par conduction solide au sein de la fonte", "Par rayonnement ultraviolet", "Par convection gazeuse"], "rep": "Par conduction solide au sein de la fonte"},
+            {"id": "cr_fr_e4", "q": "Quel matériau, offrant un compromis optimal de conductivité lambda, constitue les disques ?", "options": ["La fonte d'acier", "L'aluminium pur", "Le cuivre électrolytique"], "rep": "La fonte d'acier"},
+            {"id": "cr_fr_e5", "q": "Quel fluide entre en ébullition si le flux thermique conducteur vers l'étrier est trop important ?", "options": ["Le liquide de frein", "Le gazole", "Le liquide de lave-glace"], "rep": "Le liquide de frein"},
+            {"id": "cr_fr_e6", "q": "Les canaux de ventilation internes situés au cœur du disque augmentent le transfert par :", "options": ["Convection forcée avec l'air", "Conduction pure", "Rayonnement infrarouge"], "rep": "Convection forcée avec l'air"},
+            {"id": "cr_fr_e7", "q": "Pour soulager durablement les disques lors d'une longue descente de col, le conducteur active :", "options": ["Le ralentisseur hydraulique ou moteur", "Le frein de parc mécanique", "La pédale d'embrayage"], "rep": "Le ralentisseur hydraulique ou moteur"},
+            {"id": "cr_fr_e8", "q": "L'élévation de température d'un disque de frein à chaque application est inversement proportionnelle à :", "options": ["Sa masse physique m", "La vitesse initiale du camion", "Le pourcentage de la pente"], "rep": "Sa masse physique m"},
+            {"id": "cr_fr_e9", "q": "Quelle est l'unité de mesure légale du flux de déperdition thermique du système ?", "options": ["Le Watt", "Le Joule", "Le Newton"], "rep": "Le Watt"},
+            {"id": "cr_fr_e10", "q": "À l'arrêt du véhicule lourd, le transfert principal du disque brûlant vers l'air ambiant est régi par :", "options": ["Le rayonnement et la convection naturelle", "La conduction fluide forcée", "Le changement d'état"], "rep": "Le rayonnement et la convection naturelle"}
         ]
         trous_sources_cr = [
-            ("1. La tôle extérieure reçoit l'énergie du soleil par du ............. .", ["Choisir...", "rayonnement", "conduction", "frottement"], "rayonnement", "at11_c1_t1"),
-            ("2. La mousse de polyuréthane apporte une forte ............. thermique.", ["Choisir...", "résistance", "conductivité", "perméabilité"], "résistance", "at11_c1_t2"),
-            ("3. Le flux de chaleur traverse l'épaisseur solide par ............. .", ["Choisir...", "conduction", "convection", "rayonnement"], "conduction", "at11_c1_t3"),
-            ("4. La température de consigne intérieure est fixée à ............. °C.", ["Choisir...", "21", "38", "0"], "21", "at11_c1_t4"),
-            ("5. Plus l'épaisseur d'isolant est grande, plus le flux thermique est ............. .", ["Choisir...", "réduit", "augmenté", "inchangé"], "réduit", "at11_c1_t5"),
-            ("6. Le coefficient de conductivité thermique de la mousse est très ............. .", ["Choisir...", "faible", "élevé", "infini"], "faible", "at11_c1_t6"),
-            ("7. La face interne de la paroi reste fraîche grâce à l'effet de la ............. .", ["Choisir...", "climatisation", "conduction", "chauffe"], "climatisation", "at11_c1_t7"),
-            ("8. L'échange convectif de l'air sur l'autoroute dépend de la ............. du camion.", ["Choisir...", "vitesse", "couleur", "hauteur"], "vitesse", "at11_c1_t8"),
-            ("9. La chaleur surfacique s'exprime rigoureusement en ............. .", ["Choisir...", "W/m²", "W/m.K", "Joules"], "W/m²", "at11_c1_t9"),
-            ("10. Ce type d'étude thermique correspond à un régime supposé ............. .", ["Choisir...", "stationnaire", "transitoire", "instable"], "stationnaire", "at11_c1_t10")
+            ("1. Le système convertit l'énergie cinétique en chaleur ..........", ["Choisir...", "sensible", "latente"], "sensible", "therm11_cr_f1"),
+            ("2. Le phénomène de .......... rend les freins inopérants à cause de la chaleur.", ["Choisir...", "fading", "glaçage"], "fading", "therm11_cr_f2"),
+            ("3. L'énergie accumulée se transmet dans le métal par ..........", ["Choisir...", "conduction", "convection"], "conduction", "therm11_cr_f3"),
+            ("4. La fonte d'acier présente une bonne .......... lambda pour évacuer les Watts.", ["Choisir...", "conductivité", "résistance"], "conductivité", "therm11_cr_f4"),
+            ("5. Les canaux internes du disque optimisent la .......... forcée de l'air.", ["Choisir...", "convection", "conduction"], "convection", "therm11_cr_f5"),
+            ("6. À 600 °C, les disques de frein émettent un .......... visible à l'œil.", ["Choisir...", "rayonnement", "courant"], "rayonnement", "therm11_cr_f6"),
+            ("7. L'ébullition du fluide engendre des bulles de gaz ..........", ["Choisir...", "compressibles", "incompressibles"], "compressibles", "therm11_cr_f7"),
+            ("8. Plus la masse du disque est grande, plus la hausse thermique est ..........", ["Choisir...", "faible", "forte"], "faible", "therm11_cr_f8"),
+            ("9. Activer le ralentisseur évite l'échauffement des freins par ..........", ["Choisir...", "friction", "induction"], "friction", "therm11_cr_f9"),
+            ("10. La puissance calorifique évacuée par l'ensemble s'exprime en ..........", ["Choisir...", "Watts", "Joules"], "Watts", "therm11_cr_f10")
         ]
 
-    # =============================================================================
-    # CAS 2 : ROUTIER - CAMION BENNE ACIER
-    # =============================================================================
-    elif scenario_actif_cr == "Chauffeur routier : Camion Benne Acier":
+    elif scenario_actif_cr == "Mécanique : Surchauffe moteur en côte":
         questions_sources_cr = [
-            {"id": "cr_c2_e1", "q": "Comment réagit le flux thermique si la tôle extérieure est peinte en noir mat ?", "options": ["Le flux augmente à cause d'une forte absorption", "Le flux diminue par réflexion", "Le flux reste totalement identique"], "rep": "Le flux augmente à cause d'une forte absorption"},
-            {"id": "cr_c2_e2", "q": "En l'absence complète d'isolant, la résistance thermique conductive de la paroi est...", "options": ["Très faible", "Très élevée", "Infinie"], "rep": "Très faible"},
-            {"id": "cr_c2_e3", "q": "Quel mode d'échange évacue activement les calories de la cabine via l'air climatisé ?", "options": ["Convection forcée", "Conduction solide", "Rayonnement pur"], "rep": "Convection forcée"},
-            {"id": "cr_c2_e4", "q": "La tôle d'acier transmet immédiatement les calories car sa conductivité lambda est...", "options": ["Élevée", "Faible", "Nulle"], "rep": "Élevée"},
-            {"id": "cr_c2_e5", "q": "L'échauffement direct de la tôle sous le soleil est lié à son coefficient...", "options": ["D'absorption énergétique", "De convection thermique", "De frottement mécanique"], "rep": "D'absorption énergétique"},
-            {"id": "cr_c2_e6", "q": "Le flux thermique surfacique traversant cette tôle brute sans isolant sera...", "options": ["Bien plus important qu'avec isolant", "Moins important qu'avec isolant", "Strictement identique"], "rep": "Bien plus important qu'avec isolant"},
-            {"id": "cr_c2_e7", "q": "L'écart de température (T_tôle - T_consigne) constitue la force...", "options": ["Motrice du transfert thermique", "Résistante du système", "Nulle"], "rep": "Motrice du transfert thermique"},
-            {"id": "cr_c2_e8", "q": "L'air extérieur immobile autour du camion à l'arrêt crée de la...", "options": ["Convection naturelle", "Convection forcée", "Conduction pure"], "rep": "Convection naturelle"},
-            {"id": "cr_c2_e9", "q": "Quelle est l'unité internationale du coefficient d'échange superficiel h ?", "options": ["W/m².K", "W/m", "J/kg.K"], "rep": "W/m².K"},
-            {"id": "tp11_c2_e10", "q": "Sans isolation, la température de la face interne de la tôle est très proche de...", "options": ["La température externe de la tôle", "La consigne interne de 21°C", "La température de fusion"], "rep": "La température externe de la tôle"}
+            {"id": "cr_mo_e1", "q": "Quel élément dissipe la chaleur interne du fluide vers l'air extérieur ?", "options": ["Le radiateur principal", "Le vase d'expansion", "Le filtre à air"], "rep": "Le radiateur principal"},
+            {"id": "cr_mo_e2", "q": "L'encrassement des ailettes du radiateur par des débris augmente quelle valeur parasite ?", "options": ["La résistance thermique R", "Le coefficient global U", "La conductivité lambda"], "rep": "La résistance thermique R"},
+            {"id": "cr_mo_e3", "q": "Le passage du liquide de l'état liquide à l'état vapeur dans un circuit en surchauffe est une transition :", "options": ["Latente de vaporisation", "Sensible de fusion", "Chimique"], "rep": "Latente de vaporisation"},
+            {"id": "cr_mo_e4", "q": "Le transfert d'énergie s'opérant entre le bloc moteur en alliage et le fluide en mouvement est de la :", "options": ["Convection thermique", "Conduction solide pure", "Sublimation"], "rep": "Convection thermique"},
+            {"id": "cr_mo_e5", "q": "Quelle pièce mécanique majeure subit une déformation destructrice en cas de surchauffe moteur prolongée ?", "options": ["Le joint de culasse", "Le carter d'huile", "L'arbre de transmission"], "rep": "Le joint de culasse"},
+            {"id": "cr_mo_e6", "q": "La pompe à eau accélère le mouvement du fluide pour optimiser le transfert par :", "options": ["Convection forcée", "Convection naturelle", "Rayonnement"], "rep": "Convection forcée"},
+            {"id": "cr_mo_e7", "q": "Quelle unité réglemente le flux de déperdition total évacué par l'échangeur ?", "options": ["Le Watt", "Le Joule", "Le Pascal"], "rep": "Le Watt"},
+            {"id": "cr_mo_e8", "q": "Une hausse de pression à l'intérieur du vase d'expansion est évacuée de manière sécurisée par :", "options": ["La soupape calibrée du bouchon", "Le joint d'étanchéité", "La jauge de niveau"], "rep": "La soupape calibrée du bouchon"},
+            {"id": "cr_mo_e9", "q": "À quelle température moyenne le thermostat s'ouvre-t-il pour libérer le grand circuit ?", "options": ["Environ 85 °C", "0 °C", "150 °C"], "rep": "Environ 85 °C"},
+            {"id": "cr_mo_e10", "q": "L'analyse thermique continue des indicateurs du tableau de bord relève de la maintenance :", "options": ["Préventive conditionnelle", "Curative d'urgence", "Corrective différée"], "rep": "Préventive conditionnelle"}
         ]
         trous_sources_cr = [
-            ("1. Sans isolant, la résistance thermique globale de la cabine est ............. .", ["Choisir...", "très faible", "très élevée", "infinie"], "très faible", "at11_c2_t1"),
-            ("2. La tôle d'acier conduit fortement la chaleur à cause d'un lambda ............. .", ["Choisir...", "élevé", "faible", "nul"], "élevé", "at11_c2_t2"),
-            ("3. Le flux thermique surfacique entrant est donc grandement ............. .", ["Choisir...", "augmenté", "atténué", "stabilisé"], "augmenté", "at11_c2_t3"),
-            ("4. La climatisation doit fournir une forte puissance par ............. forcée.", ["Choisir...", "convection", "conduction", "rayonnement"], "convection", "at11_c2_t4"),
-            ("5. Une peinture mate de couleur sombre favorise l'............. du rayonnement.", ["Choisir...", "absorption", "réflexion", "transmission"], "absorption", "at11_c2_t5"),
-            ("6. Le métal non abrité présente une température ............. à celle de l'air.", ["Choisir...", "supérieure", "inférieure", "égale"], "supérieure", "at11_c2_t6"),
-            ("7. La résistance thermique conductive de la tôle fine est presque ............. .", ["Choisir...", "négligeable", "infinie", "bloquante"], "négligeable", "at11_c2_t7"),
-            ("8. L'absence de climatisation saturerait la cabine d'énergie ............. .", ["Choisir...", "sensible", "latente", "chimique"], "sensible", "at11_c2_t8"),
-            ("9. Les échanges aux limites intérieures font intervenir le fluide ............. .", ["Choisir...", "air", "eau", "liquide"], "air", "at11_c2_t9"),
-            ("10. La formule associe la puissance thermique à l'inverse de la ............. .", ["Choisir...", "résistance", "température", "surface"], "résistance", "at11_c2_t10")
+            ("1. L'encrassement des faisceaux du radiateur crée une .......... thermique parasite.", ["Choisir...", "résistance", "conductivité"], "résistance", "therm11_cr_m1"),
+            ("2. Le liquide moteur en ébullition absorbe son énergie .......... de vaporisation.", ["Choisir...", "latente", "sensible"], "latente", "therm11_cr_m2"),
+            ("3. Le fluide caloporteur en circulation forcée transmet ses calories par .......... .", ["Choisir...", "convection", "conduction"], "convection", "therm11_cr_m3"),
+            ("4. Le flux thermique instantané rejeté à l'extérieur s'exprime toujours en .......... .", ["Choisir...", "Watts", "Joules"], "Watts", "therm11_cr_m4"),
+            ("5. Surveiller le cadran de contrôle prévient la rupture critique du joint de .......... .", ["Choisir...", "culasse", "carter"], "culasse", "therm11_cr_m5"),
+            ("6. Les ailettes en aluminium offrent un excellent coefficient de conduction .......... .", ["Choisir...", "lambda", "R"], "lambda", "therm11_cr_m6"),
+            ("7. À l'arrêt, le ventilateur s'active pour forcer l'extraction des .......... .", ["Choisir...", "calories", "Ohms"], "calories", "therm11_cr_m7"),
+            ("8. Dépasser les 110 °C provoque l'ouverture de la .......... du vase.", ["Choisir...", "soupape", "vis"], "soupape", "therm11_cr_m8"),
+            ("9. L'eau possède une forte .......... massique pour emmagasiner la chaleur.", ["Choisir...", "capacité", "résistance"], "capacité", "therm11_cr_m9"),
+            ("10. Ce diagnostic préventif sécurise les organes mécaniques du .......... lourd.", ["Choisir...", "poids", "châssis"], "poids", "therm11_cr_m10")
         ]
 
-    # =============================================================================
-    # CAS 3 : ROUTIER - CONVOI DE NUIT
-    # =============================================================================
-    elif scenario_actif_cr == "Chauffeur routier : Convoi de Nuit":
+    elif scenario_actif_cr == "Confort : Climatisation de cabine et flux de paroi":
         questions_sources_cr = [
-            {"id": "cr_c3_e1", "q": "Dans quel sens s'effectue le transfert thermique global de la cabine la nuit ?", "options": ["De la cabine vers l'extérieur", "De l'extérieur vers la cabine", "Aucun échange possible la nuit"], "rep": "De la cabine vers l'extérieur"},
-            {"id": "cr_c3_e2", "q": "L'absence complète de rayonnement solaire direct coupe quel mode d'apport ?", "options": ["Le rayonnement thermique solaire", "La convection de l'air ambiant", "La conduction du sol"], "rep": "Le rayonnement thermique solaire"},
-            {"id": "cr_c3_e3", "q": "Le refroidissement de la tôle vers le ciel noir nocturne s'appelle le rayonnement...", "options": ["Céleste ou spatial", "Mutuel", "Solaire indirect"], "rep": "Céleste ou spatial"},
-            {"id": "cr_c3_e4", "q": "Si la température extérieure descend à 5°C, la puissance interne devra...", "options": ["Chauffer pour compenser les pertes", "Climatiser pour refroidir", "Rester strictement coupée"], "rep": "Chauffer pour compenser les pertes"},
-            {"id": "cr_c3_e5", "q": "Le flux thermique traverse désormais la paroi de la cabine...", "options": ["De l'intérieur vers l'extérieur", "De l'extérieur vers l'intérieur", "De manière stationnaire nulle"], "rep": "De l'intérieur vers l'extérieur"},
-            {"id": "cr_c3_e6", "q": "Pour limiter les déperditions nocturnes, la résistance de la cabine doit être...", "options": ["Maximisée", "Minimisée", "Maintenue nulle"], "rep": "Maximisée"},
-            {"id": "cr_c3_e7", "q": "Le vent de nuit sur l'autoroute engendre sur la carrosserie une convection extérieure...", "options": ["Forcée et très élevée", "Naturelle et faible", "Absolument nulle"], "rep": "Forcée et très élevée"},
-            {"id": "cr_c3_e8", "q": "La loi physique régissant l'émittance par rayonnement d'un corps est la loi de...", "options": ["Stefan-Boltzmann", "Fourier", "Newton"], "rep": "Stefan-Boltzmann"},
-            {"id": "cr_c3_e9", "q": "L'émissivité d'une tôle peinte standard est généralement proche de...", "options": ["0.9 (forte)", "0.05 (faible)", "0.0 (nulle)"], "rep": "0.9 (forte)"},
-            {"id": "cr_c3_e10", "q": "Le chauffage interne maintient la consigne en transférant l'énergie à l'air par...", "options": ["Convection", "Rayonnement pur", "Conduction solide"], "rep": "Convection"}
+            {"id": "cr_cl_e1", "q": "Quelle équation régit le flux thermique traversant la tôle de cabine par conduction ?", "options": ["La loi de Fourier", "La loi de Newton", "La loi de Stefan"], "rep": "La loi de Fourier"},
+            {"id": "cr_cl_e2", "q": "Quelle propriété des vitrages de cabine bloque le rayonnement solaire direct ?", "options": ["L'athermalité ou réflectivité", "La conduction pure", "L'épaisseur métallique"], "rep": "L'athermalité ou réflectivité"},
+            {"id": "cr_cl_e3", "q": "Quelle unité qualifie la résistance d'opposition des garnitures isolantes internes ?", "options": ["m².K/W", "W/(m².K)", "W/(m.K)"], "rep": "m².K/W"},
+            {"id": "cr_cl_e3", "q": "Quelle unité qualifie la résistance d'opposition des garnitures isolantes internes ?", "options": ["m².K/W", "W/(m².K)", "W/(m.K)"], "rep": "m².K/W"},
+            {"id": "cr_cl_e4", "q": "Extraire les Watts intrusifs pour abaisser la température requiert de la puissance :", "options": ["Frigorifique via le climatiseur", "Calorifique pure", "Mécanique d'arbre"], "rep": "Frigorifique via le climatiseur"},
+            {"id": "cr_cl_e5", "q": "La tôle d'acier transmet immédiatement le flux car sa conductivité lambda est :", "options": ["Très élevée", "Nulle", "Négligeable"], "rep": "Très élevée"},
+            {"id": "cr_cl_e6", "q": "Le brassage continu de l'air par le ventilateur d'habitacle relève de la :", "options": ["Convection forcée", "Convection naturelle", "Conduction"], "rep": "Convection forcée"},
+            {"id": "cr_cl_e7", "q": "L'apport calorifique initial du soleil sur les parois extérieures se fait par :", "options": ["Rayonnement électromagnétique", "Conduction solide", "Fusion"], "rep": "Rayonnement électromagnétique"},
+            {"id": "cr_cl_e8", "q": "Pour minimiser le flux entrant, le panneau isolant doit présenter une conductivité :", "options": ["La plus basse possible", "La plus élevée possible", "Strictement infinie"], "rep": "La plus basse possible"},
+            {"id": "cr_cl_e9", "q": "L'air immobile à l'intérieur d'une cabine non ventilée génère de la :", "options": ["Convection naturelle", "Convection forcée", "Sublimation"], "rep": "Convection naturelle"},
+            {"id": "cr_cl_e10", "q": "Maintenir un climat de travail de 21 °C en cabine protège le conducteur contre :", "options": ["La somnolence et la baisse de vigilance", "L'aquaplaning", "Le givrage des vitres"], "rep": "La somnolence et la baisse de vigilance"}
         ]
         trous_sources_cr = [
-            ("1. La nuit, le flux thermique s'inverse et se dirige vers l'............. .", ["Choisir...", "extérieur", "intérieur", "moteur"], "extérieur", "at11_c3_t1"),
-            ("2. La cabine perd ses calories par rayonnement vers la voûte ............. .", ["Choisir...", "céleste", "terrestre", "solaire"], "céleste", "at11_c3_t2"),
-            ("3. Le vent augmente les pertes thermiques par convection ............. .", ["Choisir...", "forcée", "naturelle", "statique"], "forcée", "at11_c3_t3"),
-            ("4. Il faut apporter de la puissance de ............. pour rester à 21°C.", ["Choisir...", "chauffage", "climatisation", "ventilation"], "chauffage", "at11_c3_t4"),
-            ("5. La perte de chaleur nocturne crée un flux de signe ............. au cas diurne.", ["Choisir...", "opposé", "identique", "nul"], "opposé", "at11_c3_t5"),
-            ("6. Le chauffeur ressent le froid à cause d'une paroi interne ............. .", ["Choisir...", "refroidie", "surchauffée", "isolée"], "refroidie", "at11_c3_t6"),
-            ("7. La loi de Stefan-Boltzmann fait intervenir la température à la puissance ............. .", ["Choisir...", "quatre", "deux", "une"], "quatre", "at11_c3_t7"),
-            ("8. L'isolation de nuit permet de conserver l'énergie ............. de l'habitacle.", ["Choisir...", "interne", "solaire", "lumineuse"], "interne", "at11_c3_t8"),
-            ("9. Les coefficients d'échange superficiels h dépendent de l'agitation du ............. .", ["Choisir...", "fluide", "solide", "vide"], "fluide", "at11_c3_t9"),
-            ("10. La résistance thermique totale s'oppose au flux de ............. .", ["Choisir...", "déperdition", "gain", "stockage"], "déperdition", "at11_c3_t10")
+            ("1. Le passage des calories à travers la tôle de cabine suit la loi de .......... .", ["Choisir...", "Fourier", "Newton"], "Fourier", "therm11_cr_c1"),
+            ("2. Les garnitures isolantes apportent une barrière de coefficient .......... élevé.", ["Choisir...", "R", "U"], "R", "therm11_cr_c2"),
+            ("3. L'extraction convective des Watts intrusifs est assurée par la .......... .", ["Choisir...", "climatisation", "ventilation"], "climatisation", "therm11_cr_c3"),
+            ("4. La puissance surfacique incidente s'exprime rigoureusement en .......... .", ["Choisir...", "W/m²", "Joules"], "W/m²", "therm11_cr_c4"),
+            ("5. Le soleil transmet ses calories à l'habitacle par le biais du .......... .", ["Choisir...", "rayonnement", "contact"], "rayonnement", "therm11_cr_c5"),
+            ("6. Plus la paroi isole l'habitacle, plus le coefficient global U est .......... .", ["Choisir...", "faible", "fort"], "faible", "therm11_cr_c6"),
+            ("7. Le flux s'établit spontanément depuis la tôle chaude vers l'air .......... .", ["Choisir...", "frais", "brûlant"], "frais", "therm11_cr_c7"),
+            ("8. Ajuster l'épaisseur de mousse réduit les pertes d'énergie .......... .", ["Choisir...", "sensible", "latente"], "sensible", "therm11_cr_c8"),
+            ("9. Ce bilan équilibré de l'habitacle caractérise le régime .......... .", ["Choisir...", "stationnaire", "transitoire"], "stationnaire", "therm11_cr_c9"),
+            ("10. Maintenir la consigne préserve la sécurité du chauffeur sur la .......... .", ["Choisir...", "route", "piste"], "route", "therm11_cr_c10")
         ]
     # =============================================================================
-    # CAS 4 : ROUTIER - CITERNE ALUMINIUM
+    # CAS 4 : LIAISON AU SOL - TEMPÉRATURE ET PRESSION DES PNEUMATIQUES
     # =============================================================================
-    elif scenario_actif_cr == "Chauffeur routier : Citerne Aluminium":
-        trous_sources_cr = [
-            ("1. L'aluminium poli présente une très ............. émissivité thermique.", ["Choisir...", "faible", "forte", "parfaite"], "faible", "at11_c4_t1"),
-            ("2. Sa surface brillante ............. une grande partie du rayonnement solaire.", ["Choisir...", "réfléchit", "absorbe", "transmet"], "réfléchit", "at11_c4_t2"),
-            ("3. L'échauffement initial de la carrosserie est donc grandement ............. .", ["Choisir...", "limité", "amplifié", "accéléré"], "limité", "at11_c4_t3"),
-            ("4. La puissance de climatisation nécessaire s'en trouve ............. .", ["Choisir...", "réduite", "augmentée", "doublée"], "réduite", "at11_c4_t4"),
-            ("5. La forte conductivité de l'aluminium homogénéise la ............. de la paroi.", ["Choisir...", "température", "résistance", "masse"], "température", "at11_c4_t5"),
-            ("6. Le pouvoir de réflexion d'un corps brillant s'oppose à son ............. .", ["Choisir...", "absorption", "emission", "épaisseur"], "absorption", "at11_c4_t6"),
-            ("7. L'absence d'isolant sous la feuille d'aluminium laisserait passer un flux par ............. .", ["Choisir...", "conduction", "vide", "frottement"], "conduction", "at11_c4_t7"),
-            ("8. Les vagues de vent autoroutier forcent le transfert thermique ............. .", ["Choisir...", "externe", "interne", "isolé"], "externe", "at11_c4_t8"),
-            ("9. La constante de Stefan intervient dans le calcul du flux de ............. .", ["Choisir...", "rayonnement", "convection", "conduction"], "rayonnement", "at11_c4_t9"),
-            ("10. Un métal poli possède un coefficient d'absorption solaire très ............. .", ["Choisir...", "bas", "élevé", "infini"], "bas", "at11_c4_t10")
-        ]
-        
-    # Sécurité d'initialisation si la chaîne de caractères transmise comporte une variante d'écriture
     else:
-        # On charge par défaut le premier cas pour éviter que le script ne lève un crash d'exécution
-        return afficher_atelier_routier_dynamique("Chauffeur routier : Camion Frigorifique", verrouille, prefixe)
+        questions_sources_cr = [
+            {"id": "cr_pn_e1", "q": "L'agitation thermique des molécules d'air sous l'effet de la chaleur dans le pneu augmente sa :", "options": ["Pression interne", "Masse volumique", "Émissivité superficielle"], "rep": "Pression interne"},
+            {"id": "cr_pn_e2", "q": "Le sous-gonflage initial d'un pneumatique accroît sa production thermique interne par :", "options": ["Malaxage et friction moléculaire de la gomme", "Rayonnement direct", "Conduction pure"], "rep": "Malaxage et friction moléculaire de la gomme"},
+            {"id": "cr_pn_e3", "q": "Quelle loi des gaz régit la hausse de pression à volume constant en fonction de la température ?", "options": ["La loi de Gay-Lussac (loi des gaz parfaits)", "La loi de Fourier", "La loi de Newton"], "rep": "La loi de Gay-Lussac (loi des gaz parfaits)"},
+            {"id": "cr_pn_e4", "q": "La conversion de l'énergie mécanique de déformation en calories au cœur du pneu crée une chaleur :", "options": ["Sensible", "Latente de fusion", "Chimique"], "rep": "Sensible"},
+            {"id": "cr_pn_e5", "q": "Le transfert thermique s'opérant entre la gomme brûlante et l'air intérieur confiné est de la :", "options": ["Conduction", "Convection forcée", "Sublimation"], "rep": "Conduction"},
+            {"id": "cr_pn_e6", "q": "L'unité internationale utilisée pour exprimer la pression de l'air sur le manomètre est :", "options": ["Le bar (ou Pascal)", "Le Watt", "Le Joule"], "rep": "Le bar (ou Pascal)"},
+            {"id": "cr_pn_e7", "q": "Quelle température critique ne doit généralement pas être dépassée par la carcasse en acier ?", "options": ["90 °C", "35 °C", "200 °C"], "rep": "90 °C"},
+            {"id": "cr_pn_e8", "q": "Lors du roulage rapide, la bande de roulement évacue ses calories vers l'air extérieur par :", "options": ["Convection forcée", "Conduction pure", "Changement d'état"], "rep": "Convection forcée"},
+            {"id": "cr_pn_e9", "q": "La température de référence pour effectuer un gonflage conforme 'à froid' est fixée à :", "options": ["20 °C", "0 °C", "40 °C"], "rep": "20 °C"},
+            {"id": "cr_pn_e10", "q": "L'explosion brutale consécutive à une surchauffe interne non maîtrisée s'appelle :", "options": ["L'éclatement thermique du pneumatique", "Le fading mécanique", "Le givrage"], "rep": "L'éclatement thermique du pneumatique"}
+        ]
+        trous_sources_cr = [
+            ("1. Le malaxage mécanique continu de la gomme engendre des .......... internes.", ["Choisir...", "frictions", "conductions"], "frictions", "therm11_cr_p1"),
+            ("2. L'énergie mécanique se dissipe sous forme de chaleur .......... parasite.", ["Choisir...", "sensible", "latente"], "sensible", "therm11_cr_p2"),
+            ("3. L'air confiné s'échauffe, ce qui augmente sa .......... moléculaire interne.", ["Choisir...", "pression", "masse"], "pression", "therm11_cr_p3"),
+            ("4. La dilatation de l'air à volume constant suit la loi des gaz .......... .", ["Choisir...", "parfaits", "conducteurs"], "parfaits", "therm11_cr_p4"),
+            ("5. La carcasse transmet l'énergie interne par .......... thermique directe.", ["Choisir...", "conduction", "convection"], "conduction", "therm11_cr_p5"),
+            ("6. Le roulement à grande vitesse évacue le flux par convection .......... .", ["Choisir...", "forcée", "naturelle"], "forcée", "therm11_cr_p6"),
+            ("7. Un pneu sous-gonflé présente une hausse de température .......... .", ["Choisir...", "critique", "conforme"], "critique", "therm11_cr_p7"),
+            ("8. La mesure de contrôle réglementaire s'effectue toujours à .......... .", ["Choisir...", "froid", "chaud"], "froid", "therm11_cr_p8"),
+            ("9. La surpression accumulée fatigue les ceintures d'.......... de la structure.", ["Choisir...", "acier", "gomme"], "acier", "therm11_cr_p9"),
+            ("10. Ce diagnostic prévient le risque majeur d'.......... sur l'autoroute.", ["Choisir...", "éclatement", "patinage"], "éclatement", "therm11_cr_p10")
+        ]
 
     # =============================================================================
-    # RENDU DE L'INTERFACE GRAPHIQUE STREAMLIT (BOUCLES FINALES)
+    # GESTION DES LOGS DE SESSION ET SÉLECTION DYNAMIC
     # =============================================================================
-    import streamlit as st
-    cle_ordre_quiz = f"ordre_quiz_{prefixe}_aleatoire"
-    if cle_ordre_quiz not in st.session_state:
-        random.shuffle(questions_sources_cr)
-        st.session_state[cle_ordre_quiz] = questions_sources_cr
+    if "ordre_quiz_tab11_cr_aleatoire" not in st.session_state:
+        st.session_state.ordre_quiz_tab11_cr_aleatoire = questions_sources_cr
+    if "champs_therm11_cr_clean" not in st.session_state:
+        st.session_state.champs_therm11_cr_clean = trous_sources_cr
 
-    cle_champs_clean = f"champs_therm_{prefixe}_clean"
-    if cle_champs_clean not in st.session_state:
-        st.session_state[cle_champs_clean] = trous_sources_cr
-
-    # Rendu des deux colonnes d'évaluation Streamlit
+    # =============================================================================
+    # RENDU GRAPHIQUE BI-COLONNE SCELLÉ (SANS FILER OU DOUBLON)
+    # =============================================================================
     col_q_cr, col_t_cr = st.columns(2)
+    
     with col_q_cr:
-        st.markdown("##### Quiz Spécifique au Scénario Routier (10 questions - 10 pts)")
-        for idx, q_data in enumerate(st.session_state[cle_ordre_quiz], 1):
+        st.markdown("##### Quiz Technique du Scénario Conduite (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_tab11_cr_aleatoire, 1):
             st.write(f"**{idx}.** {q_data['q']}")
             st.selectbox(
                 "", 
                 options=["Choisir..."] + q_data["options"], 
-                key=f"therm_{prefixe}_final_g_{q_data['id']}", 
+                key=f"therm_at11_final_g_{prefixe}_{q_data['id']}", 
                 disabled=verrouille, 
                 label_visibility="collapsed"
             )
 
     with col_t_cr:
         st.markdown("##### Synthèse de l'Atelier 11 (Texte à trous - 10 cases - 10 pts)")
-        for ligne in st.session_state[cle_champs_clean]:
+        for ligne in st.session_state.champs_therm11_cr_clean:
             enonce, choix, attendu, cle = ligne
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
@@ -528,13 +528,11 @@ def afficher_atelier_routier_dynamique(scenario_actif_cr, verrouille=False, pref
             with c_sel: 
                 st.selectbox(
                     "", 
-                    options=choix, 
-                    key=f"{cle}_therm{prefixe}_clean", 
+                    choix, 
+                    key=f"{cle}_{prefixe}_clean", 
                     disabled=verrouille, 
                     label_visibility="collapsed"
                 )
-
-
 
 
 
