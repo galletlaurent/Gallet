@@ -5847,12 +5847,11 @@ with tab11:
                 "**Cas 4 :** Consigne atteinte : « Bilan thermique nul, la cabine reste fraîche tout le trajet ! »"
             )
 
-        else: # Température et pression des pneumatiques
+        else: # ???
             st.info(
                 "**Cas 1 : Le sous-gonflage.** Un pneu arrière roule sur autoroute avec un manque de pression : "
                 "« La structure s'écrase et fléchit à chaque tour, les frictions internes génèrent de la chaleur ! ».\n\n"
                 "**Cas 2 : La montée en flèche.** La gomme atteint rapidement une température de 90 °C : "
-
                 "« La structure s'écrase et fléchit à chaque tour, les frictions internes génèrent de la chaleur ! ».\n\n"
                 "**Cas 2 : La montée en flèche.** La gomme atteint rapidement une température de 90 °C : "
                 "« La chaleur sensible accumulée se transmet par conduction à l'air emprisonné à l'intérieur ! ».\n\n"
@@ -5902,7 +5901,7 @@ with tab11:
 
         # 1. Affichage supérieur : L'image réelle du cas (largeur fixe 300px)
         if os.path.exists(fichier_reel):
-            st.image(fichier_reel, caption=caption_reel, width=300)
+            st.image(fichier_reel, caption=caption_reel)
         else:
             st.caption(caption_reel)
 
@@ -5912,7 +5911,7 @@ with tab11:
         
         # 2. Affichage inférieur : L'image de la caricature (largeur fixe 300px)
         if os.path.exists(fichier_caricature):
-            st.image(fichier_caricature, caption=caption_caricature, width=300)
+            st.image(fichier_caricature, caption=caption_caricature)
         else:
             st.caption(caption_caricature)
             
