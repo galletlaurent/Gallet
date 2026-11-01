@@ -6622,11 +6622,12 @@ with tab12:
     # =============================================================================
     # GESTION DU VERROUILLAGE ET APPEL DU MODULE D'ÉVALUATION DE L'ATELIER 12
     # =============================================================================
+    # Gestion de l'état de verrouillage
     if "suite_verrouille_tab12_geo" not in st.session_state:
         st.session_state.suite_verrouille_tab12_geo = False
     verrou_at12_geo = st.session_state.suite_verrouille_tab12_geo
 
-    # C'est cet appel UNIQUE qui va créer les variables en session et afficher le Quiz + Trous
+    # Affichage opérationnel des questions et textes à trous dynamiques indexés
     afficher_atelier_geometre_dynamique(scen_geo, verrouille=verrou_at12_geo)
 
     st.write("---")
@@ -6653,40 +6654,39 @@ with tab12:
         elif not case_certif_stat12:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # 1. Correction du Quiz (10 pts) - Sécurisée contre le KeyError
+            # 1. Correction du Quiz (10 pts) - Recherche indexée anti-KeyError
             score_q12 = 0.0
             if "ordre_quiz_tab12_geo_aleatoire" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_tab12_geo_aleatoire:
-                    # Correction dynamique pour correspondre exactement aux clés générées par la fonction
-                    # On cherche la clé avec la structure : therm_at12_final_g_geo_[id]_[idx]
                     saisie = "Choisir..."
                     for k in st.session_state.keys():
-                        if k.startswith(f"therm_at12_final_g_geo_{q_item['id']}_"):
+                        if k.startswith(f"sec_tab12_geo_q_{q_item['id']}_"):
                             saisie = st.session_state[k]
                             break
                     if str(saisie).strip() == str(q_item["rep"]).strip():
                         score_q12 += 1.0
 
-            # 2. Correction du Texte à trous (10 pts) - Sécurisée contre le KeyError
+            # 2. Correction du Texte à trous (10 pts) - Recherche indexée anti-KeyError
             score_t12 = 0.0
             if "champs_therm12_geo_clean" in st.session_state:
                 for ligne in st.session_state.champs_therm12_geo_clean:
                     enonce_t, choix_t, attendu_t, cle_t = ligne
                     saisie_t = "Choisir..."
                     for k in st.session_state.keys():
-                        if k.startswith(f"{cle_t}_geo_clean_"):
+                        if k.startswith(f"sec_tab12_geo_t_{cle_t}_"):
                             saisie_t = st.session_state[k]
                             break
                     if str(saisie_t).strip() == str(attendu_t).strip():
                         score_t12 += 1.0
 
+            # 3. Sauvegarde et rafraîchissement
             st.session_state.score_suite12_geo_p1 = round(float(score_q12), 1)
             st.session_state.score_suite12_geo_p2 = round(float(score_t12), 1)
             st.session_state.score_final_suite12_geo = round(float(score_q12 + score_t12), 1)
             st.session_state.suite_verrouille_tab12_geo = True
             st.rerun()
 
-    # --- COMPILATION ET EXPORTATION DU RAPPORT SCELLÉ HTML ---
+    # --- COMPILATION ET TÉLÉCHARGEMENT DU RAPPORT SCELLÉ HTML ---
     if st.session_state.get("suite_verrouille_tab12_geo", False):
         from datetime import datetime
         scr1_t12 = st.session_state.get("score_suite12_geo_p1", 0.0)
@@ -6740,7 +6740,11 @@ with tab12:
 
         if "ordre_quiz_tab12_geo_aleatoire" in st.session_state:
             for num, q_item in enumerate(st.session_state.ordre_quiz_tab12_geo_aleatoire, 1):
-                saisie = st.session_state.get(f"therm_at12_final_g_{q_item['id']}", "Choisir...")
+                saisie = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"sec_tab12_geo_q_{q_item['id']}_"):
+                        saisie = st.session_state[k]
+                        break
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
@@ -6760,11 +6764,12 @@ with tab12:
 
         if "champs_therm12_geo_clean" in st.session_state:
             for num, ligne in enumerate(st.session_state.champs_therm12_geo_clean, 1):
-                enonce_texte = ligne[0]
-                attendu_texte = ligne[2]
-                cle_variable = ligne[-1]
-
-                saisie_texte = st.session_state.get(f"{cle_variable}_therm12_geo_clean", "Choisir...")
+                enonce_texte, choix_texte, attendu_texte, cle_variable = ligne
+                saisie_texte = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"sec_tab12_geo_t_{cle_variable}_"):
+                        saisie_texte = st.session_state[k]
+                        break
                 v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
                 v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
                 html_export_therm12 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
