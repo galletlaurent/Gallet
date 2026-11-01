@@ -6360,7 +6360,8 @@ with tab11:
     if "scenario_conduite_choisi" not in st.session_state:
         st.session_state.scenario_conduite_choisi = "Sécurité : Échauffement des freins de poids lourd"
 
-    # Système de tirage au sort par bouton
+    import streamlit as st
+
     col_tirage_cr, col_statut_cr = st.columns([0.4, 0.6], vertical_alignment="center")
     with col_tirage_cr:
         if st.button("TIRER UN EXERCICE DE CONDUITE AU HASARD", key="btn_tirage_hasard_t11", use_container_width=True):
@@ -6374,16 +6375,13 @@ with tab11:
             actuel_cr = st.session_state.scenario_conduite_choisi
             possibles_cr = [s for s in liste_scenarios_cr if s != actuel_cr]
             st.session_state.scenario_conduite_choisi = random.choice(possibles_cr)
+            
             # Réinitialisation des ordres de quiz pour forcer le recalcul lié au nouveau scénario
             if "ordre_quiz_tab11_cr_aleatoire" in st.session_state:
                 del st.session_state.ordre_quiz_tab11_cr_aleatoire
             if "champs_therm11_cr_clean" in st.session_state:
                 del st.session_state.champs_therm11_cr_clean
             st.rerun()
-
-    scen_cr = st.session_state.scenario_conduite_choisi
-    st.success(f"Exercice de Conduite actif affecté : {scen_cr}")
-    st.write("---")
 
     # =============================================================================
     # DÉFINITION TECHNIQUE ADAPTATIVE DE L'ATELIER 11 (CONDUITE ROUTIÈRE)
