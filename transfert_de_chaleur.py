@@ -215,6 +215,173 @@ tab10 = onglets[10]
 tab11 = onglets[11] 
 tab12 = onglets[12]
 
+def afficher_atelier_douze_dynamique(scenario_actif_at12, verrouille=False, prefixe="at12"):
+    import random
+    import streamlit as st
+
+    # =============================================================================
+    # CONFIGURATION DES 4 CAS DE L'ATELIER 12 - GÉOMÈTRES
+    # =============================================================================
+    if scenario_actif_at12 == "Atelier 12 : Levé de Corps de Rue et Polygonal":
+        questions_sources_at12 = [
+            {"id": "at12_c1_e1", "q": "Quelle erreur systématique est éliminée par la méthode du double retournement de la lunette ?", "options": ["L'erreur de collimation horizontale", "L'erreur de centrage sur le repère", "L'erreur de réfraction atmosphérique"], "rep": "L'erreur de collimation horizontale"},
+            {"id": "at12_c1_e2", "q": "Dans un cheminement polygonal fermé, comment appelle-t-on l'écart entre la fermeture calculée et la fermeture théorique ?", "options": ["L'écart de fermeture angulaire", "L'erreur accidentelle de pointé", "La tolérance de l'appareil"], "rep": "L'écart de fermeture angulaire"},
+            {"id": "at12_c1_e3", "q": "Quelle est l'unité réglementaire utilisée par le géomètre pour les mesures d'angles en France ?", "options": ["Le grad", "Le degré", "Le radian"], "rep": "Le grad"},
+            {"id": "at12_c1_e4", "q": "Pour garantir un levé de corps de rue de classe A, quelle doit être la précision maximale tolérée ?", "options": ["10 centimètres", "40 centimètres", "1 mètre"], "rep": "10 centimètres"},
+            {"id": "at12_c1_e5", "q": "Quel repère officiel du réseau NGF sert de référence pour l'altitude en France ?", "options": ["Le repère de nivellement", "La borne cadastrale", "Le point de centrage"], "rep": "Le repère de nivellement"},
+            {"id": "at12_c1_e6", "q": "Comment qualifie-t-on une erreur dont la valeur et le signe varient de manière imprévisible à chaque mesure ?", "options": ["Accidentelle", "Systématique", "Grossière"], "rep": "Accidentelle"},
+            {"id": "at12_c1_e7", "q": "Quel accessoire doit être parfaitement verticalisé au-dessus du point grâce à une nacelle ou une canne plumb ?", "options": ["Le prisme porte-voyant", "Le trépied de la station", "Le plomb optique"], "rep": "Le prisme porte-voyant"},
+            {"id": "at12_c1_e8", "q": "La correction liée à la courbure de la Terre et à la déviation des rayons lumineux s'appelle la correction de...", "options": ["Niveau et réfraction", "Collimation", "Tourillonnement"], "rep": "Niveau et réfraction"},
+            {"id": "at12_c1_e9", "q": "Pour le calcul des coordonnées planométriques, la projection officielle en France métropolitaine est le...", "options": ["Lambert-93", "Mercator", "UTM Zone 32"], "rep": "Lambert-93"},
+            {"id": "at12_c1_e10", "q": "L'action de caler l'axe principal du tachéomètre à la verticale à l'aide de la compensation électronique s'appelle...", "options": ["La mise en station", "Le calage de l'embase", "Le pivotement'], "rep": "La mise en station"}
+        ]
+        trous_sources_at12 = [
+            ("1. Le géomètre réalise la mise en station du tachéomètre à l'aide du plomb ............. .", ["Choisir...", "optique", "mécanique", "sphérique"], "optique", "at12_c1_t1"),
+            ("2. Pour éliminer les erreurs systématiques d'axe, on effectue un double ............. .", ["Choisir...", "retournement", "visée", "calage"], "retournement", "at12_c1_t2"),
+            ("3. Les calculs de coordonnées s'appuient sur le système de projection ............. .", ["Choisir...", "Lambert-93", "WGS84", "UTM"], "Lambert-93", "at12_c1_t3"),
+            ("4. L'erreur de fermeture d'une polygonale doit rester inférieure à la ............. réglementaire.", ["Choisir...", "tolérance", "collimation", "constante"], "tolérance", "at12_c1_t4"),
+            ("5. La mesure des distances par ondes implique de configurer la constante de ............. .", ["Choisir...", "prisme", "station", "hauteur"], "prisme", "at12_c1_t5"),
+            ("6. Le nivellement direct utilise une mire posée verticalement sur un ............. .", ["Choisir...", "crapaud", "trépied", "repère"], "crapaud", "at12_c1_t6"),
+            ("7. La détermination mathématique d'un point par visées d'angles s'appelle l'............. .", ["Choisir...", "intersection", "cheminement", "rayonnement"], "intersection", "at12_c1_t7"),
+            ("8. Une inclinaison de la canne du voyant génère une erreur de type ............. .", ["Choisir...", "systématique", "accidentelle", "grossière"], "systématique", "at12_c1_t8"),
+            ("9. Les lectures d'angles horizontaux s'effectuent sur le cercle ............. .", ["Choisir...", "limbe", "éclat", "vertical"], "limbe", "at12_c1_t9"),
+            ("10. Un levé topo rattaché au réseau de l'IGN utilise des points pivots ............. .", ["Choisir...", "géodésiques", "cadastrats", "arbitraires"], "géodésiques", "at12_c1_t10")
+        ]
+
+    elif scenario_actif_at12 == "Atelier 12 : Implantation de Bâtiment et Axes":
+        questions_sources_at12 = [
+            {"id": "at12_c2_e1", "q": "Quelle opération consiste à reporter sur le terrain la position des axes de fondations d'un ouvrage ?", "options": ["L'implantation", "Le levé de détails", "Le récolement"], "rep": "L'implantation"},
+            {"id": "at12_c2_e2", "q": "Quelle vérification géométrique simple permet de valider sur le terrain l'équerrage d'un rectangle ?", "options": ["La mesure des diagonales", "La mesure du périmètre", "Le double retournement"], "rep": "La mesure des diagonales"},
+            {"id": "at12_c2_e3", "q": "Comment appelle-t-on les structures en bois provisoires servant à matérialiser les lignes d'axes ?", "options": ["Les chaises d'implantation", "Les mires de garde", "Les jalons d'alignement"], "rep": "Les chaises d'implantation"},
+            {"id": "at12_c2_e4", "q": "Pour implanter un repère altimétrique de chantier, quel type de nivellement est le plus précis ?", "options": ["Le nivellement direct (géométrique)", "Le nivellement indirect (trigonométrique)", "Le levé GPS de canne"], "rep": "Le nivellement direct (géométrique)"},
+            {"id": "at12_c2_e5", "q": "Quelle erreur grossière commet l'opérateur en saisissant une mauvaise hauteur de prisme ?", "options": ["Une erreur de carnet ou de saisie", "Une erreur de centrage", "Une dérive d'étalonnage"], "rep": "Une erreur de carnet ou de saisie"},
+            {"id": "at12_c2_e6", "q": "Lors de l'utilisation d'une station totale, le décalage de l'axe vertical de l'appareil par rapport au plomb s'appelle...", "options": ["Le défaut de centrage", "L'erreur d'excentricité", "Le tourillonnement"], "rep": "Le défaut de centrage"},
+            {"id": "at12_c2_e7", "q": "Quelle méthode topographique permet de calculer la position de la station à partir de trois points connus ?", "options": ["Le relèvement", "Le rayonnement", "L'excentrement"], "rep": "Le relèvement"},
+            {"id": "at12_c2_e8", "q": "Pour éviter de déplacer le trépied par inadvertance sur le sol meuble, le géomètre doit...", "options": ["Enfoncer fermement les broches", "Utiliser un niveau laser", "Bloquer les vis de blocage"], "rep": "Enfoncer fermement les broches"},
+            {"id": "at12_c2_e9", "q": "La différence entre la distance projetée calculée sur plan et la distance mesurée au sol dépend du...", "options": ["Facteur d'échelle de la projection", "Coefficient de réfraction", "Type de prisme exploité"], "rep": "Facteur d'échelle de la projection"},
+            {"id": "at12_c2_e10", "q": "Le contrôle final des éléments maçonnés pour vérifier la conformité avec le projet initial s'appelle...", "options": ["Le levé de récolement", "L'avant-métré", "L'auscultation"], "rep": "Le levé de récolement"}
+        ]
+        trous_sources_at12 = [
+            ("1. Le transfert d'un plan vers le terrain s'appelle l'............. de l'ouvrage.", ["Choisir...", "implantation", "auscultation", "lever"], "implantation", "at12_c2_t1"),
+            ("2. Pour fixer les repères d'alignements, on construit des ............. d'implantation.", ["Choisir...", "chaises", "bornes", "mires"], "chaises", "at12_c2_t2"),
+            ("3. Un contrôle d'angle droit sur le sol utilise la règle des diagonales ou du ............. .", ["Choisir...", "3-4-5", "double retour", "limbe"], "3-4-5", "at12_c2_t3"),
+            ("4. La précision altimétrique des chaises est garantie par un nivellement ............. .", ["Choisir...", "direct", "indirect", "GPS"], "direct", "at12_c2_t4"),
+            ("5. La mesure de distance de la station utilise un EDM à onde ............. .", ["Choisir...", "électro-optique", "acoustique", "mécanique"], "électro-optique", "at12_c2_t5"),
+            ("6. Le rattachement planimétrique à des repères préexistants utilise le ............. .", ["Choisir...", "relèvement", "rayonnement", "déport"], "relèvement", "at12_c2_t6"),
+            ("7. Entrer une mauvaise valeur de hauteur d'appareil cause une erreur ............. .", ["Choisir...", "grossière", "accidentelle", "systématique"], "grossière", "at12_c2_t7"),
+            ("8. L'axe de visée d'un instrument topo doit être orthogonal à l'axe des ............. .", ["Choisir...", "tourillons", "graduations", "pivots"], "tourillons", "at12_c2_t8"),
+            ("9. Les mesures géométriques finales de conformité constituent le plan de ............. .", ["Choisir...", "récolement", "bornage", "mitoyenneté"], "récolement", "at12_c2_t9"),
+            ("10. L'ajustement fin de la fiole de la nivelle torique assure la ............. de l'axe.", ["Choisir...", "verticalité", "collimation", "stabilité"], "verticalité", "at12_c2_t10")
+        ]
+
+    elif scenario_actif_at12 == "Atelier 12 : Nivellement de Précision d'Ouvrages":
+        questions_sources_at12 = [
+            {"id": "at12_c3_e1", "q": "Quel instrument est exclusivement dédié au nivellement géométrique de haute précision ?", "options": ["Le niveau optique de chantier avec platine micrométrique", "Le tachéomètre robotisé", "Le récepteur GNSS RTK"], "rep": "Le niveau optique de chantier avec platine micrométrique"},
+            {"id": "at12_c3_e2", "q": "Pour éliminer complètement l'erreur d'égalisation des portées (défaut de parallélisme), que doit faire le géomètre ?", "options": ["Placer le niveau à égale distance de la mire arrière et avant", "Viser uniquement au double décamètre", "Faire des visées courtes de moins de 5 mètres"], "rep": "Placer le niveau à égale distance de la mire arrière et avant"},
+            {"id": "at12_c3_e3", "q": "Comment appelle-t-on le carnet de terrain où l'on note les lectures arrière et avant ?", "options": ["Le carnet de nivellement par cheminement", "Le registre cadastral de section", "Le schéma de polygonation"], "rep": "Le carnet de nivellement par cheminement"},
+            {"id": "at12_c3_e4", "q": "Quelle est la cause principale de la dérive des mesures de nivellement lors des fortes chaleurs ?", "options": ["La réfraction atmosphérique due au gradient de température", "La dilatation thermique des pieds en carbone", "La variation de la constante de gravité"], "rep": "La réfraction atmosphérique due au gradient de température"},
+            {"id": "at12_c3_e5", "q": "Quel contrôle mathématique permet de valider le calcul d'un cheminement de nivellement ?", "options": ["Somme des lectures AR - Somme des lectures AV = Delta H", "Lecture AR minimale = Lecture AV maximale", "Le produit des distances stationnaires"], "rep": "Somme des lectures AR - Somme des lectures AV = Delta H"},
+            {"id": "at12_c3_e6", "q": "Lors du nivellement, sur quel repère stable positionne-t-on l'embase de la mire pour le changement de station ?", "options": ["Un crapaud métallisé lourd", "Une broche d'alignement", "Un jalon télescopique"], "rep": "Un crapaud métallisé lourd"},
+            {"id": "at12_c3_e7", "q": "Quelle tolérance réglementaire s'applique généralement à un nivellement de haute précision ?", "options": ["Quelques millimètres", "Quelques centimètres", "Un demi-mètre"], "rep": "Quelques millimètres"},
+            {"id": "at12_c3_e8", "q": "La lecture effectuée sur la mire positionnée sur le point d'altitude connu s'appelle...", "options": ["La lecture arrière", "La lecture avant", "L'intermédiaire"], "rep": "La lecture arrière"},
+            {"id": "at12_c3_e9", "q": "Le phénomène optique provoquant l'oscillation visuelle de la mire à grande distance s'appelle...", "options": ["Le miroitement ou la vibration de l'air", "La collimation résiduelle", "La diffraction de l'objectif"], "rep": "Le miroitement ou la vibration de l'air"},
+            {"id": "at12_c3_e10", "q": "Quelle méthode permet de déterminer l'altitude sans stationner sur les points par calcul de dénivelées successives ?", "options": ["Le cheminement par l'axe du milieu", "Le rayonnement gastronomique", "L'excentrement excentré"], "rep": "Le cheminement par l'axe du milieu"}
+        ]
+        trous_sources_at12 = [
+            ("1. Le nivellement géométrique s'effectue à l'aide d'un niveau et d'une ............. .", ["Choisir...", "mire", "canne", "chaîne"], "mire", "at12_c3_t1"),
+            ("2. Pour annuler le défaut de la ligne de visée, on applique l'égalisation des portées.", ["Choisir...", "égalisation", "amplification", "inclinaison"], "égalisation", "at12_c3_t2"),
+            ("3. Pour stabiliser les points de retournement de la mire, on pose un ............. .", ["Choisir...", "crapaud", "trépied", "socle"], "crapaud", "at12_c3_t3"),
+            ("4. La première visée sur le repère d'altitude connu constitue la lecture ............. .", ["Choisir...", "arrière", "avant", "intermédiaire"], "arrière", "at12_c3_t4"),
+            ("5. La visée finale sur le point inconnu ou de fermeture est la lecture ............. .", ["Choisir...", "avant", "arrière", "centrale"], "avant", "at12_c3_t5"),
+            ("6. Les calculs géodésiques de hauteur font référence à la surface du ............. .", ["Choisir...", "géoïde", "ellipsoïde", "cadastre"], "géoïde", "at12_c3_t6"),
+            ("7. La déviation due à l'échauffement des couches d'air s'appelle la réfraction atmosphérique.", ["Choisir...", "réfraction", "diffraction", "dispersion"], "réfraction", "at12_c3_t7"),
+            ("8. L'erreur de fermeture tolérée se calcule en fonction de la distance totale.", ["Choisir...", "distance", "température", "pente"], "distance", "at12_c3_t8"),
+            ("9. Un contrôle de planéité de dalle béton fait appel aux lectures ............. .", ["Choisir...", "intermédiaires", "absolues", "inverses"], "intermédiaires", "at12_c3_t9"),
+            ("10. Le nivellement trigonométrique calcule la dénivelée à l'aide de l'angle zénithal.", ["Choisir...", "zénithal", "horizontal", "azimutal"], "zénithal", "at12_c3_t10")
+        ]
+
+   # =============================================================================
+    # CAS 4 : LEVÉS PARCELLAIRES ET CADASTRE
+    # =============================================================================
+    elif scenario_actif_at12 == "Atelier 12 : Levés Parcellaires et Cadastre":
+        questions_sources_at12 = [
+            {"id": "at12_c4_e1", "q": "Quel document technique officiel définit la délimitation juridique et irrévocable de deux propriétés ?", "options": ["Le procès-verbal de bornage", "Le plan cadastral de section", "L'extrait de matrice"], "rep": "Le procès-verbal de bornage"},
+            {"id": "at12_c4_e2", "q": "La technique consistant à déterminer la position d'un point inconnu en stationnant dessus et en mesurant les signaux satellites s'appelle...", "options": ["Le positionnement GNSS (GPS)", "Le relèvement optique", "Le rayonnement libre"], "rep": "Le positionnement GNSS (GPS)"},
+            {"id": "at12_c4_e3", "q": "Quelle est la valeur juridique première du plan cadastral français ?", "options": ["Une valeur uniquement fiscale", "Une garantie absolue de propriété", "Un document de mitoyenneté figé"], "rep": "Une valeur uniquement fiscale"},
+            {"id": "at12_c4_e4", "q": "Quelle erreur systématique se produit si le prisme sélectionné dans le logiciel ne correspond pas à la marque physique ?", "options": ["Une erreur de constante de prisme", "Une erreur de collimation", "Une dérive d'index de cercle"], "rep": "Une erreur de constante de prisme"},
+            {"id": "at12_c4_e5", "q": "Le repère en pierre ou en résine synthétique scellé au sol pour marquer une limite de propriété s'appelle...", "options": ["Une borne", "Un jalon", "Un témoin de garde"], "rep": "Une borne"},
+            {"id": "at12_c4_e6", "q": "Quel protocole de correction en temps réel permet d'obtenir une précision centimétrique au GNSS ?", "options": ["Le mode RTK (Real Time Kinematic)", "Le mode statique post-traité", "Le calcul de triangulation"], "rep": "Le mode RTK (Real Time Kinematic)"},
+            {"id": "at12_c4_e7", "q": "La déviation locale du fil à plomb par rapport à la normale théorique à l'ellipsoïde est...", "options": ["La déviation de la verticale", "L'erreur de réfraction", "L'excentricité de l'axe"], "rep": "La déviation de la verticale"},
+            {"id": "at12_c4_e8", "q": "Pour garantir l'alignement de trois bornes de propriété séparées de grande distance, on utilise...", "options": ["La méthode de l'alignement par visées croisées", "Le nivellement trigonométrique", "Le positionnement libre"], "rep": "La méthode de l'alignement par visées croisées"},
+            {"id": "at12_c4_e9", "q": "Dans le calcul d'une surface de parcelle par coordonnées, quelle méthode mathématique utilise-t-on ?", "options": ["La méthode de Gauss (par les coordonnées des sommets)", "Le théorème de Pythagore simple", "L'intégration de Simpson"], "rep": "La méthode de Gauss (par les coordonnées des sommets)"},
+            {"id": "at12_c4_e10", "q": "L'action de rechercher les limites anciennes en s'appuyant sur les titres de propriété s'appelle...", "options": ["La recherche d'antériorité", "L'arpentage", "Le récolement foncier"], "rep": "La recherche d'antériorité"}
+        ]
+        trous_sources_at12 = [
+            ("1. La définition contradictoire des limites foncières s'établit lors du ............. .", ["Choisir...", "bornage", "levé", "recolement"], "bornage", "at12_c4_t1"),
+            ("2. Les repères physiques implantés aux sommets de la propriété sont des ............. .", ["Choisir...", "bornes", "jalons", "reperes"], "bornes", "at12_c4_t2"),
+            ("3. Le levé de canne centimétrique instantané s'effectue en mode GNSS ............. .", ["Choisir...", "RTK", "statique", "libre"], "RTK", "at12_c4_t3"),
+            ("4. Le plan émis par l'administration des impôts pour l'identification est le ............. .", ["Choisir...", "cadastre", "bornage", "NGF"], "cadastre", "at12_c4_t4"),
+            ("5. Utiliser un prisme d'une autre marque sans réglage engendre une erreur de ............. .", ["Choisir...", "constante", "centrage", "hauteur"], "constante", "at12_c4_t5"),
+            ("6. Le calcul mathématique des surfaces polygonales foncières applique la formule de ............. .", ["Choisir...", "Gauss", "Pythagore", "Newton"], "Gauss", "at12_c4_t6"),
+            ("7. La canne porte-prisme doit être maintenue stable à l'aide d'une fiole ............. .", ["Choisir...", "sphérique", "torique", "optique"], "sphérique", "at12_c4_t7"),
+            ("8. L'étude historique des mutations et des limites de parcelles est l'............. .", ["Choisir...", "anteriorite", "arpentage", "recolement"], "anteriorite", "at12_c4_t8"),
+            ("9. Les erreurs de centrage de la station au-dessus du clou topo sont de type ............. .", ["Choisir...", "accidentel", "systematique", "grossier"], "accidentel", "at12_c4_t9"),
+            ("10. L'enregistrement informatique des points levés constitue le fichier de ............. .", ["Choisir...", "coordonnees", "dessin", "matrice"], "coordonnees", "at12_c4_t10")
+        ]
+    else:
+        return afficher_atelier_douze_dynamique("Atelier 12 : Levé de Corps de Rue et Polygonal", verrouille, prefixe)
+
+    # =============================================================================
+    # RENDU DE L'INTERFACE STREAMLIT EN DEUX COLONNES (SANS EMOJI)
+    # =============================================================================
+    import streamlit as st
+
+    cle_ordre_quiz = f"ordre_quiz_{prefixe}_aleatoire"
+    if cle_ordre_quiz not in st.session_state:
+        random.shuffle(questions_sources_at12)
+        st.session_state[cle_ordre_quiz] = questions_sources_at12
+
+    cle_champs_clean = f"champs_therm_{prefixe}_clean"
+    if cle_champs_clean not in st.session_state:
+        st.session_state[cle_champs_clean] = trous_sources_at12
+
+    col_q_at12, col_t_at12 = st.columns(2)
+    
+    with col_q_at12:
+        st.markdown("##### Quiz Technique de Topographie (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state[cle_ordre_quiz], 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox(
+                "", 
+                options=["Choisir..."] + q_data["options"], 
+                key=f"therm_{prefixe}_final_g_{q_data['id']}", 
+                disabled=verrouille, 
+                label_visibility="collapsed"
+            )
+
+    with col_t_at12:
+        st.markdown("##### Synthese de l'Atelier 12 (Texte a trous - 10 cases - 10 pts)")
+        for ligne in st.session_state[cle_champs_clean]:
+            enonce, choix, attendu, cle = ligne
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox(
+                    "", 
+                    options=choix, 
+                    key=f"{cle}_therm{prefixe}_clean", 
+                    disabled=verrouille, 
+                    label_visibility="collapsed"
+                )
+
+
+
+
+
+
+
+
 def afficher_atelier_routier_dynamique(scenario_actif_cr, verrouille=False, prefixe="at11"):
     import random
     import streamlit as st
@@ -4958,7 +5125,7 @@ with tab9:
             )
 
     with col_droite_cours:  # Utilisation de la même variable pour insérer la caricature et le cours
-        st.markdown("##### Illustration caricaturale du cas")
+        st.markdown("##### Illustration caricaturale")
         # Sélection de la caricature spécifique au scénario tiré
         if scen == "Électricité : Surchauffe de discontacteur":
             fichier_img = "maintenance_elec.jpg"
@@ -5801,6 +5968,10 @@ with tab11:
                 "**Cas 4 : Le salut.** Le chauffeur active le ralentisseur hydraulique pour stopper la friction des disques : "
                 "« Affaire classée ! Les disques refroidissent enfin à l'air, le système est sauvé ! »"
             )
+                    # Ajout d'espacement pour pousser les éléments suivants vers le bas
+            for _ in range(20):
+                st.write("")
+        
             texte_bd_bleu_cr = (
                 "**La BD humoristique : Le sprint des Joules du disque**\n\n"
                 "**Cas 1 :** Friction intense : « C'est la transformation géante d'énergie cinétique en chaleur sensible ! ».\n\n"
@@ -5820,6 +5991,10 @@ with tab11:
                 "**Cas 4 : L'arrêt d'urgence.** Le chauffeur s'arrête sur le refuge et laisse tourner au ralenti : "
                 "« Affaire classée ! Le nettoyage du faisceau restaurera la conduction, le joint de culasse est préservé ! »"
             )
+                    # Ajout d'espacement pour pousser les éléments suivants vers le bas
+            for _ in range(20):
+                st.write("")
+        
             texte_bd_bleu_cr = (
                 "**La BD humoristique : La révolte des cylindres**\n\n"
                 "**Cas 1 :** Pleine charge en côte : « Les Watts s'accumulent plus vite que l'évacuation du circuit ! ».\n\n"
@@ -5839,6 +6014,10 @@ with tab11:
                 "**Cas 4 : La vigilance préservée.** L'atmosphère se stabilise à une température confortable de 21 °C : "
                 "« Affaire classée ! L'équilibre thermique protège le chauffeur de la somnolence estivale ! »"
             )
+                    # Ajout d'espacement pour pousser les éléments suivants vers le bas
+            for _ in range(20):
+                st.write("")
+        
             texte_bd_bleu_cr = (
                 "**La BD humoristique : L'assaut des Watts solaires**\n\n"
                 "**Cas 1 :** Rayonnement direct : « Les parois en tôle agissent comme des radiateurs conducteurs ! ».\n\n"
@@ -5860,6 +6039,10 @@ with tab11:
                 "**Cas 4 : L'éclatement.** La structure cède brusquement dans un grand bruit sur la trajectoire : "
                 "« Affaire classée ! La surchauffe a détruit la cohésion de la gomme, le pneu a rendu l'âme ! »"
             )
+                    # Ajout d'espacement pour pousser les éléments suivants vers le bas
+            for _ in range(20):
+                st.write("")
+        
             texte_bd_bleu_cr = (
                 "**La BD humoristique : Le coup de sang du pneu écrasé**\n\n"
                 "**Cas 1 :** Flexion continue : « Le malaxage de la gomme transforme l'énergie mécanique en calories ! ».\n\n"
@@ -5905,10 +6088,7 @@ with tab11:
         else:
             st.caption(caption_reel)
 
-        # Ajout d'espacement pour pousser les éléments suivants vers le bas
-        for _ in range(20):
-            st.write("")
-        
+
         # 2. Affichage inférieur : L'image de la caricature (largeur fixe 300px)
         if os.path.exists(fichier_caricature):
             st.image(fichier_caricature, caption=caption_caricature)
@@ -6171,4 +6351,414 @@ with tab11:
             mime="text/html",
             use_container_width=True,
         )
+
+
+with tab11:
+    st.header("Application dans le Domaine de la Conduite Routière")
+    
+    # BANQUE DE DONNÉES DES 4 SCÉNARIOS DE CONDUITE ROUTIÈRE
+    if "scenario_conduite_choisi" not in st.session_state:
+        st.session_state.scenario_conduite_choisi = "Sécurité : Échauffement des freins de poids lourd"
+
+    # Système de tirage au sort par bouton
+    col_tirage_cr, col_statut_cr = st.columns([0.4, 0.6], vertical_alignment="center")
+    with col_tirage_cr:
+        if st.button("TIRER UN EXERCICE DE CONDUITE AU HASARD", key="btn_tirage_hasard_t11", use_container_width=True):
+            liste_scenarios_cr = [
+                "Sécurité : Échauffement des freins de poids lourd",
+                "Mécanique : Surchauffe moteur en côte",
+                "Confort : Climatisation de cabine et flux de paroi",
+                "Liaison au sol : Température et pression des pneumatiques"
+            ]
+            import random
+            actuel_cr = st.session_state.scenario_conduite_choisi
+            possibles_cr = [s for s in liste_scenarios_cr if s != actuel_cr]
+            st.session_state.scenario_conduite_choisi = random.choice(possibles_cr)
+            # Réinitialisation des ordres de quiz pour forcer le recalcul lié au nouveau scénario
+            if "ordre_quiz_tab11_cr_aleatoire" in st.session_state:
+                del st.session_state.ordre_quiz_tab11_cr_aleatoire
+            if "champs_therm11_cr_clean" in st.session_state:
+                del st.session_state.champs_therm11_cr_clean
+            st.rerun()
+
+    scen_cr = st.session_state.scenario_conduite_choisi
+    st.success(f"Exercice de Conduite actif affecté : {scen_cr}")
+    st.write("---")
+
+    # =============================================================================
+    # DÉFINITION TECHNIQUE ADAPTATIVE DE L'ATELIER 11 (CONDUITE ROUTIÈRE)
+    # =============================================================================
+    if scen_cr == "Sécurité : Échauffement des freins de poids lourd":
+        def_scen_cr = (
+            "En **conduite routière**, le freinage prolongé d'un véhicule lourd transforme l'énergie cinétique "
+            "en chaleur sensible au niveau des disques. La conduction thermique doit évacuer ces calories "
+            "vers les moyeux pour éviter le phénomène de fading, caractérisé par l'ébullition du liquide de frein "
+            "et la perte totale d'efficacité du système."
+        )
+    elif scen_cr == "Mécanique : Surchauffe moteur en côte":
+        def_scen_cr = (
+            "Lors de la traction d'une charge lourde en forte rampe, le bloc moteur dissipe un flux thermique intense. "
+            "Le liquide de refroidissement doit assurer un transfert convectif efficace vers le radiateur principal. "
+            "Si la conduction à travers les parois de l'échangeur est entravée, le moteur dépasse sa température critique, "
+            "risquant la rupture mécanique du joint de culasse."
+        )
+    elif scen_cr == "Confort : Climatisation de cabine et flux de paroi":
+        def_scen_cr = (
+            "La gestion de l'ambiance thermique en cabine impacte directement la vigilance du conducteur routier. "
+            "Les parois de la cabine subissent le rayonnement solaire direct et transmettent un flux de chaleur par conduction. "
+            "Le système de climatisation doit extraire ces Watts intrusifs pour maintenir une température de consigne "
+            "confortable et sécuritaire sur les longs trajets."
+        )
+    else: # Température et pression des pneumatiques
+        def_scen_cr = (
+            "Les pneumatiques d'un poids lourd subissent des cycles de déformation continus qui génèrent de la chaleur "
+            "par friction interne. Ce transfert thermique élève la température de l'air emprisonné, ce qui augmente "
+            "la pression interne conformément à la loi des gaz parfaits. Une surchauffe par sous-gonflage initial peut "
+            "conduire à l'éclatement destructeur du pneu."
+        )
+
+    st.write(f"**Définition et contexte du cas :** {def_scen_cr}")
+    st.write("---")
+
+    # =============================================================================
+    # 1. ENONCÉ DE L'EXERCICE ET BANDE DESSINÉE (COLONNE DE GAUCHE : 30%)
+    # =============================================================================
+    col_gauche_bd_cr, col_droite_cours_cr = st.columns([0.3, 0.7])
+
+    with col_gauche_bd_cr:
+        st.markdown("##### Enoncé de l'exercice et contexte")
+        if scen_cr == "Sécurité : Échauffement des freins de poids lourd":
+            st.info(
+                "**Cas 1 : La longue descente.** Un camion de 40 tonnes descend un col : "
+                "« Les plaquettes serrent les disques, les frottements génèrent des milliers de Joules à chaque seconde ! ».\n\n"
+                "**Cas 2 : Le pic thermique.** Les disques de fonte montent à 600 °C et rougissent : "
+                "« La fonte emmagasine la chaleur mais la conduction vers le moyeu sature, le flux peine à s'évacuer ! ».\n\n"
+                "**Cas 3 : L'évanouissement.** Le liquide de frein bout à cause du transfert thermique vers l'étrier : "
+                "« Alerte, formation de bulles de gaz compressibles dans le circuit, la pédale s'enfonce dans le vide ! ».\n\n"
+                "**Cas 4 : Le salut.** Le chauffeur active le ralentisseur hydraulique pour stopper la friction des disques : "
+                "« Affaire classée ! Les disques refroidissent enfin à l'air, le système est sauvé ! »"
+            )
+                    # Ajout d'espacement pour pousser les éléments suivants vers le bas
+            for _ in range(20):
+                st.write("")
+        
+            texte_bd_bleu_cr = (
+                "**La BD humoristique : Le sprint des Joules du disque**\n\n"
+                "**Cas 1 :** Friction intense : « C'est la transformation géante d'énergie cinétique en chaleur sensible ! ».\n\n"
+                "**Cas 2 :** Surchauffe : « L'étrier chauffe par conduction directe, le liquide de frein commence à bouillir ! ».\n\n"
+                "**Cas 3 :** Fading : « Des bulles de gaz apparaissent, la pression hydraulique s'effondre dans la pédale ! ».\n\n"
+                "**Cas 4 :** Ralentisseur : « Fin de la friction ! La convection de l'air évacue les Watts perdus ! »"
+            )
+
+        elif scen_cr == "Mécanique : Surchauffe moteur en côte":
+            st.info(
+                "**Cas 1 : L'effort maximal.** Le camion monte une forte côte à pleine charge : "
+                "« Les cylindres tournent à plein régime, les explosions libèrent un flux thermique de forte puissance ! ».\n\n"
+                "**Cas 2 : L'embouteillage de Watts.** Le radiateur s'avère encrassé par des insectes : "
+                "« Le coefficient de transmission global U s'effondre, les calories n'arrivent plus à migrer vers l'extérieur ! ».\n\n"
+                "**Cas 3 : L'ébullition.** L'aiguille du tableau de bord entre de force dans la zone rouge : "
+                "« Le liquide de refroidissement bout à plus de 110 °C, la pression fait sauter la soupape du vase ! ».\n\n"
+                "**Cas 4 : L'arrêt d'urgence.** Le chauffeur s'arrête sur le refuge et laisse tourner au ralenti : "
+                "« Affaire classée ! Le nettoyage du faisceau restaurera la conduction, le joint de culasse est préservé ! »"
+            )
+                    # Ajout d'espacement pour pousser les éléments suivants vers le bas
+            for _ in range(20):
+                st.write("")
+        
+            texte_bd_bleu_cr = (
+                "**La BD humoristique : La révolte des cylindres**\n\n"
+                "**Cas 1 :** Pleine charge en côte : « Les Watts s'accumulent plus vite que l'évacuation du circuit ! ».\n\n"
+                "**Cas 2 :** Radiateur obstrué : « La brière de saleté oppose une résistance thermique parasite énorme ! ».\n\n"
+                "**Cas 3 :** Zone rouge : « Changement d'état en vue ! Le liquide devient vapeur et s'échappe par la soupape ! ».\n\n"
+                "**Cas 4 :** Refroidissement : « Le flux thermique se stabilise, le moteur retrouve son équilibre ! »"
+            )
+
+        elif scen_cr == "Confort : Climatisation de cabine et flux de paroi":
+            st.info(
+                "**Cas 1 : La fournaise estivale.** Le camion roule en plein après-midi sous un soleil de plomb : "
+                "« Les tôles de la cabine absorbent le rayonnement solaire, la chaleur sensible pénètre l'habitacle ! ».\n\n"
+                "**Cas 2 : L'inconfort.** L'isolation fine des parois laisse passer les calories : "
+                "« La résistance thermique R des garnitures est insuffisante, le flux conducteur traverse les portes ! ».\n\n"
+                "**Cas 3 : L'action de la clim.** Le conducteur enclenche la climatisation au maximum : "
+                "« Le groupe frigorifique extrait activement les Watts pour abaisser la température intérieure ! ».\n\n"
+                "**Cas 4 : La vigilance préservée.** L'atmosphère se stabilise à une température confortable de 21 °C : "
+                "« Affaire classée ! L'équilibre thermique protège le chauffeur de la somnolence estivale ! »"
+            )
+                    # Ajout d'espacement pour pousser les éléments suivants vers le bas
+            for _ in range(20):
+                st.write("")
+        
+            texte_bd_bleu_cr = (
+                "**La BD humoristique : L'assaut des Watts solaires**\n\n"
+                "**Cas 1 :** Rayonnement direct : « Les parois en tôle agissent comme des radiateurs conducteurs ! ».\n\n"
+                "**Cas 2 :** Infiltration : « Faible épaisseur, le flux de chaleur traverse sans aucune opposition ! ».\n\n"
+                "**Cas 3 :** Climatiseur en marche : « Extraction convective des calories en cours, on chasse les Joules ! ».\n\n"
+                "**Cas 4 :** Consigne atteinte : « Bilan thermique nul, la cabine reste fraîche tout le trajet ! »"
+            )
+
+        else: # ???
+            st.info(
+                "**Cas 1 : Le sous-gonflage.** Un pneu arrière roule sur autoroute avec un manque de pression : "
+                "« La structure s'écrase et fléchit à chaque tour, les frictions internes génèrent de la chaleur ! ».\n\n"
+                "**Cas 2 : La montée en flèche.** La gomme atteint rapidement une température de 90 °C : "
+                "« La structure s'écrase et fléchit à chaque tour, les frictions internes génèrent de la chaleur ! ».\n\n"
+                "**Cas 2 : La montée en flèche.** La gomme atteint rapidement une température de 90 °C : "
+                "« La chaleur sensible accumulée se transmet par conduction à l'air emprisonné à l'intérieur ! ».\n\n"
+                "**Cas 3 : La surpression.** L'air chaud se dilate fortement et fait grimper le manomètre : "
+                "« Conformément à la loi des gaz, la pression interne s'envole, la carcasse en acier fatigue ! ».\n\n"
+                "**Cas 4 : L'éclatement.** La structure cède brusquement dans un grand bruit sur la trajectoire : "
+                "« Affaire classée ! La surchauffe a détruit la cohésion de la gomme, le pneu a rendu l'âme ! »"
+            )
+                    # Ajout d'espacement pour pousser les éléments suivants vers le bas
+            for _ in range(20):
+                st.write("")
+        
+            texte_bd_bleu_cr = (
+                "**La BD humoristique : Le coup de sang du pneu écrasé**\n\n"
+                "**Cas 1 :** Flexion continue : « Le malaxage de la gomme transforme l'énergie mécanique en calories ! ».\n\n"
+                "**Cas 2 :** Conduction interne : « L'air intérieur s'échauffe et ses molécules s'agitent de plus en plus ! ».\n\n"
+                "**Cas 3 :** Pression en hausse : « Plus la température monte, plus la force exercée sur les parois grandit ! ».\n\n"
+                "**Cas 4 :** Explosion : « Limite élastique dépassée, les Joules accumulés se libèrent d'un coup net ! »"
+            )
+        
+        # Affichage de la BD en fond bleu superposée
+        st.info(texte_bd_bleu_cr)
+
+    with col_droite_cours_cr:
+        st.markdown("##### Illustration caricaturale du cas")
+        
+        # Détermination des fichiers images (réels et caricatures) selon le scénario actif
+        if scen_cr == "Sécurité : Échauffement des freins de poids lourd":
+            caption_caricature = "Caricature du transfert thermique de friction sur les freins"
+            fichier_reel = "echauffementfreinspoidslourd.jpg"
+            fichier_caricature = "cr_freins.jpg"
+            caption_reel = "Image réelle : Disque de frein en cours de test"
+
+        elif scen_cr == "Mécanique : Surchauffe moteur en côte":
+            caption_caricature = "Caricature de la surchauffe du liquide de refroidissement moteur"
+            fichier_reel = "Surchauffemoteurcote.jpg"
+            fichier_caricature = "cr_moteur.jpg"
+            caption_reel = "Image réelle : Indicateur de température moteur"
+
+        elif scen_cr == "Confort : Climatisation de cabine et flux de paroi":
+            caption_caricature = "Caricature des flux de conduction thermique à travers la tôle de cabine"
+            fichier_reel = "Climatisationcabinefluxparoi.jpg"
+            fichier_caricature = "cr_cabine.jpg"
+            caption_reel = "Image réelle : Cabine de camion sous le soleil"
+
+        else:
+            caption_caricature = "Caricature de la hausse de pression liée à l'échauffement de l'air interne"
+            fichier_reel = "Temperaturepressionpneumatiques.jpg"
+            fichier_caricature = "cr_pneus.jpg"
+            caption_reel = "Image réelle : Contrôle de pression des pneus à chaud"
+
+        # 1. Affichage supérieur : L'image réelle du cas (largeur fixe 300px)
+        if os.path.exists(fichier_reel):
+            st.image(fichier_reel, caption=caption_reel)
+        else:
+            st.caption(caption_reel)
+
+
+        # 2. Affichage inférieur : L'image de la caricature (largeur fixe 300px)
+        if os.path.exists(fichier_caricature):
+            st.image(fichier_caricature, caption=caption_caricature)
+        else:
+            st.caption(caption_caricature)
+            
+    st.write("---")
+
+    st.subheader("Laboratoire Virtuel : Simulateur de thermodynamique routière")
+
+    col_p1_cr, col_p2_cr = st.columns(2)
+
+    # --- SCÉNARIO 1 : FREINS ---
+    if scen_cr == "Sécurité : Échauffement des freins de poids lourd":
+        with col_p1_cr:
+            vitesse_camion = st.slider("Vitesse initiale du poids lourd (km/h) :", min_value=30, max_value=90, value=60, key="l11_cr_p1")
+            masse_camion = st.slider("Masse totale en charge du véhicule (tonnes) :", min_value=10, max_value=44, value=40, key="l11_cr_p2")
+        
+            v_ms_cr = vitesse_camion / 3.6
+            puissance_calculee = 0.5 * (masse_camion * 1000.0) * (v_ms_cr ** 2) / 1000.0
+            
+            st.metric(label="Énergie cinétique totale convertie en chaleur", value=f"{puissance_calculee:,.0f} kJ")
+            formule_cr = rf"E_c = \frac{{1}}{{2}} \cdot m \cdot v^2 = \frac{{1}}{{2}} \cdot ({masse_camion} \times 1000) \cdot ({v_ms_cr:.2f})^2 = {puissance_calculee:,.0f}\text{{ kJ}}"
+            st.latex(formule_cr)
+            st.info("Cette énergie immense doit être dissipée par conduction et convection pour éviter l'ébullition des freins.")
+
+    # --- SCÉNARIO 2 : MOTEUR ---
+    elif scen_cr == "Mécanique : Surchauffe moteur en côte":
+        with col_p1_cr:
+            pente_route = st.slider("Pente de la route subie (%) :", min_value=2, max_value=12, value=7, key="l11_cr_p1_m")
+            regime_moteur = st.slider("Régime de rotation moteur (tr/min) :", min_value=1000, max_value=2500, value=2100, step=100, key="l11_cr_p2_m")
+        
+            puissance_calculee = pente_route * regime_moteur * 0.1
+            temp_liquide = 80 + (puissance_calculee * 0.05)
+            
+            st.metric(label="Flux thermique généré à évacuer", value=f"{puissance_calculee:.1f} Watts")
+            formule_moteur = rf"\Phi_{{\text{{moteur}}}} = k \cdot \text{{Pente}} \cdot N = {puissance_calculee:.1f}\text{{ W}}"
+            st.latex(formule_moteur)
+            
+            if temp_liquide > 100.0:
+                st.error(f"Surchauffe critique : Température du fluide estimée à {temp_liquide:.1f} °C. Risque de rupture du joint de culasse.")
+            else:
+                st.success(f"Température régulée : Fluide stable à {temp_liquide:.1f} °C.")
+              
+    # --- SCÉNARIO 3 : CLIMATISATION ---
+    elif scen_cr == "Confort : Climatisation de cabine et flux de paroi":
+        with col_p1_cr:
+            t_exterieure_soleil = st.slider("Température de la tôle au soleil (°C) :", min_value=25, max_value=60, value=45, key="l11_cr_p1_c")
+            epaisseur_isolant_cab = st.slider("Épaisseur de la garniture de cabine (e en cm) :", min_value=1, max_value=8, value=3, key="l11_cr_p2_c")
+        
+            lambda_cab = 0.040
+            r_cab = (epaisseur_isolant_cab / 100.0) / lambda_cab
+            puissance_calculee = (t_exterieure_soleil - 21) / (r_cab + 0.17)
+            
+            st.metric(label="Flux thermique conducteur entrant", value=f"{puissance_calculee:.1f} W/m²")
+            t_tole = r"T_{\text{tôle}}"
+            t_cons = r"T_{\text{consigne}}"
+            unite = r"\text{ W/m²}"
+
+            formule_clim = rf"\Phi = \frac{{{t_tole} - {t_cons}}}{{R}} = \frac{{{t_exterieure_soleil} - 21}}{{{r_cab + 0.17:.3f}}} = {puissance_calculee:.1f}{unite}"
+            st.latex(formule_clim)
+            st.info("Le groupe frigorifique doit extraire ce flux surfacique continu pour maintenir la cabine fraîche.")
+
+    # --- SCÉNARIO 4 : PNEUMATIQUES ---
+    else: 
+        with col_p1_cr:
+            temp_initiale_pneu = st.slider("Température initiale interne de l'air (°C) :", min_value=15, max_value=90, value=50, key="l11_cr_p1_p")
+            pression_froide = st.slider("Pression de gonflage initiale à 20°C (bars) :", min_value=6.0, max_value=9.0, value=8.5, step=0.1, key="l11_cr_p2_p")
+        
+            # Loi de Gay-Lussac simplifiée P1/T1 = P2/T2 avec T en Kelvin
+            t1_k = 20 + 273.15
+            t2_k = temp_initiale_pneu + 273.15
+            puissance_calculee = pression_froide * (t2_k / t1_k)
+            
+            st.metric(label="Pression interne résultante à chaud", value=f"{puissance_calculee:.2f} bars")
+            p_chaud = r"P_{\text{chaud}}"
+            p_froid = r"P_{\text{froid}}"
+            t_chaud = r"T_{\text{chaud}}"
+            unite = r"\text{ bars}"
+
+            formule_cr = rf"{p_chaud} = {p_froid} \cdot \frac{{{t_chaud}}}{{{t1_k:.1f}}} = {pression_froide} \cdot \frac{{{t2_k:.1f}}}{{{t1_k:.1f}}} = {puissance_calculee:.2f}{unite}"
+            st.latex(formule_cr)
+            
+            if puissance_calculee > 9.8:
+                st.error("Risque d'éclatement : La dilatation thermique de l'air engendre une surpression dangereuse.")
+            else:
+                st.info("L'élévation de pression découle de l'agitation thermique moléculaire de l'air confiné.")
+                
+    with col_p2_cr:
+        import matplotlib.pyplot as plt
+        import matplotlib.patches as patches
+        fig_cr, ax_cr = plt.subplots(figsize=(6, 2.5))
+        ax_cr.add_patch(patches.Rectangle((0.5, 0.4), 3.0, 1.4, facecolor='#cbd5e1', edgecolor='#0f172a', lw=1.5))
+        ax_cr.add_patch(patches.Rectangle((1.0, 0.8), 2.0, 0.6, facecolor='#3b82f6', alpha=0.3))
+        ax_cr.text(2.0, 1.1, "Cabine / Organe", color='#1e3a8a', fontweight='bold', ha='center', va='center', fontsize=9)
+        ax_cr.text(4.2, 1.1, "Banc d'essai\nConduite\nRoutière", color='#0f172a', fontweight='bold', fontsize=9)
+        ax_cr.set_xlim(0, 6.0)
+        ax_cr.set_ylim(0, 2.2)
+        ax_cr.axis('off')
+        st.pyplot(fig_cr)
+
+    st.write("---")
+
+    # =============================================================================
+    # APPEL CRUCIAL DU MODULE DE RENDU DES QUESTIONNAIRES DYNAMIQUES (ATELIER 11)
+    # =============================================================================
+    if "suite_verrouille_tab11_cr" not in st.session_state:
+        st.session_state.suite_verrouille_tab11_cr = False
+    verrou_at11_cr = st.session_state.suite_verrouille_tab11_cr
+
+    # Sécurité d'initialisation pour éviter le NameError du quiz ou scénario
+    if "scen_cr" not in locals() and "scen_cr" not in globals():
+        scen_cr = st.session_state.get("scenario_actuel_tab11", "Chauffeur routier : Camion Frigorifique")
+
+    # Cette ligne affiche vos questions et trous dédiés aux routiers (Atelier 11)
+    afficher_atelier_routier_dynamique(scen_cr, verrouille=verrou_at11_cr, prefixe="at11")
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 11")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat11 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier d'application de la Conduite.",
+        key="check_certif_therm11_cr_net",
+        disabled=verrou_at11_cr,
+    )
+
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 11",
+        key="btn_export_suite11_cr_official",
+        use_container_width=True,
+        disabled=verrou_at11_cr,
+    ):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat11:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction du Quiz (10 pts)
+            score_q11 = 0.0
+            ordre_quiz_11 = st.session_state.get("ordre_quiz_at11_aleatoire", [])
+            for q_item in ordre_quiz_11:
+                saisie = st.session_state.get(f"therm_at11_final_g_{q_item['id']}", "Choisir...")
+                if str(saisie).strip() == str(q_item["rep"]).strip():
+                    score_q11 += 1.0
+
+            # 2. Correction du Texte à trous (10 pts)
+            score_t11 = 0.0
+            champs_t11 = st.session_state.get("champs_therm_at11_clean", [])
+            for ligne in champs_t11:
+                enonce_t, choix_t, attendu_t, cle_t = ligne
+                saisie_t = st.session_state.get(f"{cle_t}_thermat11_clean", "Choisir...")
+                if str(saisie_t).strip() == str(attendu_t).strip():
+                    score_t11 += 1.0
+
+            # 3. Sauvegarde définitive dans la session et rafraîchissement
+            st.session_state.score_suite11_cr_p1 = round(float(score_q11), 1)
+            st.session_state.score_suite11_cr_p2 = round(floa
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
