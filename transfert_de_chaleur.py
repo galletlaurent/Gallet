@@ -371,7 +371,7 @@ def afficher_atelier_geometre_dynamique(scenario_actif_geo, verrouille=False):
                 st.selectbox(
                     "", 
                     choix, 
-                    key=f"{cle}_therm12_geo_clean", 
+                    key=f"sec_tab12_geo_t_{cle}_{idx}", 
                     disabled=verrouille, 
                     label_visibility="collapsed"
                 )
@@ -6513,7 +6513,7 @@ with tab12:
         elif scen_geo == "Géomatique : Mesure laser et réfraction atmosphérique":
             caption_img_geo = "Caricature de la déviation du faisceau laser par le gradient thermique de l'air"
             fichier_reel_geo = "Mesurelaserrefraction.jpg"
-            fichier_caricature_geo = "geo_laser.jpg"
+            fichier_caricature_geo = "????"
             caption_reel_geo = "Image réelle : Visée laser sur le terrain"
 
         elif scen_geo == "Implantation : Stabilisation de trépied sur sol gelé":
