@@ -344,7 +344,7 @@ with tab1:
         * **L'Expérience Célèbre :** *Le crève-tonneau de Pascal (1646)*. En appliquant le poids d'un faible volume d'eau (Force) au sommet d'un long tube de très fine section (Surface minuscule), il génère une pression hydrostatique immense capable de faire éclater le bois.
         """)
         try:
-            st.image("crevetonneau.jpg", caption="Blaise Pascal", use_container_width=True)
+            st.image("crevetonneau.jpg", caption="tonneau", use_container_width=True)
         except Exception:
             # Remplacement par un avertissement d'absence de média plus propre pour l'élève
             st.warning("Illustration en cours de chargement ou fichier 'crevetonneau.jpg' absent du serveur.")
