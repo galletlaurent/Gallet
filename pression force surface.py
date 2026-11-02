@@ -206,6 +206,78 @@ tab6 = onglets[6]
 tab7 = onglets[7] 
 tab8 = onglets[8]
 
+def afficher_atelier_surface(verrouille=False):
+    import random
+    import math
+    import streamlit as st
+
+    # Déclaration de la base de données des 10 questions du Quiz Surface
+    questions_surf_sources = [
+        {"id": "qsu1", "q": "Quelle est l'unité légale du système international (SI) pour mesurer une surface ou une aire ?", "options": ["Le mètre carré (m²)", "Le centimètre carré (cm²)", "Le millimètre carré (mm²)"], "rep": "Le mètre carré (m²)"},
+        {"id": "qsu2", "q": "Par quelle formule mathématique calcule-t-on la surface d'un piston circulaire de diamètre D ?", "options": ["S = (pi * D²) / 4", "S = pi * D", "S = 2 * pi * D"], "rep": "S = (pi * D²) / 4"},
+        {"id": "qsu3", "q": "Combien de centimètres carrés (cm²) contient un mètre carré (m²) ?", "options": ["10 000 cm²", "100 cm²", "1 000 cm²"], "rep": "10 000 cm²"},
+        {"id": "qsu4", "q": "Dans la relation P = F / S, si la force F reste fixe et que la surface S augmente, la pression P :", "options": ["Diminue", "Augmente", "Reste identique"], "rep": "Diminue"},
+        {"id": "qsu5", "q": "Pour obtenir une pression très élevée à partir d'une force modérée, la surface d'appui doit être :", "options": ["La plus petite possible", "La plus grande possible", "Parfaitement infinie"], "rep": "La plus petite possible"},
+        {"id": "qsu6", "q": "Quel mathématicien antique de Syracuse a formalisé les premières méthodes de calcul des aires de cercles et de disques ?", "options": ["Archimède", "Thalès", "Pythagore"], "rep": "Archimède"},
+        {"id": "qsu7", "q": "Dans un système de vérins hydrauliques (presse de Pascal), pour multiplier la force, le vérin récepteur doit avoir :", "options": ["Une surface plus grande que le vérin émetteur", "Une surface plus petite que le vérin émetteur", "La même surface que le vérin émetteur"], "rep": "Une surface plus grande que le vérin émetteur"},
+        {"id": "qsu8", "q": "Quelle est la valeur numérique abrégée de la constante Pi couramment utilisée pour le calcul des surfaces circulaires ?", "options": ["3,1416", "1,414", "2,718"], "rep": "3,1416"},
+        {"id": "qsu9", "q": "Si un diamètre de piston est exprimé en millimètres (mm), sa surface calculée sera directement en :", "options": ["Millimètres carrés (mm²)", "Mètres carrés (m²)", "Centimètres carrés (cm²)"], "rep": "Millimètres carrés (mm²)"},
+        {"id": "qsu10", "q": "Le terme 'section normale' d'un conduit ou d'un vérin désigne une surface qui coupe l'axe de manière :", "options": ["Perpendiculaire", "Parallèle", "Oblique à 45 degrés"], "rep": "Perpendiculaire"}
+    ]
+
+    if "ordre_quiz_surf4_aleatoire" not in st.session_state:
+        random.shuffle(questions_surf_sources)
+        st.session_state.ordre_quiz_surf4_aleatoire = questions_surf_sources
+
+    if "champs_surf4_clean" not in st.session_state:
+        st.session_state.champs_surf4_clean = [
+            ("1. L'aire d'une paroi en contact direct avec un fluide constitue sa ..........", ["Choisir...", "surface", "force"], "surface", "surf4_t1"),
+            ("2. Pour l'application des formules SI, l'aire s'exprime obligatoirement en ..........", ["Choisir...", "mètre carré", "millimètre"], "mètre carré", "surf4_t2"),
+            ("3. Multiplier le rayon d'un disque par lui-même et par la constante Pi donne son ..........", ["Choisir...", "aire", "périmètre"], "aire", "surf4_t3"),
+            ("4. Dans une presse hydraulique, la force est multipliée si le grand vérin possède une large ..........", ["Choisir...", "section", "course"], "section", "surf4_t4"),
+            ("5. Une pointe acérée s'enfonce facilement car sa surface de contact est extrêmement ..........", ["Choisir...", "réduite", "étendue"], "réduite", "surf4_t5"),
+            ("6. Diviser une force mécanique par la valeur de la section permet d'obtenir la ..........", ["Choisir...", "pression", "puissance"], "pression", "surf4_t6"),
+            ("7. Un centimètre carré représente une fraction d'un mètre carré égale à un ..........", ["Choisir...", "dix-millième", "centième"], "dix-millième", "surf4_t7"),
+            ("8. À pression constante, l'effort développé par un piston augmente proportionnellement à sa ..........", ["Choisir...", "surface", "longueur"], "surface", "surf4_t8"),
+            ("9. L'étude de la géométrie plane et du calcul des surfaces remonte à l'..........", ["Choisir...", "Antiquité", "Époque moderne"], "Antiquité", "surf4_t9"),
+            ("10. La section transversale interne d'un cylindre de guidage est une surface ..........", ["Choisir...", "circulaire", "rectangulaire"], "circulaire", "surf4_t10")
+        ]
+
+    # SEPARATION PRINCIPALE EN DEUX GRANDES COLONNES GLOBALES (MOTEUR BI-COLONNE SCELLÉ)
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_surf4_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox(
+                "", 
+                options=["Choisir..."] + q_data["options"], 
+                key=f"surf_at4_final_g_{q_data['id']}_{idx}", 
+                disabled=verrouille, 
+                label_visibility="collapsed"
+            )
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier (Texte à trous - 10 cases - 10 pts)")
+        for idx, ligne in enumerate(st.session_state.champs_surf4_clean, 1):
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox(
+                    "", 
+                    choix, 
+                    key=f"{cle}_surf4_clean_{idx}", 
+                    disabled=verrouille, 
+                    label_visibility="collapsed"
+                )
+
+
 
 def afficher_atelier_pression(verrouille=False):
     """Affiche le Quiz et le Texte à trous côte à côte en bas de la page pour l'Atelier 3."""
@@ -1287,15 +1359,6 @@ with tab3:
 
 
 
-
-
-
-
-
-
-
-
-
         
 
 with tab4:
@@ -1310,108 +1373,96 @@ with tab4:
     </style>
     """, unsafe_allow_html=True)
 
-    # DÉFINITION INTERNE DE L'ATELIER INTERACTIF (QUIZ, SURFACE ET TROUS)
-    def afficher_atelier_surface(verrouille=False):
-        import random
-        import math
+    if "suite_verrouille_tab4_surface" not in st.session_state:
+        st.session_state.suite_verrouille_tab4_surface = False
+    verrou_at4 = st.session_state.suite_verrouille_tab4_surface
 
-        # Déclaration de la base de données des 10 questions du Quiz Surface
-        questions_surf_sources = [
-            {"id": "qsu1", "q": "Quelle est l'unité légale du système international (SI) pour mesurer une surface ou une aire ?", "options": ["Le mètre carré (m²)", "Le centimètre carré (cm²)", "Le millimètre carré (mm²)"], "rep": "Le mètre carré (m²)"},
-            {"id": "qsu2", "q": "Par quelle formule mathématique calcule-t-on la surface d'un piston circulaire de diamètre D ?", "options": ["S = (pi * D²) / 4", "S = pi * D", "S = 2 * pi * D"], "rep": "S = (pi * D²) / 4"},
-            {"id": "qsu3", "q": "Combien de centimètres carrés (cm²) contient un mètre carré (m²) ?", "options": ["10 000 cm²", "100 cm²", "1 000 cm²"], "rep": "10 000 cm²"},
-            {"id": "qsu4", "q": "Dans la relation P = F / S, si la force F reste fixe et que la surface S augmente, la pression P :", "options": ["Diminue", "Augmente", "Reste identique"], "rep": "Diminue"},
-            {"id": "qsu5", "q": "Pour obtenir une pression très élevée à partir d'une force modérée, la surface d'appui doit être :", "options": ["La plus petite possible", "La plus grande possible", "Parfaitement infinie"], "rep": "La plus petite possible"},
-            {"id": "qsu6", "q": "Quel mathématicien antique de Syracuse a formalisé les premières méthodes de calcul des aires de cercles et de disques ?", "options": ["Archimède", "Thalès", "Pythagore"], "rep": "Archimède"},
-            {"id": "qsu7", "q": "Dans un système de vérins hydrauliques (presse de Pascal), pour multiplier la force, le vérin récepteur doit avoir :", "options": ["Une surface plus grande que le vérin émetteur", "Une surface plus petite que le vérin émetteur", "La même surface que le vérin émetteur"], "rep": "Une surface plus grande que le vérin émetteur"},
-            {"id": "qsu8", "q": "Quelle est la valeur numérique abrégée de la constante Pi couramment utilisée pour le calcul des surfaces circulaires ?", "options": ["3,1416", "1,414", "2,718"], "rep": "3,1416"},
-            {"id": "qsu9", "q": "Si un diamètre de piston est exprimé en millimètres (mm), sa surface calculée sera directement en :", "options": ["Millimètres carrés (mm²)", "Mètres carrés (m²)", "Centimètres carrés (cm²)"], "rep": "Millimètres carrés (mm²)"},
-            {"id": "qsu10", "q": "Le terme 'section normale' d'un conduit ou d'un vérin désigne une surface qui coupe l'axe de manière :", "options": ["Perpendiculaire", "Parallèle", "Oblique à 45 degrés"], "rep": "Perpendiculaire"}
-        ]
+    # =============================================================================
+    # 1. RENDU ASYMÉTRIQUE DU COURS ET DES IMAGES [0.3 GAUCHE, 0.7 DROITE]
+    # =============================================================================
+    col_gauche_bd_surf, col_droite_cours_surf = st.columns([0.3, 0.7])
 
-        if "ordre_quiz_surf4_aleatoire" not in st.session_state:
-            random.shuffle(questions_surf_sources)
-            st.session_state.ordre_quiz_surf4_aleatoire = questions_surf_sources
+    with col_gauche_bd_surf:
+        st.markdown("##### Enoncé de l'exercice et contexte")
+        st.info(
+            "**La Galerie des Génies : La Mesure des Aires**\n\n"
+            "Dès l'Antiquité, Archimède de Syracuse développe la méthode d'exhaustion pour encadrer précisément la valeur de Pi et calculer l'aire du disque. Cette maîtrise géométrique s'avérera indispensable des siècles plus tard pour concevoir les pistons des premières machines hydrauliques.\n\n"
+            "**Observations Techniques (Le Paradoxe des Raquettes à Neige) :**\n\n"
+            "**Case 1 :** Un randonneur équipé de bottes classiques s'enfonce profondément au premier pas dans la neige poudreuse.\n\n"
+            "**Case 2 :** Son poids (Force) se concentre sur la faible section de ses semelles, créant une forte pression locale.\n\n"
+            "**Case 3 :** Il chausse des raquettes de grande section. La force de son poids reste rigoureusement inchangée.\n\n"
+            "**Case 4 :** En multipliant la surface d'appui par dix, la pression s'effondre. Il marche à la surface sans s'enfoncer."
+        )
 
-        if "champs_surf4_clean" not in st.session_state:
-            st.session_state.champs_surf4_clean = [
-                ("1. L'aire d'une paroi en contact direct avec un fluide constitue sa ..........", ["Choisir...", "surface", "force"], "surface", "surf4_t1"),
-                ("2. Pour l'application des formules SI, l'aire s'exprime obligatoirement en ..........", ["Choisir...", "mètre carré", "millimètre"], "mètre carré", "surf4_t2"),
-                ("3. Multiplier le rayon d'un disque par lui-même et par la constante Pi donne son ..........", ["Choisir...", "aire", "périmètre"], "aire", "surf4_t3"),
-                ("4. Dans une presse hydraulique, la force est multipliée si le grand vérin possède une large ..........", ["Choisir...", "section", "course"], "section", "surf4_t4"),
-                ("5. Une pointe acérée s'enfonce facilement car sa surface de contact est extrêmement ..........", ["Choisir...", "réduite", "étendue"], "réduite", "surf4_t5"),
-                ("6. Diviser une force mécanique par la valeur de la section permet d'obtenir la ..........", ["Choisir...", "pression", "puissance"], "pression", "surf4_t6"),
-                ("7. Un centimètre carré représente une fraction d'un mètre carré égale à un ..........", ["Choisir...", "dix-millième", "centième"], "dix-millième", "surf4_t7"),
-                ("8. À pression constante, l'effort développé par un piston augmente proportionnellement à sa ..........", ["Choisir...", "surface", "longueur"], "surface", "surf4_t8"),
-                ("9. L'étude de la géométrie plane et du calcul des surfaces remonte à l'..........", ["Choisir...", "Antiquité", "Époque moderne"], "Antiquité", "surf4_t9"),
-                ("10. La section transversale interne d'un cylindre de guidage est une surface ..........", ["Choisir...", "circulaire", "rectangulaire"], "circulaire", "surf4_t10")
-            ]
+        texte_bd_bleu_s4 = (
+            "**La BD humoristique : Le Paradoxe des Raquettes à Neige**\n\n"
+            "**Case 1 :** Randonneur : « Je m'enfonce jusqu'aux genoux ! La neige ne porte rien du tout aujourd'hui ! ».\n\n"
+            "**Case 2 :** Archimède : « C'est une simple question de répartition ! Ta force pressante est concentrée sur une aire trop restreinte ! ».\n\n"
+            "**Case 3 :** Pascal : « Chausse ces raquettes ! Ta surface d'appui va décupler, forçant la pression P à s'effondrer instantanément ! ».\n\n"
+            "**Case 4 :** Randonneur : « Miracle ! Je flotte sur la poudreuse alors que mon poids lourd n'a pas bougé d'un Newton ! »"
+        )
+        st.info(texte_bd_bleu_s4)
 
-        # SÉPARATION PRINCIPALE EN DEUX GRANDES COLONNES GLOBALES (Mise en page style 4 pages par feuille)
-        col_gauche_globale, col_droite_globale = st.columns(2)
+    with col_droite_cours_surf:
+        st.markdown("##### Illustration caricaturale du cas")
+        # 1. Affichage supérieur : Image réelle (Largeur fixe 300px)
+        if os.path.exists("geometrie_surface_reelle.jpg"):
+            st.image("geometrie_surface_reelle.jpg", caption="Image réelle : Vérification de la surface géométrique d'un support mécanique", width=300)
+        else:
+            st.caption("Image réelle de contexte manquante")
 
-        # ---------------------------------------------------------------------
-        # COLONNE GAUCHE (PAGES 1 ET 3 : CONTEXTE, SIMULATEUR ET QUIZ)
-        # ---------------------------------------------------------------------
-        with col_gauche_globale:
-            # PAGE 1 : CONTEXTE HISTORIQUE
-            st.subheader("La Galerie des Génies : La Mesure des Aires")
-            st.markdown("""
-            <div class="bandeau-surface">
-                <b>Repères Historiques :</b> Dès l'Antiquité, Archimède de Syracuse développe la méthode d'exhaustion pour encadrer précisément la valeur de Pi et calculer l'aire du disque. Cette maîtrise géométrique s'avérera indispensable des siècles plus tard pour concevoir les pistons des premières machines hydrauliques.
-            </div>
-            """, unsafe_allow_html=True)
+        # Insertion des 20 lignes d'espacement réglementaires pour repousser la caricature vers le bas
+        for _ in range(20):
+            st.write("")
+        
+        # 2. Affichage inférieur : Caricature de BD (Largeur fixe 300px)
+        if os.path.exists("bd_calcul_surfaces.jpg"):
+            st.image("bd_calcul_surfaces.jpg", caption="Caricature de la répartition des pressions surfaciques", width=300)
+        else:
+            st.caption("Caricature de la répartition des pressions surfaciques")
 
-            sub_col_hist1, sub_col_hist2 = st.columns(2)
-            with sub_col_hist1:
-                st.image("https://wikimedia.org", use_container_width=True)
-                st.markdown('<div class="legende-surface">Géométrie d\'Archimède</div>', unsafe_allow_html=True)
-            with sub_col_hist2:
-                st.image("https://wikimedia.org", use_container_width=True)
-                st.markdown('<div class="legende-surface">Blaise Pascal (1623 - 1662)</div>', unsafe_allow_html=True)
+    st.markdown("---")
 
-            st.markdown("<br>", unsafe_allow_html=True)
+    # =============================================================================
+    # 2. SIMULATEUR INTERACTIF DE SECTION DE VÉRIN
+    # =============================================================================
+    st.subheader("Laboratoire Virtuel : Simulateur de Dimensionnement de Surface Circulaire")
+    
+    col_p1_surf4, col_p2_surf4 = st.columns(2)
+    with col_p1_surf4:
+        diametre_mm = st.slider("Ajuster le diamètre utile du piston (en millimètres) :", min_value=10, max_value=200, value=50, step=5, disabled=verrou_at4, key="slider_diametre_piston_at4")
+    
+    with col_p2_surf4:
+        # Calcul en mm² puis conversion en m²
+        surface_mm2 = (math.pi * (diametre_mm ** 2)) / 4
+        surface_m2 = surface_mm2 / 1_000_000
+        st.metric(label="Surface d'appui utile calculée", value=f"{surface_mm2:.1f} mm²")
+        st.info(f"Équivalence dans le Système International : {surface_m2:.6f} m².")
 
-            # SIMULATEUR INTERACTIF DE SECTION DE VÉRIN
-            st.markdown("**Simulateur de Dimensionnement de Surface Circulaire**")
-            diametre_mm = st.slider("Ajuster le diamètre utile du piston (en millimètres) :", min_value=10, max_value=200, value=50, step=5, disabled=verrouille, key="slider_diametre_piston")
-            
-            # Calcul en mm² puis conversion en m²
-            surface_mm2 = (math.pi * (diametre_mm ** 2)) / 4
-            surface_m2 = surface_mm2 / 1_000_000
-            st.info(f"Calcul Géométrique : Pour un diamètre de {diametre_mm} mm, la surface d'appui utile est de {surface_mm2:.1f} mm² (soit {surface_m2:.6f} m²).")
+    st.write("---")
 
-            st.markdown("<br><hr><br>", unsafe_allow_html=True)
+    # =============================================================================
+    # 3. RENDU DES FORMULAIRES D'ÉVALUATION BI-COLONNES COMPATIBLES ET ENTIÈREMENT INDEXÉS
+    # =============================================================================
+    col_gauche_globale, col_droite_globale = st.columns(2)
 
-            # PAGE 3 : QUIZ TECHNIQUE DE LA SURFACE
-            st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+    with col_gauche_globale:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        if "ordre_quiz_surf4_aleatoire" in st.session_state:
             for idx, q_data in enumerate(st.session_state.ordre_quiz_surf4_aleatoire, 1):
                 st.write(f"**{idx}.** {q_data['q']}")
-                st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"surf4_at4_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+                st.selectbox(
+                    "", 
+                    options=["Choisir..."] + q_data["options"], 
+                    key=f"surf4_at4_final_g_{q_data['id']}_{idx}", 
+                    disabled=verrou_at4, 
+                    label_visibility="collapsed"
+                )
 
-        # ---------------------------------------------------------------------
-        # COLONNE DROITE (PAGES 2 ET 4 : CARICATURE, MODÉLISATION ET TROUS)
-        # ---------------------------------------------------------------------
-        with col_droite_globale:
-            # PAGE 2 : BANDE CARICATURALE TECHNIQUE
-            st.subheader("Bande Caricaturale : Le Paradoxe des Raquettes à Neige")
-            
-            sub_col_text, sub_col_img = st.columns([0.45, 0.55])
-            with sub_col_text:
-                st.markdown('<div class="legende-surface">Répartition des Pressions</div>', unsafe_allow_html=True)
-                st.write("**Case 1 :** Un randonneur équipé de bottes classiques s'enfonce profondément au premier pas dans la neige poudreuse.")
-                st.write("**Case 2 :** Son poids (Force) se concentre sur la faible section de ses semelles, créant une forte pression locale.")
-                st.write("**Case 3 :** Il chausse des raquettes de grande section. La force de son poids reste rigoureusement inchangée.")
-                st.write("**Case 4 :** En multipliant la surface d'appui par dix, la pression s'effondre. Il marche à la surface sans s'enfoncer.")
-            with sub_col_img:
-                st.image("https://unsplash.com")
-                st.markdown('<div class="legende-surface">Vérification de la surface géométrique d\'un support support mécanique</div>', unsafe_allow_html=True)
-
-            st.markdown("<br><hr><br>", unsafe_allow_html=True)
-
-            # PAGE 4 : SYNTHÈSE DE L'ATELIER (TEXTE À TROUS - 10 CASES)
-            st.markdown("##### Synthèse de l'Atelier (Texte à trous - 10 cases - 10 pts)")
-            for ligne in st.session_state.champs_surf4_clean:
+    with col_droite_globale:
+        st.markdown("##### Synthèse de l'Atelier (Texte à trous - 10 cases - 10 pts)")
+        if "champs_surf4_clean" in st.session_state:
+            for idx, ligne in enumerate(st.session_state.champs_surf4_clean, 1):
                 enonce = ligne[0]
                 choix = ligne[1]
                 cle = ligne[-1]
@@ -1420,17 +1471,17 @@ with tab4:
                 with c_txt: 
                     st.write(enonce)
                 with c_sel: 
-                    st.selectbox("", choix, key=f"{cle}_surf4_clean", disabled=verrouille, label_visibility="collapsed")
+                    st.selectbox(
+                        "", 
+                        choix, 
+                        key=f"{cle}_surf4_clean_{idx}", 
+                        disabled=verrou_at4, 
+                        label_visibility="collapsed"
+                    )
 
-
-    # --- EXECUTION DE LA LOGIQUE DE CORRECTION ET D'EXPORT DE L'ATELIER 4 ---
-    if "suite_verrouille_tab4_surface" not in st.session_state:
-        st.session_state.suite_verrouille_tab4_surface = False
-    verrou_at4 = st.session_state.suite_verrouille_tab4_surface
-
-    # Appel de la fonction d'affichage
-    afficher_atelier_surface(verrouille=verrou_at4)
-    
+    # =============================================================================
+    # 4. MOTEUR DE NOTATION AUTOMATIQUE SUR 20 POINTS
+    # =============================================================================
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 4")
     
@@ -1450,21 +1501,30 @@ with tab4:
         elif not case_certif_stat4: 
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Correction automatique du Quiz
+            # Correction automatique du Quiz par parcours sécurisé
             score_q4 = 0.0
             if "ordre_quiz_surf4_aleatoire" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_surf4_aleatoire:
-                    saisie = st.session_state.get(f"surf4_at4_final_g_{q_item['id']}", "Choisir...")
+                for idx, q_item in enumerate(st.session_state.ordre_quiz_surf4_aleatoire, 1):
+                    saisie = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"surf4_at4_final_g_{q_item['id']}_"):
+                            saisie = st.session_state[k]
+                            break
                     if str(saisie).strip() == str(q_item["rep"]).strip(): 
                         score_q4 += 1.0
 
-            # Correction automatique du Texte à trous
+            # Correction automatique du Texte à trous par parcours sécurisé
             score_t4 = 0.0
             if "champs_surf4_clean" in st.session_state:
-                for ligne in st.session_state.champs_surf4_clean:
+                for idx, ligne in enumerate(st.session_state.champs_surf4_clean, 1):
                     cle = ligne[-1]
                     attendu = ligne[2]
-                    if st.session_state.get(f"{cle}_surf4_clean", "Choisir...") == attendu: 
+                    saisie_t = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"{cle}_surf4_clean_"):
+                            saisie_t = st.session_state[k]
+                            break
+                    if str(saisie_t).strip() == str(attendu).strip(): 
                         score_t4 += 1.0
 
             st.session_state.score_suite4_surf_p1 = round(float(score_q4), 1)
@@ -1473,15 +1533,18 @@ with tab4:
             st.session_state.suite_verrouille_tab4_surface = True
             st.rerun()
 
-    # --- COMPILATION DU BILAN HTML DE L'ATELIER 4 ---
+    # =============================================================================
+    # 5. COMPILATION DU BILAN HTML DE L'ATELIER 4 SCELLÉ
+    # =============================================================================
     if st.session_state.get("suite_verrouille_tab4_surface", False):
+
         from datetime import datetime
         scr1_t4 = st.session_state.get("score_suite4_surf_p1", 0.0)
         scr2_t4 = st.session_state.get("score_suite4_surf_p2", 0.0)
         tot_s_t4 = st.session_state.get("score_final_suite4_surf", 0.0)
         timestamp_suite4 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
 
-        st.success(f"ATELIER SURFACE SCELLÉ | Note de session : {tot_s_t4:.1f} / 20")
+        st.success(f"ATELIER SURFACES SCELLÉ | Note de session : {tot_s_t4:.1f} / 20")
 
         html_export_surf4 = f"""<!DOCTYPE html>
         <html>
@@ -1503,7 +1566,7 @@ with tab4:
         <body>
             <div class="header-box">
                 <h1>Rapport d'Évaluation de Physique</h1>
-                <p>Atelier 4 : Dimensionnement géométrique des sections et transmission des forces pressantes</p>
+                <p>Atelier 4 : Étude de l'impact des Sections Géométriques et Surfaces d'Appui</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite4}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t4:.1f}</span> / 20</div>
@@ -1526,7 +1589,11 @@ with tab4:
 
         if "ordre_quiz_surf4_aleatoire" in st.session_state:
             for num, q_item in enumerate(st.session_state.ordre_quiz_surf4_aleatoire, 1):
-                saisie = st.session_state.get(f"surf4_at4_final_g_{q_item['id']}", "Choisir...")
+                saisie = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"surf4_at4_final_g_{q_item['id']}_"):
+                        saisie = st.session_state[k]
+                        break
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
@@ -1542,16 +1609,16 @@ with tab4:
                     <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
-        
         """
 
         if "champs_surf4_clean" in st.session_state:
             for num, ligne in enumerate(st.session_state.champs_surf4_clean, 1):
-                enonce_texte = ligne[0]
-                attendu_texte = ligne[2]
-                cle_variable = ligne[-1]
-                
-                saisie_texte = st.session_state.get(f"{cle_variable}_surf4_clean", "Choisir...")
+                enonce_texte, choix_texte, attendu_texte, cle_variable = ligne
+                saisie_texte = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"{cle_variable}_surf4_clean_"):
+                        saisie_texte = st.session_state[k]
+                        break
                 v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
                 v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
                 html_export_surf4 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
@@ -1563,17 +1630,17 @@ with tab4:
         </html>
         """
         
-        nom_fichier_html_surf4 = preparer_nom_fichier("Rapport_Etude_Surfaces").replace(".txt", ".html")
+        nom_fichier_html_surf4 = preparer_nom_fichier("Rapport_Atelier_4_Surface").replace(".txt", ".html")
         st.download_button(
-            label="Télécharger le rapport d'évaluation officiel de l'Atelier 4",
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 4 (.HTML)",
             data=html_export_surf4,
             file_name=nom_fichier_html_surf4,
             mime="text/html",
             use_container_width=True,
-            key="btn_download_html_surf4_final"
         )
-if "cas_aleatoire_tab5" not in st.session_state:
-    st.session_state.cas_aleatoire_tab5 = random.randint(1, 4)
+
+
+      
 
 with tab5:
     st.header("Application professionnelle : Diagnostic et Maintenance")
