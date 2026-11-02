@@ -629,8 +629,6 @@ with tab2:
 
             st.markdown("<br>", unsafe_allow_html=True)
 
-            # SIMULATEUR INTERACTIF
-            st.markdown("**Simulateur Interactif de Vecteurs Force**
             st.markdown("**Simulateur Interactif de Vecteurs Force**")
             valeur_force = st.slider("Ajuster l'intensité de la Force Motrice (en Newtons) :", min_value=0, max_value=200, value=100, step=10, disabled=verrouille, key="slider_force_motrice")
             if valeur_force == 100:
@@ -782,7 +780,583 @@ with tab2:
                 v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
                 html_export_forc2 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
 
-        html_export_forc2 += """        
+        html_export_forc2 += """
+        """
+        nom_fichier_html_forc2 = preparer_nom_fichier("Rapport_Etude_Forces").replace(".txt", ".html")
+        st.download_button(
+        label="Télécharger le rapport d'évaluation officiel de l'Atelier 2",
+        data=html_export_forc2,
+        file_name=nom_fichier_html_forc2,
+        mime="text/html",
+        use_container_width=True,
+        key="btn_download_html_forc_final"
+        )
+
+
+with tab3:
+    st.header("Étude de la Pression et des Phénomènes Barométriques")
+    st.write("Explorez les lois régissant l'équilibre des pressions fluides, manipulez les paramètres manométriques, puis complétez l'évaluation de l'Atelier 3.")
+
+    # Styles CSS pour les légendes, bandeaux et textes spécifiques à l'Atelier 3
+    st.markdown("""
+    <style>
+    .legende-pression { color: #059669; font-weight: bold; text-align: center; margin-top: 5px; font-size: 13px; }
+    .bandeau-pression { background-color: #ecfdf5; border-left: 5px solid #10b981; padding: 12px; font-size: 14px; font-weight: 500; margin-bottom: 20px; color: #065f46; border-radius: 4px; }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # DÉFINITION INTERNE DE L'ATELIER INTERACTIF (QUIZ, PRESSION ET TROUS)
+    def afficher_atelier_pression(verrouille=False):
+        import random
+
+        # Déclaration de la base de données des 10 questions du Quiz Pression
+        questions_pres_sources = [
+            {"id": "qpr1", "q": "Quelle unité de mesure du système international correspond exactement à un Pascal (Pa) ?", "options": ["1 N/m²", "1 kg/m²", "1 J/m²"], "rep": "1 N/m²"},
+            {"id": "qpr2", "q": "Quelle est l'unité usuelle utilisée dans l'industrie équivalente à 100 000 Pascals ?", "options": ["Le bar", "L'atmosphère", "Le millimètre de mercure"], "rep": "Le bar"},
+            {"id": "qpr3", "q": "Quel instrument de mesure spécifique utilise-t-on pour relever la pression à l'intérieur d'un circuit hydraulique fermé ?", "options": ["Un manomètre", "Un baromètre", "Un anémomètre"], "rep": "Un manomètre"},
+            {"id": "qpr4", "q": "Comment évolue la pression atmosphérique lorsque l'on s'élève en altitude ?", "options": ["Elle diminue", "Elle augmente", "Elle reste constante"], "rep": "Elle diminue"},
+            {"id": "qpr5", "q": "La pression exercée au fond d'une cuve par une colonne de liquide dépend principalement de :", "options": ["La hauteur du liquide et sa densité", "La forme de la cuve", "Le volume total du réservoir"], "rep": "La hauteur du liquide et sa densité"},
+            {"id": "qpr6", "q": "Quel fluide lourd Torricelli a-t-il retenu pour créer le premier baromètre à colonne ?", "options": ["Le mercure", "L'eau déminéralisée", "L'huile hydraulique"], "rep": "Le mercure"},
+            {"id": "qpr7", "q": "Quelle valeur moyenne standard caractérise la pression atmosphérique au niveau de la mer ?", "options": ["1013 hPa", "100 000 Pa", "1 bar"], "rep": "1013 hPa"},
+            {"id": "qpr8", "q": "Dans une canalisation, comment se nomme un point où la pression du fluide devient inférieure à la pression atmosphérique ?", "options": ["Une dépression (ou vide relatif)", "Une surpression", "Une zone d'équilibre"], "rep": "Une dépression (ou vide relatif)"},
+            {"id": "qpr9", "q": "Pourquoi les liquides sont-ils privilégiés dans les transmissions de puissance industrielle ?", "options": ["Parce qu'ils sont incompressibles", "Parce qu'ils sont expansibles", "Parce qu'ils n'ont pas de poids"], "rep": "Parce qu'ils sont incompressibles"},
+            {"id": "qpr10", "q": "Quelle loi stipule qu'une variation de pression appliquée en un point d'un fluide enfermé se transmet intégralement ?", "options": ["Le principe de Pascal", "La poussée d'Archimède", "La loi de Newton"], "rep": "Le principe de Pascal"}
+        ]
+
+        if "ordre_quiz_pres3_aleatoire" not in st.session_state:
+            random.shuffle(questions_pres_sources)
+            st.session_state.ordre_quiz_pres3_aleatoire = questions_pres_sources
+
+        if "champs_pres3_clean" not in st.session_state:
+            st.session_state.champs_pres3_clean = [
+                ("1. La pression traduit la répartition d'une force pressante sur une ..........", ["Choisir...", "surface", "vitesse"], "surface", "pres3_t1"),
+                ("2. L'instrument destiné à évaluer la valeur de la pression atmosphérique est le ..........", ["Choisir...", "baromètre", "manomètre"], "baromètre", "pres3_t2"),
+                ("3. En hydraulique, le manomètre indique souvent une pression relative par rapport à l'..........", ["Choisir...", "atmosphère", "vide"], "atmosphere", "pres3_t3"),
+                ("4. La pression hydrostatique au sein d'un liquide au repos croît avec la ..........", ["Choisir...", "profondeur", "surface"], "profondeur", "pres3_t4"),
+                ("5. Un fluide transmettant fidèlement les pressions subies est qualifié d'..........", ["Choisir...", "incompressible", "gazeux"], "incompressible", "pres3_t5"),
+                ("6. L'unité légale du système international pour quantifier la pression est le ..........", ["Choisir...", "Pascal", "Bar"], "Pascal", "pres3_t6"),
+                ("7. Un bar correspond à une valeur de pression équivalente à cent mille ..........", ["Choisir...", "Pascals", "Newtons"], "Pascals", "pres3_t7"),
+                ("8. À force constante, si la section d'appui est divisée par deux, la pression ..........", ["Choisir...", "double", "diminue"], "double", "pres3_t8"),
+                ("9. La force pressante générée agit de façon normale, c'est-à-dire .......... aux parois.", ["Choisir...", "perpendiculaire", "tangentielle"], "perpendiculaire", "pres3_t9"),
+                ("10. L'absence totale de molécules de gaz ou de matière définit l'état de ..........", ["Choisir...", "vide", "surpression"], "vide", "pres3_t10")
+            ]
+
+        # SEPARATION PRINCIPALE EN DEUX GRANDES COLONNES GLOBALES (Mise en page style 4 pages par feuille)
+        col_gauche_globale, col_droite_globale = st.columns(2)
+
+        # ---------------------------------------------------------------------
+        # COLONNE GAUCHE (PAGES 1 ET 3 : CONTEXTE, SIMULATEUR ET QUIZ)
+        # ---------------------------------------------------------------------
+        with col_gauche_globale:
+            # PAGE 1 : CONTEXTE HISTORIQUE DU BAROMÈTRE
+            st.subheader("La Galerie des Génies : L'Équilibre des Pressions")
+            st.markdown("""
+            <div class="bandeau-pression">
+                <b>Repères Historiques :</b> En 1648, Florin Périer réalise sur les conseils de Blaise Pascal l'expérience scientifique du Puy de Dôme. Il prouve de manière définitive que la hauteur de la colonne de mercure dépend de l'altitude, validant l'existence du poids de l'air.
+            </div>
+            """, unsafe_allow_html=True)
+
+            sub_col_hist1, sub_col_hist2 = st.columns(2)
+            with sub_col_hist1:
+                st.image("https://wikimedia.org", use_container_width=True)
+                st.markdown('<div class="legende-pression">Blaise Pascal (1623 - 1662)</div>', unsafe_allow_html=True)
+            with sub_col_hist2:
+                st.image("https://wikimedia.org", use_container_width=True)
+                st.markdown('<div class="legende-pression">Expérimentation barométrique</div>', unsafe_allow_html=True)
+
+            st.markdown("<br>", unsafe_allow_html=True)
+
+            # SIMULATEUR INTERACTIF DE PRESSION HYDROSTATIQUE
+            st.markdown("**Simulateur de Pression Hydrostatique (P = rho * g * h)**")
+            hauteur_fluide = st.slider("Ajuster la profondeur de mesure dans la cuve (en mètres) :", min_value=0.0, max_value=10.0, value=5.0, step=0.5, disabled=verrouille, key="slider_profondeur_cuve")
+            
+            # Calcul théorique simplifié de la pression hydrostatique (pression = rho * g * h avec rho=1000 et g=9.81)
+            pression_calculee_bar = (1000 * 9.81 * hauteur_fluide) / 100000
+            st.info(f"Mesure au manomètre : À une profondeur de {hauteur_fluide} m, la pression relative exercée par l'eau est de {pression_calculee_bar:.3f} bar.")
+
+            st.markdown("<br><hr><br>", unsafe_allow_html=True)
+
+            # PAGE 3 : QUIZ TECHNIQUE DE LA PRESSION
+            st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+            for idx, q_data in enumerate(st.session_state.ordre_quiz_pres3_aleatoire, 1):
+                st.write(f"**{idx}.** {q_data['q']}")
+                st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"pres3_at3_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+        # ---------------------------------------------------------------------
+        # COLONNE DROITE (PAGES 2 ET 4 : CARICATURE, MODÉLISATION ET TROUS)
+        # ---------------------------------------------------------------------
+        with col_droite_globale:
+            # PAGE 2 : BANDE CARICATURALE TECHNIQUE
+            st.subheader("Bande Caricaturale : Le Principe des Vases Communiquants")
+            
+            sub_col_text, sub_col_img = st.columns([0.45, 0.55])
+            with sub_col_text:
+                st.markdown('<div class="legende-pression">Observations Hydrostatiques</div>', unsafe_allow_html=True)
+                st.write("**Case 1 :** Plusieurs réservoirs de formes et de sections totalement différentes sont reliés à leur base.")
+                st.write("**Case 2 :** Lorsque l'on verse le liquide, les molécules se répartissent librement d'un contenant à un autre.")
+                st.write("**Case 3 :** À l'équilibre, la hauteur du fluide atteint strictement le même niveau horizontal dans chaque colonne.")
+                st.write("**Case 4 :** Ce phénomène confirme que la pression en un point ne dépend pas du volume de fluide mais uniquement de la profondeur.")
+            with sub_col_img:
+                st.image("https://unsplash.com")
+
+                st.markdown('<div class="legende-pression">Analyse de la répartition des niveaux hydrostatiques</div>', unsafe_allow_html=True)
+
+            st.markdown("<br><hr><br>", unsafe_allow_html=True)
+
+            # PAGE 4 : SYNTHÈSE DE L'ATELIER (TEXTE À TROUS - 10 CASES)
+            st.markdown("##### Synthèse de l'Atelier (Texte à trous - 10 cases - 10 pts)")
+            for ligne in st.session_state.champs_pres3_clean:
+                enonce = ligne[0]
+                choix = ligne[1]
+                cle = ligne[-1]
+                
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: 
+                    st.write(enonce)
+                with c_sel: 
+                    st.selectbox("", choix, key=f"{cle}_pres3_clean", disabled=verrouille, label_visibility="collapsed")
+
+
+    # --- EXECUTION DE LA LOGIQUE DE CORRECTION ET D'EXPORT DE L'ATELIER 3 ---
+    if "suite_verrouille_tab3_pression" not in st.session_state:
+        st.session_state.suite_verrouille_tab3_pression = False
+    verrou_at3 = st.session_state.suite_verrouille_tab3_pression
+
+    # Appel de la fonction d'affichage
+    afficher_atelier_pression(verrouille=verrou_at3)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 3")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat3 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier d'Étude de la Pression.",
+        key="check_certif_pres3_final_net",
+        disabled=verrou_at3,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_suite3_pres_official", use_container_width=True, disabled=verrou_at3):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat3: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # Correction automatique du Quiz
+            score_q3 = 0.0
+            if "ordre_quiz_pres3_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_pres3_aleatoire:
+                    saisie = st.session_state.get(f"pres3_at3_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q3 += 1.0
+
+            # Correction automatique du Texte à trous
+            score_t3 = 0.0
+            if "champs_pres3_clean" in st.session_state:
+                for ligne in st.session_state.champs_pres3_clean:
+                    cle = ligne[-1]
+                    attendu = ligne[2]
+                    if st.session_state.get(f"{cle}_pres3_clean", "Choisir...") == attendu: 
+                        score_t3 += 1.0
+
+            st.session_state.score_suite3_pres_p1 = round(float(score_q3), 1)
+            st.session_state.score_suite3_pres_p2 = round(float(score_t3), 1)
+            st.session_state.score_final_suite3_pres = round(float(score_q3 + score_t3), 1)
+            st.session_state.suite_verrouille_tab3_pression = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML DE L'ATELIER 3 ---
+    if st.session_state.get("suite_verrouille_tab3_pression", False):
+        from datetime import datetime
+        scr1_t3 = st.session_state.get("score_suite3_pres_p1", 0.0)
+        scr2_t3 = st.session_state.get("score_suite3_pres_p2", 0.0)
+        tot_s_t3 = st.session_state.get("score_final_suite3_pres", 0.0)
+        timestamp_suite3 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER PRESSION SCELLÉ | Note de session : {tot_s_t3:.1f} / 20")
+
+        html_export_pres3 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport d'Étude de la Pression - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #10b981; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Physique</h1>
+                <p>Atelier 3 : Lois barométriques, phénomènes hydrostatiques et instruments manométriques</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t3:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t3:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t3:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 3 : <strong>{tot_s_t3:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_pres3_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_pres3_aleatoire, 1):
+                saisie = st.session_state.get(f"pres3_at3_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_pres3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_pres3 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_pres3_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_pres3_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"{cle_variable}_pres3_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_pres3 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_pres3 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_pres3 = preparer_nom_fichier("Rapport_Etude_Pression").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 3",
+            data=html_export_pres3,
+            file_name=nom_fichier_html_pres3,
+            mime="text/html",
+            use_container_width=True,
+            key="btn_download_html_pres3_final"
+        )
+
+
+with tab4:
+    st.header("Étude des Surfaces de Contact et Sections Géométriques")
+    st.write("Explorez l'impact du dimensionnement des surfaces sur la transmission des efforts, manipulez le simulateur géométrique, puis complétez l'évaluation de l'Atelier 4.")
+
+    # Styles CSS pour les légendes, bandeaux et textes spécifiques à l'Atelier 4
+    st.markdown("""
+    <style>
+    .legende-surface { color: #b45309; font-weight: bold; text-align: center; margin-top: 5px; font-size: 13px; }
+    .bandeau-surface { background-color: #fffbeb; border-left: 5px solid #f59e0b; padding: 12px; font-size: 14px; font-weight: 500; margin-bottom: 20px; color: #78350f; border-radius: 4px; }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # DÉFINITION INTERNE DE L'ATELIER INTERACTIF (QUIZ, SURFACE ET TROUS)
+    def afficher_atelier_surface(verrouille=False):
+        import random
+        import math
+
+        # Déclaration de la base de données des 10 questions du Quiz Surface
+        questions_surf_sources = [
+            {"id": "qsu1", "q": "Quelle est l'unité légale du système international (SI) pour mesurer une surface ou une aire ?", "options": ["Le mètre carré (m²)", "Le centimètre carré (cm²)", "Le millimètre carré (mm²)"], "rep": "Le mètre carré (m²)"},
+            {"id": "qsu2", "q": "Par quelle formule mathématique calcule-t-on la surface d'un piston circulaire de diamètre D ?", "options": ["S = (pi * D²) / 4", "S = pi * D", "S = 2 * pi * D"], "rep": "S = (pi * D²) / 4"},
+            {"id": "qsu3", "q": "Combien de centimètres carrés (cm²) contient un mètre carré (m²) ?", "options": ["10 000 cm²", "100 cm²", "1 000 cm²"], "rep": "10 000 cm²"},
+            {"id": "qsu4", "q": "Dans la relation P = F / S, si la force F reste fixe et que la surface S augmente, la pression P :", "options": ["Diminue", "Augmente", "Reste identique"], "rep": "Diminue"},
+            {"id": "qsu5", "q": "Pour obtenir une pression très élevée à partir d'une force modérée, la surface d'appui doit être :", "options": ["La plus petite possible", "La plus grande possible", "Parfaitement infinie"], "rep": "La plus petite possible"},
+            {"id": "qsu6", "q": "Quel mathématicien antique de Syracuse a formalisé les premières méthodes de calcul des aires de cercles et de disques ?", "options": ["Archimède", "Thalès", "Pythagore"], "rep": "Archimède"},
+            {"id": "qsu7", "q": "Dans un système de vérins hydrauliques (presse de Pascal), pour multiplier la force, le vérin récepteur doit avoir :", "options": ["Une surface plus grande que le vérin émetteur", "Une surface plus petite que le vérin émetteur", "La même surface que le vérin émetteur"], "rep": "Une surface plus grande que le vérin émetteur"},
+            {"id": "qsu8", "q": "Quelle est la valeur numérique abrégée de la constante Pi couramment utilisée pour le calcul des surfaces circulaires ?", "options": ["3,1416", "1,414", "2,718"], "rep": "3,1416"},
+            {"id": "qsu9", "q": "Si un diamètre de piston est exprimé en millimètres (mm), sa surface calculée sera directement en :", "options": ["Millimètres carrés (mm²)", "Mètres carrés (m²)", "Centimètres carrés (cm²)"], "rep": "Millimètres carrés (mm²)"},
+            {"id": "qsu10", "q": "Le terme 'section normale' d'un conduit ou d'un vérin désigne une surface qui coupe l'axe de manière :", "options": ["Perpendiculaire", "Parallèle", "Oblique à 45 degrés"], "rep": "Perpendiculaire"}
+        ]
+
+        if "ordre_quiz_surf4_aleatoire" not in st.session_state:
+            random.shuffle(questions_surf_sources)
+            st.session_state.ordre_quiz_surf4_aleatoire = questions_surf_sources
+
+        if "champs_surf4_clean" not in st.session_state:
+            st.session_state.champs_surf4_clean = [
+                ("1. L'aire d'une paroi en contact direct avec un fluide constitue sa ..........", ["Choisir...", "surface", "force"], "surface", "surf4_t1"),
+                ("2. Pour l'application des formules SI, l'aire s'exprime obligatoirement en ..........", ["Choisir...", "mètre carré", "millimètre"], "mètre carré", "surf4_t2"),
+                ("3. Multiplier le rayon d'un disque par lui-même et par la constante Pi donne son ..........", ["Choisir...", "aire", "périmètre"], "aire", "surf4_t3"),
+                ("4. Dans une presse hydraulique, la force est multipliée si le grand vérin possède une large ..........", ["Choisir...", "section", "course"], "section", "surf4_t4"),
+                ("5. Une pointe acérée s'enfonce facilement car sa surface de contact est extrêmement ..........", ["Choisir...", "réduite", "étendue"], "réduite", "surf4_t5"),
+                ("6. Diviser une force mécanique par la valeur de la section permet d'obtenir la ..........", ["Choisir...", "pression", "puissance"], "pression", "surf4_t6"),
+                ("7. Un centimètre carré représente une fraction d'un mètre carré égale à un ..........", ["Choisir...", "dix-millième", "centième"], "dix-millième", "surf4_t7"),
+                ("8. À pression constante, l'effort développé par un piston augmente proportionnellement à sa ..........", ["Choisir...", "surface", "longueur"], "surface", "surf4_t8"),
+                ("9. L'étude de la géométrie plane et du calcul des surfaces remonte à l'..........", ["Choisir...", "Antiquité", "Époque moderne"], "Antiquité", "surf4_t9"),
+                ("10. La section transversale interne d'un cylindre de guidage est une surface ..........", ["Choisir...", "circulaire", "rectangulaire"], "circulaire", "surf4_t10")
+            ]
+
+        # SÉPARATION PRINCIPALE EN DEUX GRANDES COLONNES GLOBALES (Mise en page style 4 pages par feuille)
+        col_gauche_globale, col_droite_globale = st.columns(2)
+
+        # ---------------------------------------------------------------------
+        # COLONNE GAUCHE (PAGES 1 ET 3 : CONTEXTE, SIMULATEUR ET QUIZ)
+        # ---------------------------------------------------------------------
+        with col_gauche_globale:
+            # PAGE 1 : CONTEXTE HISTORIQUE
+            st.subheader("La Galerie des Génies : La Mesure des Aires")
+            st.markdown("""
+            <div class="bandeau-surface">
+                <b>Repères Historiques :</b> Dès l'Antiquité, Archimède de Syracuse développe la méthode d'exhaustion pour encadrer précisément la valeur de Pi et calculer l'aire du disque. Cette maîtrise géométrique s'avérera indispensable des siècles plus tard pour concevoir les pistons des premières machines hydrauliques.
+            </div>
+            """, unsafe_allow_html=True)
+
+            sub_col_hist1, sub_col_hist2 = st.columns(2)
+            with sub_col_hist1:
+                st.image("https://wikimedia.org", use_container_width=True)
+                st.markdown('<div class="legende-surface">Géométrie d\'Archimède</div>', unsafe_allow_html=True)
+            with sub_col_hist2:
+                st.image("https://wikimedia.org", use_container_width=True)
+                st.markdown('<div class="legende-surface">Blaise Pascal (1623 - 1662)</div>', unsafe_allow_html=True)
+
+            st.markdown("<br>", unsafe_allow_html=True)
+
+            # SIMULATEUR INTERACTIF DE SECTION DE VÉRIN
+            st.markdown("**Simulateur de Dimensionnement de Surface Circulaire**")
+            diametre_mm = st.slider("Ajuster le diamètre utile du piston (en millimètres) :", min_value=10, max_value=200, value=50, step=5, disabled=verrouille, key="slider_diametre_piston")
+            
+            # Calcul en mm² puis conversion en m²
+            surface_mm2 = (math.pi * (diametre_mm ** 2)) / 4
+            surface_m2 = surface_mm2 / 1_000_000
+            st.info(f"Calcul Géométrique : Pour un diamètre de {diametre_mm} mm, la surface d'appui utile est de {surface_mm2:.1f} mm² (soit {surface_m2:.6f} m²).")
+
+            st.markdown("<br><hr><br>", unsafe_allow_html=True)
+
+            # PAGE 3 : QUIZ TECHNIQUE DE LA SURFACE
+            st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+            for idx, q_data in enumerate(st.session_state.ordre_quiz_surf4_aleatoire, 1):
+                st.write(f"**{idx}.** {q_data['q']}")
+                st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"surf4_at4_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+        # ---------------------------------------------------------------------
+        # COLONNE DROITE (PAGES 2 ET 4 : CARICATURE, MODÉLISATION ET TROUS)
+        # ---------------------------------------------------------------------
+        with col_droite_globale:
+            # PAGE 2 : BANDE CARICATURALE TECHNIQUE
+            st.subheader("Bande Caricaturale : Le Paradoxe des Raquettes à Neige")
+            
+            sub_col_text, sub_col_img = st.columns([0.45, 0.55])
+            with sub_col_text:
+                st.markdown('<div class="legende-surface">Répartition des Pressions</div>', unsafe_allow_html=True)
+                st.write("**Case 1 :** Un randonneur équipé de bottes classiques s'enfonce profondément au premier pas dans la neige poudreuse.")
+                st.write("**Case 2 :** Son poids (Force) se concentre sur la faible section de ses semelles, créant une forte pression locale.")
+                st.write("**Case 3 :** Il chausse des raquettes de grande section. La force de son poids reste rigoureusement inchangée.")
+                st.write("**Case 4 :** En multipliant la surface d'appui par dix, la pression s'effondre. Il marche à la surface sans s'enfoncer.")
+            with sub_col_img:
+                st.image("https://unsplash.com")
+                st.markdown('<div class="legende-surface">Vérification de la surface géométrique d\'un support support mécanique</div>', unsafe_allow_html=True)
+
+            st.markdown("<br><hr><br>", unsafe_allow_html=True)
+
+            # PAGE 4 : SYNTHÈSE DE L'ATELIER (TEXTE À TROUS - 10 CASES)
+            st.markdown("##### Synthèse de l'Atelier (Texte à trous - 10 cases - 10 pts)")
+            for ligne in st.session_state.champs_surf4_clean:
+                enonce = ligne[0]
+                choix = ligne[1]
+                cle = ligne[-1]
+                
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: 
+                    st.write(enonce)
+                with c_sel: 
+                    st.selectbox("", choix, key=f"{cle}_surf4_clean", disabled=verrouille, label_visibility="collapsed")
+
+
+    # --- EXECUTION DE LA LOGIQUE DE CORRECTION ET D'EXPORT DE L'ATELIER 4 ---
+    if "suite_verrouille_tab4_surface" not in st.session_state:
+        st.session_state.suite_verrouille_tab4_surface = False
+    verrou_at4 = st.session_state.suite_verrouille_tab4_surface
+
+    # Appel de la fonction d'affichage
+    afficher_atelier_surface(verrouille=verrou_at4)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 4")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat4 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier d'Étude des Surfaces.",
+        key="check_certif_surf4_final_net",
+        disabled=verrou_at4,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_suite4_surf_official", use_container_width=True, disabled=verrou_at4):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat4: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # Correction automatique du Quiz
+            score_q4 = 0.0
+            if "ordre_quiz_surf4_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_surf4_aleatoire:
+                    saisie = st.session_state.get(f"surf4_at4_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q4 += 1.0
+
+            # Correction automatique du Texte à trous
+            score_t4 = 0.0
+            if "champs_surf4_clean" in st.session_state:
+                for ligne in st.session_state.champs_surf4_clean:
+                    cle = ligne[-1]
+                    attendu = ligne[2]
+                    if st.session_state.get(f"{cle}_surf4_clean", "Choisir...") == attendu: 
+                        score_t4 += 1.0
+
+            st.session_state.score_suite4_surf_p1 = round(float(score_q4), 1)
+            st.session_state.score_suite4_surf_p2 = round(float(score_t4), 1)
+            st.session_state.score_final_suite4_surf = round(float(score_q4 + score_t4), 1)
+            st.session_state.suite_verrouille_tab4_surface = True
+            st.rerun()
+
+    # --- COMPILATION DU BILAN HTML DE L'ATELIER 4 ---
+    if st.session_state.get("suite_verrouille_tab4_surface", False):
+        from datetime import datetime
+        scr1_t4 = st.session_state.get("score_suite4_surf_p1", 0.0)
+        scr2_t4 = st.session_state.get("score_suite4_surf_p2", 0.0)
+        tot_s_t4 = st.session_state.get("score_final_suite4_surf", 0.0)
+        timestamp_suite4 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER SURFACE SCELLÉ | Note de session : {tot_s_t4:.1f} / 20")
+
+        html_export_surf4 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport d'Étude des Surfaces - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #b45309; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Physique</h1>
+                <p>Atelier 4 : Dimensionnement géométrique des sections et transmission des forces pressantes</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite4}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t4:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t4:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t4:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 4 : <strong>{tot_s_t4:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_surf4_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_surf4_aleatoire, 1):
+                saisie = st.session_state.get(f"surf4_at4_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_surf4 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_surf4 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        
+        """
+
+        if "champs_surf4_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_surf4_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"{cle_variable}_surf4_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_surf4 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_surf4 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_surf4 = preparer_nom_fichier("Rapport_Etude_Surfaces").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 4",
+            data=html_export_surf4,
+            file_name=nom_fichier_html_surf4,
+            mime="text/html",
+            use_container_width=True,
+            key="btn_download_html_surf4_final"
+        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
