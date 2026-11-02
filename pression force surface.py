@@ -333,7 +333,7 @@ with tab1:
     with col_pascal:
         st.markdown("### Blaise Pascal (1623 - 1662)")
         # Remplacement du lien générique par le portrait officiel de Blaise Pascal
-        st.image("https://wikimedia.org", width=180, caption="Blaise Pascal")
+        st.image("Blaise.jpg", caption="Blaise Pascal", use_container_width=True)
         st.markdown("""
         * **Sa Trouvaille :** La formulation de la pression comme le rapport d'une force sur une surface (**P = F / S**). Il démontre qu'une même force répartie sur une surface plus petite engendre une pression bien plus élevée.
         * **L'Expérience Célèbre :** *Le crève-tonneau de Pascal (1646)*. En appliquant le poids d'un faible volume d'eau (Force) au sommet d'un long tube de très fine section (Surface minuscule), il génère une pression hydrostatique immense capable de faire éclater le bois.
@@ -342,7 +342,7 @@ with tab1:
     with col_torricelli:
         st.markdown("### Evangelista Torricelli (1608 - 1647)")
         # Remplacement du lien générique par le portrait officiel de Evangelista Torricelli
-        st.image("https://wikimedia.org", width=180, caption="Evangelista Torricelli")
+        st.image("Torricelli.jpg", caption="Evangelista Torricelli", use_container_width=True)
         st.markdown("""
         * **Sa Trouvaille :** La mesure de la force pressante de l'air. Il est le premier à quantifier la force colossale exercée par le poids de l'atmosphère sur chaque unité de surface terrestre.
         * **L'Expérience Célèbre :** *Le tube de Torricelli (1643)*. Il équilibre la force du poids de l'atmosphère s'exerçant sur la surface d'un bassin avec le poids d'une colonne de mercure de 76 centimètres de hauteur.
