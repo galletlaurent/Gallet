@@ -208,13 +208,12 @@ tab8 = onglets[8]
 
 
 
-
 def afficher_atelier_histoire_pression(verrouille=False):
-
-"""Affiche le Quiz et le Texte à trous de l'onglet 1 (Historique) sur deux colonnes."""
+    """Affiche le Quiz et le Texte à trous côte à côte en bas de la page."""
     import random
 
-    # Base de données de 10 questions sur P = F / S et son contexte historique
+    st.subheader("Atelier Interactif : Modélisation Mathématique de la Pression")
+
     questions_pression_sources = [
         {"id": "qp1", "q": "Dans la relation mathématique P = F / S, que représente la lettre P ?", "options": ["La Pression", "La Puissance", "Le Poids"], "rep": "La Pression"},
         {"id": "qp2", "q": "Dans la relation mathématique P = F / S, que représente la lettre F ?", "options": ["La Force pressante", "Le Fluide", "Le Frottement"], "rep": "La Force pressante"},
@@ -232,7 +231,6 @@ def afficher_atelier_histoire_pression(verrouille=False):
         random.shuffle(questions_pression_sources)
         st.session_state.ordre_quiz_pression_aleatoire = questions_pression_sources
 
-    # Structure du texte à trous (10 lignes) axée sur la formule et ses unités
     if "champs_pression_clean" not in st.session_state:
         st.session_state.champs_pression_clean = [
             ("1. La pression est définie comme le rapport d'une force sur une ..........", ["Choisir...", "surface", "hauteur"], "surface", "pres_t1"),
@@ -247,9 +245,7 @@ def afficher_atelier_histoire_pression(verrouille=False):
             ("10. 1 bar est une unité usuelle qui correspond à cent mille ..........", ["Choisir...", "Pascals", "Newtons"], "Pascals", "pres_t10")
         ]
 
-    # Affichage des activités côte à côte
     col_quiz, col_trous = st.columns(2)
-    
     with col_quiz:
         st.markdown("##### Quiz Technique (10 questions - 10 pts)")
         for idx, q_data in enumerate(st.session_state.ordre_quiz_pression_aleatoire, 1):
@@ -259,10 +255,11 @@ def afficher_atelier_histoire_pression(verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_pression_clean:
-            enonce, choix, cle = ligne[0], ligne[1], ligne[-1]
+            enonce, choix, cle = ligne, ligne, ligne[-1]
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: st.write(enonce)
             with c_sel: st.selectbox("", choix, key=f"{cle}_pres_clean", disabled=verrouille, label_visibility="collapsed")
+
 
 with tab0:
     st.subheader("Identification de l'élève")
