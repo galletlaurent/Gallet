@@ -1356,12 +1356,8 @@ with tab5:
     """, unsafe_allow_html=True)
 
     # DÉFINITION DYNAMIQUE DE L'ATELIER DE MAINTENANCE SELON LE CAS
-    def afficher_atelier_maintenance(verrouille=False):
-        import random
-
-        # ---------------------------------------------------------------------
-        # CONFIGURATION DES BANQUES DE DONNÉES SELON LE CAS DE MAINTENANCE
-        # ---------------------------------------------------------------------
+    def afficher_atelier_maintenance(id_cas, verrouille=False):
+        # Tout votre code reste identique en dessous...
         if id_cas == 1:
             titre_maint = "Défaut d'étanchéité du piston sur un vérin hydraulique de presse"
             desc_bd = [
@@ -1562,8 +1558,8 @@ with tab5:
     verrou_at5 = st.session_state.suite_verrouille_tab5_maint
 
     # Appel de la fonction d'affichage de l'atelier 5
-    afficher_atelier_maintenance(verrouille=verrou_at5)
-    
+    afficher_atelier_maintenance(id_cas=st.session_state.get("cas_maintenance_actif", 1), verrouille=verrou_at5)
+
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 5")
     
