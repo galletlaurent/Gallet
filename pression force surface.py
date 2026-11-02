@@ -3080,9 +3080,380 @@ with tab7:
 
 
 
+with tab8:
+    st.header("Application dans le domaine Topographe Géomètre")
+    st.write("Gérez les corrections d'erreurs systématiques liées à la dilatation thermique linéaire et la réfraction des signaux optiques.")
 
+    # Styles CSS pour les légendes, bandeaux et alertes de l'Atelier 8
+    st.markdown("""
+    <style>
+    .legende-geo { color: #1e3a8a; font-weight: bold; text-align: center; margin-top: 5px; font-size: 13px; }
+    .bandeau-geo { background-color: #f1f5f9; border-left: 5px solid #475569; padding: 12px; font-size: 14px; font-weight: 500; margin-bottom: 20px; color: #334155; border-radius: 4px; }
+    </style>
+    """, unsafe_allow_html=True)
 
+    # 1. DÉCLARATION DE SÉCURITÉ ABSOLUE DU VERROU TOUT EN HAUT
+    if "suite_verrouille_tab8_geo" not in st.session_state:
+        st.session_state.suite_verrouille_tab8_geo = False
+    verrou_at8 = st.session_state.suite_verrouille_tab8_geo
 
+    # 2. INITIALISATION ET TIRAGE AU SORT D'EXERCICE MULTI-CAS AUTONOME
+    if "cas_aleatoire_tab8" not in st.session_state:
+        st.session_state.cas_aleatoire_tab8 = 1
+
+    col_tirage_geo, col_statut_geo = st.columns([0.4, 0.6], vertical_alignment="center")
+    with col_tirage_geo:
+        if st.button("GÉNÉRER UN EXERCICE DE TOPOGRAPHIE AU HASARD", key="btn_tirage_hasard_at8_officiel_final", use_container_width=True, disabled=verrou_at8):
+            import random
+            actuel_geo = st.session_state.cas_aleatoire_tab8
+            possibles_geo = [1, 2]
+            filtrés_geo = [c for c in possibles_geo if c != actuel_geo]
+            st.session_state.cas_aleatoire_tab8 = random.choice(filtrés_geo)
+            
+            # Nettoyage des anciennes clés pour forcer la mise à jour synchrone
+            if "ordre_quiz_tab8_geo_aleatoire" in st.session_state: del st.session_state.ordre_quiz_tab8_geo_aleatoire
+            if "champs_therm8_geo_clean" in st.session_state: del st.session_state.champs_therm8_geo_clean
+            st.rerun()
+
+    id_cas_geo = st.session_state.cas_aleatoire_tab8
+    st.write(f"Dossier technique Topographie attribué : **Cas n°{id_cas_geo}**")
+
+    # =============================================================================
+    # 3. BASE DE DONNÉES DYNAMIQUES DES QUESTIONS, TROUS ET TEXTES (PAR CAS)
+    # =============================================================================
+    if id_cas_geo == 1:
+        titre_geo = "Dilatation thermique linéaire de rubans d'arpentage en acier au soleil"
+        enonce_geo = (
+            "**Case 1 :** Un ruban d'arpentage métallique en acier subit un fort rayonnement solaire direct lors d'un chaînage de précision.\n\n"
+            "**Case 2 :** L'élévation de température provoque un allongement millimétrique systématique de la structure solide par rapport à sa longueur nominale.\n\n"
+            "**Case 3 :** Cette dérive géométrique non corrigée fausse la mesure bout à bout en sous-estimant la distance réelle du terrain.\n\n"
+            "**Case 4 :** L'application du coefficient d'allongement linéaire (11.5 ppm/°C) corrige la mesure et valide le plan de bornage."
+        )
+        texte_bd_geo = (
+            "**Bande Caricaturale de l'Incident : Le Ruban Élastique**\n\n"
+            "**Case 1 :** Canicule : « Le thermomètre grimpe à 35 °C sur le goudron, les atomes du ruban solide s'agitent et s'écartent ! ».\n\n"
+            "**Case 2 :** Piège métrologique : « Comme l'acier s'est allongé, ton ruban de 50 m mesure en fait 50.01 m sans que tu le saches ! ».\n\n"
+            "**Case 3 :** Erreur : « En reportant plusieurs fois ce ruban trop long, ton calcul final affichera une distance trop courte ! ».\n\n"
+            "**Case 4 :** Correction : « On injecte le Delta T dans l'équation linéaire, les millimètres parasites sont recalibrés ! »"
+        )
+        img_reelle_geo, img_bd_geo = "ruban_reel.jpg", "bd_ruban.jpg"
+        
+        questions_sources_geo = [
+            {"id": "geo_q1_c1", "q": "Quel phénomène physique provoque l'augmentation de longueur d'un ruban d'acier exposé au soleil ?", "options": ["La dilatation thermique linéaire", "La réfraction atmosphérique", "La compressibilité fluide"], "rep": "La dilatation thermique linéaire"},
+            {"id": "geo_q2_c1", "q": "À quelle température réglementaire standard de référence sont étalonnés les rubans en usine ?", "options": ["20 °C", "0 °C", "25 °C"], "rep": "20 °C"},
+            {"id": "geo_q3_c1", "q": "Si un ruban s'allonge sous l'effet de la chaleur, la distance brute lue sur le terrain est :", "options": ["Inférieure à la distance réelle (sous-estimation)", "Supérieure à la distance réelle", "Strictement exacte"], "rep": "Inférieure à la distance réelle (sous-estimation)"},
+            {"id": "geo_q4_c1", "q": "Quel alliage métallique stable est privilégié en topographie pour son coefficient de dilatation quasi nul ?", "options": ["L'Invar (acier-nickel)", "L'aluminium pur", "Le cuivre rouge"], "rep": "L'Invar (acier-nickel)"},
+            {"id": "geo_q5_c1", "q": "Le coefficient d'allongement linéaire de l'acier standard est proche de :", "options": ["11.5 ppm/°C (ou 11.5×10⁻⁶ K⁻¹)", "1.2 ppm/°C", "150 ppm/°C"], "rep": "11.5 ppm/°C (ou 11.5×10⁻⁶ K⁻¹)"},
+            {"id": "geo_q6_c1", "q": "L'erreur systématique due à la température relève d'une grandeur d'influence :", "options": ["Environnementale", "Humaine d'alignement", "Strictement accidentelle"], "rep": "Environnementale"},
+            {"id": "geo_q7_c1", "q": "Un écart thermique positif (T > T_ref) engendre sur le ruban une correction numérique :", "options": ["Positive à rajouter", "Négative à retrancher", "Nulle"], "rep": "Positive à rajouter"},
+            {"id": "geo_q8_c1", "q": "L'unité métrologique légale du système international pour exprimer une longueur est :", "options": ["Le mètre (m)", "Le millimètre (mm)", "Le pouce (inch)"], "rep": "Le mètre (m)"},
+            {"id": "geo_q9_c1", "q": "Chaîner de manière répétée sans thermomètre introduit une incertitude de type :", "options": ["Systématique cumulable", "Aléatoire gaussienne", "Nulle"], "rep": "Systématique cumulable"},
+            {"id": "geo_q10_c1", "q": "La contrainte de tension appliquée par le géomètre sur le ruban sert à contrer l'effet de :", "options": ["La flèche (ou chaînette due à la gravité)", "La réfraction optique", "La tension de vapeur"], "rep": "La flèche (ou chaînette due à la gravité)"}
+        ]
+        trous_sources_geo = [
+            ("1. La hausse de température engendre la .......... thermique linéaire de l'acier.", ["Choisir...", "dilatation", "contraction"], "dilatation", "geo_t1_c1"),
+            ("2. Les rubans de précision sont étalonnés en usine à la température de .......... °C.", ["Choisir...", "20", "0"], "20", "geo_t2_c1"),
+            ("3. Un ruban dilaté devient trop long, ce qui .......... la distance brute lue.", ["Choisir...", "sous-estime", "surentend"], "sous-estime", "geo_t3_c1"),
+            ("4. Pour s'affranchir de cette dérive, on utilise des mires en alliage d'..........", ["Choisir...", "Invar", "Laiton"], "Invar", "geo_t4_c1"),
+            ("5. La correction métrologique calculée est directement proportionnelle au .......... L.", ["Choisir...", "Delta T", "Volume"], "Delta T", "geo_t5_c1"),
+            ("6. Cette fluctuation physique de la matière modifie la longueur de la barre ..........", ["Choisir...", "solide", "fluide"], "solide", "geo_t6_c1"),
+            ("7. La constante de dilatation de l'acier s'exprime en parties par .......... (ppm).", ["Choisir...", "million", "mille"], "million", "geo_t7_c1"),
+            ("8. Appliquer la formule de recalibrage élimine l'erreur .......... systématique.", ["Choisir...", "thermique", "optique"], "thermique", "geo_t8_c1"),
+            ("9. Un bornage officiel exige une précision rigoureuse des mesures de ..........", ["Choisir...", "distance", "pression"], "distance", "geo_t9_c1"),
+            ("10. Ce soin garantit la parfaite exactitude géométrique des limites de .......... .", ["Choisir...", "propriété", "vitesse"], "propriété", "geo_t10_c1")
+        ]
+    else:
+        titre_geo = "Déviation des faisceaux lasers par gradient de réfraction atmosphérique"
+        enonce_geo = (
+            "**Case 1 :** Le faisceau laser infrarouge d'une station totale traverse un gradient thermique vertical au-dessus du bitume.\n\n"
+            "**Case 2 :** La variation de densité optique de l'air surchauffé courbe la trajectoire lumineuse rectiligne du signal.\n\n"
+            "**Case 3 :** Ce phénomène de réfraction atmosphérique modifie infimement la célérité de l'onde et fausse la distance EDM.\n\n"
+            "**Case 4 :** Le calcul de correction basé sur la pression (hPa) et la température rétablit l'indice de réfraction exact."
+        )
+        texte_bd_geo = (
+            "**Bande Caricaturale de l'Incident : Le Laser Courbé**\n\n"
+            "**Case 1 :** Mirage : « Le goudron surchauffé agit comme un miroir, l'air chaud ascendant tremble dans l'objectif ! ».\n\n"
+            "**Case 2 :** Réfraction : « Les photons traversent des couches d'air de densités différentes, le rayon courbe sa course ! ».\n\n"
+            "**Case 3 :** Erreur laser : « L'indice de réfraction n a changé, la vitesse du signal varie, le calcul de distance est faussé ! ».\n\n"
+            "**Case 4 :** Calibrage : « Station météo lue ! Pression et température encodées, la station totale corrige sa visée ! »"
+        )
+        img_reelle_geo, img_bd_geo = "laser_reel.jpg", "bd_laser.jpg"
+
+        questions_sources_geo = [
+            {"id": "geo_q1_c2", "q": "Quel effet le gradient thermique de l'air a-t-il sur le faisceau laser de visée ?", "options": ["Il courbe sa trajectoire par réfraction", "Il augmente sa fréquence lumineuse", "Il stoppe totalement les photons"], "rep": "Il courbe sa trajectoire par réfraction"},
+            {"id": "geo_q2_c2", "q": "Quelle grandeur physique de l'atmosphère modifie directement la vitesse de l'onde laser ?", "options": ["La densité optique de l'air (liée à T et P)", "La conductivité du sol en acier", "L'émissivité du prisme réflecteur"], "rep": "La densité optique de l'air (liée à T et P)"},
+            {"id": "geo_q3_c2", "q": "Quel instrument météo portatif le topographe utilise-t-on pour corriger l'indice n ?", "options": ["Un thermo-baromètre", "Un dynamomètre", "Un manomètre hydraulique"], "rep": "Un thermo-baromètre"},
+            {"id": "geo_q4_c2", "q": "La vitesse de la lumière dans le vide absolu (c) est une constante égale à environ :", "options": ["300 000 km/s", "1 500 m/s", "340 m/s"], "rep": "300 000 km/s"},
+            {"id": "geo_q5_c2", "q": "Dans un air plus chaud et moins dense à pression constante, la vitesse du signal laser :", "options": ["Augmente légèrement", "Diminue fortement", "Reste parfaitement identique au vide"], "rep": "Augmente légèrement"},
+            {"id": "geo_q6_c2", "q": "L'abréviation EDM intégrée aux stations totales de topographie signifie :", "options": ["Electronic Distance Measurement", "Équilibre Des Masses", "Érosion Des Molécules"], "rep": "Electronic Distance Measurement"},
+            {"id": "geo_q7_c2", "q": "La correction atmosphérique appliquée par l'appareil s'exprime généralement en :", "options": ["ppm (parties par million)", "Pascals", "Newtons"], "rep": "ppm (parties par million)"},
+            {"id": "geo_q8_c2", "q": "Une forte réfraction courbe le rayon vers le bas, faisant apparaître la cible :", "options": ["Plus haute qu'elle ne l'est réellement", "Plus basse qu'elle ne l'est réellement", "Strictement à sa vraie cote"], "rep": "Plus haute qu'elle ne l'est réellement"},
+            {"id": "geo_q9_c2", "q": "L'indice de réfraction de l'air standard au niveau de la mer est de l'ordre de :", "options": ["1.0003", "1.33", "2.42"], "rep": "1.0003"},
+            {"id": "geo_q10_c2", "q": "Travailler au-dessus d'une surface asphaltée en plein après-midi accentue les erreurs de :", "options": ["Scintillation et mirage optique", "Pesanteur locale", "Fléchissement de flèche"], "rep": "Scintillation et mirage optique"}
+        ]
+        trous_sources_geo = [
+            ("1. Le goudron surchauffé modifie l'indice de .......... de l'air de surface.", ["Choisir...", "réfraction", "conduction"], "réfraction", "geo_t1_c2"),
+            ("2. L'air chaud ascendant modifie la vitesse du faisceau .......... de visée.", ["Choisir...", "laser", "sonore"], "laser", "geo_t2_c2"),
+            ("3. La variation de la densité moléculaire courbe la trajectoire de l'.......... optique.", ["Choisir...", "onde", "fluide"], "onde", "geo_t3_c2"),
+            ("4. Pour corriger l'EDM, le technicien relève la pression avec un .......... .", ["Choisir...", "baromètre", "dynamomètre"], "baromètre", "geo_t4_c2"),
+            ("5. La déviation due à l'indice n de l'air constitue une erreur .......... .", ["Choisir...", "atmosphérique", "humaine"], "atmosphérique", "geo_t5_c2"),
+            ("6. Le signal infrarouge traverse un milieu gazeux non .......... verticalement.", ["Choisir...", "homogène", "liquide"], "homogène", "geo_t6_c2"),
+            ("7. Entrer la température de service permet à la station de recalculer la ..........", ["Choisir...", "célérité", "viscosité"], "célérité", "geo_t7_c2"),
+            ("8. La correction d'indice s'injecte de façon automatique en .......... par million.", ["Choisir...", "parties", "grammes"], "parties", "geo_t8_c2"),
+            ("9. Un relevé de nivellement l'après-midi subit les effets de .......... visuelle.", ["Choisir...", "scintillation", "cavitation"], "scintillation", "geo_t9_c2"),
+            ("10. Ce traitement élimine l'erreur systématique pour stabiliser les cotes de .......... .", ["Choisir...", "visée", "calage"], "visée", "geo_t10_c2")
+        ]
+
+    # Enregistrement final et synchronisation immédiate des variables en session
+    if "ordre_quiz_tab8_geo_aleatoire" not in st.session_state:
+        st.session_state.ordre_quiz_tab8_geo_aleatoire = questions_sources_geo
+    if "champs_therm8_geo_clean" not in st.session_state:
+        st.session_state.champs_therm8_geo_clean = trous_sources_geo
+
+    col_g_geo, col_d_geo = st.columns([0.3, 0.7])
+    
+    with col_g_geo:
+        st.markdown(f"##### Dossier Technique : {titre_geo}")
+        st.info(enonce_geo)
+        st.info(texte_bd_geo)
+        
+    with col_d_geo:
+        st.markdown("##### Visualisation Technique")
+        import os
+        
+        # 1. Rendu supérieur : Image réelle (Largeur fixe 300px)
+        if os.path.exists(img_reelle_geo):
+            st.image(img_reelle_geo, caption="Image réelle : Relevé instrumental sur le terrain", width=300)
+        else:
+            st.caption("Illustration réelle indisponible ou manquante")
+        
+        # Boucle d'espacement des 20 lignes réglementaires pour descendre la caricature
+        for _ in range(20):
+            st.write("")
+        
+        # 2. Rendu inférieur : Caricature de BD (Largeur fixe 300px)
+        if os.path.exists(img_bd_geo):
+            st.image(img_bd_geo, caption="Bande dessinée humoristique de l'arpentage", width=300)
+        else:
+            st.caption("Illustration caricaturale indisponible ou manquante")
+
+    st.write("---")
+
+    st.subheader("Laboratoire Virtuel : Simulateur Topographique Éléments d'Influence")
+    
+    col_p1_geo, col_p2_geo = st.columns(2)
+    if id_cas_geo == 1:
+        with col_p1_geo:
+            temp_sol_c = st.slider("Température mesurée sur le ruban d'acier (°C) :", 10, 60, 35, 1, key="sl_geo_c1_1_s8")
+            dist_nominale_m = st.slider("Distance nominale mesurée de la ligne (m) :", 20, 200, 100, 10, key="sl_geo_c1_2_s8")
+        # Formule : Delta L = L0 * alpha * (T - T_ref) avec alpha = 11.5 ppm/K
+        delta_l = float(dist_nominale_m) * 11.5e-6 * (float(temp_sol_c) - 20.0)
+        with col_p2_geo:
+            st.metric("Allongement thermique cumulé du ruban (Delta L)", f"+{delta_l*1000:.1f} mm")
+            st.latex(rf"\Delta L = L_0 \cdot \alpha \cdot \Delta T = {dist_nominale_m} \cdot (11{{,}}5 \cdot 10^{{-6}}) \cdot ({temp_sol_c} - 20) = {delta_l*1000:.2f}\text{{ mm}}")
+    else:
+        with col_p1_geo:
+            temp_air_c = st.slider("Température moyenne sur l'axe de visée (°C) :", -10, 45, 15, 1, key="sl_geo_c2_1_s8")
+            pres_atm_hpa = st.slider("Pression atmosphérique relevée (hPa) :", 950, 1050, 1013, 5, key="sl_geo_c2_2_s8")
+        # Formule simplifiée de Barrel & Sears pour l'indice n de l'air
+        ppm_corr = 273.15 - (0.2924 * float(pres_atm_hpa)) / (1.0 + 0.00366 * float(temp_air_c))
+        with col_p2_geo:
+            st.metric("Correction d'indice atmosphérique EDM", f"{ppm_corr:.1f} ppm (mm/km)")
+            st.latex(rf"\text{{Corr}} = 273{{,}}15 - \frac{{0{{,}}2924 \cdot {pres_atm_hpa}}}{{1 + 0{{,}}00366 \cdot {temp_air_c}}} = {ppm_corr:.1f}\text{{ ppm}}")
+
+    st.write("---")
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Technique du Scénario Géomètre (10 pts)")
+        if "ordre_quiz_tab8_geo_aleatoire" in st.session_state:
+            for idx, q_data in enumerate(st.session_state.ordre_quiz_tab8_geo_aleatoire, 1):
+                st.write(f"**{idx}.** {q_data['q']}")
+                st.selectbox(
+                    "", 
+                    options=["Choisir..."] + q_data["options"], 
+                    key=f"geo_q_{q_data['id']}_{idx}", 
+                    disabled=verrou_at8, 
+                    label_visibility="collapsed"
+                )
+    with col_t:
+        st.markdown("##### Synthèse de l'Atelier 8 (Texte à trous - 10 pts)")
+        if "champs_therm8_geo_clean" in st.session_state:
+            for idx, ligne in enumerate(st.session_state.champs_therm8_geo_clean, 1):
+                enonce, choix, attendu, cle = ligne
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: 
+                    st.write(enonce)
+                with c_sel: 
+                    st.selectbox(
+                        "", 
+                        choix, 
+                        key=f"geo_t_{cle}_{idx}", 
+                        disabled=verrou_at8, 
+                        label_visibility="collapsed"
+                    )
+
+    # =============================================================================
+    # 7. LOGIQUE DE VALIDATION TECHNIQUE ET COMPILATION DU BILAN HTML
+    # =============================================================================
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 8")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_geo = st.checkbox(
+        "Je certifie avoir complété l'Atelier d'application Topographie.", 
+        key="chk_certif_at8_final_official_final", 
+        disabled=verrou_at8
+    )
+    
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 8", 
+        key="btn_valider_at8_official_ultimate_final", 
+        use_container_width=True, 
+        disabled=verrou_at8
+    ):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_geo: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction automatique du Quiz
+            score_q = 0.0
+            if "ordre_quiz_tab8_geo_aleatoire" in st.session_state:
+                for idx, q_item in enumerate(st.session_state.ordre_quiz_tab8_geo_aleatoire, 1):
+                    saisie = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"geo_q_{q_item['id']}_"):
+                            saisie = st.session_state[k]
+                            break
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q += 1.0
+            
+            # 2. Correction automatique du Texte à trous
+            score_t = 0.0
+            if "champs_therm8_geo_clean" in st.session_state:
+                for idx, ligne in enumerate(st.session_state.champs_therm8_geo_clean, 1):
+                    cle = ligne[-1]
+                    attendu = ligne
+                    saisie_t = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"geo_t_{cle}_"):
+                            saisie_t = st.session_state[k]
+                            break
+                    if str(saisie_t).strip() == str(attendu).strip(): 
+                        score_t += 1.0
+            
+            st.session_state.score_suite8_geo_p1 = round(float(score_q), 1)
+            st.session_state.score_suite8_geo_p2 = round(float(score_t), 1)
+            st.session_state.score_final_at8 = round(float(score_q + score_t), 1)
+            st.session_state.suite_verrouille_tab8_geo = True
+            st.rerun()
+
+    # --- ARCHIVAGE DU RAPPORT ELECTRONIQUE SCELLÉ HTML ---
+    if st.session_state.get("suite_verrouille_tab8_geo", False):
+        from datetime import datetime
+        scr1_t8 = st.session_state.get("score_suite8_geo_p1", 0.0)
+        scr2_t8 = st.session_state.get("score_suite8_geo_p2", 0.0)
+        tot_s_t8 = st.session_state.get("score_final_at8", 0.0)
+        timestamp_suite8 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER TOPOGRAPHIE SCELLÉ | Note de session : {tot_s_t8:.1f} / 20")
+
+        html_export_geo8 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Topographe Géomètre - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #475569; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Physique</h1>
+                <p>Atelier 8 : Métrologie appliquée, corrections linéaires et réfraction chez le Géomètre</p>
+                <p>Scénario résolu : {titre_geo}</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite8}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t8:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t8:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t8:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 8 : <strong>{tot_s_t8:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab8_geo_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab8_geo_aleatoire, 1):
+                saisie = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"geo_q_{q_item['id']}_"):
+                        saisie = st.session_state[k]
+                        break
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_geo8 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_geo8 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_therm8_geo_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_therm8_geo_clean, 1):
+                enonce_texte, choix_texte, attendu_texte, cle_variable = ligne
+                saisie_texte = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"geo_t_{cle_variable}_"):
+                        saisie_texte = st.session_state[k]
+                        break
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_geo8 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_geo8 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_geo8 = preparer_nom_fichier("Rapport_Application_Topographie").replace(".txt", ".html")
+        st.download_button(
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 8 (.HTML)",
+            data=html_export_geo8,
+            file_name=nom_fichier_html_geo8,
+            mime="text/html",
+            use_container_width=True,
+        )
 
 
 
@@ -3106,6 +3477,15 @@ with tab7:
 
 
     
+
+
+
+
+
+
+
+
+
 
 
 
