@@ -1407,7 +1407,7 @@ with tab4:
         st.markdown("##### Illustration caricaturale du cas")
         # 1. Affichage supérieur : Image réelle (Largeur fixe 300px)
         if os.path.exists("geometrie_surface_reelle.jpg"):
-            st.image("geometrie_surface_reelle.jpg", caption="Image réelle : Vérification de la surface géométrique d'un support mécanique", width=300)
+            st.image("geometrie_surface_reelle.jpg", caption="Image réelle : Vérification de la surface géométrique d'un support mécanique")
         else:
             st.caption("Image réelle de contexte manquante")
 
@@ -1417,7 +1417,7 @@ with tab4:
         
         # 2. Affichage inférieur : Caricature de BD (Largeur fixe 300px)
         if os.path.exists("bd_calcul_surfaces.jpg"):
-            st.image("bd_calcul_surfaces.jpg", caption="Caricature de la répartition des pressions surfaciques", width=300)
+            st.image("bd_calcul_surfaces.jpg", caption="Caricature de la répartition des pressions surfaciques")
         else:
             st.caption("Caricature de la répartition des pressions surfaciques")
 
