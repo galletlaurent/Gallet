@@ -1645,6 +1645,11 @@ with tab4:
 with tab5:
     st.header("Application professionnelle : Diagnostic et Maintenance")
     
+    # 1. DÉCLARATION DE SÉCURITÉ ABSOLUE TOUT EN HAUT DE L'ONGLET
+    if "suite_verrouille_tab5_maint" not in st.session_state:
+        st.session_state.suite_verrouille_tab5_maint = False
+    verrou_at5 = st.session_state.suite_verrouille_tab5_maint
+    
     if "cas_aleatoire_tab5" not in st.session_state:
         st.session_state.cas_aleatoire_tab5 = 1
     id_cas_maint = st.session_state.cas_aleatoire_tab5
