@@ -1923,40 +1923,97 @@ with tab5:
     st.write("---")
 
     # =============================================================================
-    # RENDU DES FORMULAIRES D'ÉVALUATION BI-COLONNE ENTIÈREMENT INDEXÉS
+    # LABORATOIRE VIRTUEL SPÉCIFIQUE ET ADAPTÉ À CHAQUE CAS DE PANNE
     # =============================================================================
-    col_q_m, col_t_m = st.columns(2)
+    st.subheader("Laboratoire Virtuel : Simulateur de calcul en direct")
     
-    with col_q_m:
-        st.markdown("##### Quiz Technique du Scénario Maintenance (10 questions - 10 pts)")
-        if "ordre_quiz_tab5_maint_aleatoire" in st.session_state:
-            for idx, q_data in enumerate(st.session_state.ordre_quiz_tab5_maint_aleatoire, 1):
-                st.write(f"**{idx}.** {q_data['q']}")
-                st.selectbox(
-                    "", 
-                    options=["Choisir..."] + q_data["options"], 
-                    key=f"widget_at5_maint_q_{q_data['id']}_{idx}", 
-                    disabled=verrou_at5,
-                    label_visibility="collapsed"
-                )
+    col_p1_m5, col_p2_m5 = st.columns(2)
+    
+    # ---------------------------------------------------------------------
+    # SCÉNARIO 1 : FORCE ET PRESSION SUR LE DISQUE DU PISTON (LA PRESSE)
+    # ---------------------------------------------------------------------
+    if id_cas_maint == 1:
+        with col_p1_m5:
+            st.markdown("**Paramètres géométriques du Vérin**")
+            diametre_piston_mm = st.slider("Diamètre du piston de la presse (mm) :", min_value=50, max_value=250, value=120, step=5, key="lab_c1_p1")
+            pression_circuit_bar = st.slider("Pression de compactage mesurée (bars) :", min_value=10, max_value=350, value=160, step=10, key="lab_c1_p2")
+        
+        # Calculs : F = P * S
+        rayon_m = (float(diametre_piston_mm) / 2.0) / 1000.0
+        surface_m2 = 3.14159265 * (rayon_m ** 2)
+        pression_pa = float(pression_circuit_bar) * 100000.0
+        force_n = pression_pa * surface_m2
+        force_kn = force_n / 1000.0
+        
+        with col_p2_m5:
+            st.metric(label="Force de compactage développée (F)", value=f"{force_kn:.1f} kN")
+            st.latex(rf"F = P \cdot S = ({pression_circuit_bar} \cdot 10^5) \cdot ({surface_m2:.5f}) = {force_n:,.0f}\text{{ N}}")
+            st.info("L'huile contournant le piston réduit la force réelle par rapport à cette valeur théorique.")
 
-    with col_t_m:
-        st.markdown("##### Synthèse de l'Atelier 5 (Texte à trous - 10 cases - 10 pts)")
-        if "champs_therm5_maint_clean" in st.session_state:
-            for idx, ligne in enumerate(st.session_state.champs_therm5_maint_clean, 1):
-                enonce, choix, attendu, cle = ligne
-                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-                with c_txt: 
-                    st.write(enonce)
-                with c_sel: 
-                    st.selectbox(
-                        "", 
-                        choix, 
-                        key=f"widget_at5_maint_t_{cle}_{idx}", 
-                        disabled=verrou_at5,
-                        label_visibility="collapsed"
-                    )
+    # ---------------------------------------------------------------------
+    # SCÉNARIO 2 : CONTRAINTE MÉCANIQUE DANS LA CONDUITE EN ACIER (RONTURE)
+    # ---------------------------------------------------------------------
+    elif id_cas_maint == 2:
+        with col_p1_m5:
+            st.markdown("**Caractéristiques de la Canalisation Rigide**")
+            pression_pic_bar = st.slider("Pression de pointe lors du choc (bars) :", min_value=50, max_value=500, value=220, step=10, key="lab_c2_p1")
+            epaisseur_paroi_mm = st.slider("Épaisseur de la paroi en acier (mm) :", min_value=1.0, max_value=5.0, value=2.0, step=0.5, key="lab_c2_p2")
+        
+        # Formule simplifiée de Barlow pour la contrainte circonférentielle (Diamètre moyen fixé à 40mm)
+        diametre_exterieur_mm = 40.0
+        pression_mpa = float(pression_pic_bar) / 10.0
+        contrainte_mpa = (pression_mpa * diametre_exterieur_mm) / (2.0 * float(epaisseur_paroi_mm))
+        
+        with col_p2_m5:
+            st.metric(label="Contrainte mécanique dans l'acier (Sigma)", value=f"{contrainte_mpa:.1f} MPa")
+            st.latex(rf"\sigma = \frac{{P \cdot D_e}}{{2 \cdot e}} = \frac{{{pression_mpa:.1f} \cdot {diametre_exterieur_mm}}}{{2 \cdot {epaisseur_paroi_mm}}} = {contrainte_mpa:.1f}\text{{ MPa}}")
+            if contrainte_mpa > 200:
+                st.error("DANGER : La contrainte dépasse le seuil élastique admissible de l'acier. Risque de rupture brute !")
+            else:
+                st.success("Zone de sécurité théorique avant fatigue de la matière solide.")
 
+    # ---------------------------------------------------------------------
+    # SCÉNARIO 3 : DÉPRESSION CRITIQUE À L'ASPIRATION (CAVITATION)
+    # ---------------------------------------------------------------------
+    elif id_cas_maint == 3:
+        with col_p1_m5:
+            st.markdown("**Calcul du Vide Relatif à l'Aspiration**")
+            debit_pompe_lmin = st.slider("Débit de circulation de la pompe (L/min) :", min_value=10, max_value=150, value=60, step=5, key="lab_c3_p1")
+            section_aspiration_cm2 = st.slider("Section interne de la conduite d'entrée (cm²) :", min_value=2.0, max_value=15.0, value=4.5, step=0.5, key="lab_c3_p2")
+        
+        # Modélisation simplifiée de la dépression générée à l'aspiration (P relative en bar)
+        vitesse_m_s = (float(debit_pompe_lmin) / 60.0 / 1000.0) / (float(section_aspiration_cm2) / 10000.0)
+        pression_aspiration_relative_bar = -0.05 * (vitesse_m_s ** 2)
+        
+        with col_p2_m5:
+            st.metric(label="Vitesse du fluide", value=f"{vitesse_m_s:.2f} m/s")
+            st.metric(label="Pression relative d'aspiration", value=f"{pression_aspiration_relative_bar:.2f} bar")
+            if pression_aspiration_relative_bar < -0.30:
+                st.error("ALERTE : Pression inférieure à la tension de vapeur saturante ! Ébullition de l'huile et cavitation destructrice.")
+            else:
+                st.success("Dépression modérée : Flux laminaire stable.")
+
+    # ---------------------------------------------------------------------
+    # SCÉNARIO 4 : LAMINAGE THERMIQUE DU FLUIDE AU LIMITEUR (SURCHAUFFE)
+    # ---------------------------------------------------------------------
+    else:
+        with col_p1_m5:
+            st.markdown("**Énergie thermique dissipée par frottement visqueux**")
+            pression_perdue_bar = st.slider("Chute de pression à travers l'étranglement (bars) :", min_value=50, max_value=300, value=210, step=10, key="lab_c4_p1")
+            debit_lamine_lmin = st.slider("Débit continu fuyant vers le réservoir (L/min) :", min_value=5, max_value=80, value=35, step=5, key="lab_c4_p2")
+        
+        # Formule de puissance thermique perdue : P_thermique (Watts) = Delta_P (Pascals) * Débit (m3/s)
+        pression_pa_c4 = float(pression_perdue_bar) * 100000.0
+        debit_m3_s = (float(debit_lamine_lmin) / 60.0) / 1000.0
+        puissance_thermique_w = pression_pa_c4 * debit_m3_s
+        puissance_thermique_kw = puissance_thermique_w / 1000.0
+        
+        with col_p2_m5:
+            st.metric(label="Puissance thermique transformée en calories", value=f"{puissance_thermique_kw:.2f} kW")
+            st.latex(rf"W = \Delta P \cdot Q = ({pression_perdue_bar} \cdot 10^5) \cdot ({debit_m3_s:.5f}) = {puissance_thermique_w:,.0f}\text{{ W}}")
+            st.error(f"Friction moléculaire intense : Cette centrale dissipe {puissance_thermique_kw:.1f} kJ de chaleur sensible par seconde dans l'huile.")
+
+    st.write("---")
     # =============================================================================
     # 5. SYSTÈME DE CORRECTION SUR 20 ET PROTOCOLE D'EXPORTATION HTML SCELLÉE
     # =============================================================================
