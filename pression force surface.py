@@ -246,6 +246,7 @@ def afficher_atelier_histoire_pression(verrouille=False):
         ]
 
     col_quiz, col_trous = st.columns(2)
+    
     with col_quiz:
         st.markdown("##### Quiz Technique (10 questions - 10 pts)")
         for idx, q_data in enumerate(st.session_state.ordre_quiz_pression_aleatoire, 1):
@@ -255,12 +256,16 @@ def afficher_atelier_histoire_pression(verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse de l'Atelier (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state.champs_pression_clean:
-            enonce, choix, cle = ligne, ligne, ligne[-1]
+            # Extraction correcte par index du tuple pour éviter les erreurs d'affectation
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
+            
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-            with c_txt: st.write(enonce)
-            with c_sel: st.selectbox("", choix, key=f"{cle}_pres_clean", disabled=verrouille, label_visibility="collapsed")
-
-
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_pres_clean", disabled=verrouille, label_visibility="collapsed")
 with tab0:
     st.subheader("Identification de l'élève")
     st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
