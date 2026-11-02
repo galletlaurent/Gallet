@@ -1939,6 +1939,11 @@ with tab5:
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 5")
 
+    # DÉCLARATION ADAPTÉE DE SÉCURITÉ DE LA VARIABLE DE VERROUILLAGE
+    if "suite_verrouille_tab5_maint" not in st.session_state:
+        st.session_state.suite_verrouille_tab5_maint = False
+    verrou_at5 = st.session_state.suite_verrouille_tab5_maint
+
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
@@ -1948,7 +1953,6 @@ with tab5:
         key="check_certif_maint5_final_net_official",
         disabled=verrou_at5,
     )
-
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_suite5_maint_official_final", use_container_width=True, disabled=verrou_at5):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
