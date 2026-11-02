@@ -554,11 +554,13 @@ with tab1:
             use_container_width=True,
             key="btn_download_html_pres_final"
         )
+
+        
 with tab2:
     st.header("Étude des Forces Physiques et Pressantes")
-    st.write("Manipulez les vecteurs de force avec le simulateur, observez leur impact sur les parois, puis complétez l'évaluation de l'Atelier 2.")
+    st.write("Explorez les fondements mécaniques des actions réciproques, manipulez les vecteurs, puis complétez l'évaluation de l'Atelier 2.")
 
-    # Styles CSS pour les légendes et bandeaux
+    # Styles CSS pour les légendes, bandeaux et textes spécifiques
     st.markdown("""
     <style>
     .legende-forces { color: #2563eb; font-weight: bold; text-align: center; margin-top: 5px; font-size: 13px; }
@@ -566,7 +568,7 @@ with tab2:
     </style>
     """, unsafe_allow_html=True)
 
-    # DÉFINITION INTERNE DE L'ATELIER INTERACTIF (QUIZ ET TROUS FORCES)
+    # DÉFINITION INTERNE DE L'ATELIER INTERACTIF (QUIZ, FORCES ET TROUS)
     def afficher_atelier_forces(verrouille=False):
         import random
 
@@ -602,79 +604,58 @@ with tab2:
                 ("10. La poussée d'un fluide s'exerce de manière normale, c'est-à-dire ..........", ["Choisir...", "perpendiculaire", "tangente"], "perpendiculaire", "forc_t10")
             ]
 
-        # REPRODUCTION DE LA STRUCTURE EN DEUX COLONNES GLOBALES (STYLE 4 PAGES PAR FEUILLE)
+        # SÉPARATION PRINCIPALE EN DEUX GRANDES COLONNES GLOBALES (Mise en page style 4 pages par feuille)
         col_gauche_globale, col_droite_globale = st.columns(2)
 
         # ---------------------------------------------------------------------
-        # COLONNE GAUCHE (SIMULATEUR DE FORCES ET QUIZ TECHNIQUE)
+        # COLONNE GAUCHE (PAGES 1 ET 3 : CONTEXTE, SIMULATEUR ET QUIZ)
         # ---------------------------------------------------------------------
         with col_gauche_globale:
-            # MODULE INTERACTIF : SIMULATEUR DE COMPENSATIONS DE FORCES
-            st.subheader("Simulateur Interactif de Vecteurs Force")
+            # PAGE 1 : CONTEXTE HISTORIQUE DES FORCES
+            st.subheader("La Galerie des Génies : La Notion de Force")
             st.markdown("""
             <div class="bandeau-forces">
-                <b>Consigne :</b> Ajustez le curseur pour faire varier l'intensité de la force motrice appliquée. Observez la modification de la longueur du vecteur et l'état physique du système.
+                <b>Repères Historiques :</b> Si Galilée formalise le principe d'inertie, c'est Isaac Newton qui formalise en 1687 les lois de la dynamique. Il définit la force comme une action capable de modifier le mouvement d'un corps ou de le déformer.
             </div>
             """, unsafe_allow_html=True)
 
+            sub_col_hist1, sub_col_hist2 = st.columns(2)
+            with sub_col_hist1:
+                st.image("https://wikimedia.org", use_container_width=True)
+                st.markdown('<div class="legende-forces">Galilée (1564 - 1642)</div>', unsafe_allow_html=True)
+            with sub_col_hist2:
+                st.image("https://wikimedia.org", use_container_width=True)
+                st.markdown('<div class="legende-forces">Isaac Newton (1643 - 1727)</div>', unsafe_allow_html=True)
+
+            st.markdown("<br>", unsafe_allow_html=True)
+
+            # SIMULATEUR INTERACTIF
+            st.markdown("**Simulateur Interactif de Vecteurs Force**
+            st.markdown("**Simulateur Interactif de Vecteurs Force**")
             valeur_force = st.slider("Ajuster l'intensité de la Force Motrice (en Newtons) :", min_value=0, max_value=200, value=100, step=10, disabled=verrouille, key="slider_force_motrice")
-            
-            # Affichage dynamique de l'état d'équilibre
             if valeur_force == 100:
-                st.info("État du système : Les forces opposées se compensent (Intensité = 100 N). Le système est à l'équilibre statique.")
+                st.info("État du système : Les forces opposées se compensent (100 N). Le système est en équilibre mécanique.")
             elif valeur_force > 100:
-                st.warning(f"État du système : Rupture d'équilibre. La force motrice ({valeur_force} N) surpasse la résistance. Le système se déplace vers la droite.")
+                st.warning(f"État du système : Rupture d'équilibre. La force motrice ({valeur_force} N) surpasse la résistance.")
             else:
-                st.error(f"État du système : Force motrice insuffisante ({valeur_force} N). La résistance maintient le mécanisme bloqué.")
+                st.error(f"État du système : Force motrice insuffisante ({valeur_force} N). La charge reste immobile.")
 
             st.markdown("<br><hr><br>", unsafe_allow_html=True)
 
-            # QUIZ TECHNIQUE DES FORCES
+            # PAGE 3 : QUIZ TECHNIQUE DES FORCES
             st.markdown("##### Quiz Technique (10 questions - 10 pts)")
             for idx, q_data in enumerate(st.session_state.ordre_quiz_forces_aleatoire, 1):
                 st.write(f"**{idx}.** {q_data['q']}")
                 st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"forc_at2_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
 
-        # ---------------------------------------------------------------------
-        # COLONNE DROITE (EXPLICATION PHYSIQUE ET SYNTHÈSE TEXTE À TROUS)
-        # ---------------------------------------------------------------------
-        with col_droite_globale:
-            # COMPORTEMENT TECHNIQUE DES FORCES PRESSANTES
-            st.subheader("Modélisation Graphique")
-            sub_col_text, sub_col_img = st.columns([0.50, 0.50])
-            with sub_col_text:
-                st.markdown('<div class="legende-forces">Caractérisation du Vecteur</div>', unsafe_allow_html=True)
-                st.write("**Point d'application :** Centre géométrique de la surface de contact de la paroi.")
-                st.write("**Direction :** Droite orthogonale (perpendiculaire) au plan de la surface solide.")
-                st.write("**Sens :** Dirigé de l'intérieur du fluide vers l'extérieur de la paroi.")
-                st.write("**Intensité :** Modélisée par la longueur de la flèche selon l'échelle choisie (1 cm = 50 N).")
-            with sub_col_img:
-                st.image("https://unsplash.com")
-                st.markdown('<div class="legende-forces">Vérification de la déformation d\'un corps sous l\'effet d\'une force</div>', unsafe_allow_html=True)
-
-            st.markdown("<br><hr><br>", unsafe_allow_html=True)
-
-            # SYNTHÈSE DE L'ATELIER (TEXTE À TROUS - 10 CASES)
-            st.markdown("##### Synthèse de l'Atelier (Texte à trous - 10 cases - 10 pts)")
-            for ligne in st.session_state.champs_forces_clean:
-                # Extraction par index pour éviter les conflits de tuple
-                enonce = ligne[0]
-                choix = ligne[1]
-                cle = ligne[-1]
-                
-                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-                with c_txt: 
-                    st.write(enonce)
-                with c_sel: 
-                    st.selectbox("", choix, key=f"{cle}_forc_clean", disabled=verrouille, label_visibility="collapsed")
 
 
-    # --- EXECUTION DE LA LOGIQUE DE CORRECTION ET D'EXPORT DE L'ATELIER 2 ---
+
     if "suite_verrouille_tab2_forces" not in st.session_state:
         st.session_state.suite_verrouille_tab2_forces = False
     verrou_at2 = st.session_state.suite_verrouille_tab2_forces
 
-    # Appel de la fonction d'affichage structurée en colonnes globales
+    # Appel de la fonction d'affichage
     afficher_atelier_forces(verrouille=verrou_at2)
     
     st.write("---")
@@ -696,7 +677,7 @@ with tab2:
         elif not case_certif_stat2: 
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Correction automatique du Quiz des forces
+            # Correction automatique du Quiz
             score_q2 = 0.0
             if "ordre_quiz_forces_aleatoire" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_forces_aleatoire:
@@ -704,7 +685,7 @@ with tab2:
                     if str(saisie).strip() == str(q_item["rep"]).strip(): 
                         score_q2 += 1.0
 
-            # Correction automatique du Texte à trous des forces
+            # Correction automatique du Texte à trous
             score_t2 = 0.0
             if "champs_forces_clean" in st.session_state:
                 for ligne in st.session_state.champs_forces_clean:
@@ -729,11 +710,9 @@ with tab2:
 
         st.success(f"ATELIER FORCES SCELLÉ | Note de session : {tot_s_t2:.1f} / 20")
 
-        html_export_forc2 = f"""<!DOCTYPE html>
+         html_export_forc2 = f"""<!DOCTYPE html>
         <html>
         <head>
-            <meta charset="utf-8">
-            <title>Rapport d'Étude des Forces -             
             <meta charset="utf-8">
             <title>Rapport d'Étude des Forces - {n_eleve}</title>
             <style>
@@ -803,22 +782,7 @@ with tab2:
                 v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
                 html_export_forc2 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
 
-        html_export_forc2 += """
-                </tbody>
-            </table>
-        </body>
-        </html>
-        """
-        
-        nom_fichier_html_forc2 = preparer_nom_fichier("Rapport_Etude_Forces").replace(".txt", ".html")
-        st.download_button(
-            label="Télécharger le rapport d'évaluation officiel de l'Atelier 2",
-            data=html_export_forc2,
-            file_name=nom_fichier_html_forc2,
-            mime="text/html",
-            use_container_width=True,
-            key="btn_download_html_forc_final"
-        )
+        html_export_forc2 += """        
 
 
 
