@@ -364,11 +364,6 @@ with tab1:
         * **L'Expérience Célèbre :** *Le tube de Torricelli (1643)*. Il équilibre la force du poids de l'atmosphère s'exerçant sur la surface d'un bassin avec le poids d'une colonne de mercure de 76 centimètres de hauteur.
         """)
         try:
-            st.image("Torricelli.jpg", caption="Evangelista Torricelli", use_container_width=True)
-        except Exception:
-            # Remplacement par un avertissement d'absence de média plus propre pour l'élève
-            st.warning("Illustration en cours de chargement ou fichier 'Torricelli.jpg' absent du serveur.")
-        try:
             st.image("pressionatmos.jpg", caption="Baromètre", use_container_width=True)
         except Exception:
             # Remplacement par un avertissement d'absence de média plus propre pour l'élève
