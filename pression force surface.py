@@ -334,15 +334,21 @@ with tab1:
         st.markdown("### Blaise Pascal (1623 - 1662)")
         # Remplacement du lien générique par le portrait officiel de Blaise Pascal
         try:
-            st.image("Blaise.jpg", caption="Blaise Pascal", use_container_width=True)
+            st.image("Pascal.jpg", caption="Blaise Pascal", use_container_width=True)
         except Exception:
             # Remplacement par un avertissement d'absence de média plus propre pour l'élève
-            st.warning("Illustration en cours de chargement ou fichier 'Blaise.jpg' absent du serveur.")
+            st.warning("Illustration en cours de chargement ou fichier 'Pascal.jpg' absent du serveur.")
 
         st.markdown("""
         * **Sa Trouvaille :** La formulation de la pression comme le rapport d'une force sur une surface (**P = F / S**). Il démontre qu'une même force répartie sur une surface plus petite engendre une pression bien plus élevée.
         * **L'Expérience Célèbre :** *Le crève-tonneau de Pascal (1646)*. En appliquant le poids d'un faible volume d'eau (Force) au sommet d'un long tube de très fine section (Surface minuscule), il génère une pression hydrostatique immense capable de faire éclater le bois.
         """)
+        try:
+            st.image("crevetonneau.jpg", caption="Blaise Pascal", use_container_width=True)
+        except Exception:
+            # Remplacement par un avertissement d'absence de média plus propre pour l'élève
+            st.warning("Illustration en cours de chargement ou fichier 'crevetonneau.jpg' absent du serveur.")
+
         
     with col_torricelli:
         st.markdown("### Evangelista Torricelli (1608 - 1647)")
