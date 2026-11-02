@@ -656,7 +656,7 @@ with tab1:
         
         # 1. Affichage de la première image réelle du cas (Largeur fixe 300px)
         if os.path.exists("histoire_pression_reelle.jpg"):
-            st.image("histoire_pression_reelle.jpg", caption="Image réelle : Documents historiques d'époque", width=300)
+            st.image("histoire_pression_reelle.jpg", caption="Image réelle : Documents historiques d'époque")
         else:
             st.caption("Image réelle de contexte manquante")
 
@@ -666,7 +666,7 @@ with tab1:
         
         # 2. Affichage de la caricature de bande dessinée (Largeur fixe 300px)
         if os.path.exists("bd_choc_fluides.jpg"):
-            st.image("bd_choc_fluides.jpg", caption="Caricature de l'incident historique", width=300)
+            st.image("bd_choc_fluides.jpg", caption="Caricature de l'incident historique")
         else:
             st.caption("Caricature de l'incident historique")
 
@@ -888,7 +888,7 @@ with tab2:
         st.markdown("##### Illustration caricaturale du cas")
         # 1. Affichage supérieur : Image réelle (Largeur fixe 300px)
         if os.path.exists("mecanique_forces_reelle.jpg"):
-            st.image("mecanique_forces_reelle.jpg", caption="Image réelle : Banc de traction et dynamomètre", width=300)
+            st.image("mecanique_forces_reelle.jpg", caption="Image réelle : Banc de traction et dynamomètre")
         else:
             st.caption("Image réelle de contexte manquante")
 
@@ -898,7 +898,7 @@ with tab2:
         
         # 2. Affichage inférieur : Caricature de BD (Largeur fixe 300px)
         if os.path.exists("bd_mecanique_forces.jpg"):
-            st.image("bd_mecanique_forces.jpg", caption="Caricature de l'incident mécanique vectoriel", width=300)
+            st.image("bd_mecanique_forces.jpg", caption="Caricature de l'incident mécanique vectoriel")
         else:
             st.caption("Caricature de l'incident mécanique vectoriel")
 
@@ -1121,7 +1121,7 @@ with tab3:
         st.markdown("##### Illustration caricaturale du cas")
         # 1. Affichage supérieur : Image réelle du baromètre (Largeur fixe 300px)
         if os.path.exists("pression_reelle_contexte.jpg"):
-            st.image("pression_reelle_contexte.jpg", caption="Image réelle : Dispositif de mesure barométrique d'époque", width=300)
+            st.image("pression_reelle_contexte.jpg", caption="Image réelle : Dispositif de mesure barométrique d'époque")
         else:
             st.caption("Image réelle de contexte manquante")
 
@@ -1131,7 +1131,7 @@ with tab3:
         
         # 2. Affichage inférieur : Caricature des vases communicants (Largeur fixe 300px)
         if os.path.exists("bd_vases_communicants.jpg"):
-            st.image("bd_vases_communicants.jpg", caption="Caricature de l'équilibre hydrostatique", width=300)
+            st.image("bd_vases_communicants.jpg", caption="Caricature de l'équilibre hydrostatique")
         else:
             st.caption("Caricature de l'équilibre hydrostatique")
 
@@ -1879,7 +1879,7 @@ with tab5:
 
         # 1. Affichage supérieur : Image réelle (Largeur fixe 300px)
         if os.path.exists(fichier_reel_maint):
-            st.image(fichier_reel_maint, caption="Image réelle : Constat en atelier", width=300)
+            st.image(fichier_reel_maint, caption="Image réelle : Constat en atelier")
         else:
             st.caption("Image réelle manquante")
 
@@ -1889,7 +1889,7 @@ with tab5:
         
         # 2. Affichage inférieur : Caricature (Largeur fixe 300px)
         if os.path.exists(fichier_caricature_maint):
-            st.image(fichier_caricature_maint, caption="Bande dessinée de l'incident", width=300)
+            st.image(fichier_caricature_maint, caption="Bande dessinée de l'incident")
         else:
             st.caption("Caricature manquante")
             
