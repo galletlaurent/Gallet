@@ -1362,7 +1362,7 @@ with tab5:
         # ---------------------------------------------------------------------
         # CONFIGURATION DES BANQUES DE DONNÉES SELON LE CAS DE MAINTENANCE
         # ---------------------------------------------------------------------
-        if id_cas_maint == 1:
+        if id_cas == 1:
             titre_maint = "Défaut d'étanchéité du piston sur un vérin hydraulique de presse"
             desc_bd = [
                 "**Case 1 :** La presse hydraulique n'atteint plus sa force nominale de compactage lors des cycles de production.",
