@@ -1816,9 +1816,13 @@ with tab5:
         st.session_state.suite_verrouille_tab5_maint = False
     verrou_at5 = st.session_state.suite_verrouille_tab5_maint
 
-    # Appel opérationnel de l'affichage de l'atelier 5
-    afficher_atelier_maintenance(id_cas=st.session_state.get("cas_aleatoire_tab5", 1), verrouille=verrou_at5)
-
+    # Appel synchronisé avec le nouveau nom et les banques de données requises
+    afficher_atelier_maintenance_dynamique(
+        id_cas=st.session_state.get("cas_aleatoire_tab5", 1),
+        questions=st.session_state.ordre_quiz_tab5_maint_aleatoire,
+        trous=st.session_state.champs_therm5_maint_clean,
+        verrouille=verrou_at5
+    )
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 5")
     
