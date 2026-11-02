@@ -207,6 +207,180 @@ tab7 = onglets[7]
 tab8 = onglets[8]
 
 
+def afficher_atelier_pression(verrouille=False):
+    """Affiche le Quiz et le Texte à trous côte à côte en bas de la page pour l'Atelier 3."""
+    import random
+    import streamlit as st
+    import os
+
+    # Déclaration de la base de données des 10 questions du Quiz Pression
+    questions_pres_sources = [
+        {"id": "qpr1", "q": "Quelle unité de mesure du système international correspond exactement à un Pascal (Pa) ?", "options": ["1 N/m²", "1 kg/m²", "1 J/m²"], "rep": "1 N/m²"},
+        {"id": "qpr2", "q": "Quelle est l'unité usuelle utilisée dans l'industrie équivalente à 100 000 Pascals ?", "options": ["Le bar", "L'atmosphère", "Le millimètre de mercure"], "rep": "Le bar"},
+        {"id": "qpr3", "q": "Quel instrument de mesure spécifique utilise-t-on pour relever la pression à l'intérieur d'un circuit hydraulique fermé ?", "options": ["Un manomètre", "Un baromètre", "Un anémomètre"], "rep": "Un manomètre"},
+        {"id": "qpr4", "q": "Comment évolue la pression atmosphérique lorsque l'on s'élève en altitude ?", "options": ["Elle diminue", "Elle augmente", "Elle reste constante"], "rep": "Elle diminue"},
+        {"id": "qpr5", "q": "La pression exercée au fond d'une cuve par une colonne de liquide dépend principalement de :", "options": ["La hauteur du liquide et sa densité", "La forme de la cuve", "Le volume total du réservoir"], "rep": "La hauteur du liquide et sa densité"},
+        {"id": "qpr6", "q": "Quel fluide lourd Torricelli a-t-il retenu pour créer le premier baromètre à colonne ?", "options": ["Le mercure", "L'eau déminéralisée", "L'huile hydraulique"], "rep": "Le mercure"},
+        {"id": "qpr7", "q": "Quelle valeur moyenne standard caractérise la pression atmosphérique au niveau de la mer ?", "options": ["1013 hPa", "100 000 Pa", "1 bar"], "rep": "1013 hPa"},
+        {"id": "qpr8", "q": "Dans une canalisation, comment se nomme un point où la pression du fluide devient inférieure à la pression atmosphérique ?", "options": ["Une dépression (ou vide relatif)", "Une surpression", "Une zone d'équilibre"], "rep": "Une dépression (ou vide relatif)"},
+        {"id": "qpr9", "q": "Pourquoi les liquides sont-ils privilégiés dans les transmissions de puissance industrielle ?", "options": ["Parce qu'ils sont incompressibles", "Parce qu'ils sont expansibles", "Parce qu'ils n'ont pas de poids"], "rep": "Parce qu'ils sont incompressibles"},
+        {"id": "qpr10", "q": "Quelle loi stipule qu'une variation de pression appliquée en un point d'un fluide enfermé se transmet intégralement ?", "options": ["Le principe de Pascal", "La poussée d'Archimède", "La loi de Newton"], "rep": "Le principe de Pascal"}
+    ]
+
+    if "ordre_quiz_pres3_aleatoire" not in st.session_state:
+        random.shuffle(questions_pres_sources)
+        st.session_state.ordre_quiz_pres3_aleatoire = questions_pres_sources
+
+    if "champs_pres3_clean" not in st.session_state:
+        st.session_state.champs_pres3_clean = [
+            ("1. La pression traduit la répartition d'une force pressante sur une ..........", ["Choisir...", "surface", "vitesse"], "surface", "pres3_t1"),
+            ("2. L'instrument destiné à évaluer la valeur de la pression atmosphérique est le ..........", ["Choisir...", "baromètre", "manomètre"], "baromètre", "pres3_t2"),
+            ("3. En hydraulique, le manomètre indique souvent une pression relative par rapport à l'..........", ["Choisir...", "atmosphère", "vide"], "atmosphère", "pres3_t3"),
+            ("4. La pression hydrostatique au sein d'un liquide au repos croît avec la ..........", ["Choisir...", "profondeur", "surface"], "profondeur", "pres3_t4"),
+            ("5. Un fluide transmettant fidèlement les pressions subies est qualifié d'..........", ["Choisir...", "incompressible", "gazeux"], "incompressible", "pres3_t5"),
+            ("6. L'unité légale du système international pour quantifier la pression est le ..........", ["Choisir...", "Pascal", "Bar"], "Pascal", "pres3_t6"),
+            ("7. Un bar correspond à une valeur de pression équivalente à cent mille ..........", ["Choisir...", "Pascals", "Newtons"], "Pascals", "pres3_t7"),
+            ("8. À force constante, si la section d'appui est divisée par deux, la pression ..........", ["Choisir...", "double", "diminue"], "double", "pres3_t8"),
+            ("9. La force pressante générée agit de façon normale, c'est-à-dire .......... aux parois.", ["Choisir...", "perpendiculaire", "tangentielle"], "perpendiculaire", "pres3_t9"),
+            ("10. L'absence totale de molécules de gaz ou de matière définit l'état de ..........", ["Choisir...", "vide", "surpression"], "vide", "pres3_t10")
+        ]
+
+    # SEPARATION PRINCIPALE EN DEUX GRANDES COLONNES GLOBALES
+    col_gauche_globale, col_droite_globale = st.columns(2)
+
+    # ---------------------------------------------------------------------
+    # COLONNE GAUCHE (PAGES 1 ET 3 : CONTEXTE ET QUIZ TECHNIQUE)
+    # ---------------------------------------------------------------------
+    with col_gauche_globale:
+        # PAGE 1 : CONTEXTE HISTORIQUE DU BAROMÈTRE
+        st.subheader("La Galerie des Génies : L'Équilibre des Pressions")
+        st.markdown("""
+        <div class="bandeau-pression">
+            <b>Repères Historiques :</b> En 1648, Florin Périer réalise sur les conseils de Blaise Pascal l'expérience scientifique du Puy de Dôme. Il prouve de manière définitive que la hauteur de la colonne de mercure dépend de l'altitude, validant l'existence du poids de l'air.
+        </div>
+        """, unsafe_allow_html=True)
+
+        sub_col_hist1, sub_col_hist2 = st.columns(2)
+        with sub_col_hist1:
+            if os.path.exists("Pascal.jpg"):
+                st.image("Pascal.jpg", caption="Blaise Pascal (1623 - 1662)", use_container_width=True)
+            else:
+                st.caption("Illustration Pascal manquante")
+        with sub_col_hist2:
+            if os.path.exists("pressionatmos.jpg"):
+                st.image("pressionatmos.jpg", caption="Expérimentation barométrique", use_container_width=True)
+            else:
+                st.caption("Illustration de contexte manquante")
+
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        # PAGE 3 : QUIZ TECHNIQUE DE LA PRESSION
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_pres3_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox(
+                "", 
+                options=["Choisir..."] + q_data["options"], 
+                key=f"pres_at3_final_g_{q_data['id']}_{idx}", 
+                disabled=verrouille, 
+                label_visibility="collapsed"
+            )
+
+    # ---------------------------------------------------------------------
+    # COLONNE DROITE (PAGES 2 ET 4 : SYNTHÈSE DE COURS À TROUS INDEXÉE)
+    # ---------------------------------------------------------------------
+    with col_droite_globale:
+        st.markdown("##### Synthèse de l'Atelier 3 (Texte à trous - 10 cases - 10 pts)")
+        for idx, ligne in enumerate(st.session_state.champs_pres3_clean, 1):
+            enonce = ligne
+            choix = ligne
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox(
+                    "", 
+                    choix, 
+                    key=f"{cle}_pres3_clean_{idx}", 
+                    disabled=verrouille, 
+                    label_visibility="collapsed"
+                )
+
+
+def afficher_atelier_forces(verrouille=False):
+    import random
+
+    # Déclaration de la base de données des 10 questions du Quiz des Forces
+    questions_forces_sources = [
+        {"id": "qf1", "q": "Quelle est l'unité légale de mesure d'une force dans le Système International ?", "options": ["Le Pascal", "Le Newton", "Le Joule"], "rep": "Le Newton"},
+        {"id": "qf2", "q": "Quel instrument de mesure utilise-t-on couramment en laboratoire pour mesurer l'intensité d'une force ?", "options": ["Un manomètre", "Un dynamomètre", "Un baromètre"], "rep": "Un dynamomètre"},
+        {"id": "qf3", "q": "Par quel objet mathématique représente-t-on graphiquement une force physique ?", "options": ["Une droite infinie", "Un vecteur (une flèche)", "Une courbe sinusoïdale"], "rep": "Un vecteur (une flèche)"},
+        {"id": "qf4", "q": "Laquelle de ces options ne constitue PAS une caractéristique essentielle d'un vecteur force ?", "options": ["Le point d'application", "La couleur de la flèche", "La direction et le sens"], "rep": "La couleur de la flèche"},
+        {"id": "qf5", "q": "Quelle force attire tous les objets massifs vers le centre de la Terre ?", "options": ["La force magnétique", "La force de gravitation (le poids)", "La force d'Archimède"], "rep": "La force de gravitation (le poids)"},
+        {"id": "qf6", "q": "Comment qualifie-t-on une force qui s'exerce sans qu'il n'y ait de contact direct entre les objets ?", "options": ["Une force de contact", "Une force à distance", "Une force hydraulique"], "rep": "Une force à distance"},
+        {"id": "qf7", "q": "La force pressante exercée par un liquide sur une paroi solide est toujours :", "options": ["Parallèle à la paroi", "Perpendiculaire à la paroi", "Oblique par rapport à la paroi"], "rep": "Perpendiculaire à la paroi"},
+        {"id": "qf8", "q": "Si un solide reste parfaitement immobile au repos, que peut-on dire des forces qui s'appliquent sur lui ?", "options": ["Aucune force ne s'applique", "Les forces se compensent (équilibre)", "La force du poids est nulle"], "rep": "Les forces se compensent (équilibre)"},
+        {"id": "qf9", "q": "Dans la formule P = F / S, si la force F double sur une même surface, la pression P :", "options": ["Reste la même", "Double", "Est divisée par deux"], "rep": "Double"},
+        {"id": "qf10", "q": "Sur la Lune, la force du poids d'un astronaute est plus faible que sur Terre car :", "options": ["Sa masse a diminué", "La gravité lunaire est plus faible", "L'atmosphère y est absente"], "rep": "La gravité lunaire est plus faible"}
+    ]
+
+    # Déclaration de la base de données de la Synthèse (Texte à trous)
+    trous_forces_sources = [
+        ("1. Une action mécanique capable de modifier le mouvement est une ..........", ["Choisir...", "force", "surface"], "force", "forc_t1"),
+        ("2. L'intensité d'une force s'exprime en Newtons, de symbole ..........", ["Choisir...", "N", "Pa"], "N", "forc_t2"),
+        ("3. Le dynamomètre mesure les forces grâce à la déformation d'un ..........", ["Choisir...", "ressort", "piston"], "ressort", "forc_t3"),
+        ("4. La droite selon laquelle s'exerce une force est appelée sa ..........", ["Choisir...", "direction", "intensité"], "direction", "forc_t4"),
+        ("5. Le point de la paroi où commence le vecteur d'action est le point d'..........", ["Choisir...", "application", "équilibre"], "application", "forc_t5"),
+        ("6. L'attraction gravitationnelle est une action mécanique s'exerçant à ..........", ["Choisir...", "distance", "contact"], "distance", "forc_t6"),
+        ("7. La force pressante est proportionnelle à la grandeur de la ..........", ["Choisir...", "surface", "viscosité"], "surface", "forc_t7"),
+        ("8. Deux forces de même direction, de sens opposés et de même intensité sont en ..........", ["Choisir...", "équilibre", "mouvement"], "équilibre", "forc_t8"),
+        ("9. La longueur d'une flèche force est proportionnelle à son ..........", ["Choisir...", "intensité", "poids"], "intensité", "forc_t9"),
+        ("10. La poussée d'un fluide s'exerce de manière normale, c'est-à-dire ..........", ["Choisir...", "perpendiculaire", "tangente"], "perpendiculaire", "forc_t10")
+    ]
+
+    if "ordre_quiz_forces_aleatoire" not in st.session_state:
+        random.shuffle(questions_forces_sources)
+        st.session_state.ordre_quiz_forces_aleatoire = questions_forces_sources
+
+    if "champs_forces_clean" not in st.session_state:
+        st.session_state.champs_forces_clean = trous_forces_sources
+
+    # SÉPARATION PRINCIPALE EN DEUX GRANDES COLONNES GLOBALES (MOTEUR BI-COLONNE)
+    col_quiz, col_trous = st.columns(2)
+
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_forces_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox(
+                "", 
+                options=["Choisir..."] + q_data["options"], 
+                key=f"forc_at2_final_g_{q_data['id']}_{idx}", 
+                disabled=verrouille, 
+                label_visibility="collapsed"
+            )
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier 2 (Texte à trous - 10 cases - 10 pts)")
+        for idx, ligne in enumerate(st.session_state.champs_forces_clean, 1):
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox(
+                    "", 
+                    choix, 
+                    key=f"{cle}_forces_clean_{idx}", 
+                    disabled=verrouille, 
+                    label_visibility="collapsed"
+                )
+
 
 def afficher_atelier_histoire_pression(verrouille=False):
     """Affiche le Quiz et le Texte à trous côte à côte en bas de la page."""
@@ -266,6 +440,7 @@ def afficher_atelier_histoire_pression(verrouille=False):
                 st.write(enonce)
             with c_sel: 
                 st.selectbox("", choix, key=f"{cle}_pres_clean", disabled=verrouille, label_visibility="collapsed")
+
 with tab0:
     st.subheader("Identification de l'élève")
     st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
@@ -332,51 +507,44 @@ with tab1:
     
     with col_pascal:
         st.markdown("### Blaise Pascal (1623 - 1662)")
-        # Remplacement du lien générique par le portrait officiel de Blaise Pascal
-        try:
+        if os.path.exists("Pascal.jpg"):
             st.image("Pascal.jpg", caption="Blaise Pascal", use_container_width=True)
-        except Exception:
-            # Remplacement par un avertissement d'absence de média plus propre pour l'élève
-            st.warning("Illustration en cours de chargement ou fichier 'Pascal.jpg' absent du serveur.")
+        else:
+            st.warning("Fichier 'Pascal.jpg' absent du serveur.")
 
         st.markdown("""
         * **Sa Trouvaille :** La formulation de la pression comme le rapport d'une force sur une surface (**P = F / S**). Il démontre qu'une même force répartie sur une surface plus petite engendre une pression bien plus élevée.
         * **L'Expérience Célèbre :** *Le crève-tonneau de Pascal (1646)*. En appliquant le poids d'un faible volume d'eau (Force) au sommet d'un long tube de très fine section (Surface minuscule), il génère une pression hydrostatique immense capable de faire éclater le bois.
         """)
-        try:
-            st.image("crevetonneau.jpg", caption="tonneau", use_container_width=True)
-        except Exception:
-            # Remplacement par un avertissement d'absence de média plus propre pour l'élève
-            st.warning("Illustration en cours de chargement ou fichier 'crevetonneau.jpg' absent du serveur.")
+        if os.path.exists("crevetonneau.jpg"):
+            st.image("crevetonneau.jpg", caption="Le crève-tonneau de Pascal", use_container_width=True)
+        else:
+            st.warning("Fichier 'crevetonneau.jpg' absent du serveur.")
 
-        
     with col_torricelli:
         st.markdown("### Evangelista Torricelli (1608 - 1647)")
-        # Remplacement du lien générique par le portrait officiel de Evangelista Torricelli
-        try:
+        if os.path.exists("Torricelli.jpg"):
             st.image("Torricelli.jpg", caption="Evangelista Torricelli", use_container_width=True)
-        except Exception:
-            # Remplacement par un avertissement d'absence de média plus propre pour l'élève
-            st.warning("Illustration en cours de chargement ou fichier 'Torricelli.jpg' absent du serveur.")
+        else:
+            st.warning("Fichier 'Torricelli.jpg' absent du serveur.")
        
         st.markdown("""
         * **Sa Trouvaille :** La mesure de la force pressante de l'air. Il est le premier à quantifier la force colossale exercée par le poids de l'atmosphère sur chaque unité de surface terrestre.
         * **L'Expérience Célèbre :** *Le tube de Torricelli (1643)*. Il équilibre la force du poids de l'atmosphère s'exerçant sur la surface d'un bassin avec le poids d'une colonne de mercure de 76 centimètres de hauteur.
         """)
-        try:
-            st.image("pressionatmos.jpg", caption="Baromètre", use_container_width=True)
-        except Exception:
-            # Remplacement par un avertissement d'absence de média plus propre pour l'élève
-            st.warning("Illustration en cours de chargement ou fichier 'pressionatmos.jpg' absent du serveur.")
+        if os.path.exists("pressionatmos.jpg"):
+            st.image("pressionatmos.jpg", caption="Expérience de Torricelli", use_container_width=True)
+        else:
+            st.warning("Fichier 'pressionatmos.jpg' absent du serveur.")
 
     st.markdown("---")
+    
     # -------------------------------------------------------------------------
-    # PARTIE 2 : BANDE DESSINÉE EN DEUX COLONNES (TEXTES À GAUCHE, IMAGE À DROITE)
+    # PARTIE 2 : BANDE DESSINÉE RESTRUCTURÉE (0.3 GAUCHE TEXTES, 0.7 DROITE IMAGES)
     # -------------------------------------------------------------------------
     st.subheader("Bande Dessinée : Le Choc des Fluides")
     st.write("Une histoire imaginaire pour comprendre leurs discussions scientifiques.")
 
-    # Style visuel pour les bulles de dialogue de la bande dessinée
     st.markdown("""
     <style>
     .bulles { background-color: #f0f2f6; padding: 15px; border-radius: 10px; border-left: 5px solid #ff4b4b; margin-bottom: 20px; }
@@ -384,35 +552,62 @@ with tab1:
     </style>
     """, unsafe_allow_html=True)
 
-    # Correction de la syntaxe : Ajout du chiffre 2 pour spécifier deux colonnes égales
-    col_bd_texte, col_bd_image = st.columns(2)
+    col_bd_texte, col_bd_image = st.columns([0.3, 0.7])
 
-    # Colonne de gauche : Empilement de toutes les cases de texte
     with col_bd_texte:
-        st.markdown("**Case 1 : À la taverne de la Science (Paris, 1648)**")
-        st.markdown('<div class="narrateur">Pascal et Torricelli s\'installent à une table. Torricelli pose un lourd tube de mercure sur le comptoir, l\'air fatigué.</div>', unsafe_allow_html=True)
-        st.markdown('<div class="bulles"><b>Torricelli :</b> "Mon cher Blaise, j\'ai mal au dos... L\'air pèse des tonnes aujourd\'hui ! Les gens croient que la nature a horreur du vide, mais c\'est faux, c\'est juste l\'atmosphère qui applique sa force sur chaque unité de surface terrestre !"</div>', unsafe_allow_html=True)
+        st.markdown("##### Enoncé de l'exercice et contexte")
+        
+        enonce_histoire = (
+            "**Case 1 : À la taverne de la Science (Paris, 1648)**\n\n"
+            "Pascal et Torricelli s'installent à une table. Torricelli pose un lourd tube de mercure sur le comptoir, l'air fatigué : "
+            "« Mon cher Blaise, j'ai mal au dos... L'air pèse des tonnes aujourd'hui ! Les gens croient que la nature a horreur du vide, mais c'est faux, c'est juste l'atmosphère qui applique sa force sur chaque unité de surface terrestre ! ».\n\n"
+            "**Case 2 : L'illumination de Pascal**\n\n"
+            "Pascal regarde son verre, prend une paille, et tape du poing sur la table : "
+            "« Tu as raison Evangelista ! Et regarde ça : la pression dépend directement du rapport P = F / S. Si j'appuie sur mon verre ici, la pression pushes le liquide partout en même temps ! C'est comme cela que j'ai brisé mon tonneau ! ».\n\n"
+            "**Case 3 : La panique au laboratoire**\n\n"
+            "Le serveur de la taverne recule, inquiet des théories des deux physiciens et des formules mathématiques : "
+            "« Messieurs, calmez-vous avec vos calculs de force et de surface. Vous voulez régler l'addition ou vous allez aussi faire éclater ma cave avec votre relation P = F / S ? »"
+        )
+        st.info(enonce_histoire)
 
-        st.markdown("**Case 2 : L\'illumination de Pascal**")
-        st.markdown('<div class="narrateur">Pascal regarde son verre, prend une paille, et tape du poing sur la table.</div>', unsafe_allow_html=True)
-        st.markdown('<div class="bulles"><b>Pascal :</b> "Tu as raison Evangelista ! Et regarde ça : la pression dépend directement du rapport P = F / S. Si j\'appuie sur mon verre ici, la pression pushes le liquide partout en même temps ! C\'est comme cela que j\'ai brisé mon tonneau !"</div>', unsafe_allow_html=True)
+        texte_bd_bleu_h = (
+            "**La BD humoristique : Le Choc des Fluides**\n\n"
+            "**Case 1 :** Torricelli : « L'atmosphère applique sa force invisible partout sur nos têtes ! ».\n\n"
+            "**Case 2 :** Pascal : « La force pressante agit de manière perpendiculaire sur l'aire du récepteur ! ».\n\n"
+            "**Case 3 :** Le Serveur : « Moins de physique des fluides et plus de sous pour régler la table ! ».\n\n"
+            "**Case 4 :** En chœur : « C'est pour l'avancement de la Science ! »"
+        )
+        st.info(texte_bd_bleu_h)
 
-        st.markdown("**Case 3 : La panique au laboratoire**")
-        st.markdown('<div class="narrateur">Le serveur de la taverne recule, inquiet des théories des deux physiciens et des formules mathématiques.</div>', unsafe_allow_html=True)
-        st.markdown('<div class="bulles"><b>Le Serveur :</b> "Messieurs, calmez-vous avec vos calculs de force et de surface. Vous voulez régler l\'addition ou vous allez aussi faire éclater ma cave avec votre relation P = F / S ?"<br><br><b>Pascal et Torricelli (en chœur) :</b> "C\'est pour la science !"</div>', unsafe_allow_html=True)
-
-    # Colonne de droite : Affichage de la grande image hébergée en ligne
     with col_bd_image:
-        st.image("https://unsplash.com", use_container_width=True, caption="Anomalie hydrostatique sur la Cuve 4")
+        st.markdown("##### Illustration caricaturale du cas")
+        
+        # 1. Affichage de la première image réelle du cas (Largeur fixe 300px)
+        if os.path.exists("histoire_pression_reelle.jpg"):
+            st.image("histoire_pression_reelle.jpg", caption="Image réelle : Documents historiques d'époque", width=300)
+        else:
+            st.caption("Image réelle de contexte manquante")
+
+        # Insertion des 20 lignes d'espacement réglementaires pour descendre la caricature
+        for _ in range(20):
+            st.write("")
+        
+        # 2. Affichage de la caricature de bande dessinée (Largeur fixe 300px)
+        if os.path.exists("bd_choc_fluides.jpg"):
+            st.image("bd_choc_fluides.jpg", caption="Caricature de l'incident historique", width=300)
+        else:
+            st.caption("Caricature de l'incident historique")
 
     st.markdown("---")
     
-    
+    # -------------------------------------------------------------------------
+    # PARTIE 3 : LOGIQUE DE VALIDATION ET MOTEUR DE CORRECTION SCELLÉ
+    # -------------------------------------------------------------------------
     if "suite_verrouille_tab1_pression" not in st.session_state:
         st.session_state.suite_verrouille_tab1_pression = False
     verrou_at1 = st.session_state.suite_verrouille_tab1_pression
 
-    # Affichage du module de questions spécifique à l'histoire de la formule P=F/S
+    # Rendu des questionnaires d'évaluation de l'Atelier 1
     afficher_atelier_histoire_pression(verrouille=verrou_at1)
     
     st.write("---")
@@ -434,32 +629,43 @@ with tab1:
         elif not case_certif_stat1: 
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Correction automatisée du Quiz (10 questions)
+            # 1. Correction automatisée du Quiz par parcours sécurisé de clés
             score_q1 = 0.0
             if "ordre_quiz_pression_aleatoire" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_pression_aleatoire:
-                    saisie = st.session_state.get(f"pres_at1_final_g_{q_item['id']}", "Choisir...")
+                    saisie = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"pres_at1_final_g_{q_item['id']}_"):
+                            saisie = st.session_state[k]
+                            break
                     if str(saisie).strip() == str(q_item["rep"]).strip(): 
                         score_q1 += 1.0
 
-            # Correction automatisée du Texte à trous (10 trous)
+            # 2. Correction automatisée du Texte à trous par parcours sécurisé de clés
             score_t1 = 0.0
             if "champs_pression_clean" in st.session_state:
                 for ligne in st.session_state.champs_pression_clean:
-                    cle = ligne[-1]
-                    attendu = ligne[2]
-                    if st.session_state.get(f"{cle}_pres_clean", "Choisir...") == attendu: 
+                    cle_variable = ligne[-1]
+                    attendu_texte = ligne[2]
+                    saisie_texte = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"{cle_variable}_pression_clean_"):
+                            saisie_texte = st.session_state[k]
+                            break
+                    if str(saisie_texte).strip() == str(attendu_texte).strip(): 
                         score_t1 += 1.0
 
-            # Sauvegarde des scores et verrouillage de la session
             st.session_state.score_suite1_pres_p1 = round(float(score_q1), 1)
             st.session_state.score_suite1_pres_p2 = round(float(score_t1), 1)
             st.session_state.score_final_suite1_pres = round(float(score_q1 + score_t1), 1)
             st.session_state.suite_verrouille_tab1_pression = True
             st.rerun()
 
-    # --- COMPILATION DU BILAN HTML SCELLÉ ---
+    # -------------------------------------------------------------------------
+    # PARTIE 4 : EXPORTATION DU RAPPORT INDIVIDUEL HTML SCELLÉ
+    # -------------------------------------------------------------------------
     if st.session_state.get("suite_verrouille_tab1_pression", False):
+        from datetime import datetime
         scr1_t1 = st.session_state.get("score_suite1_pres_p1", 0.0)
         scr2_t1 = st.session_state.get("score_suite1_pres_p2", 0.0)
         tot_s_t1 = st.session_state.get("score_final_suite1_pres", 0.0)
@@ -471,7 +677,7 @@ with tab1:
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Historique Relation P=F/S - {n_eleve}</title>
+            <title>Rapport Historique Pression - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
@@ -484,9 +690,10 @@ with tab1:
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
             </style>
         </head>
+        <body>
             <div class="header-box">
                 <h1>Rapport d'Évaluation de Physique</h1>
-                <p>Atelier 1 : Contexte historique de la relation fondamentale de la pression P = F / S</p>
+                <p>Atelier 1 : Fondements Historiques de la relation Pression-Force-Surface</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite1}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t1:.1f}</span> / 20</div>
@@ -494,8 +701,8 @@ with tab1:
             
             <div class="sub-title">Récapitulatif des Notes Générées</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
-                Note obtenue au Quiz Technique : <strong>{scr1_t1:.1f} / 10</strong><br>
-                Note obtenue à la Synthèse : <strong>{scr2_t1:.1f} / 10</strong><br>
+                Note obtenue au Quiz Historique : <strong>{scr1_t1:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse de Cours : <strong>{scr2_t1:.1f} / 10</strong><br>
                 Note Totale de l'Atelier 1 : <strong>{tot_s_t1:.1f} / 20</strong>
             </p>
             
@@ -509,7 +716,11 @@ with tab1:
 
         if "ordre_quiz_pression_aleatoire" in st.session_state:
             for num, q_item in enumerate(st.session_state.ordre_quiz_pression_aleatoire, 1):
-                saisie = st.session_state.get(f"pres_at1_final_g_{q_item['id']}", "Choisir...")
+                saisie = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"pres_at1_final_g_{q_item['id']}_"):
+                        saisie = st.session_state[k]
+                        break
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
@@ -533,7 +744,11 @@ with tab1:
                 attendu_texte = ligne[2]
                 cle_variable = ligne[-1]
                 
-                saisie_texte = st.session_state.get(f"{cle_variable}_pres_clean", "Choisir...")
+                saisie_texte = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"{cle_variable}_pression_clean_"):
+                        saisie_texte = st.session_state[k]
+                        break
                 v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
                 v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
                 html_export_pres1 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
@@ -545,22 +760,25 @@ with tab1:
         </html>
         """
         
-        nom_fichier_html_pres1 = preparer_nom_fichier("Rapport_Histoire_Pression").replace(".txt", ".html")
+        nom_fichier_html_pres1 = preparer_nom_fichier("Rapport_Atelier_1_Histoire").replace(".txt", ".html")
         st.download_button(
-            label="Télécharger le rapport d'évaluation officiel",
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 1 (.HTML)",
             data=html_export_pres1,
             file_name=nom_fichier_html_pres1,
             mime="text/html",
             use_container_width=True,
-            key="btn_download_html_pres_final"
         )
 
+
+
+
+
+        
         
 with tab2:
     st.header("Étude des Forces Physiques et Pressantes")
     st.write("Explorez les fondements mécaniques des actions réciproques, manipulez les vecteurs, puis complétez l'évaluation de l'Atelier 2.")
 
-    # Styles CSS pour les légendes, bandeaux et textes spécifiques
     st.markdown("""
     <style>
     .legende-forces { color: #2563eb; font-weight: bold; text-align: center; margin-top: 5px; font-size: 13px; }
@@ -568,94 +786,81 @@ with tab2:
     </style>
     """, unsafe_allow_html=True)
 
-    # DÉFINITION INTERNE DE L'ATELIER INTERACTIF (QUIZ, FORCES ET TROUS)
-    def afficher_atelier_forces(verrouille=False):
-        import random
+    # =============================================================================
+    # 2. RENDU ASYMÉTRIQUE DU COURS ET DES IMAGES [0.3 GAUCHE, 0.7 DROITE]
+    # =============================================================================
+    col_gauche_bd_forces, col_droite_cours_forces = st.columns([0.3, 0.7])
 
-        # Déclaration de la base de données des 10 questions du Quiz des Forces
-        questions_forces_sources = [
-            {"id": "qf1", "q": "Quelle est l'unité légale de mesure d'une force dans le Système International ?", "options": ["Le Pascal", "Le Newton", "Le Joule"], "rep": "Le Newton"},
-            {"id": "qf2", "q": "Quel instrument de mesure utilise-t-on couramment en laboratoire pour mesurer l'intensité d'une force ?", "options": ["Un manomètre", "Un dynamomètre", "Un baromètre"], "rep": "Un dynamomètre"},
-            {"id": "qf3", "q": "Par quel objet mathématique représente-t-on graphiquement une force physique ?", "options": ["Une droite infinie", "Un vecteur (une flèche)", "Une courbe sinusoïdale"], "rep": "Un vecteur (une flèche)"},
-            {"id": "qf4", "q": "Laquelle de ces options ne constitue PAS une caractéristique essentielle d'un vecteur force ?", "options": ["Le point d'application", "La couleur de la flèche", "La direction et le sens"], "rep": "La couleur de la flèche"},
-            {"id": "qf5", "q": "Quelle force attire tous les objets massifs vers le centre de la Terre ?", "options": ["La force magnétique", "La force de gravitation (le poids)", "La force d'Archimède"], "rep": "La force de gravitation (le poids)"},
-            {"id": "qf6", "q": "Comment qualifie-t-on une force qui s'exerce sans qu'il n'y ait de contact direct entre les objets ?", "options": ["Une force de contact", "Une force à distance", "Une force hydraulique"], "rep": "Une force à distance"},
-            {"id": "qf7", "q": "La force pressante exercée par un liquide sur une paroi solide est toujours :", "options": ["Parallèle à la paroi", "Perpendiculaire à la paroi", "Oblique par rapport à la paroi"], "rep": "Perpendiculaire à la paroi"},
-            {"id": "qf8", "q": "Si un solide reste parfaitement immobile au repos, que peut-on dire des forces qui s'appliquent sur lui ?", "options": ["Aucune force ne s'applique", "Les forces se compensent (équilibre)", "La force du poids est nulle"], "rep": "Les forces se compensent (équilibre)"},
-            {"id": "qf9", "q": "Dans la formule P = F / S, si la force F double sur une même surface, la pression P :", "options": ["Reste la même", "Double", "Est divisée par deux"], "rep": "Double"},
-            {"id": "qf10", "q": "Sur la Lune, la force du poids d'un astronaute est plus faible que sur Terre car :", "options": ["Sa masse a diminué", "La gravité lunaire est plus faible", "L'atmosphère y est absente"], "rep": "La gravité lunaire est plus faible"}
-        ]
+    with col_gauche_bd_forces:
+        st.markdown("##### Enoncé de l'exercice et contexte")
+        enonce_forces = (
+            "**Case 1 : Le défi du laboratoire.** Un opérateur cherche à déplacer une lourde charge solide au repos : "
+            "« Sans action mécanique extérieure, la masse reste immobile, le vecteur force motrice appliqué doit contrer la résistance ! ».\n\n"
+            "**Case 2 : L'équilibrage des forces.** Le dynamomètre à ressort étalonné affiche une déformation linéaire stable : "
+            "« À 100 Newtons d'intensité, le système trouve sa position d'équilibre, la somme vectorielle des forces opposées s'annule ! ».\n\n"
+            "**Case 3 : La force pressante.** Le fluide interne ést mis sous contrainte mécanique par une face plane : "
+            "« C'est mathématique, la poussée du fluide s'exerce de manière normale, c'est-à-dire perpendiculaire à l'aire de la paroi ! »."
+        )
+        st.info(enonce_forces)
 
-        if "ordre_quiz_forces_aleatoire" not in st.session_state:
-            random.shuffle(questions_forces_sources)
-            st.session_state.ordre_quiz_forces_aleatoire = questions_forces_sources
+        texte_bd_bleu_f = (
+            "**La BD humoristique : Le Vecteur Fou du Laboratoire**\n\n"
+            "**Case 1 :** Galilée : « Sans frottement, un corps lancé poursuit sa trajectoire en ligne droite à l'infini ! ».\n\n"
+            "**Case 2 :** Newton : « Toute modification du mouvement traduit l'action d'un vecteur force net non nul ! ».\n\n"
+            "**Case 3 :** Le Technicien : « Attention à l'intensité sur le manomètre, la force pressante va arracher la jante ! ».\n\n"
+            "**Case 4 :** Résolution : « Forces équilibrées, structures stabilisées, le laboratoire est hors de danger ! »"
+        )
+        st.info(texte_bd_bleu_f)
 
-        if "champs_forces_clean" not in st.session_state:
-            st.session_state.champs_forces_clean = [
-                ("1. Une action mécanique capable de modifier le mouvement est une ..........", ["Choisir...", "force", "surface"], "force", "forc_t1"),
-                ("2. L'intensité d'une force s'exprime en Newtons, de symbole ..........", ["Choisir...", "N", "Pa"], "N", "forc_t2"),
-                ("3. Le dynamomètre mesure les forces grâce à la déformation d'un ..........", ["Choisir...", "ressort", "piston"], "ressort", "forc_t3"),
-                ("4. La droite selon laquelle s'exerce une force est appelée sa ..........", ["Choisir...", "direction", "intensité"], "direction", "forc_t4"),
-                ("5. Le point de la paroi où commence le vecteur d'action est le point d'..........", ["Choisir...", "application", "équilibre"], "application", "forc_t5"),
-                ("6. L'attraction gravitationnelle est une action mécanique s'exerçant à ..........", ["Choisir...", "distance", "contact"], "distance", "forc_t6"),
-                ("7. La force pressante est proportionnelle à la grandeur de la ..........", ["Choisir...", "surface", "viscosité"], "surface", "forc_t7"),
-                ("8. Deux forces de même direction, de sens opposés et de même intensité sont en ..........", ["Choisir...", "équilibre", "mouvement"], "équilibre", "forc_t8"),
-                ("9. La longueur d'une flèche force est proportionnelle à son ..........", ["Choisir...", "intensité", "poids"], "intensité", "forc_t9"),
-                ("10. La poussée d'un fluide s'exerce de manière normale, c'est-à-dire ..........", ["Choisir...", "perpendiculaire", "tangente"], "perpendiculaire", "forc_t10")
-            ]
+    with col_droite_cours_forces:
+        st.markdown("##### Illustration caricaturale du cas")
+        # 1. Affichage supérieur : Image réelle (Largeur fixe 300px)
+        if os.path.exists("mecanique_forces_reelle.jpg"):
+            st.image("mecanique_forces_reelle.jpg", caption="Image réelle : Banc de traction et dynamomètre", width=300)
+        else:
+            st.caption("Image réelle de contexte manquante")
 
-        # SÉPARATION PRINCIPALE EN DEUX GRANDES COLONNES GLOBALES (Mise en page style 4 pages par feuille)
-        col_gauche_globale, col_droite_globale = st.columns(2)
+        # Insertion des 20 lignes d'espacement réglementaires pour repousser la caricature vers le bas
+        for _ in range(20):
+            st.write("")
+        
+        # 2. Affichage inférieur : Caricature de BD (Largeur fixe 300px)
+        if os.path.exists("bd_mecanique_forces.jpg"):
+            st.image("bd_mecanique_forces.jpg", caption="Caricature de l'incident mécanique vectoriel", width=300)
+        else:
+            st.caption("Caricature de l'incident mécanique vectoriel")
 
-        # ---------------------------------------------------------------------
-        # COLONNE GAUCHE (PAGES 1 ET 3 : CONTEXTE, SIMULATEUR ET QUIZ)
-        # ---------------------------------------------------------------------
-        with col_gauche_globale:
-            # PAGE 1 : CONTEXTE HISTORIQUE DES FORCES
-            st.subheader("La Galerie des Génies : La Notion de Force")
-            st.markdown("""
-            <div class="bandeau-forces">
-                <b>Repères Historiques :</b> Si Galilée formalise le principe d'inertie, c'est Isaac Newton qui formalise en 1687 les lois de la dynamique. Il définit la force comme une action capable de modifier le mouvement d'un corps ou de le déformer.
-            </div>
-            """, unsafe_allow_html=True)
+    st.markdown("---")
 
-            sub_col_hist1, sub_col_hist2 = st.columns(2)
-            with sub_col_hist1:
-                st.image("https://wikimedia.org", use_container_width=True)
-                st.markdown('<div class="legende-forces">Galilée (1564 - 1642)</div>', unsafe_allow_html=True)
-            with sub_col_hist2:
-                st.image("https://wikimedia.org", use_container_width=True)
-                st.markdown('<div class="legende-forces">Isaac Newton (1643 - 1727)</div>', unsafe_allow_html=True)
+    st.subheader("Laboratoire Virtuel : Simulateur interactif de vecteurs force")
+    
+    col_p1_f2, col_p2_f2 = st.columns(2)
+    with col_p1_f2:
+        valeur_force = st.slider("Ajuster l'intensité de la Force Motrice (en Newtons) :", min_value=0, max_value=200, value=100, step=10, key="slider_force_motrice_at2_officiel")
+    
+    with col_p2_f2:
+        if valeur_force == 100:
+            st.info("État du système : Les forces opposées se compensent (100 N). Le système est en équilibre mécanique.")
+        elif valeur_force > 100:
+            st.warning(f"État du système : Rupture d'équilibre. La force motrice ({valeur_force} N) surpasse la résistance.")
+        else:
+            st.error(f"État du système : Force motrice insuffisante ({valeur_force} N). La charge reste immobile.")
 
-            st.markdown("<br>", unsafe_allow_html=True)
+    st.write("---")
 
-            st.markdown("**Simulateur Interactif de Vecteurs Force**")
-            valeur_force = st.slider("Ajuster l'intensité de la Force Motrice (en Newtons) :", min_value=0, max_value=200, value=100, step=10, disabled=verrouille, key="slider_force_motrice")
-            if valeur_force == 100:
-                st.info("État du système : Les forces opposées se compensent (100 N). Le système est en équilibre mécanique.")
-            elif valeur_force > 100:
-                st.warning(f"État du système : Rupture d'équilibre. La force motrice ({valeur_force} N) surpasse la résistance.")
-            else:
-                st.error(f"État du système : Force motrice insuffisante ({valeur_force} N). La charge reste immobile.")
-
-            st.markdown("<br><hr><br>", unsafe_allow_html=True)
-
-            # PAGE 3 : QUIZ TECHNIQUE DES FORCES
-            st.markdown("##### Quiz Technique (10 questions - 10 pts)")
-            for idx, q_data in enumerate(st.session_state.ordre_quiz_forces_aleatoire, 1):
-                st.write(f"**{idx}.** {q_data['q']}")
-                st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"forc_at2_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
-
-
-
-
+    # =============================================================================
+    # 4. APPEL OPÉRATIONNEL DE L'ÉVALUATION COMPOSÉE COMPATIBLE
+    # =============================================================================
     if "suite_verrouille_tab2_forces" not in st.session_state:
         st.session_state.suite_verrouille_tab2_forces = False
     verrou_at2 = st.session_state.suite_verrouille_tab2_forces
 
-    # Appel de la fonction d'affichage
+    # Rendu des formulaires Quiz + Trous indexés de sécurité
     afficher_atelier_forces(verrouille=verrou_at2)
-    
+
+    # =============================================================================
+    # 5. SYSTÈME DE CORRECTION SUR 20 ET PROTOCOLE D'EXPORTATION HTML SCELLÉE
+    # =============================================================================
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 2")
     
@@ -664,58 +869,61 @@ with tab2:
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_stat2 = st.checkbox(
-        "Je certifie avoir complété les questions de l'Atelier d'Étude des Forces.",
-        key="check_certif_forc2_final_net",
+        "Je certifie avoir complété les questions d'évaluation sur l'Étude des Forces Physiques.",
+        key="check_certif_forces2_final_official",
         disabled=verrou_at2,
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_suite2_forc_official", use_container_width=True, disabled=verrou_at2):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_suite2_forces_official", use_container_width=True, disabled=verrou_at2):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
-            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+            st.error("Action refusée : Saisissez votre identity dans l'onglet 'Identification'.")
         elif not case_certif_stat2: 
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Correction automatique du Quiz
+            # 1. Correction automatique du Quiz par parcours sécurisé
             score_q2 = 0.0
             if "ordre_quiz_forces_aleatoire" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_forces_aleatoire:
-                    saisie = st.session_state.get(f"forc_at2_final_g_{q_item['id']}", "Choisir...")
+                for idx, q_item in enumerate(st.session_state.ordre_quiz_forces_aleatoire, 1):
+                    saisie = st.session_state.get(f"forc_at2_final_g_{q_item['id']}_{idx}", "Choisir...")
                     if str(saisie).strip() == str(q_item["rep"]).strip(): 
                         score_q2 += 1.0
 
-            # Correction automatique du Texte à trous
+            # 2. Correction automatique du Texte à trous par parcours sécurisé
             score_t2 = 0.0
             if "champs_forces_clean" in st.session_state:
-                for ligne in st.session_state.champs_forces_clean:
+                for idx, ligne in enumerate(st.session_state.champs_forces_clean, 1):
                     cle = ligne[-1]
                     attendu = ligne[2]
-                    if st.session_state.get(f"{cle}_forc_clean", "Choisir...") == attendu: 
+                    saisie_t = st.session_state.get(f"{cle}_forces_clean_{idx}", "Choisir...")
+                    if str(saisie_t).strip() == str(attendu).strip(): 
                         score_t2 += 1.0
 
-            st.session_state.score_suite2_forc_p1 = round(float(score_q2), 1)
-            st.session_state.score_suite2_forc_p2 = round(float(score_t2), 1)
-            st.session_state.score_final_suite2_forc = round(float(score_q2 + score_t2), 1)
+            st.session_state.score_suite2_forces_p1 = round(float(score_q2), 1)
+            st.session_state.score_suite2_forces_p2 = round(float(score_t2), 1)
+            st.session_state.score_final_suite2_forces = round(float(score_q2 + score_t2), 1)
             st.session_state.suite_verrouille_tab2_forces = True
             st.rerun()
 
-    # --- COMPILATION DU BILAN HTML DE L'ATELIER 2 ---
+    # =============================================================================
+    # 6. COMPILATION DU BILAN HTML DE L'ATELIER 2 SCELLÉ
+    # =============================================================================
     if st.session_state.get("suite_verrouille_tab2_forces", False):
         from datetime import datetime
-        scr1_t2 = st.session_state.get("score_suite2_forc_p1", 0.0)
-        scr2_t2 = st.session_state.get("score_suite2_forc_p2", 0.0)
-        tot_s_t2 = st.session_state.get("score_final_suite2_forc", 0.0)
+        scr1_t2 = st.session_state.get("score_suite2_forces_p1", 0.0)
+        scr2_t2 = st.session_state.get("score_suite2_forces_p2", 0.0)
+        tot_s_t2 = st.session_state.get("score_final_suite2_forces", 0.0)
         timestamp_suite2 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
 
-        st.success(f"ATELIER FORCES SCELLÉ | Note de session : {tot_s_t2:.1f} / 20")
+        st.success(f"ATELIER FORCES ET VECTEURS SCELLÉ | Note de session : {tot_s_t2:.1f} / 20")
 
-        html_export_forc2 = f"""<!DOCTYPE html>
+        html_export_forces2 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport d'Étude des Forces - {n_eleve}</title>
+            <title>Rapport d'Application Forces - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #0384c7; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #2563eb; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
@@ -728,23 +936,36 @@ with tab2:
         <body>
             <div class="header-box">
                 <h1>Rapport d'Évaluation de Physique</h1>
-                <p>Atelier 2 : Caractérisation des forces mécaniques et modélisation des forces pressantes</p>
+                <p>Atelier 2 : Étude des Forces Physiques, Modélisation Vectorielle et Actions Fluides</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite2}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t2:.1f}</span> / 20</div>
             </div>
-        </body>
-        </html>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t2:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 2 : <strong>{tot_s_t2:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
         """
+
         if "ordre_quiz_forces_aleatoire" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz_forces_aleatoire, 1):
-                saisie = st.session_state.get(f"forc_at2_final_g_{q_item['id']}", "Choisir...")
+            for idx, q_item in enumerate(st.session_state.ordre_quiz_forces_aleatoire, 1):
+                saisie = st.session_state.get(f"forc_at2_final_g_{q_item['id']}_{idx}", "Choisir...")
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_forc2 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+                html_export_forces2 += f"<tr><td>{idx}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_forc2 += """
+        html_export_forces2 += """
                 </tbody>
             </table>
             
@@ -757,33 +978,34 @@ with tab2:
         """
 
         if "champs_forces_clean" in st.session_state:
-            for num, ligne in enumerate(st.session_state.champs_forces_clean, 1):
-                # Correction des index de tuple pour correspondre a la structure reelle
-                enonce_texte = ligne[0]
-                attendu_texte = ligne[2]
-                cle_variable = ligne[-1]
-                
-                saisie_texte = st.session_state.get(f"{cle_variable}_forc_clean", "Choisir...")
+            for idx, ligne in enumerate(st.session_state.champs_forces_clean, 1):
+                enonce_texte, choix_texte, attendu_texte, cle_variable = ligne
+                saisie_texte = st.session_state.get(f"{cle_variable}_forces_clean_{idx}", "Choisir...")
                 v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
                 v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
-                html_export_forc2 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+                html_export_forces2 += f"<tr><td>{idx}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
 
-        html_export_forc2 += """
+        html_export_forces2 += """
                 </tbody>
             </table>
         </body>
         </html>
         """
         
-        nom_fichier_html_forc2 = preparer_nom_fichier("Rapport_Etude_Forces").replace(".txt", ".html")
+        nom_fichier_html_forces2 = preparer_nom_fichier("Rapport_Atelier_2_Forces").replace(".txt", ".html")
         st.download_button(
-            label="Télécharger le rapport d'évaluation officiel de l'Atelier 2",
-            data=html_export_forc2,
-            file_name=nom_fichier_html_forc2,
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 2 (.HTML)",
+            data=html_export_forces2,
+            file_name=nom_fichier_html_forces2,
             mime="text/html",
             use_container_width=True,
-            key="btn_download_html_forc_final"
         )
+
+
+
+
+
+
 
 with tab3:
     st.header("Étude de la Pression et des Phénomènes Barométriques")
@@ -797,107 +1019,96 @@ with tab3:
     </style>
     """, unsafe_allow_html=True)
 
-    # DÉFINITION INTERNE DE L'ATELIER INTERACTIF (QUIZ, PRESSION ET TROUS)
-    def afficher_atelier_pression(verrouille=False):
-        import random
+    # =============================================================================
+    # 1. RENDU ASYMÉTRIQUE DU COURS ET DES IMAGES [0.3 GAUCHE, 0.7 DROITE]
+    # =============================================================================
+    col_gauche_bd_pres, col_droite_cours_pres = st.columns([0.3, 0.7])
 
-        # Déclaration de la base de données des 10 questions du Quiz Pression
-        questions_pres_sources = [
-            {"id": "qpr1", "q": "Quelle unité de mesure du système international correspond exactement à un Pascal (Pa) ?", "options": ["1 N/m²", "1 kg/m²", "1 J/m²"], "rep": "1 N/m²"},
-            {"id": "qpr2", "q": "Quelle est l'unité usuelle utilisée dans l'industrie équivalente à 100 000 Pascals ?", "options": ["Le bar", "L'atmosphère", "Le millimètre de mercure"], "rep": "Le bar"},
-            {"id": "qpr3", "q": "Quel instrument de mesure spécifique utilise-t-on pour relever la pression à l'intérieur d'un circuit hydraulique fermé ?", "options": ["Un manomètre", "Un baromètre", "Un anémomètre"], "rep": "Un manomètre"},
-            {"id": "qpr4", "q": "Comment évolue la pression atmosphérique lorsque l'on s'élève en altitude ?", "options": ["Elle diminue", "Elle augmente", "Elle reste constante"], "rep": "Elle diminue"},
-            {"id": "qpr5", "q": "La pression exercée au fond d'une cuve par une colonne de liquide dépend principalement de :", "options": ["La hauteur du liquide et sa densité", "La forme de la cuve", "Le volume total du réservoir"], "rep": "La hauteur du liquide et sa densité"},
-            {"id": "qpr6", "q": "Quel fluide lourd Torricelli a-t-il retenu pour créer le premier baromètre à colonne ?", "options": ["Le mercure", "L'eau déminéralisée", "L'huile hydraulique"], "rep": "Le mercure"},
-            {"id": "qpr7", "q": "Quelle valeur moyenne standard caractérise la pression atmosphérique au niveau de la mer ?", "options": ["1013 hPa", "100 000 Pa", "1 bar"], "rep": "1013 hPa"},
-            {"id": "qpr8", "q": "Dans une canalisation, comment se nomme un point où la pression du fluide devient inférieure à la pression atmosphérique ?", "options": ["Une dépression (ou vide relatif)", "Une surpression", "Une zone d'équilibre"], "rep": "Une dépression (ou vide relatif)"},
-            {"id": "qpr9", "q": "Pourquoi les liquides sont-ils privilégiés dans les transmissions de puissance industrielle ?", "options": ["Parce qu'ils sont incompressibles", "Parce qu'ils sont expansibles", "Parce qu'ils n'ont pas de poids"], "rep": "Parce qu'ils sont incompressibles"},
-            {"id": "qpr10", "q": "Quelle loi stipule qu'une variation de pression appliquée en un point d'un fluide enfermé se transmet intégralement ?", "options": ["Le principe de Pascal", "La poussée d'Archimède", "La loi de Newton"], "rep": "Le principe de Pascal"}
-        ]
+    with col_gauche_bd_pres:
+        st.markdown("##### Enoncé de l'exercice et contexte")
+        st.info(
+            "**La Galerie des Génies : L'Équilibre des Pressions**\n\n"
+            "En 1648, Florin Périer réalise sur les conseils de Blaise Pascal l'expérience scientifique du Puy de Dôme. Il prouve de manière définitive que la hauteur de la colonne de mercure dépend de l'altitude, validant l'existence du poids de l'air.\n\n"
+            "**Observations Hydrostatiques (Les Vases Communicants) :**\n\n"
+            "**Case 1 :** Plusieurs réservoirs de formes et de sections totalement différentes sont reliés à leur base.\n\n"
+            "**Case 2 :** Lorsque l'on verse le liquide, les molécules se répartissent librement d'un contenant à un autre.\n\n"
+            "**Case 3 :** À l'équilibre, la hauteur du fluide atteint strictement le même niveau horizontal dans chaque colonne.\n\n"
+            "**Case 4 :** Ce phénomène confirme que la pression en un point ne dépend pas du volume de fluide mais uniquement de la profondeur."
+        )
 
-        if "ordre_quiz_pres3_aleatoire" not in st.session_state:
-            random.shuffle(questions_pres_sources)
-            st.session_state.ordre_quiz_pres3_aleatoire = questions_pres_sources
+        texte_bd_bleu_p3 = (
+            "**La BD humoristique : Le Mystère de la Colonne de Mercure**\n\n"
+            "**Case 1 :** Torricelli : « Plus on monte haut sur la montagne, moins le poids de l'atmosphère pèse sur notre bassin ! ».\n\n"
+            "**Case 2 :** Pascal : « C'est l'expérience du Puy de Dôme ! Le vide s'agrandit dans le tube car l'air se raréfie ! ».\n\n"
+            "**Case 3 :** Le Serveur : « Peu importe la géométrie ou la section de vos verres, le niveau se stabilise toujours à l'horizontale ! ».\n\n"
+            "**Case 4 :** En chœur : « C'est la loi des vases communicants, l'équilibre hydrostatique parfait ! »"
+        )
+        st.info(texte_bd_bleu_p3)
 
-        if "champs_pres3_clean" not in st.session_state:
-            st.session_state.champs_pres3_clean = [
-                ("1. La pression traduit la répartition d'une force pressante sur une ..........", ["Choisir...", "surface", "vitesse"], "surface", "pres3_t1"),
-                ("2. L'instrument destiné à évaluer la valeur de la pression atmosphérique est le ..........", ["Choisir...", "baromètre", "manomètre"], "baromètre", "pres3_t2"),
-                ("3. En hydraulique, le manomètre indique souvent une pression relative par rapport à l'..........", ["Choisir...", "atmosphère", "vide"], "atmosphere", "pres3_t3"),
-                ("4. La pression hydrostatique au sein d'un liquide au repos croît avec la ..........", ["Choisir...", "profondeur", "surface"], "profondeur", "pres3_t4"),
-                ("5. Un fluide transmettant fidèlement les pressions subies est qualifié d'..........", ["Choisir...", "incompressible", "gazeux"], "incompressible", "pres3_t5"),
-                ("6. L'unité légale du système international pour quantifier la pression est le ..........", ["Choisir...", "Pascal", "Bar"], "Pascal", "pres3_t6"),
-                ("7. Un bar correspond à une valeur de pression équivalente à cent mille ..........", ["Choisir...", "Pascals", "Newtons"], "Pascals", "pres3_t7"),
-                ("8. À force constante, si la section d'appui est divisée par deux, la pression ..........", ["Choisir...", "double", "diminue"], "double", "pres3_t8"),
-                ("9. La force pressante générée agit de façon normale, c'est-à-dire .......... aux parois.", ["Choisir...", "perpendiculaire", "tangentielle"], "perpendiculaire", "pres3_t9"),
-                ("10. L'absence totale de molécules de gaz ou de matière définit l'état de ..........", ["Choisir...", "vide", "surpression"], "vide", "pres3_t10")
-            ]
+    with col_droite_cours_pres:
+        st.markdown("##### Illustration caricaturale du cas")
+        # 1. Affichage supérieur : Image réelle du baromètre (Largeur fixe 300px)
+        if os.path.exists("pression_reelle_contexte.jpg"):
+            st.image("pression_reelle_contexte.jpg", caption="Image réelle : Dispositif de mesure barométrique d'époque", width=300)
+        else:
+            st.caption("Image réelle de contexte manquante")
 
-        # SEPARATION PRINCIPALE EN DEUX GRANDES COLONNES GLOBALES (Mise en page style 4 pages par feuille)
-        col_gauche_globale, col_droite_globale = st.columns(2)
+        # Insertion des 20 lignes d'espacement réglementaires pour repousser la caricature
+        for _ in range(20):
+            st.write("")
+        
+        # 2. Affichage inférieur : Caricature des vases communicants (Largeur fixe 300px)
+        if os.path.exists("bd_vases_communicants.jpg"):
+            st.image("bd_vases_communicants.jpg", caption="Caricature de l'équilibre hydrostatique", width=300)
+        else:
+            st.caption("Caricature de l'équilibre hydrostatique")
 
-        # ---------------------------------------------------------------------
-        # COLONNE GAUCHE (PAGES 1 ET 3 : CONTEXTE, SIMULATEUR ET QUIZ)
-        # ---------------------------------------------------------------------
-        with col_gauche_globale:
-            # PAGE 1 : CONTEXTE HISTORIQUE DU BAROMÈTRE
-            st.subheader("La Galerie des Génies : L'Équilibre des Pressions")
-            st.markdown("""
-            <div class="bandeau-pression">
-                <b>Repères Historiques :</b> En 1648, Florin Périer réalise sur les conseils de Blaise Pascal l'expérience scientifique du Puy de Dôme. Il prouve de manière définitive que la hauteur de la colonne de mercure dépend de l'altitude, validant l'existence du poids de l'air.
-            </div>
-            """, unsafe_allow_html=True)
+    st.markdown("---")
 
-            sub_col_hist1, sub_col_hist2 = st.columns(2)
-            with sub_col_hist1:
-                st.image("https://wikimedia.org", use_container_width=True)
-                st.markdown('<div class="legende-pression">Blaise Pascal (1623 - 1662)</div>', unsafe_allow_html=True)
-            with sub_col_hist2:
-                st.image("https://wikimedia.org", use_container_width=True)
-                st.markdown('<div class="legende-pression">Expérimentation barométrique</div>', unsafe_allow_html=True)
+    # =============================================================================
+    # 2. SIMULATEUR INTERACTIF DE PRESSION HYDROSTATIQUE
+    # =============================================================================
+    st.subheader("Laboratoire Virtuel : Simulateur de Pression Hydrostatique (P = rho * g * h)")
+    
+    if "suite_verrouille_tab3_pression" not in st.session_state:
+        st.session_state.suite_verrouille_tab3_pression = False
+    verrou_at3 = st.session_state.suite_verrouille_tab3_pression
 
-            st.markdown("<br>", unsafe_allow_html=True)
+    col_p1_p3, col_p2_p3 = st.columns(2)
+    with col_p1_p3:
+        hauteur_fluide = st.slider("Ajuster la profondeur de mesure dans la cuve (en mètres) :", min_value=0.0, max_value=10.0, value=5.0, step=0.5, disabled=verrou_at3, key="slider_profondeur_cuve_at3")
+    
+    with col_p2_p3:
+        # Calcul théorique simplifié de la pression hydrostatique (pression = rho * g * h avec rho=1000 et g=9.81)
+        pression_calculee_bar = (1000 * 9.81 * hauteur_fluide) / 100000
+        st.metric(label="Pression relative mesurée au manomètre", value=f"{pression_calculee_bar:.3f} bar")
+        formule_hydro = rf"P = \rho \cdot g \cdot h = 1000 \cdot 9{{,}}81 \cdot {hauteur_fluide} = {1000 * 9.81 * hauteur_fluide:,.0f}\text{{ Pa}}"
+        st.latex(formule_hydro)
 
-            # SIMULATEUR INTERACTIF DE PRESSION HYDROSTATIQUE
-            st.markdown("**Simulateur de Pression Hydrostatique (P = rho * g * h)**")
-            hauteur_fluide = st.slider("Ajuster la profondeur de mesure dans la cuve (en mètres) :", min_value=0.0, max_value=10.0, value=5.0, step=0.5, disabled=verrouille, key="slider_profondeur_cuve")
-            
-            # Calcul théorique simplifié de la pression hydrostatique (pression = rho * g * h avec rho=1000 et g=9.81)
-            pression_calculee_bar = (1000 * 9.81 * hauteur_fluide) / 100000
-            st.info(f"Mesure au manomètre : À une profondeur de {hauteur_fluide} m, la pression relative exercée par l'eau est de {pression_calculee_bar:.3f} bar.")
+    st.write("---")
 
-            st.markdown("<br><hr><br>", unsafe_allow_html=True)
+    # =============================================================================
+    # 3. RENDU DES FORMULAIRES D'ÉVALUATION COMPOSÉS ET COMPATIBLES (BI-COLONNE)
+    # =============================================================================
+    col_gauche_globale, col_droite_globale = st.columns(2)
 
-            # PAGE 3 : QUIZ TECHNIQUE DE LA PRESSION
-            st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+    with col_gauche_globale:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        if "ordre_quiz_pres3_aleatoire" in st.session_state:
             for idx, q_data in enumerate(st.session_state.ordre_quiz_pres3_aleatoire, 1):
                 st.write(f"**{idx}.** {q_data['q']}")
-                st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"pres3_at3_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+                st.selectbox(
+                    "", 
+                    options=["Choisir..."] + q_data["options"], 
+                    key=f"pres3_at3_final_g_{q_data['id']}_{idx}", 
+                    disabled=verrou_at3, 
+                    label_visibility="collapsed"
+                )
 
-        # ---------------------------------------------------------------------
-        # COLONNE DROITE (PAGES 2 ET 4 : CARICATURE, MODÉLISATION ET TROUS)
-        # ---------------------------------------------------------------------
-        with col_droite_globale:
-            # PAGE 2 : BANDE CARICATURALE TECHNIQUE
-            st.subheader("Bande Caricaturale : Le Principe des Vases Communiquants")
-            
-            sub_col_text, sub_col_img = st.columns([0.45, 0.55])
-            with sub_col_text:
-                st.markdown('<div class="legende-pression">Observations Hydrostatiques</div>', unsafe_allow_html=True)
-                st.write("**Case 1 :** Plusieurs réservoirs de formes et de sections totalement différentes sont reliés à leur base.")
-                st.write("**Case 2 :** Lorsque l'on verse le liquide, les molécules se répartissent librement d'un contenant à un autre.")
-                st.write("**Case 3 :** À l'équilibre, la hauteur du fluide atteint strictement le même niveau horizontal dans chaque colonne.")
-                st.write("**Case 4 :** Ce phénomène confirme que la pression en un point ne dépend pas du volume de fluide mais uniquement de la profondeur.")
-            with sub_col_img:
-                st.image("https://unsplash.com")
-
-                st.markdown('<div class="legende-pression">Analyse de la répartition des niveaux hydrostatiques</div>', unsafe_allow_html=True)
-
-            st.markdown("<br><hr><br>", unsafe_allow_html=True)
-
-            # PAGE 4 : SYNTHÈSE DE L'ATELIER (TEXTE À TROUS - 10 CASES)
-            st.markdown("##### Synthèse de l'Atelier (Texte à trous - 10 cases - 10 pts)")
-            for ligne in st.session_state.champs_pres3_clean:
+    with col_droite_globale:
+        st.markdown("##### Synthèse de l'Atelier (Texte à trous - 10 cases - 10 pts)")
+        if "champs_pres3_clean" in st.session_state:
+            for idx, ligne in enumerate(st.session_state.champs_pres3_clean, 1):
                 enonce = ligne[0]
                 choix = ligne[1]
                 cle = ligne[-1]
@@ -906,17 +1117,17 @@ with tab3:
                 with c_txt: 
                     st.write(enonce)
                 with c_sel: 
-                    st.selectbox("", choix, key=f"{cle}_pres3_clean", disabled=verrouille, label_visibility="collapsed")
+                    st.selectbox(
+                        "", 
+                        choix, 
+                        key=f"{cle}_pres3_clean_{idx}", 
+                        disabled=verrou_at3, 
+                        label_visibility="collapsed"
+                    )
 
-
-    # --- EXECUTION DE LA LOGIQUE DE CORRECTION ET D'EXPORT DE L'ATELIER 3 ---
-    if "suite_verrouille_tab3_pression" not in st.session_state:
-        st.session_state.suite_verrouille_tab3_pression = False
-    verrou_at3 = st.session_state.suite_verrouille_tab3_pression
-
-    # Appel de la fonction d'affichage
-    afficher_atelier_pression(verrouille=verrou_at3)
-    
+    # =============================================================================
+    # 4. MOTEUR DE NOTATION AUTOMATIQUE SUR 20 ET EXPORTATION HTML SCELLÉE
+    # =============================================================================
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 3")
     
@@ -936,21 +1147,30 @@ with tab3:
         elif not case_certif_stat3: 
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Correction automatique du Quiz
+            # Correction automatique du Quiz par parcours sécurisé
             score_q3 = 0.0
             if "ordre_quiz_pres3_aleatoire" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_pres3_aleatoire:
-                    saisie = st.session_state.get(f"pres3_at3_final_g_{q_item['id']}", "Choisir...")
+                for idx, q_item in enumerate(st.session_state.ordre_quiz_pres3_aleatoire, 1):
+                    saisie = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"pres_at3_final_g_{q_item['id']}_"):
+                            saisie = st.session_state[k]
+                            break
                     if str(saisie).strip() == str(q_item["rep"]).strip(): 
                         score_q3 += 1.0
 
-            # Correction automatique du Texte à trous
+            # Correction automatique du Texte à trous par parcours sécurisé
             score_t3 = 0.0
             if "champs_pres3_clean" in st.session_state:
-                for ligne in st.session_state.champs_pres3_clean:
+                for idx, ligne in enumerate(st.session_state.champs_pres3_clean, 1):
                     cle = ligne[-1]
                     attendu = ligne[2]
-                    if st.session_state.get(f"{cle}_pres3_clean", "Choisir...") == attendu: 
+                    saisie_t = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"{cle}_pres3_clean_"):
+                            saisie_t = st.session_state[k]
+                            break
+                    if str(saisie_t).strip() == str(attendu).strip(): 
                         score_t3 += 1.0
 
             st.session_state.score_suite3_pres_p1 = round(float(score_q3), 1)
@@ -959,7 +1179,7 @@ with tab3:
             st.session_state.suite_verrouille_tab3_pression = True
             st.rerun()
 
-    # --- COMPILATION DU BILAN HTML DE L'ATELIER 3 ---
+    # --- ENCAPSULATION DU RAPPORT ELECTRONIQUE HTML SCELLÉ ---
     if st.session_state.get("suite_verrouille_tab3_pression", False):
         from datetime import datetime
         scr1_t3 = st.session_state.get("score_suite3_pres_p1", 0.0)
@@ -976,7 +1196,7 @@ with tab3:
             <title>Rapport d'Étude de la Pression - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #10b981; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .header-box {{ background-color: #0284c7; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
                 .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
@@ -989,7 +1209,7 @@ with tab3:
         <body>
             <div class="header-box">
                 <h1>Rapport d'Évaluation de Physique</h1>
-                <p>Atelier 3 : Lois barométriques, phénomènes hydrostatiques et instruments manométriques</p>
+                <p>Atelier 3 : Étude Expérimentale de la Pression Hydrostatique et Loi des Fluides</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite3}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t3:.1f}</span> / 20</div>
@@ -1012,7 +1232,11 @@ with tab3:
 
         if "ordre_quiz_pres3_aleatoire" in st.session_state:
             for num, q_item in enumerate(st.session_state.ordre_quiz_pres3_aleatoire, 1):
-                saisie = st.session_state.get(f"pres3_at3_final_g_{q_item['id']}", "Choisir...")
+                saisie = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"pres3_at3_final_g_{q_item['id']}_"):
+                        saisie = st.session_state[k]
+                        break
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
@@ -1036,7 +1260,11 @@ with tab3:
                 attendu_texte = ligne[2]
                 cle_variable = ligne[-1]
                 
-                saisie_texte = st.session_state.get(f"{cle_variable}_pres3_clean", "Choisir...")
+                saisie_texte = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"{cle_variable}_pres3_clean_"):
+                        saisie_texte = st.session_state[k]
+                        break
                 v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
                 v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
                 html_export_pres3 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
@@ -1048,16 +1276,27 @@ with tab3:
         </html>
         """
         
-        nom_fichier_html_pres3 = preparer_nom_fichier("Rapport_Etude_Pression").replace(".txt", ".html")
+        nom_fichier_html_pres3 = preparer_nom_fichier("Rapport_Atelier_3_Pression").replace(".txt", ".html")
         st.download_button(
-            label="Télécharger le rapport d'évaluation officiel de l'Atelier 3",
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 3 (.HTML)",
             data=html_export_pres3,
             file_name=nom_fichier_html_pres3,
             mime="text/html",
             use_container_width=True,
-            key="btn_download_html_pres3_final"
         )
 
+
+
+
+
+
+
+
+
+
+
+
+        
 
 with tab4:
     st.header("Étude des Surfaces de Contact et Sections Géométriques")
@@ -1339,14 +1578,59 @@ if "cas_aleatoire_tab5" not in st.session_state:
 with tab5:
     st.header("Application professionnelle : Diagnostic et Maintenance")
     
-    # Sécurisation : Tirage au sort et initialisation directe si la clé n'existe pas
+    # BANQUE DE DONNÉES ET INITIALISATION EN AMONT DES QUESTIONS DE SECOURS (ANTI-BUG)
+    questions_sources = [
+        {"id": "qm1", "q": "Quel appareil de mesure permet de valider la valeur de pression dans le circuit ?", "options": ["Un manomètre", "Un débitmètre", "Un thermomètre"], "rep": "Un manomètre"},
+        {"id": "qm2", "q": "Si l'huile contourne le piston à cause d'un joint usé, comment qualifie-t-on cette défaillance ?", "options": ["Une fuite interne", "Une fuite externe", "Une cavitation"], "rep": "Une fuite interne"},
+        {"id": "qm3", "q": "Dans la relation P = F / S, si l'huile fuit et la pression s'effondre, la force développée :", "options": ["Chute proportionnellement", "Reste maximale", "Augmente subitement"], "rep": "Chute proportionnellement"},
+        {"id": "qm4", "q": "Quelle unité normalisée est généralement lue sur le cadran d'un manomètre industriel ?", "options": ["Le bar", "Le Newton", "Le mètre par seconde"], "rep": "Le bar"},
+        {"id": "qm5", "q": "Pour augmenter la force d'une presse sans modifier sa pression de service, il faut :", "options": ["Augmenter la section du vérin", "Réduire le diamètre du piston", "Allonger la course"], "rep": "Augmenter la section du vérin"},
+        {"id": "qm6", "q": "Un fluide hydraulique industriel est utilisé dans les circuits car il est pratiquement :", "options": ["Incompressible", "Compressible", "Volatile"], "rep": "Incompressible"},
+        {"id": "qm7", "q": "La force pressante s'exerçant sur la face plane d'un piston de vérin agit toujours de façon :", "options": ["Perpendiculaire", "Parallèle", "Oblique"], "rep": "Perpendiculaire"},
+        {"id": "qm8", "q": "Quel risque présente une huile contenant des impuretés ou des particules métalliques ?", "options": ["Abrasion des joints de section", "Augmentation de la viscosité", "Chute de la gravité"], "rep": "Abrasion des joints de section"},
+        {"id": "qm9", "q": "Quelle opération préventive permet de limiter l'usure prématurée des composants hydrauliques ?", "options": ["La filtration périodique", "Le surtarage des valves", "L'augmentation du débit"], "rep": "La filtration périodique"},
+        {"id": "qm10", "q": "L'unité de pression du système international équivalente à 1 N/m² is :", "options": ["Le Pascal", "Le Bar", "Le Joule"], "rep": "Le Pascal"}
+    ]
+    trous_sources = [
+        ("1. Un manque de force sur un actionneur traduit une perte de .......... hydraulique.", ["Choisir...", "pression", "vitesse"], "pression", "m5_t1"),
+        ("2. Le manomètre mesure l'effort réparti par le fluide sur l'unité de ..........", ["Choisir...", "surface", "longueur"], "surface", "m5_t2"),
+        ("3. Le contournement du piston par le fluide constitue une fuite ..........", ["Choisir...", "interne", "externe"], "interne", "m5_t3"),
+        ("4. La force pressante se déploie de manière orthogonale, donc .......... à la paroi.", ["Choisir...", "perpendiculaire", "tangente"], "perpendiculaire", "m5_t4"),
+        ("5. L'unité courante lue sur les cadrans des techniciens est le ..........", ["Choisir...", "bar", "Pascal"], "bar", "m5_t5"),
+        ("6. Pour restaurer l'étanchéité, il faut remplacer le .......... d'usure.", ["Choisir...", "joint", "piston"], "joint", "m5_t6"),
+        ("7. Un fluide sous pression transmet son action dans toutes les ..........", ["Choisir...", "directions", "lignes"], "directions", "m5_t7"),
+        ("8. L'huile de maintenance est choisie pour ses propriétés d'..........", ["Choisir...", "incompressibilité", "dilatation"], "incompressibilité", "m5_t8"),
+        ("9. Modifier l'aire de poussée modifie l'intensité du vecteur .......... développé.", ["Choisir...", "force", "vitesse"], "force", "m5_t9"),
+        ("10. Le maintien d'une pression stable garantit le bon fonctionnement mécanique de la ..........", ["Choisir...", "presse", "pompe"], "presse", "m5_t10")
+    ]
+
     if "cas_aleatoire_tab5" not in st.session_state:
-        import random
-        st.session_state.cas_aleatoire_tab5 = random.randint(1, 4)
-        
-    # Lecture sécurisée après vérification
+        st.session_state.cas_aleatoire_tab5 = 1
+
+    if "ordre_quiz_tab5_maint_aleatoire" not in st.session_state:
+        st.session_state.ordre_quiz_tab5_maint_aleatoire = questions_sources
+    if "champs_therm5_maint_clean" not in st.session_state:
+        st.session_state.champs_therm5_maint_clean = trous_sources
+
+    # Système de tirage au sort par bouton (Index unique officiel)
+    col_tirage_maint, col_statut_maint = st.columns([0.4, 0.6], vertical_alignment="center")
+    with col_tirage_maint:
+        if st.button("GÉNÉRER UN EXERCICE DE MAINTENANCE AU HASARD", key="btn_tirage_hasard_at5_officiel", use_container_width=True):
+            import random
+            actuel_maint = st.session_state.cas_aleatoire_tab5
+            possibles_maint = [1, 2, 3, 4]
+            filtrés_maint = [c for c in possibles_maint if c != actuel_maint]
+            st.session_state.cas_aleatoire_tab5 = random.choice(filtrés_maint)
+            
+            if "ordre_quiz_tab5_maint_aleatoire" in st.session_state:
+                del st.session_state.ordre_quiz_tab5_maint_aleatoire
+            if "champs_therm5_maint_clean" in st.session_state:
+                del st.session_state.champs_therm5_maint_clean
+            st.rerun()
+
     id_cas_maint = st.session_state.cas_aleatoire_tab5
     st.write(f"Dossier technique de maintenance attribué : **Anomalie mécanique n°{id_cas_maint}**")
+    
     # Styles CSS pour les légendes, bandeaux et alertes de l'Atelier 5
     st.markdown("""
     <style>
@@ -1355,210 +1639,119 @@ with tab5:
     </style>
     """, unsafe_allow_html=True)
 
-    # DÉFINITION DYNAMIQUE DE L'ATELIER DE MAINTENANCE SELON LE CAS
-    def afficher_atelier_maintenance(id_cas, verrouille=False):
-        # Tout votre code reste identique en dessous...
-        if id_cas == 1:
-            titre_maint = "Défaut d'étanchéité du piston sur un vérin hydraulique de presse"
-            desc_bd = [
-                "**Case 1 :** La presse hydraulique n'atteint plus sa force nominale de compactage lors des cycles de production.",
-                "**Case 2 :** Le technicien connecte un manomètre en dérivation et constate une chute de pression en fin de course.",
-                "**Case 3 :** Le diagnostic confirme un passage d'huile interne entre la chambre de travail et la chambre de retour.",
-                "**Case 4 :** Après remplacement du joint composite de section, le profil de pression redevient conforme aux spécifications."
-            ]
-            questions_sources = [
-                {"id": "qm1", "q": "Quel appareil de mesure permet de valider la valeur de pression dans le circuit ?", "options": ["Un manomètre", "Un débitmètre", "Un thermomètre"], "rep": "Un manomètre"},
-                {"id": "qm2", "q": "Si l'huile contourne le piston à cause d'un joint usé, comment qualifie-t-on cette défaillance ?", "options": ["Une fuite interne", "Une fuite externe", "Une cavitation"], "rep": "Une fuite interne"},
-                {"id": "qm3", "q": "Dans la relation P = F / S, si l'huile fuit et la pression s'effondre, la force développée :", "options": ["Chute proportionnellement", "Reste maximale", "Augmente subitement"], "rep": "Chute proportionnellement"},
-                {"id": "qm4", "q": "Quelle unité normalisée est généralement lue sur le cadran d'un manomètre industriel ?", "options": ["Le bar", "Le Newton", "Le mètre par seconde"], "rep": "Le bar"},
-                {"id": "qm5", "q": "Pour augmenter la force d'une presse sans modifier sa pression de service, il faut :", "options": ["Augmenter la section du vérin", "Réduire le diamètre du piston", "Allonger la course"], "rep": "Augmenter la section du vérin"},
-                {"id": "qm6", "q": "Un fluide hydraulique industriel est utilisé dans les circuits car il est pratiquement :", "options": ["Incompressible", "Compressible", "Volatile"], "rep": "Incompressible"},
-                {"id": "qm7", "q": "La force pressante s'exerçant sur la face plane d'un piston de vérin agit toujours de façon :", "options": ["Perpendiculaire", "Parallèle", "Oblique"], "rep": "Perpendiculaire"},
-                {"id": "qm8", "q": "Quel risque présente une huile contenant des impuretés ou des particules métalliques ?", "options": ["Abrasion des joints de section", "Augmentation de la viscosité", "Chute de la gravité"], "rep": "Abrasion des joints de section"},
-                {"id": "qm9", "q": "Quelle opération préventive permet de limiter l'usure prématurée des composants hydrauliques ?", "options": ["La filtration périodique", "Le surtarage des valves", "L'augmentation du débit"], "rep": "La filtration périodique"},
-                {"id": "qm10", "q": "L'unité de pression du système international équivalente à 1 N/m² est :", "options": ["Le Pascal", "Le Bar", "Le Joule"], "rep": "Le Pascal"}
-            ]
-            trous_sources = [
-                ("1. Un manque de force sur un actionneur traduit une perte de .......... hydraulique.", ["Choisir...", "pression", "vitesse"], "pression", "m5_t1"),
-                ("2. Le manomètre mesure l'effort réparti par le fluide sur l'unité de ..........", ["Choisir...", "surface", "longueur"], "surface", "m5_t2"),
-                ("3. Le contournement du piston par le fluide constitue une fuite ..........", ["Choisir...", "interne", "externe"], "interne", "m5_t3"),
-                ("4. La force pressante se déploie de manière orthogonale, donc .......... à la paroi.", ["Choisir...", "perpendiculaire", "tangente"], "perpendiculaire", "m5_t4"),
-                ("5. L'unité courante lue sur les cadrans des techniciens est le ..........", ["Choisir...", "bar", "Pascal"], "bar", "m5_t5"),
-                ("6. Pour restaurer l'étanchéité, il faut remplacer le .......... d'usure.", ["Choisir...", "joint", "piston"], "joint", "m5_t6"),
-                ("7. Un fluide sous pression transmet son action dans toutes les ..........", ["Choisir...", "directions", "lignes"], "directions", "m5_t7"),
-                ("8. L'huile de maintenance est choisie pour ses propriétés d'..........", ["Choisir...", "incompressibilité", "dilatation"], "incompressibilité", "m5_t8"),
-                ("9. Modifier l'aire de poussée modifie l'intensité du vecteur .......... développé.", ["Choisir...", "force", "vitesse"], "force", "m5_t9"),
-                ("10. Le maintien d'une pression stable garantit le bon fonctionnement mécanique de la ..........", ["Choisir...", "presse", "pompe"], "presse", "m5_t10")
-            ]
+    # CONFIGURATION DES ÉNONCÉS TEXTUELS SELON L'ID DU CAS
+    if id_cas_maint == 1:
+        titre_maint = "Défaut d'étanchéité du piston sur un vérin hydraulique de presse"
+        enonce_maint = (
+            "**Case 1 :** La presse hydraulique n'atteint plus sa force nominale de compactage lors des cycles de production.\n\n"
+            "**Case 2 :** Le technicien connecte un manomètre en dérivation et constate une chute de pression en fin de course.\n\n"
+            "**Case 3 :** Le diagnostic confirme un passage d'huile interne entre la chambre de travail et la chambre de retour.\n\n"
+            "**Case 4 :** Après remplacement du joint composite de section, le profil de pression redevient conforme aux spécifications."
+        )
+        texte_bd_maint = (
+            "**Bande Caricaturale de l'Incident : Défaut d'étanchéité du vérin**\n\n"
+            "**Case 1 :** Perte de poussée : « On écrase la matière mais les Watts manquent, la force F plafonne ! ».\n\n"
+            "**Case 2 :** Fuite interne : « L'huile s'échappe en douce à travers le piston défaillant vers le retour ! ».\n\n"
+            "**Case 3 :** Chute de pression : « Le fluide s'égalise entre les deux chambres, la pression P s'effondre ! ».\n\n"
+            "**Case 4 :** Résolution : « Nouveau joint scellé, l'étanchéité est parfaite, la presse retrouve ses performances ! »"
+        )
+    elif id_cas_maint == 2:
+        titre_maint = "Rupture par fatigue d'une canalisation rigide de distribution"
+        enonce_maint = (
+            "**Case 1 :** Une canalisation en acier éclate brutalement lors d'une phase de surpression transitoire.\n\n"
+            "**Case 2 :** L'équipe de maintenance balise la zone et isole le tronçon en fermant les vannes de sectionnement.\n\n"
+            "**Case 3 :** L'expertise révèle une fragilisation du métal due à des vibrations répétées et des coups de bélier.\n\n"
+            "**Case 4 :** Une nouvelle conduite avec lyre de dilatation et amortisseurs de pulsations est mise en service."
+        )
+        texte_bd_maint = (
+            "**Bande Caricaturale de l'Incident : Éclatement de canalisation**\n\n"
+            "**Case 1 :** Éclatement : « La surpression instantanée a dépassé la limite de rupture de l'enveloppe acier ! ».\n\n"
+            "**Case 2 :** Isolation : « Fermeture immédiate des vannes, on stoppe le flux de fluide perdu ! ».\n\n"
+            "**Case 3 :** Diagnostic : « Les ondes de choc répétées ont fatigué la structure interne de la matière solidifiée ! ».\n\n"
+            "**Case 4 :** Réparation : « Nouvelle ligne posée avec lyre flexible, les coups de bélier sont maîtrisés ! »"
+        )
+    elif id_cas_maint == 3:
+        titre_maint = "Cavitation destructive au corps d'aspiration d'une pompe principale"
+        enonce_maint = (
+            "**Case 1 :** La pompe principale émet un bruit de crépitement métallique intense évoquant un pompage de graviers.\n\n"
+            "**Case 2 :** Les techniciens relèvent une chute irrégulière du débit de fluide conjuguée à de fortes vibrations de ligne.\n\n"
+            "**Case 3 :** Le démontage du corps révèle une érosion par piqûres profondes sur les faces actives des engrenages.\n\n"
+            "**Case 4 :** L'aspiration est nettoyée, la section d'entrée élargie pour ramener la dépression sous le seuil de tension de vapeur."
+        )
+        texte_bd_maint = (
+            "**Bande Caricaturale de l'Incident : Phénomène de cavitation**\n\n"
+            "**Case 1 :** Crépitement : « On dirait que la pompe avale des cailloux, l'implosion des micro-bulles fait rage ! ».\n\n"
+            "**Case 2 :** Analyse : « La dépression d'entrée fait bouillir l'huile à température ambiante ! ».\n\n"
+            "**Case 3 :** Constat : « Les micro-jets de fluide frappent le métal à haute vitesse, la surface s'érode ! ».\n\n"
+            "**Case 4 :** Solution : « Section élargie, la vitesse diminue, la pression remonte au-dessus du point critique ! »"
+        )
+    else:
+    else:
+        titre_maint = "Surchauffe d'huile par laminage intense dans un limiteur de pression bloqué"
+        enonce_maint = (
+            "**Case 1 :** La centrale hydraulique subit une élévation thermique continue, l'huile franchit le seuil des 85 °C.\n\n"
+            "**Case 2 :** L'indicateur visuel montre un retour massif et permanent de fluide vers le réservoir sans action mécanique.\n\n"
+            "**Case 3 :** Le diagnostic confirme le blocage en position ouverte du clapet du limiteur de pression principal.\n\n"
+            "**Case 4 :** Après nettoyage du tiroir et calibrage du ressort, le fluide cesse de laminer et la température se stabilise."
+        )
+        texte_bd_maint = (
+            "**Bande Caricaturale de l'Incident : Laminage et surchauffes**\n\n"
+            "**Case 1 :** Surchauffe : « L'huile est bouillante, l'énergie mécanique se transforme entièrement en calories ! ».\n\n"
+            "**Case 2 :** Fuite permanente : « Le clapet refuse de se fermer, tout le débit repart au réservoir en continu ! ».\n\n"
+            "**Case 3 :** Laminage : « Forcer le fluide à traverser une section minuscule génère une friction thermique intense ! ».\n\n"
+            "**Case 4 :** Recalibrage : « Tiroir nettoyé, le clapet se ferme, l'huile retrouve sa circulation normale ! »"
+        )
 
-        elif id_cas == 2:
-            titre_maint = "Rupture par fatigue d'une canalisation rigide de distribution"
-            desc_bd = [
-                "**Case 1 :** Une canalisation en acier éclate brutalement lors d'une phase de surpression transitoire.",
-                "**Case 2 :** L'équipe de maintenance balise la zone et isole le tronçon en fermant les vannes de sectionnement.",
-                "**Case 3 :** L'expertise révèle une fragilisation du métal due à des vibrations répétées et des coups de bélier.",
-                "**Case 4 :** Une nouvelle conduite avec lyre de dilatation et amortisseurs de pulsations est mise en service."
-            ]
-            questions_sources = [
-                {"id": "qm1", "q": "Comment qualifie-t-on une onde de surpression brutale provoquée par la fermeture rapide d'une vanne ?", "options": ["Un coup de bélier", "Une cavitation", "Un effet Venturi"], "rep": "Un coup de bélier"},
-                {"id": "qm2", "q": "Quelle unité SI définit la contrainte mécanique maximale admissible par l'acier du tube ?", "options": ["Le Pascal (ou MPa)", "Le Newton", "Le Bar"], "rep": "Le Pascal (ou MPa)"},
-                {"id": "qm3", "q": "Pour dissiper les ondes de choc de pression dans un circuit, quel composant ajoute-t-on ?", "options": ["Un accumulateur hydropneumatique", "Une pompe de gavage", "Un limiteur de débit"], "rep": "Un accumulateur hydropneumatique"},
-                {"id": "qm4", "q": "La force de rupture appliquée sur la paroi du tube dépend de la pression et de :", "options": ["La surface intérieure exposée", "La longueur totale de la ligne", "La température ambiante"], "rep": "La surface intérieure exposée"},
-                {"id": "qm5", "q": "Une rupture par application répétée de contraintes inférieures à la limite élastique est appelée :", "options": ["Rupture par fatigue", "Rupture ductile", "Arrachement thermique"], "rep": "Rupture par fatigue"},
-                {"id": "qm6", "q": "Quel appareil permet de détecter des micro-fissures invisibles à l'œil nu sur un tube ?", "options": ["Un système de contrôle par ressuage", "Un manomètre", "Un multimètre"], "rep": "Un système de contrôle par ressuage"},
-                {"id": "qm7", "q": "Si l'épaisseur de la paroi du tube est doublée, sa résistance aux forces pressantes :", "options": ["Augmente", "Diminue", "Reste inchangée"], "rep": "Augmente"},
-                {"id": "qm8", "q": "Les colliers de fixation d'une tuyauterie industrielle ont pour rôle principal de :", "options": ["Amortir les vibrations", "Augmenter la pression", "Guider le fluide"], "rep": "Amortir les vibrations"},
-                {"id": "qm9", "q": "En cas de fuite externe de fluide, quel est le premier réflexe de sécurité ?", "options": ["Consigner l'énergie hydraulique", "Remplacer le tube sous pression", "Essuyer le fluide"], "rep": "Consigner l'énergie hydraulique"},
-                {"id": "qm10", "q": "La direction de la force pressante qui a fissuré le tube était :", "options": ["Perpendiculaire à la surface interne", "Parallèle à l'écoulement", "Hélicoïdale"], "rep": "Perpendiculaire à la surface interne"}
-            ]
-            trous_sources = [
-                ("1. L'élévation brutale et transitoire de la pression est un coup de ..........", ["Choisir...", "bélier", "frein"], "bélier", "m5_t1"),
-                ("2. La sollicitation répétée du métal entraîne une rupture par ..........", ["Choisir...", "fatigue", "flexion"], "fatigue", "m5_t2"),
-                ("3. La force destructive est le produit de la surpression par la .......... interne.", ["Choisir...", "surface", "longueur"], "surface", "m5_t3"),
-                ("4. La contrainte mécanique dans le métal s'exprime légalement en ..........", ["Choisir...", "Pascals", "Newtons"], "Pascals", "m5_t4"),
-                ("5. Avant toute intervention sur la conduite, il faut effectuer la ..........", ["Choisir...", "consignation", "lubrification"], "consignation", "m5_t5"),
-                ("6. Pour absorber les variations de volume, on installe un ..........", ["Choisir...", "accumulateur", "filtre"], "accumulateur", "m5_t6"),
-                ("7. Les colliers rigides limitent la propagation des .......... mécaniques.", ["Choisir...", "vibrations", "fluides"], "vibrations", "m5_t7"),
-                ("8. Le vecteur force pressante s'exerce de l'intérieur vers l'.......... du tube.", ["Choisir...", "extérieur", "centre"], "extérieur", "m5_t8"),
-                ("9. L'acier est choisi pour sa haute limite de résistance ..........", ["Choisir...", "élastique", "thermique"], "élastique", "m5_t9"),
-                ("10. Le remplacement du tronçon rétablit la continuité de la ..........", ["Choisir...", "distribution", "aspiration"], "distribution", "m5_t10")
-            ]
+    # RENDU ASYMÉTRIQUE [0.3, 0.7] ET SUPERPOSÉ DES ÉNONCÉS ET IMAGES
+    col_gauche_bd_maint, col_droite_cours_maint = st.columns([0.3, 0.7])
 
+    with col_gauche_bd_maint:
+        st.markdown(f"##### Dossier Technique : {titre_maint}")
+        st.info(enonce_maint)
+        st.info(texte_bd_maint)
+
+    with col_droite_cours_maint:
+        st.markdown("##### Illustration caricaturale du cas")
+        
+        # Détermination des fichiers images
+        if id_cas_maint == 1:
+            fichier_reel_maint = "pressehydraulique.jpg"
+            fichier_caricature_maint = "maint_verin.jpg"
+        elif id_cas_maint == 2:
+            fichier_reel_maint = "rupturecanalisation.jpg"
+            fichier_caricature_maint = "maint_tube.jpg"
         elif id_cas_maint == 3:
-            titre_maint = "Cavitation et érosion de la turbine d'une pompe centrifuge"
-            desc_bd = [
-                "**Case 1 :** Une pompe de transfert émet un bruit anormal de gravier et son débit chute en continu.",
-                "**Case 2 :** Au démontage, le technicien découvre des micro-cavités de matière détruite sur les pales.",
-                "**Case 3 :** La chute locale de pression sous la tension de vapeur a provoqué l'implosion de bulles de gaz.",
-                "**Case 4 :** La hauteur d'aspiration est corrigée et une turbine neuve à traitement de surface est posée."
-            ]
-            questions_sources = [
-                {"id": "qm1", "q": "Quel phénomène physique provoque la formation et l'implosion de bulles de vapeur dans une pompe ?", "options": ["La cavitation", "La lamination", "L'oxydation"], "rep": "La cavitation"},
-                {"id": "qm2", "q": "La cavitation se produit lorsque la pression locale descend en dessous de :", "options": ["La pression de vapeur saturante", "La pression atmosphérique", "Le vide absolu"], "rep": "La pression de vapeur saturante"},
-                {"id": "qm3", "q": "Quel type de bruit caractéristique signale la présence de cavitation dans une tuyauterie ?", "options": ["Un crépitement (bruit de gravier)", "Un sifflement aigu", "Un ronronnement sourd"], "rep": "Un crépitement (bruit de gravier)"},
-                {"id": "qm4", "q": "L'implosion des bulles génère des micro-jets de fluide dont la force locale crée une pression :", "options": ["Extrêmement élevée", "Parfaitement nulle", "Négative"], "rep": "Extrêmement élevée"},
-                {"id": "qm5", "q": "Pour éviter la cavitation, il faut s'assurer que le NPSH disponible du circuit est :", "options": ["Supérieur au NPSH requis de la pompe", "Inférieur au NPSH requis", "Égal à zéro"], "rep": "Supérieur au NPSH requis de la pompe"},
-                {"id": "qm6", "q": "L'érosion des pales de la turbine modifie leur profil géométrique, ce qui réduit :", "options": ["Le rendement hydrostatique", "La vitesse de rotation", "La masse du fluide"], "rep": "Le rendement hydrostatique"},
-                {"id": "qm7", "q": "Une solution de maintenance pour réduire la cavitation à l'aspiration consiste à :", "options": ["Diminuer la hauteur d'aspiration", "Augmenter la vitesse de la pompe", "Restreindre le diamètre d'entrée"], "rep": "Diminuer la hauteur d'aspiration"},
-                {"id": "qm8", "q": "La force d'impact répétée des bulles arrache la matière par un phénomène de :", "options": ["Fatigue de surface mécanique", "Corrosion chimique pure", "Dilatation thermique"], "rep": "Fatigue de surface mécanique"},
-                {"id": "qm9", "q": "Quel appareil permet de mesurer la dépression à l'entrée d'aspiration d'une pompe ?", "options": ["Un vacuomètre", "Un débitmètre à engrenages", "Un thermomètre"], "rep": "Un vacuomètre"},
-                {"id": "qm10", "q": "Dans quelle zone de la pale la pression est-elle la plus basse, favorisant les bulles ?", "options": ["Le côté aspiration (extrados)", "Le côté pression (intrados)", "Le moyeu central"], "rep": "Le côté aspiration (extrados)"}
-            ]
-            trous_sources = [
-                ("1. La formation de bulles de vapeur due à une baisse de pression est la ..........", ["Choisir...", "cavitation", "lamination"], "cavitation", "m5_t1"),
-                ("2. Ce phénomène apparaît quand la pression descend sous le seuil de ..........", ["Choisir...", "vapeur saturante", "pression nominale"], "vapeur saturante", "m5_t2"),
-                ("3. L'implosion des bulles libère une .......... d'impact locale destructrice.", ["Choisir...", "force", "chaleur"], "force", "m5_t3"),
-                ("4. Les chocs répététés provoquent un arrachement de matière appelé ..........", ["Choisir...", "érosion", "grippage"], "érosion", "m5_t4"),
-                ("5. Le contrôle de la pression d'entrée s'effectue avec un ..........", ["Choisir...", "vacuomètre", "débitmètre"], "vacuomètre", "m5_t5"),
-                ("6. Pour stopper le défaut, on doit augmenter la pression à l'..........", ["Choisir...", "aspiration", "refoulement"], "aspiration", "m5_t6"),
-                ("7. Le bruit de fonctionnement s'apparente à un passage de ..........", ["Choisir...", "gravier", "liquide fluide"], "gravier", "m5_t7"),
-                ("8. Les pales de la roue constituent la .......... d'action géométrique.", ["Choisir...", "surface", "longueur"], "surface", "m5_t8"),
-                ("9. L'altération géométrique de la turbine détruit son .......... hydraulique.", ["Choisir...", "rendement", "poids"], "rendement", "m5_t9"),
-                ("10. La remise en état exige le remplacement de la .......... endommagée.", ["Choisir...", "turbine", "volute"], "turbine", "m5_t10")
-            ]
-
+            fichier_reel_maint = "cavitationpompe.jpg"
+            fichier_caricature_maint = "maint_pompe.jpg"
         else:
-            titre_maint = "Anomalie de tarage sur un limiteur de pression de centrale hydraulique"
-            desc_bd = [
-                "**Case 1 :** Les actionneurs de la machine se déplacent trop lentement et la centrale surchauffe.",
-                "**Case 2 :** Le technicien constate que le fluide s'échappe en continu vers le réservoir via la ligne de décharge.",
-                "**Case 3 :** La force du ressort de la valve de sécurité est trop faible par rapport à la consigne requise.",
-                "**Case 4 :** Le technicien ajuste la vis de réglage pour comprimer le ressort et restaurer la pression nominale."
-            ]
-            questions_sources = [
-                {"id": "qm1", "q": "Quel composant protège le circuit hydraulique contre les surpressions dangereuses ?", "options": ["Le limiteur de pression", "Le clapet anti-retour", "Le filtre"], "rep": "Le limiteur de pression"},
-                {"id": "qm2", "q": "Si le limiteur est réglé trop bas, que devient l'énergie de la pompe non utilisée ?", "options": ["Elle se dissipe en chaleur (surchauffe)", "Elle est détruite", "Elle augmente le débit utile"], "rep": "Elle se dissipe en chaleur (surchauffe)"},
-                {"id": "qm3", "q": "La force qui pousse le clapet du limiteur pour l'ouvrir provient de :", "options": ["La force pressante du fluide", "La tension du ressort", "Le débit de la pompe"], "rep": "La force pressante du fluide"},
-                {"id": "qm4", "q": "Quel composant mécanique interne s'oppose à l'ouverture du clapet de décharge ?", "options": ["Un ressort de tarage", "Un piston amortisseur", "Une aiguille conique"], "rep": "Un ressort de tarage"},
-                {"id": "qm5", "q": "Pour augmenter la valeur de déclenchement du limiteur, il faut :", "options": ["Comprimer le ressort (visser)", "Détendre le ressort (dévisser)", "Changer l'huile"], "rep": "Comprimer le ressort (visser)"},
-                {"id": "qm6", "q": "À l'instant précis où la valve s'ouvre, la force du fluide et la force du ressort sont :", "options": ["Strictement égales (équilibre)", "Opposées et asymétriques", "Nulles"], "rep": "Strictement égales (équilibre)"},
-                {"id": "qm7", "q": "L'ouverture du limiteur renvoie directement le fluide excédentaire vers :", "options": ["Le réservoir (bac)", "Le vérin", "L'accumulateur"], "rep": "Le réservoir (bac)"},
-                {"id": "qm8", "q": "Quelle est l'unité légale d'intensité pour régler l'effort de fermeture du ressort ?", "options": ["Le Newton", "Le Pascal", "Le Bar"], "rep": "Le Newton"},
-                {"id": "qm9", "q": "Si le limiteur reste bloqué en position ouverte, la pression du circuit sera :", "options": ["Proche de zéro", "Maximale", "Instable"], "rep": "Proche de zéro"},
-                {"id": "qm10", "q": "Le contrôle final du bon tarage s'effectue en observant un :", "options": ["Manomètre en dérivation", "Débitmètre de ligne", "Thermomètre"], "rep": "Manomètre en dérivation"}
-            ]
-            trous_sources = [
-                ("1. La protection de la centrale est assurée par le limiteur de ..........", ["Choisir...", "pression", "débit"], "pression", "m5_t1"),
-                ("2. L'effort d'opposition interne est généré par un .......... métallique.", ["Choisir...", "ressort", "piston"], "ressort", "m5_t2"),
-                ("3. Le fluide exerce sur le clapet une .......... pressante ascendante.", ["Choisir...", "force", "vitesse"], "force", "m5_t3"),
-                ("4. L'aire du clapet soumise au fluide constitue la .......... de contact.", ["Choisir...", "surface", "section"], "surface", "m5_t4"),
-                ("5. Un tarage trop bas provoque une décharge permanente vers le ..........", ["Choisir...", "réservoir", "vérin"], "réservoir", "m5_t5"),
-                ("6. L'énergie perdue par laminage se transforme directement en ..........", ["Choisir...", "chaleur", "pression"], "chaleur", "m5_t6"),
-                ("7. Pour corriger le réglage, le technicien doit .......... la vis de tarage.", ["Choisir...", "visser", "dévisser"], "visser", "m5_t7"),
-                ("8. L'intensité des actions mécaniques antagonistes est mesurée en ..........", ["Choisir...", "Newtons", "Pascals"], "Newtons", "m5_t8"),
-                ("9. Le contrôle visuel du seuil de basculement utilise un ..........", ["Choisir...", "manomètre", "thermomètre"], "manomètre", "m5_t9"),
-                ("10. À l'équilibre limite, les vecteurs forces opposés possèdent la même ..........", ["Choisir...", "intensité", "direction"], "intensité", "m5_t10")
-            ]
+            fichier_reel_maint = "laminagehuile.jpg"
+            fichier_caricature_maint = "maint_laminage.jpg"
 
-        # Sauvegarde des listes configurées dans l'état de la session élève
-        st.session_state.ordre_quiz_maint_aleatoire = questions_sources
-        st.session_state.champs_maint_clean = trous_sources
+        # 1. Affichage supérieur : Image réelle (Largeur fixe 300px)
+        if os.path.exists(fichier_reel_maint):
+            st.image(fichier_reel_maint, caption="Image réelle : Constat en atelier", width=300)
+        else:
+            st.caption("Image réelle manquante")
 
-        # SÉPARATION EN DEUX COLONNES GLOBALES STYLE 4 PAGES PAR FEUILLE
-        col_gauche_globale, col_droite_globale = st.columns(2)
-
-        # ---------------------------------------------------------------------
-        # COLONNE GAUCHE (PAGES 1 ET 3 : CAS TECHNIQUE ET QUIZ ADAPTATIF)
-        # ---------------------------------------------------------------------
-        with col_gauche_globale:
-            st.subheader(f"Dossier Technique : {titre_maint}")
-            st.markdown("""
-            <div class="bandeau-maint">
-                <b>Analyse du Cas :</b> Examinez la situation d'anomalie industrielle affectant votre poste. Identifiez le lien mécanique direct entre force, surface et pression pour remplir le questionnaire de diagnostic.
-            </div>
-            """, unsafe_allow_html=True)
-
-            # AFFICHAGE CHRONOLOGIQUE DES SYMPTÔMES DU CAS ACTIF
-            st.write("**Symptômes constatés en atelier :**")
-            for case_texte in desc_bd:
-                st.write(case_texte)
-
-            st.markdown("<br><hr><br>", unsafe_allow_html=True)
-
-            # PAGE 3 : QUIZ DE DIAGNOSTIC À 10 QUESTIONS
-            st.markdown("##### Quiz de Diagnostic (10 questions - 10 pts)")
-            for idx, q_data in enumerate(st.session_state.ordre_quiz_maint_aleatoire, 1):
-                st.write(f"**{idx}.** {q_data['q']}")
-                st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"maint_at5_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
-
-        # ---------------------------------------------------------------------
-        # COLONNE DROITE (PAGES 2 ET 4 : ILLUSTRATION ET SYNTHÈSE TEXTE À TROUS)
-        # ---------------------------------------------------------------------
-        with col_droite_globale:
-            st.subheader("Bande Caricaturale de l'Incident")
+        # Les 20 lignes d'espacement réglementaires pour descendre la caricature
+        for _ in range(20):
+            st.write("")
+        
+        # 2. Affichage inférieur : Caricature (Largeur fixe 300px)
+        if os.path.exists(fichier_caricature_maint):
+            st.image(fichier_caricature_maint, caption="Bande dessinée de l'incident", width=300)
+        else:
+            st.caption("Caricature manquante")
             
-            sub_col_text, sub_col_img = st.columns([0.50, 0.50])
-            with sub_col_text:
-                st.markdown('<div class="legende-maint">Rapport d\'Intervention</div>', unsafe_allow_html=True)
-                for case_texte in desc_bd:
-                    st.write(case_texte)
-            with sub_col_img:
-                st.image("https://unsplash.com")
-                st.markdown('<div class="legende-maint">Résolution technique du dysfonctionnement</div>', unsafe_allow_html=True)
-
-            st.markdown("<br><hr><br>", unsafe_allow_html=True)
-
-            # PAGE 4 : SYNTHÈSE DE L'ATELIER (TEXTE À TROUS ADAPTATIF DE 10 CASES)
-            st.markdown("##### Synthèse de l'Atelier (Texte à trous - 10 cases - 10 pts)")
-            for ligne in st.session_state.champs_maint_clean:
-                enonce = ligne[0]
-                choix = ligne[1]
-                cle = ligne[-1]
-                
-                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-                with c_txt: 
-                    st.write(enonce)
-                with c_sel: 
-                    st.selectbox("", choix, key=f"{cle}_maint_clean", disabled=verrouille, label_visibility="collapsed")
+    st.write("---")
 
 
-    # --- EXECUTION DE LA LOGIQUE DE CORRECTION ET D'EXPORT DE L'ATELIER 5 ---
     if "suite_verrouille_tab5_maint" not in st.session_state:
         st.session_state.suite_verrouille_tab5_maint = False
     verrou_at5 = st.session_state.suite_verrouille_tab5_maint
 
-    # Appel de la fonction d'affichage de l'atelier 5
-    afficher_atelier_maintenance(id_cas=st.session_state.get("cas_maintenance_actif", 1), verrouille=verrou_at5)
+    # Appel opérationnel de l'affichage de l'atelier 5
+    afficher_atelier_maintenance(id_cas=st.session_state.get("cas_aleatoire_tab5", 1), verrouille=verrou_at5)
 
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 5")
@@ -1579,30 +1772,40 @@ with tab5:
         elif not case_certif_stat5: 
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Correction automatique du Quiz
+            # 1. Correction automatique du Quiz (Recherche de clé indexée anti-bug)
             score_q5 = 0.0
-            if "ordre_quiz_maint_aleatoire" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_maint_aleatoire:
-                    saisie = st.session_state.get(f"maint_at5_final_g_{q_item['id']}", "Choisir...")
+            if "ordre_quiz_tab5_maint_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab5_maint_aleatoire:
+                    saisie = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"widget_at5_maint_q_{q_item['id']}_"):
+                            saisie = st.session_state[k]
+                            break
                     if str(saisie).strip() == str(q_item["rep"]).strip(): 
                         score_q5 += 1.0
 
-            # Correction automatique du Texte à trous
+            # 2. Correction automatique du Texte à trous (Recherche de clé indexée anti-bug)
             score_t5 = 0.0
-            if "champs_maint_clean" in st.session_state:
-                for ligne in st.session_state.champs_maint_clean:
+            if "champs_therm5_maint_clean" in st.session_state:
+                for ligne in st.session_state.champs_therm5_maint_clean:
                     cle = ligne[-1]
                     attendu = ligne[2]
-                    if st.session_state.get(f"{cle}_maint_clean", "Choisir...") == attendu: 
+                    saisie_t = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"widget_at5_maint_t_{cle}_"):
+                            saisie_t = st.session_state[k]
+                            break
+                    if str(saisie_t).strip() == str(attendu).strip(): 
                         score_t5 += 1.0
 
+            # Sauvegarde des résultats et rechargement
             st.session_state.score_suite5_maint_p1 = round(float(score_q5), 1)
             st.session_state.score_suite5_maint_p2 = round(float(score_t5), 1)
             st.session_state.score_final_suite5_maint = round(float(score_q5 + score_t5), 1)
             st.session_state.suite_verrouille_tab5_maint = True
             st.rerun()
 
-    # --- COMPILATION DU BILAN HTML DE L'ATELIER 5 ---
+    # --- COMPILATION DU BILAN HTML DE L'ATELIER 5 SCELLÉ ---
     if st.session_state.get("suite_verrouille_tab5_maint", False):
         from datetime import datetime
         scr1_t5 = st.session_state.get("score_suite5_maint_p1", 0.0)
@@ -1633,6 +1836,7 @@ with tab5:
             <div class="header-box">
                 <h1>Rapport d'Évaluation de Physique</h1>
                 <p>Atelier 5 : Applications industrielles, diagnostics de pannes et maintenance des systèmes hydrauliques</p>
+                <p>Scénario résolu : {titre_maint}</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite5}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t5:.1f}</span> / 20</div>
@@ -1653,9 +1857,13 @@ with tab5:
                 <tbody>
         """
 
-        if "ordre_quiz_maint_aleatoire" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz_maint_aleatoire, 1):
-                saisie = st.session_state.get(f"maint_at5_final_g_{q_item['id']}", "Choisir...")
+        if "ordre_quiz_tab5_maint_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab5_maint_aleatoire, 1):
+                saisie = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"widget_at5_maint_q_{q_item['id']}_"):
+                        saisie = st.session_state[k]
+                        break
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
@@ -1673,13 +1881,17 @@ with tab5:
                 <tbody>
         """
 
-        if "champs_maint_clean" in st.session_state:
-            for num, ligne in enumerate(st.session_state.champs_maint_clean, 1):
+        if "champs_therm5_maint_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_therm5_maint_clean, 1):
                 enonce_texte = ligne[0]
                 attendu_texte = ligne[2]
                 cle_variable = ligne[-1]
                 
-                saisie_texte = st.session_state.get(f"{cle_variable}_maint_clean", "Choisir...")
+                saisie_texte = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"widget_at5_maint_t_{cle_variable}_"):
+                        saisie_texte = st.session_state[k]
+                        break
                 v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
                 v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
                 html_export_maint5 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
@@ -1693,14 +1905,12 @@ with tab5:
         
         nom_fichier_html_maint5 = preparer_nom_fichier("Rapport_Application_Maintenance").replace(".txt", ".html")
         st.download_button(
-            label="Télécharger le rapport d'évaluation officiel de l'Atelier 5",
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 5 (.HTML)",
             data=html_export_maint5,
             file_name=nom_fichier_html_maint5,
             mime="text/html",
             use_container_width=True,
-            key="btn_download_html_maint_final"
         )
-
 
 
 
