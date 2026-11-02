@@ -2723,10 +2723,389 @@ with tab6:
         )
 
 
+with tab7:
+    st.header("Application dans le domaine du Transport Routier")
+    st.write("Analysez les systèmes de freinage pneumatique et la répartition des masses par essieu routier.")
+
+    # Styles CSS pour les légendes, bandeaux et alertes de l'Atelier 7
+    st.markdown("""
+    <style>
+    .legende-tr { color: #2563eb; font-weight: bold; text-align: center; margin-top: 5px; font-size: 13px; }
+    .bandeau-tr { background-color: #eff6ff; border-left: 5px solid #3b82f6; padding: 12px; font-size: 14px; font-weight: 500; margin-bottom: 20px; color: #1e3a8a; border-radius: 4px; }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # 1. DÉCLARATION DE SÉCURITÉ ABSOLUE DU VERROU TOUT EN HAUT
+    if "suite_verrouille_tab7_tr" not in st.session_state:
+        st.session_state.suite_verrouille_tab7_tr = False
+    verrou_at7 = st.session_state.suite_verrouille_tab7_tr
+
+    # 2. INITIALISATION ET TIRAGE AU SORT D'EXERCICE MULTI-CAS AUTONOME
+    if "cas_aleatoire_tab7" not in st.session_state:
+        st.session_state.cas_aleatoire_tab7 = 1
+
+    col_tirage_tr, col_statut_tr = st.columns([0.4, 0.6], vertical_alignment="center")
+    with col_tirage_tr:
+        if st.button("GÉNÉRER UN EXERCICE DE TRANSPORT ROUTIER AU HASARD", key="btn_tirage_hasard_at7_officiel_final", use_container_width=True, disabled=verrou_at7):
+            import random
+            actuel_tr = st.session_state.cas_aleatoire_tab7
+            possibles_tr = [1, 2, 3, 4]
+            filtrés_tr = [c for c in possibles_tr if c != actuel_tr]
+            st.session_state.cas_aleatoire_tab7 = random.choice(filtrés_tr)
+            
+            # Nettoyage des sélections pour forcer la mise à jour synchrone
+            if "ordre_quiz_tab7_tr_aleatoire" in st.session_state: del st.session_state.ordre_quiz_tab7_tr_aleatoire
+            if "champs_therm7_tr_clean" in st.session_state: del st.session_state.champs_therm7_tr_clean
+            st.rerun()
+
+    id_cas_tr = st.session_state.cas_aleatoire_tab7
+    st.write(f"Dossier technique Transport Routier attribué : **Cas n°{id_cas_tr}**")
+
+    # =============================================================================
+    # 3. BASE DE DONNÉES DYNAMIQUES DES QUESTIONS, TROUS ET TEXTES (PAR CAS)
+    # =============================================================================
+    if id_cas_tr == 1:
+        titre_tr = "Vase de freinage pneumatique d'un semi-remorque en pleine charge"
+        enonce_tr = (
+            "**Case 1 :** L'effort de serrage mécanique sur les garnitures de freins dépend directement de la pression d'air comprimé injectée.\n\n"
+            "**Case 2 :** Le diaphragme souple interne convertit la pression relative pneumatique P en une force axiale rectiligne F.\n\n"
+            "**Case 3 :** En cas de micro-fissure de l'enveloppe, une fuite d'air externe fait chuter la pression, compromettant le freinage.\n\n"
+            "**Case 4 :** Le maintien d'une étanchéité parfaite garantit le déploiement de la force de poussée nominale requise."
+        )
+        texte_bd_tr = (
+            "**Bande Caricaturale de l'Incident : Les Freins Pneumatiques**\n\n"
+            "**Case 1 :** Commande : « Pied sur la pédale, les valves s'ouvrent, l'air sous pression se rue vers les roues ! ».\n\n"
+            "**Case 2 :** Transformation : « Le vase de frein reçoit les bars et pousse la tige métallique comme un vérin ! ».\n\n"
+            "**Case 3 :** Relation P=F/S : « Plus l'aire de la membrane S est grande, plus la force de serrage F est titanesque ! ».\n\n"
+            "**Case 4 :** Sécurité : « Circuit étanche, le poids lourd de 44 tonnes s'arrête pile sur la ligne de stop ! »"
+        )
+        img_reelle_tr, img_bd_tr = "frein_reel.jpg", "bd_frein.jpg"
+        
+        questions_sources_tr = [
+            {"id": "tr_q1_c1", "q": "Quel fluide compressible anime les actionneurs de freinage d'un poids lourd ?", "options": ["L'air comprimé", "L'huile minérale", "L'eau distillée"], "rep": "L'air comprimé"},
+            {"id": "tr_q2_c1", "q": "Si la membrane souple interne du vase de frein se déchire, la force mécanique développée :", "options": ["S'annule par fuite d'air", "Reste maximale", "Est doublée par sécurité"], "rep": "S'annule par fuite d'air"},
+            {"id": "tr_q3_c1", "q": "Dans l'unité usuelle industrielle, à combien de Pascals correspond 1 bar ?", "options": ["100 000 Pa", "1 000 Pa", "100 Pa"], "rep": "100 000 Pa"},
+            {"id": "tr_q4_c1", "q": "L'effort mécanique F transmis par la tige de commande agit de façon :", "options": ["Perpendiculaire à la surface", "Parallèle à la surface", "Oblique"], "rep": "Perpendiculaire à la surface"},
+            {"id": "tr_q5_c1", "q": "Quel organe mécanique génère l'air comprimé à bord du tracteur routier ?", "options": ["Le compresseur bicylindre", "La pompe d'injection", "L'alternateur d'arbre"], "rep": "Le compresseur bicylindre"},
+            {"id": "tr_q6_c1", "q": "Le relâchement de la pédale de frein provoque une évacuation d'air qualifiée de :", "options": ["Échappement à l'atmosphère", "Aspiration de sécurité", "Laminage thermique"], "rep": "Échappement à l'atmosphère"},
+            {"id": "tr_q7_c1", "q": "La surface utile de la membrane souple d'un récepteur de frein s'exprime en :", "options": ["Mètres carrés (ou pouces)", "Bars", "Newtons par mètre"], "rep": "Mètres carrés (ou pouces)"},
+            {"id": "tr_q8_c1", "q": "Un temps de réponse trop long lors du freinage indique généralement :", "options": ["Une fuite ou une restriction de ligne", "Une huile trop visqueuse", "Une surpression du compresseur"], "rep": "Une fuite ou une restriction de ligne"},
+            {"id": "tr_q9_c1", "q": "Pour garantir l'arrêt d'un véhicule articulé de 44 tonnes, la force de freinage totale doit être :", "options": ["Proportionnelle à la masse totale en charge", "Strictement égale à 100 N", "Indépendante de la vitesse"], "rep": "Proportionnelle à la masse totale en charge"},
+            {"id": "tr_q10_c1", "q": "La jauge rouge du tableau de bord d'un camion indique une alerte critique si la pression pneumatique est :", "options": ["Inférieure au seuil de sécurité de 5.5 bars", "Supérieure à 1 bar", "Strictement stable"], "rep": "Inférieure au seuil de sécurité de 5.5 bars"}
+        ]
+        trous_sources_tr = [
+            ("1. Le compresseur de bord stocke l'énergie sous forme de .......... pneumatique.", ["Choisir...", "pression", "chaleur"], "pression", "tr_t1_c1"),
+            ("2. La section utile de la membrane conditionne l'intensité de la .......... .", ["Choisir...", "force", "vitesse"], "force", "tr_t2_c1"),
+            ("3. L'évacuation de l'air lors du relâchement correspond à une baisse de .......... .", ["Choisir...", "pression", "masse"], "pression", "tr_t3_c1"),
+            ("4. La force pressante se déploie de manière orthogonale aux .......... .", ["Choisir...", "parois", "tubes"], "parois", "tr_t4_c1"),
+            ("5. La loi fondamentale appliquée aux actionneurs du circuit est le principe de ..........", ["Choisir...", "Pascal", "Newton"], "Pascal", "tr_t5_c1"),
+            ("6. Une fuite d'air comprimé vers l'extérieur constitue une anomalie ..........", ["Choisir...", "externe", "interne"], "externe", "tr_t6_c1"),
+            ("7. Convertir les bars en Pascals exige de multiplier la valeur lue par ..........", ["Choisir...", "100 000", "1 000"], "100 000", "tr_t7_c1"),
+            ("8. L'effort axial pousse fermement les garnitures contre le .......... solide.", ["Choisir...", "tambour", "réservoir"], "tambour", "tr_t8_c1"),
+            ("9. L'étanchéité des raccords souples garantit la sécurité du ..........", ["Choisir...", "transport", "moteur"], "transport", "tr_t9_c1"),
+            ("10. Ce diagnostic prévient tout risque de perte de contrôle du .......... routier.", ["Choisir...", "camion", "fluide"], "camion", "tr_t10_c1")
+        ]
+    else:
+        titre_tr = "Régulation des suspensions pneumatiques et impact de la surcharge"
+        enonce_tr = (
+            "**Case 1 :** Les coussins d'essieux en élastomère s'adaptent pour maintenir le châssis routier à hauteur constante.\n\n"
+            "**Case 2 :** Une surcharge localisée augmente de manière critique le poids (Force) s'exerçant sur la surface d'appui.\n\n"
+            "**Case 3 :** La centrale électronique doit injecter plus d'air pour faire grimper la pression P et équilibrer le pont.\n\n"
+            "**Case 4 :** Si la pression franchit la limite mécanique élastique, le boudin explose par surpression brutale."
+        )
+        texte_bd_tr = (
+            "**Bande Caricaturale de l'Incident : Les Coussins de Suspension**\n\n"
+            "**Case 1 :** Chargement lourd : « On empile les palettes à l'arrière, les coussins s'écrasent sous la force ! ».\n\n"
+            "**Case 2 :** Réaction : « Les capteurs crient ! Il faut gonfler les ballons pour contrer le tassement ! ».\n\n"
+            "**Case 3 :** Calcul : « La pression grimpe à 7 bars pour maintenir l'assiette du plateau à l'horizontale ! ».\n\n"
+            "**Case 4 :** Alerte Surcharge : « Trop de Newtons ! Le boudin sature, attention à la hernie mécanique ! »"
+        )
+        img_reelle_tr, img_bd_tr = "susp_reelle.jpg", "bd_susp.jpg"
+
+        questions_sources_tr = [
+            {"id": "tr_q1_c2", "q": "Quelle grandeur physique varie dans le coussin pour compenser un surcroît de poids ?", "options": ["La pression de l'air insuflé", "La masse volumique du caoutchouc", "La constante gravitationnelle"], "rep": "La pression de l'air insuflé"},
+            {"id": "tr_q2_c2", "q": "L'éclatement d'un boudin pneumatique de suspension constitue une rupture :", "options": ["Brute par dépassement de la limite élastique", "Thermique transitoire", "Isotherme permanente"], "rep": "Brute par dépassement de la limite élastique"},
+
+            {"id": "tr_q3_c2", "q": "Quel appareil permet de vérifier la pression de gonflage des circuits pneumatiques ?", "options": ["Un manomètre", "Un dynamomètre", "Un débitmètre"], "rep": "Un manomètre"},
+            {"id": "tr_q4_c2", "q": "Quand le camion roule sur une bosse, la force dynamique subie par la suspension :", "options": ["Augmente instantanément", "Reste parfaitement stable", "S'annule"], "rep": "Augmente instantanément"},
+            {"id": "tr_q5_c2", "q": "La suspension pneumatique offre par rapport aux ressorts métalliques l'avantage d'une :", "options": ["Correction d'assiette constante", "Masse totale réduite de moitié", "Suppression totale de la gravité"], "rep": "Correction d'assiette constante"},
+            {"id": "tr_q6_c2", "q": "Une mauvaise répartition de la cargaison dans la remorque génère une surcharge localisée sur :", "options": ["Un essieu spécifique", "Le pare-brise", "Le réservoir de gazole"], "rep": "Un essieu spécifique"},
+            {"id": "tr_q7_c2", "q": "L'unité légale du système international pour mesurer l'aire d'appui du coussin est :", "options": ["Le mètre carré (m²)", "Le Pascal", "Le bar"], "rep": "Le mètre carré (m²)"},
+            {"id": "tr_q8_c2", "q": "Si un boudin de suspension fuit en continu, le camion va présenter une assiette :", "options": ["Inclinée ou déséquilibrée", "Strictement parfaite", "Totalement surélevée"], "rep": "Inclinée ou déséquilibrée"},
+            {"id": "tr_q9_c2", "q": "Pour doubler la force de levée d'un coussin sans modifier sa pression, il faut :", "options": ["Doubler sa surface active", "Réduire sa hauteur", "Changer le type d'acier"], "rep": "Doubler sa surface active"},
+            {"id": "tr_q10_c2", "q": "La valve de nivellement automatique réagit directement aux variations géométriques de :", "options": ["La garde au sol du châssis", "La température extérieure", "La vitesse de rotation des roues"], "rep": "La garde au sol du châssis"}
+        ]
+        trous_sources_tr = [
+            ("1. Les suspensions absorbent les chocs du profil de la .......... .", ["Choisir...", "route", "bâche"], "route", "tr_t1_c2"),
+            ("2. Équilibrer une charge lourde exige d'augmenter le flux d'.......... comprimé.", ["Choisir...", "air", "fluide"], "air", "tr_t2_c2"),
+            ("3. La pression répartie sur la surface interne développe le vecteur .......... d'assiette.", ["Choisir...", "force", "vitesse"], "force", "tr_t3_c2"),
+            ("4. Maintenir le niveau horizontal évite un comportement routier .......... .", ["Choisir...", "instable", "parfait"], "instable", "tr_t4_c2"),
+            ("5. Les boudins souples s'adaptent selon les contraintes de la .......... solidifiée.", ["Choisir...", "charge", "vitesse"], "charge", "tr_t5_c2"),
+            ("6. Une surpression trop brutale sur l'enveloppe cause un risque d'..........", ["Choisir...", "éclatement", "laminage"], "éclatement", "tr_t6_c2"),
+            ("7. L'effort s'exerce de façon normale, donc .......... à l'aire interne.", ["Choisir...", "perpendiculaire", "tangentielle"], "perpendiculaire", "tr_t7_c2"),
+            ("8. L'unité normalisée lue sur le cadran d'atelier est le ..........", ["Choisir...", "bar", "Pascal"], "bar", "tr_t8_c2"),
+            ("9. La régulation automatique garantit la sécurité active du .......... routier.", ["Choisir...", "convoi", "manomètre"], "convoi", "tr_t9_c2"),
+            ("10. Ce diagnostic prévient la détérioration prématurée des liaisons au ..........", ["Choisir...", "sol", "vide"], "sol", "tr_t10_c2")
+        ]
+
+    # Enregistrement final et synchronisation immédiate des variables en session
+    if "ordre_quiz_tab7_tr_aleatoire" not in st.session_state:
+        st.session_state.ordre_quiz_tab7_tr_aleatoire = questions_sources_tr
+    if "champs_therm7_tr_clean" not in st.session_state:
+        st.session_state.champs_therm7_tr_clean = trous_sources_tr
+    col_g_tr, col_d_tr = st.columns([0.3, 0.7])
+    
+    with col_g_tr:
+        st.markdown(f"##### Dossier Technique : {titre_tr}")
+        st.info(enonce_tr)
+        st.info(texte_bd_tr)
+        
+    with col_d_tr:
+        st.markdown("##### Visualisation Technique")
+        import os
+        
+        # 1. Rendu supérieur : Image réelle (Largeur fixe 300px)
+        if os.path.exists(img_reelle_tr):
+            st.image(img_reelle_tr, caption="Image réelle : Organe technique du convoi routier", width=300)
+        else:
+            st.caption("Illustration réelle indisponible ou manquante")
+        
+        # Boucle d'espacement des 20 lignes réglementaires pour descendre la caricature
+        for _ in range(20):
+            st.write("")
+        
+        # 2. Rendu inférieur : Caricature de BD (Largeur fixe 300px)
+        if os.path.exists(img_bd_tr):
+            st.image(img_bd_tr, caption="Bande dessinée humoristique de l'incident routier", width=300)
+        else:
+            st.caption("Illustration caricaturale indisponible ou manquante")
+
+    st.write("---")
+
+    st.subheader("Laboratoire Virtuel : Simulateur de calcul Pneumatique")
+    
+    col_p1_tr, col_p2_tr = st.columns(2)
+    if id_cas_tr == 1:
+        with col_p1_tr:
+            p_frein_bar = st.slider("Pression de freinage injectée (bars) :", 2.0, 10.0, 6.5, 0.5, key="sl_tr_c1_1_s7")
+            diam_vase_type = st.slider("Taille de la membrane utile (cm²) :", 100, 300, 150, 10, key="sl_tr_c1_2_s7")
+        f_frein_n = (p_frein_bar * 100000.0) * (diam_vase_type / 10000.0)
+        with col_p2_tr:
+            st.metric("Force de poussée sur la tige de commande (F)", f"{f_frein_n:.0f} N")
+            st.latex(rf"F = P \cdot S = ({p_frein_bar} \cdot 10^5) \cdot ({diam_vase_type / 10000:.4f}) = {f_frein_n:,.0f}\text{{ N}}")
+    else:
+        with col_p1_tr:
+            poids_essieu_kg = st.slider("Masse reposant sur l'essieu routier arrière (kg) :", 4000, 13000, 8000, 500, key="sl_tr_c2_1_s7")
+        f_coussin = (float(poids_essieu_kg) * 9.81) / 2.0 # Réparti sur 2 coussins d'essieu
+        pres_coussin_bar = (f_coussin / 0.045) / 100000.0  # Aire de contact moyenne fixée à 0.045 m²
+        with col_p2_tr:
+            st.metric("Pression interne requise par coussin de suspension", f"{pres_coussin_bar:.2f} bar")
+            st.latex(rf"P = \frac{{F}}{{S}} = \frac{{{f_coussin:.0f}}}{{0{{,}}045}} = {pres_coussin_bar * 100000:,.0f}\text{{ Pa}}")
+
+    st.write("---")
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Technique du Scénario Routier (10 pts)")
+        if "ordre_quiz_tab7_tr_aleatoire" in st.session_state:
+            for idx, q_d in enumerate(st.session_state.ordre_quiz_tab7_tr_aleatoire, 1):
+                st.write(f"**{idx}.** {q_d['q']}")
+                st.selectbox("", options=["Choisir..."] + q_d["options"], key=f"tr_q_{q_d['id']}_{idx}", disabled=verrou_at7, label_visibility="collapsed")
+    with col_t:
+        st.markdown("##### Synthèse de l'Atelier 7 (Texte à trous - 10 pts)")
+        if "champs_therm7_tr_clean" in st.session_state:
+            for idx, ligne in enumerate(st.session_state.champs_therm7_tr_clean, 1):
+                enonce, choix, attendu, cle = ligne
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: 
+                    st.write(enonce)
+                with c_sel: 
+                    st.selectbox("", choix, key=f"tr_t_{cle}_{idx}", disabled=verrou_at7, label_visibility="collapsed")
+
+    # =============================================================================
+    # 7. LOGIQUE DE VALIDATION TECHNIQUE ET COMPILATION DU BILAN HTML
+    # =============================================================================
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 7")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_tr = st.checkbox("Je certifie avoir complété l'Atelier du Transport Routier.", key="chk_certif_at7_final_official_final", disabled=verrou_at7)
+    
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 7", key="btn_valider_at7_official_ultimate_final", use_container_width=True, disabled=verrou_at7):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_tr: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction automatique du Quiz
+            score_q = 0.0
+            if "ordre_quiz_tab7_tr_aleatoire" in st.session_state:
+                for idx, q_item in enumerate(st.session_state.ordre_quiz_tab7_tr_aleatoire, 1):
+                    saisie = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"tr_q_{q_item['id']}_"):
+                            saisie = st.session_state[k]
+                            break
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q += 1.0
+            
+            # 2. Correction automatique du Texte à trous
+            score_t = 0.0
+            if "champs_therm7_tr_clean" in st.session_state:
+                for idx, ligne in enumerate(st.session_state.champs_therm7_tr_clean, 1):
+                    cle = ligne[-1]
+                    attendu = ligne
+                    saisie_t = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"tr_t_{cle}_"):
+                            saisie_t = st.session_state[k]
+                            break
+                    if str(saisie_t).strip() == str(attendu).strip(): 
+                        score_t += 1.0
+            
+            st.session_state.score_suite7_tr_p1 = round(float(score_q), 1)
+            st.session_state.score_suite7_tr_p2 = round(float(score_t), 1)
+            st.session_state.score_final_at7 = round(float(score_q + score_t), 1)
+            st.session_state.suite_verrouille_tab7_tr = True
+            st.rerun()
+
+    # --- ARCHIVAGE DU RAPPORT ELECTRONIQUE SCELLÉ HTML ---
+    if st.session_state.get("suite_verrouille_tab7_tr", False):
+        from datetime import datetime
+        scr1_t7 = st.session_state.get("score_suite7_tr_p1", 0.0)
+        scr2_t7 = st.session_state.get("score_suite7_tr_p2", 0.0)
+        tot_s_t7 = st.session_state.get("score_final_at7", 0.0)
+        timestamp_suite7 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER TRANSPORT SCELLÉ | Note de session : {tot_s_t7:.1f} / 20")
+
+        html_export_tr7 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Transport Routier - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #2563eb; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Physique</h1>
+                <p>Atelier 7 : Applications pneumatiques, freinage et répartition des masses au Transport Routier</p>
+                <p>Scénario résolu : {titre_tr}</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite7}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t7:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t7:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t7:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 7 : <strong>{tot_s_t7:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab7_tr_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab7_tr_aleatoire, 1):
+                saisie = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"tr_q_{q_item['id']}_"):
+                        saisie = st.session_state[k]
+                        break
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_tr7 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tr7 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_therm7_tr_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_therm7_tr_clean, 1):
+                enonce_texte = ligne
+                attendu_texte = ligne
+                cle_variable = ligne[-1]
+                
+                saisie_texte = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"tr_t_{cle_variable}_"):
+                        saisie_texte = st.session_state[k]
+                        break
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_tr7 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_tr7 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_tr7 = preparer_nom_fichier("Rapport_Application_Transport").replace(".txt", ".html")
+        st.download_button(
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 7 (.HTML)",
+            data=html_export_tr7,
+            file_name=nom_fichier_html_tr7,
+            mime="text/html",
+            use_container_width=True,
+        )
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 
 
 
