@@ -1785,40 +1785,6 @@ with tab5:
         ]
 
 
-    col_q_m, col_t_m = st.columns(2)
-    
-    with col_q_m:
-        st.markdown("##### Quiz Technique du Scénario Maintenance (10 questions - 10 pts)")
-        if "ordre_quiz_tab5_maint_aleatoire" in st.session_state:
-            for idx, q_data in enumerate(st.session_state.ordre_quiz_tab5_maint_aleatoire, 1):
-                st.write(f"**{idx}.** {q_data['q']}")
-                st.selectbox(
-                    "", 
-                    options=["Choisir..."] + q_data["options"], 
-                    key=f"widget_at5_maint_q_{q_data['id']}_{idx}", 
-                    disabled=verrou_at5,
-                    label_visibility="collapsed"
-                )
-
-    with col_t_m:
-        st.markdown("##### Synthèse de l'Atelier 5 (Texte à trous - 10 cases - 10 pts)")
-        if "champs_therm5_maint_clean" in st.session_state:
-            for idx, ligne in enumerate(st.session_state.champs_therm5_maint_clean, 1):
-                enonce, choix, attendu, cle = ligne
-                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-                with c_txt: 
-                    st.write(enonce)
-                with c_sel: 
-                    st.selectbox(
-                        "", 
-                        choix, 
-                        key=f"widget_at5_maint_t_{cle}_{idx}", 
-                        disabled=verrou_at5,
-                        label_visibility="collapsed"
-                    )
-
-
-
     # Enregistrement immédiat dans la session pour garantir la synchronisation
     st.session_state.ordre_quiz_tab5_maint_aleatoire = questions_sources
     st.session_state.champs_therm5_maint_clean = trous_sources
@@ -2049,6 +2015,40 @@ with tab5:
             st.error(f"Friction moléculaire intense : Cette centrale dissipe {puissance_thermique_kw:.1f} kJ de chaleur sensible par seconde dans l'huile.")
 
     st.write("---")
+
+        col_q_m, col_t_m = st.columns(2)
+    
+    with col_q_m:
+        st.markdown("##### Quiz Technique du Scénario Maintenance (10 questions - 10 pts)")
+        if "ordre_quiz_tab5_maint_aleatoire" in st.session_state:
+            for idx, q_data in enumerate(st.session_state.ordre_quiz_tab5_maint_aleatoire, 1):
+                st.write(f"**{idx}.** {q_data['q']}")
+                st.selectbox(
+                    "", 
+                    options=["Choisir..."] + q_data["options"], 
+                    key=f"widget_at5_maint_q_{q_data['id']}_{idx}", 
+                    disabled=verrou_at5,
+                    label_visibility="collapsed"
+                )
+
+    with col_t_m:
+        st.markdown("##### Synthèse de l'Atelier 5 (Texte à trous - 10 cases - 10 pts)")
+        if "champs_therm5_maint_clean" in st.session_state:
+            for idx, ligne in enumerate(st.session_state.champs_therm5_maint_clean, 1):
+                enonce, choix, attendu, cle = ligne
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: 
+                    st.write(enonce)
+                with c_sel: 
+                    st.selectbox(
+                        "", 
+                        choix, 
+                        key=f"widget_at5_maint_t_{cle}_{idx}", 
+                        disabled=verrou_at5,
+                        label_visibility="collapsed"
+                    )
+
+
     # =============================================================================
     # 5. SYSTÈME DE CORRECTION SUR 20 ET PROTOCOLE D'EXPORTATION HTML SCELLÉE
     # =============================================================================
