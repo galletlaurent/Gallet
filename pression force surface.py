@@ -358,6 +358,12 @@ with tab1:
         except Exception:
             # Remplacement par un avertissement d'absence de média plus propre pour l'élève
             st.warning("Illustration en cours de chargement ou fichier 'Torricelli.jpg' absent du serveur.")
+        try:
+            st.image("pressionatmos.jpg", caption="Baromètre", use_container_width=True)
+        except Exception:
+            # Remplacement par un avertissement d'absence de média plus propre pour l'élève
+            st.warning("Illustration en cours de chargement ou fichier 'pressionatmos.jpg' absent du serveur.")
+
 
         st.markdown("""
         * **Sa Trouvaille :** La mesure de la force pressante de l'air. Il est le premier à quantifier la force colossale exercée par le poids de l'atmosphère sur chaque unité de surface terrestre.
