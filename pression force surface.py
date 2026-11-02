@@ -358,8 +358,8 @@ with tab1:
     </style>
     """, unsafe_allow_html=True)
 
-    # Création des deux colonnes principales pour la BD
-    col_bd_texte, col_bd_image = st.columns()
+    # Correction de la syntaxe : Ajout du chiffre 2 pour spécifier deux colonnes égales
+    col_bd_texte, col_bd_image = st.columns(2)
 
     # Colonne de gauche : Empilement de toutes les cases de texte
     with col_bd_texte:
@@ -369,7 +369,7 @@ with tab1:
 
         st.markdown("**Case 2 : L\'illumination de Pascal**")
         st.markdown('<div class="narrateur">Pascal regarde son verre, prend une paille, et tape du poing sur la table.</div>', unsafe_allow_html=True)
-        st.markdown('<div class="bulles"><b>Pascal :</b> "Tu as raison Evangelista ! Et regarde ça : la pression dépend directement du rapport P = F / S. Si j\'appuie sur mon verre ici, la pression pousse le liquide partout en même temps ! C\'est comme cela que j\'ai brisé mon tonneau !"</div>', unsafe_allow_html=True)
+        st.markdown('<div class="bulles"><b>Pascal :</b> "Tu as raison Evangelista ! Et regarde ça : la pression dépend directement du rapport P = F / S. Si j\'appuie sur mon verre ici, la pression pushes le liquide partout en même temps ! C\'est comme cela que j\'ai brisé mon tonneau !"</div>', unsafe_allow_html=True)
 
         st.markdown("**Case 3 : La panique au laboratoire**")
         st.markdown('<div class="narrateur">Le serveur de la taverne recule, inquiet des théories des deux physiciens et des formules mathématiques.</div>', unsafe_allow_html=True)
