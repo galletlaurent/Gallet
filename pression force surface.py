@@ -1338,9 +1338,14 @@ with tab4:
 with tab5:
     st.header("Application professionnelle : Diagnostic et Maintenance")
     
+    # Sécurisation : Tirage au sort et initialisation directe si la clé n'existe pas
+    if "cas_aleatoire_tab5" not in st.session_state:
+        import random
+        st.session_state.cas_aleatoire_tab5 = random.randint(1, 4)
+        
+    # Lecture sécurisée après vérification
     id_cas_maint = st.session_state.cas_aleatoire_tab5
     st.write(f"Dossier technique de maintenance attribué : **Anomalie mécanique n°{id_cas_maint}**")
-
     # Styles CSS pour les légendes, bandeaux et alertes de l'Atelier 5
     st.markdown("""
     <style>
