@@ -359,7 +359,7 @@ with tab1:
     """, unsafe_allow_html=True)
 
     # Création des deux colonnes principales pour la BD
-    col_bd_texte, col_bd_image = st.columns([1, 1])
+    col_bd_texte, col_bd_image = st.columns()
 
     # Colonne de gauche : Empilement de toutes les cases de texte
     with col_bd_texte:
@@ -375,11 +375,12 @@ with tab1:
         st.markdown('<div class="narrateur">Le serveur de la taverne recule, inquiet des théories des deux physiciens et des formules mathématiques.</div>', unsafe_allow_html=True)
         st.markdown('<div class="bulles"><b>Le Serveur :</b> "Messieurs, calmez-vous avec vos calculs de force et de surface. Vous voulez régler l\'addition ou vous allez aussi faire éclater ma cave avec votre relation P = F / S ?"<br><br><b>Pascal et Torricelli (en chœur) :</b> "C\'est pour la science !"</div>', unsafe_allow_html=True)
 
-    # Colonne de droite : Affichage de la grande image de la BD qui s'aligne avec le texte
+    # Colonne de droite : Affichage de la grande image hébergée en ligne
     with col_bd_image:
-        st.image("bd_cuve4.png", use_container_width=True, caption="Anomalie hydrostatique sur la Cuve 4")
+        st.image("https://unsplash.com", use_container_width=True, caption="Anomalie hydrostatique sur la Cuve 4")
 
     st.markdown("---")
+    
     
     if "suite_verrouille_tab1_pression" not in st.session_state:
         st.session_state.suite_verrouille_tab1_pression = False
