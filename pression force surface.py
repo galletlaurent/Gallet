@@ -1645,68 +1645,124 @@ with tab4:
 with tab5:
     st.header("Application professionnelle : Diagnostic et Maintenance")
     
-    # BANQUE DE DONNÉES ET INITIALISATION EN AMONT DES QUESTIONS DE SECOURS (ANTI-BUG)
-    questions_sources = [
-        {"id": "qm1", "q": "Quel appareil de mesure permet de valider la valeur de pression dans le circuit ?", "options": ["Un manomètre", "Un débitmètre", "Un thermomètre"], "rep": "Un manomètre"},
-        {"id": "qm2", "q": "Si l'huile contourne le piston à cause d'un joint usé, comment qualifie-t-on cette défaillance ?", "options": ["Une fuite interne", "Une fuite externe", "Une cavitation"], "rep": "Une fuite interne"},
-        {"id": "qm3", "q": "Dans la relation P = F / S, si l'huile fuit et la pression s'effondre, la force développée :", "options": ["Chute proportionnellement", "Reste maximale", "Augmente subitement"], "rep": "Chute proportionnellement"},
-        {"id": "qm4", "q": "Quelle unité normalisée est généralement lue sur le cadran d'un manomètre industriel ?", "options": ["Le bar", "Le Newton", "Le mètre par seconde"], "rep": "Le bar"},
-        {"id": "qm5", "q": "Pour augmenter la force d'une presse sans modifier sa pression de service, il faut :", "options": ["Augmenter la section du vérin", "Réduire le diamètre du piston", "Allonger la course"], "rep": "Augmenter la section du vérin"},
-        {"id": "qm6", "q": "Un fluide hydraulique industriel est utilisé dans les circuits car il est pratiquement :", "options": ["Incompressible", "Compressible", "Volatile"], "rep": "Incompressible"},
-        {"id": "qm7", "q": "La force pressante s'exerçant sur la face plane d'un piston de vérin agit toujours de façon :", "options": ["Perpendiculaire", "Parallèle", "Oblique"], "rep": "Perpendiculaire"},
-        {"id": "qm8", "q": "Quel risque présente une huile contenant des impuretés ou des particules métalliques ?", "options": ["Abrasion des joints de section", "Augmentation de la viscosité", "Chute de la gravité"], "rep": "Abrasion des joints de section"},
-        {"id": "qm9", "q": "Quelle opération préventive permet de limiter l'usure prématurée des composants hydrauliques ?", "options": ["La filtration périodique", "Le surtarage des valves", "L'augmentation du débit"], "rep": "La filtration périodique"},
-        {"id": "qm10", "q": "L'unité de pression du système international équivalente à 1 N/m² is :", "options": ["Le Pascal", "Le Bar", "Le Joule"], "rep": "Le Pascal"}
-    ]
-    trous_sources = [
-        ("1. Un manque de force sur un actionneur traduit une perte de .......... hydraulique.", ["Choisir...", "pression", "vitesse"], "pression", "m5_t1"),
-        ("2. Le manomètre mesure l'effort réparti par le fluide sur l'unité de ..........", ["Choisir...", "surface", "longueur"], "surface", "m5_t2"),
-        ("3. Le contournement du piston par le fluide constitue une fuite ..........", ["Choisir...", "interne", "externe"], "interne", "m5_t3"),
-        ("4. La force pressante se déploie de manière orthogonale, donc .......... à la paroi.", ["Choisir...", "perpendiculaire", "tangente"], "perpendiculaire", "m5_t4"),
-        ("5. L'unité courante lue sur les cadrans des techniciens est le ..........", ["Choisir...", "bar", "Pascal"], "bar", "m5_t5"),
-        ("6. Pour restaurer l'étanchéité, il faut remplacer le .......... d'usure.", ["Choisir...", "joint", "piston"], "joint", "m5_t6"),
-        ("7. Un fluide sous pression transmet son action dans toutes les ..........", ["Choisir...", "directions", "lignes"], "directions", "m5_t7"),
-        ("8. L'huile de maintenance est choisie pour ses propriétés d'..........", ["Choisir...", "incompressibilité", "dilatation"], "incompressibilité", "m5_t8"),
-        ("9. Modifier l'aire de poussée modifie l'intensité du vecteur .......... développé.", ["Choisir...", "force", "vitesse"], "force", "m5_t9"),
-        ("10. Le maintien d'une pression stable garantit le bon fonctionnement mécanique de la ..........", ["Choisir...", "presse", "pompe"], "presse", "m5_t10")
-    ]
-
     if "cas_aleatoire_tab5" not in st.session_state:
         st.session_state.cas_aleatoire_tab5 = 1
-
-    if "ordre_quiz_tab5_maint_aleatoire" not in st.session_state:
-        st.session_state.ordre_quiz_tab5_maint_aleatoire = questions_sources
-    if "champs_therm5_maint_clean" not in st.session_state:
-        st.session_state.champs_therm5_maint_clean = trous_sources
-
-    # Système de tirage au sort par bouton (Index unique officiel)
-    col_tirage_maint, col_statut_maint = st.columns([0.4, 0.6], vertical_alignment="center")
-    with col_tirage_maint:
-        if st.button("GÉNÉRER UN EXERCICE DE MAINTENANCE AU HASARD", key="btn_tirage_hasard_at5_officiel", use_container_width=True):
-            import random
-            actuel_maint = st.session_state.cas_aleatoire_tab5
-            possibles_maint = [1, 2, 3, 4]
-            filtrés_maint = [c for c in possibles_maint if c != actuel_maint]
-            st.session_state.cas_aleatoire_tab5 = random.choice(filtrés_maint)
-            
-            if "ordre_quiz_tab5_maint_aleatoire" in st.session_state:
-                del st.session_state.ordre_quiz_tab5_maint_aleatoire
-            if "champs_therm5_maint_clean" in st.session_state:
-                del st.session_state.champs_therm5_maint_clean
-            st.rerun()
-
     id_cas_maint = st.session_state.cas_aleatoire_tab5
-    st.write(f"Dossier technique de maintenance attribué : **Anomalie mécanique n°{id_cas_maint}**")
-    
-    # Styles CSS pour les légendes, bandeaux et alertes de l'Atelier 5
-    st.markdown("""
-    <style>
-    .legende-maint { color: #dc2626; font-weight: bold; text-align: center; margin-top: 5px; font-size: 13px; }
-    .bandeau-maint { background-color: #fef2f2; border-left: 5px solid #ef4444; padding: 12px; font-size: 14px; font-weight: 500; margin-bottom: 20px; color: #991b1b; border-radius: 4px; }
-    </style>
-    """, unsafe_allow_html=True)
 
-    # CONFIGURATION DES ÉNONCÉS TEXTUELS SELON L'ID DU CAS
+    # --- CONFIGURATION DYNAMIQUE DES QUIZ ET DES TROUS SELON LE SCÉNARIO ---
+    if id_cas_maint == 1:
+        # CAS 1 : VÉRIN DE PRESSE HYDRAULIQUE
+        questions_sources = [
+            {"id": "qm1_c1", "q": "Quel appareil de mesure permet de valider la valeur de pression dans le circuit ?", "options": ["Un manomètre", "Un débitmètre", "Un thermomètre"], "rep": "Un manomètre"},
+            {"id": "qm2_c1", "q": "Si l'huile contourne le piston à cause d'un joint usé, comment qualifie-t-on cette défaillance ?", "options": ["Une fuite interne", "Une fuite externe", "Une cavitation"], "rep": "Une fuite interne"},
+            {"id": "qm3_c1", "q": "Dans la relation P = F / S, si l'huile fuit et la pression s'effondre, la force développée :", "options": ["Chute proportionnellement", "Reste maximale", "Augmente subitement"], "rep": "Chute proportionnellement"},
+            {"id": "qm4_c1", "q": "Quelle unité normalisée est généralement lue sur le cadran d'un manomètre industriel ?", "options": ["Le bar", "Le Newton", "Le mètre par seconde"], "rep": "Le bar"},
+            {"id": "qm5_c1", "q": "Pour augmenter la force d'une presse sans modifier sa pression de service, il faut :", "options": ["Augmenter la section du vérin", "Réduire le diamètre du piston", "Allonger la course"], "rep": "Augmenter la section du vérin"},
+            {"id": "qm6_c1", "q": "Un fluide hydraulique industriel est utilisé dans les circuits car il est pratiquement :", "options": ["Incompressible", "Compressible", "Volatile"], "rep": "Incompressible"},
+            {"id": "qm7_c1", "q": "La force pressante s'exerçant sur la face plane d'un piston de vérin agit toujours de façon :", "options": ["Perpendiculaire", "Parallèle", "Oblique"], "rep": "Perpendiculaire"},
+            {"id": "qm8_c1", "q": "Quel risque présente une huile contenant des impuretés ou des particules métalliques ?", "options": ["Abrasion des joints de section", "Augmentation de la viscosité", "Chute de la gravité"], "rep": "Abrasion des joints de section"},
+            {"id": "qm9_c1", "q": "Quelle opération préventive permet de limiter l'usure prématurée des composants hydrauliques ?", "options": ["La filtration périodique", "Le surtarage des valves", "L'augmentation du débit"], "rep": "La filtration périodique"},
+            {"id": "qm10_c1", "q": "L'unité de pression du système international équivalente à 1 N/m² est :", "options": ["Le Pascal", "Le Bar", "Le Joule"], "rep": "Le Pascal"}
+        ]
+        trous_sources = [
+            ("1. Un manque de force sur un actionneur traduit une perte de .......... hydraulique.", ["Choisir...", "pression", "vitesse"], "pression", "m5_t1_c1"),
+            ("2. Le manomètre mesure l'effort réparti par le fluide sur l'unité de ..........", ["Choisir...", "surface", "longueur"], "surface", "m5_t2_c1"),
+            ("3. Le contournement du piston par le fluide constitue une fuite ..........", ["Choisir...", "interne", "externe"], "interne", "m5_t3_c1"),
+            ("4. La force pressante se déploie de manière orthogonale, donc .......... à la paroi.", ["Choisir...", "perpendiculaire", "tangente"], "perpendiculaire", "m5_t4_c1"),
+            ("5. L'unité courante lue sur les cadrans des techniciens est le ..........", ["Choisir...", "bar", "Pascal"], "bar", "m5_t5_c1"),
+            ("6. Pour restaurer l'étanchéité, il faut remplacer le .......... d'usure.", ["Choisir...", "joint", "piston"], "joint", "m5_t6_c1"),
+            ("7. Un fluide sous pression transmet son action dans toutes les ..........", ["Choisir...", "directions", "lignes"], "directions", "m5_t7_c1"),
+            ("8. L'huile de maintenance est choisie pour ses propriétés d'..........", ["Choisir...", "incompressibilité", "dilatation"], "incompressibilité", "m5_t8_c1"),
+            ("9. Modifier l'aire de poussée modifie l'intensité du vecteur .......... développé.", ["Choisir...", "force", "vitesse"], "force", "m5_t9_c1"),
+            ("10. Le maintien d'une pression stable garantit le bon fonctionnement mécanique de la ..........", ["Choisir...", "presse", "pompe"], "presse", "m5_t10_c1")
+        ]
+
+    elif id_cas_maint == 2:
+        # CAS 2 : RUPTURE DE CANALISATION
+        questions_sources = [
+            {"id": "qm1_c2", "q": "Comment qualifie-t-on une onde de surpression brutale provoquée par la fermeture rapide d'une vanne ?", "options": ["Un coup de bélier", "Une cavitation", "Un effet Venturi"], "rep": "Un coup de bélier"},
+            {"id": "qm2_c2", "q": "Quelle unité SI définit la contrainte mécanique maximale admissible par l'acier du tube ?", "options": ["Le Pascal (ou MPa)", "Le Newton", "Le Bar"], "rep": "Le Pascal (ou MPa)"},
+            {"id": "qm3_c2", "q": "Pour dissiper les ondes de choc de pression dans un circuit, quel composant ajoute-t-on ?", "options": ["Un accumulateur hydropneumatique", "Une pompe de gavage", "Un limiteur de débit"], "rep": "Un accumulateur hydropneumatique"},
+            {"id": "qm4_c2", "q": "La force de rupture appliquée sur la paroi du tube dépend de la pression et de :", "options": ["La surface intérieure exposée", "La longueur de la ligne", "La température ambiante"], "rep": "La surface intérieure exposée"},
+            {"id": "qm5_c2", "q": "Une rupture par application répétée de contraintes inférieures à la limite élastique est appelée :", "options": ["Rupture par fatigue", "Rupture ductile", "Arrachement thermique"], "rep": "Rupture par fatigue"},
+            {"id": "qm6_c2", "q": "Quelle formule de base lie l'épaisseur du tube à sa résistance à la pression ?", "options": ["La formule de Barlow", "La loi de Fourier", "Le principe d'Archimède"], "rep": "La formule de Barlow"},
+            {"id": "qm7_c2", "q": "Si l'épaisseur de la paroi du tube est doublée, sa résistance à l'éclatement mécanique :", "options": ["Augmente nettement", "Diminue de moitié", "Reste parfaitement identique"], "rep": "Augmente nettement"},
+            {"id": "qm8_c2", "q": "Les vibrations d'une tuyauterie mal fixée engendrent un phénomène d'usure par :", "options": ["Fatigue mécanique", "Laminage", "Sublimation"], "rep": "Fatigue mécanique"},
+            {"id": "qm9_c2", "q": "En cas d'éclatement, le fluide s'échappe vers l'extérieur. C'est une fuite :", "options": ["Externe", "Interne", "Convective"], "rep": "Externe"},
+            {"id": "qm10_c2", "q": "Quelle est l'équivalence d'une contrainte mécanique de 1 MégaPascal (MPa) en Pascals ?", "options": ["1 000 000 Pa", "1 000 Pa", "100 bars"], "rep": "1 000 000 Pa"}
+        ]
+        trous_sources = [
+            ("1. La surpression transitoire maximale a provoqué l'.......... du tube d'acier.", ["Choisir...", "éclatement", "laminage"], "éclatement", "m5_t1_c2"),
+            ("2. L'onde acoustique violente provoquée par une vanne fermée s'appelle coup de ..........", ["Choisir...", "bélier", "piston"], "bélier", "m5_t2_c2"),
+            ("3. La contrainte de rupture du métal solide s'exprime rigoureusement en ..........", ["Choisir...", "Pascals", "Newtons"], "Pascals", "m5_t3_c2"),
+            ("4. Le fluide sous pression s'échappe dans l'atelier, créant une fuite ..........", ["Choisir...", "externe", "interne"], "externe", "m5_t4_c2"),
+            ("5. Les cycles de sollicitations répétées fatiguent la .......... de la canalisation.", ["Choisir...", "structure", "viscosité"], "structure", "m5_t5_c2"),
+            ("6. Pour absorber les chocs de fluide, on installe un .......... amortisseur.", ["Choisir...", "accumulateur", "débitmètre"], "accumulateur", "m5_t6_c2"),
+            ("7. L'effort d'éclatement est le produit de la pression par l'.......... interne projetée.", ["Choisir...", "aire", "longueur"], "aire", "m5_t7_c2"),
+            ("8. Isoler le tronçon défaillant exige de fermer les .......... de sectionnement.", ["Choisir...", "vannes", "clapets"], "vannes", "m5_t8_c2"),
+            ("9. Une conduite neuve munie d'une lyre flexible amortit les .......... parasites.", ["Choisir...", "vibrations", "températures"], "vibrations", "m5_t9_c2"),
+            ("10. Ce diagnostic de défaillance structurelle assure la sécurité des .......... d'usinage.", ["Choisir...", "opérateurs", "fluides"], "opérateurs", "m5_t10_c2")
+        ]
+
+    elif id_cas_maint == 3:
+        # CAS 3 : CAVITATION DANS LA POMPE
+        questions_sources = [
+            {"id": "qm1_c3", "q": "Où se forment principalement les micro-bulles de vapeur lors de la cavitation ?", "options": ["À l'aspiration (zone de basse pression)", "Au refoulement (haute pression)", "Dans le réservoir"], "rep": "À l'aspiration (zone de basse pression)"},
+            {"id": "qm2_c3", "q": "La cavitation se produit lorsque la pression locale du liquide descend sous :", "options": ["Sa tension de vapeur saturante", "La pression de tarage", "Zéro absolu"], "rep": "Sa tension de vapeur saturante"},
+            {"id": "qm3_c3", "q": "Quel bruit caractéristique indique qu'une pompe hydraulique subit de la cavitation ?", "options": ["Un crépitement métallique (bruit de graviers)", "Un sifflement aigu constant", "Un silence total"], "rep": "Un crépitement métallique (bruit de graviers)"},
+            {"id": "qm4_c3", "q": "L'érosion des dents d'engrenages ou des aubes par cavitation découle de :", "options": ["L'implosion violente des micro-bulles", "La corrosion chimique pure", "Le frottement mécanique direct"], "rep": "L'implosion violente des micro-bulles"},
+            {"id": "qm5_c3", "q": "Pour supprimer la cavitation à l'entrée d'une pompe, il faut impérativement :", "options": ["Augmenter la section du tube d'aspiration", "Réduire le diamètre d'entrée", "Augmenter la vitesse de rotation"], "rep": "Augmenter la section du tube d'aspiration"},
+            {"id": "qm6_c3", "q": "Quelle modification physique subit le fluide lors de sa vaporisation locale dans la pompe ?", "options": ["Un changement d'état (liquide vers gaz)", "Une hausse de densité", "Une solidification"], "rep": "Un changement d'état (liquide vers gaz)"},
+            {"id": "qm7_c3", "q": "Les micro-jets de liquide projetés lors de l'implosion détruisent le métal par :", "options": ["Fatigue mécanique de surface (piqûres)", "Fusion thermique", "Laminage fluide"], "rep": "Fatigue mécanique de surface (piqûres)"},
+            {"id": "qm8_c3", "q": "Une restriction ou un colmatage du filtre d'aspiration a pour conséquence de :", "options": ["Faire chuter la pression d'entrée", "Augmenter le débit utile", "Stabiliser les vibrations"], "rep": "Faire chuter la pression d'entrée"},
+            {"id": "qm9_c3", "q": "La chute de pression en dessous de la pression atmosphérique crée un vide :", "options": ["Relatif (ou dépression)", "Absolu parfait", "Hydrostatique stable"], "rep": "Relatif (ou dépression)"},
+            {"id": "qm10_c3", "q": "À température ambiante, l'huile hydraulique peut bouillir si la pression devient :", "options": ["Extrêmement basse", "Supérieure à 200 bars", "Strictement constante"], "rep": "Extrêmement basse"}
+        ]
+        trous_sources = [
+            ("1. Le phénomène de .......... érode prématurément le corps métallique de la pompe.", ["Choisir...", "cavitation", "laminage"], "cavitation", "m5_t1_c3"),
+            ("2. Les bulles naissent car la pression locale descend sous la tension de ..........", ["Choisir...", "vapeur", "surface"], "vapeur", "m5_t2_c3"),
+            ("3. Le retour en zone de haute pression provoque l'.......... brutale de ces bulles.", ["Choisir...", "implosion", "dilatation"], "implosion", "m5_t3_c3"),
+            ("4. Les micro-jets de fluide frappent la surface active et créent des .......... profondes.", ["Choisir...", "piqûres", "fissures"], "piqûres", "m5_t4_c3"),
+            ("5. Ce bombardement mécanique détruit l'acier par fatigue de ..........", ["Choisir...", "surface", "volume"], "surface", "m5_t5_c3"),
+            ("6. Le crépitement sonore de l'aspiration évoque un transfert de ..........", ["Choisir...", "graviers", "vapeur"], "graviers", "m5_t6_c3"),
+            ("7. Élargir le conduit d'entrée permet de réduire la .......... du fluide.", ["Choisir...", "vitesse", "densité"], "vitesse", "m5_t7_c3"),
+            ("8. Nettoyer la crépine empêche la formation d'une .......... d'entrée critique.", ["Choisir...", "dépression", "surpression"], "dépression", "m5_t8_c3"),
+            ("9. Ramener le profil au-dessus du seuil critique stabilise le .......... de fluide.", ["Choisir...", "débit", "poids"], "débit", "m5_t9_c3"),
+            ("10. Ce diagnostic prévient la destruction totale de l'actionneur .......... de l'usine.", ["Choisir...", "principal", "externe"], "principal", "m5_t10_c3")
+        ]
+
+    # =============================================================================
+    # CAS 4 : LAMINAGE DU FLUIDE DANS LE LIMITEUR
+    # =============================================================================
+    else:
+        questions_sources = [
+            {"id": "qm1_c4", "q": "Comment appelle-t-on le passage forcé d'un fluide à grande vitesse à travers une section minuscule ?", "options": ["Le laminage", "La cavitation", "La conduction hydrostatique"], "rep": "Le laminage"},
+            {"id": "qm2_c4", "q": "Lors d'un laminage permanent intense, en quelle forme d'énergie se convertit la puissance mécanique du fluide ?", "options": ["En énergie thermique (calories)", "En énergie potentielle", "En force pressante pure"], "rep": "En énergie thermique (calories)"},
+            {"id": "qm3_c4", "q": "Quel est le symptôme direct mesurable sur le réservoir en cas de laminage continu au limiteur ?", "options": ["Une élévation continue de la température de l'huile", "Une baisse de la viscosité cinématique", "Une hausse immédiate du niveau"], "rep": "Une élévation continue de la température de l'huile"},
+            {"id": "qm4_c4", "q": "Pourquoi un limiteur de pression bloqué ouvert empêche-t-il la presse d'atteindre sa force maximale ?", "options": ["Le débit fuit en continu directement au réservoir", "La viscosité augmente trop", "Le fluide devient compressible"], "rep": "Le débit fuit en continu directement au réservoir"},
+            {"id": "qm5_c4", "q": "Le frottement visqueux des molécules d'huile lors du laminage génère une chaleur dite :", "options": ["Sensible", "Latente de fusion", "Chimique parasite"], "rep": "Sensible"},
+            {"id": "qm6_c4", "q": "Quelle caractéristique physique de l'huile se dégrade fortement si sa température dépasse 85 °C ?", "options": ["Sa viscosité (le fluide devient trop fluide)", "Sa masse volumique", "Sa compressibilité"], "rep": "Sa viscosité (le fluide devient trop fluide)"},
+            {"id": "qm7_c4", "q": "Le clapet du limiteur de pression s'ouvre normalement pour protéger le circuit contre :", "options": ["Les surpressions accidentelles", "Les chutes de débit", "Le gel de l'huile"], "rep": "Les surpressions accidentelles"},
+            {"id": "qm8_c4", "q": "La friction thermique moléculaire au passage de l'étranglement relève d'un transfert par :", "options": ["Frottement visqueux mécanique", "Rayonnement direct", "Changement de phase"], "rep": "Frottement visqueux mécanique"},
+            {"id": "qm9_c4", "q": "Pour stopper le laminage thermique parasite, le technicien doit procéder au :", "options": ["Nettoyage du tiroir et calibrage du ressort", "Remplacement de la pompe", "Surdimensionnement du moteur"], "rep": "Nettoyage du tiroir et calibrage du ressort"},
+            {"id": "qm10_c4", "q": "L'indicateur visuel de la panne montre un retour massif et permanent de fluide vers :", "options": ["Le réservoir (ou bâche)", "Le vérin de compactage", "Le manomètre"], "rep": "Le réservoir (ou bâche)"}
+        ]
+        trous_sources = [
+            ("1. Forcer l'huile à travers un orifice minuscule engendre un .......... intense.", ["Choisir...", "laminage", "éclatement"], "laminage", "m5_t1_c4"),
+            ("2. Cette friction interne convertit instantanément la pression en .......... de frottement.", ["Choisir...", "calories", "Pascals"], "calories", "m5_t2_c4"),
+            ("3. Le symptôme majeur mesuré en cuve est une élévation .......... continue.", ["Choisir...", "thermique", "statique"], "thermique", "m5_t3_c4"),
+            ("4. L'énergie perdue correspond à une production parasite de chaleur .......... .", ["Choisir...", "sensible", "latente"], "sensible", "m5_t4_c4"),
+            ("5. Le coupable identifié est le clapet du .......... de pression bloqué ouvert.", ["Choisir...", "limiteur", "débitmètre"], "limiteur", "m5_t5_c4"),
+            ("6. Le fluide s'échappe en continu et retourne directement au .......... principal.", ["Choisir...", "réservoir", "piston"], "réservoir", "m5_t6_c4"),
+            ("7. Une huile surchauffée perd son pouvoir lubrifiant car sa .......... s'effondre.", ["Choisir...", "viscosité", "densité"], "viscosité", "m5_t7_c4"),
+            ("8. Pour résoudre l'anomalie, il faut démonter le .......... coulissant grippé.", ["Choisir...", "tiroir", "tube"], "tiroir", "m5_t8_c4"),
+            ("9. Nettoyer et régler le ressort restaure la section d'.......... normale.", ["Choisir...", "fermeture", "laminage"], "fermeture", "m5_t9_c4"),
+            ("10. Ce soin préventif stabilise la température de service de la .......... hydraulique.", ["Choisir...", "centrale", "pompe"], "centrale", "m5_t10_c4")
+        ]
+
+    # Enregistrement immédiat dans la session pour garantir la synchronisation
+    st.session_state.ordre_quiz_tab5_maint_aleatoire = questions_sources
+    st.session_state.champs_therm5_maint_clean = trous_sources
     if id_cas_maint == 1:
         titre_maint = "Défaut d'étanchéité du piston sur un vérin hydraulique de presse"
         enonce_maint = (
@@ -1761,14 +1817,16 @@ with tab5:
             "**Case 4 :** Après nettoyage du tiroir et calibrage du ressort, le fluide cesse de laminer et la température se stabilise."
         )
         texte_bd_maint = (
-            "**Bande Caricaturale de l'Incident : Laminage et surchauffes**\n\n"
+            "**Bande Caricaturale de l'Incident : Laminage et surchauffe**\n\n"
             "**Case 1 :** Surchauffe : « L'huile est bouillante, l'énergie mécanique se transforme entièrement en calories ! ».\n\n"
             "**Case 2 :** Fuite permanente : « Le clapet refuse de se fermer, tout le débit repart au réservoir en continu ! ».\n\n"
             "**Case 3 :** Laminage : « Forcer le fluide à traverser une section minuscule génère une friction thermique intense ! ».\n\n"
             "**Case 4 :** Recalibrage : « Tiroir nettoyé, le clapet se ferme, l'huile retrouve sa circulation normale ! »"
         )
 
-    # RENDU ASYMÉTRIQUE [0.3, 0.7] ET SUPERPOSÉ DES ÉNONCÉS ET IMAGES
+    # =============================================================================
+    # RENDU ASYMÉTRIQUE DU COURS ET DES IMAGES [0.3 GAUCHE, 0.7 DROITE]
+    # =============================================================================
     col_gauche_bd_maint, col_droite_cours_maint = st.columns([0.3, 0.7])
 
     with col_gauche_bd_maint:
@@ -1778,8 +1836,9 @@ with tab5:
 
     with col_droite_cours_maint:
         st.markdown("##### Illustration caricaturale du cas")
+        import os
         
-        # Détermination des fichiers images
+        # Détermination des fichiers images selon le cas actif
         if id_cas_maint == 1:
             fichier_reel_maint = "pressehydraulique.jpg"
             fichier_caricature_maint = "maint_verin.jpg"
@@ -1799,7 +1858,7 @@ with tab5:
         else:
             st.caption("Image réelle manquante")
 
-        # Les 20 lignes d'espacement réglementaires pour descendre la caricature
+        # Les 20 lignes d'espacement réglementaires pour repousser la caricature vers le bas
         for _ in range(20):
             st.write("")
         
@@ -1811,41 +1870,95 @@ with tab5:
             
     st.write("---")
 
+    # =============================================================================
+    # LABORATOIRE VIRTUEL INTERACTIF (ATELIER 5)
+    # =============================================================================
+    st.subheader("Laboratoire Virtuel : Simulateur d'effort et de pression sur piston")
+    
+    col_p1_m5, col_p2_m5 = st.columns(2)
+    with col_p1_m5:
+        diametre_piston_mm = st.slider("Diamètre du piston de la presse (mm) :", min_value=50, max_value=250, value=120, step=5, key="l5_maint_p1_new")
+        pression_circuit_bar = st.slider("Pression lue au manomètre (bars) :", min_value=10, max_value=350, value=160, step=10, key="l5_maint_p2_new")
+    
+    # Calculs physiques précis : Aire en m², Pression en Pa, Force en N et kN
+    rayon_m = (diametre_piston_mm / 2.0) / 1000.0
+    surface_m2 = 3.14159265 * (rayon_m ** 2)
+    pression_pa = pression_circuit_bar * 100000.0
+    force_n = pression_pa * surface_m2
+    force_kn = force_n / 1000.0
+    
+    with col_p2_m5:
+        st.metric(label="Force théorique développée par la presse", value=f"{force_kn:.1f} kN")
+        formule_pression_at5 = rf"F = P \cdot S = ({pression_circuit_bar} \cdot 10^5) \cdot ({surface_m2:.5f}) = {force_n:,.0f}\text{{ N}}"
+        st.latex(formule_pression_at5)
+        if pression_circuit_bar > 250:
+            st.error("Seuil de surpression : Risque de fatigue accélérée ou d'éclatement des canalisations rigides.")
+        else:
+            st.info("L'action mécanique s'exerce de façon uniformément répartie sur l'aire du disque solide.")
 
-    if "suite_verrouille_tab5_maint" not in st.session_state:
-        st.session_state.suite_verrouille_tab5_maint = False
-    verrou_at5 = st.session_state.suite_verrouille_tab5_maint
+    st.write("---")
 
-    # Appel synchronisé avec le nouveau nom et les banques de données requises
-    afficher_atelier_maintenance_dynamique(
-        id_cas=st.session_state.get("cas_aleatoire_tab5", 1),
-        questions=st.session_state.ordre_quiz_tab5_maint_aleatoire,
-        trous=st.session_state.champs_therm5_maint_clean,
-        verrouille=verrou_at5
-    )
+    # =============================================================================
+    # RENDU DES FORMULAIRES D'ÉVALUATION BI-COLONNE ENTIÈREMENT INDEXÉS
+    # =============================================================================
+    col_q_m, col_t_m = st.columns(2)
+    
+    with col_q_m:
+        st.markdown("##### Quiz Technique du Scénario Maintenance (10 questions - 10 pts)")
+        if "ordre_quiz_tab5_maint_aleatoire" in st.session_state:
+            for idx, q_data in enumerate(st.session_state.ordre_quiz_tab5_maint_aleatoire, 1):
+                st.write(f"**{idx}.** {q_data['q']}")
+                st.selectbox(
+                    "", 
+                    options=["Choisir..."] + q_data["options"], 
+                    key=f"widget_at5_maint_q_{q_data['id']}_{idx}", 
+                    disabled=verrou_at5,
+                    label_visibility="collapsed"
+                )
+
+    with col_t_m:
+        st.markdown("##### Synthèse de l'Atelier 5 (Texte à trous - 10 cases - 10 pts)")
+        if "champs_therm5_maint_clean" in st.session_state:
+            for idx, ligne in enumerate(st.session_state.champs_therm5_maint_clean, 1):
+                enonce, choix, attendu, cle = ligne
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: 
+                    st.write(enonce)
+                with c_sel: 
+                    st.selectbox(
+                        "", 
+                        choix, 
+                        key=f"widget_at5_maint_t_{cle}_{idx}", 
+                        disabled=verrou_at5,
+                        label_visibility="collapsed"
+                    )
+
+    # =============================================================================
+    # 5. SYSTÈME DE CORRECTION SUR 20 ET PROTOCOLE D'EXPORTATION HTML SCELLÉE
+    # =============================================================================
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 5")
-    
+
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_stat5 = st.checkbox(
         "Je certifie avoir complété les questions de diagnostic de l'Atelier Maintenance.",
-        key="check_certif_maint5_final_net",
+        key="check_certif_maint5_final_net_official",
         disabled=verrou_at5,
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_suite5_maint_official", use_container_width=True, disabled=verrou_at5):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_suite5_maint_official_final", use_container_width=True, disabled=verrou_at5):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_stat5: 
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # 1. Correction automatique du Quiz (Recherche de clé indexée anti-bug)
+            # 1. Correction automatique du Quiz par parcours sécurisé
             score_q5 = 0.0
             if "ordre_quiz_tab5_maint_aleatoire" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_tab5_maint_aleatoire:
+                for idx, q_item in enumerate(st.session_state.ordre_quiz_tab5_maint_aleatoire, 1):
                     saisie = "Choisir..."
                     for k in st.session_state.keys():
                         if k.startswith(f"widget_at5_maint_q_{q_item['id']}_"):
@@ -1854,10 +1967,10 @@ with tab5:
                     if str(saisie).strip() == str(q_item["rep"]).strip(): 
                         score_q5 += 1.0
 
-            # 2. Correction automatique du Texte à trous (Recherche de clé indexée anti-bug)
+            # 2. Correction automatique du Texte à trous par parcours sécurisé
             score_t5 = 0.0
             if "champs_therm5_maint_clean" in st.session_state:
-                for ligne in st.session_state.champs_therm5_maint_clean:
+                for idx, ligne in enumerate(st.session_state.champs_therm5_maint_clean, 1):
                     cle = ligne[-1]
                     attendu = ligne[2]
                     saisie_t = "Choisir..."
@@ -1868,7 +1981,7 @@ with tab5:
                     if str(saisie_t).strip() == str(attendu).strip(): 
                         score_t5 += 1.0
 
-            # Sauvegarde des résultats et rechargement
+            # Enregistrement des notes globales de session
             st.session_state.score_suite5_maint_p1 = round(float(score_q5), 1)
             st.session_state.score_suite5_maint_p2 = round(float(score_t5), 1)
             st.session_state.score_final_suite5_maint = round(float(score_q5 + score_t5), 1)
@@ -1981,6 +2094,21 @@ with tab5:
             mime="text/html",
             use_container_width=True,
         )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
