@@ -353,7 +353,12 @@ with tab1:
     with col_torricelli:
         st.markdown("### Evangelista Torricelli (1608 - 1647)")
         # Remplacement du lien générique par le portrait officiel de Evangelista Torricelli
-
+        try:
+            st.image("Torricelli.jpg", caption="Evangelista Torricelli", use_container_width=True)
+        except Exception:
+            # Remplacement par un avertissement d'absence de média plus propre pour l'élève
+            st.warning("Illustration en cours de chargement ou fichier 'Torricelli.jpg' absent du serveur.")
+       
         st.markdown("""
         * **Sa Trouvaille :** La mesure de la force pressante de l'air. Il est le premier à quantifier la force colossale exercée par le poids de l'atmosphère sur chaque unité de surface terrestre.
         * **L'Expérience Célèbre :** *Le tube de Torricelli (1643)*. Il équilibre la force du poids de l'atmosphère s'exerçant sur la surface d'un bassin avec le poids d'une colonne de mercure de 76 centimètres de hauteur.
