@@ -1333,7 +1333,8 @@ with tab4:
             use_container_width=True,
             key="btn_download_html_surf4_final"
         )
-
+if "cas_aleatoire_tab5" not in st.session_state:
+    st.session_state.cas_aleatoire_tab5 = random.randint(1, 4)
 
 with tab5:
     st.header("Application professionnelle : Diagnostic et Maintenance")
