@@ -344,7 +344,42 @@ with tab1:
         """)
 
     st.markdown("---")
+    # -------------------------------------------------------------------------
+    # PARTIE 2 : BANDE DESSINÉE EN DEUX COLONNES (TEXTES À GAUCHE, IMAGE À DROITE)
+    # -------------------------------------------------------------------------
+    st.subheader("Bande Dessinée : Le Choc des Fluides")
+    st.write("Une histoire imaginaire pour comprendre leurs discussions scientifiques.")
 
+    # Style visuel pour les bulles de dialogue de la bande dessinée
+    st.markdown("""
+    <style>
+    .bulles { background-color: #f0f2f6; padding: 15px; border-radius: 10px; border-left: 5px solid #ff4b4b; margin-bottom: 20px; }
+    .narrateur { font-style: italic; color: #555555; margin: 10px 0; }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # Création des deux colonnes principales pour la BD
+    col_bd_texte, col_bd_image = st.columns([1, 1])
+
+    # Colonne de gauche : Empilement de toutes les cases de texte
+    with col_bd_texte:
+        st.markdown("**Case 1 : À la taverne de la Science (Paris, 1648)**")
+        st.markdown('<div class="narrateur">Pascal et Torricelli s\'installent à une table. Torricelli pose un lourd tube de mercure sur le comptoir, l\'air fatigué.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="bulles"><b>Torricelli :</b> "Mon cher Blaise, j\'ai mal au dos... L\'air pèse des tonnes aujourd\'hui ! Les gens croient que la nature a horreur du vide, mais c\'est faux, c\'est juste l\'atmosphère qui applique sa force sur chaque unité de surface terrestre !"</div>', unsafe_allow_html=True)
+
+        st.markdown("**Case 2 : L\'illumination de Pascal**")
+        st.markdown('<div class="narrateur">Pascal regarde son verre, prend une paille, et tape du poing sur la table.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="bulles"><b>Pascal :</b> "Tu as raison Evangelista ! Et regarde ça : la pression dépend directement du rapport P = F / S. Si j\'appuie sur mon verre ici, la pression pousse le liquide partout en même temps ! C\'est comme cela que j\'ai brisé mon tonneau !"</div>', unsafe_allow_html=True)
+
+        st.markdown("**Case 3 : La panique au laboratoire**")
+        st.markdown('<div class="narrateur">Le serveur de la taverne recule, inquiet des théories des deux physiciens et des formules mathématiques.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="bulles"><b>Le Serveur :</b> "Messieurs, calmez-vous avec vos calculs de force et de surface. Vous voulez régler l\'addition ou vous allez aussi faire éclater ma cave avec votre relation P = F / S ?"<br><br><b>Pascal et Torricelli (en chœur) :</b> "C\'est pour la science !"</div>', unsafe_allow_html=True)
+
+    # Colonne de droite : Affichage de la grande image de la BD qui s'aligne avec le texte
+    with col_bd_image:
+        st.image("bd_cuve4.png", use_container_width=True, caption="Anomalie hydrostatique sur la Cuve 4")
+
+    st.markdown("---")
     
     if "suite_verrouille_tab1_pression" not in st.session_state:
         st.session_state.suite_verrouille_tab1_pression = False
