@@ -554,19 +554,271 @@ with tab1:
             use_container_width=True,
             key="btn_download_html_pres_final"
         )
+with tab2:
+    st.header("Étude des Forces Physiques et Pressantes")
+    st.write("Manipulez les vecteurs de force avec le simulateur, observez leur impact sur les parois, puis complétez l'évaluation de l'Atelier 2.")
+
+    # Styles CSS pour les légendes et bandeaux
+    st.markdown("""
+    <style>
+    .legende-forces { color: #2563eb; font-weight: bold; text-align: center; margin-top: 5px; font-size: 13px; }
+    .bandeau-forces { background-color: #e0f2fe; border-left: 5px solid #0284c7; padding: 12px; font-size: 14px; font-weight: 500; margin-bottom: 20px; color: #1e3a8a; border-radius: 4px; }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # DÉFINITION INTERNE DE L'ATELIER INTERACTIF (QUIZ ET TROUS FORCES)
+    def afficher_atelier_forces(verrouille=False):
+        import random
+
+        # Déclaration de la base de données des 10 questions du Quiz des Forces
+        questions_forces_sources = [
+            {"id": "qf1", "q": "Quelle est l'unité légale de mesure d'une force dans le Système International ?", "options": ["Le Pascal", "Le Newton", "Le Joule"], "rep": "Le Newton"},
+            {"id": "qf2", "q": "Quel instrument de mesure utilise-t-on couramment en laboratoire pour mesurer l'intensité d'une force ?", "options": ["Un manomètre", "Un dynamomètre", "Un baromètre"], "rep": "Un dynamomètre"},
+            {"id": "qf3", "q": "Par quel objet mathématique représente-t-on graphiquement une force physique ?", "options": ["Une droite infinie", "Un vecteur (une flèche)", "Une courbe sinusoïdale"], "rep": "Un vecteur (une flèche)"},
+            {"id": "qf4", "q": "Laquelle de ces options ne constitue PAS une caractéristique essentielle d'un vecteur force ?", "options": ["Le point d'application", "La couleur de la flèche", "La direction et le sens"], "rep": "La couleur de la flèche"},
+            {"id": "qf5", "q": "Quelle force attire tous les objets massifs vers le centre de la Terre ?", "options": ["La force magnétique", "La force de gravitation (le poids)", "La force d'Archimède"], "rep": "La force de gravitation (le poids)"},
+            {"id": "qf6", "q": "Comment qualifie-t-on une force qui s'exerce sans qu'il n'y ait de contact direct entre les objets ?", "options": ["Une force de contact", "Une force à distance", "Une force hydraulique"], "rep": "Une force à distance"},
+            {"id": "qf7", "q": "La force pressante exercée par un liquide sur une paroi solide est toujours :", "options": ["Parallèle à la paroi", "Perpendiculaire à la paroi", "Oblique par rapport à la paroi"], "rep": "Perpendiculaire à la paroi"},
+            {"id": "qf8", "q": "Si un solide reste parfaitement immobile au repos, que peut-on dire des forces qui s'appliquent sur lui ?", "options": ["Aucune force ne s'applique", "Les forces se compensent (équilibre)", "La force du poids est nulle"], "rep": "Les forces se compensent (équilibre)"},
+            {"id": "qf9", "q": "Dans la formule P = F / S, si la force F double sur une même surface, la pression P :", "options": ["Reste la même", "Double", "Est divisée par deux"], "rep": "Double"},
+            {"id": "qf10", "q": "Sur la Lune, la force du poids d'un astronaute est plus faible que sur Terre car :", "options": ["Sa masse a diminué", "La gravité lunaire est plus faible", "L'atmosphère y est absente"], "rep": "La gravité lunaire est plus faible"}
+        ]
+
+        if "ordre_quiz_forces_aleatoire" not in st.session_state:
+            random.shuffle(questions_forces_sources)
+            st.session_state.ordre_quiz_forces_aleatoire = questions_forces_sources
+
+        if "champs_forces_clean" not in st.session_state:
+            st.session_state.champs_forces_clean = [
+                ("1. Une action mécanique capable de modifier le mouvement est une ..........", ["Choisir...", "force", "surface"], "force", "forc_t1"),
+                ("2. L'intensité d'une force s'exprime en Newtons, de symbole ..........", ["Choisir...", "N", "Pa"], "N", "forc_t2"),
+                ("3. Le dynamomètre mesure les forces grâce à la déformation d'un ..........", ["Choisir...", "ressort", "piston"], "ressort", "forc_t3"),
+                ("4. La droite selon laquelle s'exerce une force est appelée sa ..........", ["Choisir...", "direction", "intensité"], "direction", "forc_t4"),
+                ("5. Le point de la paroi où commence le vecteur d'action est le point d'..........", ["Choisir...", "application", "équilibre"], "application", "forc_t5"),
+                ("6. L'attraction gravitationnelle est une action mécanique s'exerçant à ..........", ["Choisir...", "distance", "contact"], "distance", "forc_t6"),
+                ("7. La force pressante est proportionnelle à la grandeur de la ..........", ["Choisir...", "surface", "viscosité"], "surface", "forc_t7"),
+                ("8. Deux forces de même direction, de sens opposés et de même intensité sont en ..........", ["Choisir...", "équilibre", "mouvement"], "équilibre", "forc_t8"),
+                ("9. La longueur d'une flèche force est proportionnelle à son ..........", ["Choisir...", "intensité", "poids"], "intensité", "forc_t9"),
+                ("10. La poussée d'un fluide s'exerce de manière normale, c'est-à-dire ..........", ["Choisir...", "perpendiculaire", "tangente"], "perpendiculaire", "forc_t10")
+            ]
+
+        # REPRODUCTION DE LA STRUCTURE EN DEUX COLONNES GLOBALES (STYLE 4 PAGES PAR FEUILLE)
+        col_gauche_globale, col_droite_globale = st.columns(2)
+
+        # ---------------------------------------------------------------------
+        # COLONNE GAUCHE (SIMULATEUR DE FORCES ET QUIZ TECHNIQUE)
+        # ---------------------------------------------------------------------
+        with col_gauche_globale:
+            # MODULE INTERACTIF : SIMULATEUR DE COMPENSATIONS DE FORCES
+            st.subheader("Simulateur Interactif de Vecteurs Force")
+            st.markdown("""
+            <div class="bandeau-forces">
+                <b>Consigne :</b> Ajustez le curseur pour faire varier l'intensité de la force motrice appliquée. Observez la modification de la longueur du vecteur et l'état physique du système.
+            </div>
+            """, unsafe_allow_html=True)
+
+            valeur_force = st.slider("Ajuster l'intensité de la Force Motrice (en Newtons) :", min_value=0, max_value=200, value=100, step=10, disabled=verrouille, key="slider_force_motrice")
+            
+            # Affichage dynamique de l'état d'équilibre
+            if valeur_force == 100:
+                st.info("État du système : Les forces opposées se compensent (Intensité = 100 N). Le système est à l'équilibre statique.")
+            elif valeur_force > 100:
+                st.warning(f"État du système : Rupture d'équilibre. La force motrice ({valeur_force} N) surpasse la résistance. Le système se déplace vers la droite.")
+            else:
+                st.error(f"État du système : Force motrice insuffisante ({valeur_force} N). La résistance maintient le mécanisme bloqué.")
+
+            st.markdown("<br><hr><br>", unsafe_allow_html=True)
+
+            # QUIZ TECHNIQUE DES FORCES
+            st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+            for idx, q_data in enumerate(st.session_state.ordre_quiz_forces_aleatoire, 1):
+                st.write(f"**{idx}.** {q_data['q']}")
+                st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"forc_at2_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+        # ---------------------------------------------------------------------
+        # COLONNE DROITE (EXPLICATION PHYSIQUE ET SYNTHÈSE TEXTE À TROUS)
+        # ---------------------------------------------------------------------
+        with col_droite_globale:
+            # COMPORTEMENT TECHNIQUE DES FORCES PRESSANTES
+            st.subheader("Modélisation Graphique")
+            sub_col_text, sub_col_img = st.columns([0.50, 0.50])
+            with sub_col_text:
+                st.markdown('<div class="legende-forces">Caractérisation du Vecteur</div>', unsafe_allow_html=True)
+                st.write("**Point d'application :** Centre géométrique de la surface de contact de la paroi.")
+                st.write("**Direction :** Droite orthogonale (perpendiculaire) au plan de la surface solide.")
+                st.write("**Sens :** Dirigé de l'intérieur du fluide vers l'extérieur de la paroi.")
+                st.write("**Intensité :** Modélisée par la longueur de la flèche selon l'échelle choisie (1 cm = 50 N).")
+            with sub_col_img:
+                st.image("https://unsplash.com")
+                st.markdown('<div class="legende-forces">Vérification de la déformation d\'un corps sous l\'effet d\'une force</div>', unsafe_allow_html=True)
+
+            st.markdown("<br><hr><br>", unsafe_allow_html=True)
+
+            # SYNTHÈSE DE L'ATELIER (TEXTE À TROUS - 10 CASES)
+            st.markdown("##### Synthèse de l'Atelier (Texte à trous - 10 cases - 10 pts)")
+            for ligne in st.session_state.champs_forces_clean:
+                # Extraction par index pour éviter les conflits de tuple
+                enonce = ligne[0]
+                choix = ligne[1]
+                cle = ligne[-1]
+                
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: 
+                    st.write(enonce)
+                with c_sel: 
+                    st.selectbox("", choix, key=f"{cle}_forc_clean", disabled=verrouille, label_visibility="collapsed")
 
 
+    # --- EXECUTION DE LA LOGIQUE DE CORRECTION ET D'EXPORT DE L'ATELIER 2 ---
+    if "suite_verrouille_tab2_forces" not in st.session_state:
+        st.session_state.suite_verrouille_tab2_forces = False
+    verrou_at2 = st.session_state.suite_verrouille_tab2_forces
 
+    # Appel de la fonction d'affichage structurée en colonnes globales
+    afficher_atelier_forces(verrouille=verrou_at2)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 2")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
+    case_certif_stat2 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier d'Étude des Forces.",
+        key="check_certif_forc2_final_net",
+        disabled=verrou_at2,
+    )
 
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_suite2_forc_official", use_container_width=True, disabled=verrou_at2):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat2: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # Correction automatique du Quiz des forces
+            score_q2 = 0.0
+            if "ordre_quiz_forces_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_forces_aleatoire:
+                    saisie = st.session_state.get(f"forc_at2_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q2 += 1.0
 
+            # Correction automatique du Texte à trous des forces
+            score_t2 = 0.0
+            if "champs_forces_clean" in st.session_state:
+                for ligne in st.session_state.champs_forces_clean:
+                    cle = ligne[-1]
+                    attendu = ligne[2]
+                    if st.session_state.get(f"{cle}_forc_clean", "Choisir...") == attendu: 
+                        score_t2 += 1.0
 
+            st.session_state.score_suite2_forc_p1 = round(float(score_q2), 1)
+            st.session_state.score_suite2_forc_p2 = round(float(score_t2), 1)
+            st.session_state.score_final_suite2_forc = round(float(score_q2 + score_t2), 1)
+            st.session_state.suite_verrouille_tab2_forces = True
+            st.rerun()
 
+    # --- COMPILATION DU BILAN HTML DE L'ATELIER 2 ---
+    if st.session_state.get("suite_verrouille_tab2_forces", False):
+        from datetime import datetime
+        scr1_t2 = st.session_state.get("score_suite2_forc_p1", 0.0)
+        scr2_t2 = st.session_state.get("score_suite2_forc_p2", 0.0)
+        tot_s_t2 = st.session_state.get("score_final_suite2_forc", 0.0)
+        timestamp_suite2 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
 
+        st.success(f"ATELIER FORCES SCELLÉ | Note de session : {tot_s_t2:.1f} / 20")
 
+        html_export_forc2 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport d'Étude des Forces -             
+            <meta charset="utf-8">
+            <title>Rapport d'Étude des Forces - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #0384c7; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Physique</h1>
+                <p>Atelier 2 : Caractérisation des forces mécaniques et modélisation des forces pressantes</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite2}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t2:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t2:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 2 : <strong>{tot_s_t2:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
 
+        if "ordre_quiz_forces_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_forces_aleatoire, 1):
+                saisie = st.session_state.get(f"forc_at2_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_forc2 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
+        html_export_forc2 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
 
+        if "champs_forces_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_forces_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = st.session_state.get(f"{cle_variable}_forc_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_forc2 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_forc2 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_forc2 = preparer_nom_fichier("Rapport_Etude_Forces").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 2",
+            data=html_export_forc2,
+            file_name=nom_fichier_html_forc2,
+            mime="text/html",
+            use_container_width=True,
+            key="btn_download_html_forc_final"
+        )
 
 
 
