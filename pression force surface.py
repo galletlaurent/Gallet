@@ -1649,10 +1649,29 @@ with tab5:
     if "suite_verrouille_tab5_maint" not in st.session_state:
         st.session_state.suite_verrouille_tab5_maint = False
     verrou_at5 = st.session_state.suite_verrouille_tab5_maint
-    
+
+    # 2. SYSTÈME DE TIRAGE AU SORT PAR BOUTON
     if "cas_aleatoire_tab5" not in st.session_state:
         st.session_state.cas_aleatoire_tab5 = 1
+
+    col_tirage_maint, col_statut_maint = st.columns([0.4, 0.6], vertical_alignment="center")
+    with col_tirage_maint:
+        if st.button("GÉNÉRER UN EXERCICE DE MAINTENANCE AU HASARD", key="btn_tirage_hasard_at5_officiel_final", use_container_width=True, disabled=verrou_at5):
+            import random
+            actuel_maint = st.session_state.cas_aleatoire_tab5
+            possibles_maint = [1, 2, 3, 4]
+            filtrés_maint = [c for c in possibles_maint if c != actuel_maint]
+            st.session_state.cas_aleatoire_tab5 = random.choice(filtrés_maint)
+            
+            # Nettoyage des anciennes sélections pour forcer la mise à jour sans conflit
+            if "ordre_quiz_tab5_maint_aleatoire" in st.session_state:
+                del st.session_state.ordre_quiz_tab5_maint_aleatoire
+            if "champs_therm5_maint_clean" in st.session_state:
+                del st.session_state.champs_therm5_maint_clean
+            st.rerun()
+
     id_cas_maint = st.session_state.cas_aleatoire_tab5
+    st.write(f"Dossier technique de maintenance attribué : **Anomalie mécanique n°{id_cas_maint}**")
 
     # --- CONFIGURATION DYNAMIQUE DES QUIZ ET DES TROUS SELON LE SCÉNARIO ---
     if id_cas_maint == 1:
