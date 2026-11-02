@@ -1686,7 +1686,6 @@ with tab5:
             "**Case 4 :** Solution : « Section élargie, la vitesse diminue, la pression remonte au-dessus du point critique ! »"
         )
     else:
-    else:
         titre_maint = "Surchauffe d'huile par laminage intense dans un limiteur de pression bloqué"
         enonce_maint = (
             "**Case 1 :** La centrale hydraulique subit une élévation thermique continue, l'huile franchit le seuil des 85 °C.\n\n"
