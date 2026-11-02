@@ -2216,15 +2216,511 @@ with tab5:
         )
 
 
+with tab6:
+    st.header("Application dans le domaine des Travaux Publics")
+    st.write("Explorez les contraintes de pression mécanique appliquées aux engins de terrassement et ouvrages d'art.")
 
+    # Styles CSS pour les légendes, bandeaux et alertes de l'Atelier 6
+    st.markdown("""
+    <style>
+    .legende-tp { color: #d97706; font-weight: bold; text-align: center; margin-top: 5px; font-size: 13px; }
+    .bandeau-tp { background-color: #fffbeb; border-left: 5px solid #f59e0b; padding: 12px; font-size: 14px; font-weight: 500; margin-bottom: 20px; color: #78350f; border-radius: 4px; }
+    </style>
+    """, unsafe_allow_html=True)
 
+    # =============================================================================
+    # 1. DÉCLARATION DE SÉCURITÉ ABSOLUE DU VERROU TOUT EN HAUT
+    # =============================================================================
+    if "suite_verrouille_tab6_tp" not in st.session_state:
+        st.session_state.suite_verrouille_tab6_tp = False
+    verrou_at6 = st.session_state.suite_verrouille_tab6_tp
 
+    # Initialisation de l'id du cas par défaut si absent
+    if "cas_aleatoire_tab6" not in st.session_state:
+        st.session_state.cas_aleatoire_tab6 = 1
+    id_cas_tp = st.session_state.cas_aleatoire_tab6
 
+    # =============================================================================
+    # 2. BOUTON DYNAMIQUEMENT LIÉ POUR GÉNÉRER UN EXERCICE AU HASARD
+    # =============================================================================
+    col_tirage_tp, col_statut_tp = st.columns([0.4, 0.6], vertical_alignment="center")
+    with col_tirage_tp:
+        if st.button("GÉNÉRER UN EXERCICE DE TRAVAUX PUBLICS AU HASARD", key="btn_tirage_hasard_at6_officiel_final", use_container_width=True, disabled=verrou_at6):
+            import random
+            actuel_tp = st.session_state.cas_aleatoire_tab6
+            possibles_tp = [1, 2, 3, 4]
+            filtrés_tp = [c for c in possibles_tp if c != actuel_tp]
+            st.session_state.cas_aleatoire_tab6 = random.choice(filtrés_tp)
+            
+            # Nettoyage des anciennes sélections pour forcer la mise à jour sans conflit
+            if "ordre_quiz_tab6_tp_aleatoire" in st.session_state:
+                del st.session_state.ordre_quiz_tab6_tp_aleatoire
+            if "champs_therm6_tp_clean" in st.session_state:
+                del st.session_state.champs_therm6_tp_clean
+            st.rerun()
 
+    id_cas_tp = st.session_state.cas_aleatoire_tab6
+    st.write(f"Dossier technique Travaux Publics attribué : **Anomalie mécanique n°{id_cas_tp}**")
 
+    # =============================================================================
+    # 3. CONFIGURATION DES BANQUES DE DONNÉES ET ÉNONCÉS TEXTUELS PAR CAS
+    # =============================================================================
+    if id_cas_tp == 1:
+        titre_tp = "Pression d'appui des chenilles d'une pelle de 32 tonnes sur sol meuble"
+        enonce_tp = (
+            "**Case 1 :** Une pelle mécanique sur chenilles de fort tonnage effectue une phase de terrassement en zone marécageuse.\n\n"
+            "**Case 2 :** L'opérateur constate une amorce d'enlisement de la structure solide sur le profil meuble instable.\n\n"
+            "**Case 3 :** Le calcul métrologique cible l'aire totale de contact développée par la section des tuiles métalliques.\n\n"
+            "**Case 4 :** L'élargissement des chenilles augmente la surface d'appui, provoquant l'effondrement de la pression exercée."
+        )
+        texte_bd_tp = (
+            "**Bande Caricaturale de l'Incident : L'Enlisement Évité**\n\n"
+            "**Case 1 :** Alarme terrain : « Le monstre de 32 tonnes s'enfonce, la portance de la boue liquide est dépassée ! ».\n\n"
+            "**Case 2 :** Analyse physique : « C'est la loi de Pascal, la force du poids s'exerce sur une aire trop étroite ! ».\n\n"
+            "**Case 3 :** Correctif : « Montage immédiat de patins larges pour multiplier la surface géométrique d'appui S ! ».\n\n"
+            "**Case 4 :** Résolution : « La pression P chute de moitié ! La machine flotte sur le chantier des fluides ! »"
+        )
+        img_reelle_tp, img_bd_tp = "pelle_reelle.jpg", "bd_pelle.jpg"
+        
+        questions_sources_tp = [
+            {"id": "tp_q1_c1", "q": "Pour empêcher un engin de chantier lourd de s'enfoncer dans un sol meuble, il faut :", "options": ["Augmenter sa surface d'appui au sol", "Réduire la largeur de ses chenilles", "Augmenter sa masse de lestage"], "rep": "Augmenter sa surface d'appui au sol"},
+            {"id": "tp_q2_c1", "q": "Dans la relation P = F / S, si l'aire des tuiles (S) double, la pression d'appui (P) :", "options": ["Est divisée par deux", "Est multipliée par deux", "Reste strictement inchangée"], "rep": "Est divisée par deux"},
+            {"id": "tp_q3_c1", "q": "Quelle unité normalisée du SI exprime la force du poids s'exerçant verticalement ?", "options": ["Le Newton (N)", "Le Pascal (Pa)", "Le Kilogramme (kg)"], "rep": "Le Newton (N)"},
+            {"id": "tp_q4_c1", "q": "Le poids d'un corps solide dépend directement de sa masse et de :", "options": ["L'accélération de la pesanteur (g)", "La surface de contact", "La température ambiante"], "rep": "L'accélération de la pesanteur (g)"},
+            {"id": "tp_q5_c1", "q": "Une pression de 1 kiloPascal (kPa) équivaut sur le plan métrologique à :", "options": ["1 000 Pa", "100 Pa", "10 bars"], "rep": "1 000 Pa"},
+            {"id": "tp_q6_c1", "q": "Sur des chenilles, la force pressante se répartit sur la surface de manière :", "options": ["Uniforme", "Ponctuelle", "Nulle"], "rep": "Uniforme"},
+            {"id": "tp_q7_c1", "q": "Si la boue devient plus liquide, sa capacité mécanique de portance :", "options": ["Diminue", "Augmente", "Reste maximale"], "rep": "Diminue"},
+            {"id": "tp_q8_c1", "q": "Modifier l'aire géométrique des tuiles métalliques permet de faire varier :", "options": ["La pression d'appui", "La masse de la pelle", "La gravité locale"], "rep": "La pression d'appui"},
+            {"id": "tp_q9_c1", "q": "Une mauvaise estimation de la nature du sol avant terrassement est une erreur :", "options": ["Humaine de préparation", "Strictement accidentelle incontournable", "Métrologique d'étalonnage"], "rep": "Humaine de préparation"},
+            {"id": "tp_q10_c1", "q": "L'action orthogonale exercée par le patin rigide sur le sol meuble est une action de :", "options": ["Contact répartie", "Contact ponctuelle", "Distance pure"], "rep": "Contact répartie"}
+        ]
+        trous_sources_tp = [
+            ("1. Répartir le poids sur une plus grande section diminue la .......... au sol.", ["Choisir...", "pression", "vitesse"], "pression", "tp_t1_c1"),
+            ("2. L'intensité de la force verticale exercée par l'engin dépend de son ..........", ["Choisir...", "poids", "volume"], "poids", "tp_t2_c1"),
+            ("3. Les patins élargis augmentent l'aire géométrique .......... globale.", ["Choisir...", "d'appui", "de frottement"], "dappui", "tp_t3_c1"),
+            ("4. La force mécanique due à la gravité reste parfaitement .......... lors du changement.", ["Choisir...", "identique", "doublée"], "identique", "tp_t4_c1"),
+            ("5. La relation fondamentale simulée dans ce cas est la loi de ..........", ["Choisir...", "Pascal", "Fourier"], "Pascal", "tp_t5_c1"),
+            ("6. Le risque majeur pour la pelle sur cette plateforme est l'..........", ["Choisir...", "enlisement", "laminage"], "enlisement", "tp_t6_c1"),
+            ("7. La contrainte répartie s'exprime dans le système légal en ..........", ["Choisir...", "Pascals", "Joules"], "Pascals", "tp_t7_c1"),
+            ("8. Une surface deux fois plus grande divise la contrainte par ..........", ["Choisir...", "deux", "quatre"], "deux", "tp_t8_c1"),
+            ("9. Maintenir la machine stable assure la continuité des opérations de ..........", ["Choisir...", "terrassement", "climatisation"], "terrassement", "tp_t9_c1"),
+            ("10. Ce soin technique prévient le basculement structurel de l'.......... solide.", ["Choisir...", "engin", "fluide"], "engin", "tp_t10_c1")
+        ]
 
+    elif id_cas_tp == 2:
+        titre_tp = "Stabilisateurs hydrauliques d'une grue mobile en levage lourd"
+        enonce_tp = (
+            "**Case 1 :** Une grue mobile de levage déploie ses poutres télescopiques stabilisatrices en bordure de fouille.\n\n"
+            "**Case 2 :** Les patins d'ancrage en acier appliquent un effort ponctuel immense lors du levage d'une poutre béton.\n\n"
+            "**Case 3 :** Sans calage d'interposition étendu, la contrainte mécanique excède la résistance élastique du goudron.\n\n"
+            "**Case 4 :** L'ajout de madriers de grande section répartit la charge orthogonale et sécurise l'assise structurelle."
+        )
+        texte_bd_tp = (
+            "**Bande Caricaturale de l'Incident : Le Poinçonnement des Chaussées**\n\n"
+            "**Case 1 :** Levage critique : « La poutre de pont oscille, les vérins hydrauliques descendent sous charge ! ».\n\n"
+            "**Case 2 :** Risque de poinçonnement : « Si l'aire du patin noir est trop petite, le bitume va percer comme du carton ! ».\n\n"
+            "**Case 3 :** Répartition : « Insérez des madriers de bois dense pour élargir l'aire de la face réceptrice ! ».\n\n"
+            "**Case 4 :** Stabilité : « Pression répartie, tassement différentiel évité, la grue reste d'équerre ! »"
+        )
+        img_reelle_tp, img_bd_tp = "grue_reelle.jpg", "bd_grue.jpg"
 
+        questions_sources_tp = [
+            {"id": "tp_q1_c2", "q": "Quel risque présente un patin stabilisateur appliqué sur une surface trop restreinte ?", "options": ["Le poinçonnement du revêtement routier", "Une baisse du débit de la pompe", "Le gel de l'huile hydraulique"], "rep": "Le poinçonnement du revêtement routier"},
+            {"id": "tp_q2_c2", "q": "Si le sol se dérobe localement sous un seul des quatre vérins, la grue subit un tassement :", "options": ["Différentiel (rupture d'équilibre)", "Uniforme et parallèle", "Strictement permanent isotherme"], "rep": "Différentiel (rupture d'équilibre)"},
+            {"id": "tp_q3_c2", "q": "Pour diviser par 4 la pression sous un patin, il faut multiplier sa surface par :", "options": ["4", "2", "16"], "rep": "4"},
+            {"id": "tp_q4_c2", "q": "La force d'appui du vérin hydraulique sur son patin est une force de type :", "options": ["Contact", "Distance", "Magnétique"], "rep": "Contact"},
+            {"id": "tp_q5_c2", "q": "L'aire d'un patin de calage carré se calcule par la relation géométrique :", "options": ["Côté × Côté", "2 × pi × Rayon", "Longueur × Largeur × Hauteur"], "rep": "Côté × Côté"},
+            {"id": "tp_q6_c2", "q": "Le bitume chaud en été présente quelle caractéristique mécanique défavorable ?", "options": ["Une résistance au poinçonnement affaiblie", "Une rigidité élastique accrue", "Une conductivité infinie"], "rep": "Une résistance au poinçonnement affaiblie"},
+            {"id": "tp_q7_c2", "q": "Le compensateur électronique de la grue alerte l'opérateur en cas de perte de :", "options": ["Verticalité ou niveau", "Pression des pneus", "Débit de carburant"], "rep": "Verticalité ou niveau"},
+            {"id": "tp_q8_c2", "q": "Interposer du bois dense sous le vérin permet de transformer une force ponctuelle en action :", "options": ["Répartie surfacique", "À distance", "Nulle"], "rep": "Répartie surfacique"},
+            {"id": "tp_q9_c2", "q": "Le levage d'une charge engendre un déplacement du centre de :", "options": ["Gravité de la structure", "Pression atmosphérique", "Célérité laser"], "rep": "Gravité de la structure"},
+            {"id": "tp_q10_c2", "q": "L'unité industrielle couramment lue sur les abaques de calage des grues est le :", "options": ["bar (ou daN/cm²)", "Joule", "Watt"], "rep": "bar (ou daN/cm²)"}
+        ]
+        trous_sources_tp = [
+            ("1. Les plaques de calage augmentent l'.......... de contact avec le terrain.", ["Choisir...", "aire", "hauteur"], "aire", "tp_t1_c2"),
+            ("2. Pourcer la répartition d'effort empêche la rupture par .......... de l'asphalte.", ["Choisir...", "poinçonnement", "laminage"], "poinçonnement", "tp_t2_c2"),
+            ("3. Un effondrement local du terrain crée un tassement .......... dangereux.", ["Choisir...", "différentiel", "homogène"], "différentiel", "tp_t3_c2"),
+            ("4. Les vérins d'ancrage déploient une action mécanique de .......... solide.", ["Choisir...", "contact", "distance"], "contact", "tp_t4_c2"),
+            ("5. La pièce en bois dense élargit la face solide de .......... du fluide.", ["Choisir...", "réception", "vaporisation"], "réception", "tp_t5_c2"),
+            ("6. Plus le côté de la plaque carrée augmente, plus la contrainte .......... .", ["Choisir...", "s'effondre", "s'élève"], "seffondre", "tp_t6_c2"),
+            ("7. La force d'appui se transmet orthogonalement, donc .......... au revêtement.", ["Choisir...", "perpendiculairement", "tangentiellement"], "perpendiculairement", "tp_t7_c2"),
+            ("8. Vérifier la stabilité de l'assise protège la flèche contre tout ..........", ["Choisir...", "basculement", "échauffement"], "basculement", "tp_t8_c2"),
+            ("9. Les charges lourdes amplifient le moment de la force de ..........", ["Choisir...", "levage", "conduction"], "levage", "tp_t9_c2"),
+            ("10. Ce contrôle métrologique strict valide la conformité du plan de .......... .", ["Choisir...", "calage", "séchage"], "calage", "tp_t10_c2")
+        ]
 
+    elif id_cas_tp == 3:
+        titre_tp = "Fléchissement de coffrage d'ouvrage d'art sous poussée du béton frais"
+        enonce_tp = (
+            "**Case 1 :** Lors du coulage des piles d'un viaduc, le béton fluide exerce une pression hydrostatique intense à la base.\n\n"
+            "**Case 2 :** Les banches métalliques subissent des forces pressantes proportionnelles à la hauteur de la colonne liquide.\n\n"
+            "**Case 3 :** Un défaut de rigidité des tirants engendre un fléchissement structurel de la paroi réceptrice solide.\n\n"
+            "**Case 4 :** L'ajustement du maillage de serrage équilibre les actions fluides et fige la géométrie de l'ouvrage."
+        )
+        texte_bd_tp = (
+            "**Bande Caricaturale de l'Incident : La Poussée Hydrostatique**\n\n"
+            "**Case 1 :** Coulage continu : « Le malaxeur déverse le béton fluide, la colonne grimpe à 6 mètres de haut ! ».\n\n"
+            "**Case 2 :** Pression hydrostatique : « C'est la loi des fluides, plus on descend profond, plus les Pascals écrasent la bâche ! ».\n\n"
+            "**Case 3 :** Alerte déformation : « Les banches se courbent, la force pressante orthogonale est en train de tout arracher ! ».\n\n"
+            "**Case 4 :** Confinement : « Verrous resserrés, les actions mécaniques se compensent, le béton est dompté ! »"
+        )
+        img_reelle_tp, img_bd_tp = "coffrage_reel.jpg", "bd_coffrage.jpg"
+
+        questions_sources_tp = [
+            {"id": "tp_q1_c3", "q": "La pression exercée par le béton fluide à la base du coffrage dépend surtout de :", "options": ["La hauteur de coulage et la densité du fluide", "Le volume total du malaxeur", "La nuance d'acier des banches"], "rep": "La hauteur de coulage et la densité du fluide"},
+            {"id": "tp_q2_c3", "q": "La force pressante exercée par le béton frais sur la paroi verticale agit de façon :", "options": ["Strictement perpendiculaire à la paroi", "Parallèle à l'axe vertical", "Oblique descendante"], "rep": "Strictement perpendiculaire à la paroi"},
+            {"id": "tp_q3_c3", "q": "Quelle formule régit la pression hydrostatique exercée par un fluide au repos ?", "options": ["P = rho * g * h", "P = F / S", "F = P * S"], "rep": "P = rho * g * h"},
+            {"id": "tp_q4_c3", "q": "Le béton fluide est considéré dans les premières heures comme un fluide pratiquement :", "options": ["Incompressible et lourd", "Compressible et volatile", "Strictement gazeux"], "rep": "Incompressible et lourd"},
+            {"id": "tp_q5_c3", "q": "Si le rythme de coulage s'accélère et la hauteur double instantanément, la pression à la base :", "options": ["Double", "Reste constante", "Divise par quatre"], "rep": "Double"},
+            {"id": "tp_q6_c3", "q": "Pour mesurer cette pression hydrostatique en cours de chantier, on utilise des capteurs de :", "options": ["Pression (manomètres de coffrage)", "Débit", "Température latente"], "rep": "Pression (manomètres de coffrage)"},
+            {"id": "tp_q7_c3", "q": "Le fléchissement géométrique des banches traduit un dépassement de la limite :", "options": ["De déformation élastique de la structure", "De viscosité du béton", "De conductivité du métal"], "rep": "De déformation élastique de la structure"},
+            {"id": "tp_q8_c3", "q": "Les tirants en acier qui maintiennent le coffrage travaillent sous une contrainte de :", "options": ["Traction mécanique", "Laminage fluide", "Cavitation gazeuse"], "rep": "Traction mécanique"},
+            {"id": "tp_q9_c3", "q": "Quelle unité SI quantifie l'aire d'appui d'une banche soumise à l'action pressante ?", "options": ["Le mètre carré (m²)", "Le Pascal", "Le Newton"], "rep": "Le mètre carré (m²)"},
+            {"id": "tp_q10_c3", "q": "L'équilibre hydrostatique est atteint lorsque la poussée interne du béton est :", "options": ["Entièrement compensée par la résistance mécanique des tirants", "Supérieure à la limite de rupture", "Strictement nulle"], "rep": "Entièrement compensée par la résistance mécanique des tirants"}
+        ]
+        trous_sources_tp = [
+            ("1. Le béton liquide applique une action mécanique de .......... hydrostatique.", ["Choisir...", "pression", "conduction"], "pression", "tp_t1_c3"),
+            ("2. Cette contrainte se déploie de façon normale, donc .......... aux panneaux.", ["Choisir...", "perpendiculaire", "parallèle"], "perpendiculaire", "tp_t2_c3"),
+            ("3. L'intensité de l'effort croît linéairement avec la .......... de coulage.", ["Choisir...", "profondeur", "surface"], "profondeur", "tp_t3_c3"),
+            ("4. La déformation des banches solides traduit un défaut de .......... des cadres.", ["Choisir...", "rigidité", "température"], "rigidité", "tp_t4_c3"),
+            ("5. Pour calibrer l'ouvrage, la surface réceptrice est mesurée en .......... carrés.", ["Choisir...", "mètres", "bars"], "mètres", "tp_t5_c3"),
+            ("6. Le béton frais se comporte initialement comme un liquide .......... .", ["Choisir...", "incompressible", "extensible"], "incompressible", "tp_t6_c3"),
+            ("7. Les forces pressantes se transmettent fidèlement dans toutes les ..........", ["Choisir...", "directions", "lignes"], "directions", "tp_t7_c3"),
+            ("8. Resserre le maillage des barres de blocage empêche le .......... des parois.", ["Choisir...", "fléchissement", "gel"], "fléchissement", "tp_t8_c3"),
+            ("9. L'effort total de poussée est égal au produit de l'aire par la .......... moyenne.", ["Choisir...", "pression", "vitesse"], "pression", "tp_t9_c3"),
+            ("10. Ce diagnostic assure la parfaite conformité géométrique de la pile du ..........", ["Choisir...", "viaduc", "vérin"], "viaduc", "tp_t10_c3")
+        ]
+    else:
+        titre_tp = "Pression hydraulique de poussée du bouclier d'un tunnelier"
+        enonce_tp = (
+            "**Case 1 :** Le tunnelier géant progresse en sous-sol en exerçant une force titanesque pour broyer la roche solide.\n\n"
+            "**Case 2 :** Les vérins hydrauliques périphériques reçoivent de l'huile sous très haute pression (jusqu'à 350 bars).\n\n"
+            "**Case 3 :** La force pressante totale dépend du produit de cette pression de service par la large section des pistons.\n\n"
+            "**Case 4 :** Le calage des patins sur les voussoirs en béton transmet l'action mécanique nécessaire à l'avancement."
+        )
+        texte_bd_tp = (
+            "**Bande Caricaturale de l'Incident : La Poussée du Tunnelier**\n\n"
+            "**Case 1 :** Excavation : « La roue de coupe tourne, mais pour mordre le granit, il faut pousser fort derrière ! ».\n\n"
+            "**Case 2 :** Puissance fluide : « Les pompes crachent l'huile à 350 bars, les chambres des vérins s'échauffent ! ».\n\n"
+            "**Case 3 :** Multiplication : « En combinant une pression extrême avec une immense surface solide S, la force F devient colossale ! ».\n\n"
+            "**Case 4 :** Avancement : « Les voussoirs tiennent bon, le bouclier avance d'un metro dans les entrailles de la Terre ! »"
+        )
+        img_reelle_tp, img_bd_tp = "tunnelier_reel.jpg", "bd_tunnelier.jpg"
+
+        questions_sources_tp = [
+            {"id": "tp_q1_c4", "q": "Pour générer la force monumentale d'avancement d'un tunnelier, le système combine :", "options": ["Une très haute pression et une large surface cumulée de pistons", "Une basse pression et des petits pistons", "Un fluide gazeux compressible"], "rep": "Une très haute pression et une large surface cumulée de pistons"},
+            {"id": "tp_q2_c4", "q": "Quelle unité de pression industrielle correspond à la haute pression de 350 bars ?", "options": ["35 MPa", "3.5 MPa", "350 Pascals"], "rep": "35 MPa"},
+            {"id": "tp_q3_c4", "q": "L'effort de réaction mécanique s'exerce en prenant appui sur les anneaux de béton nommés :", "options": ["Voussoirs", "Banches", "Tirants"], "rep": "Voussoirs"},
+            {"id": "tp_q4_c4", "q": "Si un circuit de tunnelier subit une fuite d'huile interne dans un vérin, la force d'avancement :", "options": ["Chute localement car la pression s'effondre", "Reste maximale", "Augmente par compensation"], "rep": "Chute localement car la pression s'effondre"},
+            {"id": "tp_q5_c4", "q": "La relation physique fondamentale qui régit la poussée du piston est :", "options": ["F = P * S", "P = F * S", "S = P / F"], "rep": "F = P * S"},
+            {"id": "tp_q6_c4", "q": "L'huile hydraulique utilisée dans les circuits de tunnelier est choisie pour son :", "options": ["Incompressibilité et pouvoir lubrifiant", "Pouvoir volatile", "Coefficient de dilatation nul"], "rep": "Incompressibilité et pouvoir lubrifiant"},
+            {"id": "tp_q7_c4", "q": "La surface transversale utile du piston du vérin de poussée est de géométrie :", "options": ["Circulaire", "Carrée", "Triangulaire"], "rep": "Circulaire"},
+            {"id": "tp_q8_c4", "q": "Un surtarage accidentel des valves de sécurité de la centrale présente un risque de :", "options": ["Rupture ou éclatement mécanique des conduites", "Chute de température", "Cavitation à l'échappement"], "rep": "Rupture ou éclatement mécanique des conduites"},
+            {"id": "tp_q9_c4", "q": "L'action mécanique de poussée exercée sur le front de taille est une action de :", "options": ["Contact répartie", "Distance pure", "Gravitation lunaire"], "rep": "Contact répartie"},
+            {"id": "tp_q10_c4", "q": "L'appareil métrologique qui surveille la pression dans chaque groupe de vérins est :", "options": ["Un manomètre électronique", "Un dynamomètre à ressort", "Un baromètre à mercure"], "rep": "Un manomètre électronique"}
+        ]
+        trous_sources_tp = [
+            ("1. Le tunnelier progresse grâce à la force développée par des vérins ..........", ["Choisir...", "hydrauliques", "pneumatiques"], "hydrauliques", "tp_t1_c4"),
+            ("2. La centrale injecte l'huile sous une très haute .......... de service.", ["Choisir...", "pression", "vitesse"], "pression", "tp_t2_c4"),
+            ("3. L'effort mécanique axial dépend du produit de la pression par la ..........", ["Choisir...", "surface", "hauteur"], "surface", "tp_t3_c4"),
+            ("4. L'action de poussée solide se déploie de manière .......... au front de taille.", ["Choisir...", "perpendiculaire", "tangentielle"], "perpendiculaire", "tp_t4_c4"),
+            ("5. La pression industrielle de 350 bars équivaut à 35 ..........", ["Choisir...", "MégaPascals", "Bars"], "MégaPascals", "tp_t5_c4"),
+            ("6. Pour reculer les pistons, le fluide est inversé dans la .......... de retour.", ["Choisir...", "chambre", "bâche"], "chambre", "tp_t6_c4"),
+            ("7. L'huile transmet intégralement les efforts car elle est .......... .", ["Choisir...", "incompressible", "volatile"], "incompressible", "tp_t7_c4"),
+            ("8. L'appui mécanique s'effectue sur des blocs de béton appelés ..........", ["Choisir...", "voussoirs", "banches"], "voussoirs", "tp_t8_c4"),
+            ("9. Maintenir un profil de poussée symétrique empêche toute déviation de ..........", ["Choisir...", "trajectoire", "température"], "trajectoire", "tp_t9_c4"),
+            ("10. Ce diagnostic hydraulique strict garantit la sécurité des travaux de .......... .", ["Choisir...", "percement", "nivellement"], "percement", "tp_t10_c4")
+        ]
+
+    # Enregistrement final et synchronisation immédiate des variables en session
+    if "ordre_quiz_tab6_tp_aleatoire" not in st.session_state:
+        st.session_state.ordre_quiz_tab6_tp_aleatoire = questions_sources_tp
+    if "champs_therm6_tp_clean" not in st.session_state:
+        st.session_state.champs_therm6_tp_clean = trous_sources_tp
+
+    col_g_tp, col_d_tp = st.columns([0.3, 0.7])
+    
+    with col_g_tp:
+        st.markdown(f"##### Dossier Technique : {titre_tp}")
+        st.info(enonce_tp)
+        st.info(texte_bd_tp)
+        
+    with col_d_tp:
+        st.markdown("##### Visualisation Technique")
+        import os
+        
+        # 1. Rendu supérieur : Image réelle (Largeur fixe 300px)
+        if os.path.exists(img_reelle_tp):
+            st.image(img_reelle_tp, caption="Image réelle : Constat sur site ou ouvrage", width=300)
+        else:
+            st.caption("Illustration réelle indisponible ou manquante")
+        
+        # Boucle d'espacement des 20 lignes réglementaires pour descendre la caricature
+        for _ in range(20):
+            st.write("")
+        
+        # 2. Rendu inférieur : Caricature de BD (Largeur fixe 300px)
+        if os.path.exists(img_bd_tp):
+            st.image(img_bd_tp, caption="Bande dessinée humoristique du cas", width=300)
+        else:
+            st.caption("Illustration caricaturale indisponible ou manquante")
+
+    st.write("---")
+    st.subheader("Laboratoire Virtuel : Simulateur d'Ouvrages et d'Engins de Terrassement")
+    
+    col_p1_tp, col_p2_tp = st.columns(2)
+    
+    # ---------------------------------------------------------------------
+    # CAS 1 : PRESSE ET CHENILLES DE PELLE SUR SOL MEUBLE
+    # ---------------------------------------------------------------------
+    if id_cas_tp == 1:
+        with col_p1_tp:
+            m_pelle = st.slider("Masse de la pelle mécanique (tonnes) :", 10, 50, 32, 2, key="sl_tp_c1_1_s6")
+            w_chenille = st.slider("Largeur des tuiles de chenille (mm) :", 500, 900, 600, 5, key="sl_tp_c1_2_s6")
+        poids_n = float(m_pelle) * 1000.0 * 9.81
+        surf_sol = 2.0 * (float(w_chenille) / 1000.0) * 4.5  # Longueur fixée à 4.5m
+        pres_sol_kpa = (poids_n / surf_sol) / 1000.0
+        with col_p2_tp:
+            st.metric("Pression d'appui moyenne sur le terrain", f"{pres_sol_kpa:.1f} kPa")
+            st.latex(rf"P = \frac{{F}}{{S}} = \frac{{{poids_n:,.0f}}}{{{surf_sol:.3f}}} = {pres_sol_kpa * 1000:,.0f}\text{{ Pa}}")
+
+    # ---------------------------------------------------------------------
+    # CAS 2 : VÉRINS STABILISATEURS ET POINÇONNEMENT DE CHAUSSÉE
+    # ---------------------------------------------------------------------
+    elif id_cas_tp == 2:
+        with col_p1_tp:
+            f_patin = st.slider("Force d'appui verticale sur le vérin (kN) :", 50, 400, 150, 10, key="sl_tp_c2_1_s6")
+            c_patin = st.slider("Côté de la plaque carrée de calage (cm) :", 30, 100, 60, 5, key="sl_tp_c2_2_s6")
+        surf_p = (float(c_patin) / 100.0) ** 2
+        pres_sol_bar = (float(f_patin * 1000) / surf_p) / 100000.0
+        with col_p2_tp:
+            st.metric("Pression répartie sous le patin stabilisateur", f"{pres_sol_bar:.2f} bar")
+            st.latex(rf"P = \frac{{F}}{{S}} = \frac{{{f_patin * 1000:,.0f}}}{{{surf_p:.4f}}} = {pres_sol_bar * 100000:,.0f}\text{{ Pa}}")
+
+    # ---------------------------------------------------------------------
+    # CAS 3 : POUSSÉE HYDROSTATIQUE SUR COFFRAGE DE VIADUC
+    # ---------------------------------------------------------------------
+    elif id_cas_tp == 3:
+        with col_p1_tp:
+            h_beton = st.slider("Hauteur du béton frais coulé dans la pile (m) :", 1.0, 12.0, 6.0, 0.5, key="sl_tp_c3_1_s6")
+        # Pression hydrostatique béton : masse volumique moyenne rho = 2400 kg/m3
+        pres_hydro_pa = 2400.0 * 9.81 * float(h_beton)
+        pres_hydro_bar = pres_hydro_pa / 100000.0
+        with col_p2_tp:
+            st.metric("Pression hydrostatique maximale à la base", f"{pres_hydro_bar:.2f} bar")
+            st.latex(rf"P = \rho \cdot g \cdot h = 2400 \cdot 9{{,}}81 \cdot {h_beton} = {pres_hydro_pa:,.0f}\text{{ Pa}}")
+
+    # ---------------------------------------------------------------------
+    # CAS 4 : FORCE DE POUSSÉE HYDRAULIQUE DU TUNNELIER
+    # ---------------------------------------------------------------------
+    else:
+        with col_p1_tp:
+            p_tun_bar = st.slider("Pression hydraulique de poussée des vérins (bars) :", 100, 400, 250, 10, key="sl_tp_c4_1_s6")
+            d_verin_mm = st.slider("Diamètre utile d'un piston de poussée (mm) :", 150, 400, 280, 10, key="sl_tp_c4_2_s6")
+        r_m = (float(d_verin_mm) / 2.0) / 1000.0
+        surf_v_m2 = 3.141592653589793 * (r_m ** 2)
+        f_poussee_n = (float(p_tun_bar) * 100000.0) * surf_v_m2
+        f_poussee_kn = f_poussee_n / 1000.0
+        with col_p2_tp:
+            st.metric("Force de poussée par vérin individuel", f"{f_poussee_kn:.1f} kN")
+            st.latex(rf"F = P \cdot S = ({p_tun_bar} \cdot 10^5) \cdot ({surf_v_m2:.4f}) = {f_poussee_n:,.0f}\text{{ N}}")
+
+    st.write("---")
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Technique du Scénario TP (10 pts)")
+        if "ordre_quiz_tab6_tp_aleatoire" in st.session_state:
+            for idx, q_d in enumerate(st.session_state.ordre_quiz_tab6_tp_aleatoire, 1):
+                st.write(f"**{idx}.** {q_d['q']}")
+                st.selectbox(
+                    "", 
+                    options=["Choisir..."] + q_d["options"], 
+                    key=f"tp_q_{q_d['id']}_{idx}", 
+                    disabled=verrou_at6, 
+                    label_visibility="collapsed"
+                )
+    with col_t:
+        st.markdown("##### Synthèse de l'Atelier 6 (Texte à trous - 10 pts)")
+        if "champs_therm6_tp_clean" in st.session_state:
+            for idx, ligne in enumerate(st.session_state.champs_therm6_tp_clean, 1):
+                enonce, choix, attendu, cle = ligne
+                c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+                with c_txt: 
+                    st.write(enonce)
+                with c_sel: 
+                    st.selectbox(
+                        "", 
+                        choix, 
+                        key=f"tp_t_{cle}_{idx}", 
+                        disabled=verrou_at6, 
+                        label_visibility="collapsed"
+                    )
+
+    # =============================================================================
+    # 7. MODULE DE VALIDATION TECHNIQUE ET COMPILATION DU BILAN HTML
+    # =============================================================================
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 6")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_tp = st.checkbox(
+        "Je certifie avoir complété l'Atelier d'application des Travaux Publics.", 
+        key="chk_certif_at6_final_official", 
+        disabled=verrou_at6
+    )
+    
+    if st.button(
+        "VALIDER ET EXPORTER LE BILAN DE L'ATELIER 6", 
+        key="btn_valider_at6_official_ultimate", 
+        use_container_width=True, 
+        disabled=verrou_at6
+    ):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_tp: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction automatique du Quiz
+            score_q = 0.0
+            if "ordre_quiz_tab6_tp_aleatoire" in st.session_state:
+                for idx, q_item in enumerate(st.session_state.ordre_quiz_tab6_tp_aleatoire, 1):
+                    saisie = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"tp_q_{q_item['id']}_"):
+                            saisie = st.session_state[k]
+                            break
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q += 1.0
+            
+            # 2. Correction automatique du Texte à trous
+            score_t = 0.0
+            if "champs_therm6_tp_clean" in st.session_state:
+                for idx, ligne in enumerate(st.session_state.champs_therm6_tp_clean, 1):
+                    cle = ligne[-1]
+                    attendu = ligne[2]
+                    saisie_t = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"tp_t_{cle}_"):
+                            saisie_t = st.session_state[k]
+                            break
+                    if str(saisie_t).strip() == str(attendu).strip(): 
+                        score_t += 1.0
+            
+            # Sauvegarde des notes globales sur 20 points
+            st.session_state.score_suite6_tp_p1 = round(float(score_q), 1)
+            st.session_state.score_suite6_tp_p2 = round(float(score_t), 1)
+            st.session_state.score_final_at6 = round(float(score_q + score_t), 1)
+            st.session_state.suite_verrouille_tab6_tp = True
+            st.rerun()
+
+    # --- ARCHIVAGE DU RAPPORT ELECTRONIQUE SCELLÉ HTML ---
+    if st.session_state.get("suite_verrouille_tab6_tp", False):
+        from datetime import datetime
+        scr1_t6 = st.session_state.get("score_suite6_tp_p1", 0.0)
+        scr2_t6 = st.session_state.get("score_suite6_tp_p2", 0.0)
+        tot_s_t6 = st.session_state.get("score_final_at6", 0.0)
+        timestamp_suite6 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER TP SCELLÉ | Note de session : {tot_s_t6:.1f} / 20")
+
+        html_export_tp6 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Travaux Publics - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #d97706; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Physique</h1>
+                <p>Atelier 6 : Applications mécaniques et répartition des pressions aux Travaux Publics</p>
+                <p>Scénario résolu : {titre_tp}</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite6}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t6:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t6:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse : <strong>{scr2_t6:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 6 : <strong>{tot_s_t6:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+        if "ordre_quiz_tab6_tp_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab6_tp_aleatoire, 1):
+                saisie = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"tp_q_{q_item['id']}_"):
+                        saisie = st.session_state[k]
+                        break
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_tp6 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tp6 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_therm6_tp_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_therm6_tp_clean, 1):
+                enonce_texte = ligne[0]
+                attendu_texte = ligne[2]
+                cle_variable = ligne[-1]
+                
+                saisie_texte = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"tp_t_{cle_variable}_"):
+                        saisie_texte = st.session_state[k]
+                        break
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_tp6 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_tp6 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        
+        nom_fichier_html_tp6 = preparer_nom_fichier("Rapport_Application_TP").replace(".txt", ".html")
+        st.download_button(
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL DE L'ATELIER 6 (.HTML)",
+            data=html_export_tp6,
+            file_name=nom_fichier_html_tp6,
+            mime="text/html",
+            use_container_width=True,
+        )
 
 
 
