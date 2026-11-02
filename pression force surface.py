@@ -708,7 +708,7 @@ with tab2:
 
         st.success(f"ATELIER FORCES SCELLÉ | Note de session : {tot_s_t2:.1f} / 20")
 
-         html_export_forc2 = f"""<!DOCTYPE html>
+        html_export_forc2 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
@@ -733,22 +733,9 @@ with tab2:
                 <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite2}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t2:.1f}</span> / 20</div>
             </div>
-            
-            <div class="sub-title">Récapitulatif des Notes Générées</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
-                Note obtenue au Quiz Technique : <strong>{scr1_t2:.1f} / 10</strong><br>
-                Note obtenue à la Synthèse : <strong>{scr2_t2:.1f} / 10</strong><br>
-                Note Totale de l'Atelier 2 : <strong>{tot_s_t2:.1f} / 20</strong>
-            </p>
-            
-            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
-            <table>
-                <thead>
-                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-                </thead>
-                <tbody>
+        </body>
+        </html>
         """
-
         if "ordre_quiz_forces_aleatoire" in st.session_state:
             for num, q_item in enumerate(st.session_state.ordre_quiz_forces_aleatoire, 1):
                 saisie = st.session_state.get(f"forc_at2_final_g_{q_item['id']}", "Choisir...")
@@ -771,6 +758,7 @@ with tab2:
 
         if "champs_forces_clean" in st.session_state:
             for num, ligne in enumerate(st.session_state.champs_forces_clean, 1):
+                # Correction des index de tuple pour correspondre a la structure reelle
                 enonce_texte = ligne[0]
                 attendu_texte = ligne[2]
                 cle_variable = ligne[-1]
@@ -781,17 +769,21 @@ with tab2:
                 html_export_forc2 += f"<tr><td>{num}</td><td>{enonce_texte}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
 
         html_export_forc2 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
         """
+        
         nom_fichier_html_forc2 = preparer_nom_fichier("Rapport_Etude_Forces").replace(".txt", ".html")
         st.download_button(
-        label="Télécharger le rapport d'évaluation officiel de l'Atelier 2",
-        data=html_export_forc2,
-        file_name=nom_fichier_html_forc2,
-        mime="text/html",
-        use_container_width=True,
-        key="btn_download_html_forc_final"
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 2",
+            data=html_export_forc2,
+            file_name=nom_fichier_html_forc2,
+            mime="text/html",
+            use_container_width=True,
+            key="btn_download_html_forc_final"
         )
-
 
 with tab3:
     st.header("Étude de la Pression et des Phénomènes Barométriques")
