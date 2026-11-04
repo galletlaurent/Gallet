@@ -2126,7 +2126,7 @@ with tab5:
         if f"suite_verrouille_tab5_{cle_cas}" not in st.session_state:
             st.session_state[f"suite_verrouille_tab5_{cle_cas}"] = False
         verrou_at5 = st.session_state[f"suite_verrouille_tab5_{cle_cas}"]
-
+        afficher_atelier_maintenance(cle_cas, verrouille=verrou_at5)
         # La suite de votre code reprend normalement :
         case_certif_maint = st.checkbox(
             f"Je certifie avoir complété l'ensemble de l'étude de cas sur les applications de maintenance ({cas_data['titre']}).",
