@@ -442,7 +442,7 @@ def afficher_atelier_histoire_optique(verrouille=False):
             with c_txt: 
                 st.write(enonce)
             with c_sel: 
-                st.selectbox("", choix, key=f"{cle}_opt_clean", disabled=verrouille, label_visibility="collapsed")with tab0:
+                st.selectbox("", choix, key=f"{cle}_opt_clean", disabled=verrouille, label_visibility="collapsed")
 
 
 
