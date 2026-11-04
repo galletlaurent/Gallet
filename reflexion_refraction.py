@@ -394,15 +394,6 @@ def afficher_atelier_travaux_publics(cas_id, verrouille=False):
             with c_sel: 
                 st.selectbox("", choix_options, key=f"{cle_unique}_{cas_id}_tp_clean", disabled=verrouille, label_visibility="collapsed")
 
-    with col_droite_visuels:
-        st.write("")
-        st.info(
-            "Utilisez les fiches de dossiers techniques et le simulateur vectoriel situés en haut pour compléter la feuille d'évaluation à gauche."
-        )
-
-
-
-
 
 
 
@@ -580,18 +571,19 @@ def afficher_atelier_maintenance(cas_id, verrouille=False):
             st.write(f"**{idx}.** {q_data['q']}")
             st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"m_at5_{cas_id}_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
 
-    with col_trous:
         st.markdown("##### Synthèse (Texte à trous - 10 cases - 10 pts)")
         for ligne in banque_trous[cas_id]:
-            enonce = ligne
-            choix = ligne
-            cle = ligne[-1]
+            # Séparation stricte des éléments du tuple par leur index
+            phrase_propre = ligne  # Extrait uniquement la phrase de cours en français
+            liste_choix = ligne   # Extrait la liste des options pour le selectbox
+            cle_session = ligne     # Extrait la clé unique pour st.session_state
             
+            # Création de deux colonnes pour aligner la phrase et son menu déroulant
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-            with c_txt: 
-                st.write(enonce)
-            with c_sel: 
-                st.selectbox("", choix, key=f"{cle}_{cas_id}_m_clean", disabled=verrouille, label_visibility="collapsed")
+            with c_txt:
+                st.write(phrase_propre) # Affiche uniquement le texte propre, sans le tuple vert
+            with c_sel:
+                st.selectbox("", liste_choix, key=f"{cle_session}_{cas_id}_m_clean", disabled=verrouille, label_visibility="collapsed")
 
                 
         
