@@ -2368,6 +2368,363 @@ with tab5:
             )
 
 
+with tab6:
+    st.header("Application dans le domaine les travaux publics")
+    st.write("Sélectionnez les lois physiques et générez des scénarios d'implantation ou de nivellement pour vous entraîner :")
+
+    # Base de données contenant les descriptions et textes des 6 applications métiers TP
+    base_applications_tp = {
+        "tp_ref1": {
+            "titre": "Théodolite électronique, station totale et prisme de visée",
+            "loi": "Réflexion",
+            "definitions": "Mesure de distances et de coordonnées d'axes sur les chantiers de terrassement par émission d'un faisceau infrarouge réfléchi par un prisme catadioptre à retour direct.",
+            "cas1": "La station totale émet une impulsion lumineuse rectiligne vers la mire du topographe.",
+            "cas2": "Le faisceau frappe le prisme en verre dont les faces internes agissent comme des miroirs.",
+            "cas3": "Le rayon subit une réflexion spéculaire successive et repart à angle r égal à l'incidence i.",
+            "cas4": "Le récepteur calcule la distance exacte grâce au temps de vol aller-retour du signal.",
+            "humour1": "L'implantation des bordures de l'autoroute commence sous une chaleur lourde.",
+            "humour2": "L'arpenteur installe son jalon mais une rafale de vent fait osciller le trépied.",
+            "humour3": "Le laser tape au cœur de la cellule en verre poli et rebondit instantanément.",
+            "humour4": "La mesure est validée au millimètre près, l'axe de la route est parfaitement droit."
+        },
+        "tp_ref2": {
+            "titre": "Guidage automatique de lame de niveleuse par cellule laser",
+            "loi": "Réflexion",
+            "definitions": "Contrôle automatique de l'altimétrie et du dévers des lames de réglage par rapport à un plan laser tournant de référence.",
+            "cas1": "Un émetteur rotatif calé sur le repère altimétrique balaie le chantier à 360 degrés.",
+            "cas2": "Le faisceau balaie la cellule réceptrice verticale fixée sur le mât de la lame.",
+            "cas3": "Les capteurs renvoient la position du signal réfléchi pour évaluer l'écart à la consigne.",
+            "cas4": "Les vérins hydrauliques ajustent la hauteur en temps réel pour lisser la plateforme.",
+            "humour1": "Le chauffeur de la niveleuse avance à l'aveugle dans un nuage de poussière fine.",
+            "humour2": "Le plan de référence laser tourne à toute vitesse pour baliser la piste de terrassement.",
+            "humour3": "Les photodiodes interceptent le flash rouge et mesurent le décalage géométrique.",
+            "humour4": "Les distributeurs corrigent la benne, la couche de grave est parfaitement plane."
+        },
+        "tp_ref3": {
+            "titre": "Alignement laser de réseaux et canalisations sous chaussée",
+            "loi": "Réflexion",
+            "definitions": "Guidage rectiligne et contrôle de pente de pose des tuyaux d'assainissement à l'aide d'un faisceau de référence frappant une cible.",
+            "cas1": "Un laser d'alignement est fixé au fond du regard de départ selon la pente requise.",
+            "cas2": "Le faisceau traverse l'intérieur de la conduite en cours d'emboîtement.",
+            "cas3": "Le spot lumineux frappe une mire cible translucide fixée à l'extrémité du tuyau.",
+            "cas4": "Le poseur ajuste la position du tuyau jusqu'à centrer le reflet sur la cible.",
+            "humour1": "Le terrassier s'enfonce dans la tranchée pour poser un collecteur d'eaux usées.",
+            "humour2": "Le réseau doit respecter une pente stricte de un pour cent pour éviter la stagnation.",
+            "humour3": "Le spot laser projette son point lumineux rouge au centre de la cible de contrôle.",
+            "humour4": "L'alignement est parfait, le remblaiement de la fouille peut démarrer sans crainte."
+        },
+        "tp_fra1": {
+            "titre": "Mirages thermiques sur enrobés chauds et visée optique",
+            "loi": "Réfraction",
+            "definitions": "Déviation de la trajectoire des faisceaux de visée provoquée par le gradient de température et d'indice de réfraction de l'air au-dessus du bitume chaud.",
+            "cas1": "Le tapis d'enrobé noir surchauffé par le soleil crée une couche d'air très chaud au sol.",
+            "cas2": "L'air chaud, moins dense, possède un indice de réfraction n plus bas que l'air supérieur.",
+            "cas3": "Le rayon de visée traverse ces strates et se courbe continuellement selon la loi des sinus.",
+            "cas4": "Le relevé altimétrique subit une erreur de réfraction qu'il faut corriger mathématiquement.",
+            "humour1": "Le finisseur vient de couler un tapis de bitume fumant à cent soixante degrés.",
+            "humour2": "Le topographe regarde dans sa lunette et croit voir des flaques d'eau inexistantes.",
+            "humour3": "La lumière oblique se courbe en traversant les couches de gaz dilatées par la chaleur.",
+            "humour4": "Attention aux fausses mesures ! L'esprit cartésien rectifie la mire avant le contrôle."
+        },
+        "tp_fra2": {
+            "titre": "Sondages de nappes phréatiques par diagraphie optique",
+            "loi": "Réfraction",
+            "definitions": "Détection de la profondeur d'interfaces géologiques ou d'eau dans les forages par modification de la réfraction lumineuse.",
+            "cas1": "Une sonde de mesure descend verticalement à l'intérieur du tubage de reconnaissance.",
+            "cas2": "La cellule émet un signal incliné qui traverse la fenêtre transparente en verre de la sonde.",
+            "cas3": "Au passage dans l'eau, l'indice n égal à 1.333 modifie l'angle de réfraction du faisceau.",
+            "cas4": "La rupture de trajectoire valide le contact immédiat avec la nappe souterraine.",
+            "humour1": "Le foreur cherche la nappe d'eau pour alimenter la centrale à béton du chantier.",
+            "humour2": "La sonde plonge dans le trou noir du forage à vingt mètres sous la surface.",
+            "humour3": "Le passage de l'air à l'eau fait dévier le rayon laser selon la loi des sinus.",
+            "humour4": "Le signal bascule, l'ordinateur de bord enregistre la cote exacte de l'aquifère."
+        },
+        "tp_fra3": {
+            "titre": "Contrôle de densité des liants bitumineux par réfractométrie",
+            "loi": "Réfraction",
+            "definitions": "Vérification de la concentration et de la qualité des émulsions de bitume routier par mesure de l'indice de réfraction du liant.",
+            "cas1": "Un échantillon de liant ou de polymère de stabilisation est prélevé sur la rampe d'épandage.",
+            "cas2": "Le fluide est déposé sur le prisme de mesure du réfractomètre de chantier.",
+            "cas3": "La déviation du rayon lumineux détermine la valeur précise du coefficient de réfringence.",
+            "cas4": "Ce contrôle qualité valide la conformité réglementaire de la structure de la chaussée.",
+            "humour1": "La citerne s'apprête à pulvériser l'accrochage sur la plateforme de la route.",
+            "humour2": "Le technicien de laboratoire prélève une goutte de l'émulsion pour la tester.",
+            "humour3": "Le faisceau traverse le bitume et subit une brisure d'angle liée à sa concentration.",
+            "humour4": "L'indice est conforme, le dossier d'assurance qualité du chantier est validé."
+        }
+    }
+
+    # Sélection à l'aide de cases à cocher
+    col_loi_tp1, col_loi_tp2 = st.columns(2)
+    with col_loi_tp1:
+        loi_reflexion_tp = st.checkbox("Applications de la Réflexion (TP)", value=True, key="chk_loi_ref_tp")
+    with col_loi_tp2:
+        loi_refraction_tp = st.checkbox("Applications de la Réfraction (TP)", value=False, key="chk_loi_fra_tp")
+
+    # Filtrage de la liste selon les choix cochés
+    liste_choix_tp = []
+    if loi_reflexion_tp:
+        liste_choix_tp.extend(["tp_ref1", "tp_ref2", "tp_ref3"])
+    if loi_refraction_tp:
+        liste_choix_tp.extend(["tp_fra1", "tp_fra2", "tp_fra3"])
+
+    if not liste_choix_tp:
+        st.warning("Veuillez cocher au moins une des deux lois physiques pour afficher les exercices.")
+    else:
+        if "cas_tp_courant" not in st.session_state or type(st.session_state.cas_tp_courant) is list:
+            st.session_state.cas_tp_courant = liste_choix_tp
+
+        if st.session_state.cas_tp_courant not in liste_choix_tp:
+            st.session_state.cas_tp_courant = liste_choix_tp
+
+        # Bouton de tirage au hasard
+        if st.button("GÉNÉRER UN EXERCICE AU HASARD PARMI LES CAS COCHÉS", use_container_width=True, key="btn_alea_tp"):
+            import random
+            st.session_state.cas_tp_courant = random.choice(liste_choix_tp)
+            if f"ordre_quiz_tp_{st.session_state.cas_tp_courant}" in st.session_state:
+                del st.session_state[f"ordre_quiz_tp_{st.session_state.cas_tp_courant}"]
+            st.rerun()
+
+        cle_cas_tp = st.session_state.cas_tp_courant
+        cas_data_tp = base_applications_tp[cle_cas_tp]
+
+        st.markdown(f"### Étude de Cas Active : {cas_data_tp['titre']} (Loi : {cas_data_tp['loi']})")
+        st.markdown("##### Définition et Contexte Technique")
+        st.write(cas_data_tp["definitions"])
+
+        # =============================================================================
+        # RENDU VISUEL : TEXTES À GAUCHE (L'UN EN DESSOUS DE L'AUTRE) ET GRAPHISME À DROITE
+        # =============================================================================
+        st.write("")
+        col_gauche_textes, col_droite_simulation = st.columns([0.55, 0.45])
+
+        with col_gauche_textes:
+            # 1. Dossier Technique (Bloc bleu en haut)
+            st.markdown(f"""
+            <div style="background-color: #e6f3ff; padding: 20px; border-radius: 8px; border-left: 6px solid #0066cc; font-family: sans-serif; color: #333333; margin-bottom: 20px;">
+                <h4 style="color: #004488; margin-top: 0; font-size: 16px;">Dossier Technique (Explication en 4 Cases)</h4>
+                <p style="font-size: 13px; margin-bottom: 8px;"><b>Case 1 :</b> {cas_data_tp['cas1']}</p>
+                <p style="font-size: 13px; margin-bottom: 8px;"><b>Case 2 :</b> {cas_data_tp['cas2']}</p>
+                <p style="font-size: 13px; margin-bottom: 8px;"><b>Case 3 :</b> {cas_data_tp['cas3']}</p>
+                <p style="font-size: 13px; margin-bottom: 0;"><b>Case 4 :</b> {cas_data_tp['cas4']}</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+            # 2. Bande Caricaturale Humoristique (Bloc orange juste en dessous)
+            st.markdown(f"""
+            <div style="background-color: #fff7ed; padding: 20px; border-radius: 8px; border-left: 6px solid #ea580c; font-family: sans-serif; color: #333333;">
+                <h4 style="color: #9a3412; margin-top: 0; font-size: 16px;">Bande Caricaturale Humoristique (L'Incident)</h4>
+                <p style="font-size: 13px; margin-bottom: 8px;"><b>Case 1 :</b> {cas_data_tp['humour1']}</p>
+                <p style="font-size: 13px; margin-bottom: 8px;"><b>Case 2 :</b> {cas_data_tp['humour2']}</p>
+                <p style="font-size: 13px; margin-bottom: 8px;"><b>Case 3 :</b> {cas_data_tp['humour3']}</p>
+                <p style="font-size: 13px; margin-bottom: 0;"><b>Case 4 :</b> {cas_data_tp['humour4']}</p>
+            </div>
+            """, unsafe_allow_html=True)
+        with col_droite_simulation:
+            st.markdown("##### Simulation Réaliste du Faisceau Optique")
+            import matplotlib.pyplot as plt
+            import numpy as np
+
+            fig, ax = plt.subplots(figsize=(7, 6))
+            ax.plot([-10, 10], [0, 0], color="#475569", linewidth=4)
+            ax.plot([0, 0], [-6, 6], color="#94a3b8", linestyle="--")
+            
+            ang_rad = np.radians(35)
+            ax.annotate("", xy=(0, 0), xytext=(-5 * np.sin(ang_rad), 5 * np.cos(ang_rad)),
+                        arrowprops=dict(arrowstyle="->", color="#dc2626", linewidth=3, mutation_scale=12))
+            ax.text(-4, 3, "Rayon Incident", fontsize=9, fontweight="bold")
+
+            if "ref" in cle_cas_tp:
+                ax.annotate("", xy=(5 * np.sin(ang_rad), 5 * np.cos(ang_rad)), xytext=(0, 0),
+                            arrowprops=dict(arrowstyle="->", color="#dc2626", linewidth=3, mutation_scale=12))
+                ax.text(2, 3, "Rayon Réfléchi", fontsize=9, fontweight="bold")
+                ax.fill_between([-10, 10], 0, -6, color="#cbd5e1", hatch="//", alpha=0.2)
+            else:
+                ang_refracte = np.arcsin(np.sin(ang_rad) / 1.4)
+                ax.annotate("", xy=(5 * np.sin(ang_refracte), -5 * np.cos(ang_refracte)), xytext=(0, 0),
+                            arrowprops=dict(arrowstyle="->", color="#dc2626", linewidth=3, mutation_scale=12))
+                ax.text(2, -3, "Rayon Réfracté", fontsize=9, fontweight="bold")
+                ax.fill_between([-10, 10], 0, -6, color="#e0f2fe", alpha=0.4)
+
+            ax.set_xlim(-10, 10)
+            ax.set_ylim(-6, 6)
+            ax.axis("off")
+            st.pyplot(fig)
+
+        st.write("---")
+        if f"suite_verrouille_tab6_{cle_cas_tp}" not in st.session_state:
+            st.session_state[f"suite_verrouille_tab6_{cle_cas_tp}"] = False
+        verrou_at6 = st.session_state[f"suite_verrouille_tab6_{cle_cas_tp}"]
+
+        # Appel du questionnaire
+        afficher_atelier_travaux_publics(cle_cas_tp, verrouille=verrou_at6)
+
+        # =============================================================================
+        # PARTIE 3 : LOGIQUE DE VALIDATION ET MOTEUR DE CORRECTION SCELLÉ
+        # =============================================================================
+        st.write("---")
+        st.subheader("Synthèse et validation de l'Atelier 6")
+        
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+        case_certif_tp = st.checkbox(
+            f"Je certifie avoir complété l'ensemble de l'étude de cas sur les applications de travaux publics ({cas_data_tp['titre']}).",
+            key=f"check_certif_tp_{cle_cas_tp}",
+            disabled=verrou_at6,
+        )
+
+        if st.button("VALIDER ET EXPORTER LE BILAN DE CET EXERCICE DE TRAVAUX PUBLICS", key=f"btn_valider_tp_{cle_cas_tp}", use_container_width=True, disabled=verrou_at6):
+            if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+                st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+            elif not case_certif_tp:
+                st.error("Action refusée : Cochez la case de certification d'exercice.")
+            else:
+                # 1. Correction dynamique du Quiz (sur 10 points)
+                score_q6 = 0.0
+                cle_ordre = f"ordre_quiz_tp_{cle_cas_tp}"
+                if cle_ordre in st.session_state:
+                    for q_item in st.session_state[cle_ordre]:
+                        saisie = "Choisir..."
+                        for k in st.session_state.keys():
+                            if k.startswith(f"tp_at6_{cle_cas_tp}_g_{q_item['id']}"):
+                                saisie = st.session_state[k]
+                                break
+                        if str(saisie).strip() == str(q_item["rep"]).strip():
+                            score_q6 += 1.0
+
+                # 2. Correction dynamique du Texte à trous (sur 10 points)
+                score_t6 = 0.0
+                for i in range(1, 11):
+                    cle_recherche = f"tp{cle_cas_tp[-1]}_t{i}_{cle_cas_tp}_tp_clean"
+                    if cle_recherche in st.session_state:
+                        if st.session_state[cle_recherche] != "Choisir...":
+                            score_t6 += 1.0
+
+                st.session_state[f"score_tp_{cle_cas_tp}_p1"] = round(float(score_q6), 1)
+                st.session_state[f"score_tp_{cle_cas_tp}_p2"] = round(float(score_t6), 1)
+                st.session_state[f"score_tp_{cle_cas_tp}"] = round(float(score_q6 + score_t6), 1)
+                st.session_state[f"suite_verrouille_tab6_{cle_cas_tp}"] = True
+                st.rerun()
+
+        # =============================================================================
+        # PARTIE 4 : EXPORTATION DU RAPPORT INDIVIDUEL HTML SCELLÉ COMPLET
+        # =============================================================================
+        if st.session_state.get(f"suite_verrouille_tab6_{cle_cas_tp}", False):
+            note_obtenue_tp = st.session_state.get(f"score_tp_{cle_cas_tp}", 0.0)
+            scr1_tp = st.session_state.get(f"score_tp_{cle_cas_tp}_p1", 0.0)
+            scr2_tp = st.session_state.get(f"score_tp_{cle_cas_tp}_p2", 0.0)
+            from datetime import datetime
+            timestamp_tp = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+            st.success(f"EXERCICE DE TRAVAUX PUBLICS SCELLÉ | Note de session : {note_obtenue_tp:.1f} / 20")
+
+            html_export_tp = f"""<!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Rapport Travaux Publics - {n_eleve}</title>
+                <style>
+                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                    .header-box {{ background-color: #0f766e; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                    table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                </style>
+            </head>
+            <body>
+                <div class="header-box">
+                    <h1>Rapport d'Évaluation de Physique Appliquée</h1>
+                    <p>Atelier 6 : Implantation Optique appliquée aux Travaux Publics</p>
+                    <p>Cas d'étude analysé : <b>{cas_data_tp['titre']}</b></p>
+                    <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                    <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_tp}</p>
+                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{note_obtenue_tp:.1f}</span> / 20</div>
+                </div>
+                
+                <div class="sub-title">Récapitulatif des Notes Travaux Publics</div>
+                <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f766e;">
+                    Note obtenue au Quiz Technique : <strong>{scr1_tp:.1f} / 10</strong><br>
+                    Note obtenue à la Synthèse Chantier : <strong>{scr2_tp:.1f} / 10</strong><br>
+                    Note Globale Spécialité : <strong>{note_obtenue_tp:.1f} / 20</strong>
+                </p>
+                
+                <div class="sub-title">Correction détaillée des Questions (QCM)</div>
+                <table>
+                    <thead>
+                        <tr><th>N°</th><th>Question Technique Posée</th><th>Saisie Élève</th><th>Verdict</th></tr>
+                    </thead>
+                    <tbody>
+            """
+
+            cle_ordre = f"ordre_quiz_tp_{cle_cas_tp}"
+            if cle_ordre in st.session_state:
+                for num, q_item in enumerate(st.session_state[cle_ordre], 1):
+                    saisie = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"tp_at6_{cle_cas_tp}_g_{q_item['id']}"):
+                            saisie = st.session_state[k]
+                            break
+                    attendu = q_item["rep"]
+                    v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                    v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                    html_export_tp += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+            html_export_tp += """
+                    </tbody>
+                </table>
+            </body>
+            </html>
+            """
+
+            nom_f_tp = preparer_nom_fichier(f"Rapport_Travaux_Publics_{cle_cas_tp}") + ".html"
+            st.download_button(
+                label="TÉLÉCHARGER LE RAPPORT D'ÉVALUATION DE TRAVAUX PUBLICS (HTML)",
+                data=html_export_tp,
+                file_name=nom_f_tp,
+                mime="text/html",
+                use_container_width=True,
+                key=f"btn_final_html_download_tp_{cle_cas_tp}"
+            )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
