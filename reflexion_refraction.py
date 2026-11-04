@@ -388,16 +388,16 @@ def afficher_atelier_transport_routier(cas_id, verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse (Texte à trous - 10 cases - 10 pts)")
         for ligne in banque_trous_routier[cas_id]:
-            enonce_texte = ligne
-            choix_options = ligne
-            cle_unique = ligne
+            # Extraction stricte de chaque élément du tuple par son index pour chasser le texte vert
+            enonce_texte = ligne[0]   # Récupère uniquement la phrase de cours en français
+            choix_options = ligne[1]  # Récupère la liste des choix
+            cle_unique = ligne[3]     # Récupère la clé de session
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
-                st.write(enonce_texte)
+                st.write(enonce_texte) # Affiche uniquement la phrase propre
             with c_sel: 
                 st.selectbox("", choix_options, key=f"{cle_unique}_{cas_id}_tr_clean", disabled=verrouille, label_visibility="collapsed")
-
 
 
 
