@@ -2122,10 +2122,16 @@ with tab5:
         st.write("---")
         st.subheader(f"Synthèse et validation de l'Atelier 5")
         
+        # AJOUTER CES DEUX LIGNES JUSTE ICI POUR DÉCLARER LA VARIABLE MANQUANTE :
+        if f"suite_verrouille_tab5_{cle_cas}" not in st.session_state:
+            st.session_state[f"suite_verrouille_tab5_{cle_cas}"] = False
+        verrou_at5 = st.session_state[f"suite_verrouille_tab5_{cle_cas}"]
+
+        # La suite de votre code reprend normalement :
         case_certif_maint = st.checkbox(
             f"Je certifie avoir complété l'ensemble de l'étude de cas sur les applications de maintenance ({cas_data['titre']}).",
             key=f"check_certif_maint_{cle_cas}",
-            disabled=verrou_at5,
+            disabled=verrou_at5, # <--- La ligne 2128 qui plantait va maintenant trouver "verrou_at5"
         )
 
         if st.button("VALIDER ET EXPORTER LE BILAN DE CET EXERCICE DE MAINTENANCE", key=f"btn_valider_maint_{cle_cas}", use_container_width=True, disabled=verrou_at5):
