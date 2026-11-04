@@ -370,27 +370,24 @@ def afficher_atelier_travaux_publics(cas_id, verrouille=False):
         random.shuffle(liste_q)
         st.session_state[cle_ordre] = liste_q
 
-    # Disposition demandée : Textes à gauche et Visuels à droite
-    col_gauche_questions, col_droite_visuels = st.columns([0.55, 0.45])
+    col_quiz, col_trous = st.columns(2)
     
-    with col_gauche_questions:
+    with col_quiz:
         st.markdown("##### Quiz Technique (10 questions - 10 pts)")
         for idx, q_data in enumerate(st.session_state[cle_ordre], 1):
             st.write(f"**{idx}.** {q_data['q']}")
             st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"tp_at6_{cas_id}_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
 
-        st.write("---")
-
+    with col_trous:
         st.markdown("##### Synthèse (Texte à trous - 10 cases - 10 pts)")
         for ligne in banque_trous_tp[cas_id]:
-            # Rétablissement des lignes actives sans le signe # devant
             enonce_texte = ligne[0]
             choix_options = ligne[1]
             cle_unique = ligne[3]
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
-                st.write(enonce_texte) # Affiche uniquement la phrase propre
+                st.write(enonce_texte)
             with c_sel: 
                 st.selectbox("", choix_options, key=f"{cle_unique}_{cas_id}_tp_clean", disabled=verrouille, label_visibility="collapsed")
 
