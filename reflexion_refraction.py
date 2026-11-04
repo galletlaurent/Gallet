@@ -3102,8 +3102,8 @@ with tab7:
             import numpy as np
 
             fig, ax = plt.subplots(figsize=(7, 6))
-            ax.plot([-10, 10],0, color="#475569", linewidth=4)
-            ax.plot(, [-6, 6], color="#94a3b8", linestyle="--")
+            ax.plot([-10, 10],[0, 0], color="#475569", linewidth=4)
+            ax.plot([0, 0], [-6, 6], color="#94a3b8", linestyle="--")
             
             ang_rad = np.radians(35)
             ax.annotate("", xy=(0, 0), xytext=(-5 * np.sin(ang_rad), 5 * np.cos(ang_rad)),
