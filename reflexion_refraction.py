@@ -383,19 +383,16 @@ def afficher_atelier_travaux_publics(cas_id, verrouille=False):
 
         st.markdown("##### Synthèse (Texte à trous - 10 cases - 10 pts)")
         for ligne in banque_trous_tp[cas_id]:
-            # Extraction stricte de chaque élément du tuple par son index pour éviter le bug visuel
-            enonce_texte = ligne[0]   # Récupère uniquement la phrase de cours
-            choix_options = ligne[1]  # Récupère la liste des choix
-            cle_unique = ligne[3]     # Correction : Ciblage direct de l'index 3 pour la clé de variable
+            # Rétablissement des lignes actives sans le signe # devant
+            enonce_texte = ligne[0]
+            choix_options = ligne[1]
+            cle_unique = ligne[3]
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
-                st.write(enonce_texte)
+                st.write(enonce_texte) # Affiche uniquement la phrase propre
             with c_sel: 
                 st.selectbox("", choix_options, key=f"{cle_unique}_{cas_id}_tp_clean", disabled=verrouille, label_visibility="collapsed")
-
-
-
 
 def afficher_atelier_maintenance(cas_id, verrouille=False):
     """Affiche le Quiz et le Texte à trous côte à côte pour l'Atelier 5 (Maintenance des engins de TP)."""
