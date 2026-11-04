@@ -494,7 +494,7 @@ def afficher_atelier_maintenance(cas_id, verrouille=False):
 
     cle_ordre = f"ordre_quiz_tp_{cas_id}"
     if cle_ordre not in st.session_state:
-        liste_q = list(banque_quiz_tp[cas_id])
+        liste_q = list(banque_quiz[cas_id])
         random.shuffle(liste_q)
         st.session_state[cle_ordre] = liste_q
 
