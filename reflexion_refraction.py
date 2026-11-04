@@ -3126,7 +3126,147 @@ with tab7:
             ax.set_ylim(-6, 6)
             ax.axis("off")
             st.pyplot(fig)
+        st.write("---")
+        if f"suite_verrouille_tab7_{cle_cas_tr}" not in st.session_state:
+            st.session_state[f"suite_verrouille_tab7_{cle_cas_tr}"] = False
+        verrou_at7 = st.session_state[f"suite_verrouille_tab7_{cle_cas_tr}"]
 
+        # Rendu dynamique de votre atelier Transport Routier
+        afficher_atelier_transport_routier(cle_cas_tr, verrouille=verrou_at7)
+
+        # =============================================================================
+        # PARTIE 3 : LOGIQUE DE VALIDATION ET MOTEUR DE CORRECTION SCELLÉ
+        # =============================================================================
+        st.write("---")
+        st.subheader("Synthèse et validation de l'Atelier 7")
+        
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+        case_certif_tr = st.checkbox(
+            f"Je certifie avoir complété l'ensemble de l'étude de cas sur les applications de transport routier ({cas_data_tr['titre']}).",
+            key=f"check_certif_tr_{cle_cas_tr}",
+            disabled=verrou_at7,
+        )
+
+        if st.button("VALIDER ET EXPORTER LE BILAN DE CET EXERCICE TRANSPORT ROUTIER", key=f"btn_valider_tr_{cle_cas_tr}", use_container_width=True, disabled=verrou_at7):
+            if st.session_state.get("nom_var", "") in ["Nom", ""] or st.session_state.get("prenom_var", "") in ["Prenom", ""]:
+                st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+            elif not case_certif_tr:
+                st.error("Action refusée : Cochez la case de certification d'exercice.")
+            else:
+                # 1. Correction dynamique du Quiz (sur 10 points)
+                score_q7 = 0.0
+                cle_ordre = f"ordre_quiz_tr_{cle_cas_tr}"
+                if cle_ordre in st.session_state:
+                    for q_item in st.session_state[cle_ordre]:
+                        saisie = "Choisir..."
+                        for k in st.session_state.keys():
+                            if k.startswith(f"tr_at7_{cle_cas_tr}_g_{q_item['id']}"):
+                                id_cle = f"tr_at7_{cle_cas_tr}_g_{q_item['id']}"
+                                saisie = st.session_state[id_cle]
+                                break
+                        if str(saisie).strip() == str(q_item["rep"]).strip():
+                            score_q7 += 1.0
+
+                # 2. Correction dynamique du Texte à trous (sur 10 points)
+                score_t7 = 0.0
+                for i in range(1, 11):
+                    cle_recherche = f"tr{cle_cas_tr[-1]}_t{i}_{cle_cas_tr}_tr_clean"
+                    if cle_recherche in st.session_state:
+                        if st.session_state[cle_recherche] != "Choisir...":
+                            score_t7 += 1.0
+
+                st.session_state[f"score_tr_{cle_cas_tr}_p1"] = round(float(score_q7), 1)
+                st.session_state[f"score_tr_{cle_cas_tr}_p2"] = round(float(score_t7), 1)
+                st.session_state[f"score_tr_{cle_cas_tr}"] = round(float(score_q7 + score_t7), 1)
+                st.session_state[f"suite_verrouille_tab7_{cle_cas_tr}"] = True
+                st.rerun()
+
+        # =============================================================================
+        # PARTIE 4 : EXPORTATION DU RAPPORT INDIVIDUEL HTML SCELLÉ COMPLET
+        # =============================================================================
+        if st.session_state.get(f"suite_verrouille_tab7_{cle_cas_tr}", False):
+            note_obtenue_tr = st.session_state.get(f"score_tr_{cle_cas_tr}", 0.0)
+            scr1_tr = st.session_state.get(f"score_tr_{cle_cas_tr}_p1", 0.0)
+            scr2_tr = st.session_state.get(f"score_tr_{cle_cas_tr}_p2", 0.0)
+            from datetime import datetime
+            timestamp_tr = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+            st.success(f"EXERCICE TRANSPORT ROUTIER SCELLÉ | Note de session : {note_obtenue_tr:.1f} / 20")
+
+            html_export_tr = f"""<!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Rapport Transport Routier - {n_eleve}</title>
+                <style>
+                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                    .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                    table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                </style>
+            </head>
+            <body>
+                <div class="header-box">
+                    <h1>Rapport d'Évaluation de Physique Appliquée</h1>
+                    <p>Atelier 7 : Applications Optiques appliquées au Transport Routier</p>
+                    <p>Cas d'étude analysé : <b>{cas_data_tr['titre']}</b></p>
+                    <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                    <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_tr}</p>
+                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{note_obtenue_tr:.1f}</span> / 20</div>
+                </div>
+                
+                <div class="sub-title">Récapitulatif des Notes Spécialité</div>
+                <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                    Note obtenue au Quiz Technique : <strong>{scr1_tr:.1f} / 10</strong><br>
+                    Note obtenue à la Synthèse Routière : <strong>{scr2_tr:.1f} / 10</strong><br>
+                    Note Globale Spécialité : <strong>{note_obtenue_tr:.1f} / 20</strong>
+                </p>
+                
+                <div class="sub-title">Correction détaillée des Questions (QCM)</div>
+                <table>
+                    <thead>
+                        <tr><th>N°</th><th>Question Technique Posée</th><th>Saisie Élève</th><th>Verdict</th></tr>
+                    </thead>
+                    <tbody>
+            """
+
+            cle_ordre = f"ordre_quiz_tr_{cle_cas_tr}"
+            if cle_ordre in st.session_state:
+                for num, q_item in enumerate(st.session_state[cle_ordre], 1):
+                    saisie = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"tr_at7_{cle_cas_tr}_g_{q_item['id']}"):
+                            saisie = st.session_state[k]
+                            break
+                    attendu = q_item["rep"]
+                    v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                    v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                    html_export_tr += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+            html_export_tr += """
+                    </tbody>
+                </table>
+            </body>
+            </html>
+            """
+
+            nom_f_tr = preparer_nom_fichier(f"Rapport_Transport_Routier_{cle_cas_tr}") + ".html"
+            st.download_button(
+                label="TÉLÉCHARGER LE RAPPORT D'ÉVALUATION TRANSPORT ROUTIER (HTML)",
+                data=html_export_tr,
+                file_name=nom_f_tr,
+                mime="text/html",
+                use_container_width=True,
+                key=f"btn_final_html_download_tr_{cle_cas_tr}"
+            )
 
 
 
