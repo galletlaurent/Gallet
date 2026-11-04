@@ -2072,8 +2072,13 @@ with tab5:
     if not liste_choix_possibles:
         st.warning("Veuillez cocher au moins une des deux lois physiques pour afficher les exercices.")
     else:
-        if "cas_maintenance_courant" not in st.session_state or st.session_state.cas_maintenance_courant not in liste_choix_possibles:
-            st.session_state.cas_maintenance_courant = liste_choix_possibles
+        # SÉCURITÉ : Si la variable n'existe pas ou contient un type incorrect (ex: une liste), on force une clé valide
+        if "cas_maintenance_courant" not in st.session_state or type(st.session_state.cas_maintenance_courant) is list:
+            st.session_state.cas_maintenance_courant = liste_choix_possibles[0]
+
+        # SÉCURITÉ : Si la clé stockée n'est pas dans les filtres actifs, on réaligne sur le premier choix disponible
+        if st.session_state.cas_maintenance_courant not in liste_choix_possibles:
+            st.session_state.cas_maintenance_courant = liste_choix_possibles[0]
 
         # Bouton générateur d'exercice au hasard
         if st.button("GÉNÉRER UN EXERCICE AU HASARD PARMI LES CAS COCHÉS", use_container_width=True, key="btn_alea_maint"):
@@ -2083,9 +2088,9 @@ with tab5:
                 del st.session_state[f"ordre_quiz_maintenance_{st.session_state.cas_maintenance_courant}"]
             st.rerun()
 
+        # Récupération sécurisée de la clé active
         cle_cas = st.session_state.cas_maintenance_courant
         cas_data = base_applications[cle_cas]
-
         st.markdown(f"### Étude de Cas Active : {cas_data['titre']} (Loi : {cas_data['loi']})")
         st.markdown("##### Définition et Contexte Technique")
         st.write(cas_data["definitions"])
