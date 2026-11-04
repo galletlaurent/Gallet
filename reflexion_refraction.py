@@ -915,23 +915,6 @@ with tab2:
         f"Constat vérifié : L'égalité mathématique fondamentale **i = r** est validée."
     )
 
-    # Préparation et sauvegarde dynamique du fichier texte brut associé à cet onglet
-    nom_fic = preparer_nom_fichier("Miroir_Plan")
-    donnees_sauvegarde = (
-        f"RAPPORT EXPERIMENTAL - LOI DE LA REFLEXION\n"
-        f"Angle d'incidence teste : {angle_inc} degres\n"
-        f"Angle de reflexion observe : {angle_inc} degres\n"
-        f"Resultat : Conformite aux lois de Snell-Descartes etablie."
-    )
-    
-    st.download_button(
-        label="Télécharger les données de mesures de cet onglet",
-        data=donnees_sauvegarde,
-        file_name=nom_fic,
-        mime="text/plain",
-        use_container_width=True,
-        key="btn_download_mesures_miroir_plan"
-    )
 
     if "suite_verrouille_tab2_miroir" not in st.session_state:
         st.session_state.suite_verrouille_tab2_miroir = False
@@ -1290,25 +1273,6 @@ with tab3:
             f"Angle de réfraction calculé dans le milieu 2 ($i_2$) : **{angle_i2_deg:.2f}°**"
         ) # Fermeture correcte de la f-string et de st.info()
 
-    # Le code suivant reprend avec l'alignement général de l'onglet
-    nom_fic = preparer_nom_fichier("Loi_Refraction")
-    donnees_sauvegarde = (
-        f"RAPPORT EXPERIMENTAL - LOI DE LA REFRACTION\n"
-        f"Milieu 1 : {nom_milieu1} (n1 = {n1})\n"
-        f"Milieu 2 : {nom_milieu2} (n2 = {n2})\n"
-        f"Angle d'incidence i1 : {angle_i1} degres\n"
-        f"Resultat mesure i2 : {angle_i2_deg:.2f} degres\n"
-    )
-    
-    st.download_button(
-        label="Télécharger les données de mesures de la réfraction",
-        data=donnees_sauvegarde,
-        file_name=nom_fic,
-        mime="text/plain",
-        use_container_width=True,
-        key="btn_download_mesures_refraction"
-    )
-
 
     if "suite_verrouille_tab3_refraction" not in st.session_state:
         st.session_state.suite_verrouille_tab3_refraction = False
@@ -1585,7 +1549,7 @@ with tab4:
     ax.fill_between([-10, 10], 0, 10, color="#f8fafc", alpha=0.5)
     ax.fill_between([-10, 10], -10, 0, color="#fff1f2" if reflexion_totale else "#f0fdf4", alpha=0.5)
     ax.plot([-10, 10], [0, 0], color="#334155", linewidth=3)
-    ax.plot([-10, 10], [-10, 10], color="#94a3b8", linestyle="--", linewidth=2)
+    ax.plot([0, 0], [-10, 10], color="#94a3b8", linestyle="--", linewidth=2)
 
     # Tracé incident
     x_inc = -8 * np.sin(rad_i1)
