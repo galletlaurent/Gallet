@@ -417,7 +417,7 @@ def afficher_atelier_maintenance(cas_id, verrouille=False):
         ]
     }
 
-    banque_trous_tp = {
+    banque_trous = {
         "tp_ref1": [
             ("1. La station totale mesure les distances sur le chantier à l'aide d'un faisceau ..........", ["Choisir...", "laser", "sonore"], "laser", "tp1_t1"),
             ("2. Pour renvoyer le signal, le topographe place une mire munie d'un ..........", ["Choisir...", "prisme", "dioptre"], "prisme", "tp1_t2"),
