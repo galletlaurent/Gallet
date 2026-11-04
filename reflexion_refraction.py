@@ -563,28 +563,30 @@ def afficher_atelier_maintenance(cas_id, verrouille=False):
         random.shuffle(liste_q)
         st.session_state[cle_ordre] = liste_q
 
+    if f"champs_maint_{cas_id}_clean" not in st.session_state:
+        st.session_state[f"champs_maint_{cas_id}_clean"] = banque_trous[cas_id]
+
     col_quiz, col_trous = st.columns(2)
     
     with col_quiz:
         st.markdown("##### Quiz Technique (10 questions - 10 pts)")
-        for idx, q_data in enumerate(st.session_state[cle_ordre], 1):
+        for idx, q_data in enumerate(st.session_state[f"ordre_quiz_maint_{cas_id}"], 1):
             st.write(f"**{idx}.** {q_data['q']}")
             st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"m_at5_{cas_id}_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
 
+    with col_trous:
         st.markdown("##### Synthèse (Texte à trous - 10 cases - 10 pts)")
-        for ligne in banque_trous[cas_id]:
-            # Séparation stricte des éléments du tuple par leur index
-            phrase_propre = ligne  # Extrait uniquement la phrase de cours en français
-            liste_choix = ligne   # Extrait la liste des options pour le selectbox
-            cle_session = ligne     # Extrait la clé unique pour st.session_state
+        for ligne in st.session_state[f"champs_maint_{cas_id}_clean"]:
+            # Extraction stricte par indexation directe du tuple de session
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
             
-            # Création de deux colonnes pour aligner la phrase et son menu déroulant
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-            with c_txt:
-                st.write(phrase_propre) # Affiche uniquement le texte propre, sans le tuple vert
-            with c_sel:
-                st.selectbox("", liste_choix, key=f"{cle_session}_{cas_id}_m_clean", disabled=verrouille, label_visibility="collapsed")
-
+            with c_txt: 
+                st.write(enonce) # N'affichera plus jamais le tuple vert, uniquement la phrase
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_{cas_id}_m_clean", disabled=verrouille, label_visibility="collapsed")
                 
         
 def afficher_atelier_reflexion_totale(verrouille=False):
