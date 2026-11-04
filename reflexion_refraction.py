@@ -2471,13 +2471,15 @@ with tab6:
     if not liste_choix_tp:
         st.warning("Veuillez cocher au moins une des deux lois physiques pour afficher les exercices.")
     else:
+        # SECURITE : Si la variable n'existe pas ou contient un type incorrect (ex: un tableau), on force un choix valide
         if "cas_tp_courant" not in st.session_state or type(st.session_state.cas_tp_courant) is list:
-            st.session_state.cas_tp_courant = liste_choix_tp
+            st.session_state.cas_tp_courant = liste_choix_tp[0]
 
+        # SECURITE : Si la clé stockée n'est plus disponible dans les filtres actifs, on réaligne sur le premier choix
         if st.session_state.cas_tp_courant not in liste_choix_tp:
-            st.session_state.cas_tp_courant = liste_choix_tp
+            st.session_state.cas_tp_courant = liste_choix_tp[0]
 
-        # Bouton de tirage au hasard
+        # Bouton générateur d'exercice au hasard
         if st.button("GÉNÉRER UN EXERCICE AU HASARD PARMI LES CAS COCHÉS", use_container_width=True, key="btn_alea_tp"):
             import random
             st.session_state.cas_tp_courant = random.choice(liste_choix_tp)
@@ -2485,6 +2487,7 @@ with tab6:
                 del st.session_state[f"ordre_quiz_tp_{st.session_state.cas_tp_courant}"]
             st.rerun()
 
+        # Récupération sécurisée et garantie de la clé active
         cle_cas_tp = st.session_state.cas_tp_courant
         cas_data_tp = base_applications_tp[cle_cas_tp]
 
