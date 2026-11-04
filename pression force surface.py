@@ -641,8 +641,6 @@ with tab1:
             "« Messieurs, calmez-vous avec vos calculs de force et de surface. Vous voulez régler l'addition ou vous allez aussi faire éclater ma cave avec votre relation P = F / S ? »"
         )
         st.info(enonce_histoire)
-        for _ in range(20):
-            st.write("")
                 
         texte_bd_bleu_h = (
             "**La BD humoristique : Le Choc des Fluides**\n\n"
@@ -663,8 +661,7 @@ with tab1:
             st.caption("Image réelle de contexte manquante")
 
         # Insertion des 20 lignes d'espacement réglementaires pour descendre la caricature
-        for _ in range(20):
-            st.write("")
+
         
         # 2. Affichage de la caricature de bande dessinée (Largeur fixe 300px)
         if os.path.exists("bd_choc_fluides.jpg"):
@@ -876,8 +873,7 @@ with tab2:
             "« C'est mathématique, la poussée du fluide s'exerce de manière normale, c'est-à-dire perpendiculaire à l'aire de la paroi ! »."
         )
         st.info(enonce_forces)
-        for _ in range(20):
-            st.write("")
+
         texte_bd_bleu_f = (
             "**La BD humoristique : Le Vecteur Fou du Laboratoire**\n\n"
             "**Case 1 :** Galilée : « Sans frottement, un corps lancé poursuit sa trajectoire en ligne droite à l'infini ! ».\n\n"
@@ -895,9 +891,6 @@ with tab2:
         else:
             st.caption("Image réelle de contexte manquante")
 
-        # Insertion des 20 lignes d'espacement réglementaires pour repousser la caricature vers le bas
-        for _ in range(20):
-            st.write("")
         
         # 2. Affichage inférieur : Caricature de BD (Largeur fixe 300px)
         if os.path.exists("bd_mecanique_forces.jpg"):
@@ -1110,8 +1103,7 @@ with tab3:
             "**Case 3 :** À l'équilibre, la hauteur du fluide atteint strictement le même niveau horizontal dans chaque colonne.\n\n"
             "**Case 4 :** Ce phénomène confirme que la pression en un point ne dépend pas du volume de fluide mais uniquement de la profondeur."
         )
-        for _ in range(20):
-            st.write("")
+
         texte_bd_bleu_p3 = (
             "**La BD humoristique : Le Mystère de la Colonne de Mercure**\n\n"
             "**Case 1 :** Torricelli : « Plus on monte haut sur la montagne, moins le poids de l'atmosphère pèse sur notre bassin ! ».\n\n"
@@ -1129,9 +1121,7 @@ with tab3:
         else:
             st.caption("Image réelle de contexte manquante")
 
-        # Insertion des 20 lignes d'espacement réglementaires pour repousser la caricature
-        for _ in range(20):
-            st.write("")
+
         
         # 2. Affichage inférieur : Caricature des vases communicants (Largeur fixe 300px)
         if os.path.exists("bd_vases_communicants.jpg"):
@@ -1397,8 +1387,7 @@ with tab4:
             "**Case 3 :** Il chausse des raquettes de grande section. La force de son poids reste rigoureusement inchangée.\n\n"
             "**Case 4 :** En multipliant la surface d'appui par dix, la pression s'effondre. Il marche à la surface sans s'enfoncer."
         )
-        for _ in range(20):
-            st.write("")
+
         texte_bd_bleu_s4 = (
             "**La BD humoristique : Le Paradoxe des Raquettes à Neige**\n\n"
             "**Case 1 :** Randonneur : « Je m'enfonce jusqu'aux genoux ! La neige ne porte rien du tout aujourd'hui ! ».\n\n"
@@ -1417,8 +1406,7 @@ with tab4:
             st.caption("Image réelle de contexte manquante")
 
         # Insertion des 20 lignes d'espacement réglementaires pour repousser la caricature vers le bas
-        for _ in range(20):
-            st.write("")
+
         
         # 2. Affichage inférieur : Caricature de BD (Largeur fixe 300px)
         if os.path.exists("bd_calcul_surfaces.jpg"):
@@ -1801,8 +1789,6 @@ with tab5:
             "**Case 3 :** Le diagnostic confirme un passage d'huile interne entre la chambre de travail et la chambre de retour.\n\n"
             "**Case 4 :** Après remplacement du joint composite de section, le profil de pression redevient conforme aux spécifications."
         )
-        for _ in range(20):
-            st.write("")
         texte_bd_maint = (
             "**Bande Caricaturale de l'Incident : Défaut d'étanchéité du vérin**\n\n"
             "**Case 1 :** Perte de poussée : « On écrase la matière mais les Watts manquent, la force F plafonne ! ».\n\n"
@@ -1818,8 +1804,7 @@ with tab5:
             "**Case 3 :** L'expertise révèle une fragilisation du métal due à des vibrations répétées et des coups de bélier.\n\n"
             "**Case 4 :** Une nouvelle conduite avec lyre de dilatation et amortisseurs de pulsations est mise en service."
         )
-        for _ in range(20):
-            st.write("")
+ 
         texte_bd_maint = (
             "**Bande Caricaturale de l'Incident : Éclatement de canalisation**\n\n"
             "**Case 1 :** Éclatement : « La surpression instantanée a dépassé la limite de rupture de l'enveloppe acier ! ».\n\n"
@@ -1835,8 +1820,7 @@ with tab5:
             "**Case 3 :** Le démontage du corps révèle une érosion par piqûres profondes sur les faces actives des engrenages.\n\n"
             "**Case 4 :** L'aspiration est nettoyée, la section d'entrée élargie pour ramener la dépression sous le seuil de tension de vapeur."
         )
-        for _ in range(20):
-            st.write("")
+
         texte_bd_maint = (
             "**Bande Caricaturale de l'Incident : Phénomène de cavitation**\n\n"
             "**Case 1 :** Crépitement : « On dirait que la pompe avale des cailloux, l'implosion des micro-bulles fait rage ! ».\n\n"
@@ -1852,8 +1836,7 @@ with tab5:
             "**Case 3 :** Le diagnostic confirme le blocage en position ouverte du clapet du limiteur de pression principal.\n\n"
             "**Case 4 :** Après nettoyage du tiroir et calibrage du ressort, le fluide cesse de laminer et la température se stabilise."
         )
-        for _ in range(20):
-            st.write("")
+
         texte_bd_maint = (
             "**Bande Caricaturale de l'Incident : Laminage et surchauffe**\n\n"
             "**Case 1 :** Surchauffe : « L'huile est bouillante, l'énergie mécanique se transforme entièrement en calories ! ».\n\n"
@@ -1896,10 +1879,7 @@ with tab5:
         else:
             st.caption("Image réelle manquante")
 
-        # Les 20 lignes d'espacement réglementaires pour repousser la caricature vers le bas
-        for _ in range(20):
-            st.write("")
-        
+
         # 2. Affichage inférieur : Caricature (Largeur fixe 300px)
         if os.path.exists(fichier_caricature_maint):
             st.image(fichier_caricature_maint, caption="Bande dessinée de l'incident")
@@ -2286,8 +2266,7 @@ with tab6:
             "**Case 3 :** Le calcul métrologique cible l'aire totale de contact développée par la section des tuiles métalliques.\n\n"
             "**Case 4 :** L'élargissement des chenilles augmente la surface d'appui, provoquant l'effondrement de la pression exercée."
         )
-        for _ in range(20):
-            st.write("")
+
         texte_bd_tp = (
             "**Bande Caricaturale de l'Incident : L'Enlisement Évité**\n\n"
             "**Case 1 :** Alarme terrain : « Le monstre de 32 tonnes s'enfonce, la portance de la boue liquide est dépassée ! ».\n\n"
@@ -2330,8 +2309,7 @@ with tab6:
             "**Case 3 :** Sans calage d'interposition étendu, la contrainte mécanique excède la résistance élastique du goudron.\n\n"
             "**Case 4 :** L'ajout de madriers de grande section répartit la charge orthogonale et sécurise l'assise structurelle."
         )
-        for _ in range(20):
-            st.write("")
+
         texte_bd_tp = (
             "**Bande Caricaturale de l'Incident : Le Poinçonnement des Chaussées**\n\n"
             "**Case 1 :** Levage critique : « La poutre de pont oscille, les vérins hydrauliques descendent sous charge ! ».\n\n"
@@ -2374,8 +2352,7 @@ with tab6:
             "**Case 3 :** Un défaut de rigidité des tirants engendre un fléchissement structurel de la paroi réceptrice solide.\n\n"
             "**Case 4 :** L'ajustement du maillage de serrage équilibre les actions fluides et fige la géométrie de l'ouvrage."
         )
-        for _ in range(20):
-            st.write("")
+
         texte_bd_tp = (
             "**Bande Caricaturale de l'Incident : La Poussée Hydrostatique**\n\n"
             "**Case 1 :** Coulage continu : « Le malaxeur déverse le béton fluide, la colonne grimpe à 6 mètres de haut ! ».\n\n"
@@ -2424,8 +2401,7 @@ with tab6:
             "**Case 3 :** Multiplication : « En combinant une pression extrême avec une immense surface solide S, la force F devient colossale ! ».\n\n"
             "**Case 4 :** Avancement : « Les voussoirs tiennent bon, le bouclier avance d'un metro dans les entrailles de la Terre ! »"
         )
-        for _ in range(20):
-            st.write("")
+
         img_reelle_tp, img_bd_tp = "tunnelier_reel.jpg", "bd_tunnelier.jpg"
 
         questions_sources_tp = [
@@ -2475,10 +2451,7 @@ with tab6:
             st.image(img_reelle_tp, caption="Image réelle : Constat sur site ou ouvrage")
         else:
             st.caption("Illustration réelle indisponible ou manquante")
-        
-        # Boucle d'espacement des 20 lignes réglementaires pour descendre la caricature
-        for _ in range(20):
-            st.write("")
+
         
         # 2. Rendu inférieur : Caricature de BD (Largeur fixe 300px)
         if os.path.exists(img_bd_tp):
@@ -2793,8 +2766,7 @@ with tab7:
             "**Case 3 :** En cas de micro-fissure de l'enveloppe, une fuite d'air externe fait chuter la pression, compromettant le freinage.\n\n"
             "**Case 4 :** Le maintien d'une étanchéité parfaite garantit le déploiement de la force de poussée nominale requise."
         )
-        for _ in range(20):
-            st.write("")
+
         texte_bd_tr = (
             "**Bande Caricaturale de l'Incident : Les Freins Pneumatiques**\n\n"
             "**Case 1 :** Commande : « Pied sur la pédale, les valves s'ouvrent, l'air sous pression se rue vers les roues ! ».\n\n"
@@ -2836,8 +2808,7 @@ with tab7:
             "**Case 3 :** La centrale électronique doit injecter plus d'air pour faire grimper la pression P et équilibrer le pont.\n\n"
             "**Case 4 :** Si la pression franchit la limite mécanique élastique, le boudin explose par surpression brutale."
         )
-        for _ in range(20):
-            st.write("")
+
         texte_bd_tr = (
             "**Bande Caricaturale de l'Incident : Les Coussins de Suspension**\n\n"
             "**Case 1 :** Chargement lourd : « On empile les palettes à l'arrière, les coussins s'écrasent sous la force ! ».\n\n"
@@ -2896,8 +2867,7 @@ with tab7:
             st.caption("Illustration réelle indisponible ou manquante")
         
         # Boucle d'espacement des 20 lignes réglementaires pour descendre la caricature
-        for _ in range(20):
-            st.write("")
+
         
         # 2. Rendu inférieur : Caricature de BD (Largeur fixe 300px)
         if os.path.exists(img_bd_tr):
@@ -3154,8 +3124,7 @@ with tab8:
             "**Case 3 :** Cette dérive géométrique non corrigée fausse la mesure bout à bout en sous-estimant la distance réelle du terrain.\n\n"
             "**Case 4 :** L'application du coefficient d'allongement linéaire (11.5 ppm/°C) corrige la mesure et valide le plan de bornage."
         )
-        for _ in range(20):
-            st.write("")
+
         texte_bd_geo = (
             "**Bande Caricaturale de l'Incident : Le Ruban Élastique**\n\n"
             "**Case 1 :** Canicule : « Le thermomètre grimpe à 35 °C sur le goudron, les atomes du ruban solide s'agitent et s'écartent ! ».\n\n"
@@ -3197,8 +3166,7 @@ with tab8:
             "**Case 3 :** Ce phénomène de réfraction atmosphérique modifie infimement la célérité de l'onde et fausse la distance EDM.\n\n"
             "**Case 4 :** Le calcul de correction basé sur la pression (hPa) et la température rétablit l'indice de réfraction exact."
         )
-        for _ in range(20):
-            st.write("")
+
         texte_bd_geo = (
             "**Bande Caricaturale de l'Incident : Le Laser Courbé**\n\n"
             "**Case 1 :** Mirage : « Le goudron surchauffé agit comme un miroir, l'air chaud ascendant tremble dans l'objectif ! ».\n\n"
@@ -3256,9 +3224,7 @@ with tab8:
         else:
             st.caption("Illustration réelle indisponible ou manquante")
         
-        # Boucle d'espacement des 20 lignes réglementaires pour descendre la caricature
-        for _ in range(20):
-            st.write("")
+
         
         # 2. Rendu inférieur : Caricature de BD (Largeur fixe 300px)
         if os.path.exists(img_bd_geo):
