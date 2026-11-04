@@ -1585,7 +1585,7 @@ with tab4:
     ax.fill_between([-10, 10], 0, 10, color="#f8fafc", alpha=0.5)
     ax.fill_between([-10, 10], -10, 0, color="#fff1f2" if reflexion_totale else "#f0fdf4", alpha=0.5)
     ax.plot([-10, 10], [0, 0], color="#334155", linewidth=3)
-    ax.plot(, [-10, 10], color="#94a3b8", linestyle="--", linewidth=2)
+    ax.plot([-10, 10], [-10, 10], color="#94a3b8", linestyle="--", linewidth=2)
 
     # Tracé incident
     x_inc = -8 * np.sin(rad_i1)
