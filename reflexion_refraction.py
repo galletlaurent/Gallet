@@ -417,110 +417,116 @@ def afficher_atelier_maintenance(cas_id, verrouille=False):
         ]
     }
 
-    banque_trous = {
-        "m_ref1": [
-            ("1. Le rétroviseur d'angle mort utilise une surface réfléchissante ..........", ["Choisir...", "convexe", "concave"], "convexe", "m1_t1"),
-            ("2. Ce miroir permet au mécanicien d'agrandir le champ de ..........", ["Choisir...", "vision", "réfraction"], "vision", "m1_t2"),
-            ("3. Les rayons réfléchis divergent en s'éloignant de la ..........", ["Choisir...", "normale", "surface"], "normale", "m1_t3"),
-            ("4. Au point de contact, l'angle r reste toujours égal à ..........", ["Choisir...", "i", "2i"], "i", "m1_t4"),
-            ("5. La déformation sphérique rend l'image plus .......... que l'objet réel.", ["Choisir...", "petite", "grande"], "petite", "m1_t5"),
-            ("6. Pour des raisons de sécurité de manoeuvre, l'angle .......... doit être réduit.", ["Choisir...", "mort", "d'incidence"], "mort", "m1_t6"),
-            ("7. La ligne perpendiculaire à la courbure locale s'appelle la ..........", ["Choisir...", "normale", "dioptre"], "normale", "m1_t7"),
-            ("8. L'image créée par ce dispositif optique est une image ..........", ["Choisir...", "virtuelle", "réelle"], "virtuelle", "m1_t8"),
-            ("9. La vérification de l'état des miroirs fait partie de la maintenance ..........", ["Choisir...", "préventive", "corrective"], "préventive", "m1_t9"),
-            ("10. L'égalité fondamentale i = r caractérise la loi de la ..........", ["Choisir...", "réflexion", "réfraction"], "réflexion", "m1_t10")
+    banque_trous_tp = {
+        "tp_ref1": [
+            ("1. La station totale mesure les distances sur le chantier à l'aide d'un faisceau ..........", ["Choisir...", "laser", "sonore"], "laser", "tp1_t1"),
+            ("2. Pour renvoyer le signal, le topographe place une mire munie d'un ..........", ["Choisir...", "prisme", "dioptre"], "prisme", "tp1_t2"),
+            ("3. Le retour direct de l'onde s'appuie sur la loi de la ..........", ["Choisir...", "réflexion", "réfraction"], "réflexion", "tp1_t3"),
+            ("4. Au point d'incidence, l'angle de retour r est égal à l'angle ..........", ["Choisir...", "i", "i2"], "i", "tp1_t4"),
+            ("5. La ligne perpendiculaire à la face d'entrée du verre est la ..........", ["Choisir...", "normale", "diagonale"], "normale", "tp1_t5"),
+            ("6. Le calcul de la distance utilise la constante de la vitesse de la ..........", ["Choisir...", "lumière", "pression"], "lumière", "tp1_t6"),
+            ("7. La trajectoire rectiligne garantit un alignement parfait des ..........", ["Choisir...", "ouvrages", "engins"], "ouvrages", "tp1_t7"),
+            ("8. Les impuretés de l'air provoquent une déviation de type ..........", ["Choisir...", "diffuse", "spéculaire"], "diffuse", "tp1_t8"),
+            ("9. Ce suivi géométrique rigoureux fait partie de l'implantation des ..........", ["Choisir...", "axes", "moteurs"], "axes", "tp1_t9"),
+            ("10. L'égalité des angles caractérise les lois de .......... pour la réflexion.", ["Choisir...", "Snell-Descartes", "Newton"], "Snell-Descartes", "tp1_t10")
         ],
-        "m_ref2": [
-            ("1. Le réglage des phares s'effectue au laboratoire à l'aide d'un banc ..........", ["Choisir...", "laser", "hydraulique"], "laser", "m2_t1"),
-            ("2. Si l'optique est droite, le faisceau incident coïncide avec la ..........", ["Choisir...", "normale", "tangente"], "normale", "m2_t2"),
-            ("3. Le rayon lumineux renvoyé vers l'appareil est le rayon ..........", ["Choisir...", "réfléchi", "incident"], "réfléchi", "m2_t3"),
-            ("4. L'évaluation de l'erreur géométrique est lue sur une mire ..........", ["Choisir...", "graduée", "opaque"], "graduée", "m2_t4"),
-            ("5. La loi spéculaire impose une égalité stricte entre angle i et angle ..........", ["Choisir...", "r", "i2"], "r", "m2_t5"),
-            ("6. Un projecteur déréglé qui tire vers le ciel provoque un ..........", ["Choisir...", "éblouissement", "court-circuit"], "éblouissement", "m2_t6"),
-            ("7. L'alignement des feux de travail sécurise le niveau de nuit ..........", ["Choisir...", "nocturne", "rapide"], "nocturne", "m2_t7"),
-            ("8. La surface courbe qui concentre les photons est un réflecteur ..........", ["Choisir...", "parabolique", "plan"], "parabolique", "m2_t8"),
-            ("9. Pour ajuster la position de la lentille, on actionne des vis de ..........", ["Choisir...", "réglage", "vidange"], "réglage", "m2_t9"),
-            ("10. La propagation de la lumière dans l'air de l'atelier reste ..........", ["Choisir...", "rectiligne", "courbe"], "rectiligne", "m2_t10")
+        "tp_ref2": [
+            ("1. La niveleuse utilise un récepteur calé sur un plan horizontal de ..........", ["Choisir...", "référence", "courbure"], "référence", "tp2_t1"),
+            ("2. L'émetteur rotatif balaie le chantier pour créer une cote ..........", ["Choisir...", "altimétrique", "volumique"], "altimétrique", "tp2_t2"),
+            ("3. Les cellules photoélectriques interceptent le faisceau par ..........", ["Choisir...", "réflexion", "réfraction"], "réflexion", "tp2_t3"),
+            ("4. L'angle d'incidence du balayage laser horizontal par rapport à la normale est de ..........", ["Choisir...", "0", "90"], "0", "tp2_t4"),
+            ("5. Si la lame dévie, le système modifie la position des vérins ..........", ["Choisir...", "hydrauliques", "électriques"], "hydrauliques", "tp2_t5"),
+            ("6. Le guidage optique permet d'ajuster l'épaisseur de la grave ..........", ["Choisir...", "non traitée", "bitumineuse"], "non traitée", "tp2_t6"),
+            ("7. La couche lissée par cet engin s'appelle le fond de ..........", ["Choisir...", "forme", "fouille"], "forme", "tp2_t7"),
+            ("8. Les capteurs éliminent le besoin de poser des piquets ..........", ["Choisir...", "manuels", "réfléchissants"], "manuels", "tp2_t8"),
+            ("9. Le balayage du faisceau s'exécute à une vitesse de plusieurs centaines de .......... par minute.", ["Choisir...", "tours", "mètres"], "tours", "tp2_t9"),
+            ("10. Ce automatisme évite les erreurs de terrassement et les surépaisseurs de ..........", ["Choisir...", "matériaux", "carburant"], "matériaux", "tp2_t10")
         ],
-        "m_ref3": [
-            ("1. L'épaisseur des tuiles métalliques se mesure par un capteur ..........", ["Choisir...", "optique", "mécanique"], "optique", "m3_t1"),
-            ("2. La méthode calcule la distance d'éloignement grâce au temps de ..........", ["Choisir...", "vol", "pose"], "vol", "m3_t2"),
-            ("3. Le flanc de la pièce en mouvement renvoie le signal par ..........", ["Choisir...", "réflexion", "réfraction"], "réflexion", "m3_t3"),
-            ("4. Si le métal s'use et s'amincit, la trajectoire retour devient plus ..........", ["Choisir...", "longue", "courte"], "longue", "m3_t4"),
-            ("5. Ce suivi en continu automatise les opérations de maintenance ..........", ["Choisir...", "prédictive", "curative"], "prédictive", "m3_t5"),
-            ("6. La boue fait chuter l'intensité car elle provoque une réflexion ..........", ["Choisir...", "diffuse", "spéculaire"], "diffuse", "m3_t6"),
-            ("7. Le faisceau incident doit attaquer la surface de manière ..........", ["Choisir...", "perpendiculaire", "tangente"], "perpendiculaire", "m3_t7"),
-            ("8. La force abrasive qui détruit les aciers s'exprime en ..........", ["Choisir...", "Newtons", "Pascals"], "Newtons", "m3_t8"),
-            ("9. L'alerte informatique prévient l'atelier avant d'atteindre la ..........", ["Choisir...", "rupture", "lubrification"], "rupture", "m3_t9"),
-            ("10. L'émetteur et le récepteur de lumière sont intégrés dans la même ..........", ["Choisir...", "cellule", "chenille"], "cellule", "m3_t10")
+        "tp_ref3": [
+            ("1. L'alignement d'un collecteur s'effectue avec un laser de ..........", ["Choisir...", "canalisation", "puissance"], "canalisation", "tp3_t1"),
+            ("2. L'appareil émetteur est calé solidement au fond du regard de ..........", ["Choisir...", "départ", "visite"], "départ", "tp3_t2"),
+            ("3. Le technicien programme la valeur réglementaire de la ..........", ["Choisir...", "pente", "pression"], "pente", "tp3_t3"),
+            ("4. Le faisceau lumineux rouge traverse l'intérieur de la ..........", ["Choisir...", "conduite", "tranchée"], "conduite", "tp3_t4"),
+            ("5. Le spot vient frapper le centre d'une mire ..........", ["Choisir...", "cible", "convexe"], "cible", "tp3_t5"),
+            ("6. La plaque de contrôle positionnée dans le tuyau est ..........", ["Choisir...", "translucide", "opaque"], "translucide", "tp3_t6"),
+            ("7. L'alignement optique prévient la stagnation des eaux ..........", ["Choisir...", "usées", "potables"], "usées", "tp3_t7"),
+            ("8. Le déplacement de la lumière dans l'air sec reste ..........", ["Choisir...", "rectiligne", "sinusoïdal"], "rectiligne", "tp3_t8"),
+            ("9. L'ajustement géométrique se fait avant le .......... de la fouille.", ["Choisir...", "remblaiement", "creusement"], "remblaiement", "tp3_t9"),
+            ("10. Ce guidage supprime les défauts d'emboîtement des tuyaux en ..........", ["Choisir...", "béton", "acier"], "béton", "tp3_t10")
         ],
-        "m_fra1": [
-            ("1. L'endoscope industriel permet de visiter les cavités du ..........", ["Choisir...", "moteur", "pneu"], "moteur", "m4_t1"),
-            ("2. La lumière guide ses photons dans la fibre grâce à la réflexion ..........", ["Choisir...", "totale", "diffuse"], "totale", "m4_t2"),
-            ("3. Pour emprisonner l'onde, l'indice du cœur doit être supérieur à la ..........", ["Choisir...", "gaine", "normale"], "gaine", "m4_t3"),
-            ("4. Au bout du flexible, une petite lentille assure la .......... du faisceau.", ["Choisir...", "réfraction", "polarisation"], "réfraction", "m4_t4"),
-            ("5. Le conduit de l'injecteur sert de voie d'.......... pour la sonde.", ["Choisir...", "accès", "vidange"], "accès", "m4_t5"),
-            ("6. L'examen détecte immédiatement les rayures profondes sur la ..........", ["Choisir...", "chemise", "courroie"], "chemise", "m4_t6"),
-            ("7. Cette technique non destructive évite un .......... complet du bloc.", ["Choisir...", "démontage", "nettoyage"], "démontage", "m4_t7"),
-            ("8. Le passage de l'onde de la lentille vers l'air obéit aux lois de ..........", ["Choisir...", "Snell-Descartes", "Newton"], "Snell-Descartes", "m4_t8"),
-            ("9. Une pellicule de graisse noire sur la tête de caméra bloque la ..........", ["Choisir...", "visibilité", "pression"], "visibilité", "m4_t9"),
-            ("10. Le diagnostic permet de déceler un point chaud ou une déformation du ..........", ["Choisir...", "piston", "filtre"], "piston", "m4_t10")
+        "tp_fra1": [
+            ("1. L'air surchauffé au ras du bitume modifie son indice de ..........", ["Choisir...", "réfraction", "réflexion"], "réfraction", "tp4_t1"),
+            ("2. Plus la température du gaz augmente, plus son indice de réfraction ..........", ["Choisir...", "diminue", "augmente"], "diminue", "tp4_t2"),
+            ("3. Cette hétérogénéité thermique courbe la trajectoire des rayons ..........", ["Choisir...", "lumineux", "mécaniques"], "lumineux", "tp4_t3"),
+            ("4. Ce phénomène de déviation continue s'appelle un .......... thermique.", ["Choisir...", "mirage", "dioptre"], "mirage", "tp4_t4"),
+            ("5. La loi de Descartes associe les indices aux .......... des angles.", ["Choisir...", "sinus", "cosinus"], "sinus", "tp4_t5"),
+            ("6. Quand le rayon glisse parallèlement au sol sans s'y enfoncer, il atteint l'angle ..........", ["Choisir...", "limite", "normal"], "limite", "tp4_t6"),
+            ("7. Le dioptre d'air chaud se comporte alors comme un .......... parfait.", ["Choisir...", "miroir", "prisme"], "miroir", "tp4_t7"),
+            ("8. Cette perturbation fausse les relevés de nivellement de haute ..........", ["Choisir...", "précision", "vitesse"], "précision", "tp4_t8"),
+            ("9. L'indice optique moyen de l'atmosphère standard vaut environ ..........", ["Choisir...", "1.0003", "1.3330"], "1.0003", "tp4_t9"),
+            ("10. Pour limiter cette erreur, le technicien évite les visées au ras du ..........", ["Choisir...", "sol", "trépied"], "sol", "tp4_t10")
         ],
-        "m_fra2": [
-            ("1. Le voyant de niveau sans flotteur utilise un prisme en ..........", ["Choisir...", "verre", "acier"], "verre", "m5_t1"),
-            ("2. Si le niveau de fluide hydraulique est BAS, l'interface touche de l'..........", ["Choisir...", "air", "huile"], "air", "m5_t2"),
-            ("3. Au contact de l'air, le rayon subit une réflexion .......... interne.", ["Choisir...", "totale", "partielle"], "totale", "m5_t3"),
-            ("4. Ce retour complet de lumière rend le hublot lumineux ou ..........", ["Choisir...", "rouge", "noir"], "rouge", "m5_t4"),
-            ("5. Lorsque le réservoir est PLEIN, le verre est noyé dans l'..........", ["Choisir...", "huile", "air"], "huile", "m5_t5"),
-            ("6. L'indice optique du liquide est très proche de celui du ..........", ["Choisir...", "verre", "vide"], "verre", "m5_t6"),
-            ("7. La similitude des indices annule le phénomène de réflexion ..........", ["Choisir...", "totale", "spéculaire"], "totale", "m5_t7"),
-            ("8. Le signal lumineux est alors transmis et se perd par .......... dans le fluide.", ["Choisir...", "réfraction", "miroitement"], "réfraction", "m5_t8"),
-            ("9. Un hublot qui reste noir confirme la présence du volume de ..........", ["Choisir...", "fluide", "vide"], "fluide", "m5_t9"),
-            ("10. Ce capteur statique élimine les pannes d'un indicateur ..........", ["Choisir...", "mécanique", "optique"], "mécanique", "m5_t10")
+        "tp_fra2": [
+            ("1. La recherche d'eau dans un forage utilise une méthode de diagraphie ..........", ["Choisir...", "optique", "manuelle"], "optique", "tp5_t1"),
+            ("2. Dans la partie haute non noyée, le rayon traverse d'abord de l'..........", ["Choisir...", "air", "eau"], "air", "tp5_t2"),
+            ("3. L'indice de réfraction de l'air est pris égal à ..........", ["Choisir...", "1", "1.33"], "1", "tp5_t3"),
+            ("4. Au contact du toit de la nappe phréatique, le milieu devient de l'..........", ["Choisir...", "eau", "roche"], "eau", "tp5_t4"),
+            ("5. L'indice de réfraction de l'eau pure possède une valeur de ..........", ["Choisir...", "1.333", "1.520"], "1.333", "tp5_t5"),
+            ("6. Le changement d'indice provoque une déviation appelée ..........", ["Choisir...", "réfraction", "réflexion"], "réfraction", "tp5_t6"),
+            ("7. Le rayon transmis se rapproche de la normale car n2 est .......... à n1.", ["Choisir...", "supérieur", "inférieur"], "supérieur", "tp5_t7"),
+            ("8. Le saut d'angle permet de repérer la profondeur de la nappe ..........", ["Choisir...", "phréatique", "de béton"], "phréatique", "tp5_t8"),
+            ("9. Cette information fixe la hauteur de sécurité des structures de ..........", ["Choisir...", "fondation", "roulement"], "fondation", "tp5_t9"),
+            ("10. Si la boue obscurcit l'eau, le signal lumineux subit une forte ..........", ["Choisir...", "absorption", "accélération"], "absorption", "tp5_t10")
         ],
-        "m_fra3": [
-            ("1. L'indice de réfraction d'une huile se contrôle avec un ..........", ["Choisir...", "réfractomètre", "densitomètre"], "réfractomètre", "m6_t1"),
-            ("2. Une dérive numérique du coefficient n indique une .......... du bain.", ["Choisir...", "pollution", "filtration"], "pollution", "m6_t2"),
-            ("3. L'infiltration d'eau de condensation modifie la valeur de l'..........", ["Choisir...", "indice", "angle i1"], "indice", "m6_t3"),
-            ("4. Le test s'effectue rapidement en déposant une seule .......... de lubrifiant.", ["Choisir...", "goutte", "seringue"], "goutte", "m6_t4"),
-            ("5. La présence de carburant de fuite fait également .......... la réfringence.", ["Choisir...", "varier", "geler"], "varier", "m6_t5"),
-            ("6. La mesure physique lue repose sur le repérage de l'angle ..........", ["Choisir...", "critique", "de braquage"], "critique", "m6_t6"),
-            ("7. L'eau pure possède un indice de référence égal à ..........", ["Choisir...", "1.333", "1.480"], "1.333", "m6_t7"),
-            ("8. Ce suivi s'intègre dans le programme de maintenance de type ..........", ["Choisir...", "préventif", "curatif"], "préventif", "m6_t8"),
-            ("9. Protéger la pureté des huiles évite le grippage des .......... hydrauliques.", ["Choisir...", "pompes", "pneus"], "pompes", "m6_t9"),
-            ("10. Ce contrôle évite des immobilisations de flottes très ..........", ["Choisir...", "coûteuses", "rapides"], "coûteuses", "m6_t10")
+        "tp_fra3": [
+            ("1. La pureté d'une émulsion de bitume se jauge sur le terrain au ..........", ["Choisir...", "réfractomètre", "baromètre"], "réfractomètre", "tp6_t1"),
+            ("2. Le prélèvement du liant nécessite le dépôt d'une seule ..........", ["Choisir...", "goutte", "cuve"], "goutte", "tp6_t2"),
+            ("3. Le fluide est étalé directement sur le prisme en .......... de l'outil.", ["Choisir...", "verre", "acier"], "verre", "tp6_t3"),
+            ("4. La déviation du rayon lumineux renseigne sur la concentration en ..........", ["Choisir...", "eau", "sable"], "eau", "tp6_t4"),
+            ("5. La déflexion de la trajectoire du laser suit la loi de ..........", ["Choisir...", "Snell-Descartes", "Pascal"], "Snell-Descartes", "tp6_t5"),
+            ("6. L'évaluation repose sur la détection fine du sinus de l'angle ..........", ["Choisir...", "critique", "de braquage"], "critique", "tp6_t6"),
+            ("7. L'indice de réfringence de l'eau de mélange vaut réglementairement ..........", ["Choisir...", "1.333", "1.000"], "1.333", "tp6_t7"),
+            ("8. Ce test de terrain valide l'adhérence de la couche d'..........", ["Choisir...", "accrochage", "forme"], "accrochage", "tp6_t8"),
+            ("9. La rampe d'épandage distribue ce liant en amont du .......... routier.", ["Choisir...", "finisseur", "compacteur"], "finisseur", "tp6_t9"),
+            ("10. Ce suivi s'inscrit dans le cadre du contrôle d'assurance ..........", ["Choisir...", "qualité", "carburant"], "qualité", "tp6_t10")
         ]
     }
 
-    # Restitution de l'ordre aléatoire propre au cas actif
-    cle_ordre = f"ordre_quiz_maintenance_{cas_id}"
+    cle_ordre = f"ordre_quiz_tp_{cas_id}"
     if cle_ordre not in st.session_state:
-        liste_q = list(banque_quiz[cas_id])
+        liste_q = list(banque_quiz_tp[cas_id])
         random.shuffle(liste_q)
         st.session_state[cle_ordre] = liste_q
 
-    col_quiz, col_trous = st.columns(2)
+    # Disposition stricte : Textes à gauche et Visuels à droite
+    col_gauche_questions, col_droite_visuels = st.columns([0.55, 0.45])
     
-    with col_quiz:
+    with col_gauche_questions:
         st.markdown("##### Quiz Technique (10 questions - 10 pts)")
         for idx, q_data in enumerate(st.session_state[cle_ordre], 1):
             st.write(f"**{idx}.** {q_data['q']}")
-            st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"m_at5_{cas_id}_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
-    with col_trous:
+            st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"tp_at6_{cas_id}_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+            
+        st.write("---")
         st.markdown("##### Synthèse (Texte à trous - 10 cases - 10 pts)")
-        for ligne in banque_trous[cas_id]:
-            # Extraction stricte de chaque élément du tuple par son index
-            enonce_texte = ligne[0]  # Récupère uniquement la phrase de cours
-            choix_options = ligne[1] # Récupère la liste des choix
-            cle_unique = ligne[-1]   # Récupère la clé de session
+        for ligne in banque_trous_tp[cas_id]:
+            enonce_texte = ligne[0]
+            choix_options = ligne[1]
+            cle_unique = ligne[3]
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-            with c_txt: 
-                st.write(enonce_texte) # Affiche uniquement la phrase propre
-            with c_sel: 
-                st.selectbox("", choix_options, key=f"{cle_unique}_{cas_id}_m_clean", disabled=verrouille, label_visibility="collapsed")
+            with c_txt:
+                st.write(enonce_texte)
+            with c_sel:
+                st.selectbox("", choix_options, key=f"{cle_unique}_{cas_id}_tp_clean", disabled=verrouille, label_visibility="collapsed")
+                
+    with col_droite_visuels:
+        st.write("")
+        st.info(
+            "Utilisez les fiches de dossiers techniques et le simulateur vectoriel situés en haut pour compléter la feuille d'évaluation à gauche."
+        )
 
-
+        
 def afficher_atelier_reflexion_totale(verrouille=False):
     """Affiche le Quiz et le Texte à trous côte à côte pour l'Atelier 4 de la Réflexion Totale."""
     import random
