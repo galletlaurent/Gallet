@@ -388,30 +388,16 @@ def afficher_atelier_maintenance(cas_id, verrouille=False):
     with col_trous:
         st.markdown("##### Synthèse (Texte à trous - 10 cases - 10 pts)")
         for ligne in banque_trous[cas_id]:
+            # Extraction correcte des éléments du tuple par leur index
             enonce = ligne
             choix = ligne
             cle = ligne[-1]
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
-                st.write(enonce)
+                st.write(enonce) # Affiche maintenant uniquement le texte propre de l'énoncé
             with c_sel: 
                 st.selectbox("", choix, key=f"{cle}_{cas_id}_m_clean", disabled=verrouille, label_visibility="collapsed")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 def afficher_atelier_reflexion_totale(verrouille=False):
