@@ -3048,12 +3048,13 @@ with tab7:
     if not liste_choix_tr:
         st.warning("Veuillez cocher au moins une des deux lois physiques pour afficher les exercices.")
     else:
-        # SÉCURITÉ : Contrôle de type de clé
+        # CORRECTION SÉCURITÉ : Si la clé n'existe pas ou est une liste, on extrait le premier élément de la liste
         if "cas_tr_courant" not in st.session_state or type(st.session_state.cas_tr_courant) is list:
-            st.session_state.cas_tr_courant = liste_choix_tr
+            st.session_state.cas_tr_courant = liste_choix_tr[0]
 
+        # SÉCURITÉ : Si la clé stockée n'est plus cochée, on réaligne sur le premier choix disponible
         if st.session_state.cas_tr_courant not in liste_choix_tr:
-            st.session_state.cas_tr_courant = liste_choix_tr
+            st.session_state.cas_tr_courant = liste_choix_tr[0]
 
         # Bouton de tirage au sort au hasard
         if st.button("GÉNÉRER UN EXERCICE AU HASARD PARMI LES CAS COCHÉS", use_container_width=True, key="btn_alea_tr"):
@@ -3063,6 +3064,7 @@ with tab7:
                 del st.session_state[f"ordre_quiz_tr_{st.session_state.cas_tr_courant}"]
             st.rerun()
 
+        # Récupération propre et garantie d'une chaîne de caractères unique
         cle_cas_tr = st.session_state.cas_tr_courant
         cas_data_tr = base_applications_tr[cle_cas_tr]
 
