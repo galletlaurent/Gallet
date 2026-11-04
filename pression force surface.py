@@ -2451,7 +2451,7 @@ with tab6:
         
         # 1. Rendu supérieur : Image réelle (Largeur fixe 300px)
         if os.path.exists(img_reelle_tp):
-            st.image(img_reelle_tp, caption="Image réelle : Constat sur site ou ouvrage", width=300)
+            st.image(img_reelle_tp, caption="Image réelle : Constat sur site ou ouvrage")
         else:
             st.caption("Illustration réelle indisponible ou manquante")
         
@@ -2461,7 +2461,7 @@ with tab6:
         
         # 2. Rendu inférieur : Caricature de BD (Largeur fixe 300px)
         if os.path.exists(img_bd_tp):
-            st.image(img_bd_tp, caption="Bande dessinée humoristique du cas", width=300)
+            st.image(img_bd_tp, caption="Bande dessinée humoristique du cas")
         else:
             st.caption("Illustration caricaturale indisponible ou manquante")
 
@@ -2866,7 +2866,7 @@ with tab7:
         
         # 1. Rendu supérieur : Image réelle (Largeur fixe 300px)
         if os.path.exists(img_reelle_tr):
-            st.image(img_reelle_tr, caption="Image réelle : Organe technique du convoi routier", width=300)
+            st.image(img_reelle_tr, caption="Image réelle : Organe technique du convoi routier")
         else:
             st.caption("Illustration réelle indisponible ou manquante")
         
@@ -2876,7 +2876,7 @@ with tab7:
         
         # 2. Rendu inférieur : Caricature de BD (Largeur fixe 300px)
         if os.path.exists(img_bd_tr):
-            st.image(img_bd_tr, caption="Bande dessinée humoristique de l'incident routier", width=300)
+            st.image(img_bd_tr, caption="Bande dessinée humoristique de l'incident routier")
         else:
             st.caption("Illustration caricaturale indisponible ou manquante")
 
@@ -3223,7 +3223,7 @@ with tab8:
         
         # 1. Rendu supérieur : Image réelle (Largeur fixe 300px)
         if os.path.exists(img_reelle_geo):
-            st.image(img_reelle_geo, caption="Image réelle : Relevé instrumental sur le terrain", width=300)
+            st.image(img_reelle_geo, caption="Image réelle : Relevé instrumental sur le terrain")
         else:
             st.caption("Illustration réelle indisponible ou manquante")
         
@@ -3233,7 +3233,7 @@ with tab8:
         
         # 2. Rendu inférieur : Caricature de BD (Largeur fixe 300px)
         if os.path.exists(img_bd_geo):
-            st.image(img_bd_geo, caption="Bande dessinée humoristique de l'arpentage", width=300)
+            st.image(img_bd_geo, caption="Bande dessinée humoristique de l'arpentage")
         else:
             st.caption("Illustration caricaturale indisponible ou manquante")
 
@@ -3454,46 +3454,6 @@ with tab8:
             mime="text/html",
             use_container_width=True,
         )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
