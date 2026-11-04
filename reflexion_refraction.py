@@ -210,6 +210,198 @@ tab8 = onglets[8]
 tab9 = onglets[9] 
 tab10 = onglets[10]
 
+
+def afficher_atelier_transport_routier(cas_id, verrouille=False):
+    """Affiche le Quiz et le Texte à trous côte à côte pour l'Atelier 7 (Transport Routier)."""
+    import random
+    import streamlit as st
+
+    st.subheader("Atelier Interactif : Contrôle et Sécurité Optique du Transport Routier")
+
+    # =============================================================================
+    # BANQUE DE QUIZ INTERNE COMPLETE (60 QUESTIONS TECHNIQUES METIERS)
+    # =============================================================================
+    banque_quiz_routier = {
+        "tr_ref1": [
+            {"id": "q1", "q": "Quel type de miroir équipe les rétroviseurs principaux d'un poids lourd pour élargir la vision latérale ?", "options": ["Miroir convexe", "Miroir concave", "Miroir plan"], "rep": "Miroir convexe"},
+            {"id": "q2", "q": "Quelle loi optique régit la déviation des rayons lumineux sur les rétroviseurs extérieurs ?", "options": ["La loi de la réflexion (i = r)", "La loi de Snell-Descartes", "La loi d'attraction"], "rep": "La loi de la réflexion (i = r)"},
+            {"id": "q3", "q": "Par rapport à quel élément géométrique mesure-t-on l'angle d'incidence sur la vitre ?", "options": ["La normale", "La surface du miroir", "La ligne d'horizon"], "rep": "La normale"},
+            {"id": "q4", "q": "L'image observée par le conducteur dans un miroir de rétrovision convexe est une image :", "options": ["Virtuelle et droite", "Réelle et inversée", "Agrandie"], "rep": "Virtuelle et droite"},
+            {"id": "q5", "q": "La distorsion d'un miroir convexe fait paraître les véhicules suiveurs :", "options": ["Plus petits et plus éloignés", "Plus grands", "Plus proches"], "rep": "Plus petits et plus éloignés"},
+            {"id": "q6", "q": "Quel miroir spécifique élimine la zone invisible située juste au pied de la cabine avant ?", "options": ["L'antéviseur", "Le rétroviseur principal", "Le miroir plan"], "rep": "L'antéviseur"},
+            {"id": "q7", "q": "La ligne imaginaire perpendiculaire à la tangente locale de la sphère du miroir s'appelle :", "options": ["La normale", "Le dioptre", "Le rayon focal"], "rep": "La normale"},
+            {"id": "q8", "q": "L'angle de réflexion spéculaire r est toujours mathématiquement :", "options": ["Égal à l'angle i", "Plus grand que i", "Égal à 90°"], "rep": "Égal à l'angle i"},
+            {"id": "q9", "q": "Un entretien rigoureux des surfaces réfléchissantes des camions permet de lutter contre :", "options": ["Les angles morts", "La consommation de carburant", "L'usure des freins"], "rep": "Les angles morts"},
+            {"id": "q10", "q": "Une réflexion lumineuse nette et ordonnée sur le rétromiroir propre est qualifiée de :", "options": ["Spéculaire", "Diffuse", "Réfractée"], "rep": "Spéculaire"}
+        ],
+        "tr_ref2": [
+            {"id": "q1", "q": "Quel type d'élément optique constitue la surface des bandes rétroréchissantes ?", "options": ["Des micro-prismes en polymère", "Des miroirs plans parfaits", "Des lentilles concaves"], "rep": "Des micro-prismes en polymère"},
+            {"id": "q2", "q": "Quelle est la particularité d'une réflexion rétroréflechissante par rapport à une réflexion classique ?", "options": ["Elle renvoie la lumière directement vers sa source", "Elle disperse les photons à 180°", "Elle absorbe l'onde incidente"], "rep": "Elle renvoie la lumière directement vers sa source"},
+            {"id": "q3", "q": "À quel type de balisage routier obligatoire appartiennent les bandes de gabarit des remorques ?", "options": ["La signalisation de contour ou de gabarit nocturne", "Les feux de détresse", "La plaque d'immatriculation"], "rep": "La signalisation de contour ou de gabarit nocturne"},
+            {"id": "q4", "q": "Combien de réflexions successives subit la lumière à l'intérieur d'un coin de cube prismatique ?", "options": ["Trois réflexions", "Une seule", "Une infinité"], "rep": "Trois réflexions"},
+            {"id": "q5", "q": "Si la bande réfléchissante est recouverte d'une épaisse couche de boue de route :", "options": ["L'intensité lumineuse renvoyée baisse drastiquement", "La vitesse de retour augmente", "Le signal change de couleur"], "rep": "L'intensité lumineuse renvoyée baisse drastiquement"},
+            {"id": "q6", "q": "La nuit, la rétroréflection permet à un automobiliste de détecter un camion en panne à une distance de :", "options": ["Plusieurs centaines de mètres", "Moins de cinq mètres", "Un kilomètre maximum"], "rep": "Plusieurs centaines de mètres"},
+            {"id": "q7", "q": "Les bandes adhésives de sécurité réglementaires doivent répondre aux normes de couleur :", "options": ["Blanche ou jaune à l'arrière, jaune ou rouge sur les côtés", "Noire ou bleue", "Vert fluo uniquement"], "rep": "Blanche ou jaune à l'arrière, jaune ou rouge sur les côtés"},
+            {"id": "q8", "q": "La trajectoire du rayon émergeant de la bande par rapport au rayon des phares est :", "options": ["Parallèle et de sens opposé", "Perpendiculaire", "Inclinée à quarante-cinq degrés"], "rep": "Parallèle et de sens opposé"},
+            {"id": "q9", "q": "L'angle formé entre le faisceau émis par la voiture et la normale à la bande est :", "options": ["L'angle d'entrée ou d'incidence i", "L'angle de réfraction", "L'angle limite"], "rep": "L'angle d'entrée ou d'incidence i"},
+            {"id": "q10", "q": "Le balisage passif par rétroréflection fonctionne sans aucune source de :", "options": ["Courant électrique embarqué", "Verre transparent", "Colle adhésive"], "rep": "Courant électrique embarqué"}
+        ],
+        "tr_ref3": [
+            {"id": "q1", "q": "Quelle pièce en rotation sous le camion sert de support à la mire du chronotachygraphe ?", "options": ["L'arbre de transmission mécanique", "Le volant de direction", "L'axe de l'essuie-glace"], "rep": "L'arbre de transmission mécanique"},
+            {"id": "q2", "q": "Quel type de secteurs alternés comporte la bague de lecture du capteur de vitesse ?", "options": ["Des zones sombres absorbantes et des zones polies miroirs", "Des dents pointues", "Des filtres colorés"], "rep": "Des zones sombres absorbantes et des zones polies miroirs"},
+            {"id": "q3", "q": "Quel composant électronique reçoit l'impulsion lumineuse réfléchie par la bague ?", "options": ["Un phototransistor récepteur", "Une bobine d'allumage", "Une résistance chauffante"], "rep": "Un phototransistor récepteur"},
+            {"id": "q4", "q": "La formule optique i = r s'applique sur la bague rotative lorsque le rayon rencontre :", "options": ["Un secteur poli réfléchissant", "Une trace de graisse noire", "Un trou d'aération"], "rep": "Un secteur poli réfléchissant"},
+            {"id": "q5", "q": "L'unité centrale de contrôle du poids lourd convertit la fréquence des flashs reçus en :", "options": ["Vitesse instantanée (km/h) et distance parcourue", "Pression des pneumatiques", "Température d'échappement"], "rep": "Vitesse instantanée (km/h) et distance parcourue"},
+            {"id": "q6", "q": "Le chronotachygraphe homologué est un instrument obligatoire servant à contrôler :", "options": ["Les temps de conduite et de repos des routiers", "Le niveau d'AdBlue", "La charge utile utile"], "rep": "Les temps de conduite et de repos des routiers"},
+            {"id": "q7", "q": "Si de la limaille de fer ou de la graisse masque le capteur optique de boîte :", "options": ["Le comptage des impulsions saute et génère une erreur", "Le camion accélère", "Le tableau de bord s'éteint"], "rep": "Le comptage des impulsions saute et génère une erreur"},
+            {"id": "q8", "q": "Le temps mis par le rayon pour faire l'aller-retour entre la diode et la cible est :", "options": ["Extrêmement court (vitesse de la lumière c)", "De plusieurs secondes", "Variable selon le régime"], "rep": "Extrêmement court (vitesse de la lumière c)"},
+            {"id": "q9", "q": "L'analyse fine des disques ou cartes de données de cet appareil est réalisée par :", "options": ["Les inspecteurs du travail ou agents de police", "Le client expéditeur", "Le mécanicien vidangeur"], "rep": "Les inspecteurs du travail ou agents de police"},
+            {"id": "q10", "q": "Le capteur optique assure une lecture sans aucun contact mécanique, évitant :", "options": ["L'usure des pièces et les frottements", "Les pannes de batterie", "Les fuites de lubrifiant"], "rep": "L'usure des pièces et les frottements"}
+        ],
+        "tr_fra1": [
+            {"id": "q1", "q": "Quel phénomène modifie la trajectoire de la lumière traversant le pare-brise incliné d'un camion ?", "options": ["La réfraction simple", "La réflexion totale", "La diffusion mécanique"], "rep": "La réfraction simple"},
+            {"id": "q2", "q": "Quelle formule régit mathématiquement la déviation lumineuse à travers le verre du pare-brise ?", "options": ["n1 * sin(i1) = n2 * sin(i2)", "i = r", "P = F / S"], "rep": "n1 * sin(i1) = n2 * sin(i2)"},
+            {"id": "q3", "q": "L'indice de réfraction moyen du verre de sécurité feuilleté est environ de :", "options": ["1.52", "1.00", "1.33"], "rep": "1.52"},
+            {"id": "q4", "q": "Lorsque le rayon passe de l'air (n=1) au verre (n=1.52), le faisceau transmis :", "options": ["Se rapproche de la normale", "S'éloigne de la normale", "Reste rectiligne sans déviation"], "rep": "Se rapproche de la normale"},
+            {"id": "q5", "q": "L'angle de déviation géométrique provoqué par l'épaisseur du verre dépend directement de :", "options": ["L'indice optique n du matériau", "Du poids du véhicule", "De la couleur des sièges"], "rep": "L'indice optique n du matériau"},
+            {"id": "q6", "q": "L'unité physique officielle utilisée pour désigner un indice de réfraction est :", "options": ["Il n'a pas d'unité", "Le degré", "Le radian"], "rep": "Il n'a pas d'unité"},
+            {"id": "q7", "q": "Le rayon lumineux ressort du pare-brise parallèlement à sa trajectoire initiale car :", "options": ["Les deux faces du verre sont planes et parallèles", "Le verre absorbe le sinus", "L'air extérieur est chaud"], "rep": "Les deux faces du verre sont planes et parallèles"},
+            {"id": "q8", "q": "Une distorsion de réfraction sur un vitrage défectueux peut induire chez le chauffeur :", "options": ["Une mauvaise appréciation des distances", "Une panne mécanique", "Une hausse de vitesse"], "rep": "Une mauvaise appréciation des distances"},
+            {"id": "q9", "q": "Le capteur optique de pluie collé sur le pare-brise exploite la disparition de :", "options": ["La réflexion totale quand l'eau touche la vitre", "La réfraction", "De la normale"], "rep": "La réflexion totale quand l'eau touche la vitre"},
+            {"id": "q10", "q": "La ligne droite perpendiculaire à la surface du vitrage est appelée :", "options": ["La normale", "Le dioptre", "La tangente"], "rep": "La normale"}
+        ],
+        "tr_fra2": [
+            {"id": "q1", "q": "Quelle condition optique permet au capteur de pluie de fonctionner sur vitre sèche ?", "options": ["La réflexion totale interne", "La réfraction simple", "L'absorption thermique"], "rep": "La réflexion totale interne"},
+            {"id": "q2", "q": "Quel élément émet le faisceau infrarouge à l'intérieur du boîtier de détection ?", "options": ["Une diode électroluminescente (LED)", "Un miroir parabolique", "Un filament tungstène"], "rep": "Une diode électroluminescente (LED)"},
+            {"id": "q3", "q": "Quel est l'indice de réfraction moyen de l'eau déposée par la pluie ?", "options": ["1.333", "1.000", "1.520"], "rep": "1.333"},
+            {"id": "q4", "q": "Pourquoi la réflexion totale disparaît-elle lorsqu'une goutte d'eau touche le pare-brise ?", "options": ["L'indice de l'eau modifie l'angle critique limite", "L'eau absorbe la lumière", "L'eau refroidit le verre"], "rep": "L'indice de l'eau modifie l'angle critique limite"},
+            {"id": "q5", "q": "Où s'échappe la lumière infrarouge lorsqu'elle rencontre une goutte d'eau ?", "options": ["Elle se réfracte vers l'extérieur dans la goutte", "Elle fait demi-turn", "Elle est bloquée"], "rep": "Elle se réfracte vers l'extérieur dans la goutte"},
+            {"id": "q6", "q": "Que mesure le phototransistor récepteur lorsque la vitre devient mouillée ?", "options": ["Une baisse d'intensité lumineuse", "Une hausse de tension", "Un changement de couleur"], "rep": "Une baisse d'intensité lumineuse"},
+            {"id": "q7", "q": "La baisse de signal reçue par le calculateur déclenche automatiquement :", "options": ["Le moteur des essuie-glaces", "Les feux de détresse", "L'injection de carburant"], "rep": "Le moteur des essuie-glaces"},
+            {"id": "q8", "q": "Le capteur optique est généralement collé en haut du pare-brise derrière :", "options": ["Le rétroviseur intérieur", "Le pare-soleil passager", "Le compteur de vitesse"], "rep": "Le rétroviseur intérieur"},
+            {"id": "q9", "q": "La loi physique n1 * sin(i1) = n2 * sin(i2) s'applique ici à l'interface :", "options": ["Verre - Eau", "Air - Plastique", "Métal - Eau"], "rep": "Verre - Eau"},
+            {"id": "q10", "q": "Si une couche de givre ou de glace recouvre le capteur, le système :", "options": ["Peut déclencher des balayages intempestifs", "S'éteint", "Augmente la température"], "rep": "Peut déclencher des balayages intempestifs"}
+        ],
+        "tr_fra3": [
+            {"id": "q1", "q": "Quel appareil mesure l'opacité des fumées lors du contrôle technique d'un poids lourd ?", "options": ["Un opacimètre", "Un réfractomètre", "Un manomètre"], "rep": "Un opacimètre"},
+            {"id": "q2", "q": "Quel type de motorisation est principalement visé par le contrôle d'opacité des suies ?", "options": ["Le moteur Diesel", "Le moteur essence", "Le moteur électrique"], "rep": "Le moteur Diesel"},
+            {"id": "q3", "q": "Comment voyage le faisceau lumineux de contrôle à l'intérieur de la chambre de mesure ?", "options": ["En ligne rectiligne à travers le flux de gaz", "En décrivant une courbe", "Par réflexions successives"], "rep": "En ligne rectiligne à travers le flux de gaz"},
+            {"id": "q4", "q": "Les micro-particules de carbone en suspension dévient la lumière par un phénomène de :", "options": ["Diffusion et réfraction multidirectionnelle", "Réflexion spéculaire parfaite", "Focalisation"], "rep": "Diffusion et réfraction multidirectionnelle"},
+            {"id": "q5", "q": "Plus la fumée d'échappement est noire et dense, plus le flux lumineux reçu en face est :", "options": ["Faible ou atténué", "Intense", "Identique"], "rep": "Faible ou atténué"},
+            {"id": "q6", "q": "Une opacité excessive des gaz d'un camion traduit généralement :", "options": ["Un défaut de combustion ou un filtre à particules défectueux", "Un manque d'huile de boîte", "Une usure des pneus"], "rep": "Un défaut de combustion ou un filtre à particules défectueux"},
+            {"id": "q7", "q": "La cellule de prélèvement introduit une sonde directement dans :", "options": ["La sortie du tube d'échappement", "Le réservoir d'AdBlue", "Le carter d'huile"], "rep": "La sortie du tube d'échappement"},
+            {"id": "q8", "q": "L'indice de réfraction des particules solides de suie est :", "options": ["Différent de celui de l'air propre", "Égal à 1.000", "Nul"], "rep": "Différent de celui de l'air propre"},
+            {"id": "q9", "q": "L'analyse optique des gaz permet de valider la conformité du véhicule aux normes :", "options": ["Anti-pollution (Euro)", "De limitation de vitesse", "De charge à l'essieu"], "rep": "Anti-pollution (Euro)"},
+            {"id": "q10", "q": "Un résultat d'opacité hors tolérance entraîne obligatoirement :", "options": ["Une obligation de contre-visite après réparations", "Une immobilisation définitive", "Une vidange moteur"], "rep": "Une obligation de contre-visite après réparations"}
+        ]
+    }
+
+    banque_trous_routier = {
+        "tr_ref1": [
+            ("1. Le rétroviseur extérieur de sécurité possède une géométrie de surface ..........", ["Choisir...", "convexe", "concave"], "convexe", "tr1_t1"),
+            ("2. Ce profil sphérique est indispensable pour élargir le champ de ..........", ["Choisir...", "vision", "réfraction"], "vision", "tr1_t2"),
+            ("3. Les rayons réfléchis s'écartent en voyageant, ils subissent une ..........", ["Choisir...", "divergence", "convergence"], "divergence", "tr1_t3"),
+            ("4. Au point d'impact, la direction du reflet obéit à la loi de la ..........", ["Choisir...", "réflexion", "réfraction"], "réflexion", "tr1_t4"),
+            ("5. La droite imaginaire servant de repère perpendiculaire est la ..........", ["Choisir...", "normale", "diagonale"], "normale", "tr1_t5"),
+            ("6. Sur ce dispositif de sécurité, l'angle r reste toujours égal à ..........", ["Choisir...", "i", "2i"], "i", "tr1_t6"),
+            ("7. La déformation de la trajectoire engendre une image plus ..........", ["Choisir...", "petite", "grande"], "petite", "tr1_t7"),
+            ("8. L'image perçue par l'œil du chauffeur routier est une image ..........", ["Choisir...", "virtuelle", "réelle"], "virtuelle", "tr1_t8"),
+            ("9. Supprimer les zones invisibles latérales permet de réduire l'angle ..........", ["Choisir...", "mort", "critique"], "mort", "tr1_t9"),
+            ("10. L'égalité géométrique i = r correspond aux lois de ..........", ["Choisir...", "Snell-Descartes", "Newton"], "Snell-Descartes", "tr1_t10")
+        ],
+        "tr_ref2": [
+            ("1. Les bandes rétro-réfléchissantes renvoient la lumière vers leur ..........", ["Choisir...", "source", "dioptre"], "source", "tr2_t1"),
+            ("2. Ce film adhésif de carrosserie utilise des milliers de micro ..........", ["Choisir...", "prismes", "lentilles"], "prismes", "tr2_t2"),
+            ("3. Le signal s'illumine sans consommer l'énergie de la ..........", ["Choisir...", "batterie", "pression"], "batterie", "tr2_t3"),
+            ("4. Le faisceau des phares de la voiture forme un angle d'.......... i.", ["Choisir...", "incidence", "réfraction"], "incidence", "tr2_t4"),
+            ("5. La loi spéculaire classique implique une trajectoire en ligne ..........", ["Choisir...", "droite", "brisée"], "droite", "tr2_t5"),
+            ("6. La poussière de route forme un écran opaque qui .......... l'intensité.", ["Choisir...", "diminue", "augmente"], "diminue", "tr2_t6"),
+            ("7. Le balisage passif délimite les contours du long ..........", ["Choisir...", "gabarit", "moteur"], "gabarit", "tr2_t7"),
+            ("8. Le segment perpendiculaire tracé sur la bande adhésive est la ..........", ["Choisir...", "normale", "tangente"], "normale", "tr2_t8"),
+            ("9. Le retour précis des photons sécurise le dépassement ..........", ["Choisir...", "nocturne", "rapide"], "nocturne", "tr2_t9"),
+            ("10. Ce dispositif applique les règles fondamentales de l'optique ..........", ["Choisir...", "géométrique", "physique"], "géométrique", "tr2_t10")
+        ],
+        "tr_ref3": [
+            ("1. Le chronotachygraphe calcule les kilomètres par voie ..........", ["Choisir...", "optique", "mécanique"], "optique", "tr3_t1"),
+            ("2. Le capteur surveille la rotation de l'arbre de ..........", ["Choisir...", "transmission", "direction"], "transmission", "tr3_t2"),
+            ("3. La bague mobile comporte des secteurs polis formant des .......... locales.", ["Choisir...", "miroirs", "lentilles"], "miroirs", "tr3_t3"),
+            ("4. Les zones noires intercalées capturent l'énergie par ..........", ["Choisir...", "absorption", "réfraction"], "absorption", "tr3_t4"),
+            ("5. La cellule réceptrice capte les impulsions selon la relation i = ..........", ["Choisir...", "r", "2i"], "r", "tr3_t5"),
+            ("6. L'ordinateur de bord convertit ces signaux en vitesse ..........", ["Choisir...", "instantanée", "moyenne"], "instantanée", "tr3_t6"),
+            ("7. Le mouchard enregistre l'historique sur une carte à ..........", ["Choisir...", "puce", "miroir"], "puce", "tr3_t7"),
+            ("8. Une accumulation de graisse bloque le passage du faisceau ..........", ["Choisir...", "laser", "sonore"], "laser", "tr3_t8"),
+            ("9. Le contrôle de l'appareil relève de la maintenance ..........", ["Choisir...", "préventive", "curative"], "préventive", "tr3_t9"),
+            ("10. L'absence de contact mécanique supprime les forces de ..........", ["Choisir...", "frottement", "torsion"], "frottement", "tr3_t10")
+        ],
+        "tr_fra1": [
+            ("1. La lumière qui pénètre dans l'habitacle subit à l'interface une ..........", ["Choisir...", "réfraction", "réflexion"], "réfraction", "tr4_t1"),
+            ("2. Le changement de trajectoire a lieu lors de la traversée du ..........", ["Choisir...", "pare-brise", "rétroviseur"], "pare-brise", "tr4_t2"),
+            ("3. Le verre de sécurité feuilleté possède un indice optique proche de ..........", ["Choisir...", "1.52", "1.00"], "1.52", "tr4_t3"),
+            ("4. En entrant dans le verre dense, l'onde se rapproche de la ..........", ["Choisir...", "normale", "surface"], "normale", "tr4_t4"),
+            ("5. Le modèle mathématique de Descartes relie les indices aux .......... des angles.", ["Choisir...", "sinus", "cosinus"], "sinus", "tr4_t5"),
+            ("6. L'air environnant possède une valeur d'indice optique de référence de ..........", ["Choisir...", "1.00", "1.33"], "1.00", "tr4_t6"),
+            ("7. Les deux faces du vitrage étant parallèles, le rayon émergeant reste ..........", ["Choisir...", "parallèle", "orthogonal"], "parallèle", "tr4_t7"),
+            ("8. Un défaut d'homogénéité du verre fausse l'évaluation des ..........", ["Choisir...", "distances", "vitesses"], "distances", "tr4_t8"),
+            ("9. La ligne tracée à 90 degrés de la vitre est appelée la ..........", ["Choisir...", "normale", "tangente"], "normale", "tr4_t9"),
+            ("10. Ce guidage géométrique de l'onde lumineuse relève de l'optique ..........", ["Choisir...", "géométrique", "ondulatoire"], "géométrique", "tr4_t10")
+        ],
+        "tr_fra2": [
+            ("1. Le déclenchement des essuie-glaces s'appuie sur la réflexion .......... interne.", ["Choisir...", "totale", "diffuse"], "totale", "tr5_t1"),
+            ("2. Quand la vitre externe reste sèche, l'onde infrarouge rebondit sur l'..........", ["Choisir...", "air", "eau"], "air", "tr5_t2"),
+            ("3. L'eau déposée par l'averse possède un coefficient n égal à ..........", ["Choisir...", "1.333", "1.520"], "1.333", "tr5_t3"),
+            ("4. La présence de la goutte modifie la valeur de l'angle .......... de réfraction.", ["Choisir...", "limite", "incident"], "limite", "tr5_t4"),
+            ("5. La condition de réflexion totale est rompue, le rayon se .......... dehors.", ["Choisir...", "réfracte", "reflète"], "réfracte", "tr5_t5"),
+            ("6. Le phototransistor placé à l'intérieur accuse une .......... d'intensité.", ["Choisir...", "baisse", "hausse"], "baisse", "tr5_t6"),
+            ("7. La puce électronique ordonne alors l'allumage automatique du ..........", ["Choisir...", "balayage", "démarreur"], "balayage", "tr5_t7"),
+            ("8. Le capteur se positionne discrètement au dos du rétroviseur ..........", ["Choisir...", "intérieur", "d'angle mort"], "intérieur", "tr5_t8"),
+            ("9. La formule de Snell relie l'indice du verre à celui du liquide ..........", ["Choisir...", "incident", "réfracté"], "incident", "tr5_t9"),
+            ("10. En cas de gel, le givre perturbe la transition géométrique du ..........", ["Choisir...", "dioptre", "pneu"], "dioptre", "tr5_t10")
+        ],
+        "tr_fra3": [
+            ("1. Le diagnostic antipollution des moteurs diesel exploite un ..........", ["Choisir...", "opacimètre", "réfractomètre"], "opacimètre", "tr6_t1"),
+            ("2. Le technicien introduit une sonde de prélèvement dans l'..........", ["Choisir...", "échappement", "carburant"], "échappement", "tr6_t2"),
+            ("3. Un faisceau laser traverse en ligne droite les gaz chargés de ..........", ["Choisir...", "suies", "vapeur"], "suies", "tr6_t3"),
+            ("4. Les micro-particules de carbone provoquent une déviation par ..........", ["Choisir...", "diffusion", "réflexion"], "diffusion", "tr6_t4"),
+            ("5. L'atténuation du signal lumineux reçu indique un défaut de ..........", ["Choisir...", "combustion", "pression"], "combustion", "tr6_t5"),
+            ("6. Le rayon traverse la cellule d'analyse selon un vecteur ..........", ["Choisir...", "rectiligne", "courbe"], "rectiligne", "tr6_t6"),
+            ("7. Les résidus opaques bloquent la transmission trigonométrique des ..........", ["Choisir...", "sinus", "normales"], "sinus", "tr6_t7"),
+            ("8. Ce contrôle optique rapide valide la conformité aux réglementations ..........", ["Choisir...", "Euro", "de charge"], "Euro", "tr6_t8"),
+            ("9. Un relevé hors norme signale un dysfonctionnement du .......... à particules.", ["Choisir...", "filtre", "flexible"], "filtre", "tr6_t9"),
+            ("10. La validation du bilan conditionne l'obtention du macaron de ..........", ["Choisir...", "conformité", "pesage"], "conformité", "tr6_t10")
+        ]
+    }
+    cle_ordre = f"ordre_quiz_tr_{cas_id}"
+    if cle_ordre not in st.session_state:
+        liste_q = list(banque_quiz_routier[cas_id])
+        random.shuffle(liste_q)
+        st.session_state[cle_ordre] = liste_q
+
+    # Disposition côte à côte sur toute la largeur de l'écran
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state[cle_ordre], 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"tr_at7_{cas_id}_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse (Texte à trous - 10 cases - 10 pts)")
+        for ligne in banque_trous_routier[cas_id]:
+            enonce_texte = ligne
+            choix_options = ligne
+            cle_unique = ligne
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce_texte)
+            with c_sel: 
+                st.selectbox("", choix_options, key=f"{cle_unique}_{cas_id}_tr_clean", disabled=verrouille, label_visibility="collapsed")
+
+
+
+
+
 def afficher_atelier_travaux_publics(cas_id, verrouille=False):
     """Affiche le Quiz et le Texte à trous pour l'Atelier 6 (Travaux Publics)."""
     import random
@@ -2753,9 +2945,187 @@ with tab6:
             )
 
 
+with tab7:
+    st.header("Application dans le domaine du transport routier")
+    st.write("Sélectionnez les lois physiques et générez des scénarios d'exploitation routière pour vous entraîner au diagnostic :")
 
+    # Base de données contenant les fiches explicatives des 6 cas métiers du transport routier
+    base_applications_tr = {
+        "tr_ref1": {
+            "titre": "Rétroviseurs de sécurité, miroirs convexes et réduction des angles morts",
+            "loi": "Réflexion",
+            "definitions": "Analyse géométrique des rétroviseurs grand angle et antéviseurs équipant les véhicules lourds. Les surfaces sphériques convexes font diverger le faisceau lumineux, permettant d'agrandir de manière critique le champ visuel au sol.",
+            "cas1": "Le rayon provenant d'un véhicule bas frappe la surface bombée du rétroviseur.",
+            "cas2": "Au point de contact local, la normale de référence passe par le centre géométrique de la sphère.",
+            "cas3": "Le rayon réfléchi repart en divergeant avec un angle r rigoureusement égal à l'incidence i.",
+            "cas4": "L'image virtuelle formée en retour réduit l'angle mort pour sécuriser le changement de voie.",
+            "humour1": "Un poids lourd articulé de 44 tonnes s'apprête à manoeuvrer dans une intersection serrée.",
+            "humour2": "Un cycliste imprudent se glisse le long de la remorque dans la zone invisible.",
+            "humour3": "Le miroir convexe intercepte les rayons et courbe le champ de vision du conducteur.",
+            "humour4": "Alerte évitée ! La silhouette est repérée à temps grâce au renvoi angulaire du miroir."
+        },
+        "tr_ref2": {
+            "titre": "Bandes de signalisation rétroréflechissantes pour remorques",
+            "loi": "Réflexion",
+            "definitions": "Étude du balisage nocturne des contours de carrosserie à l'aide de micro-prismes renvoyant la lumière reçue directement vers sa source.",
+            "cas1": "Les phares d'un véhicule suiveur projettent un faisceau lumineux sur l'arrière de la remorque.",
+            "cas2": "Le flux heurte les micro-prismes intégrés dans la bande adhésive homologuée.",
+            "cas3": "La lumière subit une triple réflexion interne et ressort parallèlement au rayon incident.",
+            "cas4": "Le conducteur suiveur perçoit un signal brillant qui signale le gabarit du camion.",
+            "humour1": "Une remorque est stationnée sans éclairage sur le bas-côté d'une départementale sombre.",
+            "humour2": "Une voiture arrive à vive allure, ses feux de croisement sondent la nuit noire.",
+            "humour3": "Le balisage adhésif intercepte les photons et fait office de miroir géant.",
+            "humour4": "Le camion s'illumine comme un sapin de Noël, évitant une collision par l'arrière."
+        },
+        "tr_ref3": {
+            "titre": "Capteurs optiques d'impulsions des chronotachygraphes",
+            "loi": "Réflexion",
+            "definitions": "Enregistrement de la vitesse et des temps de conduite par comptage de spots lumineux réfléchis par une cible solidaire de l'arbre de transmission.",
+            "cas1": "Une diode électroluminescente émet un faisceau continu vers la bague rotative de l'arbre.",
+            "cas2": "Le rayon rencontre alternativement des secteurs sombres absorbants et des secteurs polis.",
+            "cas3": "Les miroirs locaux renvoient le signal incident vers un phototransistor récepteur (i = r).",
+            "cas4": "L'unité centrale traduit la fréquence des impulsions en vitesse réelle sur le cadran.",
+            "humour1": "Le contrôleur inspecte le mouchard électronique pour vérifier les heures de conduite.",
+            "humour2": "L'arbre de transmission tourne à plein régime sous le plancher de la cabine.",
+            "humour3": "Le capteur compte les flashs réfléchis par la bague pour pister le moindre kilomètre heure.",
+            "humour4": "Le graphique est imprimé : vitesse stable et temps de repos respectés, le carnet est vierge."
+        },
+        "tr_fra1": {
+            "titre": "Inclinaison des pare-brise de cabines et distorsion de réfraction",
+            "loi": "Réfraction",
+            "definitions": "Étude de la déviation géométrique des rayons lumineux traversant le vitrage feuilleté incliné des cabines avancées. Le changement de milieu d'indice n provoque une brisure de la trajectoire selon la loi des sinus.",
+            "cas1": "Le rayon lumineux réfléchi par un panneau routier arrive sur la face externe du pare-brise.",
+            "cas2": "Le flux traverse le dioptre air-verre et se rapproche de la normale (n1=1 vers n2=1.52).",
+            "cas3": "Le faisceau se déplace en ligne droite dans le verre puis subit une seconde réfraction en sortie.",
+            "cas4": "Le rayon émergeant reste parallèle à l'axe initial, évitant toute distorsion visuelle de hauteur.",
+            "humour1": "Le chauffeur routier roule de nuit face à une signalisation de chantier temporaire.",
+            "humour2": "L'inclinaison aérodynamique de sa vitre dévie la trajectoire des faisceaux entrants.",
+            "humour3": "Les photons subissent une double brisure d'angle en traversant le vitrage feuilleté.",
+            "humour4": "L'esprit cartésien valide la visée : la ligne de rive est vue à sa position exacte."
+        },
+        "tr_fra2": {
+            "titre": "Systèmes de détection de pluie et balayage automatique",
+            "loi": "Réfraction",
+            "definitions": "Commande automatique des essuie-glaces par capteur optique infrarouge basé sur la rupture de la réflexion totale interne en présence de gouttes d'eau.",
+            "cas1": "Une LED injecte un rayon incliné à l'intérieur du pare-brise sous un angle supérieur à la limite.",
+            "cas2": "Sur vitre sèche, le dioptre verre-air provoque une réflexion totale interne et le rayon revient.",
+            "cas3": "Dès qu'une goutte d'eau (n=1.33) touche l'extérieur, le seuil critique change et la lumière se réfracte.",
+            "cas4": "La baisse d'intensité reçue par le capteur déclenche instantanément le moteur de balayage.",
+            "humour1": "Un violent orage d'été éclate soudainement au milieu d'un trajet autoroutier.",
+            "humour2": "Le conducteur n'a pas le temps de lâcher le volant que les balais s'activent déjà.",
+            "humour3": "L'eau perturbe le piège à photons en brisant la réflexion totale interne du boîtier.",
+            "humour4": "La vitre est nettoyée en un clignement d'œil, la trajectoire reste parfaitement sous contrôle."
+        },
+        "tr_fra3": {
+            "titre": "Opacimètres de contrôle antipollution des gaz d'échappement",
+            "loi": "Réfraction",
+            "definitions": "Mesure du taux d'opacité des fumées de moteurs diesel lors du contrôle technique par atténuation et réfraction d'un faisceau laser traversant le flux d'échappement.",
+            "cas1": "Une cellule de mesure prélève une fraction des gaz d'échappement à la sortie du silencieux.",
+            "cas2": "Un faisceau laser traverse transversalement la chambre remplie de particules de suie.",
+            "cas3": "Les micro-particules dévient et réfractent la lumière, réduisant le flux collecté en face.",
+            "cas4": "L'ordinateur calcule le coefficient d'absorption pour valider la conformité de la combustion.",
+            "humour1": "Un vieux camion passe sur le banc de contrôle pour valider son bilan environnemental.",
+            "humour2": "L'opérateur enfonce la pédale d'accélérateur et une épaisse fumée noire s'échappe.",
+            "humour3": "Le faisceau de contrôle est malmené et dévié par les suies en suspension.",
+            "humour4": "Le verdict tombe sur l'écran de test : « Filtre colmaté ou injecteur fuyard, contre-visite requise ! »"
+        }
+    }
 
+    # Sélection à l'aide de cases à cocher
+    col_loi_tr1, col_loi_tr2 = st.columns(2)
+    with col_loi_tr1:
+        loi_reflexion_tr = st.checkbox("Applications de la Réflexion (Routier)", value=True, key="chk_loi_ref_tr")
+    with col_loi_tr2:
+        loi_refraction_tr = st.checkbox("Applications de la Réfraction (Routier)", value=False, key="chk_loi_fra_tr")
 
+    # Filtrage de la liste selon les choix cochés
+    liste_choix_tr = []
+    if loi_reflexion_tr:
+        liste_choix_tr.extend(["tr_ref1", "tr_ref2", "tr_ref3"])
+    if loi_refraction_tr:
+        liste_choix_tr.extend(["tr_fra1", "tr_fra2", "tr_fra3"])
+
+    if not liste_choix_tr:
+        st.warning("Veuillez cocher au moins une des deux lois physiques pour afficher les exercices.")
+    else:
+        # SÉCURITÉ : Contrôle de type de clé
+        if "cas_tr_courant" not in st.session_state or type(st.session_state.cas_tr_courant) is list:
+            st.session_state.cas_tr_courant = liste_choix_tr
+
+        if st.session_state.cas_tr_courant not in liste_choix_tr:
+            st.session_state.cas_tr_courant = liste_choix_tr
+
+        # Bouton de tirage au sort au hasard
+        if st.button("GÉNÉRER UN EXERCICE AU HASARD PARMI LES CAS COCHÉS", use_container_width=True, key="btn_alea_tr"):
+            import random
+            st.session_state.cas_tr_courant = random.choice(liste_choix_tr)
+            if f"ordre_quiz_tr_{st.session_state.cas_tr_courant}" in st.session_state:
+                del st.session_state[f"ordre_quiz_tr_{st.session_state.cas_tr_courant}"]
+            st.rerun()
+
+        cle_cas_tr = st.session_state.cas_tr_courant
+        cas_data_tr = base_applications_tr[cle_cas_tr]
+
+        st.markdown(f"### Étude de Cas Active : {cas_data_tr['titre']} (Loi : {cas_data_tr['loi']})")
+        st.markdown("##### Définition et Contexte Technique")
+        st.write(cas_data_tr["definitions"])
+
+        st.write("")
+        col_gauche_textes, col_droite_simulation = st.columns([0.55, 0.45])
+
+        with col_gauche_textes:
+            # 1. Dossier Technique (Bloc bleu en haut)
+            st.markdown(f"""
+            <div style="background-color: #e6f3ff; padding: 20px; border-radius: 8px; border-left: 6px solid #0066cc; font-family: sans-serif; color: #333333; margin-bottom: 20px;">
+                <h4 style="color: #004488; margin-top: 0; font-size: 16px;">Dossier Technique (Explication en 4 Cases)</h4>
+                <p style="font-size: 13px; margin-bottom: 8px;"><b>Case 1 :</b> {cas_data_tr['cas1']}</p>
+                <p style="font-size: 13px; margin-bottom: 8px;"><b>Case 2 :</b> {cas_data_tr['cas2']}</p>
+                <p style="font-size: 13px; margin-bottom: 8px;"><b>Case 3 :</b> {cas_data_tr['cas3']}</p>
+                <p style="font-size: 13px; margin-bottom: 0;"><b>Case 4 :</b> {cas_data_tr['cas4']}</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+            # 2. Bande Caricaturale Humoristique (Bloc orange juste en dessous)
+            st.markdown(f"""
+            <div style="background-color: #fff7ed; padding: 20px; border-radius: 8px; border-left: 6px solid #ea580c; font-family: sans-serif; color: #333333;">
+                <h4 style="color: #9a3412; margin-top: 0; font-size: 16px;">Bande Caricaturale Humoristique (L'Incident)</h4>
+                <p style="font-size: 13px; margin-bottom: 8px;"><b>Case 1 :</b> {cas_data_tr['humour1']}</p>
+                <p style="font-size: 13px; margin-bottom: 8px;"><b>Case 2 :</b> {cas_data_tr['humour2']}</p>
+                <p style="font-size: 13px; margin-bottom: 8px;"><b>Case 3 :</b> {cas_data_tr['humour3']}</p>
+                <p style="font-size: 13px; margin-bottom: 0;"><b>Case 4 :</b> {cas_data_tr['humour4']}</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+        with col_droite_simulation:
+            st.markdown("##### Simulation Réaliste du Faisceau Optique")
+            import matplotlib.pyplot as plt
+            import numpy as np
+
+            fig, ax = plt.subplots(figsize=(7, 6))
+            ax.plot([-10, 10],, color="#475569", linewidth=4)
+            ax.plot(, [-6, 6], color="#94a3b8", linestyle="--")
+            
+            ang_rad = np.radians(35)
+            ax.annotate("", xy=(0, 0), xytext=(-5 * np.sin(ang_rad), 5 * np.cos(ang_rad)),
+                        arrowprops=dict(arrowstyle="->", color="#dc2626", linewidth=3, mutation_scale=12))
+            ax.text(-4, 3, "Rayon Incident", fontsize=9, fontweight="bold")
+
+            if "ref" in cle_cas_tr:
+                ax.annotate("", xy=(5 * np.sin(ang_rad), 5 * np.cos(ang_rad)), xytext=(0, 0),
+                            arrowprops=dict(arrowstyle="->", color="#dc2626", linewidth=3, mutation_scale=12))
+                ax.text(2, 3, "Rayon Réfléchi", fontsize=9, fontweight="bold")
+                ax.fill_between([-10, 10], 0, -6, color="#cbd5e1", hatch="//", alpha=0.2)
+            else:
+                ang_refracte = np.arcsin(np.sin(ang_rad) / 1.4)
+                ax.annotate("", xy=(5 * np.sin(ang_refracte), -5 * np.cos(ang_refracte)), xytext=(0, 0),
+                            arrowprops=dict(arrowstyle="->", color="#dc2626", linewidth=3, mutation_scale=12))
+                ax.text(2, -3, "Rayon Réfracté", fontsize=9, fontweight="bold")
+                ax.fill_between([-10, 10], 0, -6, color="#e0f2fe", alpha=0.4)
+
+            ax.set_xlim(-10, 10)
+            ax.set_ylim(-6, 6)
+            ax.axis("off")
+            st.pyplot(fig)
 
 
 
