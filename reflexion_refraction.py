@@ -384,20 +384,19 @@ def afficher_atelier_maintenance(cas_id, verrouille=False):
         for idx, q_data in enumerate(st.session_state[cle_ordre], 1):
             st.write(f"**{idx}.** {q_data['q']}")
             st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"m_at5_{cas_id}_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
-
     with col_trous:
         st.markdown("##### Synthèse (Texte à trous - 10 cases - 10 pts)")
         for ligne in banque_trous[cas_id]:
-            # Extraction correcte des éléments du tuple par leur index
-            enonce = ligne
-            choix = ligne
-            cle = ligne[-1]
+            # Extraction stricte de chaque élément du tuple par son index
+            enonce_texte = ligne[0]  # Récupère uniquement la phrase de cours
+            choix_options = ligne[1] # Récupère la liste des choix
+            cle_unique = ligne[-1]   # Récupère la clé de session
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
-                st.write(enonce) # Affiche maintenant uniquement le texte propre de l'énoncé
+                st.write(enonce_texte) # Affiche uniquement la phrase propre
             with c_sel: 
-                st.selectbox("", choix, key=f"{cle}_{cas_id}_m_clean", disabled=verrouille, label_visibility="collapsed")
+                st.selectbox("", choix_options, key=f"{cle_unique}_{cas_id}_m_clean", disabled=verrouille, label_visibility="collapsed")
 
 
 def afficher_atelier_reflexion_totale(verrouille=False):
