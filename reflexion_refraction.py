@@ -509,7 +509,7 @@ def afficher_atelier_maintenance(cas_id, verrouille=False):
             
         st.write("---")
         st.markdown("##### Synthèse (Texte à trous - 10 cases - 10 pts)")
-        for ligne in banque_trous_tp[cas_id]:
+        for ligne in banque_trous[cas_id]:
             enonce_texte = ligne[0]
             choix_options = ligne[1]
             cle_unique = ligne[3]
