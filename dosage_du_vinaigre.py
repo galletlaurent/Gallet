@@ -121,11 +121,6 @@ st.image = safe_image
 
 
 
-
-
-
-
-
 # =============================================================================
 # FONCTIONS GLOBALES DE VALIDATION DE L'IDENTITÉ
 # =============================================================================
@@ -1214,9 +1209,6 @@ with tab2:
             </p>
             <div class="sub-title">Compose : Vinaigre | Masse pesée (aléatoire) : {st.session_state.masse_reelle_g * 1000.0:.1f} mg | Soude titrante : {C_base} mol/L</div>
 
-            <div class="sub-title">SAUVEGARDE GÉOMÉTRIQUE DE VOTRE COURBE EXPERIMENTALE</div>
-            <div class="img-container">
-                <img src="data:image/png;base64,{base64_image_courbe}" alt="Courbe de suivi eleve">
             </div>
 
             <div class="sub-title">PARTIE 1 : DETAILS DU QUIZ NUMÉRIQUE DE TITRAGE</div>
