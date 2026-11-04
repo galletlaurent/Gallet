@@ -210,6 +210,131 @@ tab8 = onglets[8]
 tab9 = onglets[9] 
 tab10 = onglets[10]
 
+def afficher_atelier_travaux_publics(cas_id, verrouille=False):
+    """Affiche le Quiz et le Texte à trous pour l'Atelier 6 (Travaux Publics)."""
+    import random
+
+    st.subheader("Atelier Interactif : Diagnostic Optique en Travaux Publics")
+
+    banque_quiz_tp = {
+        "tp_ref1": [
+            {"id": "q1", "q": "Quel instrument de mesure utilise un prisme réfléchissant pour calculer des distances sur un chantier ?", "options": ["Un tachéomètre ou station totale", "Un fil à plomb", "Une excavatrice"], "rep": "Un tachéomètre ou station totale"},
+            {"id": "q2", "q": "Quelle loi régit le retour du signal laser réfléchi par le prisme du topographe ?", "options": ["La loi de la réflexion (i = r)", "La loi de Snell-Descartes", "La loi de Newton"], "rep": "La loi de la réflexion (i = r)"},
+            {"id": "q3", "q": "Si le faisceau laser tape perpendiculairement sur la face du prisme, l'angle d'incidence vaut :", "options": ["0 degré", "90 degrés", "45 degrés"], "rep": "0 degré"},
+            {"id": "q4", "q": "Un signal laser réfléchi qui revient exactement vers sa source utilise un prisme dit :", "options": ["Catadioptre ou rétro-réfléchissant", "Divergent", "Opaque"], "rep": "Catadioptre ou rétro-réfléchissant"},
+            {"id": "q5", "q": "Quelle propriété de la lumière permet de garantir l'alignement parfait d'une bordure ?", "options": ["La propagation rectiligne", "La réfraction", "La dispersion"], "rep": "La propagation rectiligne"},
+            {"id": "q6", "q": "Si de la poussière de chantier masque le prisme, le signal de retour est :", "options": ["Atténué ou diffus", "Plus rapide", "Inversé"], "rep": "Atténué ou diffus"},
+            {"id": "q7", "q": "Le calcul de distance par la station totale se base sur :", "options": ["Le temps de vol de l'impulsion lumineuse", "Le poids de la cible", "La couleur du prisme"], "rep": "Le temps de vol de l'impulsion lumineuse"},
+            {"id": "q8", "q": "L'angle de réflexion spéculaire s'évalue toujours par rapport à :", "options": ["La normale", "La ligne d'horizon", "Le trépied"], "rep": "La normale"},
+            {"id": "q9", "q": "Le guidage laser des engins de terrassement augmente principalement :", "options": ["La précision des cotes de nivellement", "La vitesse maximale de l'engin", "La consommation de carburant"], "rep": "La précision des cotes de nivellement"},
+            {"id": "q10", "q": "Une surface métallique de mire polie renvoie la lumière de manière :", "options": ["Spéculaire", "Diffuse", "Absorbante"], "rep": "Spéculaire"}
+        ],
+        "tp_ref2": [
+            {"id": "q1", "q": "Quel type de repère altimétrique génère le plan laser tournant sur le chantier ?", "options": ["Un plan horizontal de référence", "Une ligne courbe", "Un point focal"], "rep": "Un plan horizontal de référence"},
+            {"id": "q2", "q": "Où est fixée la cellule réceptrice qui intercepte le faisceau laser ?", "options": ["Sur le mât de la lame de l'engin", "Dans la cabine", "Sur le pot d'échappement"], "rep": "Sur le mât de la lame de l'engin"},
+            {"id": "q3", "q": "Comment réagissent les vérins hydrauliques si la lame descend trop bas ?", "options": ["Ils remontent la lame automatiquement", "Ils coupent le moteur", "Ils bloquent les chenilles"], "rep": "Ils remontent la lame automatiquement"},
+            {"id": "q4", "q": "Quelle est la vitesse de balayage type d'un laser rotatif de chantier ?", "options": ["Plusieurs centaines de tours par minute", "Une rotation par heure", "Il reste fixe"], "rep": "Plusieurs centaines de tours par minute"},
+            {"id": "q5", "q": "La surface lissée par une niveleuse guidée au laser est appelée :", "options": ["La plateforme ou fond de forme", "Le revêtement fini", "Le dévers de fossé"], "rep": "La plateforme ou fond de forme"},
+            {"id": "q6", "q": "Quel est l'ennemi principal de la transmission du signal laser sur une piste ?", "options": ["La poussière et la fumée d'échappement", "Le bruit des moteurs", "Le poids de la benne"], "rep": "La poussière et la fumée d'échappement"},
+            {"id": "q7", "q": "Si la cellule capte le rayon au-dessus de sa zone centrale, la lame est :", "options": ["Trop basse", "Trop haute", "Parfaitement à la bonne hauteur"], "rep": "Trop basse"},
+            {"id": "q8", "q": "Le récepteur utilise quel type de composants pour détecter le faisceau ?", "options": ["Des photodiodes alignées", "Des miroirs sphériques", "Des prismes de verre"], "rep": "Des photodiodes alignées"},
+            {"id": "q9", "q": "Le dévers d'une plateforme correspond à :", "options": ["Son inclinaison transversale", "Sa longueur totale", "Son épaisseur"], "rep": "Son inclinaison transversale"},
+            {"id": "q10", "q": "Le guidage laser supprime l'obligation de poser des :", "options": ["Piquets de repères manuels", "Panneaux de signalisation", "Tuyaux de drainage"], "rep": "Piquets de repères manuels"}
+        ],
+        "tp_ref3": [
+            {"id": "q1", "q": "Où positionne-t-on le laser d'alignement pour poser des canalisations ?", "options": ["Au fond du regard de départ", "Sur le toit du camion", "Au milieu de la tranchée"], "rep": "Au fond du regard de départ"},
+            {"id": "q2", "q": "Quel paramètre hydraulique fondamental dicte l'angle d'inclinaison du laser ?", "options": ["La pente d'écoulement (en %)", "Le diamètre du tuyau", "La pression de l'eau"], "rep": "La pente d'écoulement (en %)"},
+            {"id": "q3", "q": "Sur quoi le poseur lit-il la bonne position du tuyau en cours d'emboîtement ?", "options": ["Sur une mire cible amovible", "Sur la paroi de la tranchée", "Sur son smartphone"], "rep": "Sur une mire cible amovible"},
+            {"id": "q4", "q": "Quand le spot laser est parfaitement centré sur la mire cible, le tuyau est :", "options": ["Correctement aligné et à la bonne pente", "Trop haut", "Dévié à gauche"], "rep": "Correctement aligné et à la bonne pente"},
+            {"id": "q5", "q": "Quel type de réseau nécessite la plus grande précision de pente ?", "options": ["L'assainissement gravitaire", "L'adduction d'eau potable", "Le fourreau électrique"], "rep": "L'assainissement gravitaire"},
+            {"id": "q6", "q": "La lumière voyage en ligne droite dans l'air du tuyau car le milieu est :", "options": ["Homogène", "Opaque", "Réfringent variable"], "rep": "Homogène"},
+            {"id": "q7", "q": "Une mauvaise pente sur une canalisation d'eaux usées provoque :", "options": ["Des risques d'engorgement et de stagnation", "Une fuite de pression", "Une rupture du béton"], "rep": "Des risques d'engorgement et de stagnation"},
+            {"id": "q8", "q": "La mire cible utilisée au fond de la conduite est généralement :", "options": ["Translucide pour voir le point par l'arrière", "En métal miroir", "En bois brut"], "rep": "Translucide pour voir le point par l'arrière"},
+            {"id": "q9", "q": "Le réglage fins du laser de canalisation se fait à l'aide d'un clavier :", "options": ["À affichage numérique de la pente", "De commande hydraulique", "De démarrage moteur"], "rep": "À affichage numérique de la pente"},
+            {"id": "q10", "q": "Quelle opération suit immédiatement la validation de l'alignement optique ?", "options": ["Le remblaiement de la fouille", "Le compactage du bitume", "Le creusement du regard"], "rep": "Le remblaiement de la fouille"}
+        ],
+        "tp_fra1": [
+            {"id": "q1", "q": "Quel phénomène optique est provoqué par les couches d'air chaud au-dessus du bitume ?", "options": ["Un mirage thermique", "Une réflexion spéculaire", "Une diffraction pure"], "rep": "Un mirage thermique"},
+            {"id": "q2", "q": "Comment évolue l'indice de réfraction de l'air lorsque sa température augmente ?", "options": ["Il diminue", "Il augmente", "Il reste fixe"], "rep": "Il diminue"},
+            {"id": "q3", "q": "La déviation continue d'un faisceau laser traversant de l'air chaud provient de :", "options": ["La variation continue de l'indice n (réfraction)", "La présence de poussière", "Un défaut mécanique du laser"], "rep": "La variation continue de l'indice n (réfraction)"},
+            {"id": "q4", "q": "La formule mathématique qui régit cette déviation à chaque interface d'air est :", "options": ["n1 * sin(i1) = n2 * sin(i2)", "i1 = r", "P = F / S"], "rep": "n1 * sin(i1) = n2 * sin(i2)"},
+            {"id": "q5", "q": "L'illusion visuelle de flaque d'eau sur une piste de chantier provient d'une :", "options": ["Réflexion totale du ciel sur l'air surchauffé", "Réfraction simple vers le sol", "Évaporation d'eau"], "rep": "Réflexion totale du ciel sur l'air surchauffé"},
+            {"id": "q6", "q": "Pour éviter l'erreur de réfraction atmosphérique, les topographes effectuent leurs visées :", "options": ["Aux heures les moins chaudes ou en évitant le ras du sol", "En plein midi", "Uniquement sous la pluie"], "rep": "Aux heures les moins chaudes ou en évitant le ras du sol"},
+            {"id": "q7", "q": "L'indice de réfraction de référence de l'air standard est environ de :", "options": ["1.0003", "1.333", "1.520"], "rep": "1.0003"},
+            {"id": "q8", "q": "Dans un mirage, le rayon lumineux courbe sa trajectoire vers :", "options": ["Les zones d'indice plus élevé (air plus froid)", "Le goudron directement", "Le ciel à la verticale"], "rep": "Les zones d'indice plus élevé (air plus froid)"},
+            {"id": "q9", "q": "La réfraction atmosphérique perturbe principalement quel type de mesure en TP ?", "options": ["Le nivellement de haute précision", "Le pesage des camions", "La numérisation 3D"], "rep": "Le nivellement de haute précision"},
+            {"id": "q10", "q": "L'unité de mesure d'un indice de réfraction est :", "options": ["Il n'a pas d'unité", "Le mètre", "Le degré"], "rep": "Il n'a pas d'unité"}
+        ],
+        "tp_fra2": [
+            {"id": "q1", "q": "Quel capteur descend dans le tubage pour localiser la nappe phréatique ?", "options": ["Une sonde de diagraphie optique", "Un manomètre", "Un fil à plomb"], "rep": "Une sonde de diagraphie optique"},
+            {"id": "q2", "q": "Quelle est la valeur de l'indice de réfraction de l'air dans le forage ?", "options": ["1.0003", "1.3330", "1.5200"], "rep": "1.0003"},
+            {"id": "q3", "q": "Quelle est la valeur de l'indice de réfraction de l'eau souterraine ?", "options": ["1.333", "1.000", "2.417"], "rep": "1.333"},
+            {"id": "q4", "q": "Au passage de l'air à l'eau (n1 < n2), le rayon lumineux :", "options": ["Se rapproche de la normale", "S'éloigne de la normale", "Fait demi-tour"], "rep": "Se rapproche de la normale"},
+            {"id": "q5", "q": "Le changement brutal de direction à la surface de l'eau est régi par la loi de :", "options": ["Snell-Descartes pour la réfraction", "La réflexion pure", "La pression des fluides"], "rep": "Snell-Descartes pour la réfraction"},
+            {"id": "q6", "q": "La détection optique de la nappe permet de fixer la profondeur des :", "options": ["Ouvrages de soutènement et fondations", "Panneaux de chantier", "Limites de vitesse"], "rep": "Ouvrages de soutènement et fondations"},
+            {"id": "q7", "q": "Comment appelle-t-on la frontière supérieure d'une nappe souterraine ?", "options": ["Le toit de la nappe ou niveau piézométrique", "Le fond de fouille", "Le dioptre dur"], "rep": "Le toit de la nappe ou niveau piézométrique"},
+            {"id": "q8", "q": "Si l'eau du forage devient très boueuse à cause du creusement, le rayon laser est :", "options": ["Absorbé ou dispersé", "Accéléré", "Réfracté deux fois plus"], "rep": "Absorbé ou dispersé"},
+            {"id": "q9", "q": "L'appareil qui enregistre les variations optiques le long du forage réalise une :", "options": ["Diagraphie", "Vidange", "Implantation d'axe"], "rep": "Diagraphie"},
+            {"id": "q10", "q": "L'eau ralentit la lumière par rapport au vide d'un facteur égal à :", "options": ["Son indice de réfraction (environ 1.33)", "Son volume", "Sa température"], "rep": "Son indice de réfraction (environ 1.33)"}
+        ],
+        "tp_fra3": [
+            {"id": "q1", "q": "Quel instrument de chantier mesure la concentration d'un liant bitumineux ?", "options": ["Un réfractomètre portable", "Un thermomètre", "Un odomètre"], "rep": "Un réfractomètre portable"},
+            {"id": "q2", "q": "Une modification de la valeur de l'indice n sur une émulsion indique :", "options": ["Une variation de la teneur en eau ou en polymères", "Une panne d'engins", "Un excès de gravillons"], "rep": "Une variation de la teneur en eau ou en polymères"},
+            {"id": "q3", "q": "Où est déposé le prélèvement de bitume pour effectuer le test ?", "options": ["Sur la face plane du prisme de mesure", "Dans la cuve du camion", "Sur le pneu du finisseur"], "rep": "Sur la face plane du prisme de mesure"},
+            {"id": "q4", "q": "Quelle relation mathématique relie le liant au faisceau lumineux ?", "options": ["n1 * sin(i1) = n2 * sin(i2)", "i = r", "F = m * g"], "rep": "n1 * sin(i1) = n2 * sin(i2)"},
+            {"id": "q5", "q": "Le contrôle de l'émulsion de bitume sur le chantier garantit :", "options": ["La bonne tenue de l'accrochage des couches", "La propreté des pneus", "La réduction des poussières"], "rep": "La bonne tenue de l'accrochage des couches"},
+            {"id": "q6", "q": "La rampe d'épandage distribue le liant juste avant le passage du :", "options": ["Finisseur d'enrobés", "Bulldozer", "Tachéomètre"], "rep": "Finisseur d'enrobés"},
+            {"id": "q7", "q": "L'indice de réfraction mesuré dépend de quelle fonction trigonométrique ?", "options": ["Le sinus", "Le cosinus", "La tangente"], "rep": "Le sinus"},
+            {"id": "q8", "q": "Pourquoi effectue-t-on cette mesure optique directement sur le terrain ?", "options": ["Pour un contrôle qualité immédiat sans attendre le laboratoire", "Pour nettoyer les outils", "Pour refroidir le goudron"], "rep": "Pour un contrôle qualité immédiat sans attendre le laboratoire"},
+            {"id": "q9", "q": "Une émulsion de bitume routier est une suspension de billes de bitume dans :", "options": ["De l'eau avec un savon émulsifiant", "De l'huile hydraulique", "Du ciment liquide"], "rep": "De l'eau avec un savon émulsifiant"},
+            {"id": "q10", "q": "La conformité de ce liant est enregistrée dans le dossier :", "options": ["D'assurance qualité du chantier", "De permis de construire", "De consommation carburant"], "rep": "D'assurance qualité du chantier"}
+        ]
+    }
+
+    cle_ordre = f"ordre_quiz_tp_{cas_id}"
+    if cle_ordre not in st.session_state:
+        liste_q = list(banque_quiz_tp[cas_id])
+        random.shuffle(liste_q)
+        st.session_state[cle_ordre] = liste_q
+
+    # Disposition demandée : Textes à gauche et Visuels à droite
+    col_gauche_questions, col_droite_visuels = st.columns([0.55, 0.45])
+    
+    with col_gauche_questions:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state[cle_ordre], 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"tp_at6_{cas_id}_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+        st.write("---")
+
+        st.markdown("##### Synthèse (Texte à trous - 10 cases - 10 pts)")
+        for ligne in banque_trous_tp[cas_id]:
+            # Extraction stricte de chaque élément du tuple par son index pour éviter le bug visuel
+            enonce_texte = ligne[0]   # Récupère uniquement la phrase de cours
+            choix_options = ligne[1]  # Récupère la liste des choix
+            cle_unique = ligne[-1]    # Récupère la clé de session
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce_texte)
+            with c_sel: 
+                st.selectbox("", choix_options, key=f"{cle_unique}_{cas_id}_tp_clean", disabled=verrouille, label_visibility="collapsed")
+
+    with col_droite_visuels:
+        st.write("")
+        st.info(
+            "Utilisez les fiches de dossiers techniques et le simulateur vectoriel situés en haut pour compléter la feuille d'évaluation à gauche."
+        )
+
+
+
+
+
+
+
+
+
 
 def afficher_atelier_maintenance(cas_id, verrouille=False):
     """Affiche le Quiz et le Texte à trous côte à côte pour l'Atelier 5 (Maintenance des engins de TP)."""
