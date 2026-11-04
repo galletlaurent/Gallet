@@ -562,9 +562,6 @@ def afficher_atelier_maintenance(cas_id, verrouille=False):
         random.shuffle(liste_q)
         st.session_state[cle_ordre] = liste_q
 
-    if f"champs_maint_{cas_id}_clean" not in st.session_state:
-        st.session_state[f"champs_maint_{cas_id}_clean"] = banque_trous[cas_id]
-
     col_quiz, col_trous = st.columns(2)
     
     with col_quiz:
@@ -575,17 +572,17 @@ def afficher_atelier_maintenance(cas_id, verrouille=False):
 
     with col_trous:
         st.markdown("##### Synthèse (Texte à trous - 10 cases - 10 pts)")
-        for ligne in st.session_state[f"champs_maint_{cas_id}_clean"]:
-            # Extraction stricte par indexation directe du tuple de session
-            enonce = ligne
-            choix = ligne
-            cle = ligne[-1]
+        # CORRECTION CHOC : On boucle directement sur le dictionnaire pour nettoyer l'écran
+        for ligne in banque_trous[cas_id]:
+            enonce = ligne[0]   # Extrait uniquement la phrase de cours en texte
+            choix = ligne[1]    # Extrait la liste des options
+            cle = ligne[3]      # Extrait la clé unique de sauvegarde
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
                 st.write(enonce) # Affiche uniquement la phrase propre
             with c_sel: 
-                st.selectbox("", choix, key=f"{cle}_{cas_id}_m_clean", disabled=verrouille, label_visibility="collapsed")    
+                st.selectbox("", choix, key=f"{cle}_{cas_id}_m_clean", disabled=verrouille, label_visibility="collapsed") 
         
 def afficher_atelier_reflexion_totale(verrouille=False):
     """Affiche le Quiz et le Texte à trous côte à côte pour l'Atelier 4 de la Réflexion Totale."""
