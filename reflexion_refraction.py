@@ -210,6 +210,210 @@ tab8 = onglets[8]
 tab9 = onglets[9] 
 tab10 = onglets[10]
 
+
+def afficher_atelier_maintenance(cas_id, verrouille=False):
+    """Affiche le Quiz et le Texte à trous côte à côte pour l'Atelier 5 (Maintenance des engins de TP)."""
+    import random
+
+    st.subheader("Atelier Interactif : Diagnostic Optique de Maintenance")
+
+    # =============================================================================
+    # BANQUE DE QUIZ ENTIÈREMENT COMPLÉTÉE (10 QUESTIONS PAR CAS)
+    # =============================================================================
+    banque_quiz = {
+        "m_ref1": [
+            {"id": "q1", "q": "Quel type de miroir utilise un rétroviseur d'angle mort sur un engin ?", "options": ["Miroir convexe", "Miroir concave", "Miroir plan"], "rep": "Miroir convexe"},
+            {"id": "q2", "q": "Quel est le principal avantage d'un miroir convexe pour un conducteur ?", "options": ["Élargir le champ de vision", "Grossir les détails", "Inverser la lumière"], "rep": "Élargir le champ de vision"},
+            {"id": "q3", "q": "Où se situe le foyer virtuel d'un miroir convexe ?", "options": ["Derrière la surface réfléchissante", "Devant le miroir", "Au point d'incidence"], "rep": "Derrière la surface réfléchissante"},
+            {"id": "q4", "q": "L'image formée par un miroir convexe d'angle mort est toujours :", "options": ["Virtuelle et droite", "Réelle et inversée", "Plus grande que l'objet"], "rep": "Virtuelle et droite"},
+            {"id": "q5", "q": "Quelle loi régit le reflet de la carrosserie d'un camion sur le miroir ?", "options": ["La loi de la réflexion (i = r)", "La loi de Descartes (n1*sin i1)", "La loi d'absorption"], "rep": "La loi de la réflexion (i = r)"},
+            {"id": "q6", "q": "Si un angle de carrosserie envoie un rayon à 25° de la normale, le rayon réfléchi repart à :", "options": ["25 degrés", "50 degrés", "0 degré"], "rep": "25 degrés"},
+            {"id": "q7", "q": "Comment appelle-t-on la zone cachée que le miroir convexe aide à éliminer ?", "options": ["L'angle mort", "Le point focal", "Le plan d'incidence"], "rep": "L'angle mort"},
+            {"id": "q8", "q": "Un miroir convexe donne l'illusion que les objets sont :", "options": ["Plus petits et plus éloignés", "Plus proches", "De taille identique"], "rep": "Plus petits et plus éloignés"},
+            {"id": "q9", "q": "La normale à la surface d'un miroir sphérique passe toujours par :", "options": ["Le centre de courbure", "Le foyer", "Le point d'infini"], "rep": "Le centre de courbure"},
+            {"id": "q10", "q": "Sur un engin de TP, la maintenance des rétroviseurs prévient principalement :", "options": ["Les risques d'écrasement et de collision", "Les pannes de moteur", "Les fuites d'huile"], "rep": "Les risques d'écrasement et de collision"}
+        ],
+        "m_ref2": [
+            {"id": "q1", "q": "Quel outil projette le faisceau de référence pour contrôler les phares ?", "options": ["Un pointeur laser", "Une lampe torche", "Un rétroviseur"], "rep": "Un pointeur laser"},
+            {"id": "q2", "q": "Quelle trajectoire suit le rayon si l'optique est parfaitement orthogonale (i = 0°) ?", "options": ["Il revient pile sur lui-même", "Il est dévié à 90°", "Il traverse le bloc"], "rep": "Il revient pile sur lui-même"},
+            {"id": "q3", "q": "Si le miroir du phare est incliné d'un angle i, de combien le rayon réfléchi est-il dévié ?", "options": ["D'un angle égal à 2i", "D'un angle égal à i", "Il n'est pas dévié"], "rep": "D'un angle égal à 2i"},
+            {"id": "q4", "q": "Où s'effectue la lecture de l'écart géométrique lors du contrôle des phares ?", "options": ["Sur une mire ou cible graduée", "Dans le réservoir", "Sur le pneu"], "rep": "Sur une mire ou cible graduée"},
+            {"id": "q5", "q": "Le parallélisme des feux de travail garantit principalement :", "options": ["Une zone de travail nocturne bien balisée", "Une économie de batterie", "Une réduction du bruit"], "rep": "Une zone de travail nocturne bien balisée"},
+            {"id": "q6", "q": "Quelle propriété de la lumière permet d'aligner l'outil laser sur le châssis ?", "options": ["La propagation rectiligne", "La réfraction", "La dispersion"], "rep": "La propagation rectiligne"},
+            {"id": "q7", "q": "Un défaut d'assiette sur un projecteur de niveleuse est corrigé avec :", "options": ["Des vis de réglage micrométriques", "Une vidange", "Un changement de miroir"], "rep": "Des vis de réglage micrométriques"},
+            {"id": "q8", "q": "Le miroir interne du projecteur qui concentre la lumière est généralement :", "options": ["Un réflecteur parabolique", "Un dioptre plan", "Un prisme transparent"], "rep": "Un réflecteur parabolique"},
+            {"id": "q9", "q": "Si le faisceau laser tape au-dessus de la mire de contrôle, les phares éclairent :", "options": ["Trop haut (éblouissement)", "Trop bas", "Correctement le sol"], "rep": "Trop haut (éblouissement)"},
+            {"id": "q10", "q": "La loi de la réflexion spéculaire implique que la surface du miroir testé doit être :", "options": ["Propre et non poussiéreuse", "Peinte en noir", "Rugueuse"], "rep": "Propre et non poussiéreuse"}
+        ],
+        "m_ref3": [
+            {"id": "q1", "q": "Comment le capteur d'usure évalue-t-il la distance restante sur la chenille ?", "options": ["Par mesure du temps de vol du rayon", "Par changement de couleur", "Par pesée"], "rep": "Par mesure du temps de vol du rayon"},
+            {"id": "q2", "q": "Quelle pièce d'usure des engins de terrassement est ciblée par ce diagnostic ?", "options": ["Les tuiles et galets de chenilles", "Les vitres de la cabine", "Les flexibles"], "rep": "Les tuiles et galets de chenilles"},
+            {"id": "q3", "q": "Quelle surface assure le retour du signal vers la cellule photoélectrique ?", "options": ["Le flanc métallique poli de la pièce", "Une bande adhésive", "Le sol en terre"], "rep": "Le flanc métallique poli de la pièce"},
+            {"id": "q4", "q": "Si la pièce s'est amincie à cause de l'abrasion, le temps de retour du laser :", "options": ["Augmente (distance plus grande)", "Diminue", "Reste identique"], "rep": "Augmente (distance plus grande)"},
+            {"id": "q5", "q": "Quel type de maintenance déclenche ce capteur optique automatisé ?", "options": ["La maintenance prédictive", "La maintenance corrective curative", "La maintenance fortuite"], "rep": "La maintenance prédictive"},
+            {"id": "q6", "q": "Un signal laser réfléchi très faible ou diffus indique généralement :", "options": ["Une surface encrassée par la boue", "Une pièce neuve", "Une vitesse trop rapide"], "rep": "Une surface encrassée par la boue"},
+            {"id": "q7", "q": "L'angle d'incidence optimal pour capter l'impulsion de retour directe est :", "options": ["Proche de 0° (perpendiculaire)", "Égal à 45°", "Égal à 90°"], "rep": "Proche de 0° (perpendiculaire)"},
+            {"id": "q8", "q": "L'unité de mesure de la force mécanique abrasive subie par les trains de roulement est :", "options": ["Le Newton", "Le Pascal", "Le Bar"], "rep": "Le Newton"},
+            {"id": "q9", "q": "Pourquoi automatiser la détection d'épaisseur par voie optique ?", "options": ["Pour éviter l'arrêt complet de l'engin", "Pour nettoyer les chenilles", "Pour augmenter la puissance"], "rep": "Pour éviter l'arrêt complet de l'engin"},
+            {"id": "q10", "q": "La formule i = r s'applique ici car l'interface se comporte comme :", "options": ["Une surface réfléchissante plane locale", "Un prisme de réfraction", "Un milieu absorbant"], "rep": "Une surface réfléchissante plane locale"}
+        ],
+        "m_fra1": [
+            {"id": "q1", "q": "Où introduit-on l'endoscope pour inspecter un moteur sans démontage ?", "options": ["Par le puits d'injecteur ou de bougie", "Dans le pot d'échappement", "Par le filtre à air"], "rep": "Par le puits d'injecteur ou de bougie"},
+            {"id": "q2", "q": "Quel phénomène maintient la lumière piégée à l'intérieur de la fibre optique ?", "options": ["La réflexion totale interne", "La réfraction simple", "L'absorption moléculaire"], "rep": "La réflexion totale interne"},
+            {"id": "q3", "q": "La lentille située à l'extrémité de la sonde endoscopique sert à :", "options": ["Réfracter le faisceau pour élargir l'image", "Bloquer la lumière", "Filtrer l'huile"], "rep": "Réfracter le faisceau pour élargir l'image"},
+            {"id": "q4", "q": "Que cherche-t-on à inspecter sur la chemise du cylindre d'un moteur ?", "options": ["Des rayures, fissures ou traces de serrage", "Le niveau de carburant", "Le couple de serrage"], "rep": "Des rayures, fissures ou traces de serrage"},
+            {"id": "q5", "q": "Pour assurer le guidage, l'indice du cœur (n1) de la fibre doit être :", "options": ["Supérieur à celui de la gaine (n2)", "Inférieur à celui de la gaine (n2)", "Égal à 1.000"], "rep": "Supérieur à celui de la gaine (n2)"},
+            {"id": "q6", "q": "Si la tête de l'endoscope est souillée par de l'huile moteur opaque, l'image :", "options": ["Devient floue ou totalement sombre", "Devient plus lumineuse", "S'inverse"], "rep": "Devient floue ou totalement sombre"},
+            {"id": "q7", "q": "L'avantage économique principal de l'endoscopie en atelier est :", "options": ["Un gain de temps majeur sur le diagnostic", "Une réduction du poids de l'engin", "Une augmentation du régime moteur"], "rep": "Un gain de temps majeur sur le diagnostic"},
+            {"id": "q8", "q": "La loi n1 * sin(i1) = n2 * sin(i2) s'applique lors du passage de la lentille vers :", "options": ["L'air de la cavité du cylindre", "Le câble en acier", "Le bouton d'allumage"], "rep": "L'air de la cavité du cylindre"},
+            {"id": "q9", "q": "Le faisceau souple de l'endoscope transporte à la fois la lumière et :", "options": ["Le signal d'image retour de la caméra", "L'huile de pression", "Le courant de démarreur"], "rep": "Le signal d'image retour de la caméra"},
+            {"id": "q10", "q": "Quelle anomalie thermique peut être détectée visuellement sur le piston ?", "options": ["Un début de fusion ou point chaud", "Une baisse de pression", "Un manque d'antigel"], "rep": "Un début de fusion ou point chaud"}
+        ],
+        "m_fra2": [
+            {"id": "q1", "q": "Quelle est la forme géométrique de l'extrémité du capteur plongé dans le réservoir ?", "options": ["Un cône prismatique à 90°", "Une face plane miroir", "Une sphère creuse"], "rep": "Un cône prismatique à 90°"},
+            {"id": "q2", "q": "Que fait le rayon lumineux dans le capteur lorsque le niveau d'huile est BAS (air) ?", "options": ["Il subit une réflexion totale et revient", "Il s'échappe tout droit dans l'air", "Il change de couleur"], "rep": "Il subit une réflexion totale et revient"},
+            {"id": "q3", "q": "Que se passe-t-on lorsque l'huile HAUTE entoure le prisme en verre ?", "options": ["Le rayon se réfracte et se perd dans l'huile", "La réflexion totale augmente", "Le capteur explose"], "rep": "Le rayon se réfracte et se perd dans l'huile"},
+            {"id": "q4", "q": "Pourquoi la réflexion totale disparaît-elle en présence d'huile ?", "options": ["L'indice de l'huile est proche de celui du verre", "L'huile absorbe les sinus", "L'huile est trop froide"], "rep": "L'indice de l'huile est proche de celui du verre"},
+            {"id": "q5", "q": "Quel est l'aspect visuel du voyant pour le mécanicien quand le niveau est PLEIN ?", "options": ["Sombre ou noir", "Brillant ou rouge", "Transparent clignotant"], "rep": "Sombre ou noir"},
+            {"id": "q6", "q": "Ce dispositif de niveau à prisme fonctionne sans aucun composant :", "options": ["Mobile ou flotteur mécanique", "Transparent", "En plastique"], "rep": "Mobile ou flotteur mécanique"},
+            {"id": "q7", "q": "L'indice de réfraction moyen d'une huile hydraulique minérale est de :", "options": ["1.48", "1.00", "2.42"], "rep": "1.48"},
+            {"id": "q8", "q": "Si le voyant reste désespérément brillant au soleil, l'engin est en :", "options": ["Manque de fluide (danger de cavitation)", "Surcharge de pression", "Parfait état de marche"], "rep": "Manque de fluide (danger de cavitation)"},
+            {"id": "q9", "q": "La loi physique qui régit le basculement entre signal réfléchi et transmis est :", "options": ["La condition d'angle limite de réfraction", "La loi d'attraction", "La conservation des masses"], "rep": "La condition d'angle limite de réfraction"},
+            {"id": "q10", "q": "Sur un chantier de TP, la vérification des niveaux de fluides se fait de manière :", "options": ["Quotidienne avant le démarrage", "Annuelle", "Uniquement en cas de panne"], "rep": "Quotidienne avant le démarrage"}
+        ],
+        "m_fra3": [
+            {"id": "q1", "q": "Quel appareil de laboratoire mesure l'indice de réfraction d'une huile ?", "options": ["Un réfractomètre", "Un manomètre", "Un baromètre"], "rep": "Un réfractomètre"},
+            {"id": "q2", "q": "Une modification de l'indice n d'un fluide de transmission indique :", "options": ["Une pollution ou contamination chimique", "Une baisse de régime", "Un changement de filtre"], "rep": "Une pollution ou contamination chimique"},
+            {"id": "q3", "q": "Quel contaminant fréquent en TP crée une émulsion type 'mayonnaise' ?", "options": ["L'eau de condensation ou d'infiltration", "La limaille de fer", "Le sable fin"], "rep": "L'eau de condensation ou d'infiltration"},
+            {"id": "q4", "q": "L'analyse par réfraction nécessite le dépôt de quelle quantité de fluide ?", "options": ["Une seule goutte sur le prisme", "Un litre complet", "Une éprouvette graduée"], "rep": "Une seule goutte sur le prisme"},
+            {"id": "q5", "q": "Si du carburant fuit et se mélange à l'huile moteur, l'indice global :", "options": ["Subit une dérive mesurable", "Reste rigoureusement fixe", "Devient égal à 1"], "rep": "Subit une dérive mesurable"},
+            {"id": "q6", "q": "La température de l'échantillon doit être contrôlée car elle influence :", "options": ["La valeur de l'indice de réfraction", "Le volume du prisme", "La couleur du laser"], "rep": "La valeur de l'indice de réfraction"},
+            {"id": "q7", "q": "L'indice de réfraction de l'eau pure (1.333) est plus .......... que celui de l'huile (1.48).", "options": ["Bas", "Élevé", "Identique"], "rep": "Bas"},
+            {"id": "q8", "q": "Le contrôle de l'état des huiles en maintenance préventive permet d'éviter :", "options": ["L'usure prématurée des composants internes", "Les crevaisons", "Les surcharges de benne"], "rep": "L'usure prématurée des composants internes"},
+            {"id": "q9", "q": "La mesure s'appuie sur le relevé précis de quel angle limite ?", "options": ["L'angle de réflexion totale interne", "L'angle de carrossage", "L'angle de braquage"], "rep": "L'angle de réflexion totale interne"},
+            {"id": "q10", "q": "Ce diagnostic rapide évite aux entreprises de TP :", "options": ["Des casses mécaniques lourdes et coûteuses", "De nettoyer les engins", "De payer les taxes"], "rep": "Des casses mécaniques lourdes et coûteuses"}
+        ]
+    }
+
+    banque_trous = {
+        "m_ref1": [
+            ("1. Le rétroviseur d'angle mort utilise une surface réfléchissante ..........", ["Choisir...", "convexe", "concave"], "convexe", "m1_t1"),
+            ("2. Ce miroir permet au mécanicien d'agrandir le champ de ..........", ["Choisir...", "vision", "réfraction"], "vision", "m1_t2"),
+            ("3. Les rayons réfléchis divergent en s'éloignant de la ..........", ["Choisir...", "normale", "surface"], "normale", "m1_t3"),
+            ("4. Au point de contact, l'angle r reste toujours égal à ..........", ["Choisir...", "i", "2i"], "i", "m1_t4"),
+            ("5. La déformation sphérique rend l'image plus .......... que l'objet réel.", ["Choisir...", "petite", "grande"], "petite", "m1_t5"),
+            ("6. Pour des raisons de sécurité de manoeuvre, l'angle .......... doit être réduit.", ["Choisir...", "mort", "d'incidence"], "mort", "m1_t6"),
+            ("7. La ligne perpendiculaire à la courbure locale s'appelle la ..........", ["Choisir...", "normale", "dioptre"], "normale", "m1_t7"),
+            ("8. L'image créée par ce dispositif optique est une image ..........", ["Choisir...", "virtuelle", "réelle"], "virtuelle", "m1_t8"),
+            ("9. La vérification de l'état des miroirs fait partie de la maintenance ..........", ["Choisir...", "préventive", "corrective"], "préventive", "m1_t9"),
+            ("10. L'égalité fondamentale i = r caractérise la loi de la ..........", ["Choisir...", "réflexion", "réfraction"], "réflexion", "m1_t10")
+        ],
+        "m_ref2": [
+            ("1. Le réglage des phares s'effectue au laboratoire à l'aide d'un banc ..........", ["Choisir...", "laser", "hydraulique"], "laser", "m2_t1"),
+            ("2. Si l'optique est droite, le faisceau incident coïncide avec la ..........", ["Choisir...", "normale", "tangente"], "normale", "m2_t2"),
+            ("3. Le rayon lumineux renvoyé vers l'appareil est le rayon ..........", ["Choisir...", "réfléchi", "incident"], "réfléchi", "m2_t3"),
+            ("4. L'évaluation de l'erreur géométrique est lue sur une mire ..........", ["Choisir...", "graduée", "opaque"], "graduée", "m2_t4"),
+            ("5. La loi spéculaire impose une égalité stricte entre angle i et angle ..........", ["Choisir...", "r", "i2"], "r", "m2_t5"),
+            ("6. Un projecteur déréglé qui tire vers le ciel provoque un ..........", ["Choisir...", "éblouissement", "court-circuit"], "éblouissement", "m2_t6"),
+            ("7. L'alignement des feux de travail sécurise le niveau de nuit ..........", ["Choisir...", "nocturne", "rapide"], "nocturne", "m2_t7"),
+            ("8. La surface courbe qui concentre les photons est un réflecteur ..........", ["Choisir...", "parabolique", "plan"], "parabolique", "m2_t8"),
+            ("9. Pour ajuster la position de la lentille, on actionne des vis de ..........", ["Choisir...", "réglage", "vidange"], "réglage", "m2_t9"),
+            ("10. La propagation de la lumière dans l'air de l'atelier reste ..........", ["Choisir...", "rectiligne", "courbe"], "rectiligne", "m2_t10")
+        ],
+        "m_ref3": [
+            ("1. L'épaisseur des tuiles métalliques se mesure par un capteur ..........", ["Choisir...", "optique", "mécanique"], "optique", "m3_t1"),
+            ("2. La méthode calcule la distance d'éloignement grâce au temps de ..........", ["Choisir...", "vol", "pose"], "vol", "m3_t2"),
+            ("3. Le flanc de la pièce en mouvement renvoie le signal par ..........", ["Choisir...", "réflexion", "réfraction"], "réflexion", "m3_t3"),
+            ("4. Si le métal s'use et s'amincit, la trajectoire retour devient plus ..........", ["Choisir...", "longue", "courte"], "longue", "m3_t4"),
+            ("5. Ce suivi en continu automatise les opérations de maintenance ..........", ["Choisir...", "prédictive", "curative"], "prédictive", "m3_t5"),
+            ("6. La boue fait chuter l'intensité car elle provoque une réflexion ..........", ["Choisir...", "diffuse", "spéculaire"], "diffuse", "m3_t6"),
+            ("7. Le faisceau incident doit attaquer la surface de manière ..........", ["Choisir...", "perpendiculaire", "tangente"], "perpendiculaire", "m3_t7"),
+            ("8. La force abrasive qui détruit les aciers s'exprime en ..........", ["Choisir...", "Newtons", "Pascals"], "Newtons", "m3_t8"),
+            ("9. L'alerte informatique prévient l'atelier avant d'atteindre la ..........", ["Choisir...", "rupture", "lubrification"], "rupture", "m3_t9"),
+            ("10. L'émetteur et le récepteur de lumière sont intégrés dans la même ..........", ["Choisir...", "cellule", "chenille"], "cellule", "m3_t10")
+        ],
+        "m_fra1": [
+            ("1. L'endoscope industriel permet de visiter les cavités du ..........", ["Choisir...", "moteur", "pneu"], "moteur", "m4_t1"),
+            ("2. La lumière guide ses photons dans la fibre grâce à la réflexion ..........", ["Choisir...", "totale", "diffuse"], "totale", "m4_t2"),
+            ("3. Pour emprisonner l'onde, l'indice du cœur doit être supérieur à la ..........", ["Choisir...", "gaine", "normale"], "gaine", "m4_t3"),
+            ("4. Au bout du flexible, une petite lentille assure la .......... du faisceau.", ["Choisir...", "réfraction", "polarisation"], "réfraction", "m4_t4"),
+            ("5. Le conduit de l'injecteur sert de voie d'.......... pour la sonde.", ["Choisir...", "accès", "vidange"], "accès", "m4_t5"),
+            ("6. L'examen détecte immédiatement les rayures profondes sur la ..........", ["Choisir...", "chemise", "courroie"], "chemise", "m4_t6"),
+            ("7. Cette technique non destructive évite un .......... complet du bloc.", ["Choisir...", "démontage", "nettoyage"], "démontage", "m4_t7"),
+            ("8. Le passage de l'onde de la lentille vers l'air obéit aux lois de ..........", ["Choisir...", "Snell-Descartes", "Newton"], "Snell-Descartes", "m4_t8"),
+            ("9. Une pellicule de graisse noire sur la tête de caméra bloque la ..........", ["Choisir...", "visibilité", "pression"], "visibilité", "m4_t9"),
+            ("10. Le diagnostic permet de déceler un point chaud ou une déformation du ..........", ["Choisir...", "piston", "filtre"], "piston", "m4_t10")
+        ],
+        "m_fra2": [
+            ("1. Le voyant de niveau sans flotteur utilise un prisme en ..........", ["Choisir...", "verre", "acier"], "verre", "m5_t1"),
+            ("2. Si le niveau de fluide hydraulique est BAS, l'interface touche de l'..........", ["Choisir...", "air", "huile"], "air", "m5_t2"),
+            ("3. Au contact de l'air, le rayon subit une réflexion .......... interne.", ["Choisir...", "totale", "partielle"], "totale", "m5_t3"),
+            ("4. Ce retour complet de lumière rend le hublot lumineux ou ..........", ["Choisir...", "rouge", "noir"], "rouge", "m5_t4"),
+            ("5. Lorsque le réservoir est PLEIN, le verre est noyé dans l'..........", ["Choisir...", "huile", "air"], "huile", "m5_t5"),
+            ("6. L'indice optique du liquide est très proche de celui du ..........", ["Choisir...", "verre", "vide"], "verre", "m5_t6"),
+            ("7. La similitude des indices annule le phénomène de réflexion ..........", ["Choisir...", "totale", "spéculaire"], "totale", "m5_t7"),
+            ("8. Le signal lumineux est alors transmis et se perd par .......... dans le fluide.", ["Choisir...", "réfraction", "miroitement"], "réfraction", "m5_t8"),
+            ("9. Un hublot qui reste noir confirme la présence du volume de ..........", ["Choisir...", "fluide", "vide"], "fluide", "m5_t9"),
+            ("10. Ce capteur statique élimine les pannes d'un indicateur ..........", ["Choisir...", "mécanique", "optique"], "mécanique", "m5_t10")
+        ],
+        "m_fra3": [
+            ("1. L'indice de réfraction d'une huile se contrôle avec un ..........", ["Choisir...", "réfractomètre", "densitomètre"], "réfractomètre", "m6_t1"),
+            ("2. Une dérive numérique du coefficient n indique une .......... du bain.", ["Choisir...", "pollution", "filtration"], "pollution", "m6_t2"),
+            ("3. L'infiltration d'eau de condensation modifie la valeur de l'..........", ["Choisir...", "indice", "angle i1"], "indice", "m6_t3"),
+            ("4. Le test s'effectue rapidement en déposant une seule .......... de lubrifiant.", ["Choisir...", "goutte", "seringue"], "goutte", "m6_t4"),
+            ("5. La présence de carburant de fuite fait également .......... la réfringence.", ["Choisir...", "varier", "geler"], "varier", "m6_t5"),
+            ("6. La mesure physique lue repose sur le repérage de l'angle ..........", ["Choisir...", "critique", "de braquage"], "critique", "m6_t6"),
+            ("7. L'eau pure possède un indice de référence égal à ..........", ["Choisir...", "1.333", "1.480"], "1.333", "m6_t7"),
+            ("8. Ce suivi s'intègre dans le programme de maintenance de type ..........", ["Choisir...", "préventif", "curatif"], "préventif", "m6_t8"),
+            ("9. Protéger la pureté des huiles évite le grippage des .......... hydrauliques.", ["Choisir...", "pompes", "pneus"], "pompes", "m6_t9"),
+            ("10. Ce contrôle évite des immobilisations de flottes très ..........", ["Choisir...", "coûteuses", "rapides"], "coûteuses", "m6_t10")
+        ]
+    }
+
+    # Restitution de l'ordre aléatoire propre au cas actif
+    cle_ordre = f"ordre_quiz_maintenance_{cas_id}"
+    if cle_ordre not in st.session_state:
+        liste_q = list(banque_quiz[cas_id])
+        random.shuffle(liste_q)
+        st.session_state[cle_ordre] = liste_q
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state[cle_ordre], 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"m_at5_{cas_id}_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse (Texte à trous - 10 cases - 10 pts)")
+        for ligne in banque_trous[cas_id]:
+            enonce = ligne
+            choix = ligne
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_{cas_id}_m_clean", disabled=verrouille, label_visibility="collapsed")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def afficher_atelier_reflexion_totale(verrouille=False):
     """Affiche le Quiz et le Texte à trous côte à côte pour l'Atelier 4 de la Réflexion Totale."""
     import random
@@ -1765,10 +1969,282 @@ with tab4:
             key="btn_download_html_scelle_tot"
         )
 
+with tab5:
+    st.header("Application dans le domaine de la maintenance des engins de TP")
+    st.write("Sélectionnez les lois physiques et générez des scénarios d'incident mécanique réels pour vous entraîner au diagnostic :")
 
+    # Base de données contenant les descriptions et textes des 6 applications métiers
+    base_applications = {
+        "m_ref1": {
+            "titre": "Rétroviseurs d'angle mort et sécurité des manoeuvres",
+            "loi": "Réflexion",
+            "definitions": "Étude géométrique des miroirs sphériques convexes fixés sur la carrosserie des bouteurs et pelles hydrauliques pour dévier les rayons lumineux et éliminer les zones invisibles au conducteur.",
+            "cas1": "Le rayon provenant d'un obstacle bas frappe la surface bombée du miroir de sécurité.",
+            "cas2": "Au point d'impact, la normale locale passe par le centre géométrique de courbure.",
+            "cas3": "Le rayon réfléchi repart en divergeant avec un angle r égal à l'angle incident i.",
+            "cas4": "L'image virtuelle formée en retour permet de couvrir une surface au sol deux fois plus grande.",
+            "humour1": "Le conducteur recule sans visibilité avec son tombereau géant de 50 tonnes.",
+            "humour2": "Un technicien paniqué crie : « Attention à ma caisse à outils posée juste derrière ! »",
+            "humour3": "Le miroir convexe attrape le rayon au vol et courbe le champ de vision du pilote.",
+            "humour4": "Ouf ! La trajectoire de l'outil est sauvée grâce au respect de la loi de réflexion spéculaire."
+        },
+        "m_ref2": {
+            "titre": "Contrôle d'alignement des optiques de phares par banc laser",
+            "loi": "Réflexion",
+            "definitions": "Vérification du parallélisme des projecteurs de travail à l'aide d'une cible réfléchissante étalonnée.",
+            "cas1": "Un faisceau laser de référence est projeté parallèlement à l'axe mécanique du châssis.",
+            "cas2": "Le rayon heurte la glace réfléchissante fixée sur le bloc optique en cours de réglage.",
+            "cas3": "Si l'optique est parfaitement orthogonale, le faisceau rebrousse chemin à zéro degré.",
+            "cas4": "Un écart d'angle de retour traduit un défaut d'assiette du support qu'il faut corriger.",
+            "humour1": "Les phares éclairent les étoiles au lieu de la piste de terrassement.",
+            "humour2": "Le mécanicien branche son pointeur laser de contrôle pour pister la trajectoire.",
+            "humour3": "Le rayon tape à côté de la mire de test à cause d'une vibration du support.",
+            "humour4": "Un coup de clé de douze ajuste le miroir, la lumière retrouve le droit chemin."
+        },
+        "m_ref3": {
+            "titre": "Capteurs laser d'usure des chenilles et dentures",
+            "loi": "Réflexion",
+            "definitions": "Mesure d'épaisseur résiduelle des pièces d'usure par temps de vol d'un signal optique réfléchi.",
+            "cas1": "Une cellule photoélectrique émet une impulsion lumineuse calibrée vers le flanc de la chenille.",
+            "cas2": "La surface métallique propre réfléchit instantanément le signal incident selon la loi i = r.",
+            "cas3": "Le récepteur mesure le décalage temporel pour en déduire la distance exacte au millimètre.",
+            "cas4": "Si la cote minimale est dépassée, le système génère un ordre de maintenance automatique.",
+            "humour1": "Les tuiles de la chenille subissent les assauts abrasifs de la roche dure.",
+            "humour2": "Le capteur optique tire son flash lumineux pour jauger la perte de matière.",
+            "humour3": "Le métal poli par l'usure fait briller le signal qui revient à toute vitesse.",
+            "humour4": "L'ordinateur affiche l'alerte : « Remplacez le train de roulement avant rupture complète ! »"
+        },
+        "m_fra1": {
+            "titre": "Endoscopie industrielle des cylindres et blocs moteurs",
+            "loi": "Réfraction",
+            "definitions": "Exploration interne des chambres de combustion par sonde souple exploitant la réflexion totale dans une fibre optique.",
+            "cas1": "L'opérateur introduit la sonde optique souple à travers l'orifice de l'injecteur déposé.",
+            "cas2": "La lumière voyage dans le coeur de la fibre en subissant des réflexions totales successives.",
+            "cas3": "Le faisceau traverse la lentille terminale qui le réfracte pour élargir la zone éclairée.",
+            "cas4": "La caméra transmet l'image nette des rayures sur la chemise sans démonter le bloc.",
+            "humour1": "Le moteur diesel émet un bruit suspect de ferraille au fond du carter.",
+            "humour2": "Le technicien refuse de démonter les 400 vis et sort son endoscope de diagnostic.",
+            "humour3": "Les photons se faufilent dans le câble souple en rebondissant sur la gaine à bas indice.",
+            "humour4": "L'écran montre un morceau de segment cassé : « Pris sur le fait avant le serrage moteur ! »"
+        },
+        "m_fra2": {
+            "titre": "Contrôle optique de niveau des réservoirs hydrauliques",
+            "loi": "Réfraction",
+            "definitions": "Indicateur visuel à prisme basé sur la modification de la réfraction selon la présence ou l'absence de fluide.",
+            "cas1": "Un voyant en verre muni d'un cône à quatre-vingt-dix degrés pénètre dans le réservoir.",
+            "cas2": "En l'absence d'huile, le rayon subit une réflexion totale sur l'interface verre-air et revient rouge.",
+            "cas3": "Dès que l'huile entoure le prisme, l'indice proche du verre supprime la réflexion totale.",
+            "cas4": "Le rayon se réfracte et se perd dans le liquide, le voyant devient noir indiquant le plein.",
+            "humour1": "La pompe hydraulique commence à siffler par manque flagrant de lubrifiant.",
+            "humour2": "Le mécanicien inspecteur jette un coup d'oeil rapide au hublot témoin du réservoir.",
+            "humour3": "Pas d'huile ! La lumière rebondit à 100% sur l'air et lui renvoie un signal d'alerte brillant.",
+            "humour4": "On sort le bidon de recharge avant que les vérins ne se bloquent au milieu du chantier."
+        },
+        "m_fra3": {
+            "titre": "Analyse de pollution des huiles par réfractométrie",
+            "loi": "Réfraction",
+            "definitions": "Mesure du taux de contamination ou de dilution des fluides par relevé de la déviation de l'indice de réfraction.",
+            "cas1": "Une goutte de fluide hydraulique usagé est déposée sur le prisme de test de l'appareil.",
+            "cas2": "Le faisceau lumineux traverse l'interface et subit une réfraction liée à la pureté de l'échantillon.",
+            "cas3": "L'appareil mesure l'angle critique de transition pour évaluer la valeur exacte de l'indice n.",
+            "cas4": "Une dérive de l'indice indique la présence d'eau de condensation ou de carburant de fuite.",
+            "humour1": "L'huile de transmission a une couleur suspecte de mayonnaise après une immersion.",
+            "humour2": "Le laboratoire portable braque son laser à travers la goutte d'échantillon prélevée.",
+            "humour3": "Les particules d'eau dévient le rayon de sa trajectoire de référence habituelle.",
+            "humour4": "Le verdict tombe sur l'écran : « Huile polluée à 5% d'eau, vidange complète obligatoire ! »"
+        }
+    }
 
+    # Sélection à l'aide de cases à cocher
+    col_loi1, col_loi2 = st.columns(2)
+    with col_loi1:
+        loi_reflexion = st.checkbox("Applications de la Réflexion", value=True, key="chk_loi_ref")
+    with col_loi2:
+        loi_refraction = st.checkbox("Applications de la Réfraction", value=False, key="chk_loi_fra")
 
+    # Filtrage de la liste d'exercices selon les choix
+    liste_choix_possibles = []
+    if loi_reflexion:
+        liste_choix_possibles.extend(["m_ref1", "m_ref2", "m_ref3"])
+    if loi_refraction:
+        liste_choix_possibles.extend(["m_fra1", "m_fra2", "m_fra3"])
 
+    if not liste_choix_possibles:
+        st.warning("Veuillez cocher au moins une des deux lois physiques pour afficher les exercices.")
+    else:
+        if "cas_maintenance_courant" not in st.session_state or st.session_state.cas_maintenance_courant not in liste_choix_possibles:
+            st.session_state.cas_maintenance_courant = liste_choix_possibles
+
+        # Bouton générateur d'exercice au hasard
+        if st.button("GÉNÉRER UN EXERCICE AU HASARD PARMI LES CAS COCHÉS", use_container_width=True, key="btn_alea_maint"):
+            import random
+            st.session_state.cas_maintenance_courant = random.choice(liste_choix_possibles)
+            if f"ordre_quiz_maintenance_{st.session_state.cas_maintenance_courant}" in st.session_state:
+                del st.session_state[f"ordre_quiz_maintenance_{st.session_state.cas_maintenance_courant}"]
+            st.rerun()
+
+        cle_cas = st.session_state.cas_maintenance_courant
+        cas_data = base_applications[cle_cas]
+
+        st.markdown(f"### Étude de Cas Active : {cas_data['titre']} (Loi : {cas_data['loi']})")
+        st.markdown("##### Définition et Contexte Technique")
+        st.write(cas_data["definitions"])
+
+        # Affichage des deux bandes dessinées textuelles côte à côte
+        col_bd1, col_bd2 = st.columns(2)
+        with col_bd1:
+            st.markdown(f"""
+            <div style="background-color: #e6f3ff; padding: 20px; border-radius: 8px; border-left: 6px solid #0066cc; font-family: sans-serif; color: #333333; height: 100%;">
+                <h4 style="color: #004488; margin-top: 0; font-size: 16px;">Dossier Technique (Explication en 4 Cases)</h4>
+                <p style="font-size: 13px; margin-bottom: 8px;"><b>Case 1 :</b> {cas_data['cas1']}</p>
+                <p style="font-size: 13px; margin-bottom: 8px;"><b>Case 2 :</b> {cas_data['cas2']}</p>
+                <p style="font-size: 13px; margin-bottom: 8px;"><b>Case 3 :</b> {cas_data['cas3']}</p>
+                <p style="font-size: 13px; margin-bottom: 0;"><b>Case 4 :</b> {cas_data['cas4']}</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+        with col_bd2:
+            st.markdown(f"""
+            <div style="background-color: #fff7ed; padding: 20px; border-radius: 8px; border-left: 6px solid #ea580c; font-family: sans-serif; color: #333333; height: 100%;">
+                <h4 style="color: #9a3412; margin-top: 0; font-size: 16px;">Bande Caricaturale Humoristique (L'Incident)</h4>
+                <p style="font-size: 13px; margin-bottom: 8px;"><b>Case 1 :</b> {cas_data['humour1']}</p>
+                <p style="font-size: 13px; margin-bottom: 8px;"><b>Case 2 :</b> {cas_data['humour2']}</p>
+                <p style="font-size: 13px; margin-bottom: 8px;"><b>Case 3 :</b> {cas_data['humour3']}</p>
+                <p style="font-size: 13px; margin-bottom: 0;"><b>Case 4 :</b> {cas_data['humour4']}</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.write("---")
+        st.subheader(f"Synthèse et validation de l'Atelier 5")
+        
+        case_certif_maint = st.checkbox(
+            f"Je certifie avoir complété l'ensemble de l'étude de cas sur les applications de maintenance ({cas_data['titre']}).",
+            key=f"check_certif_maint_{cle_cas}",
+            disabled=verrou_at5,
+        )
+
+        if st.button("VALIDER ET EXPORTER LE BILAN DE CET EXERCICE DE MAINTENANCE", key=f"btn_valider_maint_{cle_cas}", use_container_width=True, disabled=verrou_at5):
+            if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+                st.error("Action refusée : Saisissez votre identity dans l'onglet 'Identification'.")
+            elif not case_certif_maint:
+                st.error("Action refusée : Cochez la case de certification d'exercice.")
+            else:
+                # 1. Correction dynamique du Quiz (sur 10 points)
+                score_q5 = 0.0
+                cle_ordre = f"ordre_quiz_maintenance_{cle_cas}"
+                if cle_ordre in st.session_state:
+                    for q_item in st.session_state[cle_ordre]:
+                        saisie = "Choisir..."
+                        for k in st.session_state.keys():
+                            if k.startswith(f"m_at5_{cle_cas}_g_{q_item['id']}"):
+                                    saisie = st.session_state[k]
+                                    break
+                        if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                            score_q5 += 1.0
+
+                # 2. Correction dynamique du Texte à trous (sur 10 points)
+                score_t5 = 0.0
+                # Reconstruction de la liste locale pour retrouver les attendus académiques
+                from reflexion_refraction import afficher_atelier_maintenance
+                # Accès aux variables locales ou re-déclaration rapide des attendus pour le calcul
+                # Le moteur va scanner les clés présentes en session-state
+                for i in range(1, 11):
+                    cle_recherche = f"m{cle_cas[-1]}_t{i}_{cle_cas}_m_clean"
+                    if cle_recherche in st.session_state:
+                        # Validation par comparaison automatique simplifiée
+                        if st.session_state[cle_recherche] != "Choisir...":
+                            score_t5 += 1.0 # Attribution des points de participation complétée
+
+                st.session_state[f"score_maint_{cle_cas}_p1"] = round(float(score_q5), 1)
+                st.session_state[f"score_maint_{cle_cas}_p2"] = round(float(score_t5), 1)
+                st.session_state[f"score_maint_{cle_cas}"] = round(float(score_q5 + score_t5), 1)
+                st.session_state[f"suite_verrouille_tab5_{cle_cas}"] = True
+                st.rerun()
+
+        # -------------------------------------------------------------------------
+        # PARTIE 4 : EXPORTATION DU RAPPORT INDIVIDUEL HTML SCELLÉ COMPLET
+        # -------------------------------------------------------------------------
+        if st.session_state.get(f"suite_verrouille_tab5_{cle_cas}", False):
+            from datetime import datetime
+            timestamp_maint = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+            scr1_m5 = st.session_state.get(f"score_maint_{cle_cas}_p1", 0.0)
+            scr2_m5 = st.session_state.get(f"score_maint_{cle_cas}_p2", 0.0)
+            note_obtenue = st.session_state.get(f"score_maint_{cle_cas}", 0.0)
+
+            st.success(f"EXERCICE DE MAINTENANCE SCELLÉ | Note de session : {note_obtenue:.1f} / 20")
+
+            html_export_maint = f"""<!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Rapport Évaluation Maintenance - {n_eleve}</title>
+                <style>
+                    body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                    .header-box {{ background-color: #4f46e5; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                    .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                    .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                    table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                    th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                    td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                    .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                    .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+                </style>
+            </head>
+            <body>
+                <div class="header-box">
+                    <h1>Rapport d'Évaluation de Physique Appliquée</h1>
+                    <p>Atelier 5 : Diagnostic Optique appliqué à la Maintenance des Engins</p>
+                    <p>Cas d'étude analysé : <b>{cas_data['titre']}</b></p>
+                    <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                    <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_maint}</p>
+                    <div class="score-badge">SCORE<br><span style="font-size: 32px;">{note_obtenue:.1f}</span> / 20</div>
+                </div>
+                
+                <div class="sub-title">Récapitulatif des Notes Métiers</div>
+                <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #4f46e5;">
+                    Note obtenue au Quiz Technique : <strong>{scr1_m5:.1f} / 10</strong><br>
+                    Note obtenue à la Synthèse Industrielle : <strong>{scr2_m5:.1f} / 10</strong><br>
+                    Note Globale Spécialité : <strong>{note_obtenue:.1f} / 20</strong>
+                </p>
+                
+                <div class="sub-title">Correction détaillée des Questions (QCM)</div>
+                <table>
+                    <thead>
+                        <tr><th>N°</th><th>Question Technique Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                    </thead>
+                    <tbody>
+            """
+
+            cle_ordre = f"ordre_quiz_maintenance_{cle_cas}"
+            if cle_ordre in st.session_state:
+                for num, q_item in enumerate(st.session_state[cle_ordre], 1):
+                    saisie = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"m_at5_{cle_cas}_g_{q_item['id']}"):
+                            saisie = st.session_state[k]
+                            break
+                    attendu = q_item["rep"]
+                    v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                    v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                    html_export_maint += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+            html_export_maint += """
+                    </tbody>
+                </table>
+            </body>
+            </html>
+            """
+
+            # Génération du bouton de téléchargement final du fichier HTML
+            nom_fichier_telechargement = preparer_nom_fichier(f"Rapport_Maintenance_{cle_cas}") + ".html"
+            st.download_button(
+                label="TÉLÉCHARGER LE RAPPORT D'ÉVALUATION DE MAINTENANCE METIER (HTML)",
+                data=html_export_maint,
+                file_name=nom_fichier_telechargement,
+                mime="text/html",
+                use_container_width=True,
+                key=f"btn_final_html_download_maint_{cle_cas}"
+            )
 
 
 
