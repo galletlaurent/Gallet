@@ -556,8 +556,7 @@ def afficher_atelier_maintenance(cas_id, verrouille=False):
         ]
     }
 
-    # Restitution de l'ordre aléatoire propre au cas actif
-    cle_ordre = f"ordre_quiz_maintenance_{cas_id}"
+    cle_ordre = f"ordre_quiz_maint_{cas_id}"
     if cle_ordre not in st.session_state:
         liste_q = list(banque_quiz[cas_id])
         random.shuffle(liste_q)
@@ -570,7 +569,7 @@ def afficher_atelier_maintenance(cas_id, verrouille=False):
     
     with col_quiz:
         st.markdown("##### Quiz Technique (10 questions - 10 pts)")
-        for idx, q_data in enumerate(st.session_state[f"ordre_quiz_maint_{cas_id}"], 1):
+        for idx, q_data in enumerate(st.session_state[cle_ordre], 1):
             st.write(f"**{idx}.** {q_data['q']}")
             st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"m_at5_{cas_id}_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
 
@@ -578,16 +577,15 @@ def afficher_atelier_maintenance(cas_id, verrouille=False):
         st.markdown("##### Synthèse (Texte à trous - 10 cases - 10 pts)")
         for ligne in st.session_state[f"champs_maint_{cas_id}_clean"]:
             # Extraction stricte par indexation directe du tuple de session
-            enonce = ligne[0]
-            choix = ligne[1]
+            enonce = ligne
+            choix = ligne
             cle = ligne[-1]
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
-                st.write(enonce) # N'affichera plus jamais le tuple vert, uniquement la phrase
+                st.write(enonce) # Affiche uniquement la phrase propre
             with c_sel: 
-                st.selectbox("", choix, key=f"{cle}_{cas_id}_m_clean", disabled=verrouille, label_visibility="collapsed")
-                
+                st.selectbox("", choix, key=f"{cle}_{cas_id}_m_clean", disabled=verrouille, label_visibility="collapsed")    
         
 def afficher_atelier_reflexion_totale(verrouille=False):
     """Affiche le Quiz et le Texte à trous côte à côte pour l'Atelier 4 de la Réflexion Totale."""
