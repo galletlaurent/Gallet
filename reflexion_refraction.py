@@ -313,7 +313,7 @@ def afficher_atelier_travaux_publics(cas_id, verrouille=False):
             # Extraction stricte de chaque élément du tuple par son index pour éviter le bug visuel
             enonce_texte = ligne[0]   # Récupère uniquement la phrase de cours
             choix_options = ligne[1]  # Récupère la liste des choix
-            cle_unique = ligne[-1]    # Récupère la clé de session
+            cle_unique = ligne[3]     # Correction : Ciblage direct de l'index 3 pour la clé de variable
             
             c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
             with c_txt: 
@@ -326,9 +326,6 @@ def afficher_atelier_travaux_publics(cas_id, verrouille=False):
         st.info(
             "Utilisez les fiches de dossiers techniques et le simulateur vectoriel situés en haut pour compléter la feuille d'évaluation à gauche."
         )
-
-
-
 
 
 
