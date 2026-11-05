@@ -4777,9 +4777,10 @@ banque_ecrites_permis_ce = [
     charger_ecrite_permis_ce_fiche_20()
 ]
 
-# Injection automatique des numéros manquants pour éviter l'erreur d'affichage
-for index, fiche in enumerate(banque_ecrites_permis_ce, start=1):
-    fiche["numero"] = index
+# Injection du numero de fiche dans chaque dictionnaire de question
+for index, liste_questions in enumerate(banque_ecrites_permis_ce, start=1):
+    for question in liste_questions:
+        question["numero_fiche"] = index
 
 banque_orales_permis_ce = [
     charger_orale_permis_ce_fiche_1(),
@@ -4796,9 +4797,10 @@ banque_orales_permis_ce = [
     charger_orale_permis_ce_fiche_12()
 ]
 
-# Injection automatique des numéros manquants pour éviter l'erreur d'affichage
-for index, fiche in enumerate(banque_orales_permis_ce, start=1):
-    fiche["numero"] = index
+# Injection du numero de fiche dans chaque dictionnaire de question
+for index, liste_questions in enumerate(banque_orales_permis_ce, start=1):
+    for question in liste_questions:
+        question["numero_fiche"] = index
 
 with tab0:
     st.subheader("Identification de l'élève")
