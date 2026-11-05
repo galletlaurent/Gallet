@@ -5212,9 +5212,9 @@ with tab3:
 
         
 with tab4:
+    # AJOUT DE LA VARIABLE MANQUANTE ICI
     if "verrou_ecrite_c" not in st.session_state:
         st.session_state.verrou_ecrite_c = False
-
     v_ecrit_c = st.session_state.verrou_ecrite_c
 
     st.header("Interrogation Ecrite - Permis C")
