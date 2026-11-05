@@ -2970,10 +2970,13 @@ banque_ecrites_permis_c = [
     charger_ecrite_permis_c_fiche_20()
 ]
 
-# Ajout dynamique de la clé "numero" pour éviter le plantage lors de l'affichage
-for index, fiche in enumerate(banque_ecrites_permis_c, start=1):
-    fiche["numero"] = index
+# Si chaque fonction retourne une LISTE de questions, il faut parcourir cette liste
+for index, liste_questions in enumerate(banque_ecrites_permis_c, start=1):
+    for question in liste_questions:
+        question["numero_fiche"] = index
 
+
+# Correction pour le second tableau (Fiches Orales)
 banque_orales_permis_c = [
     charger_orale_permis_c_fiche_1(),
     charger_orale_permis_c_fiche_2(),
@@ -2986,12 +2989,12 @@ banque_orales_permis_c = [
     charger_orale_permis_c_fiche_9(),
     charger_orale_permis_c_fiche_10(),
     charger_orale_permis_c_fiche_11(),
-    charger_orale_permis_c_fiche_12(),
+    charger_orale_permis_c_fiche_12()
 ]
 
-# Cette boucle ajoute automatiquement la clé "numero" à chaque fiche du tableau !
-for index, fiche in enumerate(banque_orales_permis_c, start=1):
-    fiche["numero"] = index
+for index, liste_questions in enumerate(banque_orales_permis_c, start=1):
+    for question in liste_questions:
+        question["numero_fiche"] = index
     
 def charger_ecrite_permis_ce_fiche_1():
     return {
