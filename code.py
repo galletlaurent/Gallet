@@ -5310,9 +5310,9 @@ with tab5:
     if isinstance(fiche_brute_o_ce, dict) and "questions" in fiche_brute_o_ce:
         liste_questions_orales_ce = fiche_brute_o_ce["questions"]
         num_fiche_o_ce = fiche_brute_o_ce.get("numero_fiche", "Non defini")
-    elif isinstance(fiche_brute_o_ce, list) and len(fiche_brute_o_ce) > 0 and isinstance(fiche_brute_o_ce, dict):
-        liste_questions_orales_ce = fiche_brute_o_ce["questions"]
-        num_fiche_o_ce = fiche_brute_o_ce.get("numero_fiche", "Non defini")
+    elif isinstance(fiche_brute_o_ce, list) and len(fiche_brute_o_ce) > 0 and isinstance(fiche_brute_o_ce[0], dict):
+        liste_questions_orales_ce = fiche_brute_o_ce[0]["questions"] if "questions" in fiche_brute_o_ce[0] else fiche_brute_o_ce
+        num_fiche_o_ce = fiche_brute_o_ce[0].get("numero_fiche", "Non defini")
     else:
         liste_questions_orales_ce = fiche_brute_o_ce
         num_fiche_o_ce = "Non defini"
@@ -5349,44 +5349,7 @@ with tab5:
 
     st.write("---")
     st.subheader("Synthese et validation")
-    certif_oral = st.checkbox(
-        "Je certifie avoir termine la preparation de cette fiche orale CE.",
-        key=f"cert_oral_ce_{num_fiche_o_ce}",
-        disabled=v_oral_ce,
-    )
-
-    if st.button(
-        "VALIDER ET VERROUILLER L'ATELIER ORAL CE",
-        key=f"val_oral_ce_{num_fiche_o_ce}",
-        disabled=v_oral_ce,
-        use_container_width=True,
-    ):
-        if not certif_oral:
-            st.warning("Veuillez cocher la case de certification avant.")
-        else:
-            st.session_state.verrou_orale_ce = True
-            st.rerun()
-            
-    st.write("---")
-    st.subheader("Synthese et validation")
     
-    # Recupere le verrou directement depuis la memoire pour le CE
-    v_oral_ce = st.session_state.get("verrou_orale_ce", False)
-    
-    # Extraction de secours ultra-securisee du numero de fiche pour eviter le bug de la variable manquante
-    fiche_actuelle_o_ce = st.session_state.get("fiche_orale_choisie_ce", [])
-    if isinstance(fiche_actuelle_o_ce, dict) and "questions" in fiche_actuelle_o_ce:
-        num_fiche_o_ce = fiche_actuelle_o_ce.get("numero_fiche", "Non defini")
-    elif isinstance(fiche_actuelle_o_ce, list) and len(fiche_actuelle_o_ce) > 0:
-        if isinstance(fiche_actuelle_o_ce[0], dict):
-            num_fiche_o_ce = fiche_actuelle_o_ce[0].get("numero_fiche", "Non defini")
-        else:
-            num_fiche_o_ce = "Non defini"
-    elif isinstance(fiche_actuelle_o_ce, dict):
-        num_fiche_o_ce = fiche_actuelle_o_ce.get("numero_fiche", "Non defini")
-    else:
-        num_fiche_o_ce = "Non defini"
-
     if not v_oral_ce:
         certif_oral = st.checkbox(
             "Je certifie avoir termine la preparation de cette fiche orale CE.",
@@ -5404,7 +5367,7 @@ with tab5:
                 st.session_state.verrou_orale_ce = True
                 st.rerun()
     else:
-        # L'atelier est verrouille, on appelle la fonction pour afficher l'identite et la validation
+        # L'atelier est verrouille, on affiche le proces-verbal d'identite de validation
         afficher_validation_orale(num_fiche=num_fiche_o_ce)
         
 
