@@ -5199,7 +5199,6 @@ with tab3:
 
 
 with tab4:
-    # Initialisation indispensable de la variable pour la ligne 5085
     if "verrou_ecrite_c" not in st.session_state:
         st.session_state.verrou_ecrite_c = False
     v_ecrit_c = st.session_state.verrou_ecrite_c
@@ -5219,21 +5218,34 @@ with tab4:
 
     fiche_brute = st.session_state.fiche_ecrite_choisie_c
     
-    if isinstance(fiche_brute, dict):
+    # Decapsulage automatique si c'est une liste de listes [[...]]
+    if isinstance(fiche_brute, list) and len(fiche_brute) > 0 and isinstance(fiche_brute[0], list):
+        liste_questions_ecrites_c = fiche_brute[0]
+    elif isinstance(fiche_brute, dict):
         liste_questions_ecrites_c = [fiche_brute]
-    elif isinstance(fiche_brute, list) and len(fiche_brute) > 0:
-        liste_questions_ecrites_c = fiche_brute
     else:
         liste_questions_ecrites_c = fiche_brute
 
+    # Extraction blindee du numero de fiche sur le premier dictionnaire reel
     if isinstance(liste_questions_ecrites_c, list) and len(liste_questions_ecrites_c) > 0:
-        num_fiche_e = liste_questions_ecrites_c[0].get("numero_fiche", "Non defini")
+        premier_element = liste_questions_ecrites_c[0]
+        if isinstance(premier_element, list) and len(premier_element) > 0:
+            premier_element = premier_element[0]
+        
+        if isinstance(premier_element, dict):
+            num_fiche_e = premier_element.get("numero_fiche", "Non defini")
+        else:
+            num_fiche_e = "Non defini"
     else:
         num_fiche_e = "Non defini"
 
     st.markdown(f"### Fiche Ecrite Numero {num_fiche_e}")
 
     for idx, question_e_c in enumerate(liste_questions_ecrites_c):
+        # Securite si une question est encore isolee dans une sous-liste
+        if isinstance(question_e_c, list) and len(question_e_c) > 0:
+            question_e_c = question_e_c[0]
+
         if isinstance(question_e_c, dict) and "question" in question_e_c:
             st.write(f"**Question {idx + 1} :** {question_e_c['question']}")
 
@@ -5261,21 +5273,6 @@ with tab4:
     st.write("---")
     st.subheader("Synthese et validation")
     
-    # Recupere le verrou de maniere autonome
-    v_ecrit_c = st.session_state.get("verrou_ecrite_c", False)
-    
-    # Extraction de secours ultra-securisee du numero de fiche
-    fiche_actuelle_c = st.session_state.get("fiche_ecrite_choisie_c", [])
-    if isinstance(fiche_actuelle_c, list) and len(fiche_actuelle_c) > 0:
-        if isinstance(fiche_actuelle_c[0], dict):
-            num_fiche_e = fiche_actuelle_c[0].get("numero_fiche", "Non defini")
-        else:
-            num_fiche_e = "Non defini"
-    elif isinstance(fiche_actuelle_c, dict):
-        num_fiche_e = fiche_actuelle_c.get("numero_fiche", "Non defini")
-    else:
-        num_fiche_e = "Non defini"
-
     if not v_ecrit_c:
         certif_ecrit_c = st.checkbox(
             "Je certifie avoir repondu aux questions de cette fiche ecrite C.",
@@ -5293,12 +5290,6 @@ with tab4:
                 st.session_state.verrou_ecrite_c = True
                 st.rerun()
     else:
-        # Normalisation de la liste pour le calcul de note
-        if isinstance(fiche_actuelle_c, dict):
-            liste_questions_ecrites_c = [fiche_actuelle_c]
-        else:
-            liste_questions_ecrites_c = fiche_actuelle_c
-
         # L'atelier est valide, on affiche l'identite complete et la note obtenue
         calculer_et_afficher_note(
             liste_questions=liste_questions_ecrites_c, 
