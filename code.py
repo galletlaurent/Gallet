@@ -523,7 +523,7 @@ def charger_orale_permis_c_fiche_12():
         "reponse": "Troubles musculo-squelettiques (maux de dos), alimentation adaptée, importance du sommeil et examens médicaux périodiques."
     }
 
-banque_questions_ecrites = [
+banque_ecrites_permis_c = [
     charger_ecrite_permis_c_fiche_1(),
     charger_ecrite_permis_c_fiche_2(),
     charger_ecrite_permis_c_fiche_3(),
@@ -543,8 +543,12 @@ banque_questions_ecrites = [
     charger_ecrite_permis_c_fiche_17(),
     charger_ecrite_permis_c_fiche_18(),
     charger_ecrite_permis_c_fiche_19(),
-    charger_ecrite_permis_c_fiche_20(),
+    charger_ecrite_permis_c_fiche_20()
 ]
+
+# Ajout dynamique de la clé "numero" pour éviter le plantage lors de l'affichage
+for index, fiche in enumerate(banque_ecrites_permis_c, start=1):
+    fiche["numero"] = index
 
 banque_orales_permis_c = [
     charger_orale_permis_c_fiche_1(),
