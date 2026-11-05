@@ -5081,7 +5081,19 @@ with tab2:
 
     st.write("---")
     st.subheader("Synthese et validation")
+    
+    # Recupere le verrou directement depuis la memoire
     v_ecrit_c = st.session_state.get("verrou_ecrite_c", False)
+    
+    # Recupere et extrait de maniere ultra-securisee le numero de fiche pour eviter le bug de la variable manquante
+    fiche_actuelle = st.session_state.get("fiche_ecrite_choisie_c", [])
+    if isinstance(fiche_actuelle, list) and len(fiche_actuelle) > 0:
+        num_fiche_e = fiche_actuelle[0].get("numero_fiche", "Non defini") if isinstance(fiche_actuelle[0], dict) else "Non defini"
+    elif isinstance(fiche_actuelle, dict):
+        num_fiche_e = fiche_actuelle.get("numero_fiche", "Non defini")
+    else:
+        num_fiche_e = "Non defini"
+
     if not v_ecrit_c:
         certif_ecrit_c = st.checkbox(
             "Je certifie avoir repondu aux questions de cette fiche ecrite C.",
@@ -5099,6 +5111,12 @@ with tab2:
                 st.session_state.verrou_ecrite_c = True
                 st.rerun()
     else:
+        # Recuperation de la liste des questions pour la notation automatique
+        if isinstance(fiche_actuelle, dict):
+            liste_questions_ecrites_c = [fiche_actuelle]
+        else:
+            liste_questions_ecrites_c = fiche_actuelle
+
         # L'atelier est verrouille, on appelle la fonction automatique pour afficher l'identite et la note
         calculer_et_afficher_note(
             liste_questions=liste_questions_ecrites_c, 
