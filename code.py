@@ -5026,65 +5026,77 @@ with tab2:
 
 with tab3:
     st.header("Interrogation Orale - Permis C")
-    st.caption("Tirage au sort d'une fiche complete parmi les 12 fiches.")
+    st.caption("Tirage au sort d'une fiche complète parmi les 12 fiches.")
 
     if "fiche_orale_choisie_c" not in st.session_state:
-        st.session_state.fiche_orale_choisie_c = random.choice(banque_orales_permis_c)
+        st.session_state.fiche_orale_choisie_c = random.choice(
+            banque_orales_permis_c
+        )
 
     if st.button("TIRER UNE AUTRE FICHE ORALE AU HASARD", key="btn_orale_c"):
-        st.session_state.fiche_orale_choisie_c = random.choice(banque_orales_permis_c)
+        st.session_state.fiche_orale_choisie_c = random.choice(
+            banque_orales_permis_c
+        )
+        # Reinitialisation propre de toutes les reponses de la session pour la nouvelle fiche
         for key in list(st.session_state.keys()):
             if key.startswith("rep_orale_c_"):
                 del st.session_state[key]
         st.rerun()
 
-    fiche_brute_orale = st.session_state.fiche_orale_choisie_c
-
-    # Normalisation immediate en liste conforme
-    if isinstance(fiche_brute_orale, list):
-        questions_a_afficher = fiche_brute_orale
-    elif isinstance(fiche_brute_orale, dict):
-        questions_a_afficher = [fiche_brute_orale]
+    fiche_brute_o = st.session_state.fiche_orale_choisie_c
+    
+    # Force la conversion en liste de dictionnaires de maniere universelle (idem ecrit)
+    if isinstance(fiche_brute_o, dict):
+        liste_questions_orales_c = [fiche_brute_o]
+    elif isinstance(fiche_brute_o, list) and len(fiche_brute_o) > 0 and isinstance(fiche_brute_o[0], list):
+        liste_questions_orales_c = fiche_brute_o[0]
     else:
-        questions_a_afficher = fiche_brute_orale
+        liste_questions_orales_c = fiche_brute_o
 
-    # Lecture securisee de la cle sur le dictionnaire situe a l'index 0
-    if isinstance(questions_a_afficher, list) and len(questions_a_afficher) > 0:
-        num_fiche = questions_a_afficher[0].get("numero_fiche", "Non defini")
-    elif isinstance(questions_a_afficher, dict):
-        num_fiche = questions_a_afficher.get("numero_fiche", "Non defini")
+    # Extraction du numero de fiche de facon totalement blindee (idem ecrit)
+    if isinstance(liste_questions_orales_c, list) and len(liste_questions_orales_c) > 0:
+        num_fiche_o = liste_questions_orales_c[0].get("numero_fiche", "Non defini")
+    elif isinstance(liste_questions_orales_c, dict):
+        num_fiche_o = liste_questions_orales_c.get("numero_fiche", "Non defini")
     else:
-        num_fiche = "Non defini"
+        num_fiche_o = "Non defini"
 
-    st.markdown(f"### Fiche Orale Numero {num_fiche}")
-    st.divider()
+    st.markdown(f"### Fiche Orale Numero {num_fiche_o}")
 
-    # Affichage de chaque question de la liste
-    for idx, question_o in enumerate(questions_a_afficher):
-        if isinstance(question_o, dict) and "question" in question_o:
-            st.write(f"**Question {idx + 1} :** {question_o['question']}")
-            
-            st.text_area(
-                "Saisissez vos notes de preparation :",
-                key=f"rep_orale_c_{idx}_{num_fiche}",
-                placeholder="Ecrivez ici vos arguments pour l'examen oral...",
-            )
+    # Parcours et affichage dynamique des questions de la fiche tiree au sort
+    for idx, question_o_c in enumerate(liste_questions_orales_c):
+        if isinstance(question_o_ce, dict) and "question" in question_o_ce:
+            st.write(f"**Question {idx + 1} :** {question_o_ce['question']}")
 
-            if st.checkbox("Afficher le guide de correction", key=f"chk_oral_c_{idx}_{num_fiche}"):
-                st.success(f"Elements cles attendus : {question_o.get('reponse', 'Non defini')}")
+            if question_o_ce.get("type") == "choix":
+                st.selectbox(
+                    "Selectionnez votre reponse :",
+                    options=["Choisir une reponse..."] + question_o_ce.get("choix", []),
+                    key=f"rep_orale_c_{idx}_{num_fiche_o}",
+                    index=0,
+                )
+            else:
+                st.text_area(
+                    "Saisissez vos notes de preparation :",
+                    key=f"rep_orale_c_{idx}_{num_fiche_o}",
+                    placeholder="Ecrivez ici vos arguments pour l'examen oral...",
+                )
+
+            if st.checkbox("Afficher le guide de correction", key=f"chk_oral_c_{idx}_{num_fiche_o}"):
+                st.success(f"Elements cles attendus : {question_o_ce.get('reponse')}")
                 
             st.divider()
-
+            
     st.write("---")
     st.subheader("Synthese et validation")
     certif_oral_c = st.checkbox(
         "Je certifie avoir termine la preparation de cette fiche orale C.",
-        key=f"cert_oral_c_{num_fiche}"
+        key=f"cert_oral_c_{num_fiche_o}"
     )
 
     if st.button(
         "VALIDER ET VERROUILLER L'ATELIER ORAL C",
-        key=f"val_oral_c_{num_fiche}",
+        key=f"val_oral_c_{num_fiche_o}",
         use_container_width=True
     ):
         if not certif_oral_c:
