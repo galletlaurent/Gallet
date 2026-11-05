@@ -956,32 +956,29 @@ with tab1:
     st.header("Interrogation Écrite / Orale — Permis AM")
     st.caption("Tirage au sort d'une question au hasard parmi la banque Permis AM.")
 
+    # 1. Chargement et numérotation sécurisés de la banque sur place
+    try:
+        banque_locale_am = charger_banque_permis_am()
+        if not banque_locale_am:
+            raise ValueError
+        for index, fiche in enumerate(banque_locale_am, start=1):
+            fiche["numero"] = index
+    except:
+        banque_locale_am = [{
+            "type": "choix",
+            "numero": 1,
+            "question": "Quelle est la vitesse maximale par construction d'un cyclomoteur de moins de 50 cm³ ?",
+            "choix": ["45 km/h", "50 km/h", "60 km/h"],
+            "reponse": "45 km/h"
+        }]
+
+    # 2. Initialisation initiale du tirage
     if "fiche_choisie_permis_am" not in st.session_state:
-        try:
-            # On tente de charger la banque directement
-            banque_locale_am = charger_banque_permis_am()
-            
-            # Si elle est vide ou mal formatée, on injecte la question de secours
-            if not banque_locale_am:
-                raise ValueError
-                
-            # On s'assure que les numéros sont bien injectés
-            for index, fiche in enumerate(banque_locale_am, start=1):
-                fiche["numero"] = index
-        except:
-            # Sécurité absolue si la fonction n'est pas accessible ou échoue
-            banque_locale_am = [{
-                "type": "choix",
-                "numero": 1,
-                "question": "Quelle est la vitesse maximale par construction d'un cyclomoteur de moins de 50 cm³ ?",
-                "choix": ["45 km/h", "50 km/h", "60 km/h"],
-                "reponse": "45 km/h"
-            }]
-            
         st.session_state.fiche_choisie_permis_am = random.choice(banque_locale_am)
 
+    # 3. Bouton de tirage corrigé (utilise la banque locale sécurisée)
     if st.button("TIRER UNE AUTRE QUESTION AU HASARD", key="btn_permis_am", disabled=v_permis_am, use_container_width=True):
-        st.session_state.fiche_choisie_permis_am = random.choice(banque_questions_permis_am)
+        st.session_state.fiche_choisie_permis_am = random.choice(banque_locale_am)
         if "rep_permis_am" in st.session_state:
             del st.session_state["rep_permis_am"]
         st.rerun()
@@ -993,7 +990,7 @@ with tab1:
     if fiche_am["type"] == "choix":
         st.selectbox(
             "Sélectionnez votre réponse :",
-            options=["Choisir une réponse..."] + fiche_am.get("choix", ["Option de secours"]),
+            options=["Choisir une réponse..."] + fiche_am.get("choix", ["Option A", "Option B", "Option C"]),
             key="rep_permis_am",
             disabled=v_permis_am,
             index=0
