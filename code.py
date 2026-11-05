@@ -5267,13 +5267,7 @@ with tab4:
             prefixe_session="rep_ecrite_c", 
             num_fiche=num_fiche_e
         )
-        else:
-            # L'atelier est valide, on appelle la fonction automatique pour afficher la note et l'identité
-            calculer_et_afficher_note(
-                liste_questions=liste_questions_ecrites_c, 
-                prefixe_session="rep_ecrite_c", 
-                num_fiche=num_fiche_e
-            )        
+      
 
 with tab5:
     if "verrou_orale_ce" not in st.session_state:
