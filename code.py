@@ -3,7 +3,44 @@ import random
 
 # CONFIGURATION DE LA PAGE
 st.set_page_config(page_title="Permis C - Revisions", layout="centered")
-
+SERIES_ECRITES = {
+    "Fiche Ecrite 1 : Situations degradees et accidents": [
+        {"q": "A l'approche d'un accident, quel feu devez-vous actionner immediatement ?", "r": "Les feux de detresse (warning)"},
+        {"q": "Quelle est la distance minimale pour placer le triangle de pre-signalisation ?", "r": "30 metres"},
+        {"q": "Quel est le numero d'urgence europeen unique gratuit ?", "r": "112"},
+        {"q": "Peut-on deplacer un blesse en cas de danger reel et imminent ?", "r": "Oui"},
+        {"q": "Quel est le delai maximal d'envoi d'un constat amiable a l'assureur ?", "r": "5 jours ouvres"},
+        {"q": "Le gilet de haute visibilite doit-il etre stocke dans la cabine ou dans le coffre ?", "r": "Dans la cabine (a portee de main)"},
+        {"q": "Quelle couleur possedent les bornes d'appel d'urgence sur autoroute ?", "r": "Orange"},
+        {"q": "Un extincteur a poudre est-il adapte pour un feu de carburant ?", "r": "Oui"},
+        {"q": "Peut-on donner a boire a un blesse qui a soif ?", "r": "Non (jamais)"},
+        {"q": "Sur autoroute, doit-on attendre les secours derriere la glissiere de securite ?", "r": "Oui"},
+    ],
+    "Fiche Ecrite 2 : Le conducteur": [
+        {"q": "Quel est le delai maximal de validite de la visite medicale pour un conducteur de moins de 60 ans ?", "r": "5 ans"},
+        {"q": "Combien d'annees dure la validite d'une FIMO ?", "r": "Elle est acquise a vie (mais necessite une FCO tous les 5 ans)"},
+        {"q": "Quelle est la periodicite obligatoire de la FCO ?", "r": "Tous les 5 ans"},
+        {"q": "Le permis C autorise-t-il la conduite d'un vehicule de transport de personnes ?", "r": "Non"},
+        {"q": "Quel document atteste de la reussite a la visite medicale ?", "r": "Le certificat medical de l'agrege prefectoral (cerfa)"},
+        {"q": "Le non-respect de la visite medicale rend-il le permis invalide ?", "r": "Oui"},
+        {"q": "Le code de la route s'applique-t-il aussi dans les cours d'usines de transport ?", "r": "Oui (si ouvertes a la circulation publique)"},
+        {"q": "Quel age minimal faut-il avoir pour passer le permis C sans diplome de conducteur ?", "r": "21 ans"},
+        {"q": "Un conducteur fatigue met-il plus de temps a reagir ?", "r": "Oui"},
+        {"q": "Quel type de sanction risque un conducteur roulant sous l'emprise de stupéfiants ?", "r": "Une sanction delictuelle (prison, amende, retrait de permis)"},
+    ],
+    "Fiche Ecrite 3 : L'equipement des vehicules": [
+        {"q": "De quelle couleur sont les feux de gabarit a l'avant ?", "r": "Blanc"},
+        {"q": "Quelle couleur ont les catadioptres lateraux obligatoires sur un camion ?", "r": "Orange (ambre)"},
+        {"q": "L'extincteur est-il obligatoire a bord d'un vehicule de transport de marchandises de plus de 3,5t ?", "r": "Oui"},
+        {"q": "Quel dispositif empeche l'incrustation des petits vehicules sous l'arriere du camion ?", "r": "La barre anti-encastrement"},
+        {"q": "La presence de disques de limitation de vitesse est-elle obligatoire a l'arriere ?", "r": "Oui (80 et 90)"},
+        {"q": "Le systeme de freinage ABS empeche-t-il le blocage des roues ?", "r": "Oui"},
+        {"q": "Un limiteur de vitesse est-il obligatoire sur les porteurs de plus de 3,5t ?", "r": "Oui"},
+        {"q": "A quelle vitesse maximale est bride un camion de plus de 3,5t ?", "r": "90 km/h"},
+        {"q": "Les retroviseurs grand angle sont-ils obligatoires des deux cotes ?", "r": "Oui"},
+        {"q": "Quel equipement enregistre la vitesse et les temps de conduite ?", "r": "Le chronotachygraphe"},
+    ],
+}
 
 # --- FONCTION DE GENERATION DU COMPTE-RENDU HTML ---
 def generer_html_correction(nom_fiche, questions, reponses_utilisateur, score):
@@ -120,44 +157,7 @@ if "serie_choisie" in st.session_state and st.session_state.serie_choisie in SER
         mime="text/html"
     )
 
-SERIES_ECRITES = {
-    "Fiche Ecrite 1 : Situations degradees et accidents": [
-        {"q": "A l'approche d'un accident, quel feu devez-vous actionner immediatement ?", "r": "Les feux de detresse (warning)"},
-        {"q": "Quelle est la distance minimale pour placer le triangle de pre-signalisation ?", "r": "30 metres"},
-        {"q": "Quel est le numero d'urgence europeen unique gratuit ?", "r": "112"},
-        {"q": "Peut-on deplacer un blesse en cas de danger reel et imminent ?", "r": "Oui"},
-        {"q": "Quel est le delai maximal d'envoi d'un constat amiable a l'assureur ?", "r": "5 jours ouvres"},
-        {"q": "Le gilet de haute visibilite doit-il etre stocke dans la cabine ou dans le coffre ?", "r": "Dans la cabine (a portee de main)"},
-        {"q": "Quelle couleur possedent les bornes d'appel d'urgence sur autoroute ?", "r": "Orange"},
-        {"q": "Un extincteur a poudre est-il adapte pour un feu de carburant ?", "r": "Oui"},
-        {"q": "Peut-on donner a boire a un blesse qui a soif ?", "r": "Non (jamais)"},
-        {"q": "Sur autoroute, doit-on attendre les secours derriere la glissiere de securite ?", "r": "Oui"},
-    ],
-    "Fiche Ecrite 2 : Le conducteur": [
-        {"q": "Quel est le delai maximal de validite de la visite medicale pour un conducteur de moins de 60 ans ?", "r": "5 ans"},
-        {"q": "Combien d'annees dure la validite d'une FIMO ?", "r": "Elle est acquise a vie (mais necessite une FCO tous les 5 ans)"},
-        {"q": "Quelle est la periodicite obligatoire de la FCO ?", "r": "Tous les 5 ans"},
-        {"q": "Le permis C autorise-t-il la conduite d'un vehicule de transport de personnes ?", "r": "Non"},
-        {"q": "Quel document atteste de la reussite a la visite medicale ?", "r": "Le certificat medical de l'agrege prefectoral (cerfa)"},
-        {"q": "Le non-respect de la visite medicale rend-il le permis invalide ?", "r": "Oui"},
-        {"q": "Le code de la route s'applique-t-il aussi dans les cours d'usines de transport ?", "r": "Oui (si ouvertes a la circulation publique)"},
-        {"q": "Quel age minimal faut-il avoir pour passer le permis C sans diplome de conducteur ?", "r": "21 ans"},
-        {"q": "Un conducteur fatigue met-il plus de temps a reagir ?", "r": "Oui"},
-        {"q": "Quel type de sanction risque un conducteur roulant sous l'emprise de stupéfiants ?", "r": "Une sanction delictuelle (prison, amende, retrait de permis)"},
-    ],
-    "Fiche Ecrite 3 : L'equipement des vehicules": [
-        {"q": "De quelle couleur sont les feux de gabarit a l'avant ?", "r": "Blanc"},
-        {"q": "Quelle couleur ont les catadioptres lateraux obligatoires sur un camion ?", "r": "Orange (ambre)"},
-        {"q": "L'extincteur est-il obligatoire a bord d'un vehicule de transport de marchandises de plus de 3,5t ?", "r": "Oui"},
-        {"q": "Quel dispositif empeche l'incrustation des petits vehicules sous l'arriere du camion ?", "r": "La barre anti-encastrement"},
-        {"q": "La presence de disques de limitation de vitesse est-elle obligatoire a l'arriere ?", "r": "Oui (80 et 90)"},
-        {"q": "Le systeme de freinage ABS empeche-t-il le blocage des roues ?", "r": "Oui"},
-        {"q": "Un limiteur de vitesse est-il obligatoire sur les porteurs de plus de 3,5t ?", "r": "Oui"},
-        {"q": "A quelle vitesse maximale est bride un camion de plus de 3,5t ?", "r": "90 km/h"},
-        {"q": "Les retroviseurs grand angle sont-ils obligatoires des deux cotes ?", "r": "Oui"},
-        {"q": "Quel equipement enregistre la vitesse et les temps de conduite ?", "r": "Le chronotachygraphe"},
-    ],
-}
+
 
 # Generation automatique pour les fiches 4 a 20 afin de couvrir les 200 questions officielles
 themes_officiels = [
