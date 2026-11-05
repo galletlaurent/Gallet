@@ -343,7 +343,38 @@ def charger_banque_permis_b():
         {"type": "ecrite", "question": "Expliquez l'effet de la force centrifuge sur un véhicule circulant dans un virage.", "choix": [], "reponse": "Force qui pousse le véhicule vers l'extérieur de la courbe, proportionnelle au carré de la vitesse."},
         {"type": "choix", "question": "Sur une route à double sens sans séparateur central, la vitesse maximale générale est fixée à :", "choix": ["80 km/h", "90 km/h", "70 km/h"], "reponse": "80 km/h"},
         {"type": "ecrite", "question": "Quel est le comportement attendu à l'intersection d'un feu jaune clignotant en bas ?", "choix": [], "reponse": "Passer avec prudence en appliquant les règles de priorité habituelles ou la signalisation associée."}
-    ]
+        {"type": "choix", "question": "Sur autoroute, si vous manquez votre sortie, vous devez :", "choix": ["Continuer jusqu'a la sortie suivante", "Faire une marche arriere sur la bande d'arret d'urgence", "Faire demi-tour au prochain passage de service"], "reponse": "Continuer jusqu'a la sortie suivante"},
+        {"type": "ecrite", "question": "Qu'est-ce que le phenomene du 'tunnel visuel' provoque par l'augmentation de la vitesse ?", "choix": [], "reponse": "Plus la vitesse augmente, plus le champ visuel du conducteur se retrecit sur le centre de la route."},
+        {"type": "choix", "question": "Le delai d'elimination de l'alcool par l'organisme pour un verre d'alcool standard est d'environ :", "choix": ["1 heure a 2 heures", "30 minutes", "4 heures"], "reponse": "1 heure a 2 heures"},
+        {"type": "ecrite", "question": "Expliquez comment verifier l'usure d'un pneumatique grace aux temoins d'usure.", "choix": [], "reponse": "La bande de roulement ne doit pas atteindre la hauteur des bossages temoins situes au fond des rainures (1,6 mm)."},
+        {"type": "choix", "question": "Sauf signalisation contraire, quelle est la vitesse maximale autorisee sur un peripherique urbain comme celui de Paris ?", "choix": ["70 km/h", "80 km/h", "50 km/h"], "reponse": "70 km/h"},
+        {"type": "ecrite", "question": "Quelles sont les trois categories d'elements a verifier regulierement sous le capot moteur ?", "choix": [], "reponse": "Les niveaux des liquides (huile, lave-glace, refroidissement, frein), l'etat de la batterie et l'absence de fuites visibles."},
+        {"type": "choix", "question": "L'oubli de l'utilisation des clignotants lors d'un changement de direction est passible d'un retrait de :", "choix": ["3 points", "2 points", "1 point"], "reponse": "3 points"},
+        {"type": "ecrite", "question": "Quelle est la difference de comportement entre un voyant moteur orange et un voyant moteur rouge ?", "choix": [], "reponse": "Orange indique une anomalie a verifier rapidement sans arret immediat. Rouge impose un arret de securite immediat."},
+        {"type": "choix", "question": "En cas de controle par les forces de l'ordre, ne pas pouvoir presenter immediatement son permis de conduire entraine :", "choix": ["Une amende de 1ere classe", "Une immobilisation du vehicule", "Un retrait de 1 point"], "reponse": "Une amende de 1ere classe"},
+        {"type": "ecrite", "question": "Qu'est-ce que la 'distance de reaction' et quels facteurs peuvent l'allonger ?", "choix": [], "reponse": "Distance parcourue entre la perception du danger et l'action de freiner. Allongee par la fatigue, l'alcool ou le telephone."},
+        {"type": "choix", "question": "Sur une chaussee comportant trois voies a double sens, quelle voie devez-vous utiliser pour circuler normalement ?", "choix": ["La voie la plus a droite", "La voie du milieu", "N'importe quelle voie libre"], "reponse": "La voie la plus a droite"},
+        {"type": "ecrite", "question": "Expliquez pourquoi il est interdit de coller un film teinte trop opaque sur les vitres avant laterales d'un vehicule.", "choix": [], "reponse": "Pour garantir une bonne visibilite de nuit pour le conducteur et permettre aux forces de l'ordre de controler l'habitacle."},
+        {"type": "choix", "question": "Un conducteur commet un grand exces de vitesse des lors qu'il depasse la limitation de :", "choix": ["50 km/h ou plus", "30 km/h", "40 km/h"], "reponse": "50 km/h ou plus"},
+        {"type": "ecrite", "question": "Quel est le risque de circuler avec des amortisseurs uses ou defectueux ?", "choix": [], "reponse": "Augmentation des distances de freinage, mauvaise tenue de route dans les virages et usure prematuree des pneus."},
+        {"type": "choix", "question": "La presence d'un gilet de haute visibilite et d'un triangle de presignalisation a bord du vehicule est :", "choix": ["Obligatoire sous peine d'amende", "Conseillee mais facultative", "Obligatoire uniquement sur autoroute"], "reponse": "Obligatoire sous peine d'amende"},
+        {"type": "ecrite", "question": "Comment s'installer confortablement pour eviter la fatigue sur les longs trajets ?", "choix": [], "reponse": "Regler la hauteur de l'assise, incliner le dossier pour garder les bras legerement flechis et poser les talons au sol."},
+        {"type": "choix", "question": "En agglomeration, lorsque vous croisez un autobus qui signale son intention de quitter son arret, vous devez :", "choix": ["Ralentir et lui ceder le passage", "Klaxonner et passer rapidement", "Conserver votre allure, vous restez prioritaire"], "reponse": "Ralentir et lui ceder le passage"},
+        {"type": "ecrite", "question": "Decrivez la procedure de securite a suivre si votre vehicule tombe en panne au milieu d'un tunnel.", "choix": [], "reponse": "Allumer les feux de detresse, serrer a droite, couper le moteur, mettre le gilet, sortir et rejoindre une issue de secours."},
+        {"type": "choix", "question": "Le delit de fuite apres avoir cause un accident est une infraction grave passible :", "choix": ["D'une peine de prison, d'une lourde amende et d'un retrait de 6 points", "D'une simple amende forfaitaire", "D'une suspension de permis de 3 mois au maximum"], "reponse": "D'une peine de prison, d'une lourde amende et d'un retrait de 6 points"},
+        {"type": "ecrite", "question": "Pourquoi la distance de freinage est-elle multipliee par deux sur chaussee mouillee ?", "choix": [], "reponse": "L'eau diminue l'adherence entre le pneu et la route, ce qui allonge la distance necessaire pour stopper les roues."},
+        {"type": "choix", "question": "Quelle categorie d'usagers de la route est consideree comme la plus vulnerable en agglomeration ?", "choix": ["Les pietons et les cyclistes", "Les conducteurs de deux-roues motorises", "Les vehicules de transports en commun"], "reponse": "Les pietons et les cyclistes"},
+        {"type": "ecrite", "question": "Quelles precautions devez-vous prendre avant d'ouvrir votre portiere pour descendre du vehicule ?", "choix": [], "reponse": "Regarder dans le retroviseur et ouvrir avec la main opposee (methode hollandaise) pour verifier l'angle mort arriere."},
+        {"type": "choix", "question": "Le stationnement dangereux (bloquant la visibilite dans un virage ou un sommet de cote) entraine un retrait de :", "choix": ["3 points", "1 point", "6 points"], "reponse": "3 points"},
+        {"type": "ecrite", "question": "Quel est le but de la verification de la pression des pneumatiques a froid ?", "choix": [], "reponse": "La chaleur dilate l'air. Mesurer a chaud fausse la mesure en indiquant une pression superieure a la realite."},
+        {"type": "choix", "question": "Sur une autoroute, la voie situee completement a gauche est reservee exclusivement :", "choix": ["Au depassement", "Aux vehicules circulant a plus de 130 km/h", "Aux vehicules de secours urbains"], "reponse": "Au depassement"},
+        {"type": "ecrite", "question": "Expliquez le concept d'eco-conduite et citez une regle simple pour la mettre en pratique.", "choix": [], "reponse": "Conduite economique et ecologique consistant a anticiper les ralentissements et changer les rapports de vitesse rapidement."},
+        {"type": "choix", "question": "La modification des caracteristiques techniques de son vehicule sans homologation (tuning extreme) peut entrainer :", "choix": ["L'annulation de la couverture d'assurance en cas d'accident", "Un simple avertissement ecrit", "Le paiement d'une taxe carbone supplementaire"], "reponse": "L'annulation de la couverture d'assurance en cas d'accident"},
+        {"type": "ecrite", "question": "Qu'est-ce qu'une zone de danger ou zone de turbulence derriere un gros poids lourd ?", "choix": [], "reponse": "Zone d'aspiration et de fortes projections d'eau ou d'air generée par le gabarit du camion qui perturbe la stabilite."},
+        {"type": "choix", "question": "Lors du franchissement d'un passage a niveau, si les signaux lumineux rouges clignotent mais que les barrieres sont encore levees, vous devez :", "choix": ["Vous arreter immediatement", "Passer rapidement avant la descente des barrieres", "Ralentir et passer prudemment"], "reponse": "Vous arreter immediatement"},
+        {"type": "ecrite", "question": "Comment adapter l'utilisation de la climatisation pour reduire sa consommation de carburant ?", "choix": [], "reponse": "Ne pas depasser un ecart de 5 degres avec l'exterieur et couper le systeme a faible vitesse en ouvrant les fenetres."}
+
+]
     # Sécurité si la fonction retourne du vide ou n'est pas une liste valide
     if not banque_questions_permis_b or not isinstance(
         banque_questions_permis_b, list
@@ -5042,26 +5073,45 @@ with tab2:
     # Affichage dynamique des 20 questions selectionnees
     for idx, question_b in enumerate(liste_questions_session):
         if isinstance(question_b, dict) and "question" in question_b:
-            # On affiche le numero de la question de 1 a 20
-            st.write(f"**Question {idx + 1} :** {question_b['question']}")
+            
+            # Creation de deux colonnes : 3/4 pour la question, 1/4 pour l'image
+            col_texte, col_image = st.columns([3, 1])
 
-            if question_b.get("type") == "choix":
-                st.selectbox(
-                    "Selectionnez votre reponse :",
-                    options=["Choisir une reponse..."] + question_b.get("choix", []),
-                    key=f"rep_permis_b_{idx}_Unique",
-                    disabled=v_permis_b,
-                    index=0,
-                )
-            else:
-                st.text_area(
-                    "Votre reponse redigee :",
-                    key=f"rep_permis_b_{idx}_Unique",
-                    disabled=v_permis_b,
-                    placeholder="Saisissez votre texte ici...",
-                )
+            # --- COLONNE DE GAUCHE : LE TEXTE ET LA REPONSE ---
+            with col_texte:
+                st.write(f"**Question {idx + 1} :** {question_b['question']}")
 
-            # S'affiche uniquement si l'atelier est valide/verrouille
+                if question_b.get("type") == "choix":
+                    st.selectbox(
+                        "Selectionnez votre reponse :",
+                        options=["Choisir une reponse..."] + question_b.get("choix", []),
+                        key=f"rep_permis_b_{idx}_Unique",
+                        disabled=v_permis_b,
+                        index=0,
+                    )
+                else:
+                    st.text_area(
+                        "Votre reponse redigee :",
+                        key=f"rep_permis_b_{idx}_Unique",
+                        disabled=v_permis_b,
+                        placeholder="Saisissez votre texte ici...",
+                    )
+
+            # --- COLONNE DE DROITE : L'IMAGE JPG ---
+            with col_image:
+                # On determine le nom du fichier image base sur l'identifiant ou le numero de la question
+                # Exemple : si la question a un "id" ou un "numero", on cherche "images/question_1.jpg"
+                id_question = question_b.get("numero", idx + 1)
+                chemin_image = f"images/question_{id_question}.jpg"
+
+                try:
+                    # Affichage de l'image callee sur la largeur de sa colonne
+                    st.image(chemin_image, use_container_width=True)
+                except Exception:
+                    # Si l'image n'existe pas ou est introuvable, on laisse la colonne vide sans planter
+                    pass
+
+            # --- ZONE DE CORRECTION ET DIVISEUR (SOUS LES DEUX COLONNES) ---
             if v_permis_b:
                 if st.checkbox("Afficher la reponse exacte", key=f"chk_permis_b_{idx}_Unique"):
                     st.success(f"Reponse attendue : {question_b.get('reponse')}")
