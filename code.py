@@ -3,6 +3,8 @@ import random
 
 # CONFIGURATION DE LA PAGE
 st.set_page_config(page_title="Permis C - Revisions", layout="centered")
+
+# --- 1. BASE DE DONNEES DES FICHES ECRITES ---
 SERIES_ECRITES = {
     "Fiche Ecrite 1 : Situations degradees et accidents": [
         {"q": "A l'approche d'un accident, quel feu devez-vous actionner immediatement ?", "r": "Les feux de detresse (warning)"},
@@ -28,21 +30,9 @@ SERIES_ECRITES = {
         {"q": "Un conducteur fatigue met-il plus de temps a reagir ?", "r": "Oui"},
         {"q": "Quel type de sanction risque un conducteur roulant sous l'emprise de stupéfiants ?", "r": "Une sanction delictuelle (prison, amende, retrait de permis)"},
     ],
-    "Fiche Ecrite 3 : L'equipement des vehicules": [
-        {"q": "De quelle couleur sont les feux de gabarit a l'avant ?", "r": "Blanc"},
-        {"q": "Quelle couleur ont les catadioptres lateraux obligatoires sur un camion ?", "r": "Orange (ambre)"},
-        {"q": "L'extincteur est-il obligatoire a bord d'un vehicule de transport de marchandises de plus de 3,5t ?", "r": "Oui"},
-        {"q": "Quel dispositif empeche l'incrustation des petits vehicules sous l'arriere du camion ?", "r": "La barre anti-encastrement"},
-        {"q": "La presence de disques de limitation de vitesse est-elle obligatoire a l'arriere ?", "r": "Oui (80 et 90)"},
-        {"q": "Le systeme de freinage ABS empeche-t-il le blocage des roues ?", "r": "Oui"},
-        {"q": "Un limiteur de vitesse est-il obligatoire sur les porteurs de plus de 3,5t ?", "r": "Oui"},
-        {"q": "A quelle vitesse maximale est bride un camion de plus de 3,5t ?", "r": "90 km/h"},
-        {"q": "Les retroviseurs grand angle sont-ils obligatoires des deux cotes ?", "r": "Oui"},
-        {"q": "Quel equipement enregistre la vitesse et les temps de conduite ?", "r": "Le chronotachygraphe"},
-    ],
 }
 
-# --- FONCTION DE GENERATION DU COMPTE-RENDU HTML ---
+# --- 2. FONCTION DE GENERATION DU COMPTE-RENDU HTML ---
 def generer_html_correction(nom_fiche, questions, reponses_utilisateur, score):
     statut_examen = "REUSSI" if score >= 8 else "ECHEC"
     couleur_statut = "#2ecc71" if score >= 8 else "#e74c3c"
@@ -93,26 +83,31 @@ def generer_html_correction(nom_fiche, questions, reponses_utilisateur, score):
     """
     return html
 
-# --- INTERFACE ET LOGIQUE ---
+# --- 3. INTERFACE ET RENDU ---
 st.title("Entrainement Permis C (Poids Lourd)")
 st.write("Entrainez-vous aux epreuves theoriques du plateau.")
 
 st.header("Questions Ecrites (Tirage par fiche)")
 st.write("L'examen comporte 10 questions liees a une fiche. Cochez les cases si votre reponse est correcte.")
 
-mode_selection = st.radio("Mode de selection de la fiche :", ["Selectionner manuellement", "Tirer au sort au hasard"])
+# AJOUT D'UNE CLE UNIQUE ICI POUR PREVENIR LE CRASH
+mode_selection = st.radio(
+    "Mode de selection de la fiche :", 
+    ["Selectionner manuellement", "Tirer au sort au hasard"],
+    key="mode_selection_global"
+)
 
 liste_fiches = list(SERIES_ECRITES.keys())
 
-# Definition securisee de la fiche courante
+# Gestion de l'affectation de la fiche
 if mode_selection == "Selectionner manuellement":
-    fiche_choisie_ecrite = st.selectbox("Choisissez la fiche ecrite a reviser :", liste_fiches)
+    fiche_choisie_ecrite = st.selectbox("Choisissez la fiche ecrite a reviser :", liste_fiches, key="select_fiche_manuelle")
     st.session_state.serie_choisie = fiche_choisie_ecrite
 else:
-    if st.button("Tirer une fiche ecrite au sort", key="btn_ecrit") or "serie_choisie" not in st.session_state:
+    if st.button("Tirer une fiche ecrite au sort", key="btn_tirage_aleatoire") or "serie_choisie" not in st.session_state:
         st.session_state.serie_choisie = random.choice(liste_fiches)
 
-# Rendu de la fiche active
+# Affichage des questions
 if "serie_choisie" in st.session_state and st.session_state.serie_choisie in SERIES_ECRITES:
     nom_serie = st.session_state.serie_choisie
     st.subheader(nom_serie)
@@ -120,20 +115,17 @@ if "serie_choisie" in st.session_state and st.session_state.serie_choisie in SER
     
     reponses_utilisateur = {}
         
-    # Affichage des questions
     for idx, item in enumerate(questions):
         st.markdown(f"**Question {idx+1} :** {item['q']}")
         
         with st.expander("Voir la reponse officielle"):
             st.info(f"Reponse : {item['r']}")
             
-        # Case a cocher
         cle_case = f"q_{nom_serie}_{idx}"
         valeur_case = st.checkbox("Ma reponse est correcte", key=cle_case)
         reponses_utilisateur[idx] = valeur_case
         st.write("---")
 
-    # Calcul et affichage de la note globale
     score_final = sum(1 for v in reponses_utilisateur.values() if v)
     
     st.subheader(f"Votre Note : {score_final} / 10")
@@ -142,7 +134,6 @@ if "serie_choisie" in st.session_state and st.session_state.serie_choisie in SER
     else:
         st.error("Examen Echoue (Minimum 8/10 requis)")
         
-    # Generation du HTML
     donnees_html = generer_html_correction(
         nom_serie, 
         questions, 
@@ -154,9 +145,9 @@ if "serie_choisie" in st.session_state and st.session_state.serie_choisie in SER
         label="Telecharger le compte-rendu HTML",
         data=donnees_html,
         file_name=f"correction_{nom_serie.replace(' ', '_')}.html",
-        mime="text/html"
+        mime="text/html",
+        key="btn_download_html"
     )
-
 
 
 # Generation automatique pour les fiches 4 a 20 afin de couvrir les 200 questions officielles
