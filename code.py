@@ -5180,11 +5180,11 @@ with tab3:
         afficher_validation_orale(num_fiche=num_fiche)
 
 
-        
 with tab4:
-    # 1. Initialisation et recuperation de la variable de verrou
+    # Definition indispensable des variables de verrou en tête d'onglet
     if "verrou_ecrite_c" not in st.session_state:
         st.session_state.verrou_ecrite_c = False
+
     v_ecrit_c = st.session_state.verrou_ecrite_c
 
     st.header("Interrogation Ecrite - Permis C")
@@ -5204,15 +5204,13 @@ with tab4:
     
     if isinstance(fiche_brute, dict):
         liste_questions_ecrites_c = [fiche_brute]
-    elif isinstance(fiche_brute, list) and len(fiche_brute) > 0 and isinstance(fiche_brute, list):
+    elif isinstance(fiche_brute, list) and len(fiche_brute) > 0:
         liste_questions_ecrites_c = fiche_brute
     else:
         liste_questions_ecrites_c = fiche_brute
 
     if isinstance(liste_questions_ecrites_c, list) and len(liste_questions_ecrites_c) > 0:
-        num_fiche_e = liste_questions_ecrites_c.get("numero_fiche", "Non defini")
-    elif isinstance(liste_questions_ecrites_c, dict):
-        num_fiche_e = liste_questions_ecrites_c.get("numero_fiche", "Non defini")
+        num_fiche_e = liste_questions_ecrites_c[0].get("numero_fiche", "Non defini")
     else:
         num_fiche_e = "Non defini"
 
@@ -5238,54 +5236,37 @@ with tab4:
                     placeholder="Saisissez votre texte ici...",
                 )
 
-            # S'affiche uniquement si l'atelier est valide/verrouille
             if v_ecrit_c:
-                if st.checkbox("Afficher la reponse exacte", key=f"chk_ecrit_c_{idx}_{num_fiche_e}"):
-                    st.success(f"Reponse attendue : {question_e_c.get('reponse')}")
+                st.success(f"Reponse attendue : {question_e_c.get('reponse')}")
                 
             st.divider()
 
     st.write("---")
     st.subheader("Synthese et validation")
-    certif_ecrit_c = st.checkbox(
-        "Je certifie avoir repondu aux questions de cette fiche ecrite C.",
-        key=f"cert_ecrit_c_{num_fiche_e}",
-        disabled=v_ecrit_c
-    )
+    
+    if not v_ecrit_c:
+        certif_ecrit_c = st.checkbox(
+            "Je certifie avoir repondu aux questions de cette fiche ecrite C.",
+            key=f"cert_ecrit_c_{num_fiche_e}"
+        )
 
-    if st.button(
-        "VALIDER ET VERROUILLER L'ATELIER ECRIT C",
-        key=f"val_ecrit_c_{num_fiche_e}",
-        disabled=v_ecrit_c,
-        use_container_width=True
-    ):
-        if not certif_ecrit_c:
-            st.warning("Veuillez cocher la case de certification avant.")
-        else:
-            st.session_state.verrou_ecrite_c = True
-            st.rerun()
-
-    if v_ecrit_c:
-        st.info("Cet atelier ecrit C a ete valide et verrouille. Les corrections sont maintenant accessibles.")
-        st.write("---")
-        st.subheader("Synthese et validation")
-        
-        if not v_ecrit_c:
-            certif_ecrit_c = st.checkbox(
-                "Je certifie avoir repondu aux questions de cette fiche ecrite C.",
-                key=f"cert_ecrit_c_{num_fiche_e}"
-            )
-
-            if st.button(
-                "VALIDER ET VERROUILLER L'ATELIER ECRIT C",
-                key=f"val_ecrit_c_{num_fiche_e}",
-                use_container_width=True
-            ):
-                if not certif_ecrit_c:
-                    st.warning("Veuillez cocher la case de certification avant.")
-                else:
-                    st.session_state.verrou_ecrite_c = True
-                    st.rerun()
+        if st.button(
+            "VALIDER ET VERROUILLER L'ATELIER ECRIT C",
+            key=f"val_ecrit_c_{num_fiche_e}",
+            use_container_width=True
+        ):
+            if not certif_ecrit_c:
+                st.warning("Veuillez cocher la case de certification avant.")
+            else:
+                st.session_state.verrou_ecrite_c = True
+                st.rerun()
+    else:
+        # L'atelier est valide, on affiche la note et l'identite complete
+        calculer_et_afficher_note(
+            liste_questions=liste_questions_ecrites_c, 
+            prefixe_session="rep_ecrite_c", 
+            num_fiche=num_fiche_e
+        )
         else:
             # L'atelier est valide, on appelle la fonction automatique pour afficher la note et l'identité
             calculer_et_afficher_note(
