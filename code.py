@@ -5040,7 +5040,7 @@ with tab3:
 
     fiche_brute_orale = st.session_state.fiche_orale_choisie_c
 
-    # Traitement identique au mecanisme d'indexation pour normaliser en liste
+    # Normalisation immediate en liste conforme
     if isinstance(fiche_brute_orale, list):
         questions_a_afficher = fiche_brute_orale
     elif isinstance(fiche_brute_orale, dict):
@@ -5048,7 +5048,7 @@ with tab3:
     else:
         questions_a_afficher = fiche_brute_orale
 
-    # Extraction securisee du numero de fiche basee sur le dictionnaire de la question
+    # Lecture securisee de la cle sur le dictionnaire situe a l'index 0
     if isinstance(questions_a_afficher, list) and len(questions_a_afficher) > 0:
         num_fiche = questions_a_afficher[0].get("numero_fiche", "Non defini")
     elif isinstance(questions_a_afficher, dict):
@@ -5059,7 +5059,7 @@ with tab3:
     st.markdown(f"### Fiche Orale Numero {num_fiche}")
     st.divider()
 
-    # Parcours des fiches orales C
+    # Affichage de chaque question de la liste
     for idx, question_o in enumerate(questions_a_afficher):
         if isinstance(question_o, dict) and "question" in question_o:
             st.write(f"**Question {idx + 1} :** {question_o['question']}")
