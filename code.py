@@ -2997,164 +2997,281 @@ for index, liste_questions in enumerate(banque_orales_permis_c, start=1):
         question["numero_fiche"] = index
     
 def charger_ecrite_permis_ce_fiche_1():
-    return {
-        "type": "choix",
-        "question": "Fiche Écrite 1 — Quelle est la longueur maximale autorisée pour un ensemble articulé standard (tracteur + semi-remorque) en Europe ?",
-        "choix": ["16,50 mètres", "18,75 mètres", "12,00 mètres"],
-        "reponse": "16,50 mètres"
-    }
+    return [
+        {"type": "choix", "question": "Fiche CE 1 — Les accidents corporels entre un poids lourd et une voiture sont majoritairement des accidents avec des véhicules circulant dans le même sens. Vrai ou Faux ?", "choix": ["Vrai", "Faux"], "reponse": "Vrai"},
+        {"type": "choix", "question": "Fiche CE 1 — Le non-respect des limitations de tonnage pour le passage sur les ponts peut-il entraîner une suspension du permis de conduire ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 1 — La rémunération mensuelle d'un conducteur salarié peut être calculée en fonction de la distance parcourue pendant le mois. Vrai ou Faux ?", "choix": ["Vrai", "Faux"], "reponse": "Faux"},
+        {"type": "choix", "question": "Fiche CE 1 — Parmi les types de graissage moteur, il existe le graissage par barbotage. Vrai ou faux ?", "choix": ["Vrai", "Faux"], "reponse": "Vrai"},
+        {"type": "ecrite", "question": "Fiche CE 1 — Quelle est la périodicité des visites techniques auxquelles sont soumis les véhicules de transport de marchandises de plus de 3,5 t de PTAC ?", "choix": [], "reponse": "12 mois ou 1 an"},
+        {"type": "ecrite", "question": "Fiche CE 1 — Quel sera le poids maximal d'un ensemble composé de : Porteur PTRA: 44 t et PTAC: 26 t ; Remorque PTAC: 26 t et Poids à Vide: 7 t ?", "choix": [], "reponse": "44 t"},
+        {"type": "ecrite", "question": "Fiche CE 1 — En cas de remorquage occasionnel, quelle est la vitesse maximale autorisée ?", "choix": [], "reponse": "25 km/h"},
+        {"type": "choix", "question": "Fiche CE 1 — Ce signal (3.5m) interdit-il l'accès aux véhicules mesurant plus de 3,50 m de hauteur, chargement compris ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 1 — Vous rentrez chez vous le soir avec le camion de l'entreprise. Le matin, le temps de conduite pour vous rendre au dépôt est-il compté comme du temps de conduite ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "ecrite", "question": "Fiche CE 1 — Comment appelle-t-on le dispositif qui assure le freinage pratiquement simultané de tous les véhicules d'un ensemble ?", "choix": [], "reponse": "Le frein continu ou Le frein principal ou Le frein de service"}
+    ]
 
 def charger_ecrite_permis_ce_fiche_2():
-    return {
-        "type": "ecrite",
-        "question": "Fiche Écrite 2 — Définissez précisément la notion de PTRA (Poids Total Roulant Autorisé).",
-        "choix": [],
-        "reponse": "La masse maximale limite fixée par l'administration que l'ensemble des véhicules reliés ne doit pas dépasser."
-    }
+    return [
+        {"type": "choix", "question": "Fiche CE 2 — Un chiffre doublé (ex: 33) dans le rectangle du haut de la plaque orange placée à l'arrière d'un camion signifie : 'produit de nature à polluer les eaux'. Vrai ou faux ?", "choix": ["Vrai", "Faux"], "reponse": "Faux"},
+        {"type": "choix", "question": "Fiche CE 2 — Des interdictions de circulation peuvent être mises en place pour les poids lourds lors des pics de pollution atmosphérique. Vrai ou Faux ?", "choix": ["Vrai", "Faux"], "reponse": "Vrai"},
+        {"type": "choix", "question": "Fiche CE 2 — Vous conduisez sans vous arrêter depuis 8 h 40 ce matin. Il est 12 h 40. Etes-vous en infraction ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "choix", "question": "Fiche CE 2 — Une huile multigrade classée SAE 20 W 40 peut-être utilisée uniquement en hiver ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "ecrite", "question": "Fiche CE 2 — Suite au contrôle technique périodique, quelle lettre figure sur le certificat d'immatriculation lorsque le véhicule est accepté ?", "choix": [], "reponse": "A ou La lettre A"},
+        {"type": "choix", "question": "Fiche CE 2 — Est-il possible d'atteler une remorque de 26 t de PTAC, chargée au maximum, derrière un camion de 19 t de PTAC, chargé au maximum, alors que le PTRA indiqué sur la plaque de poids et surface du camion est de 40 t ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "ecrite", "question": "Fiche CE 2 — Vous conduisez un camion de plus de 7,5 t de PTAC. Quand finit l'interdiction de circulation en fin de semaine ?", "choix": [], "reponse": "Dimanche à 22 h ou Dimanche à 10 h du soir"},
+        {"type": "choix", "question": "Fiche CE 2 — Le poids indiqué dans ce signal (2.5t) concerne-t-il le poids maximal autorisé que peut supporter l'essieu ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "ecrite", "question": "Fiche CE 2 — Vous vous arrêtez pour faire le plein de carburant. Sur quel symbole devez-vous positionner le sélecteur d'activité du chronotachygraphe ?", "choix": [], "reponse": "Autres tâches, marteaux ou marteaux"},
+        {"type": "choix", "question": "Fiche CE 2 — Existe-t-il des véhicules équipés de 2 ralentisseurs ?", "choix": ["Oui", "Non"], "reponse": "Oui"}
+    ]
 
 def charger_ecrite_permis_ce_fiche_3():
-    return {
-        "type": "choix",
-        "question": "Fiche Écrite 3 — Quelle est la longueur maximale autorisée pour un train routier (porteur + remorque) ?",
-        "choix": ["18,75 mètres", "16,50 mètres", "20,00 mètres"],
-        "reponse": "18,75 mètres"
-    }
+    return [
+        {"type": "choix", "question": "Fiche CE 3 — Les accidents graves de poids lourds sont en majorité des accidents sans autre usager impliqué. Vrai ou Faux ?", "choix": ["Vrai", "Faux"], "reponse": "Faux"},
+        {"type": "choix", "question": "Fiche CE 3 — Vous conduisez votre véhicule personnel avec une alcoolémie de 1 g/l de sang. En cas de condamnation, votre permis poids lourds peut-il être annulé ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 3 — En double équipage, en France, vous êtes assis à côté du conducteur depuis 1 h. Pouvez-vous reprendre le volant ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "ecrite", "question": "Fiche CE 3 — Vous chargez du sable dans un véhicule isolé, quelle est la charge maximale autorisée sur l'essieu le plus chargé du groupe d'essieux moteur ?", "choix": [], "reponse": "11,5 t ou 11,500 t ou 11 t 500"},
+        {"type": "choix", "question": "Fiche CE 3 — Mon véhicule a un poids à vide de 5 tonnes et un PTAC de 12 tonnes. Ce signal (5,5 t) me concerne-t-il ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "ecrite", "question": "Fiche CE 3 — Le contrôle et le remplissage du circuit de refroidissement s'effectuent plutôt moteur chaud ou moteur froid ?", "choix": [], "reponse": "Moteur à froid ou A froid."},
+        {"type": "choix", "question": "Fiche CE 3 — Votre camion, en charge, transporte des denrées périssables, avez-vous le droit de continuer votre trajet le samedi après 22 h ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 3 — Pour effectuer un transport national, pouvez-vous laisser la plaque avec la mention 'TIR' visible à l'arrière de votre véhicule ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "ecrite", "question": "Fiche CE 3 — Sauf cas d'urgence, quelle est la durée de conduite maximale journalière autorisée en tenant compte des dérogations possibles ?", "choix": [], "reponse": "10 h ou 10 heures"},
+        {"type": "ecrite", "question": "Fiche CE 3 — En règle générale, à quelle vitesse doit être réglé le limiteur de vitesse d'un tracteur routier neuf ?", "choix": [], "reponse": "90 km/h"}
+    ]
 
 def charger_ecrite_permis_ce_fiche_4():
-    return {
-        "type": "ecrite",
-        "question": "Fiche Écrite 4 — Qu'est-ce que le principe du report de charge sur un ensemble de véhicules ?",
-        "choix": [],
-        "reponse": "Technique de chargement optimisant le poids transféré sur l'essieu du tracteur sans dépasser la limite légale."
-    }
-
+    return [
+        {"type": "choix", "question": "Fiche CE 4 — Ma remorque a un contour de sécurité arrière rétroréfléchissant de couleur rouge. En panne, je suis obligé de la laisser dételée sur la chaussée. Est-il obligatoire de placer le triangle de présignalisation ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 4 — Dans une entreprise, le chargement est effectué par un manutentionnaire. Une fois terminé, vous appartient-il d'effectuer le contrôle de l'arrimage avant de démarrer ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "ecrite", "question": "Fiche CE 4 — Au bout de combien de jours, au maximum, l'entreprise doit-elle 'télécharger' les données de votre carte conducteur ?", "choix": [], "reponse": "28 ou 28 jours"},
+        {"type": "ecrite", "question": "Fiche CE 4 — Quelle est la longueur maximale autorisée d'un ensemble porte-voitures ?", "choix": [], "reponse": "20,35 m"},
+        {"type": "ecrite", "question": "Fiche CE 4 — Comment s'appelle le document qui doit accompagner la marchandise lors de tout transport pour compte d'autrui ?", "choix": [], "reponse": "Lettre de voiture"},
+        {"type": "ecrite", "question": "Fiche CE 4 — En règle générale, les véhicules lourds utilisent deux batteries de 12 volts montées en ... ?", "choix": [], "reponse": "Série"},
+        {"type": "choix", "question": "Fiche CE 4 — Un pont dont la hauteur libre est de 5 m (au plus bas) sera obligatoirement signalé par un panneau de hauteur limitée. Vrai ou faux ?", "choix": ["Vrai", "Faux"], "reponse": "Faux"},
+        {"type": "choix", "question": "Fiche CE 4 — Sur cette chaussée (Arbres inclinés), la hauteur des arbres est susceptible d'être inférieure à 4,30 m. Vrai ou faux ?", "choix": ["Vrai", "Faux"], "reponse": "Vrai"},
+        {"type": "ecrite", "question": "Fiche CE 4 — Vous avez fait une coupure de 2 h, quelle sera, au minimum, la durée (non réduite) de la période de repos que vous devrez prendre à la fin de votre journée de travail pour être en règle vis-à-vis du repos journalier ?", "choix": [], "reponse": "11 h ou 11 heures"},
+        {"type": "choix", "question": "Fiche CE 4 — Dans un camion neuf, le passager doit-il obligatoirement attacher sa ceinture de sécurité ?", "choix": ["Oui", "Non"], "reponse": "Oui"}
+    ]
 def charger_ecrite_permis_ce_fiche_5():
-    return {
-        "type": "choix",
-        "question": "Fiche Écrite 5 — La vitesse maximale d'un ensemble de plus de 12t sur route à double sens sans séparateur est de :",
-        "choix": ["80 km/h", "70 km/h", "90 km/h"],
-        "reponse": "80 km/h"
-    }
+    return [
+        {"type": "choix", "question": "Fiche CE 5 — Le modèle français de constat amiable peut-il être utilisé dans les autres pays de l'Union européenne ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 5 — En transport public, le destinataire doit-il vérifier l'état apparent de la marchandise ou des colis au moment de l'livraison en présence du conducteur ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 5 — En règle générale, vous est-il possible de modifier les activités enregistrées par le chronotachygraphe sur votre carte ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "ecrite", "question": "Fiche CE 5 — Le châssis d'un véhicule lourd est principalement constitué de longerons et de ... ?", "choix": [], "reponse": "Traverses"},
+        {"type": "choix", "question": "Fiche CE 5 — Cette limitation de vitesse (50) peut-elle concerner les véhicules autres que les trains routiers, trains doubles et véhicules articulés ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 5 — Est-il possible d'atteler une remorque de 19 t de PTAC, chargée au maximum, derrière un camion de 19 t de PTAC, chargé au maximum, alors que le PTRA indiqué sur la plaque de poids et surface du camion est de 40 t ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "ecrite", "question": "Fiche CE 5 — Vous conduisez un ensemble routier neuf de 40 t de PTRA. A quelle vitesse êtes-vous limité sur autoroute ?", "choix": [], "reponse": "90 km/h"},
+        {"type": "ecrite", "question": "Fiche CE 5 — En transport public, à bord de votre véhicule, vous devez posséder l'original ou une copie conforme de la licence communautaire de transport ?", "choix": [], "reponse": "Une copie conforme"},
+        {"type": "ecrite", "question": "Fiche CE 5 — En règle générale, quelle est la durée minimale normale (non réduite) de repos hebdomadaire pour un conducteur de camions ?", "choix": [], "reponse": "45 h"},
+        {"type": "choix", "question": "Fiche CE 5 — Une semi-remorque dételée doit-elle être munie d'un extincteur en état de fonctionner ?", "choix": ["Oui", "Non"], "reponse": "Non"}
+    ]
 
 def charger_ecrite_permis_ce_fiche_6():
-    return {
-        "type": "ecrite",
-        "question": "Fiche Écrite 6 — Quel document de transport remplace obligatoirement la lettre de voiture nationale lors des acheminements internationaux ?",
-        "choix": [],
-        "reponse": "La lettre de voiture internationale CMR."
-    }
+    return [
+        {"type": "choix", "question": "Fiche CE 6 — En cas d'accident, les données du chronotachygraphe numérique peuvent-elles servir de preuve devant un tribunal ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "ecrite", "question": "Fiche CE 6 — Au-delà de quel taux de surcharge (en pourcentage - %) le camion pourra-t-il être immobilisé, jusqu'au déchargement de l'excédent ?", "choix": [], "reponse": "5 ou 5 % ou 5 pour cent"},
+        {"type": "choix", "question": "Fiche CE 6 — Si, dans la même journée, vous conduisez un véhicule avec un chronotachygraphe numérique après avoir conduit un véhicule avec un chronotachygraphe à disque, devez-vous conserver le disque avec vous ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "ecrite", "question": "Fiche CE 6 — Certains éléments de la chaîne cinématique nécessitent d'être vidangés ou ... ?", "choix": [], "reponse": "Graissés"},
+        {"type": "choix", "question": "Fiche CE 6 — Ce signal (interdiction de dépasser pour véhicules lourds) concerne-t-il uniquement les véhicules affectés au transport de marchandises excédant 3 500 kg de PTAC ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "ecrite", "question": "Fiche CE 6 — Je dois conduire un train routier de 32 t de PTRA dont la somme des PTAC est de 38 t. Quel doit être le poids maximum du train routier lors d'une pesée sur bascule ?", "choix": [], "reponse": "32 t"},
+        {"type": "ecrite", "question": "Fiche CE 6 — Vous conduisez un tracteur solo de 19 t de PTAC et 38 t de PTRA. A quelle vitesse êtes-vous limité sur autoroute ?", "choix": [], "reponse": "90 km/h"},
+        {"type": "choix", "question": "Fiche CE 6 — La lettre de voiture doit détailler la nature des marchandises transportées. Vrai ou faux ?", "choix": ["Vrai", "Faux"], "reponse": "Vrai"},
+        {"type": "ecrite", "question": "Fiche CE 6 — Quand le repos journalier est fractionné, quelle doit être la durée minimale totale de ce repos ?", "choix": [], "reponse": "12 h ou 12 heures"},
+        {"type": "choix", "question": "Fiche CE 6 — Vous chargez du gravier. Vous voulez connaître la charge maximale autorisée par essieu, vous pouvez la trouver sur la plaque du constructeur. Vrai ou faux ?", "choix": ["Vrai", "Faux"], "reponse": "Vrai"}
+    ]
 
 def charger_ecrite_permis_ce_fiche_7():
-    return {
-        "type": "choix",
-        "question": "Fiche Écrite 7 — À partir de quel PTRA la présence d'un deuxième extincteur est-elle obligatoire à bord de l'ensemble ?",
-        "choix": ["Dès que le véhicule transporte des marchandises", "Uniquement en cas de transport ADR", "Au-dessus de 12 tonnes"],
-        "reponse": "Dès que le véhicule transporte des marchandises"
-    }
+    return [
+        {"type": "choix", "question": "Fiche CE 7 — Une plaque orange sans aucune inscription, placée à l'arrière d'un camion signifie qu'il s'agit d'un transport de matières dangereuses circulant à vide. Vrai ou Faux ?", "choix": ["Vrai", "Faux"], "reponse": "Faux"},
+        {"type": "ecrite", "question": "Fiche CE 7 — Quelle est la catégorie du permis exigée pour conduire un véhicule de transport en commun articulé comportant 60 places circulant à vide ?", "choix": [], "reponse": "D ou Le permis D"},
+        {"type": "ecrite", "question": "Fiche CE 7 — Quelle est, en heures, la durée maximale autorisée de conduite par période de deux semaines consécutives ?", "choix": [], "reponse": "90 h"},
+        {"type": "ecrite", "question": "Fiche CE 7 — Qu'aspire le moteur diesel lors du premier temps appelé « admission » ?", "choix": [], "reponse": "De l'air"},
+        {"type": "ecrite", "question": "Fiche CE 7 — Lors de la mise en circulation d'un véhicule de transport de marchandises de plus de 3,5 t, vendu carrossé, quel est le délai maximal autorisé pour le présenter à la première visite technique ?", "choix": [], "reponse": "1 an ou 12 mois"},
+        {"type": "ecrite", "question": "Fiche CE 7 — Quelle est la charge utile d'un véhicule dont le PTAC est de 26 t et le poids à vide de 7 t ?", "choix": [], "reponse": "19 t"},
+        {"type": "ecrite", "question": "Fiche CE 7 — Je conduis un véhicule articulé de 38 t de PTRA pesant 14 t à vide. Pour emprunter une route où une barrière de dégel à 12 t avec mention demi-charge autorisée est en place, quel doit être le poids maximum de mon chargement ?", "choix": [], "reponse": "12 t ou 12 tonnes"},
+        {"type": "choix", "question": "Fiche CE 7 — La descente dangereuse annoncée possède-t-elle un dénivelé de 100 mètres pour chaque kilomètre parcouru ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 7 — Vous avez interrompu votre conduite pendant 1 h 15 mn. Ce temps peut-il être pris en compte pour le calcul du temps de repos journalier ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "choix", "question": "Fiche CE 7 — Sur la plaque du constructeur d'un véhicule porteur-remorqueur, on trouve inscrite la longueur maximale de l'ensemble que l'on peut constituer avec ce véhicule. Vrai ou Faux ?", "choix": ["Vrai", "Faux"], "reponse": "Faux"}
+    ]
 
 def charger_ecrite_permis_ce_fiche_8():
-    return {
-        "type": "ecrite",
-        "question": "Fiche Écrite 8 — Quel est le rôle du dispositif de freinage de secours automatique d'une remorque ?",
-        "choix": [],
-        "reponse": "Serrer instantanément les freins de la remorque en cas de rupture physique de l'attelage en mouvement."
-    }
-
+    return [
+        {"type": "choix", "question": "Fiche CE 8 — Un X (ex: X362) inscrit à côté du nombre dans le rectangle du haut de la plaque orange placée à l'arrière d'un camion signifie : 'produit ayant une réaction dangereuse avec l'eau'. Vrai ou faux ?", "choix": ["Vrai", "Faux"], "reponse": "Vrai"},
+        {"type": "ecrite", "question": "Fiche CE 8 — À partir de quel âge la périodicité du contrôle médical obligatoire pour le renouvellement du permis de conduire catégories C ou CE est-elle de 2 ans ?", "choix": [], "reponse": "60 ans"},
+        {"type": "choix", "question": "Fiche CE 8 — Un premier arrêt de 15 mn sur un parking peut-il être considéré comme une pause ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "ecrite", "question": "Fiche CE 8 — La somme des PTAC d'un train routier est de 45 t et son PTRA est de 40 t. Quel poids réel ne faut-il pas dépasser ?", "choix": [], "reponse": "40 t"},
+        {"type": "ecrite", "question": "Fiche CE 8 — Ce signal concerne-t-il les véhicules affectés au transport de produits dangereux ou au transport de produits explosifs ?", "choix": [], "reponse": "Produits explosifs ou Explosifs"},
+        {"type": "choix", "question": "Fiche CE 8 — Le turbocompresseur a pour fonction de diminuer l'air admis dans les cylindres ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "ecrite", "question": "Fiche CE 8 — Vous conduisez un tracteur solo de 19 t de PTAC et 38 t de PTRA. À quelle vitesse êtes-vous limité sur route à sens unique prioritaire ?", "choix": [], "reponse": "80 km/h"},
+        {"type": "choix", "question": "Fiche CE 8 — Le transport de pièces de grande longueur qui dépassent d'1 mètre à l'avant du camion entre dans la catégorie des transports exceptionnels. Vrai ou Faux ?", "choix": ["Vrai", "Faux"], "reponse": "Vrai"},
+        {"type": "ecrite", "question": "Fiche CE 8 — Un chauffeur a conduit 20 heures la semaine précédente. Selon la réglementation sociale européenne, combien d'heures maximum peut-il conduire la semaine en cours ?", "choix": [], "reponse": "56 h ou 56 heures"},
+        {"type": "choix", "question": "Fiche CE 8 — L'extincteur prévu pour les semi-remorques peut être placé sur le tracteur. Vrai ou Faux ?", "choix": ["Vrai", "Faux"], "reponse": "Vrai"}
+    ]
 def charger_ecrite_permis_ce_fiche_9():
-    return {
-        "type": "choix",
-        "question": "Fiche Écrite 9 — Un ensemble de véhicules de plus de 3.5 tonnes circulant sous la pluie sur autoroute est limité à :",
-        "choix": ["80 km/h", "90 km/h", "70 km/h"],
-        "reponse": "80 km/h"
-    }
+    return [
+        {"type": "choix", "question": "Fiche CE 9 — En cas d'accident dans lequel votre véhicule est en cause, les forces de l'ordre peuvent-elles imprimer le ticket qui correspond à la journée en cours ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 9 — Après l'obtention du permis CE, un conducteur possédant le permis C et travaillant déjà dans une entreprise de transport doit-il suivre une formation complémentaire avant de conduire un véhicule articulé ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "choix", "question": "Fiche CE 9 — En double équipage, le temps passé sur la couchette d'un véhicule en circulation, est-il considéré comme repos journalier ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "ecrite", "question": "Fiche CE 9 — Quel sera le Poids Maximal Autorisé (PMA) pour le véhicule articulé suivant : Tracteur PTRA: 38 t et PV: 10 t ; Semi-remorque PTAC: 22 t et PV: 7 t ?", "choix": [], "reponse": "32 t"},
+        {"type": "choix", "question": "Fiche CE 9 — La date limite de validité de la dernière visite technique est-elle inscrite sur le certificat d'immatriculation du véhicule ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "ecrite", "question": "Fiche CE 9 — Le circuit d'alimentation d'un moteur diesel se compose, entre autres éléments, de deux pompes : l'une est dite pompe d'injection haute pression, l'autre est dite pompe... ?", "choix": [], "reponse": "D'alimentation"},
+        {"type": "ecrite", "question": "Fiche CE 9 — En cas de remorquage occasionnel d'un véhicule isolé de transport de marchandises, quelle est la longueur maximale autorisée de l'ensemble constitué ?", "choix": [], "reponse": "30 m"},
+        {"type": "choix", "question": "Fiche CE 9 — Cette signalisation de présignalisation (Déviation 12t) peut annoncer une barrière de dégel : vrai ou faux ?", "choix": ["Vrai", "Faux"], "reponse": "Vrai"},
+        {"type": "choix", "question": "Fiche CE 9 — Le conducteur d'un camion de plus de 7,5 t effectuant une collecte de fruits est-il soumis à la réglementation sociale européenne ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 9 — Le principal avantage du système de freinage antibloquant est-il de réduire les distances de freinage ?", "choix": ["Oui", "Non"], "reponse": "Non"}
+    ]
 
 def charger_ecrite_permis_ce_fiche_10():
-    return {
-        "type": "ecrite",
-        "question": "Fiche Écrite 10 — Quelle est l'utilité du dispositif d'aide au démarrage en côte sur un tracteur routier lourd ?",
-        "choix": [],
-        "reponse": "Maintenir la pression de freinage quelques secondes pour éviter le recul de l'ensemble lors du lâcher de pédale."
-    }
+    return [
+        {"type": "choix", "question": "Fiche CE 10 — Les accidents mortels entre un poids lourd et une voiture sont majoritairement des accidents avec des véhicules circulant dans le même sens. Vrai ou Faux ?", "choix": ["Vrai", "Faux"], "reponse": "Faux"},
+        {"type": "choix", "question": "Fiche CE 10 — Après un contrôle du poids, serez-vous passible d'une amende si la surcharge correspond à 4% (4 pour cent) du poids maximal autorisé ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "ecrite", "question": "Fiche CE 10 — Après 2 heures de conduite, quelle est la durée minimale d'un premier arrêt pouvant être pris en compte comme pause ?", "choix": [], "reponse": "15 mn"},
+        {"type": "choix", "question": "Fiche CE 10 — Les filtres à carburant ou filtres principaux sont situés entre la pompe d'alimentation et la pompe d'injection haute pression. Vrai ou faux ?", "choix": ["Vrai", "Faux"], "reponse": "Vrai"},
+        {"type": "choix", "question": "Fiche CE 10 — Ce signal (Camion 10m) concerne-t-il uniquement les véhicules isolés ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "ecrite", "question": "Fiche CE 10 — Quel sera le Poids Maximal Autorisé (PMA) pour l'ensemble suivant : Porteur remorqueur PTRA: 44 t et PTAC: 26 t ; Remorque PTAC: 26 t et PV: 7 t ?", "choix": [], "reponse": "44 t"},
+        {"type": "ecrite", "question": "Fiche CE 10 — Si les disques à l'arrière d'un camion (isolé), de 38 t de PTRA, sont '80 - 90', quels sont les disques placés à l'arrière de la remorque lorsque le train routier est formé ?", "choix": [], "reponse": "60 - 80 - 90"},
+        {"type": "choix", "question": "Fiche CE 10 — Un véhicule qui circule sous le régime 'TIR' doit comporter un scellement effectué par la douane du pays d'origine. Vrai ou Faux ?", "choix": ["Vrai", "Faux"], "reponse": "Vrai"},
+        {"type": "ecrite", "question": "Fiche CE 10 — Un chauffeur a conduit 40 heures la semaine précédente. Selon la réglementation sociale européenne, combien d'heures maximum peut-il conduire la semaine en cours ?", "choix": [], "reponse": "50 h ou 50 heures"},
+        {"type": "choix", "question": "Fiche CE 10 — Ai-je le droit d'atteler une semi-remorque dont le type des pneumatiques est différent de celui du véhicule tracteur ?", "choix": ["Oui", "Non"], "reponse": "Oui"}
+    ]
 
 def charger_ecrite_permis_ce_fiche_11():
-    return {
-        "type": "choix",
-        "question": "Fiche Écrite 11 — Le contrôle technique périodique d'une semi-remorque de plus de 3.5 tonnes doit être réalisé :",
-        "choix": ["Chaque année", "Tous les 6 mois", "Tous les 2 ans"],
-        "reponse": "Chaque année"
-    }
+    return [
+        {"type": "choix", "question": "Fiche CE 11 — Le constat amiable d'accident peut-il constituer une preuve de responsabilité ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 11 — Circuler avec un seul pneu lisse ou détérioré n'entraîne pas de contravention si le véhicule possède une roue de secours en bon état. Vrai ou Faux ?", "choix": ["Vrai", "Faux"], "reponse": "Faux"},
+        {"type": "choix", "question": "Fiche CE 11 — La rémunération mensuelle d'un conducteur salarié peut être calculée en fonction de la charge transportée pendant le mois. Vrai ou Faux ?", "choix": ["Vrai", "Faux"], "reponse": "Faux"},
+        {"type": "ecrite", "question": "Fiche CE 11 — Quel sera le Poids Maximal Autorisé (PMA) pour l'ensemble suivant : Porteur remorqueur PTRA: 44 t et PTAC: 26 t ; Remorque PTAC: 14 t et PV: 5 t ?", "choix": [], "reponse": "40 t"},
+        {"type": "ecrite", "question": "Fiche CE 11 — Comment appelle-t-on les transports exécutés à titre onéreux pour le compte d'un client ?", "choix": [], "reponse": "Publics ou Compte d'autrui"},
+        {"type": "choix", "question": "Fiche CE 11 — L'embrayage est un organe mécanique nécessaire au passage des vitesses sur les seules boîtes mécaniques ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "ecrite", "question": "Fiche CE 11 — Hors agglomération, sur une route à double sens, vous suivez un camion à 70 km/h. Quel intervalle de sécurité minimum devez-vous respecter ?", "choix": [], "reponse": "50 m"},
+        {"type": "choix", "question": "Fiche CE 11 — Je circule avec un véhicule mesurant 2,30 m de large. A hauteur de ce signal (2.3m), puis-je continuer sur cette route ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "ecrite", "question": "Fiche CE 11 — En règle générale, quelle est la durée maximale de conduite journalière autorisée en respectant les temps de repos ?", "choix": [], "reponse": "9 h"},
+        {"type": "choix", "question": "Fiche CE 11 — Le frein de rupture agit-il uniquement sur les roues du véhicule remorqué ?", "choix": ["Oui", "Non"], "reponse": "Oui"}
+    ]
 
 def charger_ecrite_permis_ce_fiche_12():
-    return {
-        "type": "ecrite",
-        "question": "Fiche Écrite 12 — Comment s'appelle l'élément d'accouplement fixé sous le châssis avant d'une semi-remorque ?",
-        "choix": [],
-        "reponse": "Le pivot d'attelage (ou King-Pin)."
-    }
+    return [
+        {"type": "choix", "question": "Fiche CE 12 — Le modèle allemand, italien ou espagnol d'un constat européen d'accident, comporte-t-il les mêmes rubriques que le modèle français ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 12 — Débrancher ou modifier les réglages du limiteur de vitesse peut entraîner une suspension du permis de conduire, même s'il n'y a pas eu d'excès de vitesse constaté. Vrai ou Faux ?", "choix": ["Vrai", "Faux"], "reponse": "Vrai"},
+        {"type": "choix", "question": "Fiche CE 12 — Le conducteur peut-il bâcher ou débâcher son véhicule pendant une pause ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "ecrite", "question": "Fiche CE 12 — Quel est le PTRA maximal d'un véhicule articulé comportant 4 essieux ?", "choix": [], "reponse": "38 t"},
+        {"type": "choix", "question": "Fiche CE 12 — Ce signal m'annonce-t-il une voie de détresse qui sera située sur ma gauche ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "choix", "question": "Fiche CE 12 — La marche arrière sert à inverser le sens de rotation de l'arbre de transmission ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 12 — Sur une autoroute à 4 voies, un véhicule articulé de 15 m de long peut-il effectuer un dépassement en empruntant la 3ème voie ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "choix", "question": "Fiche CE 12 — Faut-il un seul certificat d'immatriculation pour un ensemble de véhicules constitué d'un camion de 26 t auquel on a attelé un compresseur sur roues de 800 kg ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "ecrite", "question": "Fiche CE 12 — En règle générale, quelle est la durée minimale normale (non réduite) obligatoire de repos journalier lorsque celui-ci n'est pas fractionné ?", "choix": [], "reponse": "11 h"},
+        {"type": "ecrite", "question": "Fiche CE 12 — Si les disques à l'arrière du tracteur d'un véhicule articulé sont '60 - 80 - 90', quels sont les disques placés à l'arrière de la semi-remorque ?", "choix": [], "reponse": "60 - 80 - 90"}
+    ]
 
 def charger_ecrite_permis_ce_fiche_13():
-    return {
-        "type": "choix",
-        "question": "Fiche Écrite 13 — La masse maximale autorisée sous un essieu moteur isolé en France est de :",
-        "choix": ["13 tonnes", "11,5 tonnes", "10 tonnes"],
-        "reponse": "13 tonnes"
-    }
+    return [
+        {"type": "choix", "question": "Fiche CE 13 — Dans une longue descente, en cas de rupture de freins, si j'utilisation une voie de détresse, le véhicule que je conduis sera-t-il gravement endommagé ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "choix", "question": "Fiche CE 13 — Je possède les catégories B - C et CE. Conduire ma voiture personnelle après avoir pris de la drogue peut entraîner la perte de la catégorie B de mon permis de conduire uniquement. Vrai ou Faux ?", "choix": ["Vrai", "Faux"], "reponse": "Faux"},
+        {"type": "ecrite", "question": "Fiche CE 13 — Quelle est la durée maximale autorisée de conduite continue pour un conducteur de camion ?", "choix": [], "reponse": "4 h 30 ou 4 h 30 mn"},
+        {"type": "ecrite", "question": "Fiche CE 13 — Quelle est la majoration maximale autorisée du PTRA d'un véhicule articulé équipé de 2 dispositifs ralentisseurs : un de 600 kg sur le tracteur et un de 400 kg sur la remorque ?", "choix": [], "reponse": "500 kg"},
+        {"type": "ecrite", "question": "Fiche CE 13 — Lors d'un contrôle des temps de conduite et de repos sur la route, en plus de la journée en cours, sur quelle période devez-vous pouvoir présenter les données ?", "choix": [], "reponse": "56 ou 56 jours"},
+        {"type": "choix", "question": "Fiche CE 13 — Un pont court permet d'obtenir un couple plus important et une vitesse du véhicule plus faible. Vrai ou faux ?", "choix": ["Vrai", "Faux"], "reponse": "Vrai"},
+        {"type": "choix", "question": "Fiche CE 13 — Sur une autoroute à 3 voies, un véhicule articulé de 15 m de long peut-il effectuer un dépassement en empruntant la 2ème voie ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 13 — Je circule, à vide, avec un véhicule de 5 tonnes de poids à vide et de 15 tonnes de PTAC. A hauteur de ce signal (5.5t), puis-je passer ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "choix", "question": "Fiche CE 13 — Pouvez-vous prendre votre temps de repos en couchette lorsque le véhicule est à l'arrêt ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 13 — Le système de freinage électronique (EBS) contrôle la répartition du freinage entre le véhicule tracteur et la remorque qui en sont équipés ?", "choix": ["Oui", "Non"], "reponse": "Oui"}
+    ]
 
 def charger_ecrite_permis_ce_fiche_14():
-    return {
-        "type": "ecrite",
-        "question": "Fiche Écrite 14 — Quelles sont les vérifications obligatoires concernant les béquilles d'une semi-remorque avant le départ ?",
-        "choix": [],
-        "reponse": "S'assurer qu'elles sont totalement remontées et que la manivelle de commande est repliée et verrouillée."
-    }
+    return [
+        {"type": "ecrite", "question": "Fiche CE 14 — Pour diminuer les risques d'accident, lors de la montée ou de la descente d'un camion, de combien de points d'appui le conducteur doit-il se servir ?", "choix": [], "reponse": "3"},
+        {"type": "choix", "question": "Fiche CE 14 — Lors d'un contrôle sur la route, est-il obligatoire de pouvoir présenter votre carte de qualification conducteur (CQC) ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "ecrite", "question": "Fiche CE 14 — Après 4 h 30 de conduite continue, quelle est la durée minimale de la pause que vous devez respecter ?", "choix": [], "reponse": "45 mn"},
+        {"type": "choix", "question": "Fiche CE 14 — La longueur d'un véhicule articulé se calcule en additionnant la longueur du tracteur routier et la longueur de la semi-remorque. Vrai ou Faux ?", "choix": ["Vrai", "Faux"], "reponse": "Faux"},
+        {"type": "choix", "question": "Fiche CE 14 — Ce signal (mat. dangereuses) peut-il concerner les véhicules transportant une faible quantité de produits polluants ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 14 — Le mécanisme de l'assistance de direction comprend une « bielle pendante ». Vrai ou faux ?", "choix": ["Vrai", "Faux"], "reponse": "Vrai"},
+        {"type": "ecrite", "question": "Fiche CE 14 — Vous conduisez un ensemble routier neuf de 40 t de PTRA. À quelle vitesse êtes-vous limité sur route à sens unique prioritaire ?", "choix": [], "reponse": "80 km/h"},
+        {"type": "choix", "question": "Fiche CE 14 — Tout véhicule effectuant un transport international doit porter à l'arrière une plaque avec la mention 'TIR'. Vrai ou Faux ?", "choix": ["Vrai", "Faux"], "reponse": "Faux"},
+        {"type": "choix", "question": "Fiche CE 14 — L'amplitude de la journée de travail d'un conducteur routier comprend le temps de service et les pauses. Vrai ou faux ?", "choix": ["Vrai", "Faux"], "reponse": "Vrai"},
+        {"type": "choix", "question": "Fiche CE 14 — En général, un véhicule articulé neuf doit être équipé d'un extincteur à poudre de 6 kg placé à l'extérieur. Vrai ou Faux ?", "choix": ["Vrai", "Faux"], "reponse": "Vrai"}
+    ]
 
 def charger_ecrite_permis_ce_fiche_15():
-    return {
-        "type": "choix",
-        "question": "Fiche Écrite 15 — Sur une autoroute à 3 voies, un ensemble routier dont la longueur dépasse 7 mètres :",
-        "choix": ["A l'interdiction d'emprunter la voie la plus à gauche", "Peut circuler sur toutes les voies", "Doit rester sur la voie de droite"],
-        "reponse": "A l'interdiction d'emprunter la voie la plus à gauche"
-    }
+    return [
+        {"type": "choix", "question": "Fiche CE 15 — Les accidents corporels entre un poids lourd et une voiture se produisent en majorité dans les intersections. Vrai ou Faux ?", "choix": ["Vrai", "Faux"], "reponse": "Faux"},
+        {"type": "ecrite", "question": "Fiche CE 15 — Quelle est la périodicité des Formations Continues Obligatoires des conducteurs routiers ?", "choix": [], "reponse": "5 ans ou Quinquennale"},
+        {"type": "choix", "question": "Fiche CE 15 — Après 3 h de conduite continue, s'arrêter 10 mn sur un parking est-il considéré comme une pause ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "ecrite", "question": "Fiche CE 15 — Quand j'attelle une semi-remorque porte-voitures à mon tracteur, quelle longueur ne doit pas dépasser le véhicule articulé ainsi constitué ?", "choix": [], "reponse": "16,50 m"},
+        {"type": "ecrite", "question": "Fiche CE 15 — Combien de certificat(s) d'immatriculation est/sont attribué(s) à un véhicule articulé ?", "choix": [], "reponse": "2"},
+        {"type": "ecrite", "question": "Fiche CE 15 — Quel type de suspension équipe généralement les véhicules lourds permettant de régler la hauteur du véhicule ?", "choix": [], "reponse": "La suspension pneumatique ou Pneumatique"},
+        {"type": "ecrite", "question": "Fiche CE 15 — Le véhicule porteur-remorqueur d'un train routier a un PTRA de 38 t. Quelles sont les vitesses indiquées à l'arrière de la remorque ?", "choix": [], "reponse": "60-80-90 ou 60 km/h 80 km/h 90 km/h"},
+        {"type": "choix", "question": "Fiche CE 15 — Ce signal (Voie bleue autobus) m'indique un arrêt d'autobus. Vrai ou faux ?", "choix": ["Vrai", "Faux"], "reponse": "Faux"},
+        {"type": "choix", "question": "Fiche CE 15 — En double équipage, en France, vous êtes assis à côté du conducteur. Votre temps de conduite continue est-il interrompu ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 15 — En circulation, le fait de freiner désactive obligatoirement le régulateur de vitesse. Vrai ou Faux ?", "choix": ["Vrai", "Faux"], "reponse": "Vrai"}
+    ]
 
 def charger_ecrite_permis_ce_fiche_16():
-    return {
-        "type": "ecrite",
-        "question": "Fiche Écrite 16 — Quel est l'impact de la force d'inertie de la remorque sur le tracteur lors d'une décélération ?",
-        "choix": [],
-        "reponse": "La remorque pousse le tracteur, augmentant la charge dynamique exercée sur l'arrière du véhicule moteur."
-    }
-
+    return [
+        {"type": "ecrite", "question": "Fiche CE 16 — Quand je circule en Espagne, quel numéro de téléphone est-il conseillé d'utiliser pour appeler les secours à partir d'un portable ?", "choix": [], "reponse": "112"},
+        {"type": "choix", "question": "Fiche CE 16 — Si je perds tous les points de mon permis de conduire à la suite d'infractions commises au volant de ma voiture personnelle, pourrai-je continuer à conduire mon camion ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "choix", "question": "Fiche CE 16 — Vous avez interrompu votre conduite pendant 45 mn. Ce temps peut-il être pris en compte pour le calcul du temps de repos journalier ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "ecrite", "question": "Fiche CE 16 — Mon camion de 20 t de PTAC est chargé au maximum. Son PTRA est de 40 t, si je dois atteler une remorque de 26 t de PTAC, quel doit être le poids réel maximal de la remorque ?", "choix": [], "reponse": "20 t"},
+        {"type": "choix", "question": "Fiche CE 16 — Dans le cadre du transport public, peut-il y avoir une seule lettre de voiture (avec état récapitulatif) dans le véhicule pour un transport comportant plusieurs destinataires dans la même journée ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 16 — Le recreusage des pneumatiques est-il une opération qui peut s'effectuer uniquement par un spécialiste ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "ecrite", "question": "Fiche CE 16 — Vous conduisez un véhicule de 38 t de PTRA. En règle générale, quand débute l'interdiction de circulation en fin de semaine ?", "choix": [], "reponse": "Samedi à 22 h ou Samedi à 10 h du soir"},
+        {"type": "choix", "question": "Fiche CE 16 — Ce signal (Silencieux orange) concerne-t-il les véhicules affectés aux seuls transports de produits polluants ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "ecrite", "question": "Fiche CE 16 — Votre véhicule est équipé d'un chronotachygraphe numérique. Vous avez perdu votre carte 'conducteur', combien de jours, au maximum, pouvez vous conduire sans carte ?", "choix": [], "reponse": "15 ou 15 jours"},
+        {"type": "choix", "question": "Fiche CE 16 — Un dolly (ou diabolo) pesant 600 kg doit-il être immatriculé ?", "choix": ["Oui", "Non"], "reponse": "Oui"}
+    ]
 def charger_ecrite_permis_ce_fiche_17():
-    return {
-        "type": "choix",
-        "question": "Fiche Écrite 17 — Le certificat d'immatriculation d'un ensemble de véhicules comprend :",
-        "choix": ["Deux cartes grises distinctes (tracteur et remorque)", "Une seule carte grise commune", "Une carte grise uniquement pour le tracteur"],
-        "reponse": "Deux cartes grises distinctes (tracteur et remorque)"
-    }
+    return [
+        {"type": "choix", "question": "Fiche CE 17 — En moyenne, il y a plus d'accidents graves impliquant un poids lourd les samedis et veilles de jours fériés que les jours de semaine. Vrai ou Faux ?", "choix": ["Vrai", "Faux"], "reponse": "Faux"},
+        {"type": "choix", "question": "Fiche CE 17 — Sur une route à double sens limitée à 70 km/h, lors d'un contrôle routier, votre carte conducteur indique que vous rouliez à 80 km/h. Pouvez-vous être sanctionné ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 17 — La réglementation sociale européenne s'applique-t-elle à un conducteur non salarié propriétaire de son véhicule ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 17 — Lorsque le conducteur serre le frein de parc, le cylindre de frein à ressort se remplit d'air. Vrai ou faux ?", "choix": ["Vrai", "Faux"], "reponse": "Faux"},
+        {"type": "ecrite", "question": "Fiche CE 17 — Suite au contrôle technique périodique, lorsque le véhicule est refusé sans interdiction de circuler, dans quel délai maximum la contre-visite doit-elle être effectuée pour éviter une visite technique complète ?", "choix": [], "reponse": "1 mois"},
+        {"type": "choix", "question": "Fiche CE 17 — Mon camion a un PTRA de 40 t et un PV de 10 t. Si le camion est vide, ai-je le droit d'atteler une remorque dont le poids réel est de 15 t ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "ecrite", "question": "Fiche CE 17 — Vous conduisez un véhicule articulé neuf de 38 t de PTRA. À quelle vitesse êtes-vous limité sur route non prioritaire ?", "choix": [], "reponse": "60 km/h"},
+        {"type": "choix", "question": "Fiche CE 17 — Par temps sec, ce signal me concerne-t-il (Accotement meuble) ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "ecrite", "question": "Fiche CE 17 — Vous attendez votre tour pour décharger sans connaître le temps d'attente. Sur quel symbole devez-vous positionner le sélecteur d'activité du chronotachygraphe ?", "choix": [], "reponse": "Autres tâches, marteaux ou marteaux"},
+        {"type": "choix", "question": "Fiche CE 17 — Les disques de limitation de vitesse apposés à l'arrière d'une semi-remorque sont-ils identiques à ceux du tracteur routier ?", "choix": ["Oui", "Non"], "reponse": "Oui"}
+    ]
 
 def charger_ecrite_permis_ce_fiche_18():
-    return {
-        "type": "ecrite",
-        "question": "Fiche Écrite 18 — Quelles sont les sanctions en cas de dépassement du PTRA constaté lors d'un pesage ?",
-        "choix": [],
-        "reponse": "Une amende par tranche de dépassement de poids, immobilisation du véhicule et obligation de décharger."
-    }
+    return [
+        {"type": "choix", "question": "Fiche CE 18 — Un X (ex: X83) inscrit à côté du nombre dans le rectangle du haut de la plaque orange placée à l'arrière d'un camion signifie : 'produit très inflammable'. Vrai ou Faux ?", "choix": ["Vrai", "Faux"], "reponse": "Faux"},
+        {"type": "choix", "question": "Fiche CE 18 — En cas de récidive de grand excès de vitesse, une suspension du permis de conduire peut être assortie d'un permis limité à la conduite professionnelle (permis blanc) si l'infraction a été commise avec la voiture personnelle du chauffeur. Vrai ou Faux ?", "choix": ["Vrai", "Faux"], "reponse": "Faux"},
+        {"type": "choix", "question": "Fiche CE 18 — Vous conduisez sans vous arrêter depuis 8 h ce matin. Il est 12 h 40. Etes-vous en infraction ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 18 — Le circuit de freinage européen rend le freinage de l'essieu avant indépendant du freinage de l'essieu arrière. Vrai ou faux ?", "choix": ["Vrai", "Faux"], "reponse": "Vrai"},
+        {"type": "choix", "question": "Fiche CE 18 — La licence de transport intérieur permet d'effectuer un transport avec un véhicule de 38 t à condition de rester en France. Vrai ou faux ?", "choix": ["Vrai", "Faux"], "reponse": "Faux"},
+        {"type": "choix", "question": "Fiche CE 18 — Mon camion a un PTRA de 40 t et un PV de 10 t. Si le camion est vide, ai-je le droit d'atteler une remorque dont le poids réel est de 13 t ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "ecrite", "question": "Fiche CE 18 — Vous conduisez un véhicule articulé neuf de 38 t de PTRA. À quelle vitesse êtes-vous limité sur route prioritaire à chaussées séparées ?", "choix": [], "reponse": "80 km/h"},
+        {"type": "choix", "question": "Fiche CE 18 — Ce signal interdit le dépassement à tous les véhicules dont le PTAC est supérieur à 3,5 tonnes ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "ecrite", "question": "Fiche CE 18 — Un chauffeur a conduit 50 heures la semaine précédente. Selon la réglementation sociale européenne, combien d'heures maximum peut-il conduire la semaine en cours ?", "choix": [], "reponse": "40 h ou 40 heures"},
+        {"type": "choix", "question": "Fiche CE 18 — Le système de contrôle électronique de stabilité (ESP) agit principalement en virage ?", "choix": ["Oui", "Non"], "reponse": "Oui"}
+    ]
 
 def charger_ecrite_permis_ce_fiche_19():
-    return {
-        "type": "choix",
-        "question": "Fiche Écrite 19 — Le dispositif de signalisation des angles morts doit être apposé :",
-        "choix": ["Sur le tracteur ET sur la remorque selon des emplacements réglementaires", "Uniquement à l'arrière de la remorque", "Uniquement sur les portières du tracteur"],
-        "reponse": "Sur le tracteur ET sur la remorque selon des emplacements réglementaires"
-    }
+    return [
+        {"type": "choix", "question": "Fiche CE 19 — Dans le transport routier, c'est pendant le travail, hors conduite, que l'on dénombre le plus fort taux d'accidents chez les conducteurs ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 19 — Vous n'avez pas mis de carte dans le chronotachygraphe numérique, lors d'un contrôle sur route, sera-t-il possible de contrôler vos temps de conduite ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 19 — En double équipage, lorsque le véhicule est en circulation depuis plus de 45 minutes, le conducteur qui n'est pas au volant est-il considéré au repos ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "choix", "question": "Fiche CE 19 — Le dispositif antiblocage de roues (ABS) peut-il fonctionner en même temps que le ou les dispositifs ralentisseurs ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "ecrite", "question": "Fiche CE 19 — Suite au contrôle technique périodique, quelle lettre figure sur le certificat d'immatriculation lorsque le véhicule est refusé avec interdiction de circuler ?", "choix": [], "reponse": "R ou La lettre R"},
+        {"type": "ecrite", "question": "Fiche CE 19 — Vous chargez du sable dans une semi-remorque, quelle peut-être la charge maximale autorisée sur l'essieu le plus chargé du groupe d'essieux arrière ?", "choix": [], "reponse": "10,5 t ou 10,500 t ou 10 t 500"},
+        {"type": "ecrite", "question": "Fiche CE 19 — Je conduis un camion de 26 t de PTAC et de 10 t de PV. Pour emprunter une route où une barrière de dégel à 12 t avec mention demi-charge autorisée est en place, quel doit être le poids maximum de mon chargement ?", "choix": [], "reponse": "8 t ou 8 tonnes"},
+        {"type": "choix", "question": "Fiche CE 19 — En agglomération, ce signal (giratoire) est-il implanté 50 mètres avant le carrefour à sens giratoire ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "ecrite", "question": "Fiche CE 19 — Vous avez fait une coupure de 4 h (repos), quelle sera, au minimum, la durée de la période de repos suivante pour être en règle vis-à-vis du repos journalier ?", "choix": [], "reponse": "9 h ou 9 heures"},
+        {"type": "ecrite", "question": "Fiche CE 19 — En général, de combien d'extincteur(s) doit être équipé un véhicule articulé neuf ?", "choix": [], "reponse": "2"}
+    ]
 
 def charger_ecrite_permis_ce_fiche_20():
-    return {
-        "type": "ecrite",
-        "question": "Fiche Écrite 20 — Pourquoi est-il primordial de vérifier le cordon ABS/EBS lors de l'attelage ?",
-        "choix": [],
-        "reponse": "Pour garantir la transmission des signaux de freinage antiblocage et de contrôle de stabilité à la remorque."
-    }
+    return [
+        {"type": "choix", "question": "Fiche CE 20 — En cas d'accident dans lequel votre véhicule est en cause, les forces de l'ordre peuvent-elles saisir votre carte 'conducteur' ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 20 — Votre permis porte la mention '01 : dispositif de correction et/ou de protection de la vision'. Avez-vous le droit de conduire sans porter de lunettes ou de lentilles ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "ecrite", "question": "Fiche CE 20 — Un temps de conduite de 4 h 30 peut être fractionné, au plus, par combien de pause(s) ?", "choix": [], "reponse": "2"},
+        {"type": "ecrite", "question": "Fiche CE 20 — Vous conduisez un train-routier. Quelle peut être sa longueur maximale ?", "choix": [], "reponse": "18,75 m"},
+        {"type": "ecrite", "question": "Fiche CE 20 — Comment appelle-t-on les transports exécutés à titre onéreux pour le compte d'un client ?", "choix": [], "reponse": "Publics ou Compte d'autrui"},
+        {"type": "ecrite", "question": "Fiche CE 20 — En principe, le ralentisseur hydraulique est situé sur ... ?", "choix": [], "reponse": "La transmission ou L'arbre de transmission"},
+        {"type": "choix", "question": "Fiche CE 20 — Un pont dont la hauteur libre est de 5 m (au plus bas) sera obligatoirement signalé par un panneau de hauteur limitée. Vrai ou faux ?", "choix": ["Vrai", "Faux"], "reponse": "Faux"},
+        {"type": "choix", "question": "Fiche CE 20 — Hors agglomération, ce signal est-il implanté 100 mètres avant le carrefour à sens giratoire ?", "choix": ["Oui", "Non"], "reponse": "Non"},
+        {"type": "choix", "question": "Fiche CE 20 — Vous conduisez un véhicule spécialisé de dépannage. Êtes-vous soumis à la réglementation sociale européenne concernant les temps de conduite et de repos si vous ramenez une voiture de Lille à Marseille ?", "choix": ["Oui", "Non"], "reponse": "Oui"},
+        {"type": "choix", "question": "Fiche CE 20 — Les disques de limitation de vitesse apposés à l'arrière d'une remorque sont-ils identiques à ceux placés à l'arrière du camion ?", "choix": ["Oui", "Non"], "reponse": "Non"}
+    ]
 
 
 
