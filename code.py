@@ -5261,6 +5261,21 @@ with tab4:
     st.write("---")
     st.subheader("Synthese et validation")
     
+    # Recupere le verrou de maniere autonome
+    v_ecrit_c = st.session_state.get("verrou_ecrite_c", False)
+    
+    # Extraction de secours ultra-securisee du numero de fiche
+    fiche_actuelle_c = st.session_state.get("fiche_ecrite_choisie_c", [])
+    if isinstance(fiche_actuelle_c, list) and len(fiche_actuelle_c) > 0:
+        if isinstance(fiche_actuelle_c[0], dict):
+            num_fiche_e = fiche_actuelle_c[0].get("numero_fiche", "Non defini")
+        else:
+            num_fiche_e = "Non defini"
+    elif isinstance(fiche_actuelle_c, dict):
+        num_fiche_e = fiche_actuelle_c.get("numero_fiche", "Non defini")
+    else:
+        num_fiche_e = "Non defini"
+
     if not v_ecrit_c:
         certif_ecrit_c = st.checkbox(
             "Je certifie avoir repondu aux questions de cette fiche ecrite C.",
@@ -5278,7 +5293,13 @@ with tab4:
                 st.session_state.verrou_ecrite_c = True
                 st.rerun()
     else:
-        # L'atelier est valide, on affiche la note et l'identite complete
+        # Normalisation de la liste pour le calcul de note
+        if isinstance(fiche_actuelle_c, dict):
+            liste_questions_ecrites_c = [fiche_actuelle_c]
+        else:
+            liste_questions_ecrites_c = fiche_actuelle_c
+
+        # L'atelier est valide, on affiche l'identite complete et la note obtenue
         calculer_et_afficher_note(
             liste_questions=liste_questions_ecrites_c, 
             prefixe_session="rep_ecrite_c", 
