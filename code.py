@@ -5081,7 +5081,7 @@ with tab2:
 
     st.write("---")
     st.subheader("Synthese et validation")
-    
+    v_ecrit_c = st.session_state.get("verrou_ecrite_c", False)
     if not v_ecrit_c:
         certif_ecrit_c = st.checkbox(
             "Je certifie avoir repondu aux questions de cette fiche ecrite C.",
