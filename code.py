@@ -65,41 +65,39 @@ st.write("L'examen comporte 10 questions liees a une fiche. Cochez les cases si 
 
 mode_selection = st.radio("Mode de selection de la fiche :", ["Selectionner manuellement", "Tirer au sort au hasard"])
 
-# Gestion du changement de fiche pour reinitialiser les cases a cocher
-if mode_selection == "Selectionner manuellement":
-    fiche_choisie_ecrite = st.selectbox("Choisissez la fiche ecrite a reviser :", list(SERIES_ECRITES.keys()))
-    if "serie_choisie" not in st.session_state or st.session_state.serie_choisie != fiche_choisie_ecrite:
-        st.session_state.serie_choisie = fiche_choisie_ecrite
-        st.session_state.reponses = {}
-else:
-    if st.button("Tirer une fiche ecrite au sort", key="btn_ecrit"):
-        st.session_state.serie_choisie = random.choice(list(SERIES_ECRITES.keys()))
-        st.session_state.reponses = {}
+liste_fiches = list(SERIES_ECRITES.keys())
 
-if "serie_choisie" in st.session_state:
-    st.subheader(st.session_state.serie_choisie)
-    questions = SERIES_ECRITES[st.session_state.serie_choisie]
+# Definition securisee de la fiche courante
+if mode_selection == "Selectionner manuellement":
+    fiche_choisie_ecrite = st.selectbox("Choisissez la fiche ecrite a reviser :", liste_fiches)
+    st.session_state.serie_choisie = fiche_choisie_ecrite
+else:
+    if st.button("Tirer une fiche ecrite au sort", key="btn_ecrit") or "serie_choisie" not in st.session_state:
+        st.session_state.serie_choisie = random.choice(liste_fiches)
+
+# Rendu de la fiche active
+if "serie_choisie" in st.session_state and st.session_state.serie_choisie in SERIES_ECRITES:
+    nom_serie = st.session_state.serie_choisie
+    st.subheader(nom_serie)
+    questions = SERIES_ECRITES[nom_serie]
     
-    # Initialisation du dictionnaire des reponses si inexistant
-    if "reponses" not in st.session_state:
-        st.session_state.reponses = {}
+    reponses_utilisateur = {}
         
     # Affichage des questions
     for idx, item in enumerate(questions):
         st.markdown(f"**Question {idx+1} :** {item['q']}")
         
-        # Affichage de la reponse cachee
         with st.expander("Voir la reponse officielle"):
             st.info(f"Reponse : {item['r']}")
             
-        # Case a cocher pour la correction autonome
-        cle_case = f"q_{st.session_state.serie_choisie}_{idx}"
+        # Case a cocher
+        cle_case = f"q_{nom_serie}_{idx}"
         valeur_case = st.checkbox("Ma reponse est correcte", key=cle_case)
-        st.session_state.reponses[idx] = valeur_case
+        reponses_utilisateur[idx] = valeur_case
         st.write("---")
 
-    # Calcul de la note globale
-    score_final = sum(1 for v in st.session_state.reponses.values() if v)
+    # Calcul et affichage de la note globale
+    score_final = sum(1 for v in reponses_utilisateur.values() if v)
     
     st.subheader(f"Votre Note : {score_final} / 10")
     if score_final >= 8:
@@ -107,18 +105,18 @@ if "serie_choisie" in st.session_state:
     else:
         st.error("Examen Echoue (Minimum 8/10 requis)")
         
-    # Bouton de telechargement du fichier HTML de correction
+    # Generation du HTML
     donnees_html = generer_html_correction(
-        st.session_state.serie_choisie, 
+        nom_serie, 
         questions, 
-        st.session_state.reponses, 
+        reponses_utilisateur, 
         score_final
     )
     
     st.download_button(
         label="Telecharger le compte-rendu HTML",
         data=donnees_html,
-        file_name=f"correction_{st.session_state.serie_choisie.replace(' ', '_')}.html",
+        file_name=f"correction_{nom_serie.replace(' ', '_')}.html",
         mime="text/html"
     )
 
