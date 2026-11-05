@@ -5130,9 +5130,9 @@ with tab3:
     if isinstance(fiche_brute_o, dict) and "questions" in fiche_brute_o:
         liste_questions_orales_c = fiche_brute_o["questions"]
         num_fiche_o = fiche_brute_o.get("numero_fiche", "Non defini")
-    elif isinstance(fiche_brute_o, list) and len(fiche_brute_o) > 0 and isinstance(fiche_brute_o, dict):
-        liste_questions_orales_c = fiche_brute_o["questions"]
-        num_fiche_o = fiche_brute_o.get("numero_fiche", "Non defini")
+    elif isinstance(fiche_brute_o, list) and len(fiche_brute_o) > 0 and isinstance(fiche_brute_o[0], dict):
+        liste_questions_orales_c = fiche_brute_o[0]["questions"] if "questions" in fiche_brute_o[0] else fiche_brute_o
+        num_fiche_o = fiche_brute_o[0].get("numero_fiche", "Non defini")
     else:
         liste_questions_orales_c = fiche_brute_o
         num_fiche_o = "Non defini"
@@ -5143,61 +5143,30 @@ with tab3:
         if isinstance(question_o_c, dict) and "question" in question_o_c:
             st.write(f"**Question {idx + 1} :** {question_o_c['question']}")
 
-            if question_o_c.get("type") == "choix":
-                st.selectbox(
-                    "Selectionnez votre reponse :",
-                    options=["Choisir une reponse..."] + question_o_c.get("choix", []),
-                    key=f"rep_orale_c_{idx}_{num_fiche_o}",
-                    disabled=v_oral_c,
-                    index=0,
-                )
-            else:
-                st.text_area(
-                    "Saisissez vos notes de preparation :",
-                    key=f"rep_orale_c_{idx}_{num_fiche_o}",
-                    disabled=v_oral_c,
-                    placeholder="Ecrivez ici vos arguments pour l'examen oral...",
-                )
+            st.text_area(
+                "Saisissez vos notes de preparation :",
+                key=f"rep_orale_c_{idx}_{num_fiche_o}",
+                disabled=v_oral_c,
+                placeholder="Ecrivez ici vos arguments pour l'examen oral...",
+            )
 
-            # S'affiche uniquement si l'atelier est valide/verrouille
             if v_oral_c:
-                if st.checkbox("Afficher le guide de correction", key=f"chk_oral_c_{idx}_{num_fiche_o}"):
-                    st.success(f"Elements cles attendus : {question_o_c.get('reponse', 'Non disponible')}")
+                st.success(f"Elements cles attendus : {question_o_c.get('reponse', 'Non disponible')}")
                 
             st.divider()
             
     st.write("---")
     st.subheader("Synthese et validation")
-    certif_oral_c = st.checkbox(
-        "Je certifie avoir termine la preparation de cette fiche orale C.",
-        key=f"cert_oral_c_{num_fiche_o}",
-        disabled=v_oral_c
-    )
-
-    if st.button(
-        "VALIDER ET VERROUILLER L'ATELIER ORAL C",
-        key=f"val_oral_c_{num_fiche_o}",
-        disabled=v_oral_c,
-        use_container_width=True
-    ):
-        if not certif_oral_c:
-            st.warning("Veuillez cocher la case de certification avant.")
-        else:
-            st.session_state.verrou_orale_c = True
-            st.rerun()
-
-    st.write("---")
-    st.subheader("Synthèse et validation")
     
     if not v_oral_c:
         certif_oral_c = st.checkbox(
-            "Je certifie avoir terminé la préparation de cette fiche orale C.",
-            key=f"cert_oral_c_{num_fiche}"
+            "Je certifie avoir termine la preparation de cette fiche orale C.",
+            key=f"cert_oral_c_{num_fiche_o}"
         )
 
         if st.button(
             "VALIDER ET VERROUILLER L'ATELIER ORAL C",
-            key=f"val_oral_c_{num_fiche}",
+            key=f"val_oral_c_{num_fiche_o}",
             use_container_width=True
         ):
             if not certif_oral_c:
@@ -5206,6 +5175,7 @@ with tab3:
                 st.session_state.verrou_orale_c = True
                 st.rerun()
     else:
+        st.info("Cet atelier oral C a ete valide et verrouille. Les corrections sont affichees ci-dessus.")
         # Appel de la fonction pour afficher l'encadré d'identité et de validation
         afficher_validation_orale(num_fiche=num_fiche)
 
