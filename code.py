@@ -5016,114 +5016,83 @@ with tab2:
 
     v_permis_b = st.session_state.verrou_permis_b
 
-    st.header("Interrogation Écrite / Orale — Permis B")
-    st.caption(
-        "Tirage au sort d'une question au hasard parmi la banque Permis B."
-    )
+    st.header("Examen du Permis B")
+    st.caption("Session d'entrainement : 20 questions tirees au sort parmi la banque de donnees.")
 
-    if "fiche_choisie_permis_b" not in st.session_state:
-        try:
-            # On tente de charger la banque du Permis B directement
-            banque_locale_b = charger_banque_permis_b()
+    # Chargement complet de la banque (les 200 questions)
+    banque_complete_b = charger_banque_permis_b()
 
-            # Si elle est vide ou mal formatée, on déclenche la sécurité
-            if not banque_locale_b:
-                raise ValueError
+    # Tirage au sort initial et fixe de 20 questions uniques
+    if "questions_permis_b_session" not in st.session_state:
+        # Securite si la banque contient moins de 20 questions
+        nb_questions_a_tirer = min(20, len(banque_complete_b))
+        st.session_state.questions_permis_b_session = random.sample(banque_complete_b, nb_questions_a_tirer)
 
-            # On s'assure que les numéros sont bien injectés
-            for index, fiche in enumerate(banque_locale_b, start=1):
-                fiche["numero"] = index
-        except:
-            # Sécurité absolue si la fonction n'est pas accessible ou échoue
-            banque_locale_b = [{
-                "type": "choix",
-                "numero": 1,
-                "question": "Quelle est la vitesse maximale autorisée sur autoroute par temps sec pour un jeune conducteur ?",
-                "choix": ["110 km/h", "130 km/h", "100 km/h"],
-                "reponse": "110 km/h",
-            }]
-
-        st.session_state.fiche_choisie_permis_b = random.choice(banque_locale_b)
-
-    if st.button(
-        "TIRER UNE AUTRE QUESTION AU HASARD",
-        key="btn_permis_b",
-        disabled=v_permis_b,
-        use_container_width=True,
-    ):
-        st.session_state.fiche_choisie_permis_b = random.choice(
-            banque_questions_permis_b
-        )
-        if "rep_permis_b" in st.session_state:
-            del st.session_state["rep_permis_b"]
+    if st.button("GENERER UN NOUVEL EXAMEN BLANC", key="btn_permis_b", disabled=v_permis_b, use_container_width=True):
+        nb_questions_a_tirer = min(20, len(banque_complete_b))
+        st.session_state.questions_permis_b_session = random.sample(banque_complete_b, nb_questions_a_tirer)
+        # Nettoyage des anciennes reponses stockees
+        for key in list(st.session_state.keys()):
+            if key.startswith("rep_permis_b_"):
+                del st.session_state[key]
         st.rerun()
 
-    fiche_b = st.session_state.fiche_choisie_permis_b
-    st.markdown(f"### Question Numéro {fiche_b['numero']}")
-    st.info(fiche_b["question"])
+    liste_questions_session = st.session_state.questions_permis_b_session
 
-    if fiche_b["type"] == "choix":
-        st.selectbox(
-            "Sélectionnez votre réponse :",
-            options=["Choisir une réponse..."] + fiche_b["choix"],
-            key="rep_permis_b",
-            disabled=v_permis_b,
-            index=0,
-        )
-    else:
-        st.text_area(
-            "Votre réponse rédigée :",
-            key="rep_permis_b",
-            disabled=v_permis_b,
-            placeholder="Saisissez votre texte ici...",
-        )
+    # Affichage dynamique des 20 questions selectionnees
+    for idx, question_b in enumerate(liste_questions_session):
+        if isinstance(question_b, dict) and "question" in question_b:
+            # On affiche le numero de la question de 1 a 20
+            st.write(f"**Question {idx + 1} :** {question_b['question']}")
 
-    if st.checkbox("Afficher la réponse exacte", key="chk_permis_b"):
-        st.success(f"Réponse attendue : {fiche_b['reponse']}")
+            if question_b.get("type") == "choix":
+                st.selectbox(
+                    "Selectionnez votre reponse :",
+                    options=["Choisir une reponse..."] + question_b.get("choix", []),
+                    key=f"rep_permis_b_{idx}_Unique",
+                    disabled=v_permis_b,
+                    index=0,
+                )
+            else:
+                st.text_area(
+                    "Votre reponse redigee :",
+                    key=f"rep_permis_b_{idx}_Unique",
+                    disabled=v_permis_b,
+                    placeholder="Saisissez votre texte ici...",
+                )
+
+            # S'affiche uniquement si l'atelier est valide/verrouille
+            if v_permis_b:
+                if st.checkbox("Afficher la reponse exacte", key=f"chk_permis_b_{idx}_Unique"):
+                    st.success(f"Reponse attendue : {question_b.get('reponse')}")
+                
+            st.divider()
 
     st.write("---")
     st.subheader("Synthese et validation")
     
-    # Recupere le verrou directement depuis la memoire
-    v_ecrit_c = st.session_state.get("verrou_ecrite_c", False)
-    
-    # Recupere et extrait de maniere ultra-securisee le numero de fiche pour eviter le bug de la variable manquante
-    fiche_actuelle = st.session_state.get("fiche_ecrite_choisie_c", [])
-    if isinstance(fiche_actuelle, list) and len(fiche_actuelle) > 0:
-        num_fiche_e = fiche_actuelle[0].get("numero_fiche", "Non defini") if isinstance(fiche_actuelle[0], dict) else "Non defini"
-    elif isinstance(fiche_actuelle, dict):
-        num_fiche_e = fiche_actuelle.get("numero_fiche", "Non defini")
-    else:
-        num_fiche_e = "Non defini"
-
-    if not v_ecrit_c:
-        certif_ecrit_c = st.checkbox(
-            "Je certifie avoir repondu aux questions de cette fiche ecrite C.",
-            key=f"cert_ecrit_c_{num_fiche_e}"
+    if not v_permis_b:
+        certif_b = st.checkbox(
+            "Je certifie avoir repondu a la question de l'atelier Permis B.",
+            key="cert_permis_b"
         )
 
         if st.button(
-            "VALIDER ET VERROUILLER L'ATELIER ECRIT C",
-            key=f"val_ecrit_c_{num_fiche_e}",
-            use_container_width=True
+            "VALIDER ET VERROUILLER L'ATELIER PERMIS B",
+            key="val_permis_b",
+            use_container_width=True,
         ):
-            if not certif_ecrit_c:
+            if not certif_b:
                 st.warning("Veuillez cocher la case de certification avant.")
             else:
-                st.session_state.verrou_ecrite_c = True
+                st.session_state.verrou_permis_b = True
                 st.rerun()
     else:
-        # Recuperation de la liste des questions pour la notation automatique
-        if isinstance(fiche_actuelle, dict):
-            liste_questions_ecrites_c = [fiche_actuelle]
-        else:
-            liste_questions_ecrites_c = fiche_actuelle
-
-        # L'atelier est verrouille, on appelle la fonction automatique pour afficher l'identite et la note
+        # L'atelier est verrouille, on appelle la fonction automatique pour afficher l'identite et la note sur les 20 questions
         calculer_et_afficher_note(
-            liste_questions=liste_questions_ecrites_c, 
-            prefixe_session="rep_ecrite_c", 
-            num_fiche=num_fiche_e
+            liste_questions=liste_questions_session,  
+            prefixe_session="rep_permis_b",                       
+            num_fiche="Unique"                                    
         )
 
 with tab3:
