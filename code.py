@@ -957,16 +957,28 @@ with tab1:
     st.caption("Tirage au sort d'une question au hasard parmi la banque Permis AM.")
 
     if "fiche_choisie_permis_am" not in st.session_state:
-        # Si la banque est vide ou non valide, on crée instantanément une question de secours
-        if not banque_questions_permis_am or len(banque_questions_permis_am) == 0:
-            banque_questions_permis_am = [{
+        try:
+            # On tente de charger la banque directement
+            banque_locale_am = charger_banque_permis_am()
+            
+            # Si elle est vide ou mal formatée, on injecte la question de secours
+            if not banque_locale_am:
+                raise ValueError
+                
+            # On s'assure que les numéros sont bien injectés
+            for index, fiche in enumerate(banque_locale_am, start=1):
+                fiche["numero"] = index
+        except:
+            # Sécurité absolue si la fonction n'est pas accessible ou échoue
+            banque_locale_am = [{
                 "type": "choix",
                 "numero": 1,
                 "question": "Quelle est la vitesse maximale par construction d'un cyclomoteur de moins de 50 cm³ ?",
                 "choix": ["45 km/h", "50 km/h", "60 km/h"],
                 "reponse": "45 km/h"
             }]
-        st.session_state.fiche_choisie_permis_am = random.choice(banque_questions_permis_am)
+            
+        st.session_state.fiche_choisie_permis_am = random.choice(banque_locale_am)
 
     if st.button("TIRER UNE AUTRE QUESTION AU HASARD", key="btn_permis_am", disabled=v_permis_am, use_container_width=True):
         st.session_state.fiche_choisie_permis_am = random.choice(banque_questions_permis_am)
