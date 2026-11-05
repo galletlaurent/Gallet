@@ -5176,7 +5176,7 @@ with tab5:
 
     # Extraction securisee du numero de fiche
     if isinstance(questions_ce_a_afficher, list) and len(questions_ce_a_afficher) > 0:
-        num_fiche_o_ce = questions_ce_a_afficher.get("numero_fiche", "Non defini")
+        num_fiche_o_ce = questions_ce_a_afficher[0].get("numero_fiche", "Non defini")
     elif isinstance(questions_ce_a_afficher, dict):
         num_fiche_o_ce = questions_ce_a_afficher.get("numero_fiche", "Non defini")
     else:
