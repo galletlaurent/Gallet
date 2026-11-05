@@ -5032,48 +5032,49 @@ with tab3:
     st.header("Interrogation Orale - Permis C")
     st.caption("Tirage au sort d'une fiche complete parmi les 12 fiches.")
 
+    # Tirage au sort et normalisation immediate en memoire d'une liste de questions
     if "fiche_orale_choisie_c" not in st.session_state:
-        st.session_state.fiche_orale_choisie_c = random.choice(
-            banque_orales_permis_c
-        )
+        tirage = random.choice(banque_orales_permis_c)
+        st.session_state.fiche_orale_choisie_c = [tirage] if isinstance(tirage, dict) else tirage
 
     if st.button("TIRER UNE AUTRE FICHE ORALE AU HASARD", key="btn_orale_c"):
-        st.session_state.fiche_orale_choisie_c = random.choice(
-            banque_orales_permis_c
-        )
-        # Reinitialisation des notes de preparation pour toutes les questions de la fiche
-        for idx in range(10):
-            if f"rep_orale_c_{idx}" in st.session_state:
-                del st.session_state[f"rep_orale_c_{idx}"]
+        tirage = random.choice(banque_orales_permis_c)
+        st.session_state.fiche_orale_choisie_c = [tirage] if isinstance(tirage, dict) else tirage
+        # Nettoyage des anciennes reponses stockees
+        for key in list(st.session_state.keys()):
+            if key.startswith("rep_orale_c_"):
+                del st.session_state[key]
         st.rerun()
 
-    liste_questions_orales = st.session_state.fiche_orale_choisie_c
+    questions_a_afficher = st.session_state.fiche_orale_choisie_c
 
-    # Force le passage en liste si la fiche chargee est un dictionnaire unique
-    if isinstance(liste_questions_orales, dict):
-        questions_a_afficher = [liste_questions_orales]
-        num_fiche = liste_questions_orales.get("numero_fiche", "Non defini")
+    # Securite supplementaire : extraction du numero de fiche
+    if questions_a_afficher and isinstance(questions_a_afficher, list) and len(questions_a_afficher) > 0:
+        if isinstance(questions_a_afficher[0], dict):
+            num_fiche = questions_a_afficher[0].get("numero_fiche", "Non defini")
+        else:
+            num_fiche = "Non defini"
     else:
-        questions_a_afficher = liste_questions_orales
-        num_fiche = liste_questions_orales[0].get("numero_fiche", "Non defini") if liste_questions_orales else "Non defini"
+        num_fiche = "Non defini"
 
     st.markdown(f"### Fiche Orale Numero {num_fiche}")
     st.divider()
 
-    # Affichage securise de chaque question
+    # Affichage securise de chaque dictionnaire de question
     for idx, question_o in enumerate(questions_a_afficher):
-        st.write(f"**Question {idx + 1} :** {question_o['question']}")
-        
-        st.text_area(
-            "Saisissez vos notes de preparation :",
-            key=f"rep_orale_c_{idx}_{num_fiche}",
-            placeholder="Ecrivez ici vos arguments pour l'examen oral...",
-        )
-
-        if st.checkbox("Afficher le guide de correction", key=f"chk_oral_c_{idx}_{num_fiche}"):
-            st.success(f"Elements cles attendus : {question_o['reponse']}")
+        if isinstance(question_o, dict) and "question" in question_o:
+            st.write(f"**Question {idx + 1} :** {question_o['question']}")
             
-        st.divider()
+            st.text_area(
+                "Saisissez vos notes de preparation :",
+                key=f"rep_orale_c_{idx}_{num_fiche}",
+                placeholder="Ecrivez ici vos arguments pour l'examen oral...",
+            )
+
+            if st.checkbox("Afficher le guide de correction", key=f"chk_oral_c_{idx}_{num_fiche}"):
+                st.success(f"Elements cles attendus : {question_o['reponse']}")
+                
+            st.divider()
 
 
 # --- 5. CONFIGURATION DE L'ONGLET 4 : FICHES ÉCRITES PERMIS C (1 parmi 20) ---
