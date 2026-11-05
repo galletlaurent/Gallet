@@ -5335,19 +5335,24 @@ with tab5:
 
     fiche_brute_o_ce = st.session_state.fiche_orale_choisie_ce
 
-    if isinstance(liste_questions_ecrites_ce, list) and len(liste_questions_ecrites_ce) > 0:
-        if isinstance(liste_questions_ecrites_ce[0], dict):
-            num_fiche_e_ce = liste_questions_ecrites_ce[0].get("numero_fiche", "Non defini")
-        else:
-            num_fiche_e_ce = "Non defini"
-    elif isinstance(liste_questions_ecrites_ce, dict):
-        num_fiche_e_ce = liste_questions_ecrites_ce.get("numero_fiche", "Non defini")
+    # 1. Extraction et normalisation de la liste cachee dans la cle "questions"
+    if isinstance(fiche_brute_o_ce, dict) and "questions" in fiche_brute_o_ce:
+        liste_questions_orales_ce = fiche_brute_o_ce["questions"]
+        num_fiche_o_ce = fiche_brute_o_ce.get("numero_fiche", "Non defini")
+    elif isinstance(fiche_brute_o_ce, list) and len(fiche_brute_o_ce) > 0 and isinstance(fiche_brute_o_ce[0], dict):
+        liste_questions_orales_ce = fiche_brute_o_ce[0]["questions"] if "questions" in fiche_brute_o_ce[0] else fiche_brute_o_ce[0]
+        num_fiche_o_ce = fiche_brute_o_ce[0].get("numero_fiche", "Non defini")
+    elif isinstance(fiche_brute_o_ce, dict):
+        liste_questions_orales_ce = fiche_brute_o_ce.get("questions", [])
+        num_fiche_o_ce = fiche_brute_o_ce.get("numero_fiche", "Non defini")
     else:
-        num_fiche_e_ce = "Non defini"
+        liste_questions_orales_ce = fiche_brute_o_ce
+        num_fiche_o_ce = "Non defini"
 
-    st.markdown(f"### Fiche Ecrite Numero {num_fiche_e_ce}")
+    st.markdown(f"### Fiche Orale Numero {num_fiche_o_ce}")
     st.divider()
 
+    # 2. Affichage dynamique des questions orales
     for idx, question_o_ce in enumerate(liste_questions_orales_ce):
         if isinstance(question_o_ce, dict) and "question" in question_o_ce:
             st.write(f"**Question {idx + 1} :** {question_o_ce['question']}")
@@ -5395,8 +5400,9 @@ with tab5:
                 st.session_state.verrou_orale_ce = True
                 st.rerun()
     else:
-        # L'atelier est verrouille, on affiche le proces-verbal d'identite de validation
+        # L'atelier est verrouille, on affiche l'encadre officiel
         afficher_validation_orale(num_fiche=num_fiche_o_ce)
+
         
 
 with tab6:
