@@ -5426,8 +5426,12 @@ with tab6:
 
     liste_questions_ecrites_ce = st.session_state.fiche_ecrite_choisie_ce
     
+    # Extraction securisee du numero de fiche via le dictionnaire a l'index 0
     if isinstance(liste_questions_ecrites_ce, list) and len(liste_questions_ecrites_ce) > 0:
-        num_fiche_e_ce = liste_questions_ecrites_ce.get("numero_fiche", "Non defini")
+        if isinstance(liste_questions_ecrites_ce[0], dict):
+            num_fiche_e_ce = liste_questions_ecrites_ce[0].get("numero_fiche", "Non defini")
+        else:
+            num_fiche_e_ce = "Non defini"
     elif isinstance(liste_questions_ecrites_ce, dict):
         num_fiche_e_ce = liste_questions_ecrites_ce.get("numero_fiche", "Non defini")
     else:
@@ -5465,26 +5469,6 @@ with tab6:
 
     st.write("---")
     st.subheader("Synthese et validation")
-    certif_ecrit = st.checkbox(
-        "Je certifie avoir repondu aux questions de cette fiche ecrite CE.",
-        key="cert_ecrit_ce",
-        disabled=v_ecrit_ce,
-    )
-
-    if st.button(
-        "VALIDER ET VERROUILLER L'ATELIER ECRIT CE",
-        key="val_ecrit_ce",
-        disabled=v_ecrit_ce,
-        use_container_width=True,
-    ):
-        if not certif_ecrit:
-            st.warning("Veuillez cocher la case de certification avant.")
-        else:
-            st.session_state.verrou_ecrite_ce = True
-            st.rerun()
-
-    st.write("---")
-    st.subheader("Synthese et validation")
     
     if not v_ecrit_ce:
         certif_ecrit = st.checkbox(
@@ -5509,9 +5493,6 @@ with tab6:
             prefixe_session="rep_ecrite_ce", 
             num_fiche=num_fiche_e_ce
         )
-
-
-
 
 
 
