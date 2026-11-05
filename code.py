@@ -228,13 +228,26 @@ def charger_banque_permis_am():
         {"type": "choix", "question": "Le transport d'un passager sur un cyclomoteur est autorisé si :", "choix": ["Le véhicule est conçu pour (siège et repose-pieds)", "Le passager a moins de 10 ans", "Le trajet fait moins de 5 km"], "reponse": "Le véhicule est conçu pour (siège et repose-pieds)"},
         {"type": "ecrite", "question": "Que devez-vous faire en premier lieu en présence d'un panneau 'Stop' ?", "choix": [], "reponse": "Marquer un arrêt absolu à la limite de la ligne transversale et céder le passage."}
     ]
-    if len(banque_questions_permis_am) >= 19:
-        if "Une ligne continue au centre de la chaussée :" in banque_questions_permis_am[17].values():
-            banque_questions_permis_am[17]["choix"] = ["Interdit le franchissement et le chevauchement", "Permet le chevauchement", "N'a pas de règle particulière"]
+    if not banque_questions_permis_am or not isinstance(
+        banque_questions_permis_am, list
+    ):
+        banque_questions_permis_am = [{
+            "type": "choix",
+            "question": "Quelle est la vitesse maximale par construction d'un cyclomoteur de moins de 50 cm³ ?",
+            "choix": ["45 km/h", "50 km/h", "60 km/h"],
+            "reponse": "45 km/h",
+        }]
 
-    # Injection automatique des numéros pour éviter l'erreur d'affichage
+    # Correction de la structure et nettoyage de la coquille d'index repérée sur votre écran
     for index, fiche in enumerate(banque_questions_permis_am, start=1):
         fiche["numero"] = index
+        # Si la clé 'choix' est absente ou mal placée pour un type choix, on initialise une liste propre
+        if fiche["type"] == "choix" and "choix" not in fiche:
+            fiche["choix"] = [
+                "Interdit le franchissement",
+                "Permet le chevauchement",
+                "Aucune règle",
+            ]
     
 def charger_banque_permis_b():
     """Retourne la banque contenant 20 questions pour le Permis B."""
@@ -260,9 +273,25 @@ def charger_banque_permis_b():
         {"type": "choix", "question": "Sur une route à double sens sans séparateur central, la vitesse maximale générale est fixée à :", "choix": ["80 km/h", "90 km/h", "70 km/h"], "reponse": "80 km/h"},
         {"type": "ecrite", "question": "Quel est le comportement attendu à l'intersection d'un feu jaune clignotant en bas ?", "choix": [], "reponse": "Passer avec prudence en appliquant les règles de priorité habituelles ou la signalisation associée."}
     ]
-    banque_questions_permis_b = charger_banque_permis_b()
+    # Sécurité si la fonction retourne du vide ou n'est pas une liste valide
+    if not banque_questions_permis_b or not isinstance(
+        banque_questions_permis_b, list
+    ):
+        banque_questions_permis_b = [{
+            "type": "choix",
+            "question": "Quelle est la vitesse maximale autorisée sur autoroute par temps sec pour un jeune conducteur ?",
+            "choix": ["110 km/h", "130 km/h", "100 km/h"],
+            "reponse": "110 km/h",
+        }]
+
+    # Ajout dynamique de la clé numéro et nettoyage des structures
     for index, fiche in enumerate(banque_questions_permis_b, start=1):
         fiche["numero"] = index
+        # Sécurité pour s'assurer que chaque QCM possède bien une liste de choix exploitable
+        if fiche["type"] == "choix" and (
+            "choix" not in fiche or not fiche["choix"]
+        ):
+            fiche["choix"] = ["Option A", "Option B", "Option C"]
 
 def charger_ecrite_permis_c_fiche_1():
     return {
