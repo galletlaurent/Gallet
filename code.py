@@ -5077,7 +5077,6 @@ with tab3:
             st.divider()
 
 
-# --- 5. CONFIGURATION DE L'ONGLET 4 : FICHES ÉCRITES PERMIS C (1 parmi 20) ---
 with tab4:
     st.header("Interrogation Ecrite - Permis C")
     st.caption("Tirage au sort d'une fiche de questions parmi les 20 fiches.")
@@ -5091,41 +5090,52 @@ with tab4:
         st.session_state.fiche_ecrite_choisie_c = random.choice(
             banque_ecrites_permis_c
         )
-        # Reinitialisation de toutes les reponses de la session pour la nouvelle fiche
-        for idx in range(10):
-            if f"rep_ecrite_c_{idx}" in st.session_state:
-                del st.session_state[f"rep_ecrite_c_{idx}"]
+        # Reinitialisation propre de toutes les reponses de la session pour la nouvelle fiche
+        for key in list(st.session_state.keys()):
+            if key.startswith("rep_ecrite_c_"):
+                del st.session_state[key]
         st.rerun()
 
-    liste_questions_ecrites = st.session_state.fiche_ecrite_choisie_c
+    fiche_brute = st.session_state.fiche_ecrite_choisie_c
     
-    # Recuperation du numero de fiche via la premiere question de la liste
-    num_fiche_e = liste_questions_ecrites[0].get("numero_fiche", "Non defini") if liste_questions_ecrites else "Non defini"
+    # Normalisation immediate pour forcer l'utilisation d'une liste de dictionnaires
+    if isinstance(fiche_brute, dict):
+        liste_questions_ecrites = [fiche_brute]
+    else:
+        liste_questions_ecrites = fiche_brute
+
+    # Recuperation du numero de fiche de facon totalement securisee via le premier element
+    if liste_questions_ecrites and len(liste_questions_ecrites) > 0:
+        num_fiche_e = liste_questions_ecrites[0].get("numero_fiche", "Non defini")
+    else:
+        num_fiche_e = "Non defini"
+        
     st.markdown(f"### Fiche Ecrite Numero {num_fiche_e}")
     st.divider()
 
-    # Parcours et affichage des 10 questions de la fiche tiree au sort
+    # Parcours et affichage dynamique des questions de la fiche tiree au sort
     for idx, question_e in enumerate(liste_questions_ecrites):
-        st.write(f"**Question {idx + 1} :** {question_e['question']}")
+        if isinstance(question_e, dict) and "question" in question_e:
+            st.write(f"**Question {idx + 1} :** {question_e['question']}")
 
-        if question_e["type"] == "choix":
-            st.selectbox(
-                "Selectionnez votre reponse :",
-                options=["Choisir une reponse..."] + question_e["choix"],
-                key=f"rep_ecrite_c_{idx}",
-                index=0,
-            )
-        else:
-            st.text_area(
-                "Votre reponse redigee :",
-                key=f"rep_ecrite_c_{idx}",
-                placeholder="Saisissez votre texte ici...",
-            )
+            if question_e.get("type") == "choix":
+                st.selectbox(
+                    "Selectionnez votre reponse :",
+                    options=["Choisir une reponse..."] + question_e.get("choix", []),
+                    key=f"rep_ecrite_c_{idx}_{num_fiche_e}",
+                    index=0,
+                )
+            else:
+                st.text_area(
+                    "Votre reponse redigee :",
+                    key=f"rep_ecrite_c_{idx}_{num_fiche_e}",
+                    placeholder="Saisissez votre texte ici...",
+                )
 
-        if st.checkbox("Afficher la reponse exacte", key=f"chk_ecrit_c_{idx}"):
-            st.success(f"Reponse attendue : {question_e['reponse']}")
-            
-        st.divider()
+            if st.checkbox("Afficher la reponse exacte", key=f"chk_ecrit_c_{idx}_{num_fiche_e}"):
+                st.success(f"Reponse attendue : {question_e.get('reponse')}")
+                
+            st.divider()
 
 with tab5:
     if "verrou_orale_ce" not in st.session_state:
