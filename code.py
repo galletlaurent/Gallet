@@ -5242,19 +5242,21 @@ with tab2:
                     index=0,
                 )
             with col_image:
-                # Récupération sécurisée du numéro réel de la question (entre 1 et 200)
+                # Recuperation securisee du numero reel de la question (entre 1 et 200)
                 if isinstance(question_b, dict) and "numero" in question_b:
                     id_reel = question_b["numero"]
                 else:
                     id_reel = idx + 1
                 
-                # Ciblage du chemin de fichier exact
-                chemin_image = f"image code/question_{id_reel}.jpg"
+                # Nom du fichier image place directement a la racine
+                nom_image = f"question_{id_reel}.jpg"
 
-                try:
-                    st.image(chemin_image, use_container_width=True)
-                except Exception:
-                    st.caption(f"Image manquante: question_{id_reel}.jpg")
+                # Votre structure habituelle de verification
+                import os
+                if os.path.exists(nom_image):
+                    st.image(nom_image, use_container_width=True)
+                else:
+                    st.caption(f"Image manquante: {nom_image}")
 
             # --- ZONE DE CORRECTION ET DIVISEUR ---
             if v_permis_b:
