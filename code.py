@@ -5028,13 +5028,11 @@ with tab3:
     st.header("Interrogation Orale - Permis C")
     st.caption("Tirage au sort d'une fiche complete parmi les 12 fiches.")
 
-    # Tirage au sort initial
     if "fiche_orale_choisie_c" not in st.session_state:
         st.session_state.fiche_orale_choisie_c = random.choice(banque_orales_permis_c)
 
     if st.button("TIRER UNE AUTRE FICHE ORALE AU HASARD", key="btn_orale_c"):
         st.session_state.fiche_orale_choisie_c = random.choice(banque_orales_permis_c)
-        # Nettoyage des anciennes reponses stockees en session
         for key in list(st.session_state.keys()):
             if key.startswith("rep_orale_c_"):
                 del st.session_state[key]
@@ -5042,16 +5040,16 @@ with tab3:
 
     fiche_brute_orale = st.session_state.fiche_orale_choisie_c
 
-    # 1. Normalisation et deballage si liste imbriquee [[...]]
-    if isinstance(fiche_brute_orale, list) and len(fiche_brute_orale) > 0 and isinstance(fiche_brute_orale[0], list):
-        questions_a_afficher = fiche_brute_orale[0]
+    # Traitement identique au mecanisme d'indexation pour normaliser en liste
+    if isinstance(fiche_brute_orale, list):
+        questions_a_afficher = fiche_brute_orale
     elif isinstance(fiche_brute_orale, dict):
         questions_a_afficher = [fiche_brute_orale]
     else:
         questions_a_afficher = fiche_brute_orale
 
-    # 2. Extraction du numero de la fiche orale via le premier dictionnaire reel
-    if isinstance(questions_a_afficher, list) and len(questions_a_afficher) > 0 and isinstance(questions_a_afficher[0], dict):
+    # Extraction securisee du numero de fiche basee sur le dictionnaire de la question
+    if isinstance(questions_a_afficher, list) and len(questions_a_afficher) > 0:
         num_fiche = questions_a_afficher[0].get("numero_fiche", "Non defini")
     elif isinstance(questions_a_afficher, dict):
         num_fiche = questions_a_afficher.get("numero_fiche", "Non defini")
@@ -5061,7 +5059,7 @@ with tab3:
     st.markdown(f"### Fiche Orale Numero {num_fiche}")
     st.divider()
 
-    # 3. Affichage dynamique de toutes les questions de la fiche
+    # Parcours des fiches orales C
     for idx, question_o in enumerate(questions_a_afficher):
         if isinstance(question_o, dict) and "question" in question_o:
             st.write(f"**Question {idx + 1} :** {question_o['question']}")
@@ -5076,6 +5074,7 @@ with tab3:
                 st.success(f"Elements cles attendus : {question_o.get('reponse', 'Non defini')}")
                 
             st.divider()
+
     st.write("---")
     st.subheader("Synthese et validation")
     certif_oral_c = st.checkbox(
