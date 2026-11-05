@@ -5240,16 +5240,20 @@ with tab2:
                     disabled=v_permis_b,
                     index=0,
                 )
-
-            # --- COLONNE DE DROITE : L'IMAGE JPG ---
             with col_image:
-                id_question = question_b.get("numero", idx + 1)
-                chemin_image = f"image code/question_{id_question}.jpg"
+                # Récupération sécurisée du numéro réel de la question (entre 1 et 200)
+                if isinstance(question_b, dict) and "numero" in question_b:
+                    id_reel = question_b["numero"]
+                else:
+                    id_reel = idx + 1
+                
+                # Ciblage du chemin de fichier exact
+                chemin_image = f"image code/question_{id_reel}.jpg"
 
                 try:
                     st.image(chemin_image, use_container_width=True)
                 except Exception:
-                    st.caption(f"Image manquante: question_{id_question}.jpg")
+                    st.caption(f"Image manquante: question_{id_reel}.jpg")
 
             # --- ZONE DE CORRECTION ET DIVISEUR ---
             if v_permis_b:
