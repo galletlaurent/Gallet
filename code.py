@@ -4797,6 +4797,11 @@ for index, fiche_ce in enumerate(banque_orales_permis_ce, start=1):
             question["numero_fiche"] = index
     elif isinstance(fiche_ce, dict):
         fiche_ce["numero_fiche"] = index
+
+
+
+
+        
 with tab0:
     st.subheader("Identification de l'élève")
     st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
