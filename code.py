@@ -543,11 +543,10 @@ banque_questions_ecrites = [
     charger_ecrite_permis_c_fiche_17(),
     charger_ecrite_permis_c_fiche_18(),
     charger_ecrite_permis_c_fiche_19(),
-    charger_ecrite_permis_c_fiche_20()
+    charger_ecrite_permis_c_fiche_20(),
 ]
 
-# Assemblage automatique des 12 thèmes oraux
-banque_questions_orales = [
+banque_orales_permis_c = [
     charger_orale_permis_c_fiche_1(),
     charger_orale_permis_c_fiche_2(),
     charger_orale_permis_c_fiche_3(),
@@ -559,9 +558,8 @@ banque_questions_orales = [
     charger_orale_permis_c_fiche_9(),
     charger_orale_permis_c_fiche_10(),
     charger_orale_permis_c_fiche_11(),
-    charger_orale_permis_c_fiche_12()
+    charger_orale_permis_c_fiche_12(),
 ]
-
 def charger_ecrite_permis_ce_fiche_1():
     return {
         "type": "choix",
