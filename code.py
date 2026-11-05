@@ -5076,7 +5076,22 @@ with tab3:
                 st.success(f"Elements cles attendus : {question_o.get('reponse', 'Non defini')}")
                 
             st.divider()
+    st.write("---")
+    st.subheader("Synthese et validation")
+    certif_oral_c = st.checkbox(
+        "Je certifie avoir termine la preparation de cette fiche orale C.",
+        key=f"cert_oral_c_{num_fiche}"
+    )
 
+    if st.button(
+        "VALIDER ET VERROUILLER L'ATELIER ORAL C",
+        key=f"val_oral_c_{num_fiche}",
+        use_container_width=True
+    ):
+        if not certif_oral_c:
+            st.warning("Veuillez cocher la case de certification avant.")
+        else:
+            st.success("Atelier oral C valide avec succes.")
 
 with tab4:
     st.header("Interrogation Ecrite - Permis C")
@@ -5140,6 +5155,25 @@ with tab4:
                 st.success(f"Reponse attendue : {question_e_c.get('reponse')}")
                 
             st.divider()
+    st.write("---")
+    st.subheader("Synthese et validation")
+    certif_ecrit_c = st.checkbox(
+        "Je certifie avoir repondu aux questions de cette fiche ecrite C.",
+        key=f"cert_ecrit_c_{num_fiche_e}"
+    )
+
+    if st.button(
+        "VALIDER ET VERROUILLER L'ATELIER ECRIT C",
+        key=f"val_ecrit_c_{num_fiche_e}",
+        use_container_width=True
+    ):
+        if not certif_ecrit_c:
+            st.warning("Veuillez cocher la case de certification avant.")
+        else:
+            st.success("Atelier ecrit C valide avec succes.")
+
+
+
 
 with tab5:
     if "verrou_orale_ce" not in st.session_state:
