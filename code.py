@@ -3,7 +3,7 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="Application Permis C - Revisions",
+    page_title="Application Permis - Revisions",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -22,7 +22,7 @@ import streamlit.components.v1 as components
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
-st.title("Application Permis C - Revisions")
+st.title("Application Permis - Revisions")
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
@@ -203,18 +203,6 @@ tab3 = onglets[3]
 tab4 = onglets[4] 
 tab5 = onglets[5]
 tab6 = onglets[6] 
-
-
-# --- 4. DÉFINITION ET CONFIGURATION DES ONGLETS STREAMLIT ---
-onglets = st.tabs([
-    "Identification",
-    "Permis AM",
-    "Permis B",
-    "Fiches orales permis C",
-    "Fiche écrites permis C",  # Index 4
-    "Fiches orales permis CE",
-    "Fiche écrites permis CE",
-])
 
 def charger_banque_permis_am():
     """Retourne la banque contenant 20 questions pour le Permis AM."""
