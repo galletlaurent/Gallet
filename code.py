@@ -5156,24 +5156,30 @@ with tab5:
         st.rerun()
 
     liste_questions_orales_ce = st.session_state.fiche_orale_choisie_ce
-    
-    # Recupere le numero de la fiche a partir du parametre injecte
-    num_fiche_o_ce = liste_questions_orales_ce.get("numero_fiche", "Non defini") if liste_questions_orales_ce else "Non defini"
+
+    # Force le passage en liste si la fiche chargee est un dictionnaire unique
+    if isinstance(liste_questions_orales_ce, dict):
+        questions_ce_a_afficher = [liste_questions_orales_ce]
+        num_fiche_o_ce = liste_questions_orales_ce.get("numero_fiche", "Non defini")
+    else:
+        questions_ce_a_afficher = liste_questions_orales_ce
+        num_fiche_o_ce = liste_questions_orales_ce[0].get("numero_fiche", "Non defini") if liste_questions_orales_ce else "Non defini"
+
     st.markdown(f"### Fiche Orale Numero {num_fiche_o_ce}")
     st.divider()
 
-    # Affichage de chaque question contenue dans la fiche tiree au sort
-    for idx, question_o_ce in enumerate(liste_questions_orales_ce):
+    # Affichage securise de chaque question
+    for idx, question_o_ce in enumerate(questions_ce_a_afficher):
         st.write(f"**Question {idx + 1} :** {question_o_ce['question']}")
 
         st.text_area(
             "Saisissez vos notes de preparation :",
-            key=f"rep_orale_ce_{idx}",
+            key=f"rep_orale_ce_{idx}_{num_fiche_o_ce}",
             disabled=v_oral_ce,
             placeholder="Ecrivez ici vos arguments pour l'examen oral...",
         )
 
-        if st.checkbox("Afficher le guide de correction complet", key=f"chk_oral_ce_{idx}"):
+        if st.checkbox("Afficher le guide de correction complet", key=f"chk_oral_ce_{idx}_{num_fiche_o_ce}"):
             st.success(f"Elements cles attendus : {question_o_ce['reponse']}")
             
         st.divider()
