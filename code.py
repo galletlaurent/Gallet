@@ -1,295 +1,705 @@
+# -*- coding: utf-8 -*-
+
 import streamlit as st
-import random
 
-# CONFIGURATION DE LA PAGE
-st.set_page_config(page_title="Permis C - Revisions", layout="centered")
-
-# --- 1. BASE DE DONNEES DES FICHES ECRITES ---
-SERIES_ECRITES = {
-    "Fiche Ecrite 1 : Situations degradees et accidents": [
-        {"q": "A l'approche d'un accident, quel feu devez-vous actionner immediatement ?", "r": "Les feux de detresse (warning)"},
-        {"q": "Quelle est la distance minimale pour placer le triangle de pre-signalisation ?", "r": "30 metres"},
-        {"q": "Quel est le numero d'urgence europeen unique gratuit ?", "r": "112"},
-        {"q": "Peut-on deplacer un blesse en cas de danger reel et imminent ?", "r": "Oui"},
-        {"q": "Quel est le delai maximal d'envoi d'un constat amiable a l'assureur ?", "r": "5 jours ouvres"},
-        {"q": "Le gilet de haute visibilite doit-il etre stocke dans la cabine ou dans le coffre ?", "r": "Dans la cabine (a portee de main)"},
-        {"q": "Quelle couleur possedent les bornes d'appel d'urgence sur autoroute ?", "r": "Orange"},
-        {"q": "Un extincteur a poudre est-il adapte pour un feu de carburant ?", "r": "Oui"},
-        {"q": "Peut-on donner a boire a un blesse qui a soif ?", "r": "Non (jamais)"},
-        {"q": "Sur autoroute, doit-on attendre les secours derriere la glissiere de securite ?", "r": "Oui"},
-    ],
-    "Fiche Ecrite 2 : Le conducteur": [
-        {"q": "Quel est le delai maximal de validite de la visite medicale pour un conducteur de moins de 60 ans ?", "r": "5 ans"},
-        {"q": "Combien d'annees dure la validite d'une FIMO ?", "r": "Elle est acquise a vie (mais necessite une FCO tous les 5 ans)"},
-        {"q": "Quelle est la periodicite obligatoire de la FCO ?", "r": "Tous les 5 ans"},
-        {"q": "Le permis C autorise-t-il la conduite d'un vehicule de transport de personnes ?", "r": "Non"},
-        {"q": "Quel document atteste de la reussite a la visite medicale ?", "r": "Le certificat medical de l'agrege prefectoral (cerfa)"},
-        {"q": "Le non-respect de la visite medicale rend-il le permis invalide ?", "r": "Oui"},
-        {"q": "Le code de la route s'applique-t-il aussi dans les cours d'usines de transport ?", "r": "Oui (si ouvertes a la circulation publique)"},
-        {"q": "Quel age minimal faut-il avoir pour passer le permis C sans diplome de conducteur ?", "r": "21 ans"},
-        {"q": "Un conducteur fatigue met-il plus de temps a reagir ?", "r": "Oui"},
-        {"q": "Quel type de sanction risque un conducteur roulant sous l'emprise de stupéfiants ?", "r": "Une sanction delictuelle (prison, amende, retrait de permis)"},
-    ],
-}
-
-# --- 2. FONCTION DE GENERATION DU COMPTE-RENDU HTML ---
-def generer_html_correction(nom_fiche, questions, reponses_utilisateur, score):
-    statut_examen = "REUSSI" if score >= 8 else "ECHEC"
-    couleur_statut = "#2ecc71" if score >= 8 else "#e74c3c"
-    
-    html = f"""
-    <!DOCTYPE html>
-    <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <title>Correction - {nom_fiche}</title>
-        <style>
-            body {{ font-family: Arial, sans-serif; margin: 40px; background-color: #f9f9f9; color: #333; }}
-            .container {{ max-width: 800px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
-            h1 {{ color: #2c3e50; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; }}
-            .vignette-note {{ background-color: {couleur_statut}; color: white; padding: 15px; border-radius: 5px; font-size: 20px; font-weight: bold; margin-bottom: 20px; text-align: center; }}
-            .bloc-question {{ margin-bottom: 20px; padding: 15px; border-left: 5px solid #34495e; background-color: #f8f9fa; }}
-            .correct {{ border-left-color: #2ecc71; background-color: #eafaf1; }}
-            .incorrect {{ border-left-color: #e74c3c; background-color: #fdedec; }}
-            .label {{ font-weight: bold; color: #7f8c8d; }}
-            .reponse {{ margin-top: 5px; font-size: 15px; }}
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>Correction : {nom_fiche}</h1>
-            <div class="vignette-note">
-                Note : {score} / 10 ({statut_examen})
-            </div>
-    """
-    
-    for idx, item in enumerate(questions):
-        valide = reponses_utilisateur.get(idx, False)
-        classe_css = "correct" if valide else "incorrect"
-        statut_texte = "Valide" if valide else "Non valide / Faux"
-        
-        html += f"""
-            <div class="bloc-question {classe_css}">
-                <p><strong>Question {idx+1} :</strong> {item['q']}</p>
-                <p class="reponse"><span class="label">Votre evaluation :</span> {statut_texte}</p>
-                <p class="reponse"><span class="label">Reponse officielle :</span> {item['r']}</p>
-            </div>
-        """
-        
-    html += """
-        </div>
-    </body>
-    </html>
-    """
-    return html
-
-# --- 3. INTERFACE ET RENDU ---
-st.title("Entrainement Permis C (Poids Lourd)")
-st.write("Entrainez-vous aux epreuves theoriques du plateau.")
-
-st.header("Questions Ecrites (Tirage par fiche)")
-st.write("L'examen comporte 10 questions liees a une fiche. Cochez les cases si votre reponse est correcte.")
-
-# AJOUT D'UNE CLE UNIQUE ICI POUR PREVENIR LE CRASH
-mode_selection = st.radio(
-    "Mode de selection de la fiche :", 
-    ["Selectionner manuellement", "Tirer au sort au hasard"],
-    key="mode_selection_global"
+st.set_page_config(
+    page_title="Application Permis C - Revisions",
+    layout="wide",
+    initial_sidebar_state="collapsed",
 )
+# Vos importations d'origine propres et saines se placent juste en dessous
+from datetime import datetime
+import math
+import os
+import random
+import time
+import matplotlib.patches as patches
+import matplotlib.pyplot as plt
+import numpy as np
+import plotly.graph_objects as go
+import pandas as pd
+import streamlit.components.v1 as components
+# =============================================================================
+# RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
+# =============================================================================
+st.title("Application Permis C - Revisions")
+st.markdown("---")
+st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
-liste_fiches = list(SERIES_ECRITES.keys())
 
-# Gestion de l'affectation de la fiche
-if mode_selection == "Selectionner manuellement":
-    fiche_choisie_ecrite = st.selectbox("Choisissez la fiche ecrite a reviser :", liste_fiches, key="select_fiche_manuelle")
-    st.session_state.serie_choisie = fiche_choisie_ecrite
-else:
-    if st.button("Tirer une fiche ecrite au sort", key="btn_tirage_aleatoire") or "serie_choisie" not in st.session_state:
-        st.session_state.serie_choisie = random.choice(liste_fiches)
+if "identifie" not in st.session_state:
+    st.session_state.identifie = False
+if "nom_var" not in st.session_state:
+    st.session_state.nom_var = ""
+if "prenom_var" not in st.session_state:
+    st.session_state.prenom_var = ""
+if "classe_var" not in st.session_state:
+    st.session_state.classe_var = ""
+if "verrouille" not in st.session_state:
+    st.session_state.verrouille = False
+BASE_DIR = os.path.abspath(".")
 
-# Affichage des questions
-if "serie_choisie" in st.session_state and st.session_state.serie_choisie in SERIES_ECRITES:
-    nom_serie = st.session_state.serie_choisie
-    st.subheader(nom_serie)
-    questions = SERIES_ECRITES[nom_serie]
-    
-    reponses_utilisateur = {}
-        
-    for idx, item in enumerate(questions):
-        st.markdown(f"**Question {idx+1} :** {item['q']}")
-        
-        with st.expander("Voir la reponse officielle"):
-            st.info(f"Reponse : {item['r']}")
-            
-        cle_case = f"q_{nom_serie}_{idx}"
-        valeur_case = st.checkbox("Ma reponse est correcte", key=cle_case)
-        reponses_utilisateur[idx] = valeur_case
-        st.write("---")
+def charger_image(nom_fichier):
+    nom_fichier = os.path.basename(nom_fichier)
+    # Python scanne automatiquement tous les dossiers présents à côté du script
+    for element in os.listdir(BASE_DIR):
+        chemin_dossier = os.path.join(BASE_DIR, element)
+        if os.path.isdir(chemin_dossier) and element.startswith("image"):
+            chemin_image = os.path.join(chemin_dossier, nom_fichier)
+            if os.path.exists(chemin_image):
+                try:
+                    return Image.open(chemin_image)
+                except Exception:
+                    pass
+                        
+    # Sécurité si l'application est déjà masquée dans fichiers_systemes
+    chemin_secours = os.path.join(BASE_DIR, "image", nom_fichier)
+    if os.path.exists(chemin_secours):
+        try: 
+            return Image.open(chemin_secours)
+        except Exception: 
+            pass
+    return None
 
-    score_final = sum(1 for v in reponses_utilisateur.values() if v)
-    
-    st.subheader(f"Votre Note : {score_final} / 10")
-    if score_final >= 8:
-        st.success("Examen Reussi (Minimum 8/10 requis)")
+# --- TOUS LES CORRECTIFS SÉCURISÉS (RERUN, COLUMNS, CONTAINER, IMAGE) ---
+
+# 1. Sauvegarde STRICTE des fonctions d'origine AVANT modification
+_vrai_st_rerun = st.rerun if hasattr(st, "rerun") else (st.experimental_rerun if hasattr(st, "experimental_rerun") else None)
+_vrai_st_image = st.image
+_vrai_st_columns = st.columns
+_vrai_st_container = st.container
+
+# 2. Correctif pour st.rerun
+def safe_rerun():
+    if _vrai_st_rerun is not None:
+        try: 
+            _vrai_st_rerun()
+        except Exception:
+            from streamlit.runtime.scriptrunner import RerunData, RerunException
+            raise RerunException(RerunData())
+st.rerun = safe_rerun
+
+import matplotlib as mpl
+mpl.rcParams['text.usetex'] = False
+mpl.rcParams['mathtext.default'] = 'regular'
+
+# 3. Correctif pour st.image (Résolution de la boucle infinie)
+def safe_image(image, *args, **kwargs):
+    if "use_container_width" in kwargs:
+        kwargs["use_column_width"] = kwargs.pop("use_container_width")
+    if isinstance(image, str) and not image.startswith(("http://", "https://", "data:image")):
+        nom_fichier = os.path.basename(image)
+        img_pil = charger_image(nom_fichier)
+        if img_pil is not None: 
+            image = img_pil
+    return _vrai_st_image(image, *args, **kwargs)  # Utilise la vraie fonction d'origine
+st.image = safe_image
+
+# 4. Interception pour st.columns (vertical_alignment)
+def safe_columns(*args, **kwargs):
+    if "vertical_alignment" in kwargs:
+        kwargs.pop("vertical_alignment")
+    return _vrai_st_columns(*args, **kwargs)
+st.columns = safe_columns
+
+# 5. Interception pour st.container (border)
+def safe_container(*args, **kwargs):
+    if "border" in kwargs:
+        kwargs.pop("border")
+    return _vrai_st_container(*args, **kwargs)
+st.container = safe_container
+
+# 6. Rétrocompatibilité st.toggle -> st.checkbox
+if not hasattr(st, "toggle"):
+    def safe_toggle(label, value=False, key=None, **kwargs):
+        return st.checkbox(label, value=value, key=key)
+    st.toggle = safe_toggle
+
+# 7. Rétrocompatibilité st.dialog
+if not hasattr(st, "dialog"):
+    def safe_dialog(*args, **kwargs):
+        return st.container()
+    st.dialog = safe_dialog
+
+# 8. Décorateur pour sécuriser l'état des widgets (Session State)
+def securiser_widget_factory(fonction_origine):
+    def safe_widget(*args, **kwargs):
+        cle = kwargs.get("key")
+        if cle and cle in st.session_state:
+            kwargs.pop("value", None)
+        return fonction_origine(*args, **kwargs)
+    return safe_widget
+
+
+
+# =============================================================================
+# FONCTIONS GLOBALES DE VALIDATION DE L'IDENTITÉ
+# =============================================================================
+def valider_saisie():
+    """Vérifie les informations d'identification saisies par l'élève,
+
+    les normalise en mémoire et verrouille définitivement le formulaire.
+    """
+    # Nettoyage et normalisation des textes saisis en session
+    nom_clean = str(st.session_state.get("nom_var", "")).strip().upper()
+    prenom_clean = str(st.session_state.get("prenom_var", "")).strip().capitalize()
+    classe_clean = str(st.session_state.get("classe_var", "")).strip().upper()
+
+    # Filtre de sécurité : empêche de valider si un champ est vide ou non modifié
+    if not nom_clean or not prenom_clean or not classe_clean or nom_clean in ["NOM", "ELEVE", "INCONNU"]:
+        st.error("Erreur : Veuillez compléter entièrement vos données d'identification avant de valider.")
+        st.session_state.verrouille = False
     else:
-        st.error("Examen Echoue (Minimum 8/10 requis)")
+        # Enregistrement des valeurs propres et verrouillage de la session
+        st.session_state.nom_var = nom_clean
+        st.session_state.prenom_var = prenom_clean
+        st.session_state.classe_var = classe_clean
+        st.session_state.verrouille = True
         
-    donnees_html = generer_html_correction(
-        nom_serie, 
-        questions, 
-        reponses_utilisateur, 
-        score_final
-    )
-    
-    st.download_button(
-        label="Telecharger le compte-rendu HTML",
-        data=donnees_html,
-        file_name=f"correction_{nom_serie.replace(' ', '_')}.html",
-        mime="text/html",
-        key="btn_download_html"
-    )
+        st.success(f"Identification réussie pour : {nom_clean} {prenom_clean} ({classe_clean}).")
+        st.rerun()
+
+def valider_session():
+    """Fonction passerelle de sécurité pour l'ouverture des droits d'ateliers."""
+    valider_saisie()
+
+# =============================================================================
+# PRÉPARATION DU NOM DE FICHIER ET CONFIGURATION DES ONGLETS
+# =============================================================================
+def preparer_nom_fichier(nom_onglet):
+    """Génère un nom de fichier standardisé et unique pour l'export des rapports."""
+    from datetime import datetime
+
+    # Récupération et formatage des chaînes sans espaces
+    nom_propre = str(st.session_state.get("nom_var", "ELEVE")).replace(" ", "_")
+    prenom_propre = str(st.session_state.get("prenom_var", "PRENOM")).replace(" ", "_")
+    classe_propre = str(st.session_state.get("classe_var", "GROUPE")).replace(" ", "_")
+
+    # Horodatage dynamique à la seconde près
+    maintenant = datetime.now()
+    heure_actuelle = maintenant.strftime("%H-%M-%S")
+    date_texte = maintenant.strftime("%Y-%m-%d_%Hh%M")
+
+    # Assemblage de la chaîne finale pour le téléchargement
+    return f"{nom_propre}_{prenom_propre}_{classe_propre}_{date_texte}_{heure_actuelle}_{nom_onglet}.txt"
 
 
-# Generation automatique pour les fiches 4 a 20 afin de couvrir les 200 questions officielles
-themes_officiels = [
-    "Reglementation sociale europeenne", "Regles du transport", "Masses et dimensions",
-    "Regles de circulation specifiques", "Mecanique et entretien", "Securite et environnement"
+onglets = st.tabs([
+    "Identification",
+    "Permis AM",
+    "Permis B",
+    "Fiches orales permis C",
+    "Fiche écrites permis C",
+    "Fiches orales permis CE",
+    "Fiche écrites permis CE",
+
+])
+
+tab0 = onglets[0] 
+tab1 = onglets[1] 
+tab2 = onglets[2] 
+tab3 = onglets[3] 
+tab4 = onglets[4] 
+tab5 = onglets[5]
+tab6 = onglets[6] 
+
+
+banque_questions = [
+    {
+        "question": "À quoi sert le contrôle des pneumatiques avant le départ ?",
+        "type": "texte",
+    },
+    {
+        "question": "Un voyant rouge de pression d'huile s'allume. Que faites-vous ?",
+        "type": "choix",
+        "choix": [
+            "Je continue jusqu'à destination",
+            "Je m'arrête dès que possible en sécurité",
+            "J'accélère pour atteindre un garage",
+            "J'ignore le voyant",
+        ],
+    },
+    {
+        "question": "Pourquoi faut-il répartir correctement le chargement ?",
+        "type": "texte",
+    },
+    {
+        "question": "Que peut provoquer un chargement mal arrimé ?",
+        "type": "choix",
+        "choix": [
+            "Un déplacement de la charge",
+            "Une baisse automatique de consommation",
+            "Une meilleure visibilité",
+            "Aucun effet sur la conduite",
+        ],
+    },
+    {
+        "question": "Que vérifiez-vous avant d'atteler une remorque ?",
+        "type": "texte",
+    },
+    {
+        "question": "Pourquoi faut-il contrôler les angles morts ?",
+        "type": "texte",
+    },
+    {
+        "question": "Que faire en cas de fatigue importante au volant ?",
+        "type": "choix",
+        "choix": [
+            "Faire une pause dans un endroit sûr",
+            "Rouler plus vite pour finir le trajet",
+            "Ouvrir la fenêtre et continuer",
+            "Ignorer la fatigue",
+        ],
+    },
+    {
+        "question": "Pourquoi adapter sa vitesse avant un virage ?",
+        "type": "choix",
+        "choix": [
+            "Pour limiter le risque de déport ou de renversement",
+            "Pour éviter d'utiliser les rétroviseurs",
+            "Pour augmenter la charge utile",
+            "Pour économiser les clignotants",
+        ],
+    },
+    {
+        "question": "Que devez-vous faire avant de quitter le véhicule à l'arrêt ?",
+        "type": "texte",
+    },
+    {
+        "question": "Pourquoi contrôler le fonctionnement des feux avant un trajet ?",
+        "type": "texte",
+    },
+    {
+        "question": "Que faire si un pneu semble endommagé avant le départ ?",
+        "type": "choix",
+        "choix": [
+            "Faire contrôler le pneu avant de partir",
+            "Augmenter la vitesse",
+            "Le regonfler sans vérifier et partir",
+            "Ne rien faire s'il reste de la bande de roulement",
+        ],
+    },
+    {
+        "question": "À quoi sert le frein de stationnement ?",
+        "type": "texte",
+    },
+    {
+        "question": "Pourquoi faut-il vérifier les niveaux du véhicule ?",
+        "type": "texte",
+    },
+    {
+        "question": "Que signifie une distance de sécurité suffisante ?",
+        "type": "choix",
+        "choix": [
+            "Avoir le temps de réagir et de s'arrêter",
+            "Rouler près du véhicule devant",
+            "Empêcher les autres de dépasser",
+            "Garder exactement cinq mètres en toute situation",
+        ],
+    },
+    {
+        "question": "Pourquoi le freinage d'un véhicule chargé demande-t-il de l'anticipation ?",
+        "type": "texte",
+    },
+    {
+        "question": "Que devez-vous faire avant une marche arrière ?",
+        "type": "choix",
+        "choix": [
+            "Vérifier la zone et manœuvrer lentement",
+            "Reculer rapidement",
+            "Regarder uniquement devant",
+            "Faire confiance aux capteurs sans contrôle",
+        ],
+    },
+    {
+        "question": "Quel est le rôle des rétroviseurs lors d'une manœuvre ?",
+        "type": "texte",
+    },
+    {
+        "question": "Pourquoi faut-il éviter les gestes brusques avec un poids lourd ?",
+        "type": "texte",
+    },
+    {
+        "question": "Que faire en cas de perte de visibilité due au brouillard ?",
+        "type": "choix",
+        "choix": [
+            "Réduire l'allure et augmenter les distances",
+            "Suivre de près les feux du véhicule devant",
+            "Accélérer pour sortir du brouillard",
+            "Éteindre tous les feux",
+        ],
+    },
+    {
+        "question": "Pourquoi faut-il adapter la conduite à l'état de la chaussée ?",
+        "type": "texte",
+    },
+    {
+        "question": "Que faire si la cargaison risque de se déplacer ?",
+        "type": "choix",
+        "choix": [
+            "S'arrêter en sécurité et sécuriser le chargement",
+            "Continuer jusqu'à destination",
+            "Freiner brutalement",
+            "Ouvrir les portes en roulant",
+        ],
+    },
+    {
+        "question": "Expliquez l'utilité de l'arrimage du chargement.",
+        "type": "texte",
+    },
+    {
+        "question": "Pourquoi faut-il vérifier la fermeture des portes de la caisse ?",
+        "type": "texte",
+    },
+    {
+        "question": "Comment réagir face à un obstacle soudain ?",
+        "type": "choix",
+        "choix": [
+            "Rester maître du véhicule et freiner de façon adaptée",
+            "Donner un coup de volant brusque sans regarder",
+            "Accélérer systématiquement",
+            "Regarder uniquement l'obstacle",
+        ],
+    },
+    {
+        "question": "Pourquoi faut-il anticiper les intersections avec un véhicule long ?",
+        "type": "texte",
+    },
+    {
+        "question": "Que devez-vous vérifier au niveau de l'attelage ?",
+        "type": "texte",
+    },
+    {
+        "question": "Pourquoi faut-il tenir compte du gabarit du véhicule ?",
+        "type": "choix",
+        "choix": [
+            "Pour éviter les obstacles bas, étroits ou limités en hauteur",
+            "Pour choisir la couleur du véhicule",
+            "Pour réduire la pression des pneus",
+            "Pour éviter de contrôler les panneaux",
+        ],
+    },
+    {
+        "question": "Que faire avant de franchir un passage étroit ou limité en hauteur ?",
+        "type": "choix",
+        "choix": [
+            "Vérifier que le gabarit du véhicule permet le passage",
+            "S'engager rapidement",
+            "Suivre le véhicule précédent sans vérifier",
+            "Se fier uniquement au GPS",
+        ],
+    },
+    {
+        "question": "Pourquoi faut-il éviter de surcharger le véhicule ?",
+        "type": "texte",
+    },
+    {
+        "question": "Que faire si le chargement masque la plaque ou les feux ?",
+        "type": "choix",
+        "choix": [
+            "Réorganiser le chargement pour rendre les équipements visibles",
+            "Partir comme cela",
+            "Éteindre les feux",
+            "Rouler uniquement de jour",
+        ],
+    },
+    {
+        "question": "Pourquoi faut-il maintenir une allure régulière et adaptée ?",
+        "type": "texte",
+    },
+    {
+        "question": "Que faire si vous constatez une anomalie importante lors des contrôles ?",
+        "type": "choix",
+        "choix": [
+            "Ne pas partir avant d'avoir fait vérifier l'anomalie",
+            "La noter et continuer",
+            "Rouler plus lentement sans rien vérifier",
+            "Attendre qu'un voyant s'allume",
+        ],
+    },
+    {
+        "question": "Pourquoi faut-il signaler ses changements de direction suffisamment tôt ?",
+        "type": "texte",
+    },
+    {
+        "question": "Que risque un conducteur qui ne contrôle pas régulièrement son environnement ?",
+        "type": "choix",
+        "choix": [
+            "Ne pas détecter un danger ou un usager",
+            "Économiser du carburant",
+            "Améliorer la stabilité",
+            "Réduire automatiquement la distance d'arrêt",
+        ],
+    },
+    {
+        "question": "Pourquoi faut-il être particulièrement prudent lors d'un dépassement ?",
+        "type": "texte",
+    },
+    {
+        "question": "Que devez-vous faire si vous devez vous arrêter sur la chaussée à la suite d'une panne ?",
+        "type": "texte",
+    },
+    {
+        "question": "Quel comportement adopter à proximité des usagers vulnérables ?",
+        "type": "choix",
+        "choix": [
+            "Réduire l'allure et leur laisser un espace suffisant",
+            "Passer au plus près pour limiter la durée du dépassement",
+            "Klaxonner systématiquement",
+            "Ne pas modifier sa conduite",
+        ],
+    },
+    {
+        "question": "Pourquoi faut-il vérifier que le chargement est compatible avec le trajet prévu ?",
+        "type": "texte",
+    },
+    {
+        "question": "Que faire après avoir constaté un bruit anormal du véhicule ?",
+        "type": "choix",
+        "choix": [
+            "S'arrêter en sécurité et rechercher l'origine ou faire contrôler",
+            "Augmenter le volume de la radio",
+            "Accélérer pour vérifier si le bruit disparaît",
+            "Continuer sans surveillance",
+        ],
+    },
 ]
-for i in range(4, 21):
-    theme = themes_officiels[(i-4) % len(themes_officiels)]
-    SERIES_ECRITES[f"Fiche Ecrite {i} : {theme}"] = [
-        {"q": f"Question officielle F{i}-Q1 : Quelle est la duree maximale de conduite journaliere normale ?", "r": "9 heures"},
-        {"q": f"Question officielle F{i}-Q2 : Combien de temps dure la pause obligatoire apres 4h30 de conduite ?", "r": "45 minutes (ou 15+30)"},
-        {"q": f"Question officielle F{i}-Q3 : Quelle est la largeur maximale autorisee pour une caisse frigorifique ?", "r": "2,60 metres"},
-        {"q": f"Question officielle F{i}-Q4 : Quelle est la longueur maximale d'un porteur a 2 ou 3 essieux ?", "r": "12 metres"},
-        {"q": f"Question officielle F{i}-Q5 : Quel est le PTAC maximal autorise pour un porteur a 2 essieux ?", "r": "19 tonnes"},
-        {"q": f"Question officielle F{i}-Q6 : Quel est le PTAC maximal autorise pour un porteur a 3 essieux ?", "r": "26 tonnes"},
-        {"q": f"Question officielle F{i}-Q7 : Quel est le PTAC maximal autorise pour un porteur a 4 essieux ?", "r": "32 tonnes"},
-        {"q": f"Question officielle F{i}-Q8 : Quel document obligatoire decrit la nature des marchandises ?", "r": "La lettre de voiture"},
-        {"q": f"Question officielle F{i}-Q9 : A partir de quel ecart de charge l'essieu est-il considere en surcharge ?", "r": "5 % (seuil d'immobilisation)"},
-        {"q": f"Question officielle F{i}-Q10 : Quelle est l'amende forfaitaire de base pour une surcharge ?", "r": "135 euros (4eme classe)"},
-    ]
-
-FICHES_ORALES = {
-    "Fiche 1 : Conduite dans des conditions atmospheriques difficiles, conduite de nuit": [
-        "Pluie, brouillard, neige, verglas : adapter sa vitesse et utiliser les feux appropries.",
-        "Adherence diminuee : les distances de freinage sont multipliees par 2 sur sol mouille et jusqu'a 10 sur le verglas.",
-        "Vent lateral : reduire la vitesse, anticiper les ecarts de trajectoire en zone degagee (ponts, depassements).",
-        "Conduite de nuit : accidents 2 fois plus graves en raison de la visibilite reduite et de la fatigue."
-    ],
-    "Fiche 2 : Comportement en cas d'accident": [
-        "Proteger : baliser les lieux (triangle a 30m, feux de detresse) pour eviter le suraccident.",
-        "Alerter : contacter les secours (112 ou 15, 17, 18) en donnant des informations precises.",
-        "Secourir : assister les blesses sans les deplacer (sauf danger reel et imminent).",
-        "Constat amiable : a completer sous format papier ou e-constat, envoi sous 5 jours ouvres a l'assureur."
-    ],
-    "Fiche 3 : Conduite en montagne ou sur fortes pentes": [
-        "Utilisation du frein moteur : retrograder pour solliciter le moteur et preserver les freins de service.",
-        "Ralentisseurs : utiliser les systemes d'echappement ou hydrauliques/electriques pour stabiliser la vitesse.",
-        "Echauffement des freins : risque de 'fading' (perte d'efficacite totale des freins) en cas d'usage prolonge.",
-        "Croisement : le vehicule descendant doit s'arreter ou reculer s'il est plus facile pour lui de manoeuvrer."
-    ],
-    "Fiche 4 : Gestes et postures, ergonomie": [
-        "Troubles Musculo-Squelettiques (TMS) : representent la majorite des maladies professionnelles des conducteurs.",
-        "Position de conduite : regler le siege (hauteur, profondeur, dossier) et le volant pour eviter la fatigue.",
-        "Montee et descente de la cabine : utiliser la regle des '3 points d'appui' et descendre face a la cabine.",
-        "Manutention : plier les genoux et garder le dos droit lors du levage de charges ou de l'arrimage."
-    ],
-    "Fiche 5 : Chargement, surcharge": [
-        "Surcharge : interdite, elle nuit a la tenue de route, allonge les freinages et degrade les infrastructures.",
-        "Repartition des charges : equilibrer la cargaison entre les essieux et abaisser au maximum le centre de gravite.",
-        "Arrimage : bloquer, sangler ou caler la marchandise pour empecher tout deplacement en cas de freinage brutal.",
-        "Sanctions : amendes de 4eme classe (135e), risque d'immobilisation du vehicule si la surcharge depasse 5%."
-    ],
-    "Fiche 6 : Le depassement": [
-        "Reglementation : verifier la signalisation specifique aux poids lourds (interdiction de depasser).",
-        "Angles morts : tres importants sur PL, verifier les retroviseurs et les angles morts avant de deboiter.",
-        "Distance et temps : un camion met beaucoup plus de temps et de distance pour depasser un autre vehicule.",
-        "Rabattement : ne pas se rabattre trop pres du vehicule depasse pour respecter les distances de securite."
-    ],
-    "Fiche 7 : Dynamique du vehicule": [
-        "Centre de gravite : plus il est haut, plus le risque de renversement (tonneau) dans les virages est eleve.",
-        "Force centrifuge : pousse le vehicule vers l'exterieur du virage, elle augmente avec le carre de la vitesse.",
-        "Transfert de charge : se produit lors des freinages ou virages brusques, destabilisant l'adherence des pneus.",
-        "Effet de vague : specifique aux citernes contenant du liquide non compartimente (ballant)."
-    ],
-    "Fiche 8 : Alcool, stupefiants, medicaments": [
-        "Alcoolemie : taux maximum de 0,5 g/l de sang (ou 0,25 mg/l d'air expire) pour les conducteurs de poids lourds.",
-        "Stupefiants : tolerance zero. Le cannabis multiplie les risques par 1,8, et l'association alcool + cannabis par 14.",
-        "Medicaments : verifier les pictogrammes de securite routiere (niveaux 1, 2 ou 3) presents sur les boites.",
-        "Sanctions : le controle positif constitue un delit (retrait de points, suspension de permis, amende, prison)."
-    ],
-    "Fiche 9 : Eco-conduite et gestion de l'autonomie": [
-        "Anticipation : observer loin devant pour reduire les freinages et relances inutiles, utiliser l'inertie.",
-        "Zone verte : maintenir le regime moteur dans la plage d'utilisation optimale indiquee sur le compte-tours.",
-        "Ralentisseurs : preferer l'usage des ralentisseurs aux freins de service pour economiser l'energie.",
-        "Entretien : un vehicule bien entretenu (pression des pneus, filtres) consomme moins de carburant."
-    ],
-    "Fiche 10 : Angles morts et situations de blocage": [
-        "Zones critiques : situes a l'avant sous le pare-brise, a l'arriere et sur les cotes lateraux de la cabine.",
-        "Signalisation : obligation d'apposer les autocollants 'Attention Angles Morts' visibles sur le vehicule.",
-        "Situations de blocage : attention aux porte-a-faux arriere dans les virages serres et aux intersections.",
-        "Usagers vulnerables : les pietons, cyclistes et trottinettes sont particulierement exposes dans ces angles."
-    ],
-    "Fiche 11 : Tunnels et passages a niveau": [
-        "Tunnels : respecter l'interdistance obligatoire (balises bleues), allumer les feux, ecouter la radio dediee.",
-        "Panne en tunnel : couper le moteur, laisser les cles sur le contact, rejoindre une issue de secours balisee.",
-        "Passages a niveau : verifier le gabarit en hauteur et en largeur, ne jamais s'engager si le carrefour est encombre.",
-        "Incident sur voie ferree : en cas de blocage sous les barrieres, casser la barriere en avancant avec le camion."
-    ],
-    "Fiche 12 : Systemes de securite et aides a la conduite": [
-        "ABS / ASR : systemes antiblocage des roues au freinage et anti-patinage lors des accelerations.",
-        "ESP : correcteur electronique de trajectoire qui aide a stabiliser le vehicule en cas de perte de controle.",
-        "AFU / AEBS : systeme d'aide au freinage d'urgence et freinage automatique d'urgence en cas d'obstacle imminent.",
-        "Limiteur de vitesse : dispositif obligatoire bridant la vitesse maximale des poids lourds a 90 km/h."
-    ],
-}
 
 
-st.title("Entrainement Permis C (Poids Lourd)")
-st.write("Entrainez-vous aux epreuves theoriques et orales du plateau.")
-
-tab1, tab2 = st.tabs(["Interrogation Ecrite", "Interrogation Orale"])
-with tab1:
-    st.header("Questions Ecrites (Tirage par fiche)")
-    st.write("L'examen comporte 10 questions liees a une fiche.")
+with tab0:
+    st.subheader("Identification de l'élève")
+    st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
     
-    # Choix de la methode de selection
-    mode_selection = st.radio("Mode de selection de la fiche :", ["Selectionner manuellement", "Tirer au sort au hasard"])
+    col_ident_1, col_ident_2 = st.columns(2)
     
-    if mode_selection == "Selectionner manuellement":
-        fiche_choisie_ecrite = st.selectbox("Choisissez la fiche ecrite a reviser :", list(SERIES_ECRITES.keys()))
-        st.session_state.serie_choisie = fiche_choisie_ecrite
-    else:
-        if st.button("Tirer une fiche ecrite au sort", key="btn_ecrit"):
-            st.session_state.serie_choisie = random.choice(list(SERIES_ECRITES.keys()))
-
-    if "serie_choisie" in st.session_state:
-        st.subheader(st.session_state.serie_choisie)
-        questions = SERIES_ECRITES[st.session_state.serie_choisie]
+    with col_ident_1:
+        # Les champs de texte lisent et écrivent directement dans le Session State
+        # Ils se bloquent automatiquement dès que le bouton OK a été cliqué
+        nom_brut = st.text_input(
+            "Nom de famille :",
+            value=st.session_state.get("nom_var", ""),
+            disabled=st.session_state.get("verrouille", False),
+            key="widget_saisie_nom_maitre"
+        )
         
-        for idx, item in enumerate(questions):
-            st.markdown(f"**Question {idx+1} :** {item['q']}")
-            with st.expander("Voir la reponse"):
-                st.info(f"Reponse : {item['r']}")
+        prenom_brut = st.text_input(
+            "Prénom :",
+            value=st.session_state.get("prenom_var", ""),
+            disabled=st.session_state.get("verrouille", False),
+            key="widget_saisie_prenom_maitre"
+        )
+        
+        classe_brut = st.text_input(
+            "Groupe / Classe :",
+            value=st.session_state.get("classe_var", ""),
+            disabled=st.session_state.get("verrouille", False),
+            key="widget_saisie_classe_maitre"
+        )
+        
+        # Synchronisation et normalisation immédiate des chaînes de texte
+        st.session_state.nom_var = nom_brut.strip().upper()
+        st.session_state.prenom_var = prenom_brut.strip().capitalize()
+        st.session_state.classe_var = classe_brut.strip().upper()
+        
+        st.write("")
+        
+        # Bouton maître de validation d'accès
+        if st.button(
+            "Valider mes informations (OK)", 
+            key="btn_validation_identité_maitre",
+            disabled=st.session_state.get("vérrouillé", False)
+        ):
+            # Appel de votre fonction globale de validation créée à l'étape précédente
+            valider_saisie()
+            
+            # Rechargement propre pour appliquer instantanément le verrouillage visuel des champs
+            if st.session_state.get("vérrouillé", False):
+                st.rerun()
 
+
+with tab1:
+    st.header("Permis AM")
 
 with tab2:
-    st.header("Fiches Orales (Tirage au sort)")
-    st.write("Tirez une fiche au sort parmi les 12 officielles.")
+    st.header("Permis B")
 
-    if st.button("Tirer une fiche orale au sort", key="btn_oral"):
-        st.session_state.fiche_choisie = random.choice(list(FICHES_ORALES.keys()))
-    
-    if "fiche_choisie" in st.session_state:
-        st.success(f"Fiche tiree : {st.session_state.fiche_choisie}")
-        st.write("Recitez votre fiche de memoire, puis verifiez les points cles officiels :")
-        
-        with st.expander("Afficher les elements requis (Bareme)") :
-            st.write("Points cles indispensables a restituer :")
-            for point in FICHES_ORALES[st.session_state.fiche_choisie]:
-                st.markdown(f"- {point}")
+with tab3:
+    st.header("Fiches orales permis C")
+
+with tab4:
+    st.subheader("Fiche d'entraînement — permis C")
+    st.caption("Une fiche contient 20 questions tirées au hasard parmi 40.")
+
+    if len(banque_questions) != 40:
+        st.error(
+            f"La banque contient {len(banque_questions)} questions au lieu de 40."
+        )
+    else:
+        # Crée la première fiche une seule fois.
+        if "fiche_permis_c" not in st.session_state:
+            st.session_state.fiche_permis_c = random.sample(
+                banque_questions, 20
+            )
+
+        # Nouveau tirage : 20 questions différentes parmi les 40.
+        if st.button("Tirer une nouvelle fiche", key="nouvelle_fiche_permis_c"):
+            st.session_state.fiche_permis_c = random.sample(
+                banque_questions, 20
+            )
+
+            # Efface les réponses précédentes.
+            for cle in list(st.session_state.keys()):
+                if cle.startswith("reponse_permis_c_"):
+                    del st.session_state[cle]
+
+            st.rerun()
+
+        # Affiche les 20 questions tirées.
+        for numero, item in enumerate(
+            st.session_state.fiche_permis_c, start=1
+        ):
+            st.markdown(f"**Question {numero}. {item['question']}**")
+
+            if item["type"] == "choix":
+                st.selectbox(
+                    "Choisissez une réponse",
+                    ["— Sélectionnez —"] + item["choix"],
+                    key=f"reponse_permis_c_{numero}",
+                )
+            else:
+                st.text_area(
+                    "Votre réponse",
+                    key=f"reponse_permis_c_{numero}",
+                    height=90,
+                )
 
 
 
-    
+
+if "suite_verrouille_tab4_permis_c" not in st.session_state:
+    st.session_state.suite_verrouille_tab4_permis_c = False
+
+verrou_permis_c = st.session_state.suite_verrouille_tab4_permis_c
+
+# La banque doit contenir exactement 40 questions.
+if len(banque_questions) != 40:
+    st.error(
+        f"La banque doit contenir 40 questions. "
+        f"Elle en contient actuellement {len(banque_questions)}."
+    )
+else:
+    # Génère une fiche de 20 questions une seule fois,
+    # ou après clic sur le bouton "Nouvelle fiche".
+    if "fiche_permis_c" not in st.session_state:
+        st.session_state.fiche_permis_c = random.sample(banque_questions, 20)
+
+    if st.button(
+        "GÉNÉRER UNE NOUVELLE FICHE DE 20 QUESTIONS",
+        key="btn_nouvelle_fiche_permis_c",
+        use_container_width=True,
+        disabled=verrou_permis_c,
+    ):
+        st.session_state.fiche_permis_c = random.sample(banque_questions, 20)
+
+        # Efface les anciennes réponses
+        for cle in list(st.session_state.keys()):
+            if cle.startswith("reponse_permis_c_"):
+                del st.session_state[cle]
+
+        st.rerun()
+
+    st.subheader("Fiche d'entraînement — Permis C")
+    st.caption("20 questions tirées au hasard parmi une banque de 40.")
+
+    for numero, item in enumerate(st.session_state.fiche_permis_c, start=1):
+        st.markdown(f"**Question {numero} — {item['question']}**")
+
+        if item["type"] == "choix":
+            st.radio(
+                "Choisissez une réponse :",
+                item["choix"],
+                key=f"reponse_permis_c_{numero}",
+                disabled=verrou_permis_c,
+                index=None,
+            )
+        else:
+            st.text_area(
+                "Votre réponse :",
+                key=f"reponse_permis_c_{numero}",
+                disabled=verrou_permis_c,
+                height=90,
+            )
+
+    st.write("---")
+    st.subheader("Correction")
+
+    afficher_correction = st.checkbox(
+        "Afficher les réponses corrigées",
+        key="afficher_correction_permis_c",
+    )
+
+    if afficher_correction:
+        for numero, item in enumerate(st.session_state.fiche_permis_c, start=1):
+            st.markdown(f"**Question {numero}**")
+            st.write(item["question"])
+            st.success(f"Réponse : {item['reponse']}")
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'atelier")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_permis_c = st.checkbox(
+        "Je certifie avoir répondu aux questions de l'atelier Permis C.",
+        key="check_certif_permis_c_final",
+        disabled=verrou_permis_c,
+    )
+
+    if st.button(
+        "VALIDER L'ATELIER PERMIS C",
+        key="btn_valider_permis_c",
+        use_container_width=True,
+        disabled=verrou_permis_c,
+    ):
+        if not case_certif_permis_c:
+            st.warning("Coche la case de certification avant de valider.")
+        else:
+            st.session_state.suite_verrouille_tab4_permis_c = True
+            st.success(
+                f"Atelier validé pour {p_eleve} {n_eleve} "
+                f"— classe {c_eleve}."
+            )
+            st.rerun()
+
+    if verrou_permis_c:
+        st.info("Cet atelier a été validé et verrouillé.")
+
+
+
+
+
+
+
+with tab5:
+    st.header("Fiches orales permis CE")
+
+with tab6:
+    st.header("Fiches écrites permis CE")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
