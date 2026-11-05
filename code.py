@@ -5090,20 +5090,23 @@ with tab4:
 
     fiche_brute = st.session_state.fiche_ecrite_choisie_c
     
-    # Transformation immediate en liste si c'est un dictionnaire unique
+    # Force la conversion en liste de dictionnaires de maniere universelle
     if isinstance(fiche_brute, dict):
         liste_questions_ecrites_c = [fiche_brute]
+    elif isinstance(fiche_brute, list) and len(fiche_brute) > 0 and isinstance(fiche_brute[0], list):
+        liste_questions_ecrites_c = fiche_brute[0]
     else:
         liste_questions_ecrites_c = fiche_brute
 
-    # Extraction securisee du numero de fiche via le dictionnaire a l'index 0
-    if liste_questions_ecrites_c and len(liste_questions_ecrites_c) > 0:
+    # Extraction du numero de fiche de facon totalement blindee
+    if isinstance(liste_questions_ecrites_c, list) and len(liste_questions_ecrites_c) > 0:
         num_fiche_e = liste_questions_ecrites_c[0].get("numero_fiche", "Non defini")
+    elif isinstance(liste_questions_ecrites_c, dict):
+        num_fiche_e = liste_questions_ecrites_c.get("numero_fiche", "Non defini")
     else:
         num_fiche_e = "Non defini"
 
     st.markdown(f"### Fiche Ecrite Numero {num_fiche_e}")
-    st.divider()
 
     # Parcours et affichage dynamique des questions de la fiche tiree au sort
     for idx, question_e_c in enumerate(liste_questions_ecrites_c):
