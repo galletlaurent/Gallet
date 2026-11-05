@@ -5011,8 +5011,8 @@ with tab2:
 
         
 with tab3:
-    st.header("Interrogation Orale — Permis C")
-    st.caption("Tirage au sort d'une fiche complète parmi les 12 fiches.")
+    st.header("Interrogation Orale - Permis C")
+    st.caption("Tirage au sort d'une fiche complete parmi les 12 fiches.")
 
     if "fiche_orale_choisie_c" not in st.session_state:
         st.session_state.fiche_orale_choisie_c = random.choice(
@@ -5023,27 +5023,38 @@ with tab3:
         st.session_state.fiche_orale_choisie_c = random.choice(
             banque_orales_permis_c
         )
-        if "rep_orale_c" in st.session_state:
-            del st.session_state["rep_orale_c"]
+        # Reinitialisation des notes de preparation pour toutes les questions de la fiche
+        for idx in range(10):
+            if f"rep_orale_c_{idx}" in st.session_state:
+                del st.session_state[f"rep_orale_c_{idx}"]
         st.rerun()
 
-    fiche_o = st.session_state.fiche_orale_choisie_c
-    st.markdown(f"### Fiche Orale Numéro {fiche_o.get('numero', 'Non défini')}")
-    st.info(fiche_o["question"])
+    liste_questions_orales = st.session_state.fiche_orale_choisie_c
+    
+    # Recupere le numero de la fiche a partir de la premiere question
+    num_fiche = liste_questions_orales[0].get("numero_fiche", "Non defini") if liste_questions_orales else "Non defini"
+    st.markdown(f"### Fiche Orale Numero {num_fiche}")
+    st.divider()
 
-    st.text_area(
-        "Saisissez vos notes de préparation :",
-        key="rep_orale_c",
-        placeholder="Écrivez ici vos arguments pour l'examen oral...",
-    )
+    # Affichage de chaque question contenue dans la fiche tiree au sort
+    for idx, question_o in enumerate(liste_questions_orales):
+        st.write(f"**Question {idx + 1} :** {question_o['question']}")
+        
+        st.text_area(
+            "Saisissez vos notes de preparation :",
+            key=f"rep_orale_c_{idx}",
+            placeholder="Ecrivez ici vos arguments pour l'examen oral...",
+        )
 
-    if st.checkbox("Afficher le guide de correction complet", key="chk_oral_c"):
-        st.success(f"Éléments clés attendus : {fiche_o['reponse']}")
+        if st.checkbox("Afficher le guide de correction", key=f"chk_oral_c_{idx}"):
+            st.success(f"Elements cles attendus : {question_o['reponse']}")
+            
+        st.divider()
 
 
 # --- 5. CONFIGURATION DE L'ONGLET 4 : FICHES ÉCRITES PERMIS C (1 parmi 20) ---
 with tab4:
-    st.header("Interrogation Écrite — Permis C")
+    st.header("Interrogation Ecrite - Permis C")
     st.caption("Tirage au sort d'une fiche de questions parmi les 20 fiches.")
 
     if "fiche_ecrite_choisie_c" not in st.session_state:
@@ -5051,35 +5062,45 @@ with tab4:
             banque_ecrites_permis_c
         )
 
-    if st.button("TIRER UNE AUTRE FICHE ÉCRITE AU HASARD", key="btn_ecrite_c"):
+    if st.button("TIRER UNE AUTRE FICHE ECRITE AU HASARD", key="btn_ecrite_c"):
         st.session_state.fiche_ecrite_choisie_c = random.choice(
             banque_ecrites_permis_c
         )
-        if "rep_ecrite_c" in st.session_state:
-            del st.session_state["rep_ecrite_c"]
+        # Reinitialisation de toutes les reponses de la session pour la nouvelle fiche
+        for idx in range(10):
+            if f"rep_ecrite_c_{idx}" in st.session_state:
+                del st.session_state[f"rep_ecrite_c_{idx}"]
         st.rerun()
 
-    fiche_e = st.session_state.fiche_ecrite_choisie_c
-    st.markdown(f"### Fiche Écrite Numéro {fiche_e['numero']}")
-    st.info(fiche_e["question"])
+    liste_questions_ecrites = st.session_state.fiche_ecrite_choisie_c
+    
+    # Recuperation du numero de fiche via la premiere question de la liste
+    num_fiche_e = liste_questions_ecrites[0].get("numero_fiche", "Non defini") if liste_questions_ecrites else "Non defini"
+    st.markdown(f"### Fiche Ecrite Numero {num_fiche_e}")
+    st.divider()
 
-    if fiche_e["type"] == "choix":
-        st.selectbox(
-            "Sélectionnez votre réponse :",
-            options=["Choisir une réponse..."] + fiche_e["choix"],
-            key="rep_ecrite_c",
-            index=0,
-        )
-    else:
-        st.text_area(
-            "Votre réponse rédigée :",
-            key="rep_ecrite_c",
-            placeholder="Saisissez votre texte ici...",
-        )
+    # Parcours et affichage des 10 questions de la fiche tiree au sort
+    for idx, question_e in enumerate(liste_questions_ecrites):
+        st.write(f"**Question {idx + 1} :** {question_e['question']}")
 
-    if st.checkbox("Afficher la réponse exacte", key="chk_ecrit_c"):
-        st.success(f"Réponse attendue : {fiche_e['reponse']}")
+        if question_e["type"] == "choix":
+            st.selectbox(
+                "Selectionnez votre reponse :",
+                options=["Choisir une reponse..."] + question_e["choix"],
+                key=f"rep_ecrite_c_{idx}",
+                index=0,
+            )
+        else:
+            st.text_area(
+                "Votre reponse redigee :",
+                key=f"rep_ecrite_c_{idx}",
+                placeholder="Saisissez votre texte ici...",
+            )
 
+        if st.checkbox("Afficher la reponse exacte", key=f"chk_ecrit_c_{idx}"):
+            st.success(f"Reponse attendue : {question_e['reponse']}")
+            
+        st.divider()
 
 with tab5:
     if "verrou_orale_ce" not in st.session_state:
@@ -5087,8 +5108,8 @@ with tab5:
 
     v_oral_ce = st.session_state.verrou_orale_ce
 
-    st.header("Interrogation Orale — Permis CE")
-    st.caption("Tirage au sort d'une fiche complète parmi les 12 fiches.")
+    st.header("Interrogation Orale - Permis CE")
+    st.caption("Tirage au sort d'une fiche complete parmi les 12 fiches.")
 
     if "fiche_orale_choisie_ce" not in st.session_state:
         st.session_state.fiche_orale_choisie_ce = random.choice(
@@ -5104,28 +5125,39 @@ with tab5:
         st.session_state.fiche_orale_choisie_ce = random.choice(
             banque_orales_permis_ce
         )
-        if "rep_orale_ce" in st.session_state:
-            del st.session_state["rep_orale_ce"]
+        # Reinitialisation des notes de preparation pour toutes les questions de la fiche
+        for idx in range(10):
+            if f"rep_orale_ce_{idx}" in st.session_state:
+                del st.session_state[f"rep_orale_ce_{idx}"]
         st.rerun()
 
-    fiche_o_ce = st.session_state.fiche_orale_choisie_ce
-    st.markdown(f"### Fiche Orale Numéro {fiche_o_ce['numero']}")
-    st.info(fiche_o_ce["question"])
+    liste_questions_orales_ce = st.session_state.fiche_orale_choisie_ce
+    
+    # Recupere le numero de la fiche a partir du parametre injecte
+    num_fiche_o_ce = liste_questions_orales_ce.get("numero_fiche", "Non defini") if liste_questions_orales_ce else "Non defini"
+    st.markdown(f"### Fiche Orale Numero {num_fiche_o_ce}")
+    st.divider()
 
-    st.text_area(
-        "Saisissez vos notes de préparation :",
-        key="rep_orale_ce",
-        disabled=v_oral_ce,
-        placeholder="Écrivez ici vos arguments pour l'examen oral...",
-    )
+    # Affichage de chaque question contenue dans la fiche tiree au sort
+    for idx, question_o_ce in enumerate(liste_questions_orales_ce):
+        st.write(f"**Question {idx + 1} :** {question_o_ce['question']}")
 
-    if st.checkbox("Afficher le guide de correction complet", key="chk_oral_ce"):
-        st.success(f"Éléments clés attendus : {fiche_o_ce['reponse']}")
+        st.text_area(
+            "Saisissez vos notes de preparation :",
+            key=f"rep_orale_ce_{idx}",
+            disabled=v_oral_ce,
+            placeholder="Ecrivez ici vos arguments pour l'examen oral...",
+        )
+
+        if st.checkbox("Afficher le guide de correction complet", key=f"chk_oral_ce_{idx}"):
+            st.success(f"Elements cles attendus : {question_o_ce['reponse']}")
+            
+        st.divider()
 
     st.write("---")
-    st.subheader("Synthèse et validation")
+    st.subheader("Synthese et validation")
     certif_oral = st.checkbox(
-        "Je certifie avoir terminé la préparation de cette fiche orale CE.",
+        "Je certifie avoir termine la preparation de cette fiche orale CE.",
         key="cert_oral_ce",
         disabled=v_oral_ce,
     )
@@ -5143,17 +5175,16 @@ with tab5:
             st.rerun()
 
     if v_oral_ce:
-        st.info("Cet atelier oral a été validé et verrouillé.")
+        st.info("Cet atelier oral a ete valide et verrouille.")
 
 
-# --- 5. CONFIGURATION DE L'ONGLET 6 : FICHES ÉCRITES PERMIS CE (1 parmi 20) ---
 with tab6:
     if "verrou_ecrite_ce" not in st.session_state:
         st.session_state.verrou_ecrite_ce = False
 
     v_ecrit_ce = st.session_state.verrou_ecrite_ce
 
-    st.header("Interrogation Écrite — Permis CE")
+    st.header("Interrogation Ecrite - Permis CE")
     st.caption("Tirage au sort d'une fiche de questions parmi les 20 fiches.")
 
     if "fiche_ecrite_choisie_ce" not in st.session_state:
@@ -5162,7 +5193,7 @@ with tab6:
         )
 
     if st.button(
-        "TIRER UNE AUTRE FICHE ÉCRITE AU HASARD",
+        "TIRER UNE AUTRE FICHE ECRITE AU HASARD",
         key="btn_ecrite_ce",
         disabled=v_ecrit_ce,
         use_container_width=True,
@@ -5170,43 +5201,54 @@ with tab6:
         st.session_state.fiche_ecrite_choisie_ce = random.choice(
             banque_ecrites_permis_ce
         )
-        if "rep_ecrite_ce" in st.session_state:
-            del st.session_state["rep_ecrite_ce"]
+        # Reinitialisation de toutes les reponses de la session pour la nouvelle fiche
+        for idx in range(10):
+            if f"rep_ecrite_ce_{idx}" in st.session_state:
+                del st.session_state[f"rep_ecrite_ce_{idx}"]
         st.rerun()
 
-    fiche_e_ce = st.session_state.fiche_ecrite_choisie_ce
-    st.markdown(f"### Fiche Écrite Numéro {fiche_e_ce['numero']}")
-    st.info(fiche_e_ce["question"])
+    liste_questions_ecrites_ce = st.session_state.fiche_ecrite_choisie_ce
+    
+    # Recuperation du numero de fiche via la premiere question de la liste
+    num_fiche_e_ce = liste_questions_ecrites_ce.get("numero_fiche", "Non defini") if liste_questions_ecrites_ce else "Non defini"
+    st.markdown(f"### Fiche Ecrite Numero {num_fiche_e_ce}")
+    st.divider()
 
-    if fiche_e_ce["type"] == "choix":
-        st.selectbox(
-            "Sélectionnez votre réponse :",
-            options=["Choisir une réponse..."] + fiche_e_ce["choix"],
-            key="rep_ecrite_ce",
-            disabled=v_ecrit_ce,
-            index=0,
-        )
-    else:
-        st.text_area(
-            "Votre réponse rédigée :",
-            key="rep_ecrite_ce",
-            disabled=v_ecrit_ce,
-            placeholder="Saisissez votre texte ici...",
-        )
+    # Parcours et affichage des 10 questions de la fiche tiree au sort
+    for idx, question_e_ce in enumerate(liste_questions_ecrites_ce):
+        st.write(f"**Question {idx + 1} :** {question_e_ce['question']}")
 
-    if st.checkbox("Afficher la réponse exacte", key="chk_ecrit_ce"):
-        st.success(f"Réponse attendue : {fiche_e_ce['reponse']}")
+        if question_e_ce["type"] == "choix":
+            st.selectbox(
+                "Selectionnez votre reponse :",
+                options=["Choisir une reponse..."] + question_e_ce["choix"],
+                key=f"rep_ecrite_ce_{idx}",
+                disabled=v_ecrit_ce,
+                index=0,
+            )
+        else:
+            st.text_area(
+                "Votre reponse redigee :",
+                key=f"rep_ecrite_ce_{idx}",
+                disabled=v_ecrit_ce,
+                placeholder="Saisissez votre texte ici...",
+            )
+
+        if st.checkbox("Afficher la reponse exacte", key=f"chk_ecrit_ce_{idx}"):
+            st.success(f"Reponse attendue : {question_e_ce['reponse']}")
+            
+        st.divider()
 
     st.write("---")
-    st.subheader("Synthèse et validation")
+    st.subheader("Synthese et validation")
     certif_ecrit = st.checkbox(
-        "Je certifie avoir répondu aux questions de cette fiche écrite CE.",
+        "Je certifie avoir repondu aux questions de cette fiche ecrite CE.",
         key="cert_ecrit_ce",
         disabled=v_ecrit_ce,
     )
 
     if st.button(
-        "VALIDER ET VERROUILLER L'ATELIER ÉCRIT CE",
+        "VALIDER ET VERROUILLER L'ATELIER ECRIT CE",
         key="val_ecrit_ce",
         disabled=v_ecrit_ce,
         use_container_width=True,
@@ -5218,10 +5260,7 @@ with tab6:
             st.rerun()
 
     if v_ecrit_ce:
-        st.info("Cet atelier écrit a été validé et verrouillé.")
-
-
-
+        st.info("Cet atelier ecrit a ete valide et verrouille.")
 
 
 
