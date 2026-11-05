@@ -2948,52 +2948,65 @@ def charger_orale_permis_c_fiche_12():
     }
 
 banque_ecrites_permis_c = [
-    charger_ecrite_permis_c_fiche_1(),
-    charger_ecrite_permis_c_fiche_2(),
-    charger_ecrite_permis_c_fiche_3(),
-    charger_ecrite_permis_c_fiche_4(),
-    charger_ecrite_permis_c_fiche_5(),
-    charger_ecrite_permis_c_fiche_6(),
-    charger_ecrite_permis_c_fiche_7(),
-    charger_ecrite_permis_c_fiche_8(),
-    charger_ecrite_permis_c_fiche_9(),
-    charger_ecrite_permis_c_fiche_10(),
-    charger_ecrite_permis_c_fiche_11(),
-    charger_ecrite_permis_c_fiche_12(),
-    charger_ecrite_permis_c_fiche_13(),
-    charger_ecrite_permis_c_fiche_14(),
-    charger_ecrite_permis_c_fiche_15(),
-    charger_ecrite_permis_c_fiche_16(),
-    charger_ecrite_permis_c_fiche_17(),
-    charger_ecrite_permis_c_fiche_18(),
-    charger_ecrite_permis_c_fiche_19(),
-    charger_ecrite_permis_c_fiche_20()
+    [charger_ecrite_permis_c_fiche_1()],
+    [charger_ecrite_permis_c_fiche_2()],
+    [charger_ecrite_permis_c_fiche_3()],
+    [charger_ecrite_permis_c_fiche_4()],
+    [charger_ecrite_permis_c_fiche_5()],
+    [charger_ecrite_permis_c_fiche_6()],
+    [charger_ecrite_permis_c_fiche_7()],
+    [charger_ecrite_permis_c_fiche_8()],
+    [charger_ecrite_permis_c_fiche_9()],
+    [charger_ecrite_permis_c_fiche_10()],
+    [charger_ecrite_permis_c_fiche_11()],
+    [charger_ecrite_permis_c_fiche_12()],
+    [charger_ecrite_permis_c_fiche_13()],
+    [charger_ecrite_permis_c_fiche_14()],
+    [charger_ecrite_permis_c_fiche_15()],
+    [charger_ecrite_permis_c_fiche_16()],
+    [charger_ecrite_permis_c_fiche_17()],
+    [charger_ecrite_permis_c_fiche_18()],
+    [charger_ecrite_permis_c_fiche_19()],
+    [charger_ecrite_permis_c_fiche_20()]
 ]
 
-# Si chaque fonction retourne une LISTE de questions, il faut parcourir cette liste
-for index, liste_questions in enumerate(banque_ecrites_permis_c, start=1):
-    for question in liste_questions:
-        question["numero_fiche"] = index
-
-# Correction pour le second tableau (Fiches Orales)
 banque_orales_permis_c = [
-    charger_orale_permis_c_fiche_1(),
-    charger_orale_permis_c_fiche_2(),
-    charger_orale_permis_c_fiche_3(),
-    charger_orale_permis_c_fiche_4(),
-    charger_orale_permis_c_fiche_5(),
-    charger_orale_permis_c_fiche_6(),
-    charger_orale_permis_c_fiche_7(),
-    charger_orale_permis_c_fiche_8(),
-    charger_orale_permis_c_fiche_9(),
-    charger_orale_permis_c_fiche_10(),
-    charger_orale_permis_c_fiche_11(),
-    charger_orale_permis_c_fiche_12()
+    [charger_orale_permis_c_fiche_1()],
+    [charger_orale_permis_c_fiche_2()],
+    [charger_orale_permis_c_fiche_3()],
+    [charger_orale_permis_c_fiche_4()],
+    [charger_orale_permis_c_fiche_5()],
+    [charger_orale_permis_c_fiche_6()],
+    [charger_orale_permis_c_fiche_7()],
+    [charger_orale_permis_c_fiche_8()],
+    [charger_orale_permis_c_fiche_9()],
+    [charger_orale_permis_c_fiche_10()],
+    [charger_orale_permis_c_fiche_11()],
+    [charger_orale_permis_c_fiche_12()]
 ]
 
-for index, liste_questions in enumerate(banque_orales_permis_c, start=1):
-    for question in liste_questions:
-        question["numero_fiche"] = index
+
+# --- BOUCLES D'INDEXATION CORRIGÉES ---
+
+# Indexation des Fiches Écrites Permis C
+for index, liste_fiches in enumerate(banque_ecrites_permis_c, start=1):
+    for fiche in liste_fiches:
+        # Si la fonction retourne une liste de sous-questions
+        if isinstance(fiche, list):
+            for question in fiche:
+                question["numero_fiche"] = index
+        # Si la fonction retourne directement un dictionnaire unique
+        elif isinstance(fiche, dict):
+            fiche["numero_fiche"] = index
+
+# Indexation des Fiches Orales Permis C
+for index, liste_fiches in enumerate(banque_orales_permis_c, start=1):
+    for fiche in liste_fiches:
+        if isinstance(fiche, list):
+            for question in fiche:
+                question["numero_fiche"] = index
+        elif isinstance(fiche, dict):
+            fiche["numero_fiche"] = index
     
 def charger_ecrite_permis_ce_fiche_1():
     return [
