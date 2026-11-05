@@ -5136,73 +5136,73 @@ with tab3:
     if "fiche_orale_choisie_c" not in st.session_state:
         st.session_state.fiche_orale_choisie_c = random.choice(banque_orales_permis_c)
 
-    if st.button("TIRER UNE AUTRE FICHE ORALE AU HASARD", key="btn_orale_c", disabled=v_oral_c):
+    if st.button("TIRER UNE AUTRE FICHE ORALE AU HASARD", key="btn_orale_c", disabled=v_oral_c, use_container_width=True):
         st.session_state.fiche_orale_choisie_c = random.choice(banque_orales_permis_c)
         for key in list(st.session_state.keys()):
             if key.startswith("rep_orale_c_"):
                 del st.session_state[key]
         st.rerun()
 
-    fiche_brute_o = st.session_state.fiche_orale_choisie_c
-    
-    if isinstance(fiche_brute_o, dict) and "questions" in fiche_brute_o:
-        liste_questions_orales_c = fiche_brute_o["questions"]
-        num_fiche_o = fiche_brute_o.get("numero_fiche", "Non defini")
-    elif isinstance(fiche_brute_o, list) and len(fiche_brute_o) > 0 and isinstance(fiche_brute_o[0], dict):
-        liste_questions_orales_c = fiche_brute_o[0]["questions"] if "questions" in fiche_brute_o[0] else fiche_brute_o
-        num_fiche_o = fiche_brute_o[0].get("numero_fiche", "Non defini")
+    fiche_brute_o_c = st.session_state.fiche_orale_choisie_c
+
+    # 1. Extraction et normalisation de la liste cachee dans la cle "questions"
+    if isinstance(fiche_brute_o_c, dict) and "questions" in fiche_brute_o_c:
+        liste_questions_orales_c = fiche_brute_o_c["questions"]
+        num_fiche_o_c = fiche_brute_o_c.get("numero_fiche", "Non defini")
+    elif isinstance(fiche_brute_o_c, list) and len(fiche_brute_o_c) > 0 and isinstance(fiche_brute_o_c[0], dict):
+        liste_questions_orales_c = fiche_brute_o_c[0]["questions"] if "questions" in fiche_brute_o_c[0] else fiche_brute_o_c[0]
+        num_fiche_o_c = fiche_brute_o_c[0].get("numero_fiche", "Non defini")
+    elif isinstance(fiche_brute_o_c, dict):
+        liste_questions_orales_c = fiche_brute_o_c.get("questions", [])
+        num_fiche_o_c = fiche_brute_o_c.get("numero_fiche", "Non defini")
     else:
-        liste_questions_orales_c = fiche_brute_o
-        num_fiche_o = "Non defini"
+        liste_questions_orales_c = fiche_brute_o_c
+        num_fiche_o_c = "Non defini"
 
-    st.markdown(f"### Fiche Orale Numero {num_fiche_o}")
+    st.markdown(f"### Fiche Orale Numero {num_fiche_o_c}")
+    st.divider()
 
+    # 2. Affichage dynamique des questions orales
     for idx, question_o_c in enumerate(liste_questions_orales_c):
         if isinstance(question_o_c, dict) and "question" in question_o_c:
             st.write(f"**Question {idx + 1} :** {question_o_c['question']}")
 
-            st.text_area(
-                "Saisissez vos notes de preparation :",
-                key=f"rep_orale_c_{idx}_{num_fiche_o}",
-                disabled=v_oral_c,
-                placeholder="Ecrivez ici vos arguments pour l'examen oral...",
-            )
+            if question_o_c.get("type") == "choix":
+                st.selectbox(
+                    "Selectionnez votre reponse :",
+                    options=["Choisir une reponse..."] + question_o_c.get("choix", []),
+                    key=f"rep_orale_c_{idx}_{num_fiche_o_c}",
+                    disabled=v_oral_c,
+                    index=0,
+                )
+            else:
+                st.text_area(
+                    "Saisissez vos notes de preparation :",
+                    key=f"rep_orale_c_{idx}_{num_fiche_o_c}",
+                    disabled=v_oral_c,
+                    placeholder="Ecrivez ici vos arguments pour l'examen oral...",
+                )
 
+            # S'affiche uniquement si l'atelier est valide/verrouille
             if v_oral_c:
-                st.success(f"Elements cles attendus : {question_o_c.get('reponse', 'Non disponible')}")
+                if st.checkbox("Afficher le guide de correction complet", key=f"chk_oral_c_{idx}_{num_fiche_o_c}"):
+                    st.success(f"Elements cles attendus : {question_o_c.get('reponse', 'Non disponible')}")
                 
             st.divider()
-            
+
     st.write("---")
     st.subheader("Synthese et validation")
     
-    # Recupere le verrou directement depuis la memoire globale
-    v_oral_c = st.session_state.get("verrou_orale_c", False)
-
-    # Extraction de secours ultra-securisee du numero de la fiche orale
-    fiche_actuelle_o_c = st.session_state.get("fiche_orale_choisie_c", [])
-    if isinstance(fiche_actuelle_o_c, dict) and "questions" in fiche_actuelle_o_c:
-        num_fiche_val = fiche_actuelle_o_c.get("numero_fiche", "Non defini")
-    elif isinstance(fiche_actuelle_o_c, list) and len(fiche_actuelle_o_c) > 0:
-        if isinstance(fiche_actuelle_o_c[0], dict):
-            num_fiche_val = fiche_actuelle_o_c[0].get("numero_fiche", "Non defini")
-        else:
-            num_fiche_val = "Non defini"
-    elif isinstance(fiche_actuelle_o_c, dict):
-        num_fiche_val = fiche_actuelle_o_c.get("numero_fiche", "Non defini")
-    else:
-        num_fiche_val = "Non defini"
-
     if not v_oral_c:
         certif_oral_c = st.checkbox(
             "Je certifie avoir termine la preparation de cette fiche orale C.",
-            key=f"cert_oral_c_{num_fiche_val}"
+            key=f"cert_oral_c_{num_fiche_o_c}"
         )
 
         if st.button(
             "VALIDER ET VERROUILLER L'ATELIER ORAL C",
-            key=f"val_oral_c_{num_fiche_val}",
-            use_container_width=True
+            key=f"val_oral_c_{num_fiche_o_c}",
+            use_container_width=True,
         ):
             if not certif_oral_c:
                 st.warning("Veuillez cocher la case de certification avant.")
@@ -5210,8 +5210,8 @@ with tab3:
                 st.session_state.verrou_orale_c = True
                 st.rerun()
     else:
-        # Appel de la fonction avec la bonne variable extraite
-        afficher_validation_orale(num_fiche=num_fiche_val)
+        # L'atelier est verrouille, on affiche l'encadre officiel
+        afficher_validation_orale(num_fiche=num_fiche_o_c)
         
 with tab4:
     if "verrou_ecrite_c" not in st.session_state:
