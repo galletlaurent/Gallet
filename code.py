@@ -824,23 +824,31 @@ def charger_orale_permis_ce_fiche_12():
         "reponse": "Prévention des chutes lors des phases d'accrochage/décrochage, manipulation ergonomique des béquilles et prévention des risques articulaires."
     }
 
-banque_orales_permis_ce = [
-    charger_orale_permis_ce_fiche_1(),
-    charger_orale_permis_ce_fiche_2(),
-    charger_orale_permis_ce_fiche_3(),
-    charger_orale_permis_ce_fiche_4(),
-    charger_orale_permis_ce_fiche_5(),
-    charger_orale_permis_ce_fiche_6(),
-    charger_orale_permis_ce_fiche_7(),
-    charger_orale_permis_ce_fiche_8(),
-    charger_orale_permis_ce_fiche_9(),
-    charger_orale_permis_ce_fiche_10(),
-    charger_orale_permis_ce_fiche_11(),
-    charger_orale_permis_ce_fiche_12()
+banque_ecrites_permis_ce = [
+    charger_ecrite_permis_ce_fiche_1(),
+    charger_ecrite_permis_ce_fiche_2(),
+    charger_ecrite_permis_ce_fiche_3(),
+    charger_ecrite_permis_ce_fiche_4(),
+    charger_ecrite_permis_ce_fiche_5(),
+    charger_ecrite_permis_ce_fiche_6(),
+    charger_ecrite_permis_ce_fiche_7(),
+    charger_ecrite_permis_ce_fiche_8(),
+    charger_ecrite_permis_ce_fiche_9(),
+    charger_ecrite_permis_ce_fiche_10(),
+    charger_ecrite_permis_ce_fiche_11(),
+    charger_ecrite_permis_ce_fiche_12(),
+    charger_ecrite_permis_ce_fiche_13(),
+    charger_ecrite_permis_ce_fiche_14(),
+    charger_ecrite_permis_ce_fiche_15(),
+    charger_ecrite_permis_ce_fiche_16(),
+    charger_ecrite_permis_ce_fiche_17(),
+    charger_ecrite_permis_ce_fiche_18(),
+    charger_ecrite_permis_ce_fiche_19(),
+    charger_ecrite_permis_ce_fiche_20()
 ]
 
-# AJOUTEZ CES DEUX LIGNES ICI :
-for index, fiche in enumerate(banque_orales_permis_ce, start=1):
+# Injection automatique des numéros manquants pour éviter l'erreur d'affichage
+for index, fiche in enumerate(banque_ecrites_permis_ce, start=1):
     fiche["numero"] = index
 
 banque_orales_permis_ce = [
