@@ -5042,14 +5042,16 @@ with tab3:
 
     fiche_brute_orale = st.session_state.fiche_orale_choisie_c
 
-    # Normalisation immediate pour forcer l'utilisation d'une liste de dictionnaires
-    if isinstance(fiche_brute_orale, dict):
+    # 1. Normalisation et deballage si liste imbriquee [[...]]
+    if isinstance(fiche_brute_orale, list) and len(fiche_brute_orale) > 0 and isinstance(fiche_brute_orale[0], list):
+        questions_a_afficher = fiche_brute_orale[0]
+    elif isinstance(fiche_brute_orale, dict):
         questions_a_afficher = [fiche_brute_orale]
     else:
         questions_a_afficher = fiche_brute_orale
 
-    # Extraction securisee du numero de la fiche orale via le premier dictionnaire de la liste
-    if isinstance(questions_a_afficher, list) and len(questions_a_afficher) > 0:
+    # 2. Extraction du numero de la fiche orale via le premier dictionnaire reel
+    if isinstance(questions_a_afficher, list) and len(questions_a_afficher) > 0 and isinstance(questions_a_afficher[0], dict):
         num_fiche = questions_a_afficher[0].get("numero_fiche", "Non defini")
     elif isinstance(questions_a_afficher, dict):
         num_fiche = questions_a_afficher.get("numero_fiche", "Non defini")
@@ -5059,7 +5061,7 @@ with tab3:
     st.markdown(f"### Fiche Orale Numero {num_fiche}")
     st.divider()
 
-    # Affichage dynamique et securise de toutes les questions de la fiche orale
+    # 3. Affichage dynamique de toutes les questions de la fiche
     for idx, question_o in enumerate(questions_a_afficher):
         if isinstance(question_o, dict) and "question" in question_o:
             st.write(f"**Question {idx + 1} :** {question_o['question']}")
