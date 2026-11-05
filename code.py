@@ -5065,13 +5065,13 @@ with tab3:
 
     # Parcours et affichage dynamique des questions de la fiche tiree au sort
     for idx, question_o_c in enumerate(liste_questions_orales_c):
-        if isinstance(question_o_ce, dict) and "question" in question_o_ce:
-            st.write(f"**Question {idx + 1} :** {question_o_ce['question']}")
+        if isinstance(question_o_c, dict) and "question" in question_o_c:
+            st.write(f"**Question {idx + 1} :** {question_o_c['question']}")
 
-            if question_o_ce.get("type") == "choix":
+            if question_o_c.get("type") == "choix":
                 st.selectbox(
                     "Selectionnez votre reponse :",
-                    options=["Choisir une reponse..."] + question_o_ce.get("choix", []),
+                    options=["Choisir une reponse..."] + question_o_c.get("choix", []),
                     key=f"rep_orale_c_{idx}_{num_fiche_o}",
                     index=0,
                 )
@@ -5083,7 +5083,7 @@ with tab3:
                 )
 
             if st.checkbox("Afficher le guide de correction", key=f"chk_oral_c_{idx}_{num_fiche_o}"):
-                st.success(f"Elements cles attendus : {question_o_ce.get('reponse')}")
+                st.success(f"Elements cles attendus : {question_o_c.get('reponse')}")
                 
             st.divider()
             
