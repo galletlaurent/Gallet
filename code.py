@@ -2975,7 +2975,6 @@ for index, liste_questions in enumerate(banque_ecrites_permis_c, start=1):
     for question in liste_questions:
         question["numero_fiche"] = index
 
-
 # Correction pour le second tableau (Fiches Orales)
 banque_orales_permis_c = [
     charger_orale_permis_c_fiche_1(),
