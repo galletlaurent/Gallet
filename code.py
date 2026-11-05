@@ -5255,38 +5255,50 @@ with tab6:
                 del st.session_state[f"rep_ecrite_ce_{idx}"]
         st.rerun()
 
-    liste_questions_ecrites_ce = st.session_state.fiche_ecrite_choisie_ce
+    fiche_brute_ce = st.session_state.fiche_ecrite_choisie_ce
     
-    # Recuperation du numero de fiche via la premiere question de la liste
-    num_fiche_e_ce = liste_questions_ecrites_ce.get("numero_fiche", "Non defini") if liste_questions_ecrites_ce else "Non defini"
+    # Normalisation immediate en liste de dictionnaires
+    if isinstance(fiche_brute_ce, dict):
+        liste_questions_ecrites_ce = [fiche_brute_ce]
+    else:
+        liste_questions_ecrites_ce = fiche_brute_ce
+
+    # Extraction securisee du numero de fiche via le dictionnaire a l'index 0
+    if isinstance(liste_questions_ecrites_ce, list) and len(liste_questions_ecrites_ce) > 0:
+        num_fiche_e_ce = liste_questions_ecrites_ce[0].get("numero_fiche", "Non defini")
+    elif isinstance(liste_questions_ecrites_ce, dict):
+        num_fiche_e_ce = liste_questions_ecrites_ce.get("numero_fiche", "Non defini")
+    else:
+        num_fiche_e_ce = "Non defini"
+
     st.markdown(f"### Fiche Ecrite Numero {num_fiche_e_ce}")
     st.divider()
 
-    # Parcours et affichage des 10 questions de la fiche tiree au sort
+    # Parcours et affichage dynamique des 10 questions de la fiche tiree au sort
     for idx, question_e_ce in enumerate(liste_questions_ecrites_ce):
-        st.write(f"**Question {idx + 1} :** {question_e_ce['question']}")
+        if isinstance(question_e_ce, dict) and "question" in question_e_ce:
+            st.write(f"**Question {idx + 1} :** {question_e_ce['question']}")
 
-        if question_e_ce["type"] == "choix":
-            st.selectbox(
-                "Selectionnez votre reponse :",
-                options=["Choisir une reponse..."] + question_e_ce["choix"],
-                key=f"rep_ecrite_ce_{idx}",
-                disabled=v_ecrit_ce,
-                index=0,
-            )
-        else:
-            st.text_area(
-                "Votre reponse redigee :",
-                key=f"rep_ecrite_ce_{idx}",
-                disabled=v_ecrit_ce,
-                placeholder="Saisissez votre texte ici...",
-            )
+            if question_e_ce.get("type") == "choix":
+                st.selectbox(
+                    "Selectionnez votre reponse :",
+                    options=["Choisir une reponse..."] + question_e_ce.get("choix", []),
+                    key=f"rep_ecrite_ce_{idx}_{num_fiche_e_ce}",
+                    disabled=v_ecrit_ce,
+                    index=0,
+                )
+            else:
+                st.text_area(
+                    "Votre reponse redigee :",
+                    key=f"rep_ecrite_ce_{idx}_{num_fiche_e_ce}",
+                    disabled=v_ecrit_ce,
+                    placeholder="Saisissez votre texte ici...",
+                )
 
-        if st.checkbox("Afficher la reponse exacte", key=f"chk_ecrit_ce_{idx}"):
-            st.success(f"Reponse attendue : {question_e_ce['reponse']}")
-            
-        st.divider()
-
+            if st.checkbox("Afficher la reponse exacte", key=f"chk_ecrit_ce_{idx}_{num_fiche_e_ce}"):
+                st.success(f"Reponse attendue : {question_e_ce.get('reponse')}")
+                
+            st.divider()
     st.write("---")
     st.subheader("Synthese et validation")
     certif_ecrit = st.checkbox(
