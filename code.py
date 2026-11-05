@@ -2948,43 +2948,42 @@ def charger_orale_permis_c_fiche_12():
     }
 
 banque_ecrites_permis_c = [
-    [charger_ecrite_permis_c_fiche_1()],
-    [charger_ecrite_permis_c_fiche_2()],
-    [charger_ecrite_permis_c_fiche_3()],
-    [charger_ecrite_permis_c_fiche_4()],
-    [charger_ecrite_permis_c_fiche_5()],
-    [charger_ecrite_permis_c_fiche_6()],
-    [charger_ecrite_permis_c_fiche_7()],
-    [charger_ecrite_permis_c_fiche_8()],
-    [charger_ecrite_permis_c_fiche_9()],
-    [charger_ecrite_permis_c_fiche_10()],
-    [charger_ecrite_permis_c_fiche_11()],
-    [charger_ecrite_permis_c_fiche_12()],
-    [charger_ecrite_permis_c_fiche_13()],
-    [charger_ecrite_permis_c_fiche_14()],
-    [charger_ecrite_permis_c_fiche_15()],
-    [charger_ecrite_permis_c_fiche_16()],
-    [charger_ecrite_permis_c_fiche_17()],
-    [charger_ecrite_permis_c_fiche_18()],
-    [charger_ecrite_permis_c_fiche_19()],
-    [charger_ecrite_permis_c_fiche_20()]
+    charger_ecrite_permis_c_fiche_1(),
+    charger_ecrite_permis_c_fiche_2(),
+    charger_ecrite_permis_c_fiche_3(),
+    charger_ecrite_permis_c_fiche_4(),
+    charger_ecrite_permis_c_fiche_5(),
+    charger_ecrite_permis_c_fiche_6(),
+    charger_ecrite_permis_c_fiche_7(),
+    charger_ecrite_permis_c_fiche_8(),
+    charger_ecrite_permis_c_fiche_9(),
+    charger_ecrite_permis_c_fiche_10(),
+    charger_ecrite_permis_c_fiche_11(),
+    charger_ecrite_permis_c_fiche_12(),
+    charger_ecrite_permis_c_fiche_13(),
+    charger_ecrite_permis_c_fiche_14(),
+    charger_ecrite_permis_c_fiche_15(),
+    charger_ecrite_permis_c_fiche_16(),
+    charger_ecrite_permis_c_fiche_17(),
+    charger_ecrite_permis_c_fiche_18(),
+    charger_ecrite_permis_c_fiche_19(),
+    charger_ecrite_permis_c_fiche_20()
 ]
 
 banque_orales_permis_c = [
-    [charger_orale_permis_c_fiche_1()],
-    [charger_orale_permis_c_fiche_2()],
-    [charger_orale_permis_c_fiche_3()],
-    [charger_orale_permis_c_fiche_4()],
-    [charger_orale_permis_c_fiche_5()],
-    [charger_orale_permis_c_fiche_6()],
-    [charger_orale_permis_c_fiche_7()],
-    [charger_orale_permis_c_fiche_8()],
-    [charger_orale_permis_c_fiche_9()],
-    [charger_orale_permis_c_fiche_10()],
-    [charger_orale_permis_c_fiche_11()],
-    [charger_orale_permis_c_fiche_12()]
+    charger_orale_permis_c_fiche_1(),
+    charger_orale_permis_c_fiche_2(),
+    charger_orale_permis_c_fiche_3(),
+    charger_orale_permis_c_fiche_4(),
+    charger_orale_permis_c_fiche_5(),
+    charger_orale_permis_c_fiche_6(),
+    charger_orale_permis_c_fiche_7(),
+    charger_orale_permis_c_fiche_8(),
+    charger_orale_permis_c_fiche_9(),
+    charger_orale_permis_c_fiche_10(),
+    charger_orale_permis_c_fiche_11(),
+    charger_orale_permis_c_fiche_12()
 ]
-
 
 # --- BOUCLES D'INDEXATION CORRIGÉES ---
 
