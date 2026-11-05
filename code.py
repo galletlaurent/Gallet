@@ -322,7 +322,7 @@ def charger_banque_permis_am():
     
 def charger_banque_permis_b():
     """Retourne la banque contenant 20 questions pour le Permis B."""
-    return [
+    banque_questions_permis_b = [
         {"type": "choix", "question": "Quelle est la vitesse maximale autorisée sur autoroute par temps sec pour un jeune conducteur (permis probatoire) ?", "choix": ["110 km/h", "130 km/h", "100 km/h"], "reponse": "110 km/h"},
         {"type": "choix", "question": "Quelle est l'utilité du système de freinage ABS en cas de freinage d'urgence ?", "choix": ["Réduire considérablement la distance de freinage.","Empêcher le blocage des roues pour garder le contrôle de la trajectoire."," Augmenter la puissance des freins arrière." ], "reponse": "Empêcher le blocage des roues pour garder le contrôle de la trajectoire."},
         {"type": "choix", "question": "Le taux d'alcoolémie limite dans le sang pour un conducteur en permis probatoire est de :", "choix": ["0,20 g/l", "0,50 g/l", "0,00 g/l"], "reponse": "0,20 g/l"},
@@ -526,7 +526,6 @@ def charger_banque_permis_b():
 
 
 ]
-    # Sécurité si la fonction retourne du vide ou n'est pas une liste valide
     if not banque_questions_permis_b or not isinstance(banque_questions_permis_b, list):
         banque_questions_permis_b = [{
             "type": "choix",
@@ -544,6 +543,8 @@ def charger_banque_permis_b():
 
     # ENVOI FINAL DE LA BANQUE COMPLETE ET SECURISEE
     return banque_questions_permis_b
+
+
 def charger_ecrite_permis_c_fiche_1():
     return [
         {
