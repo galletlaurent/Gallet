@@ -560,6 +560,11 @@ banque_orales_permis_c = [
     charger_orale_permis_c_fiche_11(),
     charger_orale_permis_c_fiche_12(),
 ]
+
+# Cette boucle ajoute automatiquement la clé "numero" à chaque fiche du tableau !
+for index, fiche in enumerate(banque_orales_permis_c, start=1):
+    fiche["numero"] = index
+    
 def charger_ecrite_permis_ce_fiche_1():
     return {
         "type": "choix",
@@ -930,7 +935,7 @@ with tab3:
         st.rerun()
 
     fiche_o = st.session_state.fiche_orale_choisie_c
-    st.markdown(f"### Fiche Orale Numéro {fiche_o['numero']}")
+    st.markdown(f"### Fiche Orale Numéro {fiche_o.get('numero', 'Non défini')}")
     st.info(fiche_o["question"])
 
     st.text_area(
