@@ -5211,7 +5211,11 @@ with tab3:
                 st.rerun()
     else:
         # L'atelier est verrouille, on affiche l'encadre officiel
-        afficher_validation_orale(num_fiche=num_fiche_o_c)
+        calculer_et_afficher_note(
+            liste_questions=liste_questions_orales_c, 
+            prefixe_session="rep_orale_c", 
+            num_fiche=num_fiche_o_c
+        )
         
 with tab4:
     if "verrou_ecrite_c" not in st.session_state:
@@ -5415,9 +5419,11 @@ with tab5:
                 st.session_state.verrou_orale_ce = True
                 st.rerun()
     else:
-        # L'atelier est verrouille, on affiche l'encadre officiel
-        afficher_validation_orale(num_fiche=num_fiche_o_ce)
-
+        calculer_et_afficher_note(
+            liste_questions=liste_questions_orales_ce, 
+            prefixe_session="rep_orale_ce", 
+            num_fiche=num_fiche_o_ce
+        )
         
 
 with tab6:
