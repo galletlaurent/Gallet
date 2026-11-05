@@ -228,7 +228,14 @@ def charger_banque_permis_am():
         {"type": "choix", "question": "Le transport d'un passager sur un cyclomoteur est autorisé si :", "choix": ["Le véhicule est conçu pour (siège et repose-pieds)", "Le passager a moins de 10 ans", "Le trajet fait moins de 5 km"], "reponse": "Le véhicule est conçu pour (siège et repose-pieds)"},
         {"type": "ecrite", "question": "Que devez-vous faire en premier lieu en présence d'un panneau 'Stop' ?", "choix": [], "reponse": "Marquer un arrêt absolu à la limite de la ligne transversale et céder le passage."}
     ]
+    if len(banque_questions_permis_am) >= 19:
+        if "Une ligne continue au centre de la chaussée :" in banque_questions_permis_am[17].values():
+            banque_questions_permis_am[17]["choix"] = ["Interdit le franchissement et le chevauchement", "Permet le chevauchement", "N'a pas de règle particulière"]
 
+    # Injection automatique des numéros pour éviter l'erreur d'affichage
+    for index, fiche in enumerate(banque_questions_permis_am, start=1):
+        fiche["numero"] = index
+    
 def charger_banque_permis_b():
     """Retourne la banque contenant 20 questions pour le Permis B."""
     return [
@@ -253,7 +260,9 @@ def charger_banque_permis_b():
         {"type": "choix", "question": "Sur une route à double sens sans séparateur central, la vitesse maximale générale est fixée à :", "choix": ["80 km/h", "90 km/h", "70 km/h"], "reponse": "80 km/h"},
         {"type": "ecrite", "question": "Quel est le comportement attendu à l'intersection d'un feu jaune clignotant en bas ?", "choix": [], "reponse": "Passer avec prudence en appliquant les règles de priorité habituelles ou la signalisation associée."}
     ]
-
+    banque_questions_permis_b = charger_banque_permis_b()
+    for index, fiche in enumerate(banque_questions_permis_b, start=1):
+        fiche["numero"] = index
 
 def charger_ecrite_permis_c_fiche_1():
     return {
@@ -910,11 +919,140 @@ with tab0:
 
 
 with tab1:
-    st.header("Permis AM")
+    if "verrou_permis_am" not in st.session_state:
+        st.session_state.verrou_permis_am = False
 
+    v_permis_am = st.session_state.verrou_permis_am
+
+    st.header("Interrogation Écrite / Orale — Permis AM")
+    st.caption("Tirage au sort d'une question au hasard parmi la banque Permis AM.")
+
+    if "fiche_choisie_permis_am" not in st.session_state:
+        st.session_state.fiche_choisie_permis_am = random.choice(banque_questions_permis_am)
+
+    if st.button("TIRER UNE AUTRE QUESTION AU HASARD", key="btn_permis_am", disabled=v_permis_am, use_container_width=True):
+        st.session_state.fiche_choisie_permis_am = random.choice(banque_questions_permis_am)
+        if "rep_permis_am" in st.session_state:
+            del st.session_state["rep_permis_am"]
+        st.rerun()
+
+    fiche_am = st.session_state.fiche_choisie_permis_am
+    st.markdown(f"### Question Numéro {fiche_am['numero']}")
+    st.info(fiche_am["question"])
+
+    if fiche_am["type"] == "choix":
+        st.selectbox(
+            "Sélectionnez votre réponse :",
+            options=["Choisir une réponse..."] + fiche_am.get("choix", ["Option de secours"]),
+            key="rep_permis_am",
+            disabled=v_permis_am,
+            index=0
+        )
+    else:
+        st.text_area(
+            "Votre réponse rédigée :",
+            key="rep_permis_am",
+            disabled=v_permis_am,
+            placeholder="Saisissez votre texte ici...",
+        )
+
+    if st.checkbox("Afficher la réponse exacte", key="chk_permis_am"):
+        st.success(f"Réponse attendue : {fiche_am['reponse']}")
+
+    st.write("---")
+    st.subheader("Synthèse et validation")
+    certif_am = st.checkbox(
+        "Je certifie avoir répondu à la question de l'atelier Permis AM.",
+        key="cert_permis_am",
+        disabled=v_permis_am
+    )
+
+    if st.button("VALIDER ET VERROUILLER L'ATELIER PERMIS AM", key="val_permis_am", disabled=v_permis_am, use_container_width=True):
+        if not certif_am:
+            st.warning("Veuillez cocher la case de certification avant.")
+        else:
+            st.session_state.verrou_permis_am = True
+            st.rerun()
+
+    if v_permis_am:
+        st.info("Cet atelier Permis AM a été validé et verrouillé.")
+        
 with tab2:
-    st.header("Permis B")
+    if "verrou_permis_b" not in st.session_state:
+        st.session_state.verrou_permis_b = False
 
+    v_permis_b = st.session_state.verrou_permis_b
+
+    st.header("Interrogation Écrite / Orale — Permis B")
+    st.caption(
+        "Tirage au sort d'une question au hasard parmi la banque Permis B."
+    )
+
+    if "fiche_choisie_permis_b" not in st.session_state:
+        st.session_state.fiche_choisie_permis_b = random.choice(
+            banque_questions_permis_b
+        )
+
+    if st.button(
+        "TIRER UNE AUTRE QUESTION AU HASARD",
+        key="btn_permis_b",
+        disabled=v_permis_b,
+        use_container_width=True,
+    ):
+        st.session_state.fiche_choisie_permis_b = random.choice(
+            banque_questions_permis_b
+        )
+        if "rep_permis_b" in st.session_state:
+            del st.session_state["rep_permis_b"]
+        st.rerun()
+
+    fiche_b = st.session_state.fiche_choisie_permis_b
+    st.markdown(f"### Question Numéro {fiche_b['numero']}")
+    st.info(fiche_b["question"])
+
+    if fiche_b["type"] == "choix":
+        st.selectbox(
+            "Sélectionnez votre réponse :",
+            options=["Choisir une réponse..."] + fiche_b["choix"],
+            key="rep_permis_b",
+            disabled=v_permis_b,
+            index=0,
+        )
+    else:
+        st.text_area(
+            "Votre réponse rédigée :",
+            key="rep_permis_b",
+            disabled=v_permis_b,
+            placeholder="Saisissez votre texte ici...",
+        )
+
+    if st.checkbox("Afficher la réponse exacte", key="chk_permis_b"):
+        st.success(f"Réponse attendue : {fiche_b['reponse']}")
+
+    st.write("---")
+    st.subheader("Synthèse et validation")
+    certif_b = st.checkbox(
+        "Je certifie avoir répondu à la question de l'atelier Permis B.",
+        key="cert_permis_b",
+        disabled=v_permis_b,
+    )
+
+    if st.button(
+        "VALIDER ET VERROUILLER L'ATELIER PERMIS B",
+        key="val_permis_b",
+        disabled=v_permis_b,
+        use_container_width=True,
+    ):
+        if not certif_b:
+            st.warning("Veuillez cocher la case de certification avant.")
+        else:
+            st.session_state.verrou_permis_b = True
+            st.rerun()
+
+    if v_permis_b:
+        st.info("Cet atelier Permis B a été validé et verrouillé.")
+
+        
 with tab3:
     st.header("Interrogation Orale — Permis C")
     st.caption("Tirage au sort d'une fiche complète parmi les 12 fiches.")
