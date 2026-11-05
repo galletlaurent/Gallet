@@ -4777,10 +4777,12 @@ banque_ecrites_permis_ce = [
     charger_ecrite_permis_ce_fiche_20()
 ]
 
-# Injection du numero de fiche dans chaque dictionnaire de question
-for index, liste_questions in enumerate(banque_ecrites_permis_ce, start=1):
-    for question in liste_questions:
-        question["numero_fiche"] = index
+for index, fiche_ce in enumerate(banque_ecrites_permis_ce, start=1):
+    if isinstance(fiche_ce, list):
+        for question in fiche_ce:
+            question["numero_fiche"] = index
+    elif isinstance(fiche_ce, dict):
+        fiche_ce["numero_fiche"] = index
 
 banque_orales_permis_ce = [
     charger_orale_permis_ce_fiche_1(),
@@ -4797,11 +4799,12 @@ banque_orales_permis_ce = [
     charger_orale_permis_ce_fiche_12()
 ]
 
-# Injection du numero de fiche dans chaque dictionnaire de question
-for index, liste_questions in enumerate(banque_orales_permis_ce, start=1):
-    for question in liste_questions:
-        question["numero_fiche"] = index
-
+for index, fiche_ce in enumerate(banque_orales_permis_ce, start=1):
+    if isinstance(fiche_ce, list):
+        for question in fiche_ce:
+            question["numero_fiche"] = index
+    elif isinstance(fiche_ce, dict):
+        fiche_ce["numero_fiche"] = index
 with tab0:
     st.subheader("Identification de l'élève")
     st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
