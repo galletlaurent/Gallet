@@ -5161,34 +5161,41 @@ with tab5:
                 del st.session_state[f"rep_orale_ce_{idx}"]
         st.rerun()
 
-    liste_questions_orales_ce = st.session_state.fiche_orale_choisie_ce
+     liste_questions_orales_ce = st.session_state.fiche_orale_choisie_ce
 
-    # Force le passage en liste si la fiche chargee est un dictionnaire unique
+    # Normalisation immediate en liste de dictionnaires
     if isinstance(liste_questions_orales_ce, dict):
         questions_ce_a_afficher = [liste_questions_orales_ce]
-        num_fiche_o_ce = liste_questions_orales_ce.get("numero_fiche", "Non defini")
     else:
         questions_ce_a_afficher = liste_questions_orales_ce
-        num_fiche_o_ce = liste_questions_orales_ce[0].get("numero_fiche", "Non defini") if liste_questions_orales_ce else "Non defini"
+
+    # Extraction securisee du numero de fiche
+    if isinstance(questions_ce_a_afficher, list) and len(questions_ce_a_afficher) > 0:
+        num_fiche_o_ce = questions_ce_a_afficher.get("numero_fiche", "Non defini")
+    elif isinstance(questions_ce_a_afficher, dict):
+        num_fiche_o_ce = questions_ce_a_afficher.get("numero_fiche", "Non defini")
+    else:
+        num_fiche_o_ce = "Non defini"
 
     st.markdown(f"### Fiche Orale Numero {num_fiche_o_ce}")
     st.divider()
 
     # Affichage securise de chaque question
     for idx, question_o_ce in enumerate(questions_ce_a_afficher):
-        st.write(f"**Question {idx + 1} :** {question_o_ce['question']}")
+        if isinstance(question_o_ce, dict) and "question" in question_o_ce:
+            st.write(f"**Question {idx + 1} :** {question_o_ce['question']}")
 
-        st.text_area(
-            "Saisissez vos notes de preparation :",
-            key=f"rep_orale_ce_{idx}_{num_fiche_o_ce}",
-            disabled=v_oral_ce,
-            placeholder="Ecrivez ici vos arguments pour l'examen oral...",
-        )
+            st.text_area(
+                "Saisissez vos notes de preparation :",
+                key=f"rep_orale_ce_{idx}_{num_fiche_o_ce}",
+                disabled=v_oral_ce,
+                placeholder="Ecrivez ici vos arguments pour l'examen oral...",
+            )
 
-        if st.checkbox("Afficher le guide de correction complet", key=f"chk_oral_ce_{idx}_{num_fiche_o_ce}"):
-            st.success(f"Elements cles attendus : {question_o_ce['reponse']}")
-            
-        st.divider()
+            if st.checkbox("Afficher le guide de correction complet", key=f"chk_oral_ce_{idx}_{num_fiche_o_ce}"):
+                st.success(f"Elements cles attendus : {question_o_ce.get('reponse', 'Non defini')}")
+                
+            st.divider()
 
     st.write("---")
     st.subheader("Synthese et validation")
