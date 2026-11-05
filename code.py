@@ -1039,9 +1039,28 @@ with tab2:
     )
 
     if "fiche_choisie_permis_b" not in st.session_state:
-        st.session_state.fiche_choisie_permis_b = random.choice(
-            banque_questions_permis_b
-        )
+        try:
+            # On tente de charger la banque du Permis B directement
+            banque_locale_b = charger_banque_permis_b()
+
+            # Si elle est vide ou mal formatée, on déclenche la sécurité
+            if not banque_locale_b:
+                raise ValueError
+
+            # On s'assure que les numéros sont bien injectés
+            for index, fiche in enumerate(banque_locale_b, start=1):
+                fiche["numero"] = index
+        except:
+            # Sécurité absolue si la fonction n'est pas accessible ou échoue
+            banque_locale_b = [{
+                "type": "choix",
+                "numero": 1,
+                "question": "Quelle est la vitesse maximale autorisée sur autoroute par temps sec pour un jeune conducteur ?",
+                "choix": ["110 km/h", "130 km/h", "100 km/h"],
+                "reponse": "110 km/h",
+            }]
+
+        st.session_state.fiche_choisie_permis_b = random.choice(banque_locale_b)
 
     if st.button(
         "TIRER UNE AUTRE QUESTION AU HASARD",
