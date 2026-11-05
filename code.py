@@ -204,6 +204,75 @@ tab4 = onglets[4]
 tab5 = onglets[5]
 tab6 = onglets[6] 
 
+
+def afficher_validation_orale(num_fiche):
+    """Affiche l'encadré officiel de validation pour les ateliers oraux
+    avec l'identité complète de l'élève.
+    """
+    nom = st.session_state.get("nom_var", "NON RENSEIGNÉ")
+    prenom = st.session_state.get("prenom_var", "Non renseigné")
+    classe = st.session_state.get("classe_var", "NON RENSEIGNÉ")
+
+    st.write("---")
+    st.subheader("Validation officielle de la préparation")
+    
+    container_style = """
+    <div style='border: 2px solid #000000; padding: 20px; border-radius: 5px; background-color: #f9f9f9;'>
+        <p><b>Nom :</b> {}</p>
+        <p><b>Prénom :</b> {}</p>
+        <p><b>Classe :</b> {}</p>
+        <p><b>Évaluation :</b> Interrogation Orale — Fiche {}</p>
+        <hr style='border: 1px solid #cccccc;'>
+        <h4 style='margin: 0; color: #2ea44f;'>Statut : Fiche validée et verrouillée</h4>
+    </div>
+    """.format(nom, prenom, classe, num_fiche)
+    
+    st.markdown(container_style, unsafe_allow_html=True)
+    st.write("---")
+
+
+
+def calculer_et_afficher_note(liste_questions, prefixe_session, num_fiche):
+    """Calcule le score obtenu sur les questions de type choix (QCM) 
+    et affiche l'encadre officiel avec l'identité de l'eleve et sa note.
+    """
+    score = 0
+    total_qcm = 0
+    
+    # Calcul automatique du score sur les QCM de la fiche
+    for idx, q in enumerate(liste_questions):
+        if q.get("type") == "choix":
+            total_qcm += 1
+            cle_reponse = f"{prefixe_session}_{idx}_{num_fiche}"
+            rep_eleve = st.session_state.get(cle_reponse)
+            if rep_eleve == q.get("reponse"):
+                score += 1
+
+    # Recuperation des donnees d'identification normalisees
+    nom = st.session_state.get("nom_var", "NON RENSEIGNE")
+    prenom = st.session_state.get("prenom_var", "Non renseigne")
+    classe = st.session_state.get("classe_var", "NON RENSEIGNE")
+
+    # Affichage de l'encadre de synthese officiel
+    st.write("---")
+    st.subheader("Resultats officiels de l'evaluation")
+    
+    container_style = """
+    <div style='border: 2px solid #000000; padding: 20px; border-radius: 5px; background-color: #f9f9f9;'>
+        <p><b>Nom :</b> {}</p>
+        <p><b>Prenom :</b> {}</p>
+        <p><b>Classe :</b> {}</p>
+        <p><b>Evaluation :</b> Fiche {}</p>
+        <hr style='border: 1px solid #cccccc;'>
+        <h4 style='margin: 0; color: #1f77b4;'>Note QCM : {} / {}</h4>
+    </div>
+    """.format(nom, prenom, classe, num_fiche, score, total_qcm)
+    
+    st.markdown(container_style, unsafe_allow_html=True)
+    st.write("---")
+
+
+
 def charger_banque_permis_am():
     """Retourne la banque contenant 20 questions pour le Permis AM."""
     return [
@@ -4913,22 +4982,31 @@ with tab1:
         st.success(f"Réponse attendue : {fiche_am['reponse']}")
 
     st.write("---")
-    st.subheader("Synthèse et validation")
-    certif_am = st.checkbox(
-        "Je certifie avoir répondu à la question de l'atelier Permis AM.",
-        key="cert_permis_am",
-        disabled=v_permis_am
-    )
+    st.subheader("Synthese et validation")
+    
+    if not v_permis_am:
+        certif_am = st.checkbox(
+            "Je certifie avoir repondu a la question de l'atelier Permis AM.",
+            key="cert_permis_am"
+        )
 
-    if st.button("VALIDER ET VERROUILLER L'ATELIER PERMIS AM", key="val_permis_am", disabled=v_permis_am, use_container_width=True):
-        if not certif_am:
-            st.warning("Veuillez cocher la case de certification avant.")
-        else:
-            st.session_state.verrou_permis_am = True
-            st.rerun()
-
-    if v_permis_am:
-        st.info("Cet atelier Permis AM a été validé et verrouillé.")
+        if st.button(
+            "VALIDER ET VERROUILLER L'ATELIER PERMIS AM",
+            key="val_permis_am",
+            use_container_width=True,
+        ):
+            if not certif_am:
+                st.warning("Veuillez cocher la case de certification avant.")
+            else:
+                st.session_state.verrou_permis_am = True
+                st.rerun()
+    else:
+        # L'atelier est verrouille, on appelle la fonction automatique pour afficher l'identite et la note
+        calculer_et_afficher_note(
+            liste_questions=st.session_state.questions_permis_am,  # Verifiez le nom de votre liste de questions en session
+            prefixe_session="rep_permis_am",                       # Adaptez avec le prefixe de vos cles de reponses AM
+            num_fiche="Unique"                                     # Indiquez le numero de la fiche ou laissez "Unique"
+        )
         
 with tab2:
     if "verrou_permis_b" not in st.session_state:
@@ -5002,36 +5080,45 @@ with tab2:
         st.success(f"Réponse attendue : {fiche_b['reponse']}")
 
     st.write("---")
-    st.subheader("Synthèse et validation")
-    certif_b = st.checkbox(
-        "Je certifie avoir répondu à la question de l'atelier Permis B.",
-        key="cert_permis_b",
-        disabled=v_permis_b,
-    )
+    st.subheader("Synthese et validation")
+    
+    if not v_permis_b:
+        certif_b = st.checkbox(
+            "Je certifie avoir repondu a la question de l'atelier Permis B.",
+            key="cert_permis_b"
+        )
 
-    if st.button(
-        "VALIDER ET VERROUILLER L'ATELIER PERMIS B",
-        key="val_permis_b",
-        disabled=v_permis_b,
-        use_container_width=True,
-    ):
-        if not certif_b:
-            st.warning("Veuillez cocher la case de certification avant.")
-        else:
-            st.session_state.verrou_permis_b = True
-            st.rerun()
-
-    if v_permis_b:
-        st.info("Cet atelier Permis B a été validé et verrouillé.")
+        if st.button(
+            "VALIDER ET VERROUILLER L'ATELIER PERMIS B",
+            key="val_permis_b",
+            use_container_width=True,
+        ):
+            if not certif_b:
+                st.warning("Veuillez cocher la case de certification avant.")
+            else:
+                st.session_state.verrou_permis_b = True
+                st.rerun()
+    else:
+        # L'atelier est verrouille, on appelle la fonction automatique pour afficher l'identite et la note
+        calculer_et_afficher_note(
+            liste_questions=st.session_state.questions_permis_b,  # Verifiez le nom de votre liste de questions en session
+            prefixe_session="rep_permis_b",                       # Adaptez avec le prefixe de vos cles de reponses si besoin
+            num_fiche="Unique"                                    # Indiquez le numero de la fiche ou laissez "Unique"
+        )
 
 with tab3:
+    if "verrou_orale_c" not in st.session_state:
+        st.session_state.verrou_orale_c = False
+
+    v_oral_c = st.session_state.verrou_orale_c
+
     st.header("Interrogation Orale - Permis C")
     st.caption("Tirage au sort d'une fiche complete parmi les 12 fiches.")
 
     if "fiche_orale_choisie_c" not in st.session_state:
         st.session_state.fiche_orale_choisie_c = random.choice(banque_orales_permis_c)
 
-    if st.button("TIRER UNE AUTRE FICHE ORALE AU HASARD", key="btn_orale_c"):
+    if st.button("TIRER UNE AUTRE FICHE ORALE AU HASARD", key="btn_orale_c", disabled=v_oral_c):
         st.session_state.fiche_orale_choisie_c = random.choice(banque_orales_permis_c)
         for key in list(st.session_state.keys()):
             if key.startswith("rep_orale_c_"):
@@ -5040,7 +5127,6 @@ with tab3:
 
     fiche_brute_o = st.session_state.fiche_orale_choisie_c
     
-    # Extraction de la liste de questions reelle cachee dans le dictionnaire de la fiche
     if isinstance(fiche_brute_o, dict) and "questions" in fiche_brute_o:
         liste_questions_orales_c = fiche_brute_o["questions"]
         num_fiche_o = fiche_brute_o.get("numero_fiche", "Non defini")
@@ -5053,7 +5139,6 @@ with tab3:
 
     st.markdown(f"### Fiche Orale Numero {num_fiche_o}")
 
-    # Parcours et affichage dynamique des questions de la fiche tiree au sort
     for idx, question_o_c in enumerate(liste_questions_orales_c):
         if isinstance(question_o_c, dict) and "question" in question_o_c:
             st.write(f"**Question {idx + 1} :** {question_o_c['question']}")
@@ -5063,17 +5148,21 @@ with tab3:
                     "Selectionnez votre reponse :",
                     options=["Choisir une reponse..."] + question_o_c.get("choix", []),
                     key=f"rep_orale_c_{idx}_{num_fiche_o}",
+                    disabled=v_oral_c,
                     index=0,
                 )
             else:
                 st.text_area(
                     "Saisissez vos notes de preparation :",
                     key=f"rep_orale_c_{idx}_{num_fiche_o}",
+                    disabled=v_oral_c,
                     placeholder="Ecrivez ici vos arguments pour l'examen oral...",
                 )
 
-            if st.checkbox("Afficher le guide de correction", key=f"chk_oral_c_{idx}_{num_fiche_o}"):
-                st.success(f"Elements cles attendus : {question_o_c.get('reponse', 'Non disponible')}")
+            # S'affiche uniquement si l'atelier est valide/verrouille
+            if v_oral_c:
+                if st.checkbox("Afficher le guide de correction", key=f"chk_oral_c_{idx}_{num_fiche_o}"):
+                    st.success(f"Elements cles attendus : {question_o_c.get('reponse', 'Non disponible')}")
                 
             st.divider()
             
@@ -5081,33 +5170,61 @@ with tab3:
     st.subheader("Synthese et validation")
     certif_oral_c = st.checkbox(
         "Je certifie avoir termine la preparation de cette fiche orale C.",
-        key=f"cert_oral_c_{num_fiche_o}"
+        key=f"cert_oral_c_{num_fiche_o}",
+        disabled=v_oral_c
     )
 
     if st.button(
         "VALIDER ET VERROUILLER L'ATELIER ORAL C",
         key=f"val_oral_c_{num_fiche_o}",
+        disabled=v_oral_c,
         use_container_width=True
     ):
         if not certif_oral_c:
             st.warning("Veuillez cocher la case de certification avant.")
         else:
-            st.success("Atelier oral C valide avec succes.")
+            st.session_state.verrou_orale_c = True
+            st.rerun()
 
+    st.write("---")
+    st.subheader("Synthèse et validation")
+    
+    if not v_oral_c:
+        certif_oral_c = st.checkbox(
+            "Je certifie avoir terminé la préparation de cette fiche orale C.",
+            key=f"cert_oral_c_{num_fiche}"
+        )
+
+        if st.button(
+            "VALIDER ET VERROUILLER L'ATELIER ORAL C",
+            key=f"val_oral_c_{num_fiche}",
+            use_container_width=True
+        ):
+            if not certif_oral_c:
+                st.warning("Veuillez cocher la case de certification avant.")
+            else:
+                st.session_state.verrou_orale_c = True
+                st.rerun()
+    else:
+        # Appel de la fonction pour afficher l'encadré d'identité et de validation
+        afficher_validation_orale(num_fiche=num_fiche)
+
+
+        
 with tab4:
+    if "verrou_ecrite_c" not in st.session_state:
+        st.session_state.verrou_ecrite_c = False
+
+    v_ecrit_c = st.session_state.verrou_ecrite_c
+
     st.header("Interrogation Ecrite - Permis C")
     st.caption("Tirage au sort d'une fiche de questions parmi les 20 fiches.")
 
     if "fiche_ecrite_choisie_c" not in st.session_state:
-        st.session_state.fiche_ecrite_choisie_c = random.choice(
-            banque_ecrites_permis_c
-        )
+        st.session_state.fiche_ecrite_choisie_c = random.choice(banque_ecrites_permis_c)
 
-    if st.button("TIRER UNE AUTRE FICHE ECRITE AU HASARD", key="btn_ecrite_c"):
-        st.session_state.fiche_ecrite_choisie_c = random.choice(
-            banque_ecrites_permis_c
-        )
-        # Reinitialisation propre de toutes les reponses de la session pour la nouvelle fiche
+    if st.button("TIRER UNE AUTRE FICHE ECRITE AU HASARD", key="btn_ecrite_c", disabled=v_ecrit_c):
+        st.session_state.fiche_ecrite_choisie_c = random.choice(banque_ecrites_permis_c)
         for key in list(st.session_state.keys()):
             if key.startswith("rep_ecrite_c_"):
                 del st.session_state[key]
@@ -5115,17 +5232,15 @@ with tab4:
 
     fiche_brute = st.session_state.fiche_ecrite_choisie_c
     
-    # Force la conversion en liste de dictionnaires de maniere universelle
     if isinstance(fiche_brute, dict):
         liste_questions_ecrites_c = [fiche_brute]
-    elif isinstance(fiche_brute, list) and len(fiche_brute) > 0 and isinstance(fiche_brute[0], list):
-        liste_questions_ecrites_c = fiche_brute[0]
+    elif isinstance(fiche_brute, list) and len(fiche_brute) > 0 and isinstance(fiche_brute, list):
+        liste_questions_ecrites_c = fiche_brute
     else:
         liste_questions_ecrites_c = fiche_brute
 
-    # Extraction du numero de fiche de facon totalement blindee
     if isinstance(liste_questions_ecrites_c, list) and len(liste_questions_ecrites_c) > 0:
-        num_fiche_e = liste_questions_ecrites_c[0].get("numero_fiche", "Non defini")
+        num_fiche_e = liste_questions_ecrites_c.get("numero_fiche", "Non defini")
     elif isinstance(liste_questions_ecrites_c, dict):
         num_fiche_e = liste_questions_ecrites_c.get("numero_fiche", "Non defini")
     else:
@@ -5133,7 +5248,6 @@ with tab4:
 
     st.markdown(f"### Fiche Ecrite Numero {num_fiche_e}")
 
-    # Parcours et affichage dynamique des questions de la fiche tiree au sort
     for idx, question_e_c in enumerate(liste_questions_ecrites_c):
         if isinstance(question_e_c, dict) and "question" in question_e_c:
             st.write(f"**Question {idx + 1} :** {question_e_c['question']}")
@@ -5143,35 +5257,72 @@ with tab4:
                     "Selectionnez votre reponse :",
                     options=["Choisir une reponse..."] + question_e_c.get("choix", []),
                     key=f"rep_ecrite_c_{idx}_{num_fiche_e}",
+                    disabled=v_ecrit_c,
                     index=0,
                 )
             else:
                 st.text_area(
                     "Votre reponse redigee :",
                     key=f"rep_ecrite_c_{idx}_{num_fiche_e}",
+                    disabled=v_ecrit_c,
                     placeholder="Saisissez votre texte ici...",
                 )
 
-            if st.checkbox("Afficher la reponse exacte", key=f"chk_ecrit_c_{idx}_{num_fiche_e}"):
-                st.success(f"Reponse attendue : {question_e_c.get('reponse')}")
+            # S'affiche uniquement si l'atelier est valide/verrouille
+            if v_ecrit_c:
+                if st.checkbox("Afficher la reponse exacte", key=f"chk_ecrit_c_{idx}_{num_fiche_e}"):
+                    st.success(f"Reponse attendue : {question_e_c.get('reponse')}")
                 
             st.divider()
+
     st.write("---")
     st.subheader("Synthese et validation")
     certif_ecrit_c = st.checkbox(
         "Je certifie avoir repondu aux questions de cette fiche ecrite C.",
-        key=f"cert_ecrit_c_{num_fiche_e}"
+        key=f"cert_ecrit_c_{num_fiche_e}",
+        disabled=v_ecrit_c
     )
 
     if st.button(
         "VALIDER ET VERROUILLER L'ATELIER ECRIT C",
         key=f"val_ecrit_c_{num_fiche_e}",
+        disabled=v_ecrit_c,
         use_container_width=True
     ):
         if not certif_ecrit_c:
             st.warning("Veuillez cocher la case de certification avant.")
         else:
-            st.success("Atelier ecrit C valide avec succes.")
+            st.session_state.verrou_ecrite_c = True
+            st.rerun()
+
+    if v_ecrit_c:
+        st.info("Cet atelier ecrit C a ete valide et verrouille. Les corrections sont maintenant accessibles.")
+        st.write("---")
+        st.subheader("Synthese et validation")
+        
+        if not v_ecrit_c:
+            certif_ecrit_c = st.checkbox(
+                "Je certifie avoir repondu aux questions de cette fiche ecrite C.",
+                key=f"cert_ecrit_c_{num_fiche_e}"
+            )
+
+            if st.button(
+                "VALIDER ET VERROUILLER L'ATELIER ECRIT C",
+                key=f"val_ecrit_c_{num_fiche_e}",
+                use_container_width=True
+            ):
+                if not certif_ecrit_c:
+                    st.warning("Veuillez cocher la case de certification avant.")
+                else:
+                    st.session_state.verrou_ecrite_c = True
+                    st.rerun()
+        else:
+            # L'atelier est valide, on appelle la fonction automatique pour afficher la note et l'identité
+            calculer_et_afficher_note(
+                liste_questions=liste_questions_ecrites_c, 
+                prefixe_session="rep_ecrite_c", 
+                num_fiche=num_fiche_e
+            )        
 
 with tab5:
     if "verrou_orale_ce" not in st.session_state:
@@ -5185,12 +5336,7 @@ with tab5:
     if "fiche_orale_choisie_ce" not in st.session_state:
         st.session_state.fiche_orale_choisie_ce = random.choice(banque_orales_permis_ce)
 
-    if st.button(
-        "TIRER UNE AUTRE FICHE ORALE AU HASARD",
-        key="btn_orale_ce",
-        disabled=v_oral_ce,
-        use_container_width=True,
-    ):
+    if st.button("TIRER UNE AUTRE FICHE ORALE AU HASARD", key="btn_orale_ce", disabled=v_oral_ce, use_container_width=True):
         st.session_state.fiche_orale_choisie_ce = random.choice(banque_orales_permis_ce)
         for key in list(st.session_state.keys()):
             if key.startswith("rep_orale_ce_"):
@@ -5199,13 +5345,12 @@ with tab5:
 
     fiche_brute_o_ce = st.session_state.fiche_orale_choisie_ce
 
-    # Extraction ciblee de la liste cachée dans la cle "questions" (idem permis C)
     if isinstance(fiche_brute_o_ce, dict) and "questions" in fiche_brute_o_ce:
         liste_questions_orales_ce = fiche_brute_o_ce["questions"]
         num_fiche_o_ce = fiche_brute_o_ce.get("numero_fiche", "Non defini")
-    elif isinstance(fiche_brute_o_ce, list) and len(fiche_brute_o_ce) > 0 and isinstance(fiche_brute_o_ce[0], dict):
-        liste_questions_orales_ce = fiche_brute_o_ce[0]["questions"]
-        num_fiche_o_ce = fiche_brute_o_ce[0].get("numero_fiche", "Non defini")
+    elif isinstance(fiche_brute_o_ce, list) and len(fiche_brute_o_ce) > 0 and isinstance(fiche_brute_o_ce, dict):
+        liste_questions_orales_ce = fiche_brute_o_ce["questions"]
+        num_fiche_o_ce = fiche_brute_o_ce.get("numero_fiche", "Non defini")
     else:
         liste_questions_orales_ce = fiche_brute_o_ce
         num_fiche_o_ce = "Non defini"
@@ -5213,7 +5358,6 @@ with tab5:
     st.markdown(f"### Fiche Orale Numero {num_fiche_o_ce}")
     st.divider()
 
-    # Parcours et affichage dynamique des questions de la fiche tiree au sort
     for idx, question_o_ce in enumerate(liste_questions_orales_ce):
         if isinstance(question_o_ce, dict) and "question" in question_o_ce:
             st.write(f"**Question {idx + 1} :** {question_o_ce['question']}")
@@ -5234,8 +5378,10 @@ with tab5:
                     placeholder="Ecrivez ici vos arguments pour l'examen oral...",
                 )
 
-            if st.checkbox("Afficher le guide de correction complet", key=f"chk_oral_ce_{idx}_{num_fiche_o_ce}"):
-                st.success(f"Elements cles attendus : {question_o_ce.get('reponse', 'Non disponible')}")
+            # S'affiche uniquement si l'atelier est valide/verrouille
+            if v_oral_ce:
+                if st.checkbox("Afficher le guide de correction complet", key=f"chk_oral_ce_{idx}_{num_fiche_o_ce}"):
+                    st.success(f"Elements cles attendus : {question_o_ce.get('reponse', 'Non disponible')}")
                 
             st.divider()
 
@@ -5258,10 +5404,30 @@ with tab5:
         else:
             st.session_state.verrou_orale_ce = True
             st.rerun()
+            
+    st.write("---")
+    st.subheader("Synthèse et validation")
+    
+    if not v_oral_ce:
+        certif_oral = st.checkbox(
+            "Je certifie avoir terminé la préparation de cette fiche orale CE.",
+            key=f"cert_oral_ce_{num_fiche_o_ce}"
+        )
 
-    if v_oral_ce:
-        st.info("Cet atelier oral a ete valide et verrouille.")
-
+        if st.button(
+            "VALIDER ET VERROUILLER L'ATELIER ORAL CE",
+            key=f"val_oral_ce_{num_fiche_o_ce}",
+            use_container_width=True,
+        ):
+            if not certif_oral:
+                st.warning("Veuillez cocher la case de certification avant.")
+            else:
+                st.session_state.verrou_orale_ce = True
+                st.rerun()
+    else:
+        # Appel de la fonction pour afficher l'encadré d'identité et de validation
+        afficher_validation_orale(num_fiche=num_fiche_o_ce)
+        
 
 with tab6:
     if "verrou_ecrite_ce" not in st.session_state:
@@ -5273,36 +5439,19 @@ with tab6:
     st.caption("Tirage au sort d'une fiche de questions parmi les 20 fiches.")
 
     if "fiche_ecrite_choisie_ce" not in st.session_state:
-        st.session_state.fiche_ecrite_choisie_ce = random.choice(
-            banque_ecrites_permis_ce
-        )
+        st.session_state.fiche_ecrite_choisie_ce = random.choice(banque_ecrites_permis_ce)
 
-    if st.button(
-        "TIRER UNE AUTRE FICHE ECRITE AU HASARD",
-        key="btn_ecrite_ce",
-        disabled=v_ecrit_ce,
-        use_container_width=True,
-    ):
-        st.session_state.fiche_ecrite_choisie_ce = random.choice(
-            banque_ecrites_permis_ce
-        )
-        # Reinitialisation de toutes les reponses de la session pour la nouvelle fiche
-        for idx in range(10):
-            if f"rep_ecrite_ce_{idx}" in st.session_state:
-                del st.session_state[f"rep_ecrite_ce_{idx}"]
+    if st.button("TIRER UNE AUTRE FICHE ECRITE AU HASARD", key="btn_ecrite_ce", disabled=v_ecrit_ce, use_container_width=True):
+        st.session_state.fiche_ecrite_choisie_ce = random.choice(banque_ecrites_permis_ce)
+        for key in list(st.session_state.keys()):
+            if key.startswith("rep_ecrite_ce_"):
+                del st.session_state[key]
         st.rerun()
 
-    fiche_brute_ce = st.session_state.fiche_ecrite_choisie_ce
+    liste_questions_ecrites_ce = st.session_state.fiche_ecrite_choisie_ce
     
-    # Normalisation immediate en liste de dictionnaires
-    if isinstance(fiche_brute_ce, dict):
-        liste_questions_ecrites_ce = [fiche_brute_ce]
-    else:
-        liste_questions_ecrites_ce = fiche_brute_ce
-
-    # Extraction securisee du numero de fiche via le dictionnaire a l'index 0
     if isinstance(liste_questions_ecrites_ce, list) and len(liste_questions_ecrites_ce) > 0:
-        num_fiche_e_ce = liste_questions_ecrites_ce[0].get("numero_fiche", "Non defini")
+        num_fiche_e_ce = liste_questions_ecrites_ce.get("numero_fiche", "Non defini")
     elif isinstance(liste_questions_ecrites_ce, dict):
         num_fiche_e_ce = liste_questions_ecrites_ce.get("numero_fiche", "Non defini")
     else:
@@ -5311,7 +5460,6 @@ with tab6:
     st.markdown(f"### Fiche Ecrite Numero {num_fiche_e_ce}")
     st.divider()
 
-    # Parcours et affichage dynamique des 10 questions de la fiche tiree au sort
     for idx, question_e_ce in enumerate(liste_questions_ecrites_ce):
         if isinstance(question_e_ce, dict) and "question" in question_e_ce:
             st.write(f"**Question {idx + 1} :** {question_e_ce['question']}")
@@ -5332,10 +5480,13 @@ with tab6:
                     placeholder="Saisissez votre texte ici...",
                 )
 
-            if st.checkbox("Afficher la reponse exacte", key=f"chk_ecrit_ce_{idx}_{num_fiche_e_ce}"):
-                st.success(f"Reponse attendue : {question_e_ce.get('reponse')}")
+            # S'affiche uniquement si l'atelier est valide/verrouille
+            if v_ecrit_ce:
+                if st.checkbox("Afficher la reponse exacte", key=f"chk_ecrit_ce_{idx}_{num_fiche_e_ce}"):
+                    st.success(f"Reponse attendue : {question_e_ce.get('reponse')}")
                 
             st.divider()
+
     st.write("---")
     st.subheader("Synthese et validation")
     certif_ecrit = st.checkbox(
@@ -5356,11 +5507,32 @@ with tab6:
             st.session_state.verrou_ecrite_ce = True
             st.rerun()
 
-    if v_ecrit_ce:
-        st.info("Cet atelier ecrit a ete valide et verrouille.")
+    st.write("---")
+    st.subheader("Synthese et validation")
+    
+    if not v_ecrit_ce:
+        certif_ecrit = st.checkbox(
+            "Je certifie avoir repondu aux questions de cette fiche ecrite CE.",
+            key=f"cert_ecrit_ce_{num_fiche_e_ce}"
+        )
 
-
-
+        if st.button(
+            "VALIDER ET VERROUILLER L'ATELIER ECRIT CE",
+            key=f"val_ecrit_ce_{num_fiche_e_ce}",
+            use_container_width=True,
+        ):
+            if not certif_ecrit:
+                st.warning("Veuillez cocher la case de certification avant.")
+            else:
+                st.session_state.verrou_ecrite_ce = True
+                st.rerun()
+    else:
+        # L'atelier est verrouille, on appelle la fonction pour afficher l'identite, la note et la fiche
+        calculer_et_afficher_note(
+            liste_questions=liste_questions_ecrites_ce, 
+            prefixe_session="rep_ecrite_ce", 
+            num_fiche=num_fiche_e_ce
+        )
 
 
 
