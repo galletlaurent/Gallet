@@ -5100,17 +5100,17 @@ with tab4:
     
     # Transformation immediate en liste si c'est un dictionnaire
     if isinstance(fiche_brute, dict):
-        liste_questions_ecrites = [fiche_brute]
+        liste_questions_ecrites_c = [fiche_brute]
     else:
-        liste_questions_ecrites = fiche_brute
+        liste_questions_ecrites_c = fiche_brute
 
+    # Maintenant l'utilisation de [0] est 100% securisee
     if liste_questions_ecrites_c and len(liste_questions_ecrites_c) > 0:
         num_fiche_e = liste_questions_ecrites_c[0].get("numero_fiche", "Non defini")
     else:
         num_fiche_e = "Non defini"
 
     st.markdown(f"### Fiche Ecrite Numero {num_fiche_e}")
-    st.divider()
 
     # Parcours et affichage dynamique des questions de la fiche tiree au sol
     for idx, question_e_c in enumerate(liste_questions_ecrites_c):
