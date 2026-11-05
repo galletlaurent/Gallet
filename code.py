@@ -5026,18 +5026,13 @@ with tab2:
 
 with tab3:
     st.header("Interrogation Orale - Permis C")
-    st.caption("Tirage au sort d'une fiche complète parmi les 12 fiches.")
+    st.caption("Tirage au sort d'une fiche complete parmi les 12 fiches.")
 
     if "fiche_orale_choisie_c" not in st.session_state:
-        st.session_state.fiche_orale_choisie_c = random.choice(
-            banque_orales_permis_c
-        )
+        st.session_state.fiche_orale_choisie_c = random.choice(banque_orales_permis_c)
 
     if st.button("TIRER UNE AUTRE FICHE ORALE AU HASARD", key="btn_orale_c"):
-        st.session_state.fiche_orale_choisie_c = random.choice(
-            banque_orales_permis_c
-        )
-        # Reinitialisation propre de toutes les reponses de la session pour la nouvelle fiche
+        st.session_state.fiche_orale_choisie_c = random.choice(banque_orales_permis_c)
         for key in list(st.session_state.keys()):
             if key.startswith("rep_orale_c_"):
                 del st.session_state[key]
@@ -5045,20 +5040,15 @@ with tab3:
 
     fiche_brute_o = st.session_state.fiche_orale_choisie_c
     
-    # Force la conversion en liste de dictionnaires de maniere universelle (idem ecrit)
-    if isinstance(fiche_brute_o, dict):
-        liste_questions_orales_c = [fiche_brute_o]
-    elif isinstance(fiche_brute_o, list) and len(fiche_brute_o) > 0 and isinstance(fiche_brute_o[0], list):
-        liste_questions_orales_c = fiche_brute_o[0]
+    # Extraction de la liste de questions reelle cachee dans le dictionnaire de la fiche
+    if isinstance(fiche_brute_o, dict) and "questions" in fiche_brute_o:
+        liste_questions_orales_c = fiche_brute_o["questions"]
+        num_fiche_o = fiche_brute_o.get("numero_fiche", "Non defini")
+    elif isinstance(fiche_brute_o, list) and len(fiche_brute_o) > 0 and isinstance(fiche_brute_o, dict):
+        liste_questions_orales_c = fiche_brute_o["questions"]
+        num_fiche_o = fiche_brute_o.get("numero_fiche", "Non defini")
     else:
         liste_questions_orales_c = fiche_brute_o
-
-    # Extraction du numero de fiche de facon totalement blindee (idem ecrit)
-    if isinstance(liste_questions_orales_c, list) and len(liste_questions_orales_c) > 0:
-        num_fiche_o = liste_questions_orales_c[0].get("numero_fiche", "Non defini")
-    elif isinstance(liste_questions_orales_c, dict):
-        num_fiche_o = liste_questions_orales_c.get("numero_fiche", "Non defini")
-    else:
         num_fiche_o = "Non defini"
 
     st.markdown(f"### Fiche Orale Numero {num_fiche_o}")
@@ -5083,7 +5073,7 @@ with tab3:
                 )
 
             if st.checkbox("Afficher le guide de correction", key=f"chk_oral_c_{idx}_{num_fiche_o}"):
-                st.success(f"Elements cles attendus : {question_o_c.get('reponse')}")
+                st.success(f"Elements cles attendus : {question_o_c.get('reponse', 'Non disponible')}")
                 
             st.divider()
             
