@@ -5082,28 +5082,28 @@ with tab2:
     st.write("---")
     st.subheader("Synthese et validation")
     
-    if not v_permis_b:
-        certif_b = st.checkbox(
-            "Je certifie avoir repondu a la question de l'atelier Permis B.",
-            key="cert_permis_b"
+    if not v_ecrit_c:
+        certif_ecrit_c = st.checkbox(
+            "Je certifie avoir repondu aux questions de cette fiche ecrite C.",
+            key=f"cert_ecrit_c_{num_fiche_e}"
         )
 
         if st.button(
-            "VALIDER ET VERROUILLER L'ATELIER PERMIS B",
-            key="val_permis_b",
-            use_container_width=True,
+            "VALIDER ET VERROUILLER L'ATELIER ECRIT C",
+            key=f"val_ecrit_c_{num_fiche_e}",
+            use_container_width=True
         ):
-            if not certif_b:
+            if not certif_ecrit_c:
                 st.warning("Veuillez cocher la case de certification avant.")
             else:
-                st.session_state.verrou_permis_b = True
+                st.session_state.verrou_ecrite_c = True
                 st.rerun()
     else:
         # L'atelier est verrouille, on appelle la fonction automatique pour afficher l'identite et la note
         calculer_et_afficher_note(
-            liste_questions=st.session_state.questions_permis_b,  # Verifiez le nom de votre liste de questions en session
-            prefixe_session="rep_permis_b",                       # Adaptez avec le prefixe de vos cles de reponses si besoin
-            num_fiche="Unique"                                    # Indiquez le numero de la fiche ou laissez "Unique"
+            liste_questions=liste_questions_ecrites_c, 
+            prefixe_session="rep_ecrite_c", 
+            num_fiche=num_fiche_e
         )
 
 with tab3:
