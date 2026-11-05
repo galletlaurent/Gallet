@@ -5176,15 +5176,32 @@ with tab3:
     st.write("---")
     st.subheader("Synthese et validation")
     
+    # Recupere le verrou directement depuis la memoire globale
+    v_oral_c = st.session_state.get("verrou_orale_c", False)
+
+    # Extraction de secours ultra-securisee du numero de la fiche orale
+    fiche_actuelle_o_c = st.session_state.get("fiche_orale_choisie_c", [])
+    if isinstance(fiche_actuelle_o_c, dict) and "questions" in fiche_actuelle_o_c:
+        num_fiche_val = fiche_actuelle_o_c.get("numero_fiche", "Non defini")
+    elif isinstance(fiche_actuelle_o_c, list) and len(fiche_actuelle_o_c) > 0:
+        if isinstance(fiche_actuelle_o_c[0], dict):
+            num_fiche_val = fiche_actuelle_o_c[0].get("numero_fiche", "Non defini")
+        else:
+            num_fiche_val = "Non defini"
+    elif isinstance(fiche_actuelle_o_c, dict):
+        num_fiche_val = fiche_actuelle_o_c.get("numero_fiche", "Non defini")
+    else:
+        num_fiche_val = "Non defini"
+
     if not v_oral_c:
         certif_oral_c = st.checkbox(
             "Je certifie avoir termine la preparation de cette fiche orale C.",
-            key=f"cert_oral_c_{num_fiche_o}"
+            key=f"cert_oral_c_{num_fiche_val}"
         )
 
         if st.button(
             "VALIDER ET VERROUILLER L'ATELIER ORAL C",
-            key=f"val_oral_c_{num_fiche_o}",
+            key=f"val_oral_c_{num_fiche_val}",
             use_container_width=True
         ):
             if not certif_oral_c:
@@ -5193,11 +5210,9 @@ with tab3:
                 st.session_state.verrou_orale_c = True
                 st.rerun()
     else:
-        st.info("Cet atelier oral C a ete valide et verrouille. Les corrections sont affichees ci-dessus.")
-        # Appel de la fonction pour afficher l'encadré d'identité et de validation
-        afficher_validation_orale(num_fiche=num_fiche)
-
-
+        # Appel de la fonction avec la bonne variable extraite
+        afficher_validation_orale(num_fiche=num_fiche_val)
+        
 with tab4:
     if "verrou_ecrite_c" not in st.session_state:
         st.session_state.verrou_ecrite_c = False
