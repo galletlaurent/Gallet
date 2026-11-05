@@ -163,6 +163,7 @@ def valider_session():
     """Fonction passerelle de sécurité pour l'ouverture des droits d'ateliers."""
     valider_saisie()
 
+
 # =============================================================================
 # PRÉPARATION DU NOM DE FICHIER ET CONFIGURATION DES ONGLETS
 # =============================================================================
@@ -204,265 +205,655 @@ tab5 = onglets[5]
 tab6 = onglets[6] 
 
 
-banque_questions = [
-    {
-        "question": "À quoi sert le contrôle des pneumatiques avant le départ ?",
-        "type": "texte",
-    },
-    {
-        "question": "Un voyant rouge de pression d'huile s'allume. Que faites-vous ?",
+# --- 4. DÉFINITION ET CONFIGURATION DES ONGLETS STREAMLIT ---
+onglets = st.tabs([
+    "Identification",
+    "Permis AM",
+    "Permis B",
+    "Fiches orales permis C",
+    "Fiche écrites permis C",  # Index 4
+    "Fiches orales permis CE",
+    "Fiche écrites permis CE",
+])
+
+def charger_banque_permis_am():
+    """Retourne la banque contenant 20 questions pour le Permis AM."""
+    return [
+        {"type": "choix", "question": "Quelle est la vitesse maximale par construction d'un cyclomoteur de moins de 50 cm³ ?", "choix": ["45 km/h", "50 km/h", "60 km/h"], "reponse": "45 km/h"},
+        {"type": "ecrite", "question": "Quels sont les deux équipements de protection obligatoires et certifiés pour le conducteur ?", "choix": [], "reponse": "Le casque homologué attaché et les gants certifiés CE."},
+        {"type": "choix", "question": "À partir de quel âge minimum est-il autorisé de conduire un cyclomoteur avec le permis AM ?", "choix": ["14 ans", "15 ans", "16 ans"], "reponse": "14 ans"},
+        {"type": "ecrite", "question": "Quelle est la sanction principale si vous circulez avec un moteur débridé ?", "choix": [], "reponse": "Amende, immobilisation/confiscation du véhicule, et déchéance des garanties d'assurance."},
+        {"type": "choix", "question": "Quel document est obligatoire pour circuler en cas de contrôle par les forces de l'ordre ?", "choix": ["Le certificat d'immatriculation (carte grise) et l'attestation d'assurance", "Le livret de famille", "Une pièce d'identité seule"], "reponse": "Le certificat d'immatriculation (carte grise) et l'attestation d'assurance"},
+        {"type": "ecrite", "question": "Que devez-vous vérifier sur votre casque avant de prendre la route ?", "choix": [], "reponse": "Qu'il est à la bonne taille, en bon état (sans fissure), propre et correctement attaché."},
+        {"type": "choix", "question": "Quel taux d'alcoolémie maximal par litre d'air expiré est toléré pour un conducteur novice ?", "choix": ["0,10 mg/l", "0,20 mg/l", "0,25 mg/l"], "reponse": "0,10 mg/l"},
+        {"type": "ecrite", "question": "Pourquoi est-il dangereux de rouler dans l'angle mort d'un véhicule lourd ?", "choix": [], "reponse": "Parce que le conducteur ne vous voit pas et risque de vous percuter s'il tourne ou change de voie."},
+        {"type": "choix", "question": "Le port du gilet de haute sécurité (gilet jaune) est-il obligatoire à cyclomoteur ?", "choix": ["Il doit être à bord et porté en cas d'arrêt d'urgence", "Oui, porté en permanence", "Non, jamais"], "reponse": "Il doit être à bord et porté en cas d'arrêt d'urgence"},
+        {"type": "ecrite", "question": "Quelle distance de sécurité minimale devez-vous laisser avec le véhicule qui vous précède ?", "choix": [], "reponse": "Une distance équivalente à un temps de réaction et de freinage d'au moins 2 secondes."},
+        {"type": "choix", "question": "Sur un cyclomoteur, l'assurance couvre-t-elle les dégâts si le passager ne porte pas de casque ?", "choix": ["Non, l'assurance peut refuser la prise en charge", "Oui, sans condition", "Uniquement si le passager est mineur"], "reponse": "Non, l'assurance peut refuser la prise en charge"},
+        {"type": "ecrite", "question": "Que signifie la présence de bandes réfléchissantes obligatoires sur un casque ?", "choix": [], "reponse": "Assurer la visibilité nocturne du conducteur sous tous les angles."},
+        {"type": "choix", "question": "Quelle est la catégorie de panneau indicateur de forme triangulaire ?", "choix": ["Un panneau de danger", "Un panneau d'interdiction", "Un panneau d'obligation"], "reponse": "Un panneau de danger"},
+        {"type": "ecrite", "question": "Quelle est la principale cause d'accident grave chez les jeunes conducteurs de deux-roues ?", "choix": [], "reponse": "La vitesse excessive ou inadaptée combinée au manque d'expérience."},
+        {"type": "choix", "question": "La consommation de cannabis au guidon multiplie le risque d'accident par :", "choix": ["2", "5", "10"], "reponse": "2"},
+        {"type": "ecrite", "question": "Quel comportement adopter à l'approche d'un passage piéton occupé ?", "choix": [], "reponse": "Ralentir et s'arrêter pour laisser la priorité absolue au piéton engagé."},
+        {"type": "choix", "question": "Une ligne continue au centre de la chaussée :", "choix": ["Interdit strictement le franchissement et le chevauchement", "Permet le dépassement des vélos", "Est une simple indication"], "reponse": "Interdit strictement le franchissement et le chevauchement"},
+        {"type": "ecrite", "question": "Pourquoi faut-il allumer les feux de croisement même en plein jour à cyclomoteur ?", "choix": [], "reponse": "Pour être immédiatement visible par les autres usagers de la route."},
+        {"type": "choix", "question": "Le transport d'un passager sur un cyclomoteur est autorisé si :", "choix": ["Le véhicule est conçu pour (siège et repose-pieds)", "Le passager a moins de 10 ans", "Le trajet fait moins de 5 km"], "reponse": "Le véhicule est conçu pour (siège et repose-pieds)"},
+        {"type": "ecrite", "question": "Que devez-vous faire en premier lieu en présence d'un panneau 'Stop' ?", "choix": [], "reponse": "Marquer un arrêt absolu à la limite de la ligne transversale et céder le passage."}
+    ]
+
+def charger_banque_permis_b():
+    """Retourne la banque contenant 20 questions pour le Permis B."""
+    return [
+        {"type": "choix", "question": "Quelle est la vitesse maximale autorisée sur autoroute par temps sec pour un jeune conducteur (permis probatoire) ?", "choix": ["110 km/h", "130 km/h", "100 km/h"], "reponse": "110 km/h"},
+        {"type": "ecrite", "question": "Expliquez brièvement comment s'applique la règle de la priorité à droite en l'absence de signalisation.", "choix": [], "reponse": "On doit céder le passage à tout véhicule qui débouche d'une rue située sur notre droite."},
+        {"type": "choix", "question": "Le taux d'alcoolémie limite dans le sang pour un conducteur en permis probatoire est de :", "choix": ["0,20 g/l", "0,50 g/l", "0,00 g/l"], "reponse": "0,20 g/l"},
+        {"type": "ecrite", "question": "Quelle est l'utilité du système de freinage ABS en cas de freinage d'urgence ?", "choix": [], "reponse": "Empêcher le blocage des roues pour garder la maîtrise de la trajectoire du véhicule."},
+        {"type": "choix", "question": "À quelle distance minimale devez-vous placer le triangle de présignalisation en cas de panne sur route ?", "choix": ["30 mètres", "15 mètres", "50 mètres"], "reponse": "30 mètres"},
+        {"type": "ecrite", "question": "Quelles sont les conditions météorologiques qui obligent à réduire sa vitesse à 50 km/h sur l'ensemble du réseau routier ?", "choix": [], "reponse": "Une visibilité inférieure à 50 mètres (brouillard intense, fortes précipitations)."},
+        {"type": "choix", "question": "L'utilisation d'un téléphone tenu en main en conduisant entraîne un retrait de :", "choix": ["3 points", "2 points", "4 points"], "reponse": "3 points"},
+        {"type": "ecrite", "question": "Qu'est-ce que l'aquaplaning et comment y faire face ?", "choix": [], "reponse": "Perte d'adhérence des pneus due à une pellicule d'eau. Il faut débrayer et garder le volant droit sans freiner."},
+        {"type": "choix", "question": "Quelle est la durée de la période probatoire pour un conducteur ayant suivi la conduite accompagnée (AAC) ?", "choix": ["2 ans", "3 ans", "1 an"], "reponse": "2 ans"},
+        {"type": "ecrite", "question": "Quelles vérifications intérieures devez-vous réaliser dès votre installation au poste de conduite ?", "choix": [], "reponse": "Réglage du siège, du volant, des trois rétroviseurs et attache de la ceinture."},
+        {"type": "choix", "question": "Le voyant de couleur rouge 'frein à main' allumé en circulant indique :", "choix": ["Une anomalie sur le système de freinage ou le frein serré", "Une simple usure des plaquettes", "Le bon fonctionnement de l'ABS"], "reponse": "Une anomalie sur le système de freinage ou le frein serré"},
+        {"type": "ecrite", "question": "Dans quelle situation devez-vous obligatoirement allumer vos feux de brouillard arrière ?", "choix": [], "reponse": "Uniquement en cas de brouillard ou de chute de neige (interdit sous la pluie)."},
+        {"type": "choix", "question": "Quelle est la distance de sécurité minimale à laisser en dépassant un cycliste en agglomération ?", "choix": ["1 mètre", "1,50 mètre", "2 mètres"], "reponse": "1 mètre"},
+        {"type": "ecrite", "question": "Qu'indique l'indice de charge inscrit sur le flanc d'un pneumatique ?", "choix": [], "reponse": "Le poids maximal que le pneumatique peut supporter à sa pression nominale."},
+        {"type": "choix", "question": "Le refus de priorité à un piéton engagé entraîne la perte de :", "choix": ["6 points", "4 points", "3 points"], "reponse": "6 points"},
+        {"type": "ecrite", "question": "Pourquoi la fatigue visuelle augmente-t-elle le danger lors de la conduite de nuit ?", "choix": [], "reponse": "Elle diminue l'acuité visuelle, altère la perception des reliefs et augmente le temps de réaction."},
+        {"type": "choix", "question": "En cas de contrôle, le défaut de contrôle technique à jour constitue une infraction passible :", "choix": ["D'une amende forfaitaire et d'une mise en fourrière potentielle", "D'un retrait de points", "D'une suspension de permis"], "reponse": "D'une amende forfaitaire et d'une mise en fourrière potentielle"},
+        {"type": "ecrite", "question": "Expliquez l'effet de la force centrifuge sur un véhicule circulant dans un virage.", "choix": [], "reponse": "Force qui pousse le véhicule vers l'extérieur de la courbe, proportionnelle au carré de la vitesse."},
+        {"type": "choix", "question": "Sur une route à double sens sans séparateur central, la vitesse maximale générale est fixée à :", "choix": ["80 km/h", "90 km/h", "70 km/h"], "reponse": "80 km/h"},
+        {"type": "ecrite", "question": "Quel est le comportement attendu à l'intersection d'un feu jaune clignotant en bas ?", "choix": [], "reponse": "Passer avec prudence en appliquant les règles de priorité habituelles ou la signalisation associée."}
+    ]
+
+
+def charger_ecrite_permis_c_fiche_1():
+    return {
         "type": "choix",
-        "choix": [
-            "Je continue jusqu'à destination",
-            "Je m'arrête dès que possible en sécurité",
-            "J'accélère pour atteindre un garage",
-            "J'ignore le voyant",
-        ],
-    },
-    {
-        "question": "Pourquoi faut-il répartir correctement le chargement ?",
-        "type": "texte",
-    },
-    {
-        "question": "Que peut provoquer un chargement mal arrimé ?",
+        "question": "Fiche Écrite 1 — Quelle est la vitesse maximale autorisée pour un véhicule de transport de marchandises de plus de 3.5 tonnes sur autoroute ?",
+        "choix": ["80 km/h", "90 km/h", "110 km/h"],
+        "reponse": "90 km/h"
+    }
+
+def charger_ecrite_permis_c_fiche_2():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Écrite 2 — Quel est le rôle principal du chronotachygraphe numérique ?",
+        "choix": [],
+        "reponse": "Enregistrer les temps de conduite, de repos, de travail et la vitesse du conducteur."
+    }
+
+def charger_ecrite_permis_c_fiche_3():
+    return {
         "type": "choix",
-        "choix": [
-            "Un déplacement de la charge",
-            "Une baisse automatique de consommation",
-            "Une meilleure visibilité",
-            "Aucun effet sur la conduite",
-        ],
-    },
-    {
-        "question": "Que vérifiez-vous avant d'atteler une remorque ?",
-        "type": "texte",
-    },
-    {
-        "question": "Pourquoi faut-il contrôler les angles morts ?",
-        "type": "texte",
-    },
-    {
-        "question": "Que faire en cas de fatigue importante au volant ?",
+        "question": "Fiche Écrite 3 — Quelle est la durée maximale de conduite journalière normale autorisée pour un conducteur de poids lourd ?",
+        "choix": ["8 heures", "9 heures", "10 heures"],
+        "reponse": "9 heures"
+    }
+
+def charger_ecrite_permis_c_fiche_4():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Écrite 4 — Qu'est-ce que la période de repos journalier régulier selon la RSE ?",
+        "choix": [],
+        "reponse": "Une période de repos ininterrompue d'au moins 11 heures."
+    }
+
+def charger_ecrite_permis_c_fiche_5():
+    return {
         "type": "choix",
-        "choix": [
-            "Faire une pause dans un endroit sûr",
-            "Rouler plus vite pour finir le trajet",
-            "Ouvrir la fenêtre et continuer",
-            "Ignorer la fatigue",
-        ],
-    },
-    {
-        "question": "Pourquoi adapter sa vitesse avant un virage ?",
+        "question": "Fiche Écrite 5 — À partir de quelle durée de conduite continue une pause de 45 minutes est-elle obligatoire ?",
+        "choix": ["3 heures 30", "4 heures", "4 heures 30"],
+        "reponse": "4 heures 30"
+    }
+
+def charger_ecrite_permis_c_fiche_6():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Écrite 6 — Expliquez comment fractionner la pause obligatoire de 45 minutes au cours de la conduite.",
+        "choix": [],
+        "reponse": "Par une première pause d'au moins 15 minutes suivie d'une seconde d'au moins 30 minutes."
+    }
+
+def charger_ecrite_permis_c_fiche_7():
+    return {
         "type": "choix",
-        "choix": [
-            "Pour limiter le risque de déport ou de renversement",
-            "Pour éviter d'utiliser les rétroviseurs",
-            "Pour augmenter la charge utile",
-            "Pour économiser les clignotants",
-        ],
-    },
-    {
-        "question": "Que devez-vous faire avant de quitter le véhicule à l'arrêt ?",
-        "type": "texte",
-    },
-    {
-        "question": "Pourquoi contrôler le fonctionnement des feux avant un trajet ?",
-        "type": "texte",
-    },
-    {
-        "question": "Que faire si un pneu semble endommagé avant le départ ?",
+        "question": "Fiche Écrite 7 — Quelle est la limite maximale de la durée de conduite hebdomadaire ?",
+        "choix": ["48 heures", "56 heures", "60 heures"],
+        "reponse": "56 heures"
+    }
+
+def charger_ecrite_permis_c_fiche_8():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Écrite 8 — Quelle est la validité maximale de la carte de conducteur pour le chronotachygraphe ?",
+        "choix": [],
+        "reponse": "5 ans."
+    }
+
+def charger_ecrite_permis_c_fiche_9():
+    return {
         "type": "choix",
-        "choix": [
-            "Faire contrôler le pneu avant de partir",
-            "Augmenter la vitesse",
-            "Le regonfler sans vérifier et partir",
-            "Ne rien faire s'il reste de la bande de roulement",
-        ],
-    },
-    {
-        "question": "À quoi sert le frein de stationnement ?",
-        "type": "texte",
-    },
-    {
-        "question": "Pourquoi faut-il vérifier les niveaux du véhicule ?",
-        "type": "texte",
-    },
-    {
-        "question": "Que signifie une distance de sécurité suffisante ?",
+        "question": "Fiche Écrite 9 — Quelle est la vitesse maximale autorisée pour un rigide de plus de 12 tonnes sur une route à double sens sans séparateur ?",
+        "choix": ["80 km/h", "70 km/h", "90 km/h"],
+        "reponse": "80 km/h"
+    }
+
+def charger_ecrite_permis_c_fiche_10():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Écrite 10 — Quelles sont les conditions pour pouvoir prolonger la conduite journalière à 10 heures ?",
+        "choix": [],
+        "reponse": "Cela est autorisé au maximum 2 fois par semaine."
+    }
+
+def charger_ecrite_permis_c_fiche_11():
+    return {
         "type": "choix",
-        "choix": [
-            "Avoir le temps de réagir et de s'arrêter",
-            "Rouler près du véhicule devant",
-            "Empêcher les autres de dépasser",
-            "Garder exactement cinq mètres en toute situation",
-        ],
-    },
-    {
-        "question": "Pourquoi le freinage d'un véhicule chargé demande-t-il de l'anticipation ?",
-        "type": "texte",
-    },
-    {
-        "question": "Que devez-vous faire avant une marche arrière ?",
+        "question": "Fiche Écrite 11 — À quelle fréquence minimale doit être effectué le contrôle technique d'un camion de plus de 3.5 tonnes ?",
+        "choix": ["Tous les ans", "Tous les 6 mois", "Tous les 2 ans"],
+        "reponse": "Tous les ans"
+    }
+
+def charger_ecrite_permis_c_fiche_12():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Écrite 12 — Quelles vérifications effectuez-vous sur les pneumatiques lors du contrôle de départ ?",
+        "choix": [],
+        "reponse": "L'absence de hernies ou de déchirures, la fixation des écrous, et la bonne pression visuelle."
+    }
+
+def charger_ecrite_permis_c_fiche_13():
+    return {
         "type": "choix",
-        "choix": [
-            "Vérifier la zone et manœuvrer lentement",
-            "Reculer rapidement",
-            "Regarder uniquement devant",
-            "Faire confiance aux capteurs sans contrôle",
-        ],
-    },
-    {
-        "question": "Quel est le rôle des rétroviseurs lors d'une manœuvre ?",
-        "type": "texte",
-    },
-    {
-        "question": "Pourquoi faut-il éviter les gestes brusques avec un poids lourd ?",
-        "type": "texte",
-    },
-    {
-        "question": "Que faire en cas de perte de visibilité due au brouillard ?",
+        "question": "Fiche Écrite 13 — Quel voyant rouge au tableau de bord indique une baisse critique de la pression d'air des freins ?",
+        "choix": ["Le voyant de pression de freinage", "Le voyant de préchauffage", "Le voyant d'ABS"],
+        "reponse": "Le voyant de pression de freinage"
+    }
+
+def charger_ecrite_permis_c_fiche_14():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Écrite 14 — Quel est le rôle de la bouteille anticongelante ou du dessicateur sur un circuit de freinage ?",
+        "choix": [],
+        "reponse": "Éliminer l'humidité contenue dans l'air comprimé pour éviter le gel des valves en hiver."
+    }
+
+def charger_ecrite_permis_c_fiche_15():
+    return {
         "type": "choix",
-        "choix": [
-            "Réduire l'allure et augmenter les distances",
-            "Suivre de près les feux du véhicule devant",
-            "Accélérer pour sortir du brouillard",
-            "Éteindre tous les feux",
-        ],
-    },
-    {
-        "question": "Pourquoi faut-il adapter la conduite à l'état de la chaussée ?",
-        "type": "texte",
-    },
-    {
-        "question": "Que faire si la cargaison risque de se déplacer ?",
+        "question": "Fiche Écrite 15 — Quel dispositif de freinage ralentit le véhicule sans utiliser les freins à friction ?",
+        "choix": ["Le ralentisseur (moteur ou hydraulique)", "Le frein de parc", "Le maître-cylindre"],
+        "reponse": "Le ralentisseur (moteur ou hydraulique)"
+    }
+
+def charger_ecrite_permis_c_fiche_16():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Écrite 16 — Quelle la fonction principale du dispositif ABS ?",
+        "choix": [],
+        "reponse": "Éviter le blocage des roues lors d'un freinage d'urgence pour garder le contrôle de la trajectoire."
+    }
+
+def charger_ecrite_permis_c_fiche_17():
+    return {
         "type": "choix",
-        "choix": [
-            "S'arrêter en sécurité et sécuriser le chargement",
-            "Continuer jusqu'à destination",
-            "Freiner brutalement",
-            "Ouvrir les portes en roulant",
-        ],
-    },
-    {
-        "question": "Expliquez l'utilité de l'arrimage du chargement.",
-        "type": "texte",
-    },
-    {
-        "question": "Pourquoi faut-il vérifier la fermeture des portes de la caisse ?",
-        "type": "texte",
-    },
-    {
-        "question": "Comment réagir face à un obstacle soudain ?",
+        "question": "Fiche Écrite 17 — Quelle doit être la pression minimale d'air requise pour pouvoir desserrer le frein de stationnement ?",
+        "choix": ["Environ 6 à 7 bars", "Environ 2 bars", "Environ 12 bars"],
+        "reponse": "Environ 6 à 7 bars"
+    }
+
+def charger_ecrite_permis_c_fiche_18():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Écrite 18 — À quoi sert le système de suspension pneumatique sur un porteur lourd ?",
+        "choix": [],
+        "reponse": "Maintenir la hauteur du véhicule constante et améliorer la stabilité de la cargaison."
+    }
+
+def charger_ecrite_permis_c_fiche_19():
+    return {
         "type": "choix",
-        "choix": [
-            "Rester maître du véhicule et freiner de façon adaptée",
-            "Donner un coup de volant brusque sans regarder",
-            "Accélérer systématiquement",
-            "Regarder uniquement l'obstacle",
-        ],
-    },
-    {
-        "question": "Pourquoi faut-il anticiper les intersections avec un véhicule long ?",
-        "type": "texte",
-    },
-    {
-        "question": "Que devez-vous vérifier au niveau de l'attelage ?",
-        "type": "texte",
-    },
-    {
-        "question": "Pourquoi faut-il tenir compte du gabarit du véhicule ?",
+        "question": "Fiche Écrite 19 — Quelle couleur possède le voyant indiquant l'activation du ralentisseur sur l'échappement ?",
+        "choix": ["Orange ou Vert", "Rouge", "Bleu"],
+        "reponse": "Orange ou Vert"
+    }
+
+def charger_ecrite_permis_c_fiche_20():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Écrite 20 — Que risquez-vous en cas de surcharge sur l'essieu moteur du véhicule ?",
+        "choix": [],
+        "reponse": "Une perte d'adhérence directionnelle à l'avant, une détérioration des routes et des sanctions financières."
+    }
+
+def charger_orale_permis_c_fiche_1():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 1 — Conduite et comportement.",
+        "choix": [],
+        "reponse": "Risques liés aux dimensions, à la masse, à l'inertie, aux angles morts et au centre de gravité élevé."
+    }
+
+def charger_orale_permis_c_fiche_2():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 2 — Prise en compte de l'environnement.",
+        "choix": [],
+        "reponse": "Éco-conduite, réduction des émissions polluantes, gestion du bruit et choix judicieux des itinéraires."
+    }
+
+def charger_orale_permis_c_fiche_3():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 3 — Équipements de sécurité des véhicules.",
+        "choix": [],
+        "reponse": "Rôle et fonctionnement de l'ABS, de l'EBS, de l'AEBS, des ceintures de sécurité, des airbags et des ralentisseurs."
+    }
+
+def charger_orale_permis_c_fiche_4():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 4 — Réglementation sociale européenne et documents.",
+        "choix": [],
+        "reponse": "Temps de conduite et de repos, utilisation de la carte chronotachygraphe, documents de bord et de transport (lettre de voiture)."
+    }
+
+def charger_orale_permis_c_fiche_5():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 5 — Chargement et surcharge.",
+        "choix": [],
+        "reponse": "Règles d'arrimage, répartition équilibrée des charges, limites réglementaires de PTAC et risques liés à la surcharge."
+    }
+
+def charger_orale_permis_c_fiche_6():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 6 — Éléments de mécanique et de sécurité.",
+        "choix": [],
+        "reponse": "Circuit d'air comprimé, freinage, suspension, direction, état d'usure et pression des pneumatiques."
+    }
+
+def charger_orale_permis_c_fiche_7():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 7 — Facteurs de risques et vigilance.",
+        "choix": [],
+        "reponse": "Fatigue, somnolence, baisse d'attention, risques liés à l'alcool, drogues, médicaments et distractions au volant."
+    }
+
+def charger_orale_permis_c_fiche_8():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 8 — Conduite en situations difficiles.",
+        "choix": [],
+        "reponse": "Gestion de la conduite sous la pluie, le brouillard, la neige, le verglas, face au vent latéral et conduite de nuit."
+    }
+
+def charger_orale_permis_c_fiche_9():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 9 — Situations d'urgence et accidents.",
+        "choix": [],
+        "reponse": "Comportement en cas de panne, d'incendie, protocole de passage dans les tunnels routiers, protection, alerte et secourisme."
+    }
+
+def charger_orale_permis_c_fiche_10():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 10 — Signalisation spécifique aux véhicules lourds.",
+        "choix": [],
+        "reponse": "Panneaux de restriction de tonnage, de hauteur, de largeur, disques de limitation de vitesse arrière et signalisation des angles morts."
+    }
+
+def charger_orale_permis_c_fiche_11():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 11 — Règles de circulation et priorités.",
+        "choix": [],
+        "reponse": "Interdictions d'emprunter certaines voies, règles de croisement et de dépassement, distances de sécurité spécifiques entre poids lourds."
+    }
+
+def charger_orale_permis_c_fiche_12():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 12 — Santé et hygiène de vie des conducteurs.",
+        "choix": [],
+        "reponse": "Troubles musculo-squelettiques (maux de dos), alimentation adaptée, importance du sommeil et examens médicaux périodiques."
+    }
+
+banque_questions_ecrites = [
+    charger_ecrite_permis_c_fiche_1(),
+    charger_ecrite_permis_c_fiche_2(),
+    charger_ecrite_permis_c_fiche_3(),
+    charger_ecrite_permis_c_fiche_4(),
+    charger_ecrite_permis_c_fiche_5(),
+    charger_ecrite_permis_c_fiche_6(),
+    charger_ecrite_permis_c_fiche_7(),
+    charger_ecrite_permis_c_fiche_8(),
+    charger_ecrite_permis_c_fiche_9(),
+    charger_ecrite_permis_c_fiche_10(),
+    charger_ecrite_permis_c_fiche_11(),
+    charger_ecrite_permis_c_fiche_12(),
+    charger_ecrite_permis_c_fiche_13(),
+    charger_ecrite_permis_c_fiche_14(),
+    charger_ecrite_permis_c_fiche_15(),
+    charger_ecrite_permis_c_fiche_16(),
+    charger_ecrite_permis_c_fiche_17(),
+    charger_ecrite_permis_c_fiche_18(),
+    charger_ecrite_permis_c_fiche_19(),
+    charger_ecrite_permis_c_fiche_20()
+]
+
+# Assemblage automatique des 12 thèmes oraux
+banque_questions_orales = [
+    charger_orale_permis_c_fiche_1(),
+    charger_orale_permis_c_fiche_2(),
+    charger_orale_permis_c_fiche_3(),
+    charger_orale_permis_c_fiche_4(),
+    charger_orale_permis_c_fiche_5(),
+    charger_orale_permis_c_fiche_6(),
+    charger_orale_permis_c_fiche_7(),
+    charger_orale_permis_c_fiche_8(),
+    charger_orale_permis_c_fiche_9(),
+    charger_orale_permis_c_fiche_10(),
+    charger_orale_permis_c_fiche_11(),
+    charger_orale_permis_c_fiche_12()
+]
+
+def charger_ecrite_permis_ce_fiche_1():
+    return {
         "type": "choix",
-        "choix": [
-            "Pour éviter les obstacles bas, étroits ou limités en hauteur",
-            "Pour choisir la couleur du véhicule",
-            "Pour réduire la pression des pneus",
-            "Pour éviter de contrôler les panneaux",
-        ],
-    },
-    {
-        "question": "Que faire avant de franchir un passage étroit ou limité en hauteur ?",
+        "question": "Fiche Écrite 1 — Quelle est la longueur maximale autorisée pour un ensemble articulé standard (tracteur + semi-remorque) en Europe ?",
+        "choix": ["16,50 mètres", "18,75 mètres", "12,00 mètres"],
+        "reponse": "16,50 mètres"
+    }
+
+def charger_ecrite_permis_ce_fiche_2():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Écrite 2 — Définissez précisément la notion de PTRA (Poids Total Roulant Autorisé).",
+        "choix": [],
+        "reponse": "La masse maximale limite fixée par l'administration que l'ensemble des véhicules reliés ne doit pas dépasser."
+    }
+
+def charger_ecrite_permis_ce_fiche_3():
+    return {
         "type": "choix",
-        "choix": [
-            "Vérifier que le gabarit du véhicule permet le passage",
-            "S'engager rapidement",
-            "Suivre le véhicule précédent sans vérifier",
-            "Se fier uniquement au GPS",
-        ],
-    },
-    {
-        "question": "Pourquoi faut-il éviter de surcharger le véhicule ?",
-        "type": "texte",
-    },
-    {
-        "question": "Que faire si le chargement masque la plaque ou les feux ?",
+        "question": "Fiche Écrite 3 — Quelle est la longueur maximale autorisée pour un train routier (porteur + remorque) ?",
+        "choix": ["18,75 mètres", "16,50 mètres", "20,00 mètres"],
+        "reponse": "18,75 mètres"
+    }
+
+def charger_ecrite_permis_ce_fiche_4():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Écrite 4 — Qu'est-ce que le principe du report de charge sur un ensemble de véhicules ?",
+        "choix": [],
+        "reponse": "Technique de chargement optimisant le poids transféré sur l'essieu du tracteur sans dépasser la limite légale."
+    }
+
+def charger_ecrite_permis_ce_fiche_5():
+    return {
         "type": "choix",
-        "choix": [
-            "Réorganiser le chargement pour rendre les équipements visibles",
-            "Partir comme cela",
-            "Éteindre les feux",
-            "Rouler uniquement de jour",
-        ],
-    },
-    {
-        "question": "Pourquoi faut-il maintenir une allure régulière et adaptée ?",
-        "type": "texte",
-    },
-    {
-        "question": "Que faire si vous constatez une anomalie importante lors des contrôles ?",
+        "question": "Fiche Écrite 5 — La vitesse maximale d'un ensemble de plus de 12t sur route à double sens sans séparateur est de :",
+        "choix": ["80 km/h", "70 km/h", "90 km/h"],
+        "reponse": "80 km/h"
+    }
+
+def charger_ecrite_permis_ce_fiche_6():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Écrite 6 — Quel document de transport remplace obligatoirement la lettre de voiture nationale lors des acheminements internationaux ?",
+        "choix": [],
+        "reponse": "La lettre de voiture internationale CMR."
+    }
+
+def charger_ecrite_permis_ce_fiche_7():
+    return {
         "type": "choix",
-        "choix": [
-            "Ne pas partir avant d'avoir fait vérifier l'anomalie",
-            "La noter et continuer",
-            "Rouler plus lentement sans rien vérifier",
-            "Attendre qu'un voyant s'allume",
-        ],
-    },
-    {
-        "question": "Pourquoi faut-il signaler ses changements de direction suffisamment tôt ?",
-        "type": "texte",
-    },
-    {
-        "question": "Que risque un conducteur qui ne contrôle pas régulièrement son environnement ?",
+        "question": "Fiche Écrite 7 — À partir de quel PTRA la présence d'un deuxième extincteur est-elle obligatoire à bord de l'ensemble ?",
+        "choix": ["Dès que le véhicule transporte des marchandises", "Uniquement en cas de transport ADR", "Au-dessus de 12 tonnes"],
+        "reponse": "Dès que le véhicule transporte des marchandises"
+    }
+
+def charger_ecrite_permis_ce_fiche_8():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Écrite 8 — Quel est le rôle du dispositif de freinage de secours automatique d'une remorque ?",
+        "choix": [],
+        "reponse": "Serrer instantanément les freins de la remorque en cas de rupture physique de l'attelage en mouvement."
+    }
+
+def charger_ecrite_permis_ce_fiche_9():
+    return {
         "type": "choix",
-        "choix": [
-            "Ne pas détecter un danger ou un usager",
-            "Économiser du carburant",
-            "Améliorer la stabilité",
-            "Réduire automatiquement la distance d'arrêt",
-        ],
-    },
-    {
-        "question": "Pourquoi faut-il être particulièrement prudent lors d'un dépassement ?",
-        "type": "texte",
-    },
-    {
-        "question": "Que devez-vous faire si vous devez vous arrêter sur la chaussée à la suite d'une panne ?",
-        "type": "texte",
-    },
-    {
-        "question": "Quel comportement adopter à proximité des usagers vulnérables ?",
+        "question": "Fiche Écrite 9 — Un ensemble de véhicules de plus de 3.5 tonnes circulant sous la pluie sur autoroute est limité à :",
+        "choix": ["80 km/h", "90 km/h", "70 km/h"],
+        "reponse": "80 km/h"
+    }
+
+def charger_ecrite_permis_ce_fiche_10():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Écrite 10 — Quelle est l'utilité du dispositif d'aide au démarrage en côte sur un tracteur routier lourd ?",
+        "choix": [],
+        "reponse": "Maintenir la pression de freinage quelques secondes pour éviter le recul de l'ensemble lors du lâcher de pédale."
+    }
+
+def charger_ecrite_permis_ce_fiche_11():
+    return {
         "type": "choix",
-        "choix": [
-            "Réduire l'allure et leur laisser un espace suffisant",
-            "Passer au plus près pour limiter la durée du dépassement",
-            "Klaxonner systématiquement",
-            "Ne pas modifier sa conduite",
-        ],
-    },
-    {
-        "question": "Pourquoi faut-il vérifier que le chargement est compatible avec le trajet prévu ?",
-        "type": "texte",
-    },
-    {
-        "question": "Que faire après avoir constaté un bruit anormal du véhicule ?",
+        "question": "Fiche Écrite 11 — Le contrôle technique périodique d'une semi-remorque de plus de 3.5 tonnes doit être réalisé :",
+        "choix": ["Chaque année", "Tous les 6 mois", "Tous les 2 ans"],
+        "reponse": "Chaque année"
+    }
+
+def charger_ecrite_permis_ce_fiche_12():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Écrite 12 — Comment s'appelle l'élément d'accouplement fixé sous le châssis avant d'une semi-remorque ?",
+        "choix": [],
+        "reponse": "Le pivot d'attelage (ou King-Pin)."
+    }
+
+def charger_ecrite_permis_ce_fiche_13():
+    return {
         "type": "choix",
-        "choix": [
-            "S'arrêter en sécurité et rechercher l'origine ou faire contrôler",
-            "Augmenter le volume de la radio",
-            "Accélérer pour vérifier si le bruit disparaît",
-            "Continuer sans surveillance",
-        ],
-    },
+        "question": "Fiche Écrite 13 — La masse maximale autorisée sous un essieu moteur isolé en France est de :",
+        "choix": ["13 tonnes", "11,5 tonnes", "10 tonnes"],
+        "reponse": "13 tonnes"
+    }
+
+def charger_ecrite_permis_ce_fiche_14():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Écrite 14 — Quelles sont les vérifications obligatoires concernant les béquilles d'une semi-remorque avant le départ ?",
+        "choix": [],
+        "reponse": "S'assurer qu'elles sont totalement remontées et que la manivelle de commande est repliée et verrouillée."
+    }
+
+def charger_ecrite_permis_ce_fiche_15():
+    return {
+        "type": "choix",
+        "question": "Fiche Écrite 15 — Sur une autoroute à 3 voies, un ensemble routier dont la longueur dépasse 7 mètres :",
+        "choix": ["A l'interdiction d'emprunter la voie la plus à gauche", "Peut circuler sur toutes les voies", "Doit rester sur la voie de droite"],
+        "reponse": "A l'interdiction d'emprunter la voie la plus à gauche"
+    }
+
+def charger_ecrite_permis_ce_fiche_16():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Écrite 16 — Quel est l'impact de la force d'inertie de la remorque sur le tracteur lors d'une décélération ?",
+        "choix": [],
+        "reponse": "La remorque pousse le tracteur, augmentant la charge dynamique exercée sur l'arrière du véhicule moteur."
+    }
+
+def charger_ecrite_permis_ce_fiche_17():
+    return {
+        "type": "choix",
+        "question": "Fiche Écrite 17 — Le certificat d'immatriculation d'un ensemble de véhicules comprend :",
+        "choix": ["Deux cartes grises distinctes (tracteur et remorque)", "Une seule carte grise commune", "Une carte grise uniquement pour le tracteur"],
+        "reponse": "Deux cartes grises distinctes (tracteur et remorque)"
+    }
+
+def charger_ecrite_permis_ce_fiche_18():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Écrite 18 — Quelles sont les sanctions en cas de dépassement du PTRA constaté lors d'un pesage ?",
+        "choix": [],
+        "reponse": "Une amende par tranche de dépassement de poids, immobilisation du véhicule et obligation de décharger."
+    }
+
+def charger_ecrite_permis_ce_fiche_19():
+    return {
+        "type": "choix",
+        "question": "Fiche Écrite 19 — Le dispositif de signalisation des angles morts doit être apposé :",
+        "choix": ["Sur le tracteur ET sur la remorque selon des emplacements réglementaires", "Uniquement à l'arrière de la remorque", "Uniquement sur les portières du tracteur"],
+        "reponse": "Sur le tracteur ET sur la remorque selon des emplacements réglementaires"
+    }
+
+def charger_ecrite_permis_ce_fiche_20():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Écrite 20 — Pourquoi est-il primordial de vérifier le cordon ABS/EBS lors de l'attelage ?",
+        "choix": [],
+        "reponse": "Pour garantir la transmission des signaux de freinage antiblocage et de contrôle de stabilité à la remorque."
+    }
+def charger_orale_permis_ce_fiche_1():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 1 — Conduite d'un ensemble de véhicules.",
+        "choix": [],
+        "reponse": "Risques majeurs de mise en portefeuille, trajectoire déportée de la remorque dans les courbes et distances d'arrêt augmentées."
+    }
+
+def charger_orale_permis_ce_fiche_2():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 2 — Prise en compte de l'environnement pour ensembles.",
+        "choix": [],
+        "reponse": "Gestion fine de la consommation en fonction de la masse globale, éco-conduite et planification des itinéraires adaptés aux grands gabarits."
+    }
+
+def charger_orale_permis_ce_fiche_3():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 3 — Équipements spécifiques aux ensembles.",
+        "choix": [],
+        "reponse": "Rôle de la sellette, du pivot d'attelage, verrouillage mécanique, utilisation des béquilles et branchements pneumatiques (flexibles rouge et jaune)."
+    }
+
+def charger_orale_permis_ce_fiche_4():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 4 — Réglementation sociale européenne et documents de l'ensemble.",
+        "choix": [],
+        "reponse": "Contrôle des disques/cartes chronotachygraphe, temps de conduite, présence des cartes grises respectives du tracteur et de la remorque."
+    }
+
+def charger_orale_permis_ce_fiche_5():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 5 — Chargement, répartition et arrimage sur remorque.",
+        "choix": [],
+        "reponse": "Calcul du centre de gravité, centrage des éléments lourds au-dessus des essieux de la remorque, amarrage réglementaire et gestion du PTRA."
+    }
+
+def charger_orale_permis_ce_fiche_6():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 6 — Vérification mécanique et sécurité de l'attelage.",
+        "choix": [],
+        "reponse": "Contrôle du circuit de freinage continu automatique, étanchéité des mains d'accouplement pneumatiques et vérification des pneumatiques de l'ensemble."
+    }
+
+def charger_orale_permis_ce_fiche_7():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 7 — Risques liés à l'état physique du conducteur d'ensemble.",
+        "choix": [],
+        "reponse": "Fatigue accrue par l'effort de concentration lors des manœuvres complexes et gestion des temps de pause physiologiques."
+    }
+
+def charger_orale_permis_ce_fiche_8():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 8 — Conduite d'un ensemble en conditions difficiles.",
+        "choix": [],
+        "reponse": "Haute vulnérabilité au vent latéral dû à la surface de voilure des carrosseries, risques accrus de lacet et de dérapage sur sol glissant."
+    }
+
+def charger_orale_permis_ce_fiche_9():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 9 — Situations critiques et accidents spécifiques.",
+        "choix": [],
+        "reponse": "Procédure d'urgence en cas de décrochage accidentel de la remorque, utilisation du frein de secours automatique et extinction des incendies de remorque."
+    }
+
+def charger_orale_permis_ce_fiche_10():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 10 — Signalisation et gabarit de grande longueur.",
+        "choix": [],
+        "reponse": "Respect strict de la signalisation d'accès (hauteur, longueur maximale, tonnage), port des plaques d'identification de grande longueur à l'arrière."
+    }
+
+def charger_orale_permis_ce_fiche_11():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 11 — Règles de circulation et croisement des ensembles.",
+        "choix": [],
+        "reponse": "Calcul des trajectoires dans les carrefours, compensation de l'effet de balayage de la structure remorquée et respect des distances d'isolement réglementaires."
+    }
+
+def charger_orale_permis_ce_fiche_12():
+    return {
+        "type": "ecrite",
+        "question": "Fiche Orale 12 — Santé au travail et prévention des risques de manutention.",
+        "choix": [],
+        "reponse": "Prévention des chutes lors des phases d'accrochage/décrochage, manipulation ergonomique des béquilles et prévention des risques articulaires."
+    }
+
+banque_ecrites_permis_ce = [
+    charger_ecrite_permis_ce_fiche_1(),
+    charger_ecrite_permis_ce_fiche_2(),
+    charger_ecrite_permis_ce_fiche_3(),
+    charger_ecrite_permis_ce_fiche_4(),
+    charger_ecrite_permis_ce_fiche_5(),
+    charger_ecrite_permis_ce_fiche_6(),
+    charger_ecrite_permis_ce_fiche_7(),
+    charger_ecrite_permis_ce_fiche_8(),
+    charger_ecrite_permis_ce_fiche_9(),
+    charger_ecrite_permis_ce_fiche_10(),
+    charger_ecrite_permis_ce_fiche_11(),
+    charger_ecrite_permis_ce_fiche_12(),
+    charger_ecrite_permis_ce_fiche_13(),
+    charger_ecrite_permis_ce_fiche_14(),
+    charger_ecrite_permis_ce_fiche_15(),
+    charger_ecrite_permis_ce_fiche_16(),
+    charger_ecrite_permis_ce_fiche_17(),
+    charger_ecrite_permis_ce_fiche_18(),
+    charger_ecrite_permis_ce_fiche_19(),
+    charger_ecrite_permis_ce_fiche_20()
+]
+
+# Regroupement des fiches orales CE
+banque_orales_permis_ce = [
+    charger_orale_permis_ce_fiche_1(),
+    charger_orale_permis_ce_fiche_2(),
+    charger_orale_permis_ce_fiche_3(),
+    charger_orale_permis_ce_fiche_4(),
+    charger_orale_permis_ce_fiche_5(),
+    charger_orale_permis_ce_fiche_6(),
+    charger_orale_permis_ce_fiche_7(),
+    charger_orale_permis_ce_fiche_8(),
+    charger_orale_permis_ce_fiche_9(),
+    charger_orale_permis_ce_fiche_10(),
+    charger_orale_permis_ce_fiche_11(),
+    charger_orale_permis_ce_fiche_12()
 ]
 
 
@@ -524,173 +915,214 @@ with tab2:
     st.header("Permis B")
 
 with tab3:
-    st.header("Fiches orales permis C")
+    st.header("Interrogation Orale — Permis C")
+    st.caption("Tirage au sort d'une fiche complète parmi les 12 fiches.")
 
-with tab4:
-    st.subheader("Fiche d'entraînement — permis C")
-    st.caption("Une fiche contient 20 questions tirées au hasard parmi 40.")
-
-    if len(banque_questions) != 40:
-        st.error(
-            f"La banque contient {len(banque_questions)} questions au lieu de 40."
+    if "fiche_orale_choisie_c" not in st.session_state:
+        st.session_state.fiche_orale_choisie_c = random.choice(
+            banque_orales_permis_c
         )
-    else:
-        # Crée la première fiche une seule fois.
-        if "fiche_permis_c" not in st.session_state:
-            st.session_state.fiche_permis_c = random.sample(
-                banque_questions, 20
-            )
 
-        # Nouveau tirage : 20 questions différentes parmi les 40.
-        if st.button("Tirer une nouvelle fiche", key="nouvelle_fiche_permis_c"):
-            st.session_state.fiche_permis_c = random.sample(
-                banque_questions, 20
-            )
-
-            # Efface les réponses précédentes.
-            for cle in list(st.session_state.keys()):
-                if cle.startswith("reponse_permis_c_"):
-                    del st.session_state[cle]
-
-            st.rerun()
-
-        # Affiche les 20 questions tirées.
-        for numero, item in enumerate(
-            st.session_state.fiche_permis_c, start=1
-        ):
-            st.markdown(f"**Question {numero}. {item['question']}**")
-
-            if item["type"] == "choix":
-                st.selectbox(
-                    "Choisissez une réponse",
-                    ["— Sélectionnez —"] + item["choix"],
-                    key=f"reponse_permis_c_{numero}",
-                )
-            else:
-                st.text_area(
-                    "Votre réponse",
-                    key=f"reponse_permis_c_{numero}",
-                    height=90,
-                )
-
-
-
-
-if "suite_verrouille_tab4_permis_c" not in st.session_state:
-    st.session_state.suite_verrouille_tab4_permis_c = False
-
-verrou_permis_c = st.session_state.suite_verrouille_tab4_permis_c
-
-# La banque doit contenir exactement 40 questions.
-if len(banque_questions) != 40:
-    st.error(
-        f"La banque doit contenir 40 questions. "
-        f"Elle en contient actuellement {len(banque_questions)}."
-    )
-else:
-    # Génère une fiche de 20 questions une seule fois,
-    # ou après clic sur le bouton "Nouvelle fiche".
-    if "fiche_permis_c" not in st.session_state:
-        st.session_state.fiche_permis_c = random.sample(banque_questions, 20)
-
-    if st.button(
-        "GÉNÉRER UNE NOUVELLE FICHE DE 20 QUESTIONS",
-        key="btn_nouvelle_fiche_permis_c",
-        use_container_width=True,
-        disabled=verrou_permis_c,
-    ):
-        st.session_state.fiche_permis_c = random.sample(banque_questions, 20)
-
-        # Efface les anciennes réponses
-        for cle in list(st.session_state.keys()):
-            if cle.startswith("reponse_permis_c_"):
-                del st.session_state[cle]
-
+    if st.button("TIRER UNE AUTRE FICHE ORALE AU HASARD", key="btn_orale_c"):
+        st.session_state.fiche_orale_choisie_c = random.choice(
+            banque_orales_permis_c
+        )
+        if "rep_orale_c" in st.session_state:
+            del st.session_state["rep_orale_c"]
         st.rerun()
 
-    st.subheader("Fiche d'entraînement — Permis C")
-    st.caption("20 questions tirées au hasard parmi une banque de 40.")
+    fiche_o = st.session_state.fiche_orale_choisie_c
+    st.markdown(f"### Fiche Orale Numéro {fiche_o['numero']}")
+    st.info(fiche_o["question"])
 
-    for numero, item in enumerate(st.session_state.fiche_permis_c, start=1):
-        st.markdown(f"**Question {numero} — {item['question']}**")
-
-        if item["type"] == "choix":
-            st.radio(
-                "Choisissez une réponse :",
-                item["choix"],
-                key=f"reponse_permis_c_{numero}",
-                disabled=verrou_permis_c,
-                index=None,
-            )
-        else:
-            st.text_area(
-                "Votre réponse :",
-                key=f"reponse_permis_c_{numero}",
-                disabled=verrou_permis_c,
-                height=90,
-            )
-
-    st.write("---")
-    st.subheader("Correction")
-
-    afficher_correction = st.checkbox(
-        "Afficher les réponses corrigées",
-        key="afficher_correction_permis_c",
+    st.text_area(
+        "Saisissez vos notes de préparation :",
+        key="rep_orale_c",
+        placeholder="Écrivez ici vos arguments pour l'examen oral...",
     )
 
-    if afficher_correction:
-        for numero, item in enumerate(st.session_state.fiche_permis_c, start=1):
-            st.markdown(f"**Question {numero}**")
-            st.write(item["question"])
-            st.success(f"Réponse : {item['reponse']}")
-
-    st.write("---")
-    st.subheader("Synthèse et validation de l'atelier")
-
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-    case_certif_permis_c = st.checkbox(
-        "Je certifie avoir répondu aux questions de l'atelier Permis C.",
-        key="check_certif_permis_c_final",
-        disabled=verrou_permis_c,
-    )
-
-    if st.button(
-        "VALIDER L'ATELIER PERMIS C",
-        key="btn_valider_permis_c",
-        use_container_width=True,
-        disabled=verrou_permis_c,
-    ):
-        if not case_certif_permis_c:
-            st.warning("Coche la case de certification avant de valider.")
-        else:
-            st.session_state.suite_verrouille_tab4_permis_c = True
-            st.success(
-                f"Atelier validé pour {p_eleve} {n_eleve} "
-                f"— classe {c_eleve}."
-            )
-            st.rerun()
-
-    if verrou_permis_c:
-        st.info("Cet atelier a été validé et verrouillé.")
+    if st.checkbox("Afficher le guide de correction complet", key="chk_oral_c"):
+        st.success(f"Éléments clés attendus : {fiche_o['reponse']}")
 
 
+# --- 5. CONFIGURATION DE L'ONGLET 4 : FICHES ÉCRITES PERMIS C (1 parmi 20) ---
+with tab4:
+    st.header("Interrogation Écrite — Permis C")
+    st.caption("Tirage au sort d'une fiche de questions parmi les 20 fiches.")
 
+    if "fiche_ecrite_choisie_c" not in st.session_state:
+        st.session_state.fiche_ecrite_choisie_c = random.choice(
+            banque_ecrites_permis_c
+        )
 
+    if st.button("TIRER UNE AUTRE FICHE ÉCRITE AU HASARD", key="btn_ecrite_c"):
+        st.session_state.fiche_ecrite_choisie_c = random.choice(
+            banque_ecrites_permis_c
+        )
+        if "rep_ecrite_c" in st.session_state:
+            del st.session_state["rep_ecrite_c"]
+        st.rerun()
 
+    fiche_e = st.session_state.fiche_ecrite_choisie_c
+    st.markdown(f"### Fiche Écrite Numéro {fiche_e['numero']}")
+    st.info(fiche_e["question"])
+
+    if fiche_e["type"] == "choix":
+        st.selectbox(
+            "Sélectionnez votre réponse :",
+            options=["Choisir une réponse..."] + fiche_e["choix"],
+            key="rep_ecrite_c",
+            index=0,
+        )
+    else:
+        st.text_area(
+            "Votre réponse rédigée :",
+            key="rep_ecrite_c",
+            placeholder="Saisissez votre texte ici...",
+        )
+
+    if st.checkbox("Afficher la réponse exacte", key="chk_ecrit_c"):
+        st.success(f"Réponse attendue : {fiche_e['reponse']}")
 
 
 with tab5:
-    st.header("Fiches orales permis CE")
+    if "verrou_orale_ce" not in st.session_state:
+        st.session_state.verrou_orale_ce = False
 
+    v_oral_ce = st.session_state.verrou_orale_ce
+
+    st.header("Interrogation Orale — Permis CE")
+    st.caption("Tirage au sort d'une fiche complète parmi les 12 fiches.")
+
+    if "fiche_orale_choisie_ce" not in st.session_state:
+        st.session_state.fiche_orale_choisie_ce = random.choice(
+            banque_orales_permis_ce
+        )
+
+    if st.button(
+        "TIRER UNE AUTRE FICHE ORALE AU HASARD",
+        key="btn_orale_ce",
+        disabled=v_oral_ce,
+        use_container_width=True,
+    ):
+        st.session_state.fiche_orale_choisie_ce = random.choice(
+            banque_orales_permis_ce
+        )
+        if "rep_orale_ce" in st.session_state:
+            del st.session_state["rep_orale_ce"]
+        st.rerun()
+
+    fiche_o_ce = st.session_state.fiche_orale_choisie_ce
+    st.markdown(f"### Fiche Orale Numéro {fiche_o_ce['numero']}")
+    st.info(fiche_o_ce["question"])
+
+    st.text_area(
+        "Saisissez vos notes de préparation :",
+        key="rep_orale_ce",
+        disabled=v_oral_ce,
+        placeholder="Écrivez ici vos arguments pour l'examen oral...",
+    )
+
+    if st.checkbox("Afficher le guide de correction complet", key="chk_oral_ce"):
+        st.success(f"Éléments clés attendus : {fiche_o_ce['reponse']}")
+
+    st.write("---")
+    st.subheader("Synthèse et validation")
+    certif_oral = st.checkbox(
+        "Je certifie avoir terminé la préparation de cette fiche orale CE.",
+        key="cert_oral_ce",
+        disabled=v_oral_ce,
+    )
+
+    if st.button(
+        "VALIDER ET VERROUILLER L'ATELIER ORAL CE",
+        key="val_oral_ce",
+        disabled=v_oral_ce,
+        use_container_width=True,
+    ):
+        if not certif_oral:
+            st.warning("Veuillez cocher la case de certification avant.")
+        else:
+            st.session_state.verrou_orale_ce = True
+            st.rerun()
+
+    if v_oral_ce:
+        st.info("Cet atelier oral a été validé et verrouillé.")
+
+
+# --- 5. CONFIGURATION DE L'ONGLET 6 : FICHES ÉCRITES PERMIS CE (1 parmi 20) ---
 with tab6:
-    st.header("Fiches écrites permis CE")
+    if "verrou_ecrite_ce" not in st.session_state:
+        st.session_state.verrou_ecrite_ce = False
 
+    v_ecrit_ce = st.session_state.verrou_ecrite_ce
 
+    st.header("Interrogation Écrite — Permis CE")
+    st.caption("Tirage au sort d'une fiche de questions parmi les 20 fiches.")
 
+    if "fiche_ecrite_choisie_ce" not in st.session_state:
+        st.session_state.fiche_ecrite_choisie_ce = random.choice(
+            banque_ecrites_permis_ce
+        )
 
+    if st.button(
+        "TIRER UNE AUTRE FICHE ÉCRITE AU HASARD",
+        key="btn_ecrite_ce",
+        disabled=v_ecrit_ce,
+        use_container_width=True,
+    ):
+        st.session_state.fiche_ecrite_choisie_ce = random.choice(
+            banque_ecrites_permis_ce
+        )
+        if "rep_ecrite_ce" in st.session_state:
+            del st.session_state["rep_ecrite_ce"]
+        st.rerun()
+
+    fiche_e_ce = st.session_state.fiche_ecrite_choisie_ce
+    st.markdown(f"### Fiche Écrite Numéro {fiche_e_ce['numero']}")
+    st.info(fiche_e_ce["question"])
+
+    if fiche_e_ce["type"] == "choix":
+        st.selectbox(
+            "Sélectionnez votre réponse :",
+            options=["Choisir une réponse..."] + fiche_e_ce["choix"],
+            key="rep_ecrite_ce",
+            disabled=v_ecrit_ce,
+            index=0,
+        )
+    else:
+        st.text_area(
+            "Votre réponse rédigée :",
+            key="rep_ecrite_ce",
+            disabled=v_ecrit_ce,
+            placeholder="Saisissez votre texte ici...",
+        )
+
+    if st.checkbox("Afficher la réponse exacte", key="chk_ecrit_ce"):
+        st.success(f"Réponse attendue : {fiche_e_ce['reponse']}")
+
+    st.write("---")
+    st.subheader("Synthèse et validation")
+    certif_ecrit = st.checkbox(
+        "Je certifie avoir répondu aux questions de cette fiche écrite CE.",
+        key="cert_ecrit_ce",
+        disabled=v_ecrit_ce,
+    )
+
+    if st.button(
+        "VALIDER ET VERROUILLER L'ATELIER ÉCRIT CE",
+        key="val_ecrit_ce",
+        disabled=v_ecrit_ce,
+        use_container_width=True,
+    ):
+        if not certif_ecrit:
+            st.warning("Veuillez cocher la case de certification avant.")
+        else:
+            st.session_state.verrou_ecrite_ce = True
+            st.rerun()
+
+    if v_ecrit_ce:
+        st.info("Cet atelier écrit a été validé et verrouillé.")
 
 
 
