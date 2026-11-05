@@ -2985,27 +2985,20 @@ banque_orales_permis_c = [
     charger_orale_permis_c_fiche_12()
 ]
 
-# --- BOUCLES D'INDEXATION CORRIGÉES ---
-
-# Indexation des Fiches Écrites Permis C
-for index, liste_fiches in enumerate(banque_ecrites_permis_c, start=1):
-    for fiche in liste_fiches:
-        # Si la fonction retourne une liste de sous-questions
-        if isinstance(fiche, list):
-            for question in fiche:
-                question["numero_fiche"] = index
-        # Si la fonction retourne directement un dictionnaire unique
-        elif isinstance(fiche, dict):
-            fiche["numero_fiche"] = index
+for index, fiche in enumerate(banque_ecrites_permis_c, start=1):
+    if isinstance(fiche, list):
+        for question in fiche:
+            question["numero_fiche"] = index
+    elif isinstance(fiche, dict):
+        fiche["numero_fiche"] = index
 
 # Indexation des Fiches Orales Permis C
-for index, liste_fiches in enumerate(banque_orales_permis_c, start=1):
-    for fiche in liste_fiches:
-        if isinstance(fiche, list):
-            for question in fiche:
-                question["numero_fiche"] = index
-        elif isinstance(fiche, dict):
-            fiche["numero_fiche"] = index
+for index, fiche in enumerate(banque_orales_permis_c, start=1):
+    if isinstance(fiche, list):
+        for question in fiche:
+            question["numero_fiche"] = index
+    elif isinstance(fiche, dict):
+        fiche["numero_fiche"] = index
     
 def charger_ecrite_permis_ce_fiche_1():
     return [
@@ -5097,17 +5090,12 @@ with tab4:
 
     fiche_brute = st.session_state.fiche_ecrite_choisie_c
     
-    # Transformation immediate en liste si c'est un dictionnaire
-    if isinstance(fiche_brute, dict):
-        liste_questions_ecrites_c = [fiche_brute]
+    if isinstance(fiche_brute, list):
+        liste_questions_ecrites = fiche_brute
+        num_fiche_e = liste_questions_ecrites[0].get("numero_fiche", "Non defini") if liste_questions_ecrites else "Non defini"
     else:
-        liste_questions_ecrites_c = fiche_brute
-
-    # Maintenant l'utilisation de [0] est 100% securisee
-    if liste_questions_ecrites_c and len(liste_questions_ecrites_c) > 0:
-        num_fiche_e = liste_questions_ecrites_c[0].get("numero_fiche", "Non defini")
-    else:
-        num_fiche_e = "Non defini"
+        liste_questions_ecrites = [fiche_brute]
+        num_fiche_e = fiche_brute.get("numero_fiche", "Non defini")
 
     st.markdown(f"### Fiche Ecrite Numero {num_fiche_e}")
 
