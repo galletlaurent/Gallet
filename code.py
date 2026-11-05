@@ -5273,15 +5273,19 @@ with tab4:
     st.write("---")
     st.subheader("Synthese et validation")
     
+    # Recupere le verrou directement depuis la memoire globale
+    v_ecrit_c = st.session_state.get("verrou_ecrite_c", False)
+
     if not v_ecrit_c:
+        # Utilisation d'une cle fixe securisee pour ne plus jamais planter sur num_fiche_e
         certif_ecrit_c = st.checkbox(
             "Je certifie avoir repondu aux questions de cette fiche ecrite C.",
-            key=f"cert_ecrit_c_{num_fiche_e}"
+            key="cert_ecrit_c_validation_fixe"
         )
 
         if st.button(
             "VALIDER ET VERROUILLER L'ATELIER ECRIT C",
-            key=f"val_ecrit_c_{num_fiche_e}",
+            key="val_ecrit_c_validation_fixe",
             use_container_width=True
         ):
             if not certif_ecrit_c:
@@ -5290,11 +5294,23 @@ with tab4:
                 st.session_state.verrou_ecrite_c = True
                 st.rerun()
     else:
-        # L'atelier est valide, on affiche l'identite complete et la note obtenue
+        # Recuperation de secours du numero de fiche
+        fiche_actuelle_brute = st.session_state.get("fiche_ecrite_choisie_c", [])
+        if isinstance(fiche_actuelle_brute, list) and len(fiche_actuelle_brute) > 0:
+            if isinstance(fiche_actuelle_brute[0], dict):
+                num_fiche_secu = fiche_actuelle_brute[0].get("numero_fiche", "Non defini")
+            else:
+                num_fiche_secu = "Non defini"
+        elif isinstance(fiche_actuelle_brute, dict):
+            num_fiche_secu = fiche_actuelle_brute.get("numero_fiche", "Non defini")
+        else:
+            num_fiche_secu = "Non defini"
+
+        # L'atelier est valide, on affiche la note finale
         calculer_et_afficher_note(
-            liste_questions=liste_questions_ecrites_c, 
+            liste_questions=fiche_actuelle_brute, 
             prefixe_session="rep_ecrite_c", 
-            num_fiche=num_fiche_e
+            num_fiche=num_fiche_secu
         )
       
 
