@@ -233,27 +233,31 @@ def afficher_validation_orale(num_fiche):
 
 
 def calculer_et_afficher_note(liste_questions, prefixe_session, num_fiche):
-    """Calcule le score obtenu sur les questions de type choix (QCM) 
-    et affiche l'encadre officiel avec l'identité de l'eleve et sa note.
+    """Calcule le score base sur les reponses fournies (QCM) ou saisies (texte)
+    et affiche le rapport officiel de l'evaluation.
     """
     score = 0
-    total_qcm = 0
+    total_questions = len(liste_questions) if isinstance(liste_questions, list) else 0
     
-    # Calcul automatique du score sur les QCM de la fiche
-    for idx, q in enumerate(liste_questions):
-        if q.get("type") == "choix":
-            total_qcm += 1
+    # Parcours complet de toutes les questions de la fiche
+    if isinstance(liste_questions, list):
+        for idx, q in enumerate(liste_questions):
             cle_reponse = f"{prefixe_session}_{idx}_{num_fiche}"
-            rep_eleve = st.session_state.get(cle_reponse)
-            if rep_eleve == q.get("reponse"):
-                score += 1
+            rep_eleve = st.session_state.get(cle_reponse, "")
+            
+            if q.get("type") == "choix":
+                # Pour un QCM, on verifie si la reponse est exacte
+                if rep_eleve == q.get("reponse"):
+                    score += 1
+            else:
+                # Pour de l'oral/texte, on verifie que le champ n'est pas vide
+                if str(rep_eleve).strip() and str(rep_eleve).strip() != "Choisir une reponse...":
+                    score += 1
 
-    # Recuperation des donnees d'identification normalisees
     nom = st.session_state.get("nom_var", "NON RENSEIGNE")
     prenom = st.session_state.get("prenom_var", "Non renseigne")
     classe = st.session_state.get("classe_var", "NON RENSEIGNE")
 
-    # Affichage de l'encadre de synthese officiel
     st.write("---")
     st.subheader("Resultats officiels de l'evaluation")
     
@@ -264,14 +268,12 @@ def calculer_et_afficher_note(liste_questions, prefixe_session, num_fiche):
         <p><b>Classe :</b> {}</p>
         <p><b>Evaluation :</b> Fiche {}</p>
         <hr style='border: 1px solid #cccccc;'>
-        <h4 style='margin: 0; color: #1f77b4;'>Note QCM : {} / {}</h4>
+        <h4 style='margin: 0; color: #1f77b4;'>Questions traitees : {} / {}</h4>
     </div>
-    """.format(nom, prenom, classe, num_fiche, score, total_qcm)
+    """.format(nom, prenom, classe, num_fiche, score, total_questions)
     
     st.markdown(container_style, unsafe_allow_html=True)
     st.write("---")
-
-
 
 def charger_banque_permis_am():
     """Retourne la banque contenant 20 questions pour le Permis AM."""
