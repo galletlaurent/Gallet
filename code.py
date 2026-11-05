@@ -5335,17 +5335,17 @@ with tab5:
 
     fiche_brute_o_ce = st.session_state.fiche_orale_choisie_ce
 
-    if isinstance(fiche_brute_o_ce, dict) and "questions" in fiche_brute_o_ce:
-        liste_questions_orales_ce = fiche_brute_o_ce["questions"]
-        num_fiche_o_ce = fiche_brute_o_ce.get("numero_fiche", "Non defini")
-    elif isinstance(fiche_brute_o_ce, list) and len(fiche_brute_o_ce) > 0 and isinstance(fiche_brute_o_ce[0], dict):
-        liste_questions_orales_ce = fiche_brute_o_ce[0]["questions"] if "questions" in fiche_brute_o_ce[0] else fiche_brute_o_ce
-        num_fiche_o_ce = fiche_brute_o_ce[0].get("numero_fiche", "Non defini")
+    if isinstance(liste_questions_ecrites_ce, list) and len(liste_questions_ecrites_ce) > 0:
+        if isinstance(liste_questions_ecrites_ce[0], dict):
+            num_fiche_e_ce = liste_questions_ecrites_ce[0].get("numero_fiche", "Non defini")
+        else:
+            num_fiche_e_ce = "Non defini"
+    elif isinstance(liste_questions_ecrites_ce, dict):
+        num_fiche_e_ce = liste_questions_ecrites_ce.get("numero_fiche", "Non defini")
     else:
-        liste_questions_orales_ce = fiche_brute_o_ce
-        num_fiche_o_ce = "Non defini"
+        num_fiche_e_ce = "Non defini"
 
-    st.markdown(f"### Fiche Orale Numero {num_fiche_o_ce}")
+    st.markdown(f"### Fiche Ecrite Numero {num_fiche_e_ce}")
     st.divider()
 
     for idx, question_o_ce in enumerate(liste_questions_orales_ce):
