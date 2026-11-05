@@ -5104,24 +5104,23 @@ with tab4:
     else:
         liste_questions_ecrites = fiche_brute
 
-    # Maintenant l'utilisation de [0] est 100% securisee
-    if liste_questions_ecrites and len(liste_questions_ecrites) > 0:
-        num_fiche_e = liste_questions_ecrites[0].get("numero_fiche", "Non defini")
+    if liste_questions_ecrites_c and len(liste_questions_ecrites_c) > 0:
+        num_fiche_e = liste_questions_ecrites_c[0].get("numero_fiche", "Non defini")
     else:
         num_fiche_e = "Non defini"
-        
+
     st.markdown(f"### Fiche Ecrite Numero {num_fiche_e}")
     st.divider()
 
-    # Parcours et affichage dynamique des questions de la fiche tiree au sort
-    for idx, question_e in enumerate(liste_questions_ecrites):
-        if isinstance(question_e, dict) and "question" in question_e:
-            st.write(f"**Question {idx + 1} :** {question_e['question']}")
+    # Parcours et affichage dynamique des questions de la fiche tiree au sol
+    for idx, question_e_c in enumerate(liste_questions_ecrites_c):
+        if isinstance(question_e_c, dict) and "question" in question_e_c:
+            st.write(f"**Question {idx + 1} :** {question_e_c['question']}")
 
-            if question_e.get("type") == "choix":
+            if question_e_c.get("type") == "choix":
                 st.selectbox(
                     "Selectionnez votre reponse :",
-                    options=["Choisir une reponse..."] + question_e.get("choix", []),
+                    options=["Choisir une reponse..."] + question_e_c.get("choix", []),
                     key=f"rep_ecrite_c_{idx}_{num_fiche_e}",
                     index=0,
                 )
@@ -5133,7 +5132,7 @@ with tab4:
                 )
 
             if st.checkbox("Afficher la reponse exacte", key=f"chk_ecrit_c_{idx}_{num_fiche_e}"):
-                st.success(f"Reponse attendue : {question_e.get('reponse')}")
+                st.success(f"Reponse attendue : {question_e_c.get('reponse')}")
                 
             st.divider()
 
