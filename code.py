@@ -5161,7 +5161,7 @@ with tab5:
                 del st.session_state[f"rep_orale_ce_{idx}"]
         st.rerun()
 
-     liste_questions_orales_ce = st.session_state.fiche_orale_choisie_ce
+    liste_questions_orales_ce = st.session_state.fiche_orale_choisie_ce
 
     # Normalisation immediate en liste de dictionnaires
     if isinstance(liste_questions_orales_ce, dict):
