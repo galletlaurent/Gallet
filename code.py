@@ -5098,13 +5098,13 @@ with tab4:
 
     fiche_brute = st.session_state.fiche_ecrite_choisie_c
     
-    # Normalisation immediate pour forcer l'utilisation d'une liste de dictionnaires
+    # Transformation immediate en liste si c'est un dictionnaire
     if isinstance(fiche_brute, dict):
         liste_questions_ecrites = [fiche_brute]
     else:
         liste_questions_ecrites = fiche_brute
 
-    # Recuperation du numero de fiche de facon totalement securisee via le premier element
+    # Maintenant l'utilisation de [0] est 100% securisee
     if liste_questions_ecrites and len(liste_questions_ecrites) > 0:
         num_fiche_e = liste_questions_ecrites[0].get("numero_fiche", "Non defini")
     else:
