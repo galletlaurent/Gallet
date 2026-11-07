@@ -259,7 +259,63 @@ def afficher_atelier_permis_b(verrouille=False):
             with c_sel: 
                 st.selectbox("", choix, key=f"{cle}_b_clean", disabled=verrouille, label_visibility="collapsed")
 
+def afficher_atelier_permis_b_caravane(verrouille=False):
+    """Affiche le Quiz et le Texte à trous côte à côte en bas de la page pour le permis B + caravane."""
+    import random
 
+    st.subheader("Atelier Interactif : Cinématique et Dynamique de l'Attelage Légat")
+
+    questions_sources = [
+        {"id": "qca1", "q": "Pourquoi une caravane coupe-t-elle le virage vers l'intérieur de la courbe ?", "options": ["En raison de la chasse cinématique liée à l'attelage", "À cause d'un manque de puissance de la voiture", "Parce que ses pneus glissent d'office"], "rep": "En raison de la chasse cinématique liée à l'attelage"},
+        {"id": "qca2", "q": "Quel point d'articulation relie la caravane au porte-à-faux arrière de la voiture ?", "options": ["La rotule d'attelage", "La sellette de pivotement", "L'essieu équivalent"], "rep": "La rotule d'attelage"},
+        {"id": "qca3", "q": "Quel paramètre amplifie le déport de la caravane vers la corde au début de la manœuvre ?", "options": ["La longueur de la flèche (timon)", "La masse des bagages", "L'aérodynamisme de la remorque"], "rep": "La longueur de la flèche (timon)"},
+        {"id": "qca4", "q": "Comment se comportent les trajectoires des roues avant et de la caravane en ligne droite initiale ?", "options": ["Les trois trajectoires fusionnent horizontalement", "Elles sont déjà écartées de un mètre", "Elles forment un angle droit"], "rep": "Les trois trajectoires fusionnent horizontalement"},
+        {"id": "qca5", "q": "Le phénomène d'oscillation dangereux d'une caravane à haute vitesse s'appelle :", "options": ["Le louvoiement ou mise en lacet", "Le sous-virage cinématique", "Le basculement statique"], "rep": "Le louvoiement ou mise en lacet"},
+        {"id": "qca6", "q": "Quel est le comportement de la ligne rouge (roues avant) lors de l'amorce du virage ?", "options": ["Elle commence à tourner pile sur la ligne verticale 0", "Elle commence à s'écarter deux mètres avant", "Elle reste rectiligne tout au long de la course"], "rep": "Elle commence à tourner pile sur la ligne verticale 0"},
+        {"id": "qca7", "q": "Quel élément graphique représente le train suiveur de l'ensemble articulé ?", "options": ["La ligne bleue pointillée", "La ligne rouge lisse", "Les lignes noires concentriques"], "rep": "La ligne bleue pointillée"},
+        {"id": "qca8", "q": "Si la vitesse de l'attelage est excessive dans une courbe serrée, quel accident est redouté ?", "options": ["Un basculement ou un glissement latéral", "Un allongement de l'empattement", "Un alignement parfait sur la ligne centrale"], "rep": "Un basculement ou un glissement latéral"},
+        {"id": "qca9", "q": "Quel facteur lié à l'infrastructure routière aide à maintenir la caravane stable ?", "options": ["Le dévers positif de la chaussée", "L'épaisseur du marquage blanc", "La présence d'une ligne droite de sortie"], "rep": "Le dévers positif de la chaussée"},
+        {"id": "qca10", "q": "Pour éviter que la caravane ne percute le trottoir intérieur, le conducteur doit :", "options": ["Ouvrir sa trajectoire vers l'extérieur au point 0", "Serrer immédiatement le bord droit", "Freiner au milieu de la courbe"], "rep": "Ouvrir sa trajectoire vers l'extérieur au point 0"}
+    ]
+
+    if "ordre_quiz_cara_aleatoire" not in st.session_state:
+        random.shuffle(questions_sources)
+        st.session_state.ordre_quiz_cara_aleatoire = questions_sources
+
+    if "champs_cara_clean" not in st.session_state:
+        st.session_state.champs_cara_clean = [
+            ("1. La caravane est reliée à la voiture par un point articulé appelé de ..........", ["Choisir...", "rotule", "sellette"], "rotule", "cara_t1"),
+            ("2. Les roues avant de la voiture guident l'ensemble et sont tracées en ..........", ["Choisir...", "rouge", "bleu"], "rouge", "b_t2"),
+            ("3. L'essieu arrière de la caravane coupe le virage et est tracé en ..........", ["Choisir...", "bleu", "rouge"], "bleu", "cara_t3"),
+            ("4. Plus le timon de la caravane est long, plus la .......... géométrique augmente.", ["Choisir...", "chasse", "dérive"], "chasse", "cara_t4"),
+            ("5. Avant le virage, en ligne droite, les trajectoires sont parfaitement ..........", ["Choisir...", "confondues", "décalées"], "confondues", "cara_t5"),
+            ("6. À vitesse élevée, des oscillations latérales peuvent provoquer une mise en ..........", ["Choisir...", "lacet", "portefeuille"], "lacet", "cara_t6"),
+            ("7. L'angle de .......... incliné de la route réduit les effets de la force centrifuge.", ["Choisir...", "dévers", "braquage"], "dévers", "cara_t7"),
+            ("8. L'accélération latérale subie par l'attelage s'évalue en unités ..........", ["Choisir...", "G", "Newton"], "G", "cara_t8"),
+            ("9. Les roues avant commencent à virer précisément sur la ligne ..........", ["Choisir...", "verticale", "horizontale"], "verticale", "cara_t9"),
+            ("10. Si le gabarit de la caravane morde sur le trottoir, il y a .......... de route.", ["Choisir...", "sortie", "stabilité"], "sortie", "cara_t10")
+        ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_cara_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"cara_at2_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_cara_clean:
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_cara_clean", disabled=verrouille, label_visibility="collapsed")
 
 
 def afficher_atelier_semi_remorque(verrouille=False):
@@ -1199,7 +1255,157 @@ with tab2:
             zone_alerte.warning("SORTIE DE VOIE : La caravane a chevauche le marquage au sol.")
         else:
             zone_alerte.success("TRAJECTOIRE REUSSITE : L'attelage est reste stable dans sa voie.")
+    if "suite_verrouille_tab2_cara" not in st.session_state:
+        st.session_state.suite_verrouille_tab2_cara = False
+    verrou_at2_cara = st.session_state.suite_verrouille_tab2_cara
 
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 2")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_cara = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Ensemble Articulé Léger sur la dynamique de louvoiement.",
+        key="check_certif_cara_final_net",
+        disabled=verrou_at2_cara,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_suite2_cara_official", use_container_width=True, disabled=verrou_at2_cara):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_cara: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction du Quiz Technique (1 point par bonne réponse)
+            score_qca = 0.0
+            if "ordre_quiz_cara_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_cara_aleatoire:
+                    saisie = st.session_state.get(f"cara_at2_final_g_{q_item['id']}", "Choisir...")
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_qca += 1.0
+
+            # 2. Correction du Texte à trous (1 point par bonne réponse)
+            score_tca = 0.0
+            if "champs_cara_clean" in st.session_state:
+                for ligne in st.session_state.champs_cara_clean:
+                    cle_variable = ligne[-1]
+                    attendu_texte = ligne[2]
+                    saisie_texte = st.session_state.get(f"{cle_variable}_cara_clean", "Choisir...")
+                    if str(saisie_texte).strip() == str(attendu_texte).strip(): 
+                        score_tca += 1.0
+
+            st.session_state.score_suite2_cara_p1 = round(float(score_qca), 1)
+            st.session_state.score_suite2_cara_p2 = round(float(score_tca), 1)
+            st.session_state.score_final_suite2_cara = round(float(score_qca + score_tca), 1)
+            st.session_state.suite_verrouille_tab2_cara = True
+            st.rerun()
+
+    # -------------------------------------------------------------------------
+    # PARTIE 4 : EXPORTATION DU RAPPORT INDIVIDUEL HTML SCELLÉ
+    # -------------------------------------------------------------------------
+    if st.session_state.get("suite_verrouille_tab2_cara", False):
+        from datetime import datetime
+        scr1_c = st.session_state.get("score_suite2_cara_p1", 0.0)
+        scr2_c = st.session_state.get("score_suite2_cara_p2", 0.0)
+        tot_s_c = st.session_state.get("score_final_suite2_cara", 0.0)
+        timestamp_c = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER ENSEMBLE LÉGER SCELLÉ | Note de session : {tot_s_c:.1f} / 20")
+
+        html_export_cara = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Permis B + Caravane - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Physique-Cinématique</h1>
+                <p>Atelier 2 : Dynamique et Balayage de Couloir de l'Attelage Léger (Permis B + Caravane)</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_c}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_c:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_c:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse de Cours : <strong>{scr2_c:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 2 : <strong>{tot_s_c:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_cara_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_cara_aleatoire, 1):
+                saisie = st.session_state.get(f"cara_at2_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_cara += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_cara += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_cara_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_cara_clean, 1):
+                cle_variable = ligne[-1]
+                phrase_enonce = ligne[0]
+                attendu_texte = ligne[2]
+                saisie_texte = st.session_state.get(f"{cle_variable}_cara_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_cara += f"<tr><td>{num}</td><td>{phrase_enonce}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_cara += f"""
+                </tbody>
+            </table>
+            
+            <div class="sub-title">DONNÉES COMPLÉMENTAIRES D'ATELIER TECHNIQUE</div>
+            <p style="font-size: 13px; color: #64748b;">
+                Valeur maximale enregistrée pour le décalage de chasse de la caravane : <strong>{decalage_reel_cara:.2f} m</strong><br>
+                Accélération transversale maximale atteinte : <strong>{acceleration_laterale_cara_g:.2f} G</strong>
+            </p>
+        </body>
+        </html>
+        """
+
+        st.download_button(
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL SCELLÉ (FORMAT HTML)",
+            data=html_export_cara,
+            file_name=f"Rapport_Caravane_{n_eleve}_{p_eleve}.html",
+            mime="text/html",
+            key="btn_download_html_official_cara",
+            use_container_width=True
+        )
         
 
 
