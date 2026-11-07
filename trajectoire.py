@@ -730,6 +730,9 @@ with tab1:
         st.session_state.suite_verrouille_tab1_b = False
     verrou_at1_b = st.session_state.suite_verrouille_tab1_b
 
+    # APPEL CRITIQUE : C'est cette ligne qui fait apparaitre le Quiz et le Texte à trous
+    afficher_atelier_permis_b(verrouille=verrou_at1_b)
+
     st.write("---")
     st.subheader("Synthese et validation de l'Atelier 1")
     
