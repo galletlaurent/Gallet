@@ -294,7 +294,6 @@ with tab3:
     # Creation du curseur de devers de la route
     angle_route_deg = st.sidebar.slider("Angle de devers de la route (degres)", 0, 15, 4, key="devers_c_sidebar")
     
-    # Configuration geometrique et devers de la route
     y_centre_virage = 2 * rayon_courbure
     beta = np.radians(angle_route_deg)
     beta_debord_init = np.radians(angle_debord_initial_deg)
@@ -307,34 +306,48 @@ with tab3:
     r_int = rayon_courbure - (largeur_voie / 2)
     r_ext = rayon_courbure + (largeur_voie / 2)
 
-    # CORRECTION CRITIQUE : Definition de ds et calcul du pas AVANT l'initialisation des tableaux
-    ds = 0.05  # Pas d'espace de 5 cm
+    # Definition de ds et calcul du pas
+    ds = 0.05  
     distance_totale = rayon_courbure * np.radians(angle_virage_deg) + 20.0
     pas = int(distance_totale / ds)
 
-    # Creation des structures de tableaux fixes (la variable 'pas' existe desormais)
+    # Creation des structures de tableaux fixes
     x_arr = np.zeros(pas)
     y_arr = np.zeros(pas)
     theta = np.zeros(pas)
     angle_debord = np.zeros(pas)
 
-    # Initialisation stricte par index pour preserver les matrices numpy
-    x_arr = -10.0
-    y_arr = rayon_courbure
-    theta = 0.0
-    angle_debord = float(angle_debord_initial_deg)
+    # Initialisation stricte par index
+    x_arr[0] = -10.0
+    y_arr[0] = rayon_courbure
+    theta[0] = 0.0
+    angle_debord[0] = float(angle_debord_initial_deg)
 
     evenement_detecte = "Aucun"
     index_interruption = pas - 1
 
+    # CORRECTION : Calcul preliminaire de la vitesse et de la derive des enveloppes de pneus
+    vitesse_ms = vitesse_kmh / 3.6
+    acceleration_laterale_g = (vitesse_ms**2) / (rayon_courbure * g)
+
+    # Modelisation de la raideur de derive (Pacejka simplifiee pour poids lourd)
+    raideur_derive_av = 150000  # N/rad
+    force_laterale_av = ((masse_totale * 1000) * g * 0.5) * acceleration_laterale_g
+    angle_derive_rad = force_laterale_av / raideur_derive_av
+
+    # Calcul de l'angle de braquage theorique et reel
+    angle_braquage_theorique_rad = np.arctan(empattement / rayon_courbure)
+    angle_braquage_reel_rad = angle_braquage_theorique_rad + angle_derive_rad
+
+    # =============================================================================
+    # BOUCLE DE CALCUL RESOLUTION PHYSIQUE DYNAMIQUE
+    # =============================================================================
     for i in range(1, pas):
         if x_arr[i-1] >= 0 and theta[i-1] < np.radians(angle_virage_deg):
             acc_lat_inst_g = (vitesse_ms**2) / (rayon_courbure * g)
-            
-            # INTEGRATION REELLE : L'angle de debord initial modifie l'angle effectif des roues arrière
             alpha = angle_braquage_reel_rad + beta_debord_init
             
-            # Équations mecaniques sur plan incliné
+            # Equations sur plan incline
             P_normale = masse_totale * 1000 * g * np.cos(beta)
             Fc_normale = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) * np.sin(beta)
             N = P_normale + Fc_normale
@@ -345,7 +358,7 @@ with tab3:
             F_frottement_requise = Fc_tangente - P_tangente
             F_frottement_max = seuil_glissement_mu * N
             
-            # Verifications de securite
+            # 1. Verification du critere de renversement
             Moment_renversement = Fc_tangente * hauteur_cg
             Moment_stabilisateur = N * (largeur_camion / 2) + P_tangente * hauteur_cg
             
@@ -353,12 +366,15 @@ with tab3:
                 evenement_detecte = "Basculement"
                 index_interruption = i - 1
                 break
+                
+            # 2. Verification du critere de glissement
             if np.abs(F_frottement_requise) >= F_frottement_max and evenement_detecte == "Aucun":
                 evenement_detecte = "Glissement"
         else:
             acc_lat_inst_g = 0.0
             alpha = 0.0
 
+        # Deplacement cinematique
         if x_arr[i-1] >= 0 and theta[i-1] < np.radians(angle_virage_deg):
             x_arr[i] = x_arr[i-1] + ds * np.cos(theta[i-1])
             y_arr[i] = y_arr[i-1] + ds * np.sin(theta[i-1])
