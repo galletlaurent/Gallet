@@ -316,9 +316,9 @@ with tab3:
     theta = np.zeros(pas)
 
     # Remplissage de la premiere ligne (Index 0) pour le depart en ligne droite
-    x_av[0] = -10.0 
+    x_av[0] = -10.0 + empattement
     y_av[0] = rayon_courbure
-    x_arr[0] = -10.0 + empattement
+    x_arr[0] = -10.0
     y_arr[0] = rayon_courbure
     theta[0] = 0.0
 
@@ -335,7 +335,7 @@ with tab3:
 
     for i in range(1, pas):
         # 1. Trajectoire ideale imposee a l'essieu avant (Ligne rouge lisse)
-        if x_av[i-1] < empattement:
+        if x_av[i-1] < 0.0:
             # Phase d'approche : Ligne droite horizontale propre
             x_av[i] = x_av[i-1] + ds
             y_av[i] = rayon_courbure
@@ -356,7 +356,7 @@ with tab3:
             theta[i] = cap_cible_rad
 
         # 2. Cinematique de l'essieu arriere (Ligne bleue tractee en retrait)
-        if x_av[i] <empattement:
+        if x_av[i] < 0.0:
             # CORRECTION : Ligne droite initiale parfaite, aucun dephasage possible
             x_arr[i] = x_av[i] - empattement
             y_arr[i] = rayon_courbure
@@ -371,7 +371,7 @@ with tab3:
             y_arr[i] = y_av[i] - empattement * (dy / distance_inter_essieux)
 
         # 3. Calcul de la dynamique des forces liees au devers pour les alertes
-        if x_av[i] >= empattement and theta[i] < cap_cible_rad:
+        if x_av[i] >= 0.0 and theta[i] < cap_cible_rad:
             acc_lat_inst_g = (vitesse_ms**2) / (rayon_courbure * g)
             
             P_normale = masse_totale * 1000 * g * np.cos(beta)
@@ -394,7 +394,7 @@ with tab3:
                 evenement_detecte = "Glissement"
                 
         # 4. Verification geometrique des franchissements de ligne
-        if x_av[i] >= empattement:
+        if x_av[i] >= 0.0:
             r_av = np.sqrt(x_av[i]**2 + (y_av[i] - y_centre_virage)**2)
             r_ar = np.sqrt(x_arr[i]**2 + (y_arr[i] - y_centre_virage)**2)
             if (r_av > r_ext or r_av < r_int or r_ar > r_ext or r_ar < r_int) and evenement_detecte == "Aucun":
