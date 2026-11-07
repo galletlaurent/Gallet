@@ -1174,7 +1174,7 @@ with tab3:
         with col_graphe:
             conteneur_graphique.empty()
             try:
-                st.image("basculementCE.jpg", caption="Accident : Rupture d'equilibre statique (Renversement).")
+                st.image("basculementCE.jpg", caption="Accident : Rupture d'equilibre statique (Renversement).",width=800)
             except Exception:
                 st.error("Fichier basculementCE.jpg introuvable.")
         zone_alerte.error("ACCIDENT DETECTE : Le camion a bascule sous l'effet de la force centrifuge.")
@@ -1681,7 +1681,7 @@ with tab5:
         with col_graphe:
             conteneur_graphique.empty()
             try:
-                st.image("basculementC.jpg", caption="Accident : Rupture d'equilibre statique (Renversement).")
+                st.image("basculementC.jpg", caption="Accident : Rupture d'equilibre statique (Renversement).",width=800)
             except Exception:
                 st.error("basculementC.jpg introuvable.")
         zone_alerte.error("ACCIDENT DETECTE : Le vehicule articule a bascule sous l'effet de la force centrifuge.")
