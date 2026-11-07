@@ -832,17 +832,17 @@ with tab5:
         empattement_tracteur = st.slider("Empattement du tracteur - L1 (m)", 3.0, 5.0, 3.8, step=0.1, key="emp_trac_semi")
 
     with col_p2:
+        # Configuration detailee de la repartition des masses lourdes
         masse_tracteur = st.slider("Masse a vide du tracteur (t)", 5.0, 10.0, 7.5, step=0.5, key="m_trac_semi")
         masse_semi_vide = st.slider("Masse a vide de la semi-remorque (t)", 4.0, 12.0, 6.0, step=0.5, key="m_semi_vide")
         masse_charge_semi = st.slider("Masse du chargement (t)", 0.0, 30.0, 20.0, step=0.5, key="m_charge_semi")
+        
+        # Calcul de la masse totale de l'ensemble routier articule
         masse_totale_semi = masse_tracteur + masse_semi_vide + masse_charge_semi
         st.write(f"Masse totale de l'ensemble : {masse_totale_semi:.1f} tonnes")
         
         distance_sellette = st.slider("Avance de la sellette / essieu AR (m)", 0.0, 1.0, 0.3, step=0.05, key="sellette_semi")
-        
-        # Configuration des deux essieux ecartes de la semi comme sur le dessin
-        longueur_semi_av = st.slider("Distance sellette - Essieu milieu semi (m)", 3.5, 6.0, 4.5, step=0.1, key="long_semi_av")
-        longueur_semi_ar = st.slider("Distance sellette - Essieu arriere semi (m)", 6.5, 10.0, 8.0, step=0.1, key="long_semi_ar")
+        longueur_semi = st.slider("Distance sellette - Essieux semi - L2 (m)", 6.0, 10.0, 7.5, step=0.1, key="long_semi")
 
     with col_p3:
         rayon_courbure_semi = st.slider("Rayon de la route (m)", 15, 60, 25, key="rc_semi")
@@ -857,30 +857,30 @@ with tab5:
     g = 9.81
     seuil_glissement_mu = 0.35
     largeur_camion = 2.5
+    
+    # Centre de gravite adaptatif dependant du poids du chargement integre
     hauteur_cg_semi = 1.1 + (masse_charge_semi / (masse_tracteur + masse_semi_vide)) * 1.2
 
     r_int_semi = rayon_courbure_semi - (largeur_voie / 2)
     r_ext_semi = rayon_courbure_semi + (largeur_voie / 2)
 
+    # Calcul preliminaire du pas d'espace
     ds_semi = 0.05  
     distance_totale_semi = rayon_courbure_semi * np.radians(angle_virage_semi) + 25.0
     pas_semi = int(distance_totale_semi / ds_semi)
 
-    # Creation des structures de tableaux pour les 4 essieux physiques reels
+    # Creation des structures de tableaux fixes (3 essieux distincts)
     x_trac_av = np.zeros(pas_semi)
     y_trac_av = np.zeros(pas_semi)
     x_trac_ar = np.zeros(pas_semi)
     y_trac_ar = np.zeros(pas_semi)
-    
-    x_semi_av = np.zeros(pas_semi)
-    y_semi_av = np.zeros(pas_semi)
     x_semi_ar = np.zeros(pas_semi)
     y_semi_ar = np.zeros(pas_semi)
     
     theta_trac = np.zeros(pas_semi)
     theta_semi = np.zeros(pas_semi)
 
-    # Initialisation stricte a l'index 0 en ligne droite horizontale
+    # CORRECTION STRICTE : Affectation par index [0] pour préserver le format matriciel NumPy
     x_trac_av[0] = -10.0
     y_trac_av[0] = rayon_courbure_semi
     
@@ -888,27 +888,25 @@ with tab5:
     y_trac_ar[0] = rayon_courbure_semi
     theta_trac[0] = 0.0
 
+    # Position initiale de la sellette d'attelage
     x_sellette_init = x_trac_ar[0] + distance_sellette
-    theta_semi[0] = 0.0
-
-    # Positionnement des deux essieux distincts de la remorque
-    x_semi_av[0] = x_sellette_init - longueur_semi_av
-    y_semi_av[0] = rayon_courbure_semi
-    
-    x_semi_ar[0] = x_sellette_init - longueur_semi_ar
+    x_semi_ar[0] = x_sellette_init - longueur_semi
     y_semi_ar[0] = rayon_courbure_semi
+    theta_semi[0] = 0.0
 
     evenement_detecte_semi = "Aucun"
     index_interruption_semi = pas_semi - 1
+
+    # Calcul de l'acceleration transversale nominale
     acceleration_laterale_semi_g = (vitesse_ms_semi**2) / (rayon_courbure_semi * g)
 
     # =============================================================================
-    # BOUCLE DE CALCUL GEOMETRIQUE AVEC TRAIN DE REMORQUE DOUBLE ÉCARTÉ
+    # BOUCLE DE CALCUL GEOMETRIQUE RESOLUTION SEMI-REMORQUE COMPLÈTE
     # =============================================================================
     cap_cible_semi_rad = np.radians(angle_virage_semi)
 
     for i in range(1, pas_semi):
-        # 1. Cinematique de l'essieu avant du tracteur (Ligne directrice de reference)
+        # 1. Trajectoire de reference de l'essieu avant du tracteur (Roues AV - Rouge)
         if x_trac_av[i-1] < 0.0:
             x_trac_av[i] = x_trac_av[i-1] + ds_semi
             y_trac_av[i] = rayon_courbure_semi
@@ -923,32 +921,26 @@ with tab5:
             y_trac_av[i] = y_trac_av[i-1] + ds_semi * np.sin(cap_cible_semi_rad)
             theta_trac[i] = cap_cible_semi_rad
 
-        # 2. Cinematique de l'essieu arriere du tracteur
+        # 2. Cinematique de l'essieu arriere du tracteur (Roues AR Tracteur - Bleu)
         dx_trac = x_trac_av[i] - x_trac_ar[i-1]
         dy_trac = y_trac_av[i] - y_trac_ar[i-1]
         dist_trac = np.hypot(dx_trac, dy_trac)
         x_trac_ar[i] = x_trac_av[i] - empattement_tracteur * (dx_trac / dist_trac)
         y_trac_ar[i] = y_trac_av[i] - empattement_tracteur * (dy_trac / dist_trac)
 
-        # Repere de position de la sellette d'attelage pivotante
+        # Coordonnees instantanees de la sellette d'attelage pivotante
         x_sel = x_trac_ar[i] + distance_sellette * np.cos(theta_trac[i])
         y_sel = y_trac_ar[i] + distance_sellette * np.sin(theta_trac[i])
 
-        # 3. Cinematique de la semi-remorque (Le point directeur de reference reste l'essieu extreme arriere L2)
+        # 3. Cinematique du groupe d'essieux de la semi-remorque (Roues AR Semi - Vert)
         dx_semi = x_sel - x_semi_ar[i-1]
         dy_semi = y_sel - y_semi_ar[i-1]
         dist_semi = np.hypot(dx_semi, dy_semi)
         theta_semi[i] = np.arctan2(dy_semi, dx_semi)
-        
-        # L'essieu extreme arriere (votre trace bleu suiveur) est calcule par poursuite pure
-        x_semi_ar[i] = x_sel - longueur_semi_ar * (dx_semi / dist_semi)
-        y_semi_ar[i] = y_sel - longueur_semi_ar * (dy_semi / dist_semi)
+        x_semi_ar[i] = x_sel - longueur_semi * (dx_semi / dist_semi)
+        y_semi_ar[i] = y_sel - longueur_semi * (dy_semi / dist_semi)
 
-        # L'essieu du milieu de la semi est rigidement lie au meme châssis et se deduit par projection
-        x_semi_av[i] = x_sel - longueur_semi_av * np.cos(theta_semi[i])
-        y_semi_av[i] = y_sel - longueur_semi_av * np.sin(theta_semi[i])
-
-        # 4. Calcul de la dynamique des forces et verifications de stabilite
+        # 4. Calcul de la dynamique des forces et verifications de securite
         if x_trac_av[i] >= 0.0 and theta_trac[i] < cap_cible_semi_rad:
             val_P_semi = masse_totale_semi * 1000 * g
             val_Fc_semi = masse_totale_semi * 1000 * (vitesse_ms_semi**2 / rayon_courbure_semi)
@@ -972,33 +964,189 @@ with tab5:
             if np.abs(F_frottement_requise) >= F_frottement_max and evenement_detecte_semi == "Aucun":
                 evenement_detecte_semi = "Glissement"
                 
-        # 5. Verification du gabarit routier (Franchissement base sur l'essieu arriere extreme)
+        # 5. Verification du gabarit routier pour les 3 trains d'essieux
         if x_trac_av[i] >= 0.0:
             r_av = np.sqrt(x_trac_av[i]**2 + (y_trac_av[i] - y_centre_virage_semi)**2)
-            r_sm_ar = np.sqrt(x_semi_ar[i]**2 + (y_semi_ar[i] - y_centre_virage_semi)**2)
-            if (r_av > r_ext_semi or r_av < r_int_semi or r_sm_ar > r_ext_semi or r_sm_ar < r_int_semi) and evenement_detecte_semi == "Aucun":
+            r_ar = np.sqrt(x_trac_ar[i]**2 + (y_trac_ar[i] - y_centre_virage_semi)**2)
+            r_sm = np.sqrt(x_semi_ar[i]**2 + (y_semi_ar[i] - y_centre_virage_semi)**2)
+            if (r_av > r_ext_semi or r_av < r_int_semi or r_ar > r_ext_semi or r_ar < r_int_semi or r_sm > r_ext_semi or r_sm < r_int_semi) and evenement_detecte_semi == "Aucun":
                 evenement_detecte_semi = "Sortie de route"
 
-    # Tronquage au point d'arret reel
+    # Tronquage des vecteurs au point d'arret reel
     x_trac_av = x_trac_av[:index_interruption_semi+1]
     y_trac_av = y_trac_av[:index_interruption_semi+1]
     x_trac_ar = x_trac_ar[:index_interruption_semi+1]
     y_trac_ar = y_trac_ar[:index_interruption_semi+1]
-    x_semi_av = x_semi_av[:index_interruption_semi+1]
-    y_semi_av = y_semi_av[:index_interruption_semi+1]
     x_semi_ar = x_semi_ar[:index_interruption_semi+1]
     y_semi_ar = y_semi_ar[:index_interruption_semi+1]
     theta_trac = theta_trac[:index_interruption_semi+1]
-    theta_semi = theta_semi[:index_interruption_semi+1]
 
-    # Le balayage maximal de chasse mesure l'ecart entre l'avant du tracteur et l'arriere de la semi
+    # Calcul du balayage de chasse maximal cumule (Tracteur + Remorque)
     if len(x_trac_av) > 1 and evenement_detecte_semi != "Basculement":
-        rayons_semi_extreme = np.sqrt(x_semi_ar**2 + (y_semi_ar - y_centre_virage_semi)**2)
+        rayons_semi = np.sqrt(x_semi_ar**2 + (y_semi_ar - y_centre_virage_semi)**2)
         rayons_avant = np.sqrt(x_trac_av**2 + (y_trac_av - y_centre_virage_semi)**2)
-        decalage_reel_semi = np.max(rayons_avant) - np.min(rayons_semi_extreme)
+        decalage_reel_semi = np.max(rayons_avant) - np.min(rayons_semi)
     else:
         decalage_reel_semi = 0.0
+    t_route_semi = np.linspace(0, np.radians(angle_virage_semi), 100)
 
+    # Generation des traces de routes fixes concentriques
+    x_dr_semi = np.linspace(-10, 0, 10)
+    x_arc_int_semi = r_int_semi * np.sin(t_route_semi)
+    y_arc_int_semi = y_centre_virage_semi - r_int_semi * np.cos(t_route_semi)
+    x_arc_ext_semi = r_ext_semi * np.sin(t_route_semi)
+    y_arc_ext_semi = y_centre_virage_semi - r_ext_semi * np.cos(t_route_semi)
+    
+    x_fin_int_semi = x_arc_int_semi[-1] + np.linspace(0, 15, 10) * np.cos(np.radians(angle_virage_semi))
+    y_fin_int_semi = y_arc_int_semi[-1] + np.linspace(0, 15, 10) * np.sin(np.radians(angle_virage_semi))
+    x_fin_ext_semi = x_arc_ext_semi[-1] + np.linspace(0, 15, 10) * np.cos(np.radians(angle_virage_semi))
+    y_fin_ext_semi = y_arc_ext_semi[-1] + np.linspace(0, 15, 10) * np.sin(np.radians(angle_virage_semi))
+    
+    x_route_int_semi = np.concatenate([x_dr_semi, x_arc_int_semi, x_fin_int_semi])
+    y_route_int_semi = np.concatenate([np.full_like(x_dr_semi, rayon_courbure_semi - largeur_voie/2), y_arc_int_semi, y_fin_int_semi])
+    x_route_ext_semi = np.concatenate([x_dr_semi, x_arc_ext_semi, x_fin_ext_semi])
+    y_route_ext_semi = np.concatenate([np.full_like(x_dr_semi, rayon_courbure_semi + largeur_voie/2), y_arc_ext_semi, y_fin_ext_semi])
+
+    # Configuration des colonnes d'affichage
+    col_graphe, col_analyse = st.columns(2)
+
+    with col_analyse:
+        st.subheader("Indicateurs Physiques Synchrones")
+        zone_metrique_chasse = st.empty()
+        zone_metrique_devers = st.empty()
+        zone_metrique_g = st.empty()
+        zone_alerte = st.empty()
+        
+        declencher_animation = st.button("Lancer la simulation pas-a-pas", key="btn_anim_semi_final")
+        
+        st.subheader("Schema Vectoriel du Bilan des Forces (Vue arriere)")
+        zone_schema_forces = st.empty()
+
+    with col_graphe:
+        conteneur_graphique = st.empty()
+
+    points_animation = range(0, len(x_trac_av), max(1, len(x_trac_av) // 40)) if declencher_animation else [len(x_trac_av) - 1]
+    
+    import time
+    from matplotlib.patches import Polygon
+
+    for k in points_animation:
+        # Trace Matplotlib de l'ensemble articule mobile
+        fig_anim, ax_anim = plt.subplots(figsize=(7, 5))
+        ax_anim.plot(x_route_int_semi, y_route_int_semi, color='black', linewidth=2)
+        ax_anim.plot(x_route_ext_semi, y_route_ext_semi, color='black', linewidth=2)
+        
+        if k > 0:
+            # Ligne bleue pour l'AVANT (tracteur), Ligne rouge pour l'ARRIÈRE (semi)
+            ax_anim.plot(x_trac_av[:k], y_trac_av[:k], color='#3498db', linewidth=2, label="Trajectoire Roues AV")
+            ax_anim.plot(x_semi_ar[:k], y_semi_ar[:k], color='#e74c3c', linewidth=2, linestyle='--', label="Trajectoire Roues AR")
+        
+        # Dessinement simplifie des deux boites (Tracteur + Remorque)
+        cos_tk, sin_tk = np.cos(theta_trac[k]), np.sin(theta_trac[k])
+        ax_anim.scatter(x_trac_av[k], y_trac_av[k], color='#3498db', s=60)
+        ax_anim.scatter(x_trac_ar[k], y_trac_ar[k], color='black', s=60)
+        ax_anim.scatter(x_semi_ar[k], y_semi_ar[k], color='#e74c3c', s=60)
+        
+        ax_anim.axis("equal")
+        ax_anim.set_xlim(-12, max(x_route_ext_semi) + 5)
+        ax_anim.set_ylim(-5, max(y_route_ext_semi) + 5)
+        
+        if declencher_animation:
+            conteneur_graphique.pyplot(fig_anim)
+        plt.close(fig_anim)
+
+        # Tracé du schema des forces synchrone
+        fig_forces, ax_f = plt.subplots(figsize=(5, 3.5))
+        ax_f.plot([-2, 2], [-2 * np.sin(beta_semi), 2 * np.sin(beta_semi)], color='black', linewidth=3)
+        cam_box = np.array([[-largeur_camion/2, 0], [largeur_camion/2, 0], [largeur_camion/2, hauteur_cg_semi * 1.4], [-largeur_camion/2, hauteur_cg_semi * 1.4]])
+        R_mat = np.array([[np.cos(beta_semi), -np.sin(beta_semi)], [np.sin(beta_semi), np.cos(beta_semi)]])
+        cam_box_rot = np.dot(cam_box, R_mat.T)
+        ax_f.add_patch(Polygon(cam_box_rot, closed=True, facecolor='#7f8c8d', alpha=0.3))
+        
+        G_coord = np.dot(np.array([0, hauteur_cg_semi]), R_mat.T)
+        ax_f.scatter(G_coord[0], G_coord[1], color='black', s=90, zorder=5)
+        
+        roue_gauche = np.dot(np.array([-largeur_camion/2, 0]), R_mat.T)
+        roue_droite = np.dot(np.array([largeur_camion/2, 0]), R_mat.T)
+        ax_f.scatter([roue_gauche[0], roue_droite[0]], [roue_gauche[1], roue_droite[1]], color='black', s=150, marker='s', zorder=4)
+        
+        f_scale = 1.0 / (masse_totale_semi * 1000 * g)
+        val_P = masse_totale_semi * 1000 * g
+        val_Fc = masse_totale_semi * 1000 * (vitesse_ms_semi**2 / rayon_courbure_semi) if evenement_detecte_semi != "Basculement" else 0.0
+        
+        ax_f.arrow(G_coord[0], G_coord[1], 0, -val_P * f_scale * 1.3, head_width=0.08, head_length=0.12, color='#2ecc71', label='Poids (P)')
+        ax_f.arrow(G_coord[0], G_coord[1], val_Fc * f_scale * 1.3, 0, head_width=0.08, head_length=0.12, color='#e74c3c', label='Force Centrifuge (Fc)')
+        
+        val_N_totale = val_P * np.cos(beta_semi) + val_Fc * np.sin(beta_semi)
+        val_Ff_totale = val_Fc * np.cos(beta_semi) - val_P * np.sin(beta_semi) if evenement_detecte_semi != "Basculement" else 0.0
+        
+        ax_f.arrow(roue_gauche[0], roue_gauche[1], -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta_semi), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta_semi), head_width=0.08, head_length=0.12, color='#9b59b6', label='Reaction Normale (N)')
+        ax_f.arrow(roue_droite[0], roue_droite[1], -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta_semi), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta_semi), head_width=0.08, head_length=0.12, color='#9b59b6')
+        
+        if np.abs(val_Ff_totale) > 0:
+            ax_f.arrow(roue_gauche[0], roue_gauche[1], -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta_semi), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta_semi), head_width=0.08, head_length=0.12, color='#3498db', label='Frottement Pneus (Ff)')
+            ax_f.arrow(roue_droite[0], roue_droite[1], -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta_semi), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta_semi), head_width=0.08, head_length=0.12, color='#3498db')
+
+        ax_f.set_xlim(-2.2, 2.2)
+        ax_f.set_ylim(-1.0, 3.2)
+        ax_f.axis('off')
+        
+        handles, labels = ax_f.get_legend_handles_labels()
+        by_label = dict(zip(labels, handles))
+        ax_f.legend(by_label.values(), by_label.keys(), loc="upper right", fontsize='small')
+        zone_schema_forces.pyplot(fig_forces)
+        plt.close(fig_forces)
+
+        # Compteurs textuels intermédiaires
+        decalage_inst = np.abs(np.sqrt(x_trac_av[k]**2 + (y_trac_av[k] - y_centre_virage_semi)**2) - np.sqrt(x_semi_ar[k]**2 + (y_semi_ar[k] - y_centre_virage_semi)**2)) if x_trac_av[k] >= 0.0 else 0.0
+        zone_metrique_chasse.metric(label="Balayage global instantane", value=f"{decalage_inst:.2f} m")
+        zone_metrique_devers.metric(label="Angle de devers de la route", value=f"{angle_route_semi:.1f} degres")
+        zone_metrique_g.metric(label="Acceleration transversale", value=f"{(vitesse_ms_semi**2)/(rayon_courbure_semi*g) if x_trac_av[k]>=0.0 else 0.0:.2f} G")
+        
+        if declencher_animation:
+            time.sleep(0.04)
+
+    # --- RENDU PLOTLY INTERACTIF ZOOMABLE EN FIN DE SIMULATION ---
+    animation_terminee = True
+    zone_metrique_chasse.metric(label="Balayage global maximal (Chasse)", value=f"{decalage_reel_semi:.2f} m")
+    zone_metrique_devers.metric(label="Devers configure de la chaussee", value=f"{angle_route_semi:.1f} degres")
+    zone_metrique_g.metric(label="Acceleration transversale maximale", value=f"{acceleration_laterale_semi_g:.2f} G")
+
+    if evenement_detecte_semi == "Basculement":
+        with col_graphe:
+            conteneur_graphique.empty()
+            try:
+                st.image("basculementCE.jpg", caption="Accident : Rupture d'equilibre statique (Renversement).")
+            except Exception:
+                st.error("Fichier basculementCE.jpg introuvable.")
+        zone_alerte.error("ACCIDENT DETECTE : Le vehicule articule a bascule sous l'effet de la force centrifuge.")
+    else:
+        with col_graphe:
+            conteneur_graphique.empty()
+            
+            import plotly.graph_objects as go
+            fig_plotly = go.Figure()
+            fig_plotly.add_trace(go.Scatter(x=x_route_int_semi, y=y_route_int_semi, name="Bord interieur", line=dict(color='black', width=2)))
+            fig_plotly.add_trace(go.Scatter(x=x_route_ext_semi, y=y_route_ext_semi, name="Bord exterieur", line=dict(color='black', width=2)))
+            
+            # Trajectoires finales : Avant en Bleu lisse, Arrière de la semi en Rouge pointillé
+            fig_plotly.add_trace(go.Scatter(x=x_trac_av, y=y_trac_av, name="Trajectoire Roues AVANT", line=dict(color='#3498db', width=3)))
+            fig_plotly.add_trace(go.Scatter(x=x_semi_ar, y=y_semi_ar, name="Trajectoire Roues ARRIERE", line=dict(color='#e74c3c', width=3, dash='dash')))
+            
+            fig_plotly.update_layout(
+                xaxis=dict(scaleanchor="y", scaleratio=1),
+                hovermode="closest",
+                height=450,
+                title="Visualisation interactive (Zoomable pour mesures fines)"
+            )
+            st.plotly_chart(fig_plotly, use_container_width=True)
+
+        if evenement_detecte_semi == "Glissement":
+            zone_alerte.warning("GLISSEMENT : L'ensemble routier a surpasse l'adherence disponible (Mise en portefeuille).")
+        elif evenement_detecte_semi == "Sortie de route":
+            zone_alerte.warning("SORTIE DE VOIE : La semi-remorque a chevauche le marquage au sol interieur.")
+        else:
+            zone_alerte.success("TRAJECTOIRE REUSSITE : L'ensemble articule est reste stable dans sa voie.")
 
 
 
