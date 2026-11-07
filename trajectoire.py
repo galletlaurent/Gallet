@@ -322,42 +322,6 @@ with tab3:
     index_interruption = pas - 1
 
     # Calcul de la derive des enveloppes de pneus avant le virage
-    acceleration_laterale_g = (vitesse_ms**2) / (rayon_courbure * g)
-    raideur_derive_av = 150000  
-    force_laterale_av = ((masse_totale * 1000) * g * 0.5) * acceleration_laterale_g
-    angle_derive_rad = force_laterale_av / raideur_derive_av
-
-    # Calcul de l'angle de braquage corrige
-    angle_braquage_theorique_rad = np.arctan(empattement / rayon_courbure)
-    angle_braquage_reel_rad = angle_braquage_theorique_rad + angle_derive_rad
-
-    # =============================================================================
-    # BOUCLE DE CALCUL RESOLUTION PHYSIQUE AVEC SOUCHAGE ET BRAQUAGE PROGRESSIF
-    # =============================================================================
-    angle_volant_actuel = 0.0  
-    vitesse_braquage = 0.15    
-    cap_cible_rad = np.radians(angle_virage_deg)
-    distance_anticipation = -2.0 
-
-    # Pour ce modele, on initialise la position de l'essieu avant (x_av, y_av)
-    # et l'essieu arriere (x_arr, y_arr) est deduit en restant en retrait de la longueur de l'empattement
-    x_arr = np.zeros(pas)
-    y_arr = np.zeros(pas)
-    x_av = np.zeros(pas)
-    y_av = np.zeros(pas)
-    theta = np.zeros(pas)
-
-    # CORRECTION : Affectation stricte sur l'index 0 pour ne pas detruire les tableaux NumPy
-    x_av[0] = -10.0 + empattement
-    y_av[0] = rayon_courbure
-    x_arr[0] = -10.0
-    y_arr[0] = rayon_courbure
-    theta[0] = 0.0
-
-    evenement_detecte = "Aucun"
-    index_interruption = pas - 1
-
-    # Calcul de la derive des enveloppes de pneus avant le virage
     vitesse_ms = vitesse_kmh / 3.6
     acceleration_laterale_g = (vitesse_ms**2) / (rayon_courbure * g)
     raideur_derive_av = 150000  # N/rad
@@ -369,85 +333,72 @@ with tab3:
     angle_braquage_reel_rad = angle_braquage_theorique_rad + angle_derive_rad
 
     for i in range(1, pas):
-        # Position X de reference basee sur l'essieu avant
-        x_ref = x_av[i-1] - empattement
+        # 1. Trajectoire idéale imposée à l'essieu avant (Ligne rouge lisse)
+        if x_av[i-1] < 0:
+            # Phase d'approche : Ligne droite horizontale parfaite
+            x_av[i] = x_av[i-1] + ds
+            y_av[i] = rayon_courbure
+            cap_av_rad = 0.0
+        elif x_av[i-1] >= 0 and theta[i-1] < np.radians(angle_virage_deg):
+            # Phase de courbe : L'essieu avant épouse rigoureusement l'arc de cercle central
+            cap_av_rad = ds / rayon_courbure
+            theta[i] = theta[i-1] + cap_av_rad
+            
+            x_av[i] = rayon_courbure * np.sin(theta[i])
+            y_av[i] = y_centre_virage - rayon_courbure * np.cos(theta[i])
+        else:
+            # Phase de sortie : Ligne droite selon le cap final stabilisé
+            cap_final_rad = np.radians(angle_virage_deg)
+            x_av[i] = x_av[i-1] + ds * np.cos(cap_final_rad)
+            y_av[i] = y_av[i-1] + ds * np.sin(cap_final_rad)
+            theta[i] = cap_final_rad
 
-        # 1. Gestion des phases de braquage anticipé
-        if x_ref >= distance_anticipation and theta[i-1] < cap_cible_rad:
-            acc_lat_inst_g = (vitesse_ms**2) / (rayon_courbure * g) if x_ref >= 0 else 0.0
+        # 2. Cinématique de l'essieu arrière (Ligne bleue tractée en retrait)
+        # L'essieu arrière est situé à une distance égale à l'empattement derrière l'avant
+        if x_av[i] < 0:
+            x_arr[i] = x_av[i] - empattement
+            y_arr[i] = rayon_courbure
+        else:
+            # Équation différentielle de poursuite : l'arrière s'oriente vers l'avant
+            dx = x_av[i] - x_arr[i-1]
+            dy = y_av[i] - y_arr[i-1]
+            distance_inter_essieux = np.hypot(dx, dy)
             
-            if angle_volant_actuel < angle_braquage_reel_rad:
-                angle_volant_actuel += vitesse_braquage * ds
-            else:
-                angle_volant_actuel = angle_braquage_reel_rad
-            alpha = angle_volant_actuel
+            # Normalisation et maintien rigide de la longueur de l'empattement
+            x_arr[i] = x_av[i] - empattement * (dx / distance_inter_essieux)
+            y_arr[i] = y_av[i] - empattement * (dy / distance_inter_essieux)
+
+        # 3. Calcul de la dynamique des forces liées au dévers pour les alertes
+        if x_av[i] >= 0 and theta[i] < np.radians(angle_virage_deg):
+            acc_lat_inst_g = (vitesse_ms**2) / (rayon_courbure * g)
             
-            # Equations d'equilibre mecanique sur plan incline
             P_normale = masse_totale * 1000 * g * np.cos(beta)
-            Fc_normale = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) * np.sin(beta) if x_ref >= 0 else 0.0
+            Fc_normale = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) * np.sin(beta)
             N = P_normale + Fc_normale
             
             P_tangente = masse_totale * 1000 * g * np.sin(beta)
-            Fc_tangente = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) * np.cos(beta) if x_ref >= 0 else 0.0
+            Fc_tangente = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) * np.cos(beta)
             F_frottement_requise = Fc_tangente - P_tangente
             F_frottement_max = seuil_glissement_mu * N
             
-            # Verifications des criteres de stabilite
             Moment_renversement = Fc_tangente * hauteur_cg
             Moment_stabilisateur = N * (largeur_camion / 2) + P_tangente * hauteur_cg
             
             if Moment_renversement >= Moment_stabilisateur:
                 evenement_detecte = "Basculement"
-                index_interruption = i - 1
+                index_interruption = i
                 break
             if np.abs(F_frottement_requise) >= F_frottement_max and evenement_detecte == "Aucun":
                 evenement_detecte = "Glissement"
                 
-        else:
-            acc_lat_inst_g = 0.0
-            if angle_volant_actuel > 0.0:
-                angle_volant_actuel -= vitesse_braquage * ds
-            else:
-                angle_volant_actuel = 0.0
-            alpha = angle_volant_actuel
-
-        # 2. Deplacement cinematique applique depuis l'avant
-        if x_ref >= distance_anticipation and theta[i-1] < cap_cible_rad:
-            # L'essieu avant suit le cap de la route + correction de dérive
-            theta[i] = theta[i-1] + (ds / empattement) * np.sin(alpha - angle_derive_rad)
-            
-            x_av[i] = x_av[i-1] + ds * np.cos(theta[i] + (alpha - angle_derive_rad))
-            y_av[i] = y_av[i-1] + ds * np.sin(theta[i] + (alpha - angle_derive_rad))
-            
-            # L'essieu arriere subit la contrainte et est traine par l'avant
-            x_arr[i] = x_av[i] - empattement * np.cos(theta[i])
-            y_arr[i] = y_av[i] - empattement * np.sin(theta[i])
-            
-        elif theta[i-1] >= cap_cible_rad:
-            # Sortie de virage rectiligne verrouillee pour l'avant
-            theta[i] = cap_cible_rad
-            x_av[i] = x_av[i-1] + ds * np.cos(cap_cible_rad)
-            y_av[i] = y_av[i-1] + ds * np.sin(cap_cible_rad)
-            
-            x_arr[i] = x_av[i] - empattement * np.cos(cap_cible_rad)
-            y_arr[i] = y_av[i] - empattement * np.sin(cap_cible_rad)
-            
-        else:
-            # Approche initiale en ligne droite parfaite alignee
-            theta[i] = 0.0
-            x_av[i] = x_av[i-1] + ds
-            y_av[i] = rayon_courbure
-            
-            x_arr[i] = x_av[i] - empattement
-            y_arr[i] = rayon_courbure
-
-        # 3. Verification geometrique du franchissement de voie
-        if x_ref >= 0:
+        # 4. Vérification géométrique des franchissements de ligne
+        if x_av[i] >= 0:
             r_av = np.sqrt(x_av[i]**2 + (y_av[i] - y_centre_virage)**2)
             r_ar = np.sqrt(x_arr[i]**2 + (y_arr[i] - y_centre_virage)**2)
             if (r_av > r_ext or r_av < r_int or r_ar > r_ext or r_ar < r_int) and evenement_detecte == "Aucun":
                 evenement_detecte = "Sortie de route"
 
+                
     # Tronquage des vecteurs au point d'arret reel
     x_arr = x_arr[:index_interruption+1]
     y_arr = y_arr[:index_interruption+1]
