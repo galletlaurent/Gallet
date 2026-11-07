@@ -343,77 +343,62 @@ with tab3:
     cap_cible_rad = np.radians(angle_virage_deg)
 
     for i in range(1, pas):
-        # 1. Gestion de la progressivite du volant
-        if x_av[i-1] >= 0.0 and theta[i-1] < cap_cible_rad:
+        # 1. Trajectoire de reference imposee a l'essieu avant (Ligne bleue lisse)
+        if x_av[i-1] < 0.0:
+            # Approche rectiligne de l'essieu avant
+            x_av[i] = x_av[i-1] + ds
+            y_av[i] = rayon_courbure
+            theta[i] = 0.0
+        elif x_av[i-1] >= 0.0 and theta[i-1] < cap_cible_rad:
+            # Arc de cercle parfait de l'essieu avant
+            cap_av_rad = ds / rayon_courbure
+            theta[i] = theta[i-1] + cap_av_rad
+            x_av[i] = rayon_courbure * np.sin(theta[i])
+            y_av[i] = y_centre_virage - rayon_courbure * np.cos(theta[i])
+        else:
+            # Sortie rectiligne de l'essieu avant
+            x_av[i] = x_av[i-1] + ds * np.cos(cap_cible_rad)
+            y_av[i] = y_av[i-1] + ds * np.sin(cap_cible_rad)
+            theta[i] = cap_cible_rad
+
+        # 2. Trajectoire de l'essieu arriere (Ligne rouge decalee)
+        # DECALAGE AU DEPART : L'arriere reste droit tant que sa propre position X n'a pas atteint 0
+        if x_av[i] < empattement:
+            x_arr[i] = x_av[i] - empattement
+            y_arr[i] = rayon_courbure
+        # DECALAGE A LA FIN : L'arriere continue sa courbe tant que sa propre position Y n'a pas depasse la fin du virage
+        elif y_arr[i-1] < (y_centre_virage - rayon_courbure):
+            dx = x_av[i] - x_arr[i-1]
+            dy = y_av[i] - y_arr[i-1]
+            distance_inter_essieux = np.hypot(dx, dy)
+            x_arr[i] = x_av[i] - empattement * (dx / distance_inter_essieux)
+            y_arr[i] = y_av[i] - empattement * (dy / distance_inter_essieux)
+        else:
+            # Alignement vertical de sortie pour le train arriere
+            x_arr[i] = rayon_courbure - empattement
+            y_arr[i] = y_arr[i-1] + ds
+
+        # 3. Calcul de la dynamique des forces pour les alertes
+        if x_av[i] >= 0.0 and theta[i] < cap_cible_rad:
             acc_lat_inst_g = (vitesse_ms**2) / (rayon_courbure * g)
-            
-            # Le conducteur tourne le volant progressivement jusqu'a la valeur cible
-            if angle_volant_actuel < angle_braquage_reel_rad:
-                angle_volant_actuel += vitesse_braquage * ds
-            else:
-                angle_volant_actuel = angle_braquage_reel_rad
-            alpha = angle_volant_actuel
-            
-            # Equations d'equilibre mecanique sur plan incline
             P_normale = masse_totale * 1000 * g * np.cos(beta)
             Fc_normale = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) * np.sin(beta)
             N = P_normale + Fc_normale
-            
             P_tangente = masse_totale * 1000 * g * np.sin(beta)
             Fc_tangente = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) * np.cos(beta)
             F_frottement_requise = Fc_tangente - P_tangente
             F_frottement_max = seuil_glissement_mu * N
-            
-            # Verifications des criteres de stabilite
             Moment_renversement = Fc_tangente * hauteur_cg
             Moment_stabilisateur = N * (largeur_camion / 2) + P_tangente * hauteur_cg
             
             if Moment_renversement >= Moment_stabilisateur:
                 evenement_detecte = "Basculement"
-                index_interruption = i - 1
+                index_interruption = i
                 break
             if np.abs(F_frottement_requise) >= F_frottement_max and evenement_detecte == "Aucun":
                 evenement_detecte = "Glissement"
-        else:
-            acc_lat_inst_g = 0.0
-            # Redressement progressif du volant en sortie
-            if angle_volant_actuel > 0.0:
-                angle_volant_actuel -= vitesse_braquage * ds
-            else:
-                angle_volant_actuel = 0.0
-            alpha = angle_volant_actuel
-
-        # 2. Deplacement cinematique applique en continu depuis l'avant
-        if x_av[i-1] >= 0.0 and theta[i-1] < cap_cible_rad:
-            # L'avant s'engage de facon lisee et progressive
-            theta[i] = theta[i-1] + (ds / empattement) * np.sin(alpha - angle_derive_rad)
-            
-            x_av[i] = x_av[i-1] + ds * np.cos(theta[i] + (alpha - angle_derive_rad))
-            y_av[i] = y_av[i-1] + ds * np.sin(theta[i] + (alpha - angle_derive_rad))
-            
-            # L'arriere suit naturellement la trajectoire de l'avant avec le dephasage physique reel
-            x_arr[i] = x_av[i] - empattement * np.cos(theta[i])
-            y_arr[i] = y_av[i] - empattement * np.sin(theta[i])
-            
-        elif theta[i-1] >= cap_cible_rad:
-            # Sortie de virage rectiligne parfaitement parallele
-            theta[i] = cap_cible_rad
-            x_av[i] = x_av[i-1] + ds * np.cos(cap_cible_rad)
-            y_av[i] = y_av[i-1] + ds * np.sin(cap_cible_rad)
-            
-            x_arr[i] = x_av[i] - empattement * np.cos(cap_cible_rad)
-            y_arr[i] = y_av[i] - empattement * np.sin(cap_cible_rad)
-            
-        else:
-            # Approche initiale en ligne droite horizontale absolue pour les deux essieux
-            theta[i] = 0.0
-            x_av[i] = x_av[i-1] + ds
-            y_av[i] = rayon_courbure
-            
-            x_arr[i] = x_av[i] - empattement
-            y_arr[i] = rayon_courbure
-
-        # 3. Verification du gabarit des essieux
+                
+        # 4. Verification du gabarit
         if x_av[i] >= 0.0:
             r_av = np.sqrt(x_av[i]**2 + (y_av[i] - y_centre_virage)**2)
             r_ar = np.sqrt(x_arr[i]**2 + (y_arr[i] - y_centre_virage)**2)
@@ -588,11 +573,10 @@ with tab3:
             fig_plotly = go.Figure()
             fig_plotly.add_trace(go.Scatter(x=x_route_int, y=y_route_int, name="Bord interieur", line=dict(color='black', width=2)))
             fig_plotly.add_trace(go.Scatter(x=x_route_ext, y=y_route_ext, name="Bord exterieur", line=dict(color='black', width=2)))
-            
-            # ATTRIBUTION FINALE CONFORME : x_av = Rouge (Avant lisse), x_arr = Bleu (Arriere decale)
-            fig_plotly.add_trace(go.Scatter(x=x_av, y=y_av, name="Trajectoire Roues AVANT", line=dict(color='#e74c3c', width=3)))
-            fig_plotly.add_trace(go.Scatter(x=x_arr, y=y_arr, name="Trajectoire Roues ARRIERE", line=dict(color='#3498db', width=3, dash='dash')))
-            
+
+            # Liaison correcte : x_av en bleu lisse (Avant) et x_arr en rouge pointille (Arriere)
+            fig_plotly.add_trace(go.Scatter(x=x_av, y=y_av, name="Trajectoire Roues AVANT", line=dict(color='#3498db', width=3)))
+            fig_plotly.add_trace(go.Scatter(x=x_arr, y=y_arr, name="Trajectoire Roues ARRIERE", line=dict(color='#e74c3c', width=3, dash='dash')))
             fig_plotly.update_layout(
                 xaxis=dict(scaleanchor="y", scaleratio=1),
                 hovermode="closest",
