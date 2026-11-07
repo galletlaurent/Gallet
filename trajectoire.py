@@ -855,17 +855,14 @@ with tab3:
         </body>
         </html>
         """
-
         st.download_button(
             label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL SCELLÉ (FORMAT HTML)",
             data=html_export_traj3,
             file_name=f"Rapport_Trajectoire_{n_eleve}_{p_eleve}.html",
-            background="red",
             mime="text/html",
             key="btn_download_html_official_traj3",
             use_container_width=True
         )
-
 
 
 
