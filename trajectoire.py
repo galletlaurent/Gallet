@@ -330,14 +330,16 @@ with tab3:
     theta = np.zeros(pas)
     angle_debord = np.zeros(pas)
 
-    # CORRECTION CRITIQUE : Affectation uniquement sur la premiere case [0]
+    # Initialisation stricte par index
     x_arr[0] = -10.0
     y_arr[0] = rayon_courbure
     theta[0] = 0.0
+    angle_debord[0] = 0.0
 
     evenement_detecte = "Aucun"
     index_interruption = pas - 1
-    
+
+    # Simulation pas a pas avec les lois d'equilibre sur plan incline
     for i in range(1, pas):
         if x_arr[i-1] >= 0 and theta[i-1] < np.radians(angle_virage_deg):
             acc_lat_inst_g = (vitesse_ms**2) / (rayon_courbure * g)
@@ -376,7 +378,7 @@ with tab3:
             y_arr[i] = y_arr[i-1] + ds * np.sin(theta[i-1])
             theta[i] = theta[i-1] + (ds / empattement) * np.tan(alpha - angle_derive_rad)
             
-            # Calcul de l'angle de debord
+            # Calcul cinematique de l'angle de debord geometrique en degres
             angle_debord[i] = np.degrees(np.arctan(empattement / rayon_courbure))
         elif theta[i-1] >= np.radians(angle_virage_deg):
             x_arr[i] = x_arr[i-1] + ds * np.cos(np.radians(angle_virage_deg))
@@ -403,15 +405,19 @@ with tab3:
     y_arr = y_arr[:index_interruption+1]
     theta = theta[:index_interruption+1]
     angle_debord = angle_debord[:index_interruption+1]
-    x_av = x_arr + empattement * np.cos(theta)
-    y_av = y_arr + empattement * np.sin(theta)
-    
+    x_av = x_av[:index_interruption+1]
+    y_av = y_av[:index_interruption+1]
+
+    # CORRECTION : Definition explicite de t_route utilisee pour tracer la route fixe
+    t_route = np.linspace(0, np.radians(angle_virage_deg), 100)
+
     # Elements fixes de la route pour le trace
     x_droite = np.linspace(-10, 0, 10)
     x_arc_int = r_int * np.sin(t_route)
     y_arc_int = y_centre_virage - r_int * np.cos(t_route)
     x_arc_ext = r_ext * np.sin(t_route)
     y_arc_ext = y_centre_virage - r_ext * np.cos(t_route)
+    
     x_fin_int = x_arc_int[-1] + np.linspace(0, 15, 10) * np.cos(np.radians(angle_virage_deg))
     y_fin_int = y_arc_int[-1] + np.linspace(0, 15, 10) * np.sin(np.radians(angle_virage_deg))
     x_fin_ext = x_arc_ext[-1] + np.linspace(0, 15, 10) * np.cos(np.radians(angle_virage_deg))
@@ -420,8 +426,7 @@ with tab3:
     x_route_int = np.concatenate([x_droite, x_arc_int, x_fin_int])
     y_route_int = np.concatenate([np.full_like(x_droite, rayon_courbure - largeur_voie/2), y_arc_int, y_fin_int])
     x_route_ext = np.concatenate([x_droite, x_arc_ext, x_fin_ext])
-    y_route_ext = np.concatenate([np.full_like(x_droite, rayon_courbure + largeur_voie/2), y_arc_ext, y_fin_ext])    
-
+    y_route_ext = np.concatenate([np.full_like(x_droite, rayon_courbure + largeur_voie/2), y_arc_ext, y_fin_ext])
     col_graphe, col_analyse = st.columns(2)
 
     with col_analyse:
