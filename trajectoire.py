@@ -202,19 +202,22 @@ tab4 = onglets[4]
 tab5 = onglets[5]
 
 
+
+
+
 def afficher_atelier_trajectoire_gabarit(verrouille=False):
     """Affiche le Quiz et le Texte à trous côte à côte en bas de la page pour l'atelier trajectoire."""
     import random
 
-    st.subheader("Atelier Interactif : Cinématique et Dynamique du Poids Lourd")
+    st.subheader("Atelier Interactif : Cinématique et Dynamique du Véhicule Porteur")
 
     questions_trajectoire_sources = [
         {"id": "qt1", "q": "Lors d'un virage, quelle ligne décrit une trajectoire circulaire parfaite ?", "options": ["Les roues avant (ligne rouge)", "Les roues arrière (ligne bleue)", "Le centre de gravité uniquement"], "rep": "Les roues avant (ligne rouge)"},
         {"id": "qt2", "q": "Quel phénomène physique force les roues arrière à couper le virage vers l'intérieur ?", "options": ["Le décalage de chasse géométrique", "La force centrifuge", "Le devers de la route"], "rep": "Le décalage de chasse géométrique"},
         {"id": "qt3", "q": "Où se situe le point de décrochage (amorce de la courbe) pour les roues arrière ?", "options": ["Décalé en X après la ligne de rupture", "Pile sur la ligne verticale 0", "Avant la ligne de rupture"], "rep": "Décalé en X après la ligne de rupture"},
-        {"id": "qt4", "q": "Quelle force pousse le camion vers l'extérieur du virage perpendiculairement à sa trajectoire ?", "options": ["La force centrifuge", "La réaction normale", "Le poids du chargement"], "rep": "La force centrifuge"},
+        {"id": "qt4", "q": "Quelle force pousse le porteur vers l'extérieur du virage perpendiculairement à sa trajectoire ?", "options": ["La force centrifuge", "La réaction normale", "Le poids du chargement"], "rep": "La force centrifuge"},
         {"id": "qt5", "q": "Comment appelle-t-on l'inclinaison de la chaussée vers l'intérieur d'un virage ?", "options": ["Le dévers de la route", "L'angle d'Ackermann", "La raideur de dérive"], "rep": "Le dévers de la route"},
-        {"id": "qt6", "q": "Quel est l'effet d'un dévers positif sur le risque de basculement du camion ?", "options": ["Il augmente la stabilité", "Il provoque un glissement immédiat", "Il amplifie la force centrifuge"], "rep": "Il augmente la stabilité"},
+        {"id": "qt6", "q": "Quel est l'effet d'un dévers positif sur le risque de basculement du porteur ?", "options": ["Il augmente la stabilité", "Il provoque un glissement immédiat", "Il amplifie la force centrifuge"], "rep": "Il augmente la stabilité"},
         {"id": "qt7", "q": "Si la vitesse du véhicule double dans un même virage, par combien est multipliée la force centrifuge ?", "options": ["Par quatre", "Par deux", "Elle reste identique"], "rep": "Par quatre"},
         {"id": "qt8", "q": "Quelle force de contact parallèle au sol empêche les pneumatiques de déraper ?", "options": ["La force de frottement", "La réaction normale", "Le poids total"], "rep": "La force de frottement"},
         {"id": "qt9", "q": "Quelle est l'unité de mesure de l'accélération transversale subie par le véhicule ?", "options": ["Le G (fraction de la gravité)", "Le Newton (N)", "Le Pascal (Pa)"], "rep": "Le G (fraction de la gravité)"},
@@ -234,7 +237,7 @@ def afficher_atelier_trajectoire_gabarit(verrouille=False):
             ("5. La force perpendiculaire à la chaussée inclinée s'appelle la réaction ..........", ["Choisir...", "normale", "tangentielle"], "normale", "traj_t5"),
             ("6. Plus le centre de gravité du chargement est haut, plus le risque de .......... est élevé.", ["Choisir...", "basculement", "glissement"], "basculement", "traj_t6"),
             ("7. L'angle de .......... de la route aide à compenser les effets de la force centrifuge.", ["Choisir...", "dévers", "braquage"], "dévers", "traj_t7"),
-            ("8. Si les pneus perdent leur adhérence latérale, le camion subit un ..........", ["Choisir...", "glissement", "renversement"], "glissement", "traj_t8"),
+            ("8. Si les pneus perdent leur adhérence latérale, le porteur subit un ..........", ["Choisir...", "glissement", "renversement"], "glissement", "traj_t8"),
             ("9. La ligne courbe dessinée en rouge représente la trajectoire des roues ..........", ["Choisir...", "avant", "arrière"], "avant", "traj_t9"),
             ("10. Le franchissement des lignes noires de la chaussée constitue une .......... de route.", ["Choisir...", "sortie", "stabilité"], "sortie", "traj_t10")
         ]
@@ -259,8 +262,6 @@ def afficher_atelier_trajectoire_gabarit(verrouille=False):
                 st.write(enonce)
             with c_sel: 
                 st.selectbox("", choix, key=f"{cle}_traj_clean", disabled=verrouille, label_visibility="collapsed")
-
-
 
 
 with tab0:
@@ -666,10 +667,10 @@ with tab3:
             # 1. Correction automatisée du Quiz par parcours sécurisé de clés
             score_q3 = 0.0
             if "ordre_quiz_trajectoire_aleatoire" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_trajectoire_sources:
+                for q_item in st.session_state.ordre_quiz_trajectoire_aleatoire:
                     saisie = "Choisir..."
                     for k in st.session_state.keys():
-                        if k.startswith(f"traj_at3_final_g_{q_item['id']}_"):
+                        if k.startswith(f"traj_at3_final_g_{q_item['id']}"):
                             saisie = st.session_state[k]
                             break
                     if str(saisie).strip() == str(q_item["rep"]).strip(): 
@@ -683,7 +684,7 @@ with tab3:
                     attendu_texte = ligne[2]
                     saisie_texte = "Choisir..."
                     for k in st.session_state.keys():
-                        if k.startswith(f"{cle_variable}_traj_clean_"):
+                        if k.startswith(f"{cle_variable}_traj_clean"):
                             saisie_texte = st.session_state[k]
                             break
                     if str(saisie_texte).strip() == str(attendu_texte).strip(): 
@@ -711,7 +712,7 @@ with tab3:
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Trajectoire Camion - {n_eleve}</title>
+            <title>Rapport Trajectoire Porteur - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
@@ -727,7 +728,7 @@ with tab3:
         <body>
             <div class="header-box">
                 <h1>Rapport d'Évaluation de Physique-Cinématique</h1>
-                <p>Atelier 3 : Modélisation et Étude des Trajectoires et Gabarits d'Inscription en Courbe</p>
+                <p>Atelier 3 : Modélisation et Étude des Trajectoires et Gabarits d'Inscription en Courbe du Véhicule Porteur</p>
                 <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
                 <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite3}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t3:.1f}</span> / 20</div>
@@ -752,7 +753,7 @@ with tab3:
             for num, q_item in enumerate(st.session_state.ordre_quiz_trajectoire_aleatoire, 1):
                 saisie = "Choisir..."
                 for k in st.session_state.keys():
-                    if k.startswith(f"traj_at3_final_g_{q_item['id']}_"):
+                    if k.startswith(f"traj_at3_final_g_{q_item['id']}"):
                         saisie = st.session_state[k]
                         break
                 attendu = q_item["rep"]
@@ -779,7 +780,7 @@ with tab3:
                 phrase_enonce = ligne[0]
                 saisie_texte = "Choisir..."
                 for k in st.session_state.keys():
-                    if k.startswith(f"{cle_variable}_traj_clean_"):
+                    if k.startswith(f"{cle_variable}_traj_clean"):
                         saisie_texte = st.session_state[k]
                         break
                 v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
@@ -803,6 +804,7 @@ with tab3:
             label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL SCELLÉ (FORMAT HTML)",
             data=html_export_traj3,
             file_name=f"Rapport_Trajectoire_{n_eleve}_{p_eleve}.html",
+            background="red",
             mime="text/html",
             key="btn_download_html_official_traj3",
             use_container_width=True
