@@ -1129,9 +1129,14 @@ with tab5:
             fig_plotly.add_trace(go.Scatter(x=x_route_int_semi, y=y_route_int_semi, name="Bord interieur", line=dict(color='black', width=2)))
             fig_plotly.add_trace(go.Scatter(x=x_route_ext_semi, y=y_route_ext_semi, name="Bord exterieur", line=dict(color='black', width=2)))
             
-            # Trajectoires finales : Avant en Bleu lisse, Arrière de la semi en Rouge pointillé
-            fig_plotly.add_trace(go.Scatter(x=x_trac_av, y=y_trac_av, name="Trajectoire Roues AVANT", line=dict(color='#3498db', width=3)))
-            fig_plotly.add_trace(go.Scatter(x=x_semi_ar, y=y_semi_ar, name="Trajectoire Roues ARRIERE", line=dict(color='#e74c3c', width=3, dash='dash')))
+            # 1. Roues AVANT Tracteur (Bleu lisse)
+            fig_plotly.add_trace(go.Scatter(x=x_trac_av, y=y_trac_av, name="Trajectoire Roues AVANT Tracteur", line=dict(color='#3498db', width=3)))
+            
+            # 2. L'ESSIEU MANQUANT : Roues ARRIÈRE Tracteur / Sellette (Vert pointillé)
+            fig_plotly.add_trace(go.Scatter(x=x_trac_ar, y=y_trac_ar, name="Trajectoire Essieu AR TRACTEUR", line=dict(color='#2ecc71', width=2.5, dash='dash')))
+            
+            # 3. Roues ARRIÈRE Semi-remorque (Rouge pointillé extrême)
+            fig_plotly.add_trace(go.Scatter(x=x_semi_ar, y=y_semi_ar, name="Trajectoire Roues ARRIERE SEMI", line=dict(color='#e74c3c', width=3, dash='dash')))
             
             fig_plotly.update_layout(
                 xaxis=dict(scaleanchor="y", scaleratio=1),
