@@ -311,142 +311,179 @@ with tab3:
     
     y_centre_virage = 2 * rayon_courbure
     
-    # Initialisation des vecteurs d'état du camion
+    # Initialisation des vecteurs d'etat du camion
     x_arr = np.zeros(pas)
     y_arr = np.zeros(pas)
     theta = np.zeros(pas)
 
-    # Positionnement initial en ligne droite (10 mètres avant l'entrée du virage)
-    x_arr[0] = -10.0
-    y_arr[0] = rayon_courbure
-    theta[0] = 0.0
+    # Positionnement initial en ligne droite (10 metres avant l'entree du virage)
+    x_arr = -10.0
+    y_arr = rayon_courbure
+    theta = 0.0
 
-    # Simulation cinématique progressive
+    # Simulation cinematique progressive (Pre-calcul complet)
     for i in range(1, pas):
-        # Le virage commence à X = 0 et se termine quand le cap nominal est atteint
         if x_arr[i-1] >= 0 and theta[i-1] < np.radians(angle_virage_deg):
             alpha = angle_braquage_reel_rad
-            
             x_arr[i] = x_arr[i-1] + ds * np.cos(theta[i-1])
             y_arr[i] = y_arr[i-1] + ds * np.sin(theta[i-1])
             theta[i] = theta[i-1] + (ds / empattement) * np.tan(alpha - angle_derive_rad)
         elif theta[i-1] >= np.radians(angle_virage_deg):
-            # Sortie de virage : prolongation en ligne droite selon le nouveau cap
             alpha = 0.0
             x_arr[i] = x_arr[i-1] + ds * np.cos(np.radians(angle_virage_deg))
             y_arr[i] = y_arr[i-1] + ds * np.sin(np.radians(angle_virage_deg))
             theta[i] = np.radians(angle_virage_deg)
         else:
-            # Approche initiale en ligne droite horizontale
             alpha = 0.0
             x_arr[i] = x_arr[i-1] + ds
             y_arr[i] = rayon_courbure
             theta[i] = 0.0
 
-    # Coordonnées de l'essieu avant du camion
+    # Coordonnees de l'essieu avant du camion
     x_av = x_arr + empattement * np.cos(theta)
     y_av = y_arr + empattement * np.sin(theta)
 
-    # Calcul de la chasse maximale mesurée
+    # Calcul du decalage maximal de chasse
     rayons_arriere = np.sqrt(x_arr**2 + (y_arr - y_centre_virage)**2)
     rayons_avant = np.sqrt(x_av**2 + (y_av - y_centre_virage)**2)
     decalage_reel = np.max(rayons_avant) - np.min(rayons_arriere)
 
-    # --- Bloc d'affichage graphique Matplotlib ---
+    # --- Pre-calcul des elements fixes de la route ---
+    t = np.linspace(0, np.radians(angle_virage_deg), 100)
+    r_int = rayon_courbure - (largeur_voie / 2)
+    r_ext = rayon_courbure + (largeur_voie / 2)
+    
+    x_droite = np.linspace(-10, 0, 10)
+    x_arc_int = r_int * np.sin(t)
+    y_arc_int = y_centre_virage - r_int * np.cos(t)
+    x_arc_ext = r_ext * np.sin(t)
+    y_arc_ext = y_centre_virage - r_ext * np.cos(t)
+    
+    x_fin_int = x_arc_int[-1] + np.linspace(0, 15, 10) * np.cos(np.radians(angle_virage_deg))
+    y_fin_int = y_arc_int[-1] + np.linspace(0, 15, 10) * np.sin(np.radians(angle_virage_deg))
+    x_fin_ext = x_arc_ext[-1] + np.linspace(0, 15, 10) * np.cos(np.radians(angle_virage_deg))
+    y_fin_ext = y_arc_ext[-1] + np.linspace(0, 15, 10) * np.sin(np.radians(angle_virage_deg))
+    
+    x_route_int = np.concatenate([x_droite, x_arc_int, x_fin_int])
+    y_route_int = np.concatenate([np.full_like(x_droite, rayon_courbure - largeur_voie/2), y_arc_int, y_fin_int])
+    x_route_ext = np.concatenate([x_droite, x_arc_ext, x_fin_ext])
+    y_route_ext = np.concatenate([np.full_like(x_droite, rayon_courbure + largeur_voie/2), y_arc_ext, y_fin_ext])
+
+    # --- Affichage Streamlit en deux colonnes ---
     col_graphe, col_analyse = st.columns(2)
 
-    with col_graphe:
-        fig, ax = plt.subplots(figsize=(8, 6))
-        
-        # 1. Tracé de la chaussée (Lignes d'approche + Arcs de cercle du virage)
-        t = np.linspace(0, np.radians(angle_virage_deg), 100)
-        
-        # Rayons des bords intérieur et extérieur de la route
-        r_int = rayon_courbure - (largeur_voie / 2)
-        r_ext = rayon_courbure + (largeur_voie / 2)
-        
-        # Portion 1 : Ligne droite d'approche (de X = -10 à X = 0)
-        x_droite = np.linspace(-10, 0, 10)
-        ax.plot(x_droite, np.full_like(x_droite, rayon_courbure - largeur_voie/2), color='black', linewidth=1.5)
-        ax.plot(x_droite, np.full_like(x_droite, rayon_courbure + largeur_voie/2), color='black', linewidth=1.5)
-        
-        # Portion 2 : L'arc de cercle du virage (centré en 0, y_centre_virage)
-        x_arc_int = r_int * np.sin(t)
-        y_arc_int = y_centre_virage - r_int * np.cos(t)
-        
-        x_arc_ext = r_ext * np.sin(t)
-        y_arc_ext = y_centre_virage - r_ext * np.cos(t)
-        
-        # Portion 3 : Ligne droite de sortie (tangente après le virage)
-        x_fin_int = x_arc_int[-1] + np.linspace(0, 15, 10) * np.cos(np.radians(angle_virage_deg))
-        y_fin_int = y_arc_int[-1] + np.linspace(0, 15, 10) * np.sin(np.radians(angle_virage_deg))
-        
-        x_fin_ext = x_arc_ext[-1] + np.linspace(0, 15, 10) * np.cos(np.radians(angle_virage_deg))
-        y_fin_ext = y_arc_ext[-1] + np.linspace(0, 15, 10) * np.sin(np.radians(angle_virage_deg))
-        
-        # Dessin des infrastructures routières continues
-        ax.plot(np.concatenate([x_droite, x_arc_int, x_fin_int]), 
-                np.concatenate([np.full_like(x_droite, rayon_courbure - largeur_voie/2), y_arc_int, y_fin_int]), 
-                color='black', linestyle='-', linewidth=2, label="Bord interieur de la route")
-        
-        ax.plot(np.concatenate([x_droite, x_arc_ext, x_fin_ext]), 
-                np.concatenate([np.full_like(x_droite, rayon_courbure + largeur_voie/2), y_arc_ext, y_fin_ext]), 
-                color='black', linestyle='-', linewidth=2, label="Bord exterieur de la route")
-        
-        # 2. Tracé des trajectoires cinématiques réelles du camion
-        ax.plot(x_av, y_av, color='#e74c3c', linewidth=3, label="Trajectoire Roues AVANT")
-        ax.plot(x_arr, y_arr, color='#3498db', linewidth=3, linestyle='--', label="Trajectoire Roues ARRIERE")
-        
-        # Segment matérialisant la position instantanée du châssis au milieu de la courbe
-        mid = int(pas / 2)
-        ax.plot([x_arr[mid], x_av[mid]], [y_arr[mid], y_av[mid]], color='#2c3e50', 
-                linewidth=3, label=f"Chassis rigide (L = {empattement}m)")
-        
-        ax.set_xlabel("X (Metres)")
-        ax.set_ylabel("Y (Metres)")
-        ax.axis("equal")
-        ax.grid(True, linestyle="--", alpha=0.5)
-        ax.legend(loc="upper left")
-        
-        st.pyplot(fig)
-        
     with col_analyse:
         st.subheader("Indicateurs Physiques du Vehicule")
-        st.metric(label="Decalage mesure (Chasse)", value=f"{decalage_reel:.2f} m")
-        st.metric(label="Acceleration laterale subie", value=f"{acceleration_laterale_g:.2f} G")
+        zone_metrique_chasse = st.empty()
+        zone_metrique_g = st.empty()
+        zone_alerte = st.empty()
         
+        # Bouton d'activation de la simulation animee
+        declencher_animation = st.button("Lancer la simulation dynamique")
+
+    with col_graphe:
+        # Creation du conteneur vide qui va accueillir l'animation ou le graphique interactif final
+        conteneur_graphique = st.empty()
+
+    # --- Gestion de l'animation en temps reel (Matplotlib) ---
+    import time
+    from matplotlib.patches import Polygon
+    
+    animation_terminee = False
+
+    if declencher_animation:
+        # Pas d'echantillonnage pour fluidifier l'animation sans saturer le serveur
+        points_animation = range(0, pas, max(1, pas // 40))
+        
+        for k in points_animation:
+            fig_anim, ax_anim = plt.subplots(figsize=(8, 6))
+            
+            # Reproduction de la route et trajectoires partielles
+            ax_anim.plot(x_route_int, y_route_int, color='black', linestyle='-', linewidth=2)
+            ax_anim.plot(x_route_ext, y_route_ext, color='black', linestyle='-', linewidth=2)
+            if k > 0:
+                ax_anim.plot(x_av[:k], y_av[:k], color='#e74c3c', linewidth=2)
+                ax_anim.plot(x_arr[:k], y_arr[:k], color='#3498db', linewidth=2, linestyle='--')
+            
+            # Dessin du rectangle du camion
+            largeur_camion = 2.5
+            cos_t, sin_t = np.cos(theta[k]), np.sin(theta[k])
+            v_long_x, v_long_y = cos_t, sin_t
+            v_larg_x, v_larg_y = -sin_t, cos_t
+            
+            arriere_gauche = [x_arr[k] - 1.0 * v_long_x - (largeur_camion/2) * v_larg_x, y_arr[k] - 1.0 * v_long_y - (largeur_camion/2) * v_larg_y]
+            arriere_droit  = [x_arr[k] - 1.0 * v_long_x + (largeur_camion/2) * v_larg_x, y_arr[k] - 1.0 * v_long_y + (largeur_camion/2) * v_larg_y]
+            avant_droit    = [x_arr[k] + (empattement + 1.0) * v_long_x + (largeur_camion/2) * v_larg_x, y_arr[k] + (empattement + 1.0) * v_long_y + (largeur_camion/2) * v_larg_y]
+            avant_gauche   = [x_arr[k] + (empattement + 1.0) * v_long_x - (largeur_camion/2) * v_larg_x, y_arr[k] + (empattement + 1.0) * v_long_y - (largeur_camion/2) * v_larg_y]
+            
+            gabarit_camion = Polygon(np.array([arriere_gauche, arriere_droit, avant_droit, avant_gauche]), closed=True, facecolor='#2c3e50', alpha=0.8)
+            ax_anim.add_patch(gabarit_camion)
+            
+            ax_anim.axis("equal")
+            ax_anim.set_xlim(-12, max(x_route_ext) + 5)
+            ax_anim.set_ylim(-5, max(y_route_ext) + 5)
+            ax_anim.grid(True, linestyle="--", alpha=0.5)
+            
+            conteneur_graphique.pyplot(fig_anim)
+            plt.close(fig_anim)
+            
+            # Mise a jour des compteurs instantanes
+            decalage_instantane = np.abs(np.sqrt(x_av[k]**2 + (y_av[k] - y_centre_virage)**2) - np.sqrt(x_arr[k]**2 + (y_arr[k] - y_centre_virage)**2)) if x_arr[k] >= 0 else 0.0
+            zone_metrique_chasse.metric(label="Decalage instantane des essieux", value=f"{decalage_instantane:.2f} m")
+            zone_metrique_g.metric(label="Acceleration laterale subie", value=f"{acceleration_laterale_g * min(1.0, k / (pas*0.3)):.2f} G")
+            
+            time.sleep(0.04)
+        animation_terminee = True
+
+    # --- Affichage Final Interactif (Plotly Zoomable) ---
+    # S'execute automatiquement par defaut, ou prend le relais a la fin de l'animation
+    if not declencher_animation or animation_terminee:
+        import plotly.graph_objects as go
+        
+        fig_plotly = go.Figure()
+        
+        # 1. Ajout de la route sur Plotly
+        fig_plotly.add_trace(go.Scatter(x=x_route_int, y=y_route_int, name="Bord interieur de la route", line=dict(color='black', width=2)))
+        fig_plotly.add_trace(go.Scatter(x=x_route_ext, y=y_route_ext, name="Bord exterieur de la route", line=dict(color='black', width=2)))
+        
+        # 2. Ajout des trajectoires completes
+        fig_plotly.add_trace(go.Scatter(x=x_av, y=y_av, name="Trajectoire Roues AVANT", line=dict(color='#e74c3c', width=3)))
+        fig_plotly.add_trace(go.Scatter(x=x_arr, y=y_arr, name="Trajectoire Roues ARRIERE", line=dict(color='#3498db', width=3, dash='dash')))
+        
+        # Configuration des options d'interactivite (Zoom, deplacement, survol de points de mesure)
+        fig_plotly.update_layout(
+            title="Analyse interactive finale (Outils Plotly : Zoom, Deplacement, Mesure)",
+            xaxis_title="X (Metres)",
+            yaxis_title="Y (Metres)",
+            xaxis=dict(scaleanchor="y", scaleratio=1), # Strict respect des proportions 1:1 pour les mesures
+            yaxis=dict(constrain="domain"),
+            hovermode="closest",
+            margin=dict(l=20, r=20, t=40, b=20),
+            height=600
+        )
+        
+        # Injection du graphique dynamique modifiable dans le conteneur principal
+        conteneur_graphique.plotly_chart(fig_plotly, use_container_width=True)
+        
+        # Mise a jour definitive des indicateurs physiques maximums
+        zone_metrique_chasse.metric(label="Decalage maximal mesure (Chasse)", value=f"{decalage_reel:.2f} m")
+        zone_metrique_g.metric(label="Acceleration laterale stabilisee", value=f"{acceleration_laterale_g:.2f} G")
+
+    # --- Section de debriefing et telechargement de fin d'atelier ---
+    with col_analyse:
         if acceleration_laterale_g > 0.35:
-            st.error("Force laterale critique. Risque eleve de derapage ou de renversement.")
+            zone_alerte.error("Force laterale critique. Risque eleve de derapage ou de renversement.")
         elif acceleration_laterale_g > 0.20:
-            st.warning("Force laterale marquee. Glissement des pneumatiques quantifiable.")
+            zone_alerte.warning("Force laterale marquee. Glissement des pneumatiques quantifiable.")
         else:
-            st.success("Force laterale faible. Comportement stable.")
+            zone_alerte.success("Force laterale faible. Comportement stable.")
 
-        # Generation de la chaine de texte pour le livrable eleve
-        texte_rapport = f"""RAPPORT D'ATELIER - SIMULATION PERMIS C
-Eleve : {st.session_state.get('prenom_var', 'PRENOM')} {st.session_state.get('nom_var', 'ELEVE')}
-Classe : {st.session_state.get('classe_var', 'GROUPE')}
---------------------------------------------------
-PARAMETRES DU VEHICULE :
-- Empattement : {empattement} m
-- Masse a vide : {masse_vide} t
-- Masse du chargement : {masse_charge} t
-- Masse totale : {masse_totale:.1f} t
+        st.caption("Outils de mesure : Passez la souris sur le graphique interactif ci-dessus pour lire les coordonnees exactes (X, Y) de chaque courbe ou utilisez le zoom rectangle de la barre d'outils Plotly.")
 
-PARAMETRES DE LA ROUTE :
-- Rayon de courbure : {rayon_courbure} m
-- Angle du virage : {angle_virage_deg} degres
-- Vitesse definie : {vitesse_kmh} km/h
-
-RESULTATS MESURES :
-- Decalage geometrique (Chasse) : {decalage_reel:.2f} m
-- Acceleration transversale : {acceleration_laterale_g:.2f} G
-"""
-        
-        # Generation de l'intitule de fichier via votre fonction personnalisee
+        # Generation du livrable
+        texte_rapport = f"RAPPORT D'ATELIER - SIMULATION PERMIS C\nEleve : {st.session_state.get('prenom_var', 'PRENOM')} {st.session_state.get('nom_var', 'ELEVE')}\nClasse : {st.session_state.get('classe_var', 'GROUPE')}\n-----------------------------------\nDecalage geometrique maximal (Chasse) : {decalage_reel:.2f} m\n"
         nom_fichier_export = preparer_nom_fichier(nom_onglet="Permis_C")
         
-        # Bouton de telechargement
         st.download_button(
             label="Exporter le rapport d'atelier (Fichier texte)",
             data=texte_rapport,
