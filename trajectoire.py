@@ -467,6 +467,7 @@ with tab1:
     r_int = rayon_courbure - (largeur_voie / 2)
     r_ext = rayon_courbure + (largeur_voie / 2)
 
+    # Creation des structures matricielles fixes
     ds = 0.05  
     distance_totale = rayon_courbure * np.radians(angle_virage_deg) + 30.0
     pas = int(distance_totale / ds)
@@ -477,18 +478,17 @@ with tab1:
     y_av = np.zeros(pas)
     theta = np.zeros(pas)
 
-    # CORRECTION DEFINITIVE : Remplissage exclusif de l'index 0 pour preserver les tableaux
-    x_av[0] = -10.0
-    y_av[0] = rayon_courbure
-    x_arr[0] = -10.0 - empattement
-    y_arr[0] = rayon_courbure
-    theta[0] = 0.0
+    # Initialisation : l'avant est a -10m, l'arriere est en retrait de l'empattement
+    x_av = -10.0
+    y_av = rayon_courbure
+    x_arr = -10.0 - empattement
+    y_arr = rayon_courbure
+    theta = 0.0
 
     evenement_detecte = "Aucun"
     index_interruption = pas - 1
 
     # Calcul dynamique preliminaire de l'acceleration nominale
-    vitesse_ms = vitesse_kmh / 3.6
     acceleration_laterale_g = (vitesse_ms**2) / (rayon_courbure * g)
 
     # =============================================================================
@@ -1218,81 +1218,81 @@ with tab3:
         else:
             zone_alerte.success("TRAJECTOIRE REUSSITE : Le camion est reste stable dans sa voie.")
 
-    if "suite_verrouille_tab1_b" not in st.session_state:
-        st.session_state.suite_verrouille_tab1_b = False
-    verrou_at1_b = st.session_state.suite_verrouille_tab1_b
+    if "suite_verrouille_tab3_trajectoire" not in st.session_state:
+        st.session_state.suite_verrouille_tab3_trajectoire = False
+    verrou_at3 = st.session_state.suite_verrouille_tab3_trajectoire
 
-    # APPEL CRITIQUE : C'est cette ligne qui fait apparaitre le Quiz et le Texte à trous
-    afficher_atelier_permis_b(verrouille=verrou_at1_b)
-
+    # Rendu des questionnaires d'évaluation de l'Atelier 3
+    afficher_atelier_trajectoire_gabarit(verrouille=verrou_at3)
+    
     st.write("---")
-    st.subheader("Synthese et validation de l'Atelier 1")
+    st.subheader("Synthèse et validation de l'Atelier 3")
     
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    case_certif_b = st.checkbox(
-        "Je certifie avoir complete les questions de l'Atelier Vehicule Leger sur la dynamique de glissement.",
-        key="check_certif_b_final_net",
-        disabled=verrou_at1_b,
+    case_certif_stat3 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Cinématique et Dynamique sur la trajectoire des essieux.",
+        key="check_certif_traj3_final_net",
+        disabled=verrou_at3,
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_suite1_b_official", use_container_width=True, disabled=verrou_at1_b):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_suite3_traj_official", use_container_width=True, disabled=verrou_at3):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_b: 
-            st.error("Action refusee : Cochez la case de certification.")
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat3: 
+            st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Correction automatique du Quiz
-            score_qb = 0.0
-            if "ordre_quiz_b_aleatoire" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_b_aleatoire:
+            # 1. Correction automatisée du Quiz par parcours sécurisé de clés
+            score_q3 = 0.0
+            if "ordre_quiz_trajectoire_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_trajectoire_aleatoire:
                     saisie = "Choisir..."
                     for k in st.session_state.keys():
-                        if k.startswith(f"b_at1_final_g_{q_item['id']}"):
+                        if k.startswith(f"traj_at3_final_g_{q_item['id']}"):
                             saisie = st.session_state[k]
                             break
                     if str(saisie).strip() == str(q_item["rep"]).strip(): 
-                        score_qb += 1.0
+                        score_q3 += 1.0
 
-            # Correction automatique du Texte à trous
-            score_tb = 0.0
-            if "champs_b_clean" in st.session_state:
-                for ligne in st.session_state.champs_b_clean:
+            # 2. Correction automatisée du Texte à trous par parcours sécurisé de clés
+            score_t3 = 0.0
+            if "champs_trajectoire_clean" in st.session_state:
+                for ligne in st.session_state.champs_trajectoire_clean:
                     cle_variable = ligne[-1]
                     attendu_texte = ligne[2]
                     saisie_texte = "Choisir..."
                     for k in st.session_state.keys():
-                        if k.startswith(f"{cle_variable}_b_clean"):
+                        if k.startswith(f"{cle_variable}_traj_clean"):
                             saisie_texte = st.session_state[k]
                             break
                     if str(saisie_texte).strip() == str(attendu_texte).strip(): 
-                        score_tb += 1.0
+                        score_t3 += 1.0
 
-            st.session_state.score_suite1_b_p1 = round(float(score_qb), 1)
-            st.session_state.score_suite1_b_p2 = round(float(score_tb), 1)
-            st.session_state.score_final_suite1_b = round(float(score_qb + score_tb), 1)
-            st.session_state.suite_verrouille_tab1_b = True
+            st.session_state.score_suite3_traj_p1 = round(float(score_q3), 1)
+            st.session_state.score_suite3_traj_p2 = round(float(score_t3), 1)
+            st.session_state.score_final_suite3_traj = round(float(score_q3 + score_t3), 1)
+            st.session_state.suite_verrouille_tab3_trajectoire = True
             st.rerun()
 
     # -------------------------------------------------------------------------
-    # GENERATION ET EXPORTATION DU RAPPORT HTML SCELLÉ (ATELIER 1)
+    # PARTIE 4 : EXPORTATION DU RAPPORT INDIVIDUEL HTML SCELLÉ
     # -------------------------------------------------------------------------
-    if st.session_state.get("suite_verrouille_tab1_b", False):
+    if st.session_state.get("suite_verrouille_tab3_trajectoire", False):
         from datetime import datetime
-        scr1_b = st.session_state.get("score_suite1_b_p1", 0.0)
-        scr2_b = st.session_state.get("score_suite1_b_p2", 0.0)
-        tot_s_b = st.session_state.get("score_final_suite1_b", 0.0)
-        timestamp_b = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        scr1_t3 = st.session_state.get("score_suite3_traj_p1", 0.0)
+        scr2_t3 = st.session_state.get("score_suite3_traj_p2", 0.0)
+        tot_s_t3 = st.session_state.get("score_final_suite3_traj", 0.0)
+        timestamp_suite3 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
 
-        st.success(f"ATELIER VEHICULE LEGER SCELLE | Note de session : {tot_s_b:.1f} / 20")
+        st.success(f"ATELIER CINÉMATIQUE SCELLÉ | Note de session : {tot_s_t3:.1f} / 20")
 
-        html_export_b = f"""<!DOCTYPE html>
+        html_export_traj3 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Permis B - {n_eleve}</title>
+            <title>Rapport Trajectoire Porteur - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
@@ -1307,95 +1307,99 @@ with tab3:
         </head>
         <body>
             <div class="header-box">
-                <h1>Rapport d'Evaluation de Physique-Cinematique</h1>
-                <p>Atelier 1 : Dynamique et Inscription en Courbe du Vehicule Leger (Permis B)</p>
-                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_b}</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_b:.1f}</span> / 20</div>
+                <h1>Rapport d'Évaluation de Physique-Cinématique</h1>
+                <p>Atelier 3 : Modélisation et Étude des Trajectoires et Gabarits d'Inscription en Courbe du Véhicule Porteur</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t3:.1f}</span> / 20</div>
             </div>
             
-            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
-                Note obtenue au Quiz Technique : <strong>{scr1_b:.1f} / 10</strong><br>
-                Note obtenue a la Synthese de Cours : <strong>{scr2_b:.1f} / 10</strong><br>
-                Note Totale de l'Atelier 1 : <strong>{tot_s_b:.1f} / 20</strong>
+                Note obtenue au Quiz Technique : <strong>{scr1_t3:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse de Cours : <strong>{scr2_t3:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 3 : <strong>{tot_s_t3:.1f} / 20</strong>
             </p>
             
-            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ</div>
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
             <table>
                 <thead>
-                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
         """
 
-        if "ordre_quiz_b_aleatoire" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz_b_aleatoire, 1):
+        if "ordre_quiz_trajectoire_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_trajectoire_aleatoire, 1):
                 saisie = "Choisir..."
                 for k in st.session_state.keys():
-                    if k.startswith(f"b_at1_final_g_{q_item['id']}"):
+                    if k.startswith(f"traj_at3_final_g_{q_item['id']}"):
                         saisie = st.session_state[k]
                         break
                 attendu = q_item["rep"]
                 v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_b += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+                html_export_traj3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_b += """
+        html_export_traj3 += """
                 </tbody>
             </table>
             
-            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
             <table>
                 <thead>
-                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
                 </thead>
                 <tbody>
         """
 
-        if "champs_b_clean" in st.session_state:
-            for num, ligne in enumerate(st.session_state.champs_b_clean, 1):
+        if "champs_trajectoire_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_trajectoire_clean, 1):
                 cle_variable = ligne[-1]
-                phrase_enonce = ligne[0]
                 attendu_texte = ligne[2]
+                phrase_enonce = ligne[0]
                 saisie_texte = "Choisir..."
                 for k in st.session_state.keys():
-                    if k.startswith(f"{cle_variable}_b_clean"):
+                    if k.startswith(f"{cle_variable}_traj_clean"):
                         saisie_texte = st.session_state[k]
                         break
                 v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
                 v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
-                html_export_b += f"<tr><td>{num}</td><td>{phrase_enonce}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+                html_export_traj3 += f"<tr><td>{num}</td><td>{phrase_enonce}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
 
-        html_export_b += f"""
+        html_export_traj3 += f"""
                 </tbody>
             </table>
             
-            <div class="sub-title">DONNEES COMPLEMENTAIRES D'ATELIER TECHNIQUE</div>
+            <div class="sub-title">DONNÉES COMPLÉMENTAIRES D'ATELIER TECHNIQUE</div>
             <p style="font-size: 13px; color: #64748b;">
-                Valeur maximale enregistree pour le decalage de chasse : <strong>{decalage_reel:.2f} m</strong><br>
-                Acceleration transversale maximale atteinte : <strong>{acceleration_laterale_g:.2f} G</strong>
+                Valeur maximale enregistrée pour le décalage de chasse : <strong>{st.session_state.get('decalage_reel', 0.0):.2f} m</strong><br>
+                Angle de dévers configuré pour la chaussée : <strong>{st.session_state.get('angle_route_deg', 0.0):.1f} degrés</strong>
             </p>
         </body>
         </html>
         """
-
         st.download_button(
-            label="TELECHARGER LE RAPPORT INDIVIDUEL SCELLE (FORMAT HTML)",
-            data=html_export_b,
-            file_name=f"Rapport_Permis_B_{n_eleve}_{p_eleve}.html",
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL SCELLÉ (FORMAT HTML)",
+            data=html_export_traj3,
+            file_name=f"Rapport_Trajectoire_{n_eleve}_{p_eleve}.html",
             mime="text/html",
-            key="btn_download_html_official_b",
+            key="btn_download_html_official_traj3",
             use_container_width=True
         )
+
+
+
 
                 
 
 with tab4:
     st.header("Simulation Permis CE et caravane")
+    st.info("Espace reserve pour la simulation d'un camion rigide tractant une remorque de type caravane.")
 
 with tab5:
     st.header("Simulation Permis C )")
+    st.info("Espace reserve pour le second module applique au Permis C.")
 
     col_p1, col_p2, col_p3 = st.columns(3)
     
