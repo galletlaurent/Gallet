@@ -316,10 +316,10 @@ with tab3:
     y_arr = np.zeros(pas)
     theta = np.zeros(pas)
 
-    # Positionnement initial en ligne droite (10 metres avant l'entree du virage)
-    x_arr = -10.0
-    y_arr = rayon_courbure
-    theta = 0.0
+    # CORRECTION DEFINITIVE : Initialisation sur l'index 0 uniquement
+    x_arr[0] = -10.0
+    y_arr[0] = rayon_courbure
+    theta[0] = 0.0
 
     # Simulation cinematique progressive (Pre-calcul complet)
     for i in range(1, pas):
