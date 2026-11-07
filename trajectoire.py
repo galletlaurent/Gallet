@@ -353,6 +353,9 @@ with tab3:
     rayons_avant = np.sqrt(x_av**2 + y_av**2)
     decalage_reel = np.max(rayons_avant) - np.min(rayons_arriere)
 
+    # CORRECTION : Declaration explicite des colonnes avant l'affichage
+    col_graphe, col_analyse = st.columns(2)
+
     # --- Bloc d'affichage graphique Matplotlib mis a jour ---
     with col_graphe:
         fig, ax = plt.subplots(figsize=(8, 6))
