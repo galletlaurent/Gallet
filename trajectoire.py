@@ -484,7 +484,9 @@ with tab3:
         conteneur_graphique.pyplot(fig_anim)
         plt.close(fig_anim)
 
-        # TRACÉ DU SCHÉMA DES FORCES CORRIGÉ ET COHÉRENT (VUE ARRIÈRE)
+        # =============================================================================
+        # TRACÉ DU SCHÉMA DES FORCES CORRIGÉ ET COMPATIBLE (VUE ARRIÈRE)
+        # =============================================================================
         fig_forces, ax_f = plt.subplots(figsize=(5, 4))
         
         # Ligne d'assiette du sol deversé
@@ -496,37 +498,38 @@ with tab3:
         cam_box_rot = np.dot(cam_box, R_mat.T)
         ax_f.add_patch(Polygon(cam_box_rot, closed=True, facecolor='#7f8c8d', alpha=0.3))
         
-        # Positionnement exacte du Centre de Gravite G
+        # Positionnement exact du Centre de Gravite G
         G_coord = np.dot(np.array([0, hauteur_cg]), R_mat.T)
-        ax_f.scatter(G_coord, G_coord, color='black', s=90, zorder=5)
+        ax_f.scatter(G_coord[0], G_coord[1], color='black', s=90, zorder=5)
         
         # Calcul des coordonnees réelles au sol des pneumatiques gauche et droit tournes
         roue_gauche = np.dot(np.array([-largeur_camion/2, 0]), R_mat.T)
         roue_droite = np.dot(np.array([largeur_camion/2, 0]), R_mat.T)
         
         # Dessin des roues sous la carrosserie pour la logique visuelle
-        ax_f.scatter([roue_gauche, roue_droite], [roue_gauche, roue_droite], color='black', s=150, marker='s', zorder=4)
+        ax_f.scatter([roue_gauche[0], roue_droite[0]], [roue_gauche[1], roue_droite[1]], color='black', s=150, marker='s', zorder=4)
         
         # Normalisation d'echelle des vecteurs forces
         f_scale = 1.0 / (masse_totale * 1000 * g)
         val_P = masse_totale * 1000 * g
         val_Fc = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) if x_arr[k] >= 0 else 0.0
         
-        # Application des forces de repere a distance du CG : Poids et Centrifuge
-        ax_f.arrow(G_coord, G_coord, 0, -val_P * f_scale * 1.3, head_width=0.08, head_length=0.12, color='#2ecc71', label='Poids (P)')
-        ax_f.arrow(G_coord, G_coord, val_Fc * f_scale * 1.3, 0, head_width=0.08, head_length=0.12, color='#e74c3c', label='Force Centrifuge (Fc)')
+        # CORRECTION EFFECTUÉE : Extraction explicite de [0] et [1] pour chaque coordonnée
+        # Application des forces au CG : Poids (Vertical bas) et Centrifuge (Horizontal droit)
+        ax_f.arrow(G_coord[0], G_coord[1], 0, -val_P * f_scale * 1.3, head_width=0.08, head_length=0.12, color='#2ecc71', label='Poids (P)')
+        ax_f.arrow(G_coord[0], G_coord[1], val_Fc * f_scale * 1.3, 0, head_width=0.08, head_length=0.12, color='#e74c3c', label='Force Centrifuge (Fc)')
         
         # Calcul de la repartition du poids et effet centrifuge sous les pneus
         val_N_totale = val_P * np.cos(beta) + val_Fc * np.sin(beta)
         val_Ff_totale = val_Fc * np.cos(beta) - val_P * np.sin(beta) if x_arr[k] >= 0 else 0.0
         
-        # Tracé des forces de contact appliquées sous chaque pneumatique
-        ax_f.arrow(roue_gauche, roue_gauche, -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta), head_width=0.08, head_length=0.12, color='#9b59b6', label='Reaction Normale (N)')
-        ax_f.arrow(roue_droite, roue_droite, -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta), head_width=0.08, head_length=0.12, color='#9b59b6')
+        # Tracé des forces de contact appliquées sous chaque pneumatique (indexés explicitement)
+        ax_f.arrow(roue_gauche[0], roue_gauche[1], -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta), head_width=0.08, head_length=0.12, color='#9b59b6', label='Reaction Normale (N)')
+        ax_f.arrow(roue_droite[0], roue_droite[1], -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta), head_width=0.08, head_length=0.12, color='#9b59b6')
         
         if np.abs(val_Ff_totale) > 0:
-            ax_f.arrow(roue_gauche, roue_gauche, -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta), head_width=0.08, head_length=0.12, color='#3498db', label='Frottement Pneus (Ff)')
-            ax_f.arrow(roue_droite, roue_droite, -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta), head_width=0.08, head_length=0.12, color='#3498db')
+            ax_f.arrow(roue_gauche[0], roue_gauche[1], -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta), head_width=0.08, head_length=0.12, color='#3498db', label='Frottement Pneus (Ff)')
+            ax_f.arrow(roue_droite[0], roue_droite[1], -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta), head_width=0.08, head_length=0.12, color='#3498db')
 
         ax_f.set_xlim(-2.2, 2.2)
         ax_f.set_ylim(-1.0, 3.2)
