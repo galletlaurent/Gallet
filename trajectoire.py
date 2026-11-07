@@ -309,15 +309,14 @@ with tab3:
     distance_totale = rayon_courbure * np.radians(angle_virage_deg) + 20.0
     pas = int(distance_totale / ds)
 
-    # Creation des structures de tableaux fixes
     x_arr = np.zeros(pas)
     y_arr = np.zeros(pas)
     theta = np.zeros(pas)
 
-    # Initialisation stricte par index
-    x_arr = -10.0
-    y_arr = rayon_courbure
-    theta = 0.0
+    # CORRECTION DÉFINITIVE : Affectation uniquement sur l'index 0 pour conserver la structure NumPy
+    x_arr[0] = -10.0
+    y_arr[0] = rayon_courbure
+    theta[0] = 0.0
 
     evenement_detecte = "Aucun"
     index_interruption = pas - 1
@@ -326,6 +325,11 @@ with tab3:
     acceleration_laterale_g = (vitesse_ms**2) / (rayon_courbure * g)
     raideur_derive_av = 150000  # N/rad
     force_laterale_av = ((masse_totale * 1000) * g * 0.5) * acceleration_laterale_g
+    angle_derive_rad = force_laterale_av / raideur_derive_av
+
+    # Calcul de l'angle de braquage reel corrige par la vitesse
+    angle_braquage_theorique_rad = np.arctan(empattement / rayon_courbure)
+    angle_braquage_reel_rad = angle_braquage_theorique_rad + angle_derive_rad
     angle_derive_rad = force_laterale_av / raideur_derive_av
 
     # Calcul de l'angle de braquage reel corrige par la vitesse
