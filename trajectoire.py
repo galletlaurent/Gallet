@@ -332,24 +332,33 @@ with tab3:
     angle_braquage_reel_rad = angle_braquage_theorique_rad + angle_derive_rad
 
     # =============================================================================
-    # BOUCLE DE CALCUL CHRONOLOGIQUE DES COMPORTEMENTS ROUTIERS
+    # BOUCLE DE CALCUL RESOLUTION PHYSIQUE AVEC SOUCHAGE ET BRAQUAGE PROGRESSIF
     # =============================================================================
+    angle_volant_actuel = 0.0  # Initialisation de l'angle de braquage reel instantane
+    vitesse_braquage = 0.05    # Vitesse de rotation des roues par metre parcouru (lissage)
+
     for i in range(1, pas):
+        # 1. Gestion progressive du volant du conducteur
         if x_arr[i-1] >= 0 and theta[i-1] < np.radians(angle_virage_deg):
             acc_lat_inst_g = (vitesse_ms**2) / (rayon_courbure * g)
-            alpha = angle_braquage_reel_rad
+            # Le conducteur tourne progressivement le volant jusqu'a la valeur cible
+            if angle_volant_actuel < angle_braquage_reel_rad:
+                angle_volant_actuel += vitesse_braquage * ds
+            else:
+                angle_volant_actuel = angle_braquage_reel_rad
+            alpha = angle_volant_actuel
             
+            # Equations d'equilibre mecanique sur plan incline
             P_normale = masse_totale * 1000 * g * np.cos(beta)
             Fc_normale = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) * np.sin(beta)
             N = P_normale + Fc_normale
             
             P_tangente = masse_totale * 1000 * g * np.sin(beta)
             Fc_tangente = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) * np.cos(beta)
-            
             F_frottement_requise = Fc_tangente - P_tangente
             F_frottement_max = seuil_glissement_mu * N
             
-            # 1. Condition de renversement statique
+            # Verifications des criteres de stabilite
             Moment_renversement = Fc_tangente * hauteur_cg
             Moment_stabilisateur = N * (largeur_camion / 2) + P_tangente * hauteur_cg
             
@@ -357,24 +366,29 @@ with tab3:
                 evenement_detecte = "Basculement"
                 index_interruption = i - 1
                 break
-                
-            # 2. Condition de glissement / derapage
             if np.abs(F_frottement_requise) >= F_frottement_max and evenement_detecte == "Aucun":
                 evenement_detecte = "Glissement"
         else:
             acc_lat_inst_g = 0.0
-            alpha = 0.0
+            # Redressement progressif du volant en sortie de virage
+            if angle_volant_actuel > 0.0:
+                angle_volant_actuel -= vitesse_braquage * ds
+            else:
+                angle_volant_actuel = 0.0
+            alpha = angle_volant_actuel
 
-        # Calcul cinematique de deplacement
+        # 2. Deplacement cinematique applique continu
         if x_arr[i-1] >= 0 and theta[i-1] < np.radians(angle_virage_deg):
             x_arr[i] = x_arr[i-1] + ds * np.cos(theta[i-1])
             y_arr[i] = y_arr[i-1] + ds * np.sin(theta[i-1])
             theta[i] = theta[i-1] + (ds / empattement) * np.tan(alpha - angle_derive_rad)
         elif theta[i-1] >= np.radians(angle_virage_deg):
-            x_arr[i] = x_arr[i-1] + ds * np.cos(np.radians(angle_virage_deg))
-            y_arr[i] = y_arr[i-1] + ds * np.sin(np.radians(angle_virage_deg))
-            theta[i] = np.radians(angle_virage_deg)
+            # Sortie de virage : la transition se fait desormais selon le cap de fin accumule
+            x_arr[i] = x_arr[i-1] + ds * np.cos(theta[i-1])
+            y_arr[i] = y_arr[i-1] + ds * np.sin(theta[i-1])
+            theta[i] = theta[i-1] + (ds / empattement) * np.tan(alpha)
         else:
+            # Approche initiale en ligne droite parfaite
             x_arr[i] = x_arr[i-1] + ds
             y_arr[i] = rayon_courbure
             theta[i] = 0.0
