@@ -744,7 +744,21 @@ with tab1:
     zone_metrique_chasse.metric(label="Decalage de chasse maximal", value=f"{decalage_reel:.2f} m")
     zone_metrique_devers.metric(label="Devers configure de la chaussee", value=f"{angle_route_deg:.1f} degres")
     zone_metrique_g.metric(label="Acceleration transversale maximale", value=f"{acceleration_laterale_g:.2f} G")
-
+    if evenement_detecte == "Glissement":
+        with col_graphe:
+            conteneur_graphique.empty()
+            try:
+                # Affichage de la photo du dérapage de la voiture en grand format
+                st.image("derapageVoitureB.jpg", caption="Accident : Perte d'adherence des pneumatiques (Derapage / Sous-virage).",width=800)
+            except Exception:
+                st.error("Fichier derapageVoitureB.jpg introuvable.")
+        zone_alerte.warning("GLISSEMENT : La voiture a glisse vers l'exterieur sous l'effet du sous-virage (Derapage).")
+        
+    elif evenement_detecte == "Sortie de route":
+        zone_alerte.warning("SORTIE DE VOIE : Le vehicule a franchi la ligne continue.")
+        
+    else:
+        zone_alerte.success("TRAJECTOIRE REUSSITE : Le vehicule est reste stable dans sa voie.")
     if evenement_detecte == "Basculement":
         with col_graphe:
             conteneur_graphique.empty()
