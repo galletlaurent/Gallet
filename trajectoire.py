@@ -331,44 +331,46 @@ with tab3:
     # =============================================================================
     # BOUCLE DE CALCUL GEOMETRIQUE INVERSEE (ROUGE PARFAIT / BLEU TRACTE DECALÉ)
     # =============================================================================
+    cap_cible_rad = np.radians(angle_virage_deg)
+
     for i in range(1, pas):
         # 1. Trajectoire ideale imposee a l'essieu avant (Ligne rouge lisse)
-        if x_av[i-1] < empattement:
-            # Phase d'approche : Ligne droite horizontale parfaite
+        if x_av[i-1] < 0.0:
+            # Phase d'approche : Ligne droite horizontale propre
             x_av[i] = x_av[i-1] + ds
             y_av[i] = rayon_courbure
-            cap_av_rad = 0.0
             theta[i] = 0.0
-        elif x_av[i-1] >= empattement and theta[i-1] < np.radians(angle_virage_deg):
-            # Phase de courbe : L'essieu avant epouse rigoureusement l'arc de cercle central
+            
+        elif x_av[i-1] >= 0.0 and theta[i-1] < cap_cible_rad:
+            # CORRECTION : Le virage commence de facon fluide des que l'essieu avant franchit 0
             cap_av_rad = ds / rayon_courbure
             theta[i] = theta[i-1] + cap_av_rad
             
             x_av[i] = rayon_courbure * np.sin(theta[i])
             y_av[i] = y_centre_virage - rayon_courbure * np.cos(theta[i])
+            
         else:
-            # Phase de sortie : Ligne droite selon le cap final stabilise
-            cap_final_rad = np.radians(angle_virage_deg)
-            x_av[i] = x_av[i-1] + ds * np.cos(cap_final_rad)
-            y_av[i] = y_av[i-1] + ds * np.sin(cap_final_rad)
-            theta[i] = cap_final_rad
+            # Phase de sortie : Prolongation rectiligne suivant le cap final
+            x_av[i] = x_av[i-1] + ds * np.cos(cap_cible_rad)
+            y_av[i] = y_av[i-1] + ds * np.sin(cap_cible_rad)
+            theta[i] = cap_cible_rad
 
         # 2. Cinematique de l'essieu arriere (Ligne bleue tractee en retrait)
-        if x_av[i] < empattement:
+        if x_av[i] < 0.0:
+            # En ligne droite initiale, l'arriere suit sagement l'avant decale de l'empattement
             x_arr[i] = x_av[i] - empattement
             y_arr[i] = rayon_courbure
         else:
-            # Equation differentielle de poursuite : l'arriere s'oriente vers l'avant
+            # Equation differentielle de poursuite : maintien rigide de la carrosserie
             dx = x_av[i] - x_arr[i-1]
             dy = y_av[i] - y_arr[i-1]
             distance_inter_essieux = np.hypot(dx, dy)
             
-            # Normalisation et maintien rigide de la longueur de l'empattement
             x_arr[i] = x_av[i] - empattement * (dx / distance_inter_essieux)
             y_arr[i] = y_av[i] - empattement * (dy / distance_inter_essieux)
 
         # 3. Calcul de la dynamique des forces liees au devers pour les alertes
-        if x_av[i] >= empattement and theta[i] < np.radians(angle_virage_deg):
+        if x_av[i] >= 0.0 and theta[i] < cap_cible_rad:
             acc_lat_inst_g = (vitesse_ms**2) / (rayon_courbure * g)
             
             P_normale = masse_totale * 1000 * g * np.cos(beta)
@@ -391,7 +393,7 @@ with tab3:
                 evenement_detecte = "Glissement"
                 
         # 4. Verification geometrique des franchissements de ligne
-        if x_av[i] >= 0:
+        if x_av[i] >= 0.0:
             r_av = np.sqrt(x_av[i]**2 + (y_av[i] - y_centre_virage)**2)
             r_ar = np.sqrt(x_arr[i]**2 + (y_arr[i] - y_centre_virage)**2)
             if (r_av > r_ext or r_av < r_int or r_ar > r_ext or r_ar < r_int) and evenement_detecte == "Aucun":
