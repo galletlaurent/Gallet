@@ -468,6 +468,7 @@ with tab1:
     r_ext = rayon_courbure + (largeur_voie / 2)
 
     # Creation des structures matricielles fixes
+    # Creation des structures matricielles fixes pour l'onglet 1
     ds = 0.05  
     distance_totale = rayon_courbure * np.radians(angle_virage_deg) + 30.0
     pas = int(distance_totale / ds)
@@ -478,17 +479,18 @@ with tab1:
     y_av = np.zeros(pas)
     theta = np.zeros(pas)
 
-    # Initialisation : l'avant est a -10m, l'arriere est en retrait de l'empattement
-    x_av = -10.0
-    y_av = rayon_courbure
-    x_arr = -10.0 - empattement
-    y_arr = rayon_courbure
-    theta = 0.0
+    # CORRECTION : Affectation explicite sur l'index 0 pour ne pas casser la matrice NumPy
+    x_av[0] = -10.0
+    y_av[0] = rayon_courbure
+    x_arr[0] = -10.0 - empattement
+    y_arr[0] = rayon_courbure
+    theta[0] = 0.0
 
     evenement_detecte = "Aucun"
     index_interruption = pas - 1
 
     # Calcul dynamique preliminaire de l'acceleration nominale
+    vitesse_ms = vitesse_kmh / 3.6
     acceleration_laterale_g = (vitesse_ms**2) / (rayon_courbure * g)
 
     # =============================================================================
