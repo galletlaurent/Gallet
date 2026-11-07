@@ -357,15 +357,16 @@ with tab3:
 
         # 2. Cinematique de l'essieu arriere (Ligne bleue tractee en retrait)
         if x_av[i] < 0.0:
-            # En ligne droite initiale, l'arriere suit sagement l'avant decale de l'empattement
+            # CORRECTION : Ligne droite initiale parfaite, aucun dephasage possible
             x_arr[i] = x_av[i] - empattement
             y_arr[i] = rayon_courbure
         else:
-            # Equation differentielle de poursuite : maintien rigide de la carrosserie
+            # L'arriere ne commence a pivoter QUE si l'avant a depasse le repere 0
             dx = x_av[i] - x_arr[i-1]
             dy = y_av[i] - y_arr[i-1]
             distance_inter_essieux = np.hypot(dx, dy)
             
+            # Maintien rigide de la carrosserie en retrait
             x_arr[i] = x_av[i] - empattement * (dx / distance_inter_essieux)
             y_arr[i] = y_av[i] - empattement * (dy / distance_inter_essieux)
 
