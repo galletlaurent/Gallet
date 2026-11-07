@@ -321,6 +321,10 @@ with tab3:
     largeur_voie = 3.5
     largeur_camion = 2.5
 
+    # CORRECTION : Declaration immediate de r_int et r_ext pour eviter l'erreur d'indexation
+    r_int = rayon_courbure - (largeur_voie / 2)
+    r_ext = rayon_courbure + (largeur_voie / 2)
+
     # Initialisation des vecteurs d'etat du camion
     x_arr = np.zeros(pas)
     y_arr = np.zeros(pas)
@@ -328,9 +332,9 @@ with tab3:
     angle_debord = np.zeros(pas)  # Stockage de l'angle de debord cinematique
 
     # Positionnement initial (10 metres avant l'entree du virage)
-    x_arr[0] = -10.0
-    y_arr[0] = rayon_courbure
-    theta[0] = 0.0
+    x_arr = -10.0
+    y_arr = rayon_courbure
+    theta = 0.0
 
     evenement_detecte = "Aucun"
     index_interruption = pas - 1
