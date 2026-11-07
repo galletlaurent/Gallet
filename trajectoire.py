@@ -2215,7 +2215,7 @@ with tab5:
             conteneur_graphique.empty()
             try:
                 # Affichage de la photo de l'accident en grand format
-                st.image("portefeuilleSPL.jpg", caption="Accident : Glissement lateral des essieux (Mise en portefeuille).", use_container_width=True)
+                st.image("portefeuilleSPL.jpg", caption="Accident : Glissement lateral des essieux (Mise en portefeuille).",width=800)
             except Exception:
                 st.error("Fichier portefeuilleSPL.jpg introuvable.")
         zone_alerte.warning("GLISSEMENT : L'ensemble routier a surpasse l'adherence disponible (Mise en portefeuille).")
