@@ -889,7 +889,316 @@ with tab1:
 
 with tab2:
     st.header("Simulation Permis B et caravane")
-    st.info("Espace reserve pour la simulation d'un vehicule articule leger avec caravane.")
+    col_param1, col_param2, col_param3 = st.columns(3)
+    
+    with col_param1:
+        vitesse_kmh_cara = st.slider("Vitesse de l'ensemble (km/h)", 10, 110, 50, step=5, key="vitesse_cara")
+        vitesse_ms_cara = vitesse_kmh_cara / 3.6
+        empattement_voiture = st.slider("Empattement de la voiture (m)", 2.2, 3.5, 2.7, step=0.1, key="emp_voiture_cara")
+
+    with col_param2:
+        longueur_fleche = st.slider("Distance rotule - Essieu caravane (m)", 3.0, 7.0, 4.5, step=0.1, key="long_cara")
+        porte_a_faux_ar = st.slider("Porte-a-faux arriere de la voiture (m)", 0.5, 1.5, 0.9, step=0.05, key="paf_voiture_cara")
+        
+        masse_voiture = st.slider("Masse de la voiture (kg)", 1000, 2500, 1400, step=50, key="m_voit_cara")
+        masse_caravane = st.slider("Masse de la caravane (kg)", 400, 1800, 900, step=50, key="m_cara")
+        masse_totale_cara = (masse_voiture + masse_caravane) / 1000.0
+        st.write(f"Masse totale de l'ensemble : {masse_voiture + masse_caravane} kg")
+
+    with col_param3:
+        rayon_courbure_cara = st.slider("Rayon de la courbe (m)", 20, 120, 45, key="rc_cara")
+        angle_virage_cara = st.slider("Angle du virage (degres)", 45, 135, 90, key="av_cara")
+        angle_route_cara = st.slider("Angle de devers de la route (degres)", 0, 15, 2, key="devers_cara_central")
+        largeur_voie = 3.0
+
+    # Configuration de l'infrastructure
+    y_centre_virage_cara = 2 * rayon_courbure_cara
+    beta_cara = np.radians(angle_route_cara)
+    
+    g = 9.81
+    seuil_glissement_mu = 0.55
+    largeur_ensemble = 2.0
+    hauteur_cg_cara = 0.85
+
+    r_int_cara = rayon_courbure_cara - (largeur_voie / 2)
+    r_ext_cara = rayon_courbure_cara + (largeur_voie / 2)
+
+    # Calcul preliminaire du pas d'espace
+    ds_cara = 0.05  
+    distance_totale_cara = rayon_courbure_cara * np.radians(angle_virage_cara) + 25.0
+    pas_cara = int(distance_totale_cara / ds_cara)
+
+    # Creation des structures de tableaux pour les essieux
+    x_v_av = np.zeros(pas_cara)
+    y_v_av = np.zeros(pas_cara)
+    x_v_ar = np.zeros(pas_cara)
+    y_v_ar = np.zeros(pas_cara)
+    x_c_ar = np.zeros(pas_cara)
+    y_c_ar = np.zeros(pas_cara)
+    
+    theta_v = np.zeros(pas_cara)
+    theta_c = np.zeros(pas_cara)
+
+    # Initialisation stricte a l'index 0 en ligne droite horizontale
+    x_v_av[0] = -10.0
+    y_v_av[0] = rayon_courbure_cara
+    
+    x_v_ar[0] = x_v_av[0] - empattement_voiture
+    y_v_ar[0] = rayon_courbure_cara
+    theta_v[0] = 0.0
+
+    x_rotule_init = x_v_ar[0] - porte_a_faux_ar
+    x_c_ar[0] = x_rotule_init - longueur_fleche
+    y_c_ar[0] = rayon_courbure_cara
+    theta_c[0] = 0.0
+
+    evenement_detecte_cara = "Aucun"
+    index_interruption_cara = pas_cara - 1
+    acceleration_laterale_cara_g = (vitesse_ms_cara**2) / (rayon_courbure_cara * g)
+
+    # =============================================================================
+    # BOUCLE DE CALCUL GEOMETRIQUE RESOLUTION ATTELLAGE LEGER (TAB 2)
+    # =============================================================================
+    cap_cible_cara_rad = np.radians(angle_virage_cara)
+
+    for i in range(1, pas_cara):
+        # 1. Cinematique de l'essieu avant de la voiture (Roues AV - Rouge lisse)
+        if x_v_av[i-1] < 0.0:
+            x_v_av[i] = x_v_av[i-1] + ds_cara
+            y_v_av[i] = rayon_courbure_cara
+            theta_v[i] = 0.0
+        elif x_v_av[i-1] >= 0.0 and theta_v[i-1] < cap_cible_cara_rad:
+            cap_av_rad = ds_cara / rayon_courbure_cara
+            theta_v[i] = theta_v[i-1] + cap_av_rad
+            x_v_av[i] = rayon_courbure_cara * np.sin(theta_v[i])
+            y_v_av[i] = y_centre_virage_cara - rayon_courbure_cara * np.cos(theta_v[i])
+        else:
+            x_v_av[i] = x_v_av[i-1] + ds_cara * np.cos(cap_cible_cara_rad)
+            y_v_av[i] = y_v_av[i-1] + ds_cara * np.sin(cap_cible_cara_rad)
+            theta_v[i] = cap_cible_cara_rad
+
+        # 2. Cinematique de l'essieu arriere de la voiture
+        dx_v = x_v_av[i] - x_v_ar[i-1]
+        dy_v = y_v_av[i] - y_v_ar[i-1]
+        dist_v = np.hypot(dx_v, dy_v)
+        x_v_ar[i] = x_v_av[i] - empattement_voiture * (dx_v / dist_v)
+        y_v_ar[i] = y_v_av[i] - empattement_voiture * (dy_v / dist_v)
+
+        # Repere spatial de la rotule d'attelage arriere
+        x_rot = x_v_ar[i] - porte_a_faux_ar * np.cos(theta_v[i])
+        y_rot = y_v_ar[i] - porte_a_faux_ar * np.sin(theta_v[i])
+
+        # 3. Cinematique de l'essieu de la caravane (Ligne bleue decalee)
+        dx_c = x_rot - x_c_ar[i-1]
+        dy_c = y_rot - y_c_ar[i-1]
+        dist_c = np.hypot(dx_c, dy_c)
+        theta_c[i] = np.arctan2(dy_c, dx_c)
+        x_c_ar[i] = x_rot - longueur_fleche * (dx_c / dist_c)
+        y_c_ar[i] = y_rot - longueur_fleche * (dy_c / dist_c)
+
+        # 4. Calcul de la dynamique des forces liees au devers
+        if x_v_av[i] >= 0.0 and theta_v[i] < cap_cible_cara_rad:
+            val_P_cara = masse_totale_cara * 1000 * g
+            val_Fc_cara = masse_totale_cara * 1000 * (vitesse_ms_cara**2 / rayon_courbure_cara)
+            
+            P_normale = val_P_cara * np.cos(beta_cara)
+            Fc_normale = val_Fc_cara * np.sin(beta_cara)
+            N = P_normale + Fc_normale
+            
+            P_tangente = val_P_cara * np.sin(beta_cara)
+            Fc_tangente = val_Fc_cara * np.cos(beta_cara)
+            F_frottement_requise = Fc_tangente - P_tangente
+            F_frottement_max = seuil_glissement_mu * N
+            
+            Moment_renversement = Fc_tangente * hauteur_cg_cara
+            Moment_stabilisateur = N * (largeur_ensemble / 2) + P_tangente * hauteur_cg_cara
+            
+            if Moment_renversement >= Moment_stabilisateur:
+                evenement_detecte_cara = "Basculement"
+                index_interruption_cara = i
+                break
+            if np.abs(F_frottement_requise) >= F_frottement_max and evenement_detecte_cara == "Aucun":
+                evenement_detecte_cara = "Glissement"
+                
+        # 5. Verification geometrique du franchissement de voie
+        if x_v_av[i] >= 0.0:
+            r_av = np.sqrt(x_v_av[i]**2 + (y_v_av[i] - y_centre_virage_cara)**2)
+            r_car = np.sqrt(x_c_ar[i]**2 + (y_c_ar[i] - y_centre_virage_cara)**2)
+            if (r_av > r_ext_cara or r_av < r_int_cara or r_car > r_ext_cara or r_car < r_int_cara) and evenement_detecte_cara == "Aucun":
+                evenement_detecte_cara = "Sortie de route"
+
+    # Tronquage des vecteurs au point d'arret reel
+    x_v_av = x_v_av[:index_interruption_cara+1]
+    y_v_av = y_v_av[:index_interruption_cara+1]
+    x_v_ar = x_v_ar[:index_interruption_cara+1]
+    y_v_ar = y_v_ar[:index_interruption_cara+1]
+    x_c_ar = x_c_ar[:index_interruption_cara+1]
+    y_c_ar = y_c_ar[:index_interruption_cara+1]
+    theta_v = theta_v[:index_interruption_cara+1]
+
+    if len(x_v_av) > 1 and evenement_detecte_cara != "Basculement":
+        rayons_cara_ar = np.sqrt(x_c_ar**2 + (y_c_ar - y_centre_virage_cara)**2)
+        rayons_avant = np.sqrt(x_v_av**2 + (y_v_av - y_centre_virage_cara)**2)
+        decalage_reel_cara = np.max(rayons_avant) - np.min(rayons_cara_ar)
+    else:
+        decalage_reel_cara = 0.0
+
+    t_route_cara = np.linspace(0, np.radians(angle_virage_cara), 100)
+
+    # Reconstruction de la chaussee fixe concentrique
+    x_dr_cara = np.linspace(-10, 0, 10)
+    x_arc_int_cara = r_int_cara * np.sin(t_route_cara)
+    y_arc_int_cara = y_centre_virage_cara - r_int_cara * np.cos(t_route_cara)
+    x_arc_ext_cara = r_ext_cara * np.sin(t_route_cara)
+    y_arc_ext_cara = y_centre_virage_cara - r_ext_cara * np.cos(t_route_cara)
+    
+    x_fin_int_cara = x_arc_int_cara[-1] + np.linspace(0, 15, 10) * np.cos(np.radians(angle_virage_cara))
+    y_fin_int_cara = y_arc_int_cara[-1] + np.linspace(0, 15, 10) * np.sin(np.radians(angle_virage_cara))
+    x_fin_ext_cara = x_arc_ext_cara[-1] + np.linspace(0, 15, 10) * np.cos(np.radians(angle_virage_cara))
+    y_fin_ext_cara = y_arc_ext_cara[-1] + np.linspace(0, 15, 10) * np.sin(np.radians(angle_virage_cara))
+    
+    x_route_int_cara = np.concatenate([x_dr_cara, x_arc_int_cara, x_fin_int_cara])
+    y_route_int_cara = np.concatenate([np.full_like(x_dr_cara, rayon_courbure_cara - largeur_voie/2), y_arc_int_cara, y_fin_int_cara])
+    x_route_ext_cara = np.concatenate([x_dr_cara, x_arc_ext_cara, x_fin_ext_cara])
+    y_route_ext_cara = np.concatenate([np.full_like(x_dr_cara, rayon_courbure_cara + largeur_voie/2), y_arc_ext_cara, y_fin_ext_cara])
+
+    # =============================================================================
+    # RENDU ET COLONNES D'AFFICHAGE (ONGLET 2)
+    # =============================================================================
+    col_graphe, col_analyse = st.columns(2)
+
+    with col_analyse:
+        st.subheader("Indicateurs Physiques Synchrones")
+        zone_metrique_chasse = st.empty()
+        zone_metrique_devers = st.empty()
+        zone_metrique_g = st.empty()
+        zone_alerte = st.empty()
+        
+        declencher_animation = st.button("Lancer la simulation pas-a-pas", key="btn_anim_cara")
+        
+        st.subheader("Schema Vectoriel du Bilan des Forces (Vue arriere)")
+        zone_schema_forces = st.empty()
+
+    with col_graphe:
+        conteneur_graphique = st.empty()
+
+    points_animation = range(0, len(x_v_av), max(1, len(x_v_av) // 40)) if declencher_animation else [len(x_v_av) - 1]
+    
+    import time
+    from matplotlib.patches import Polygon
+
+    for k in points_animation:
+        fig_anim, ax_anim = plt.subplots(figsize=(7, 5))
+        ax_anim.plot(x_route_int_cara, y_route_int_cara, color='black', linewidth=2)
+        ax_anim.plot(x_route_ext_cara, y_route_ext_cara, color='black', linewidth=2)
+        
+        if k > 0:
+            # ROUGE pour l'AVANT de la voiture (x_v_av), BLEU pour l'ARRIERE de la caravane (x_c_ar)
+            ax_anim.plot(x_v_av[:k], y_v_av[:k], color='#e74c3c', linewidth=2, label="Trajectoire Roues AV Voiture")
+            ax_anim.plot(x_c_ar[:k], y_c_ar[:k], color='#3498db', linewidth=2, linestyle='--', label="Trajectoire Essieu Caravane")
+        
+        ax_anim.scatter(x_v_av[k], y_v_av[k], color='#e74c3c', s=50)
+        ax_anim.scatter(x_c_ar[k], y_c_ar[k], color='#3498db', s=50)
+        ax_anim.axis("equal")
+        ax_anim.set_xlim(-12, max(x_route_ext_cara) + 5)
+        ax_anim.set_ylim(-5, max(y_route_ext_cara) + 5)
+        
+        if declencher_animation:
+            conteneur_graphique.pyplot(fig_anim)
+        plt.close(fig_anim)
+
+        # Schema des forces vectorielles de la caravane
+        fig_forces, ax_f = plt.subplots(figsize=(5, 3.5))
+        ax_f.plot([-2, 2], [-2 * np.sin(beta_cara), 2 * np.sin(beta_cara)], color='black', linewidth=3)
+        cam_box = np.array([[-largeur_ensemble/2, 0], [largeur_ensemble/2, 0], [largeur_ensemble/2, hauteur_cg_cara * 1.4], [-largeur_ensemble/2, hauteur_cg_cara * 1.4]])
+        R_mat = np.array([[np.cos(beta_cara), -np.sin(beta_cara)], [np.sin(beta_cara), np.cos(beta_cara)]])
+        cam_box_rot = np.dot(cam_box, R_mat.T)
+        ax_f.add_patch(Polygon(cam_box_rot, closed=True, facecolor='#7f8c8d', alpha=0.3))
+        
+        G_coord = np.dot(np.array([0, hauteur_cg_cara]), R_mat.T)
+        ax_f.scatter(G_coord, G_coord, color='black', s=90, zorder=5)
+        
+        roue_gauche = np.dot(np.array([-largeur_ensemble/2, 0]), R_mat.T)
+        roue_droite = np.dot(np.array([largeur_ensemble/2, 0]), R_mat.T)
+        ax_f.scatter([roue_gauche, roue_droite], [roue_gauche, roue_droite], color='black', s=120, marker='s', zorder=4)
+        
+        f_scale = 1.0 / (masse_totale_cara * 1000 * g)
+        val_P = masse_totale_cara * 1000 * g
+        val_Fc = masse_totale_cara * 1000 * (vitesse_ms_cara**2 / rayon_courbure_cara) if evenement_detecte_cara != "Basculement" else 0.0
+        
+        ax_f.arrow(G_coord, G_coord, 0, -val_P * f_scale * 1.3, head_width=0.08, head_length=0.12, color='#2ecc71', label='Poids (P)')
+        ax_f.arrow(G_coord, G_coord, val_Fc * f_scale * 1.3, 0, head_width=0.08, head_length=0.12, color='#e74c3c', label='Force Centrifuge (Fc)')
+        
+        val_N_totale = val_P * np.cos(beta_cara) + val_Fc * np.sin(beta_cara)
+        val_Ff_totale = val_Fc * np.cos(beta_cara) - val_P * np.sin(beta_cara) if evenement_detecte_cara != "Basculement" else 0.0
+        
+        ax_f.arrow(roue_gauche, roue_gauche, -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta_cara), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta_cara), head_width=0.08, head_length=0.12, color='#9b59b6', label='Reaction Normale (N)')
+        ax_f.arrow(roue_droite, roue_droite, -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta_cara), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta_cara), head_width=0.08, head_length=0.12, color='#9b59b6')
+        
+        if np.abs(val_Ff_totale) > 0:
+            ax_f.arrow(roue_gauche, roue_gauche, -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta_cara), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta_cara), head_width=0.08, head_length=0.12, color='#3498db', label='Frottement Pneus (Ff)')
+            ax_f.arrow(roue_droite, roue_droite, -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta_cara), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta_cara), head_width=0.08, head_length=0.12, color='#3498db')
+
+        ax_f.set_xlim(-1.8, 1.8)
+        ax_f.set_ylim(-0.8, 2.5)
+        ax_f.axis('off')
+        
+        handles, labels = ax_f.get_legend_handles_labels()
+        by_label = dict(zip(labels, handles))
+        ax_f.legend(by_label.values(), by_label.keys(), loc="upper right", fontsize='small')
+        zone_schema_forces.pyplot(fig_forces)
+        plt.close(fig_forces)
+
+        decalage_inst = np.abs(np.sqrt(x_v_av[k]**2 + (y_v_av[k] - y_centre_virage_cara)**2) - np.sqrt(x_c_ar[k]**2 + (y_c_ar[k] - y_centre_virage_cara)**2)) if x_v_av[k] >= 0.0 else 0.0
+        zone_metrique_chasse.metric(label="Balayage instantane", value=f"{decalage_inst:.2f} m")
+        zone_metrique_devers.metric(label="Angle de devers de la route", value=f"{angle_route_cara:.1f} degres")
+        zone_metrique_g.metric(label="Acceleration transversale", value=f"{(vitesse_ms_cara**2)/(rayon_courbure_cara*g) if x_v_av[k]>=0.0 else 0.0:.2f} G")
+        
+        if declencher_animation:
+            time.sleep(0.04)
+
+    # --- VERDICT ET TRACÉ PLOTLY ZOOMABLE FINAL ---
+    animation_terminee = True
+    zone_metrique_chasse.metric(label="Balayage global maximal (Chasse)", value=f"{decalage_reel_cara:.2f} m")
+    zone_metrique_devers.metric(label="Devers configure de la chaussee", value=f"{angle_route_cara:.1f} degres")
+    zone_metrique_g.metric(label="Acceleration transversale maximale", value=f"{acceleration_laterale_cara_g:.2f} G")
+
+    if evenement_detecte_cara == "Basculement":
+        with col_graphe:
+            conteneur_graphique.empty()
+            try:
+                st.image("basculementB.jpg", caption="Accident : Rupture d'equilibre statique (Renversement).", use_container_width=True)
+            except Exception:
+                st.error("Fichier basculementB.jpg introuvable.")
+        zone_alerte.error("ACCIDENT DETECTE : L'attelage a bascule sous l'effet de la force centrifuge excessive.")
+    else:
+        with col_graphe:
+            conteneur_graphique.empty()
+            
+            import plotly.graph_objects as go
+            fig_plotly = go.Figure()
+            fig_plotly.add_trace(go.Scatter(x=x_route_int_cara, y=y_route_int_cara, name="Bord interieur", line=dict(color='black', width=2)))
+            fig_plotly.add_trace(go.Scatter(x=x_route_ext_cara, y=y_route_ext_cara, name="Bord exterieur", line=dict(color='black', width=2)))
+            
+            fig_plotly.add_trace(go.Scatter(x=x_v_av, y=y_v_av, name="Trajectoire Roues AVANT", line=dict(color='#e74c3c', width=3)))
+            fig_plotly.add_trace(go.Scatter(x=x_c_ar, y=y_c_ar, name="Trajectoire Roues ARRIERE", line=dict(color='#3498db', width=3, dash='dash')))
+            
+            fig_plotly.update_layout(
+                xaxis=dict(scaleanchor="y", scaleratio=1),
+                hovermode="closest",
+                height=450,
+                title="Visualisation interactive (Zoomable pour mesures fines)"
+            )
+            st.plotly_chart(fig_plotly, use_container_width=True)
+
+        if evenement_detecte_cara == "Glissement":
+            zone_alerte.warning("GLISSEMENT : L'ensemble a surpasse l'adherence disponible (Mise en lacet / Derapage).")
+        elif evenement_detecte_cara == "Sortie de route":
+            zone_alerte.warning("SORTIE DE VOIE : La caravane a chevauche le marquage au sol.")
+        else:
+            zone_alerte.success("TRAJECTOIRE REUSSITE : L'attelage est reste stable dans sa voie.")
+
+        
 
 
 # =============================================================================
