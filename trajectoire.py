@@ -1321,7 +1321,57 @@ with tab3:
                 Note Totale de l'Atelier 1 : <strong>{tot_s_b:.1f} / 20</strong>
             </p>
             
-            <div class="sub-title">CORRECTION DETAILLEE</div>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_b_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_b_aleatoire, 1):
+                saisie = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"b_at1_final_g_{q_item['id']}"):
+                        saisie = st.session_state[k]
+                        break
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_b += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_b += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_b_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_b_clean, 1):
+                cle_variable = ligne[-1]
+                phrase_enonce = ligne[0]
+                attendu_texte = ligne[2]
+                saisie_texte = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"{cle_variable}_b_clean"):
+                        saisie_texte = st.session_state[k]
+                        break
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_b += f"<tr><td>{num}</td><td>{phrase_enonce}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_b += f"""
+                </tbody>
+            </table>
+            
+            <div class="sub-title">DONNEES COMPLEMENTAIRES D'ATELIER TECHNIQUE</div>
             <p style="font-size: 13px; color: #64748b;">
                 Valeur maximale enregistree pour le decalage de chasse : <strong>{decalage_reel:.2f} m</strong><br>
                 Acceleration transversale maximale atteinte : <strong>{acceleration_laterale_g:.2f} G</strong>
@@ -1338,8 +1388,6 @@ with tab3:
             key="btn_download_html_official_b",
             use_container_width=True
         )
-
-
 
                 
 
