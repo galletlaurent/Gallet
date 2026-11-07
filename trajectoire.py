@@ -331,7 +331,7 @@ with tab3:
     decalage_reel = np.max(rayons_avant) - np.min(rayons_arriere)
 
     # Affichage du rendu graphique et des donnees numeriques
-    col_graphe, col_analyse = st.columns()
+    col_graphe, col_analyse = st.columns(2)
 
     with col_graphe:
         fig, ax = plt.subplots(figsize=(8, 6))
