@@ -338,7 +338,6 @@ with tab3:
 
     evenement_detecte = "Aucun"
     index_interruption = pas - 1
-    # Simulation pas a pas avec les lois d'equilibre sur plan incline et calcul de debord
     for i in range(1, pas):
         if x_arr[i-1] >= 0 and theta[i-1] < np.radians(angle_virage_deg):
             acc_lat_inst_g = (vitesse_ms**2) / (rayon_courbure * g)
