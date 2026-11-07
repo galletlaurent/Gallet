@@ -336,13 +336,13 @@ with tab3:
     x_arr = np.zeros(pas)
     y_arr = np.zeros(pas)
     theta = np.zeros(pas)
-    angle_debord = np.zeros(pas)
+    angle_debord = np.zeros(pas)  # Redevient un tableau propre pour stocker les variations
 
     # Initialisation stricte par index pour preserver les matrices numpy
     x_arr[0] = -10.0
     y_arr[0] = rayon_courbure
     theta[0] = 0.0
-    angle_debord[0] = angle_debord_initial_deg
+    angle_debord[0] = float(angle_debord_initial_deg)
 
     evenement_detecte = "Aucun"
     index_interruption = pas - 1
@@ -387,18 +387,22 @@ with tab3:
             y_arr[i] = y_arr[i-1] + ds * np.sin(theta[i-1])
             theta[i] = theta[i-1] + (ds / empattement) * np.tan(alpha - angle_derive_rad)
             
-            # Calcul geometrique reel : debord = angle d'Ackermann + dephasage manuel initial
-            angle_debord[i] = np.degrees(np.arctan(empattement / rayon_courbure)) + angle_debord_initial_deg
+            # CALCUL DYNAMIQUE REEL : Denivelation angulaire geometrique instantanee
+            # Base sur le cap theta actuel et l'effet cinematique d'Ackermann evolutif
+            changement_cap_deg = np.degrees(theta[i] - theta[i-1])
+            angle_debord[i] = angle_debord[i-1] + (changement_cap_deg * (empattement / rayon_courbure))
+            
         elif theta[i-1] >= np.radians(angle_virage_deg):
             x_arr[i] = x_arr[i-1] + ds * np.cos(np.radians(angle_virage_deg))
             y_arr[i] = y_arr[i-1] + ds * np.sin(np.radians(angle_virage_deg))
             theta[i] = np.radians(angle_virage_deg)
-            angle_debord[i] = angle_debord_initial_deg  # Le debord se stabilise en sortie
+            # Retours progressifs vers l'alignement en ligne droite de sortie
+            angle_debord[i] = max(0.0, angle_debord[i-1] - 0.5)
         else:
             x_arr[i] = x_arr[i-1] + ds
             y_arr[i] = rayon_courbure
             theta[i] = 0.0
-            angle_debord[i] = angle_debord_initial_deg
+            angle_debord[i] = float(angle_debord_initial_deg)
 
         # 3. Verification geometrique du franchissement de voie
         x_av_inst = x_arr[i] + empattement * np.cos(theta[i])
