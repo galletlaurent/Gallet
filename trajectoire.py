@@ -311,33 +311,33 @@ with tab3:
     
     y_centre_virage = 2 * rayon_courbure
     
-    # Ajout du parametre d'angle de la route (devers) et variables physiques
+    # Parametre d'angle de la route (devers) et variables physiques
     angle_route_deg = st.sidebar.slider("Angle de devers de la route (degres)", 0, 15, 4, key="devers_c")
     beta = np.radians(angle_route_deg)
     
     g = 9.81
-    seuil_glissement_mu = 0.35  # Coefficient d'adherence maximal des pneumatiques
+    seuil_glissement_mu = 0.35
     hauteur_cg = 1.1 + (masse_charge / masse_totale) * 0.9
     largeur_voie = 3.5
     largeur_camion = 2.5
 
-    # CORRECTION : Declaration immediate de r_int et r_ext pour eviter l'erreur d'indexation
     r_int = rayon_courbure - (largeur_voie / 2)
     r_ext = rayon_courbure + (largeur_voie / 2)
 
-    # Initialisation des vecteurs d'etat du camion
+    # Creation des structures de tableaux fixes
     x_arr = np.zeros(pas)
     y_arr = np.zeros(pas)
     theta = np.zeros(pas)
-    angle_debord = np.zeros(pas)  # Stockage de l'angle de debord cinematique
+    angle_debord = np.zeros(pas)
 
-    # Positionnement initial (10 metres avant l'entree du virage)
-    x_arr = -10.0
-    y_arr = rayon_courbure
-    theta = 0.0
+    # CORRECTION CRITIQUE : Affectation uniquement sur la premiere case [0]
+    x_arr[0] = -10.0
+    y_arr[0] = rayon_courbure
+    theta[0] = 0.0
 
     evenement_detecte = "Aucun"
     index_interruption = pas - 1
+    
     for i in range(1, pas):
         if x_arr[i-1] >= 0 and theta[i-1] < np.radians(angle_virage_deg):
             acc_lat_inst_g = (vitesse_ms**2) / (rayon_courbure * g)
@@ -376,7 +376,7 @@ with tab3:
             y_arr[i] = y_arr[i-1] + ds * np.sin(theta[i-1])
             theta[i] = theta[i-1] + (ds / empattement) * np.tan(alpha - angle_derive_rad)
             
-            # Calcul de l'angle de debord (ecart geometrique instantane du train arriere)
+            # Calcul de l'angle de debord
             angle_debord[i] = np.degrees(np.arctan(empattement / rayon_courbure))
         elif theta[i-1] >= np.radians(angle_virage_deg):
             x_arr[i] = x_arr[i-1] + ds * np.cos(np.radians(angle_virage_deg))
