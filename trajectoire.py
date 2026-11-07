@@ -307,22 +307,24 @@ with tab3:
     distance_totale = rayon_courbure * np.radians(angle_virage_deg) + 20.0
     pas = int(distance_totale / ds)
 
+    # Creation de tableaux de zeros pour eviter les erreurs d'indexation
     x_arr = np.zeros(pas)
     y_arr = np.zeros(pas)
     x_av = np.zeros(pas)
     y_av = np.zeros(pas)
     theta = np.zeros(pas)
 
-    # L'essieu avant (rouge) commence a -10 m. L'arriere (bleu) est en retrait de l'empattement.
-    x_av = -10.0
-    y_av = rayon_courbure
-    x_arr = -10.0 - empattement
-    y_arr = rayon_courbure
-    theta = 0.0
+    # CORRECTION DEFINITIVE : Remplissage de l'index 0 pour conserver la structure NumPy
+    x_av[0] = -10.0
+    y_av[0] = rayon_courbure
+    x_arr[0] = -10.0 - empattement
+    y_arr[0] = rayon_courbure
+    theta[0] = 0.0
 
     evenement_detecte = "Aucun"
     index_interruption = pas - 1
 
+    # Calcul des variables physiques
     vitesse_ms = vitesse_kmh / 3.6
     acceleration_laterale_g = (vitesse_ms**2) / (rayon_courbure * g)
 
