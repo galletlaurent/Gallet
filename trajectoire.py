@@ -475,36 +475,46 @@ with tab3:
 
         # Tracé du schema vectoriel des forces (Vue arriere synchrone)
         fig_forces, ax_f = plt.subplots(figsize=(5, 3.5))
+        
+        # Inclinaison de la ligne d'assiette du sol
         ax_f.plot([-2, 2], [-2 * np.sin(beta), 2 * np.sin(beta)], color='black', linewidth=3)
         
+        # Section rectangulaire du camion inclinee de l'angle beta
         cam_box = np.array([[-largeur_camion/2, 0], [largeur_camion/2, 0], [largeur_camion/2, hauteur_cg * 1.4], [-largeur_camion/2, hauteur_cg * 1.4]])
         R_mat = np.array([[np.cos(beta), -np.sin(beta)], [np.sin(beta), np.cos(beta)]])
         cam_box_rot = np.dot(cam_box, R_mat.T)
+        from matplotlib.patches import Polygon
         ax_f.add_patch(Polygon(cam_box_rot, closed=True, facecolor='#7f8c8d', alpha=0.3))
         
+        # Positionnement de la masse au CG
         G_coord = np.dot(np.array([0, hauteur_cg]), R_mat.T)
-        ax_f.scatter(G_coord, G_coord, color='black', s=90, zorder=5)
+        ax_f.scatter(G_coord[0], G_coord[1], color='black', s=90, zorder=5)
         
+        # Calcul des points d'appui des pneumatiques au sol
         roue_gauche = np.dot(np.array([-largeur_camion/2, 0]), R_mat.T)
         roue_droite = np.dot(np.array([largeur_camion/2, 0]), R_mat.T)
-        ax_f.scatter([roue_gauche, roue_droite], [roue_gauche, roue_droite], color='black', s=150, marker='s', zorder=4)
+        ax_f.scatter([roue_gauche[0], roue_droite[0]], [roue_gauche[1], roue_droite[1]], color='black', s=150, marker='s', zorder=4)
         
+        # Echelle de proportion des forces
         f_scale = 1.0 / (masse_totale * 1000 * g)
         val_P = masse_totale * 1000 * g
         val_Fc = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) if evenement_detecte != "Basculement" else 0.0
         
-        ax_f.arrow(G_coord, G_coord, 0, -val_P * f_scale * 1.3, head_width=0.08, head_length=0.12, color='#2ecc71', label='Poids (P)')
-        ax_f.arrow(G_coord, G_coord, val_Fc * f_scale * 1.3, 0, head_width=0.08, head_length=0.12, color='#e74c3c', label='Force Centrifuge (Fc)')
+        # CORRECTION EFFECTUÉE : Extraction avec [0] et [1] des composantes des flèches au CG
+        ax_f.arrow(G_coord[0], G_coord[1], 0, -val_P * f_scale * 1.3, head_width=0.08, head_length=0.12, color='#2ecc71', label='Poids (P)')
+        ax_f.arrow(G_coord[0], G_coord[1], val_Fc * f_scale * 1.3, 0, head_width=0.08, head_length=0.12, color='#e74c3c', label='Force Centrifuge (Fc)')
         
+        # Repartition des forces Normales et Tangentielles
         val_N_totale = val_P * np.cos(beta) + val_Fc * np.sin(beta)
         val_Ff_totale = val_Fc * np.cos(beta) - val_P * np.sin(beta) if evenement_detecte != "Basculement" else 0.0
         
-        ax_f.arrow(roue_gauche, roue_gauche, -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta), head_width=0.08, head_length=0.12, color='#9b59b6', label='Reaction Normale (N)')
-        ax_f.arrow(roue_droite, roue_droite, -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta), head_width=0.08, head_length=0.12, color='#9b59b6')
+        # CORRECTION EFFECTUÉE : Extraction avec [0] et [1] pour le tracé sous les roues
+        ax_f.arrow(roue_gauche[0], roue_gauche[1], -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta), head_width=0.08, head_length=0.12, color='#9b59b6', label='Reaction Normale (N)')
+        ax_f.arrow(roue_droite[0], roue_droite[1], -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta), head_width=0.08, head_length=0.12, color='#9b59b6')
         
         if np.abs(val_Ff_totale) > 0:
-            ax_f.arrow(roue_gauche, roue_gauche, -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta), head_width=0.08, head_length=0.12, color='#3498db', label='Frottement Pneus (Ff)')
-            ax_f.arrow(roue_droite, roue_droite, -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta), head_width=0.08, head_length=0.12, color='#3498db')
+            ax_f.arrow(roue_gauche[0], roue_gauche[1], -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta), head_width=0.08, head_length=0.12, color='#3498db', label='Frottement Pneus (Ff)')
+            ax_f.arrow(roue_droite[0], roue_droite[1], -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta), head_width=0.08, head_length=0.12, color='#3498db')
 
         ax_f.set_xlim(-2.2, 2.2)
         ax_f.set_ylim(-1.0, 3.2)
