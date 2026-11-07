@@ -1169,9 +1169,9 @@ with tab2:
         with col_graphe:
             conteneur_graphique.empty()
             try:
-                st.image("basculementB.jpg", caption="Accident : Rupture d'equilibre statique (Renversement).", use_container_width=True)
+                st.image("basculementBcar.jpg", caption="Accident : Rupture d'equilibre statique (Renversement).", use_container_width=True)
             except Exception:
-                st.error("Fichier basculementB.jpg introuvable.")
+                st.error("Fichier basculementBcar.jpg introuvable.")
         zone_alerte.error("ACCIDENT DETECTE : L'attelage a bascule sous l'effet de la force centrifuge excessive.")
     else:
         with col_graphe:
