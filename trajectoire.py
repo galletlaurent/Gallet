@@ -288,6 +288,8 @@ with tab3:
     with col_param3:
         rayon_courbure = st.slider("Rayon de la route (m)", 15, 60, 25, key="rc_c")
         angle_virage_deg = st.slider("Angle du virage (degres)", 45, 135, 90, key="av_c")
+        # Ajout direct ici au centre de l'ecran
+        angle_debord_initial_deg = st.slider("Angle de debord initial du train (degres)", 0, 20, 5, key="debord_init_c")
         largeur_voie = 3.5
 
     # Calculs Mecaniques et Dynamiques
@@ -422,13 +424,20 @@ with tab3:
     else:
         decalage_reel = 0.0
 
+    # Definition explicite de t_route utilisee pour tracer la route fixe
     t_route = np.linspace(0, np.radians(angle_virage_deg), 100)
-    
+
+    # CORRECTION : Re-introduction des lignes de calcul de sortie de courbe manquantes
     x_droite = np.linspace(-10, 0, 10)
     x_arc_int = r_int * np.sin(t_route)
     y_arc_int = y_centre_virage - r_int * np.cos(t_route)
     x_arc_ext = r_ext * np.sin(t_route)
     y_arc_ext = y_centre_virage - r_ext * np.cos(t_route)
+    
+    x_fin_int = x_arc_int[-1] + np.linspace(0, 15, 10) * np.cos(np.radians(angle_virage_deg))
+    y_fin_int = y_arc_int[-1] + np.linspace(0, 15, 10) * np.sin(np.radians(angle_virage_deg))
+    x_fin_ext = x_arc_ext[-1] + np.linspace(0, 15, 10) * np.cos(np.radians(angle_virage_deg))
+    y_fin_ext = y_arc_ext[-1] + np.linspace(0, 15, 10) * np.sin(np.radians(angle_virage_deg))
     
     x_route_int = np.concatenate([x_droite, x_arc_int, x_fin_int])
     y_route_int = np.concatenate([np.full_like(x_droite, rayon_courbure - largeur_voie/2), y_arc_int, y_fin_int])
@@ -454,7 +463,7 @@ with tab3:
     points_animation = range(0, len(x_arr), max(1, len(x_arr) // 40)) if declencher_animation else [len(x_arr) - 1]
 
     for k in points_animation:
-        # Trace standard Matplotlib de la trajectoire au sol (Inchange)
+        # Trace standard Matplotlib de la trajectoire au sol
         fig_anim, ax_anim = plt.subplots(figsize=(7, 5))
         ax_anim.plot(x_route_int, y_route_int, color='black', linewidth=2)
         ax_anim.plot(x_route_ext, y_route_ext, color='black', linewidth=2)
@@ -488,14 +497,14 @@ with tab3:
         
         # Positionnement exacte du Centre de Gravite G
         G_coord = np.dot(np.array([0, hauteur_cg]), R_mat.T)
-        ax_f.scatter(G_coord[0], G_coord[1], color='black', s=90, zorder=5)
+        ax_f.scatter(G_coord, G_coord, color='black', s=90, zorder=5)
         
         # Calcul des coordonnees réelles au sol des pneumatiques gauche et droit tournes
         roue_gauche = np.dot(np.array([-largeur_camion/2, 0]), R_mat.T)
         roue_droite = np.dot(np.array([largeur_camion/2, 0]), R_mat.T)
         
         # Dessin des roues sous la carrosserie pour la logique visuelle
-        ax_f.scatter([roue_gauche[0], roue_droite[0]], [roue_gauche[1], roue_droite[1]], color='black', s=150, marker='s', zorder=4)
+        ax_f.scatter([roue_gauche, roue_droite], [roue_gauche, roue_droite], color='black', s=150, marker='s', zorder=4)
         
         # Normalisation d'echelle des vecteurs forces
         f_scale = 1.0 / (masse_totale * 1000 * g)
@@ -503,28 +512,25 @@ with tab3:
         val_Fc = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) if x_arr[k] >= 0 else 0.0
         
         # Application des forces de repere a distance du CG : Poids et Centrifuge
-        ax_f.arrow(G_coord[0], G_coord[1], 0, -val_P * f_scale * 1.3, head_width=0.08, head_length=0.12, color='#2ecc71', label='Poids (P)')
-        ax_f.arrow(G_coord[0], G_coord[1], val_Fc * f_scale * 1.3, 0, head_width=0.08, head_length=0.12, color='#e74c3c', label='Force Centrifuge (Fc)')
+        ax_f.arrow(G_coord, G_coord, 0, -val_P * f_scale * 1.3, head_width=0.08, head_length=0.12, color='#2ecc71', label='Poids (P)')
+        ax_f.arrow(G_coord, G_coord, val_Fc * f_scale * 1.3, 0, head_width=0.08, head_length=0.12, color='#e74c3c', label='Force Centrifuge (Fc)')
         
-        # Calcul de la repartition symmetrique des reactions normales du sol sous chaque roue
+        # Calcul de la repartition du poids et effet centrifuge sous les pneus
         val_N_totale = val_P * np.cos(beta) + val_Fc * np.sin(beta)
         val_Ff_totale = val_Fc * np.cos(beta) - val_P * np.sin(beta) if x_arr[k] >= 0 else 0.0
         
-        # Tracé des forces de contact appliquées LOGIQUEMENT sous chaque pneumatique (Roue gauche et droite)
-        # Force de Reaction Normale (N, violette) : Perpendiculaire au sol deversé sous chaque roue
-        ax_f.arrow(roue_gauche[0], roue_gauche[1], -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta), head_width=0.08, head_length=0.12, color='#9b59b6', label='Reaction Normale (N)')
-        ax_f.arrow(roue_droite[0], roue_droite[1], -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta), head_width=0.08, head_length=0.12, color='#9b59b6')
+        # Tracé des forces de contact appliquées sous chaque pneumatique
+        ax_f.arrow(roue_gauche, roue_gauche, -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta), head_width=0.08, head_length=0.12, color='#9b59b6', label='Reaction Normale (N)')
+        ax_f.arrow(roue_droite, roue_droite, -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta), head_width=0.08, head_length=0.12, color='#9b59b6')
         
-        # Force d'Adhérence/Frottement (Ff, bleue) : Parallèle au sol, appliquée sous chaque pneu
         if np.abs(val_Ff_totale) > 0:
-            ax_f.arrow(roue_gauche[0], roue_gauche[1], -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta), head_width=0.08, head_length=0.12, color='#3498db', label='Frottement Pneus (Ff)')
-            ax_f.arrow(roue_droite[0], roue_droite[1], -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta), head_width=0.08, head_length=0.12, color='#3498db')
+            ax_f.arrow(roue_gauche, roue_gauche, -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta), head_width=0.08, head_length=0.12, color='#3498db', label='Frottement Pneus (Ff)')
+            ax_f.arrow(roue_droite, roue_droite, -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta), head_width=0.08, head_length=0.12, color='#3498db')
 
         ax_f.set_xlim(-2.2, 2.2)
         ax_f.set_ylim(-1.0, 3.2)
         ax_f.axis('off')
         
-        # Nettoyage de la legende pour ne pas dupliquer les etiquettes des deux roues
         handles, labels = ax_f.get_legend_handles_labels()
         by_label = dict(zip(labels, handles))
         ax_f.legend(by_label.values(), by_label.keys(), loc="upper right", fontsize='small')
@@ -540,6 +546,7 @@ with tab3:
         
         if declencher_animation:
             time.sleep(0.04)
+            
     # Gestion de l'affichage de fin de parcours (Arret sur accident ou Graphique zoomable)
     if evenement_detecte == "Basculement":
         with col_graphe:
