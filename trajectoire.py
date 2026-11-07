@@ -341,11 +341,32 @@ with tab3:
 
     # Pour ce modele, on initialise la position de l'essieu avant (x_av, y_av)
     # et l'essieu arriere (x_arr, y_arr) est deduit en restant en retrait de la longueur de l'empattement
+    x_arr = np.zeros(pas)
+    y_arr = np.zeros(pas)
+    x_av = np.zeros(pas)
+    y_av = np.zeros(pas)
+    theta = np.zeros(pas)
+
+    # CORRECTION : Affectation stricte sur l'index 0 pour ne pas detruire les tableaux NumPy
     x_av[0] = -10.0 + empattement
     y_av[0] = rayon_courbure
     x_arr[0] = -10.0
     y_arr[0] = rayon_courbure
     theta[0] = 0.0
+
+    evenement_detecte = "Aucun"
+    index_interruption = pas - 1
+
+    # Calcul de la derive des enveloppes de pneus avant le virage
+    vitesse_ms = vitesse_kmh / 3.6
+    acceleration_laterale_g = (vitesse_ms**2) / (rayon_courbure * g)
+    raideur_derive_av = 150000  # N/rad
+    force_laterale_av = ((masse_totale * 1000) * g * 0.5) * acceleration_laterale_g
+    angle_derive_rad = force_laterale_av / raideur_derive_av
+
+    # Calcul de l'angle de braquage reel corrige par la vitesse
+    angle_braquage_theorique_rad = np.arctan(empattement / rayon_courbure)
+    angle_braquage_reel_rad = angle_braquage_theorique_rad + angle_derive_rad
 
     for i in range(1, pas):
         # Position X de reference basee sur l'essieu avant
