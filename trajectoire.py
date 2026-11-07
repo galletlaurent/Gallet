@@ -309,78 +309,95 @@ with tab3:
     # Generation d'un arc de cercle propre pour le centre de la route
     angles_route = np.linspace(0, np.radians(angle_virage_deg), pas)
     
-    # Initialisation des vecteurs d'etat du camion
+    y_centre_virage = 2 * rayon_courbure
+    
+    # Initialisation des vecteurs d'état du camion
     x_arr = np.zeros(pas)
     y_arr = np.zeros(pas)
     theta = np.zeros(pas)
 
-    # Positionnement initial en ligne droite avant l'entree du virage
-    # Le camion commence parallele a l'axe X, aligne avec le rayon de courbure
+    # Positionnement initial en ligne droite (10 mètres avant l'entrée du virage)
     x_arr[0] = -10.0
     y_arr[0] = rayon_courbure
     theta[0] = 0.0
 
-    # Simulation cinematique progressive
+    # Simulation cinématique progressive
     for i in range(1, pas):
-        # Le virage s'enclenche de maniere fluide des que le camion depasse l'entree (X = 0)
-        # et s'arrete des que le cap nominal du virage est atteint
+        # Le virage commence à X = 0 et se termine quand le cap nominal est atteint
         if x_arr[i-1] >= 0 and theta[i-1] < np.radians(angle_virage_deg):
             alpha = angle_braquage_reel_rad
             
-            # Evolution des coordonnees dans le virage
             x_arr[i] = x_arr[i-1] + ds * np.cos(theta[i-1])
             y_arr[i] = y_arr[i-1] + ds * np.sin(theta[i-1])
             theta[i] = theta[i-1] + (ds / empattement) * np.tan(alpha - angle_derive_rad)
         elif theta[i-1] >= np.radians(angle_virage_deg):
-            # Sortie de virage : stabilisation en ligne droite suivant le nouveau cap
+            # Sortie de virage : prolongation en ligne droite selon le nouveau cap
             alpha = 0.0
             x_arr[i] = x_arr[i-1] + ds * np.cos(np.radians(angle_virage_deg))
             y_arr[i] = y_arr[i-1] + ds * np.sin(np.radians(angle_virage_deg))
             theta[i] = np.radians(angle_virage_deg)
         else:
-            # Approche initiale en ligne droite parfaite
+            # Approche initiale en ligne droite horizontale
             alpha = 0.0
             x_arr[i] = x_arr[i-1] + ds
             y_arr[i] = rayon_courbure
             theta[i] = 0.0
 
-    # Coordonnees de l'essieu avant calculees parallelement au vecteur de cap
+    # Coordonnées de l'essieu avant du camion
     x_av = x_arr + empattement * np.cos(theta)
     y_av = y_arr + empattement * np.sin(theta)
 
-    # Recalcul de la chasse maximale mesuree
-    rayons_arriere = np.sqrt(x_arr**2 + y_arr**2)
-    rayons_avant = np.sqrt(x_av**2 + y_av**2)
+    # Calcul de la chasse maximale mesurée
+    rayons_arriere = np.sqrt(x_arr**2 + (y_arr - y_centre_virage)**2)
+    rayons_avant = np.sqrt(x_av**2 + (y_av - y_centre_virage)**2)
     decalage_reel = np.max(rayons_avant) - np.min(rayons_arriere)
 
-    # CORRECTION : Declaration explicite des colonnes avant l'affichage
+    # --- Bloc d'affichage graphique Matplotlib ---
     col_graphe, col_analyse = st.columns(2)
 
-    # --- Bloc d'affichage graphique Matplotlib mis a jour ---
     with col_graphe:
         fig, ax = plt.subplots(figsize=(8, 6))
         
-        # 1. Trace geometrique de la route reelle (Voie interieure et exterieure)
-        # Genere des arcs concentriques parfaits independants de la vitesse du camion
-        x_route_centre = rayon_courbure * np.sin(angles_route)
-        y_route_centre = rayon_courbure - (rayon_courbure * np.cos(angles_route))
-        
-        # On ajuste le trace pour centrer la route sur l'origine geometrique
+        # 1. Tracé de la chaussée (Lignes d'approche + Arcs de cercle du virage)
         t = np.linspace(0, np.radians(angle_virage_deg), 100)
-        x_bord_int = (rayon_courbure - largeur_voie/2) * np.sin(t)
-        y_bord_int = rayon_courbure - (rayon_courbure - largeur_voie/2) * np.cos(t)
-        x_bord_ext = (rayon_courbure + largeur_voie/2) * np.sin(t)
-        y_bord_ext = rayon_courbure - (rayon_courbure + largeur_voie/2) * np.cos(t)
         
-        # Dessin des limites materielles de la chaussee
-        ax.plot(x_bord_int, y_bord_int, color='black', linestyle='-', linewidth=1.5, label="Bord interieur de la route")
-        ax.plot(x_bord_ext, y_bord_ext, color='black', linestyle='-', linewidth=1.5, label="Bord exterieur de la route")
+        # Rayons des bords intérieur et extérieur de la route
+        r_int = rayon_courbure - (largeur_voie / 2)
+        r_ext = rayon_courbure + (largeur_voie / 2)
         
-        # 2. Trace des trajectoires cinematiques des roues du camion
+        # Portion 1 : Ligne droite d'approche (de X = -10 à X = 0)
+        x_droite = np.linspace(-10, 0, 10)
+        ax.plot(x_droite, np.full_like(x_droite, rayon_courbure - largeur_voie/2), color='black', linewidth=1.5)
+        ax.plot(x_droite, np.full_like(x_droite, rayon_courbure + largeur_voie/2), color='black', linewidth=1.5)
+        
+        # Portion 2 : L'arc de cercle du virage (centré en 0, y_centre_virage)
+        x_arc_int = r_int * np.sin(t)
+        y_arc_int = y_centre_virage - r_int * np.cos(t)
+        
+        x_arc_ext = r_ext * np.sin(t)
+        y_arc_ext = y_centre_virage - r_ext * np.cos(t)
+        
+        # Portion 3 : Ligne droite de sortie (tangente après le virage)
+        x_fin_int = x_arc_int[-1] + np.linspace(0, 15, 10) * np.cos(np.radians(angle_virage_deg))
+        y_fin_int = y_arc_int[-1] + np.linspace(0, 15, 10) * np.sin(np.radians(angle_virage_deg))
+        
+        x_fin_ext = x_arc_ext[-1] + np.linspace(0, 15, 10) * np.cos(np.radians(angle_virage_deg))
+        y_fin_ext = y_arc_ext[-1] + np.linspace(0, 15, 10) * np.sin(np.radians(angle_virage_deg))
+        
+        # Dessin des infrastructures routières continues
+        ax.plot(np.concatenate([x_droite, x_arc_int, x_fin_int]), 
+                np.concatenate([np.full_like(x_droite, rayon_courbure - largeur_voie/2), y_arc_int, y_fin_int]), 
+                color='black', linestyle='-', linewidth=2, label="Bord interieur de la route")
+        
+        ax.plot(np.concatenate([x_droite, x_arc_ext, x_fin_ext]), 
+                np.concatenate([np.full_like(x_droite, rayon_courbure + largeur_voie/2), y_arc_ext, y_fin_ext]), 
+                color='black', linestyle='-', linewidth=2, label="Bord exterieur de la route")
+        
+        # 2. Tracé des trajectoires cinématiques réelles du camion
         ax.plot(x_av, y_av, color='#e74c3c', linewidth=3, label="Trajectoire Roues AVANT")
         ax.plot(x_arr, y_arr, color='#3498db', linewidth=3, linestyle='--', label="Trajectoire Roues ARRIERE")
         
-        # Segment materialisant la position instantanee du chassis au milieu de la courbe
+        # Segment matérialisant la position instantanée du châssis au milieu de la courbe
         mid = int(pas / 2)
         ax.plot([x_arr[mid], x_av[mid]], [y_arr[mid], y_av[mid]], color='#2c3e50', 
                 linewidth=3, label=f"Chassis rigide (L = {empattement}m)")
@@ -392,7 +409,7 @@ with tab3:
         ax.legend(loc="upper left")
         
         st.pyplot(fig)
-
+        
     with col_analyse:
         st.subheader("Indicateurs Physiques du Vehicule")
         st.metric(label="Decalage mesure (Chasse)", value=f"{decalage_reel:.2f} m")
