@@ -1220,7 +1220,21 @@ with tab2:
     zone_metrique_chasse.metric(label="Balayage global maximal (Chasse)", value=f"{decalage_reel_cara:.2f} m")
     zone_metrique_devers.metric(label="Devers configure de la chaussee", value=f"{angle_route_cara:.1f} degres")
     zone_metrique_g.metric(label="Acceleration transversale maximale", value=f"{acceleration_laterale_cara_g:.2f} G")
-
+    if evenement_detecte_cara == "Glissement":
+        with col_graphe:
+            conteneur_graphique.empty()
+            try:
+                # Rendu de la photo de mise en lacet / derapage agrandie
+                st.image("derapageBcar.jpg", caption="Accident : Perte d'adhérence latérale (Mise en lacet / Louvoiement).", width=800)
+            except Exception:
+                st.error("Fichier derapageB.jpg introuvable.")
+        zone_alerte.warning("GLISSEMENT : L'ensemble a surpasse l'adherence disponible (Mise en lacet / Derapage).")
+        
+    elif evenement_detecte_cara == "Sortie de route":
+        zone_alerte.warning("SORTIE DE VOIE : La caravane a chevauche le marquage au sol.")
+        
+    else:
+        zone_alerte.success("TRAJECTOIRE REUSSITE : L'attelage est reste stable dans sa voie.")
     if evenement_detecte_cara == "Basculement":
         with col_graphe:
             conteneur_graphique.empty()
@@ -2196,7 +2210,21 @@ with tab5:
     zone_metrique_chasse.metric(label="Balayage global maximal (Chasse)", value=f"{decalage_reel_semi:.2f} m")
     zone_metrique_devers.metric(label="Devers configure de la chaussee", value=f"{angle_route_semi:.1f} degres")
     zone_metrique_g.metric(label="Acceleration transversale maximale", value=f"{acceleration_laterale_semi_g:.2f} G")
-
+    if evenement_detecte_semi == "Glissement":
+        with col_graphe:
+            conteneur_graphique.empty()
+            try:
+                # Affichage de la photo de l'accident en grand format
+                st.image("portefeuilleSPL.jpg", caption="Accident : Glissement lateral des essieux (Mise en portefeuille).", use_container_width=True)
+            except Exception:
+                st.error("Fichier portefeuilleSPL.jpg introuvable.")
+        zone_alerte.warning("GLISSEMENT : L'ensemble routier a surpasse l'adherence disponible (Mise en portefeuille).")
+        
+    elif evenement_detecte_semi == "Sortie de route":
+        zone_alerte.warning("SORTIE DE VOIE : La semi-remorque a chevauche le marquage au sol interieur.")
+        
+    else:
+        zone_alerte.success("TRAJECTOIRE REUSSITE : L'ensemble articule est reste stable dans sa voie.")
     if evenement_detecte_semi == "Basculement":
         with col_graphe:
             conteneur_graphique.empty()
@@ -2204,7 +2232,7 @@ with tab5:
                 st.image("basculementC.jpg", caption="Accident : Rupture d'equilibre statique (Renversement).",width=800)
             except Exception:
                 st.error("basculementC.jpg introuvable.")
-        zone_alerte.error("ACCIDENT DETECTE : Le vehicule articule a bascule sous l'effet de la force centrifuge.")
+        zone_alerte.error("ACCIDENT DETECTE : Le vehicule articule a basculé sous l'effet de la force centrifuge.")
     else:
         with col_graphe:
             conteneur_graphique.empty()
