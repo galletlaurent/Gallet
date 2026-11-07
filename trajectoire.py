@@ -880,19 +880,19 @@ with tab5:
     theta_trac = np.zeros(pas_semi)
     theta_semi = np.zeros(pas_semi)
 
-    # Initialisation stricte par index (Alignement horizontal initial)
-    x_trac_av = -10.0
-    y_trac_av = rayon_courbure_semi
+    # CORRECTION STRICTE : Affectation par index [0] pour préserver le format matriciel NumPy
+    x_trac_av[0] = -10.0
+    y_trac_av[0] = rayon_courbure_semi
     
-    x_trac_ar = x_trac_av - empattement_tracteur
-    y_trac_ar = rayon_courbure_semi
-    theta_trac = 0.0
+    x_trac_ar[0] = x_trac_av[0] - empattement_tracteur
+    y_trac_ar[0] = rayon_courbure_semi
+    theta_trac[0] = 0.0
 
-    # Position de la sellette d'attelage
-    x_sellette_init = x_trac_ar + distance_sellette
-    x_semi_ar = x_sellette_init - longueur_semi
-    y_semi_ar = rayon_courbure_semi
-    theta_semi = 0.0
+    # Position initiale de la sellette d'attelage
+    x_sellette_init = x_trac_ar[0] + distance_sellette
+    x_semi_ar[0] = x_sellette_init - longueur_semi
+    y_semi_ar[0] = rayon_courbure_semi
+    theta_semi[0] = 0.0
 
     evenement_detecte_semi = "Aucun"
     index_interruption_semi = pas_semi - 1
