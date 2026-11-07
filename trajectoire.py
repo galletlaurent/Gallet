@@ -316,9 +316,9 @@ with tab3:
     theta = np.zeros(pas)
 
     # Remplissage de la premiere ligne (Index 0) pour le depart en ligne droite
-    x_av[0] = -10.0 + empattement
+    x_av[0] = -10.0 
     y_av[0] = rayon_courbure
-    x_arr[0] = -10.0
+    x_arr[0] = -10.0 + empattement
     y_arr[0] = rayon_courbure
     theta[0] = 0.0
 
