@@ -434,7 +434,7 @@ with tab0:
 
 with tab1:
     st.header("Simulation Permis B")
-    st.info("Espace reserve pour la simulation de trajectoire d'un vehicule leger.")
+
 
     col_param1, col_param2, col_param3 = st.columns(3)
     
@@ -467,7 +467,6 @@ with tab1:
     r_int = rayon_courbure - (largeur_voie / 2)
     r_ext = rayon_courbure + (largeur_voie / 2)
 
-    # Creation des structures matricielles fixes
     ds = 0.05  
     distance_totale = rayon_courbure * np.radians(angle_virage_deg) + 30.0
     pas = int(distance_totale / ds)
@@ -478,17 +477,18 @@ with tab1:
     y_av = np.zeros(pas)
     theta = np.zeros(pas)
 
-    # Initialisation : l'avant est a -10m, l'arriere est en retrait de l'empattement
-    x_av = -10.0
-    y_av = rayon_courbure
-    x_arr = -10.0 - empattement
-    y_arr = rayon_courbure
-    theta = 0.0
+    # CORRECTION DEFINITIVE : Remplissage exclusif de l'index 0 pour preserver les tableaux
+    x_av[0] = -10.0
+    y_av[0] = rayon_courbure
+    x_arr[0] = -10.0 - empattement
+    y_arr[0] = rayon_courbure
+    theta[0] = 0.0
 
     evenement_detecte = "Aucun"
     index_interruption = pas - 1
 
     # Calcul dynamique preliminaire de l'acceleration nominale
+    vitesse_ms = vitesse_kmh / 3.6
     acceleration_laterale_g = (vitesse_ms**2) / (rayon_courbure * g)
 
     # =============================================================================
@@ -1395,11 +1395,9 @@ with tab3:
 
 with tab4:
     st.header("Simulation Permis CE et caravane")
-    st.info("Espace reserve pour la simulation d'un camion rigide tractant une remorque de type caravane.")
 
 with tab5:
     st.header("Simulation Permis C )")
-    st.info("Espace reserve pour le second module applique au Permis C.")
 
     col_p1, col_p2, col_p3 = st.columns(3)
     
