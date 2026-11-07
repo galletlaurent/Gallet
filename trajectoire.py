@@ -402,81 +402,81 @@ with tab3:
             r_ar = np.sqrt(x_arr[i]**2 + (y_arr[i] - y_centre_virage)**2)
             if (r_av > r_ext or r_av < r_int or r_ar > r_ext or r_ar < r_int) and evenement_detecte == "Aucun":
                 evenement_detecte = "Sortie de route"                
-        # Tronquage des vecteurs au point d'arret reel
-        x_arr = x_arr[:index_interruption+1]
-        y_arr = y_arr[:index_interruption+1]
-        theta = theta[:index_interruption+1]
+    # Tronquage des vecteurs au point d'arret reel
+    x_arr = x_arr[:index_interruption+1]
+    y_arr = y_arr[:index_interruption+1]
+    theta = theta[:index_interruption+1]
 
-        x_av = x_arr + empattement * np.cos(theta)
-        y_av = y_arr + empattement * np.sin(theta)
+    x_av = x_arr + empattement * np.cos(theta)
+    y_av = y_arr + empattement * np.sin(theta)
 
-        if len(x_arr) > 1 and evenement_detecte != "Basculement":
-            rayons_arriere = np.sqrt(x_arr**2 + (y_arr - y_centre_virage)**2)
-            rayons_avant = np.sqrt(x_av**2 + (y_av - y_centre_virage)**2)
-            decalage_reel = np.max(rayons_avant) - np.min(rayons_arriere)
-        else:
-            decalage_reel = 0.0
+    if len(x_arr) > 1 and evenement_detecte != "Basculement":
+        rayons_arriere = np.sqrt(x_arr**2 + (y_arr - y_centre_virage)**2)
+        rayons_avant = np.sqrt(x_av**2 + (y_av - y_centre_virage)**2)
+        decalage_reel = np.max(rayons_avant) - np.min(rayons_arriere)
+    else:
+        decalage_reel = 0.0
 
-        # CORRECTION CRITIQUE : Alignement de l'arc de la route sur le cap final reellement atteint par le camion
-        cap_final_reel_rad = theta[-1]
-        t_route = np.linspace(0, cap_final_reel_rad, 100)
+    # CORRECTION CRITIQUE : Alignement de l'arc de la route sur le cap final reellement atteint par le camion
+    cap_final_reel_rad = theta[-1]
+    t_route = np.linspace(0, cap_final_reel_rad, 100)
 
-        # Reconstruction de la chaussee fixe synchronisee
-        x_droite = np.linspace(-10, 0, 10)
-        x_arc_int = r_int * np.sin(t_route)
-        y_arc_int = y_centre_virage - r_int * np.cos(t_route)
-        x_arc_ext = r_ext * np.sin(t_route)
-        y_arc_ext = y_centre_virage - r_ext * np.cos(t_route)
+    # Reconstruction de la chaussee fixe synchronisee
+    x_droite = np.linspace(-10, 0, 10)
+    x_arc_int = r_int * np.sin(t_route)
+    y_arc_int = y_centre_virage - r_int * np.cos(t_route)
+    x_arc_ext = r_ext * np.sin(t_route)
+    y_arc_ext = y_centre_virage - r_ext * np.cos(t_route)
+    
+    # Prolongation des lignes droites de sortie basee sur le vrai vecteur de sortie
+    x_fin_int = x_arc_int[-1] + np.linspace(0, 15, 10) * np.cos(cap_final_reel_rad)
+    y_fin_int = y_arc_int[-1] + np.linspace(0, 15, 10) * np.sin(cap_final_reel_rad)
+    x_fin_ext = x_arc_ext[-1] + np.linspace(0, 15, 10) * np.cos(cap_final_reel_rad)
+    y_fin_ext = y_arc_ext[-1] + np.linspace(0, 15, 10) * np.sin(cap_final_reel_rad)
+    
+    x_route_int = np.concatenate([x_droite, x_arc_int, x_fin_int])
+    y_route_int = np.concatenate([np.full_like(x_droite, rayon_courbure - largeur_voie/2), y_arc_int, y_fin_int])
+    x_route_ext = np.concatenate([x_droite, x_arc_ext, x_fin_ext])
+    y_route_ext = np.concatenate([np.full_like(x_droite, rayon_courbure + largeur_voie/2), y_arc_ext, y_fin_ext])
+
+    # =============================================================================
+    # RENDU ET COLONNES D'AFFICHAGE AVEC INTEGRATION DU BOUTON D'ANIMATION
+    # =============================================================================
+    col_graphe, col_analyse = st.columns(2)
+
+    with col_analyse:
+        st.subheader("Indicateurs Physiques Synchrones")
+        zone_metrique_chasse = st.empty()
+        zone_metrique_devers = st.empty()
+        zone_metrique_g = st.empty()
+        zone_alerte = st.empty()
         
-        # Prolongation des lignes droites de sortie basee sur le vrai vecteur de sortie
-        x_fin_int = x_arc_int[-1] + np.linspace(0, 15, 10) * np.cos(cap_final_reel_rad)
-        y_fin_int = y_arc_int[-1] + np.linspace(0, 15, 10) * np.sin(cap_final_reel_rad)
-        x_fin_ext = x_arc_ext[-1] + np.linspace(0, 15, 10) * np.cos(cap_final_reel_rad)
-        y_fin_ext = y_arc_ext[-1] + np.linspace(0, 15, 10) * np.sin(cap_final_reel_rad)
+        # AJOUT EXPLICITE DU BOUTON ICI POUR RENDRE L'ANIMATION POSSIBLE
+        declencher_animation = st.button("Lancer la simulation pas-a-pas")
         
-        x_route_int = np.concatenate([x_droite, x_arc_int, x_fin_int])
-        y_route_int = np.concatenate([np.full_like(x_droite, rayon_courbure - largeur_voie/2), y_arc_int, y_fin_int])
-        x_route_ext = np.concatenate([x_droite, x_arc_ext, x_fin_ext])
-        y_route_ext = np.concatenate([np.full_like(x_droite, rayon_courbure + largeur_voie/2), y_arc_ext, y_fin_ext])
+        st.subheader("Schema Vectoriel du Bilan des Forces (Vue arriere)")
+        zone_schema_forces = st.empty()
 
-        # =============================================================================
-        # RENDU ET COLONNES D'AFFICHAGE AVEC INTEGRATION DU BOUTON D'ANIMATION
-        # =============================================================================
-        col_graphe, col_analyse = st.columns(2)
+    with col_graphe:
+        conteneur_graphique = st.empty()
 
-        with col_analyse:
-            st.subheader("Indicateurs Physiques Synchrones")
-            zone_metrique_chasse = st.empty()
-            zone_metrique_devers = st.empty()
-            zone_metrique_g = st.empty()
-            zone_alerte = st.empty()
-            
-            # AJOUT EXPLICITE DU BOUTON ICI POUR RENDRE L'ANIMATION POSSIBLE
-            declencher_animation = st.button("Lancer la simulation pas-a-pas")
-            
-            st.subheader("Schema Vectoriel du Bilan des Forces (Vue arriere)")
-            zone_schema_forces = st.empty()
+    # Définition des index de tracé selon que le bouton d'animation est cliqué ou non
+    points_animation = range(0, len(x_arr), max(1, len(x_arr) // 40)) if declencher_animation else [len(x_arr) - 1]
+    
+    import time
+    from matplotlib.patches import Polygon
 
-        with col_graphe:
-            conteneur_graphique = st.empty()
+    points_animation = range(0, len(x_arr), max(1, len(x_arr) // 40)) if declencher_animation else [len(x_arr) - 1]
+    
+    import time
+    from matplotlib.patches import Polygon
 
-        # Définition des index de tracé selon que le bouton d'animation est cliqué ou non
-        points_animation = range(0, len(x_arr), max(1, len(x_arr) // 40)) if declencher_animation else [len(x_arr) - 1]
+    for k in points_animation:
+        # Tracé standard Matplotlib de la trajectoire au sol pendant la course
+        fig_anim, ax_anim = plt.subplots(figsize=(7, 5))
+        ax_anim.plot(x_route_int, y_route_int, color='black', linewidth=2)
+        ax_anim.plot(x_route_ext, y_route_ext, color='black', linewidth=2)
         
-        import time
-        from matplotlib.patches import Polygon
-
-        points_animation = range(0, len(x_arr), max(1, len(x_arr) // 40)) if declencher_animation else [len(x_arr) - 1]
-        
-        import time
-        from matplotlib.patches import Polygon
-
-        for k in points_animation:
-            # Tracé standard Matplotlib de la trajectoire au sol pendant la course
-            fig_anim, ax_anim = plt.subplots(figsize=(7, 5))
-            ax_anim.plot(x_route_int, y_route_int, color='black', linewidth=2)
-            ax_anim.plot(x_route_ext, y_route_ext, color='black', linewidth=2)
-            
         if k > 0:
             # INTERACTION COULEUR : Rouge pour l'AVANT (Lisse), Bleu pour l'ARRIÈRE (Chasse)
             ax_anim.plot(x_av[:k], y_av[:k], color='#e74c3c', linewidth=2, label="Trajectoire Roues AV")
