@@ -288,15 +288,13 @@ with tab3:
     with col_param3:
         rayon_courbure = st.slider("Rayon de la route (m)", 15, 60, 25, key="rc_c")
         angle_virage_deg = st.slider("Angle du virage (degres)", 45, 135, 90, key="av_c")
-        angle_debord_initial_deg = st.slider("Angle de debord initial du train (degres)", 0, 20, 5, key="debord_init_c_final")
+        # RECTIFICATION : Le curseur s'appelle desormais devers et pilote la vraie physique
+        angle_route_deg = st.slider("Angle de devers de la route (degres)", 0, 15, 4, key="devers_c_central")
         largeur_voie = 3.5
 
-    # Creation du curseur de devers de la route
-    angle_route_deg = st.sidebar.slider("Angle de devers de la route (degres)", 0, 15, 4, key="devers_c_sidebar")
-    
+    # Configuration geometrique et devers de la route
     y_centre_virage = 2 * rayon_courbure
     beta = np.radians(angle_route_deg)
-    beta_debord_init = np.radians(angle_debord_initial_deg)
     
     g = 9.81
     seuil_glissement_mu = 0.35
@@ -306,7 +304,7 @@ with tab3:
     r_int = rayon_courbure - (largeur_voie / 2)
     r_ext = rayon_courbure + (largeur_voie / 2)
 
-    # Definition de ds et calcul du pas
+    # Calcul preliminaires de la trajectoire et du pas
     ds = 0.05  
     distance_totale = rayon_courbure * np.radians(angle_virage_deg) + 20.0
     pas = int(distance_totale / ds)
@@ -315,39 +313,34 @@ with tab3:
     x_arr = np.zeros(pas)
     y_arr = np.zeros(pas)
     theta = np.zeros(pas)
-    angle_debord = np.zeros(pas)
 
     # Initialisation stricte par index
-    x_arr[0] = -10.0
-    y_arr[0] = rayon_courbure
-    theta[0] = 0.0
-    angle_debord[0] = float(angle_debord_initial_deg)
+    x_arr = -10.0
+    y_arr = rayon_courbure
+    theta = 0.0
 
     evenement_detecte = "Aucun"
     index_interruption = pas - 1
 
-    # CORRECTION : Calcul preliminaire de la vitesse et de la derive des enveloppes de pneus
-    vitesse_ms = vitesse_kmh / 3.6
+    # Calcul de la derive des enveloppes de pneus avant le virage
     acceleration_laterale_g = (vitesse_ms**2) / (rayon_courbure * g)
-
-    # Modelisation de la raideur de derive (Pacejka simplifiee pour poids lourd)
     raideur_derive_av = 150000  # N/rad
     force_laterale_av = ((masse_totale * 1000) * g * 0.5) * acceleration_laterale_g
     angle_derive_rad = force_laterale_av / raideur_derive_av
 
-    # Calcul de l'angle de braquage theorique et reel
+    # Calcul de l'angle de braquage reel corrige par la vitesse
     angle_braquage_theorique_rad = np.arctan(empattement / rayon_courbure)
     angle_braquage_reel_rad = angle_braquage_theorique_rad + angle_derive_rad
 
     # =============================================================================
-    # BOUCLE DE CALCUL RESOLUTION PHYSIQUE DYNAMIQUE
+    # BOUCLE DE CALCUL RESOLUTION PHYSIQUE AVEC DEVERS DYNAMIQUE
     # =============================================================================
     for i in range(1, pas):
         if x_arr[i-1] >= 0 and theta[i-1] < np.radians(angle_virage_deg):
             acc_lat_inst_g = (vitesse_ms**2) / (rayon_courbure * g)
-            alpha = angle_braquage_reel_rad + beta_debord_init
+            alpha = angle_braquage_reel_rad
             
-            # Equations sur plan incline
+            # Equations d'equilibre mecanique sur plan incline realiiste
             P_normale = masse_totale * 1000 * g * np.cos(beta)
             Fc_normale = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) * np.sin(beta)
             N = P_normale + Fc_normale
@@ -358,7 +351,7 @@ with tab3:
             F_frottement_requise = Fc_tangente - P_tangente
             F_frottement_max = seuil_glissement_mu * N
             
-            # 1. Verification du critere de renversement
+            # 1. Verification du critere de renversement (Loi des moments au devers)
             Moment_renversement = Fc_tangente * hauteur_cg
             Moment_stabilisateur = N * (largeur_camion / 2) + P_tangente * hauteur_cg
             
@@ -367,32 +360,27 @@ with tab3:
                 index_interruption = i - 1
                 break
                 
-            # 2. Verification du critere de glissement
+            # 2. Verification du critere de glissement des pneumatiques
             if np.abs(F_frottement_requise) >= F_frottement_max and evenement_detecte == "Aucun":
                 evenement_detecte = "Glissement"
         else:
             acc_lat_inst_g = 0.0
             alpha = 0.0
 
-        # Deplacement cinematique
+        # Evolution cinematique de la trajectoire
         if x_arr[i-1] >= 0 and theta[i-1] < np.radians(angle_virage_deg):
             x_arr[i] = x_arr[i-1] + ds * np.cos(theta[i-1])
             y_arr[i] = y_arr[i-1] + ds * np.sin(theta[i-1])
             theta[i] = theta[i-1] + (ds / empattement) * np.tan(alpha - angle_derive_rad)
-            
-            changement_cap_deg = np.degrees(theta[i] - theta[i-1])
-            angle_debord[i] = angle_debord[i-1] + (changement_cap_deg * (empattement / rayon_courbure))
         elif theta[i-1] >= np.radians(angle_virage_deg):
             x_arr[i] = x_arr[i-1] + ds * np.cos(np.radians(angle_virage_deg))
             y_arr[i] = y_arr[i-1] + ds * np.sin(np.radians(angle_virage_deg))
             theta[i] = np.radians(angle_virage_deg)
-            angle_debord[i] = max(0.0, angle_debord[i-1] - 0.5)
         else:
             x_arr[i] = x_arr[i-1] + ds
             y_arr[i] = rayon_courbure
             theta[i] = 0.0
-            angle_debord[i] = float(angle_debord_initial_deg)
-            
+
         # 3. Verification geometrique du franchissement de voie
         x_av_inst = x_arr[i] + empattement * np.cos(theta[i])
         y_av_inst = y_arr[i] + empattement * np.sin(theta[i])
@@ -402,11 +390,10 @@ with tab3:
             if (r_av > r_ext or r_av < r_int or r_ar > r_ext or r_ar < r_int) and evenement_detecte == "Aucun":
                 evenement_detecte = "Sortie de route"
 
-    # Tronquage des structures selon la duree reelle avant accident
+    # Tronquage des vecteurs au point d'arret reel
     x_arr = x_arr[:index_interruption+1]
     y_arr = y_arr[:index_interruption+1]
     theta = theta[:index_interruption+1]
-    angle_debord = angle_debord[:index_interruption+1]
 
     x_av = x_arr + empattement * np.cos(theta)
     y_av = y_arr + empattement * np.sin(theta)
@@ -418,10 +405,9 @@ with tab3:
     else:
         decalage_reel = 0.0
 
-    # Definition explicite de t_route utilisee pour tracer la route fixe
     t_route = np.linspace(0, np.radians(angle_virage_deg), 100)
 
-    # CORRECTION : Re-introduction des lignes de calcul de sortie de courbe manquantes
+    # Reconstruction de la chaussée fixe
     x_droite = np.linspace(-10, 0, 10)
     x_arc_int = r_int * np.sin(t_route)
     y_arc_int = y_centre_virage - r_int * np.cos(t_route)
@@ -438,12 +424,15 @@ with tab3:
     x_route_ext = np.concatenate([x_droite, x_arc_ext, x_fin_ext])
     y_route_ext = np.concatenate([np.full_like(x_droite, rayon_courbure + largeur_voie/2), y_arc_ext, y_fin_ext])
 
+    # =============================================================================
+    # RENDU ET COLONNES D'AFFICHAGE
+    # =============================================================================
     col_graphe, col_analyse = st.columns(2)
 
     with col_analyse:
         st.subheader("Indicateurs Physiques Dynamiques")
         zone_metrique_chasse = st.empty()
-        zone_metrique_debord = st.empty()
+        zone_metrique_devers = st.empty()
         zone_metrique_g = st.empty()
         zone_alerte = st.empty()
         declencher_animation = st.button("Lancer la simulation pas-a-pas")
@@ -457,7 +446,7 @@ with tab3:
     points_animation = range(0, len(x_arr), max(1, len(x_arr) // 40)) if declencher_animation else [len(x_arr) - 1]
 
     for k in points_animation:
-        # Trace standard Matplotlib de la trajectoire au sol
+        # Trace de la trajectoire au sol
         fig_anim, ax_anim = plt.subplots(figsize=(7, 5))
         ax_anim.plot(x_route_int, y_route_int, color='black', linewidth=2)
         ax_anim.plot(x_route_ext, y_route_ext, color='black', linewidth=2)
@@ -477,9 +466,7 @@ with tab3:
         conteneur_graphique.pyplot(fig_anim)
         plt.close(fig_anim)
 
-        # =============================================================================
-        # TRACÉ DU SCHÉMA DES FORCES CORRIGÉ ET COMPATIBLE (VUE ARRIÈRE)
-        # =============================================================================
+        # TRACÉ DU SCHÉMA DES FORCES SYNCHRONISÉ AVEC LE DEVERS DU CURSEUR
         fig_forces, ax_f = plt.subplots(figsize=(5, 4))
         
         # Ligne d'assiette du sol deversé
