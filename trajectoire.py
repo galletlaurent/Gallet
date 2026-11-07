@@ -328,7 +328,7 @@ with tab2:
 # CONTENU DE L'ONGLET 3 : PERMIS C (PREMIER ATELIER - DYNAMIQUE RIGIDE)
 # =============================================================================
 with tab3:
-    st.header("Simulation de Trajectoire - Camion Rigide Categorie C")
+    st.header("Simulation de Trajectoire - Camion Rigide Categorie CE")
     st.markdown("""
     Cette section montre l'influence de la vitesse, du poids et de la geometrie sur le phenomene de chasse 
     (le decalage des roues arriere vers l'interieur du virage).
@@ -817,14 +817,166 @@ with tab3:
                 
 
 with tab4:
-    st.header("Simulation Permis C et caravane")
+    st.header("Simulation Permis CE et caravane")
     st.info("Espace reserve pour la simulation d'un camion rigide tractant une remorque de type caravane.")
 
 with tab5:
-    st.header("Simulation Permis C (Deuxieme Atelier)")
+    st.header("Simulation Permis C )")
     st.info("Espace reserve pour le second module applique au Permis C.")
 
+    col_p1, col_p2, col_p3 = st.columns(3)
+    
+    with col_p1:
+        vitesse_kmh_semi = st.slider("Vitesse de l'ensemble (km/h)", 5, 50, 20, step=5, key="vitesse_semi")
+        vitesse_ms_semi = vitesse_kmh_semi / 3.6
+        empattement_tracteur = st.slider("Empattement du tracteur - L1 (m)", 3.0, 5.0, 3.8, step=0.1, key="emp_trac_semi")
 
+    with col_p2:
+        distance_sellette = st.slider("Avance de la sellette / essieu AR (m)", 0.0, 1.0, 0.3, step=0.05, key="sellette_semi")
+        longueur_semi = st.slider("Distance sellette - Essieux semi - L2 (m)", 6.0, 10.0, 7.5, step=0.1, key="long_semi")
+
+    with col_p3:
+        rayon_courbure_semi = st.slider("Rayon de la route (m)", 15, 60, 25, key="rc_semi")
+        angle_virage_semi = st.slider("Angle du virage (degres)", 45, 135, 90, key="av_semi")
+        angle_route_semi = st.slider("Angle de devers de la route (degres)", 0, 15, 4, key="devers_semi_central")
+        largeur_voie = 3.5
+
+    # Configuration de l'infrastructure
+    y_centre_virage_semi = 2 * rayon_courbure_semi
+    beta_semi = np.radians(angle_route_semi)
+    
+    g = 9.81
+    seuil_glissement_mu = 0.35
+    largeur_camion = 2.5
+    hauteur_cg_semi = 1.8  
+
+    r_int_semi = rayon_courbure_semi - (largeur_voie / 2)
+    r_ext_semi = rayon_courbure_semi + (largeur_voie / 2)
+
+    # Calcul preliminaire du pas d'espace
+    ds_semi = 0.05  
+    distance_totale_semi = rayon_courbure_semi * np.radians(angle_virage_semi) + 25.0
+    pas_semi = int(distance_totale_semi / ds_semi)
+
+    # Creation des structures de tableaux fixes (3 essieux distincts)
+    x_trac_av = np.zeros(pas_semi)
+    y_trac_av = np.zeros(pas_semi)
+    x_trac_ar = np.zeros(pas_semi)
+    y_trac_ar = np.zeros(pas_semi)
+    x_semi_ar = np.zeros(pas_semi)
+    y_semi_ar = np.zeros(pas_semi)
+    
+    theta_trac = np.zeros(pas_semi)
+    theta_semi = np.zeros(pas_semi)
+
+    # Initialisation stricte par index (Alignement horizontal initial)
+    x_trac_av[0] = -10.0
+    y_trac_av[0] = rayon_courbure_semi
+    
+    x_trac_ar[0] = x_trac_av[0] - empattement_tracteur
+    y_trac_ar[0] = rayon_courbure_semi
+    theta_trac[0] = 0.0
+
+    # Position de la sellette d'attelage
+    x_sellette_init = x_trac_ar[0] + distance_sellette
+    x_semi_ar[0] = x_sellette_init - longueur_semi
+    y_semi_ar[0] = rayon_courbure_semi
+    theta_semi[0] = 0.0
+
+    evenement_detecte_semi = "Aucun"
+    index_interruption_semi = pas_semi - 1
+
+    # Calcul de l'acceleration transversale nominale
+    acceleration_laterale_semi_g = (vitesse_ms_semi**2) / (rayon_courbure_semi * g)
+
+    # =============================================================================
+    # BOUCLE DE CALCUL GEOMETRIQUE RESOLUTION SEMI-REMORQUE COMPLÈTE
+    # =============================================================================
+    cap_cible_semi_rad = np.radians(angle_virage_semi)
+
+    for i in range(1, pas_semi):
+        # 1. Trajectoire de reference de l'essieu avant du tracteur (Roues AV - Rouge)
+        if x_trac_av[i-1] < 0.0:
+            x_trac_av[i] = x_trac_av[i-1] + ds_semi
+            y_trac_av[i] = rayon_courbure_semi
+            theta_trac[i] = 0.0
+        elif x_trac_av[i-1] >= 0.0 and theta_trac[i-1] < cap_cible_semi_rad:
+            cap_av_rad = ds_semi / rayon_courbure_semi
+            theta_trac[i] = theta_trac[i-1] + cap_av_rad
+            x_trac_av[i] = rayon_courbure_semi * np.sin(theta_trac[i])
+            y_trac_av[i] = y_centre_virage_semi - rayon_courbure_semi * np.cos(theta_trac[i])
+        else:
+            x_trac_av[i] = x_trac_av[i-1] + ds_semi * np.cos(cap_cible_semi_rad)
+            y_trac_av[i] = y_trac_av[i-1] + ds_semi * np.sin(cap_cible_semi_rad)
+            theta_trac[i] = cap_cible_semi_rad
+
+        # 2. Cinematique de l'essieu arriere du tracteur (Roues AR Tracteur - Bleu)
+        dx_trac = x_trac_av[i] - x_trac_ar[i-1]
+        dy_trac = y_trac_av[i] - y_trac_ar[i-1]
+        dist_trac = np.hypot(dx_trac, dy_trac)
+        x_trac_ar[i] = x_trac_av[i] - empattement_tracteur * (dx_trac / dist_trac)
+        y_trac_ar[i] = y_trac_av[i] - empattement_tracteur * (dy_trac / dist_trac)
+
+        # Coordonnees instantanees de la sellette d'attelage pivotante
+        x_sel = x_trac_ar[i] + distance_sellette * np.cos(theta_trac[i])
+        y_sel = y_trac_ar[i] + distance_sellette * np.sin(theta_trac[i])
+
+        # 3. Cinematique du groupe d'essieux de la semi-remorque (Roues AR Semi - Vert)
+        dx_semi = x_sel - x_semi_ar[i-1]
+        dy_semi = y_sel - y_semi_ar[i-1]
+        dist_semi = np.hypot(dx_semi, dy_semi)
+        theta_semi[i] = np.arctan2(dy_semi, dx_semi)
+        x_semi_ar[i] = x_sel - longueur_semi * (dx_semi / dist_semi)
+        y_semi_ar[i] = y_sel - longueur_semi * (dy_semi / dist_semi)
+
+        # 4. Calcul de la dynamique des forces et verifications de securite
+        if x_trac_av[i] >= 0.0 and theta_trac[i] < cap_cible_semi_rad:
+            val_P_semi = masse_totale * 1000 * g
+            val_Fc_semi = masse_totale * 1000 * (vitesse_ms_semi**2 / rayon_courbure_semi)
+            
+            P_normale = val_P_semi * np.cos(beta_semi)
+            Fc_normale = val_Fc_semi * np.sin(beta_semi)
+            N = P_normale + Fc_normale
+            
+            P_tangente = val_P_semi * np.sin(beta_semi)
+            Fc_tangente = val_Fc_semi * np.cos(beta_semi)
+            F_frottement_requise = Fc_tangente - P_tangente
+            F_frottement_max = seuil_glissement_mu * N
+            
+            Moment_renversement = Fc_tangente * hauteur_cg_semi
+            Moment_stabilisateur = N * (largeur_camion / 2) + P_tangente * hauteur_cg_semi
+            
+            if Moment_renversement >= Moment_stabilisateur:
+                evenement_detecte_semi = "Basculement"
+                index_interruption_semi = i
+                break
+            if np.abs(F_frottement_requise) >= F_frottement_max and evenement_detecte_semi == "Aucun":
+                evenement_detecte_semi = "Glissement"
+                
+        # 5. Verification du gabarit routier pour les 3 trains d'essieux
+        if x_trac_av[i] >= 0.0:
+            r_av = np.sqrt(x_trac_av[i]**2 + (y_trac_av[i] - y_centre_virage_semi)**2)
+            r_ar = np.sqrt(x_trac_ar[i]**2 + (y_trac_ar[i] - y_centre_virage_semi)**2)
+            r_sm = np.sqrt(x_semi_ar[i]**2 + (y_semi_ar[i] - y_centre_virage_semi)**2)
+            if (r_av > r_ext_semi or r_av < r_int_semi or r_ar > r_ext_semi or r_ar < r_int_semi or r_sm > r_ext_semi or r_sm < r_int_semi) and evenement_detecte_semi == "Aucun":
+                evenement_detecte_semi = "Sortie de route"
+
+    # Tronquage des vecteurs au point d'arret reel
+    x_trac_av = x_trac_av[:index_interruption_semi+1]
+    y_trac_av = y_trac_av[:index_interruption_semi+1]
+    x_trac_ar = x_trac_ar[:index_interruption_semi+1]
+    y_trac_ar = y_trac_ar[:index_interruption_semi+1]
+    x_semi_ar = x_semi_ar[:index_interruption_semi+1]
+    y_semi_ar = y_semi_ar[:index_interruption_semi+1]
+    theta_trac = theta_trac[:index_interruption_semi+1]
+
+    # Calcul du balayage de chasse maximal cumule (Tracteur + Remorque)
+    if len(x_trac_av) > 1 and evenement_detecte_semi != "Basculement":
+        rayons_semi = np.sqrt(x_semi_ar**2 + (y_semi_ar - y_centre_virage_semi)**2)
+        rayons_avant = np.sqrt(x_trac_av**2 + (y_trac_av - y_centre_virage_semi)**2)
+        decalage_reel_semi = np.max(rayons_avant) - np.min(rayons_semi)
+    else:
+        decalage_reel_semi = 0.0
 
 
 
