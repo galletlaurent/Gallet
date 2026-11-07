@@ -272,7 +272,6 @@ with tab3:
     (le decalage des roues arriere vers l'interieur du virage).
     """)
 
-    # Configuration des parametres de controle
     col_param1, col_param2, col_param3 = st.columns(3)
     
     with col_param1:
@@ -289,14 +288,13 @@ with tab3:
     with col_param3:
         rayon_courbure = st.slider("Rayon de la route (m)", 15, 60, 25, key="rc_c")
         angle_virage_deg = st.slider("Angle du virage (degres)", 45, 135, 90, key="av_c")
-        # Curseur de debord synchronise avec la bonne cle unique
         angle_debord_initial_deg = st.slider("Angle de debord initial du train (degres)", 0, 20, 5, key="debord_init_c_final")
         largeur_voie = 3.5
 
-    # CORRECTION : On cree d'abord le curseur de devers de la route pour qu'il existe en memoire
+    # Creation du curseur de devers de la route
     angle_route_deg = st.sidebar.slider("Angle de devers de la route (degres)", 0, 15, 4, key="devers_c_sidebar")
     
-    # Configuration geometrique et devers de la route (Lecture desormais possible)
+    # Configuration geometrique et devers de la route
     y_centre_virage = 2 * rayon_courbure
     beta = np.radians(angle_route_deg)
     beta_debord_init = np.radians(angle_debord_initial_deg)
@@ -309,13 +307,18 @@ with tab3:
     r_int = rayon_courbure - (largeur_voie / 2)
     r_ext = rayon_courbure + (largeur_voie / 2)
 
-    # Creation des structures de tableaux fixes
+    # CORRECTION CRITIQUE : Definition de ds et calcul du pas AVANT l'initialisation des tableaux
+    ds = 0.05  # Pas d'espace de 5 cm
+    distance_totale = rayon_courbure * np.radians(angle_virage_deg) + 20.0
+    pas = int(distance_totale / ds)
+
+    # Creation des structures de tableaux fixes (la variable 'pas' existe desormais)
     x_arr = np.zeros(pas)
     y_arr = np.zeros(pas)
     theta = np.zeros(pas)
     angle_debord = np.zeros(pas)
 
-    # Initialisation stricte par index
+    # Initialisation stricte par index pour preserver les matrices numpy
     x_arr = -10.0
     y_arr = rayon_courbure
     theta = 0.0
