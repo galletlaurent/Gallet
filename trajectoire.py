@@ -311,9 +311,13 @@ with tab3:
     
     y_centre_virage = 2 * rayon_courbure
     
-    # Parametre d'angle de la route (devers) et variables physiques
+    # Parametres d'angle de la route (devers) et variables physiques
     angle_route_deg = st.sidebar.slider("Angle de devers de la route (degres)", 0, 15, 4, key="devers_c")
     beta = np.radians(angle_route_deg)
+    
+    # Ajout du curseur d'angle de debord initial demande
+    angle_debord_initial_deg = st.sidebar.slider("Angle de debord initial du train (degres)", 0, 20, 0, key="debord_init_c")
+    beta_debord_init = np.radians(angle_debord_initial_deg)
     
     g = 9.81
     seuil_glissement_mu = 0.35
@@ -334,7 +338,7 @@ with tab3:
     x_arr[0] = -10.0
     y_arr[0] = rayon_courbure
     theta[0] = 0.0
-    angle_debord[0] = 0.0
+    angle_debord[0] = angle_debord_initial_deg
 
     evenement_detecte = "Aucun"
     index_interruption = pas - 1
@@ -376,10 +380,11 @@ with tab3:
         if x_arr[i-1] >= 0 and theta[i-1] < np.radians(angle_virage_deg):
             x_arr[i] = x_arr[i-1] + ds * np.cos(theta[i-1])
             y_arr[i] = y_arr[i-1] + ds * np.sin(theta[i-1])
+            # Integration prenant en compte l'angle de debord dans le changement de cap
             theta[i] = theta[i-1] + (ds / empattement) * np.tan(alpha - angle_derive_rad)
             
-            # Calcul cinematique de l'angle de debord geometrique en degres
-            angle_debord[i] = np.degrees(np.arctan(empattement / rayon_courbure))
+            # Calcul cinematique de l'angle de debord dynamique cumule
+            angle_debord[i] = np.degrees(np.arctan(empattement / rayon_courbure)) + angle_debord_initial_deg
         elif theta[i-1] >= np.radians(angle_virage_deg):
             x_arr[i] = x_arr[i-1] + ds * np.cos(np.radians(angle_virage_deg))
             y_arr[i] = y_arr[i-1] + ds * np.sin(np.radians(angle_virage_deg))
@@ -389,7 +394,7 @@ with tab3:
             x_arr[i] = x_arr[i-1] + ds
             y_arr[i] = rayon_courbure
             theta[i] = 0.0
-            angle_debord[i] = 0.0
+            angle_debord[i] = angle_debord_initial_deg
 
         # 3. Critere de sortie de route geometrique
         x_av_inst = x_arr[i] + empattement * np.cos(theta[i])
@@ -400,15 +405,17 @@ with tab3:
             if (r_av > r_ext or r_av < r_int or r_ar > r_ext or r_ar < r_int) and evenement_detecte == "Aucun":
                 evenement_detecte = "Sortie de route"
 
-    # Tronquage des vecteurs au point d'arret reel
+    # Tronquage des vecteurs de base au point d'arret reel
     x_arr = x_arr[:index_interruption+1]
     y_arr = y_arr[:index_interruption+1]
     theta = theta[:index_interruption+1]
     angle_debord = angle_debord[:index_interruption+1]
-    x_av = x_av[:index_interruption+1]
-    y_av = y_av[:index_interruption+1]
 
-    # CORRECTION : Definition explicite de t_route utilisee pour tracer la route fixe
+    # CORRECTION CRITIQUE : Calcul des coordonnees avant APRES le tronquage de x_arr et theta
+    x_av = x_arr + empattement * np.cos(theta)
+    y_av = y_arr + empattement * np.sin(theta)
+
+    # Definition explicite de t_route utilisee pour tracer la route fixe
     t_route = np.linspace(0, np.radians(angle_virage_deg), 100)
 
     # Elements fixes de la route pour le trace
@@ -427,6 +434,7 @@ with tab3:
     y_route_int = np.concatenate([np.full_like(x_droite, rayon_courbure - largeur_voie/2), y_arc_int, y_fin_int])
     x_route_ext = np.concatenate([x_droite, x_arc_ext, x_fin_ext])
     y_route_ext = np.concatenate([np.full_like(x_droite, rayon_courbure + largeur_voie/2), y_arc_ext, y_fin_ext])
+    
     col_graphe, col_analyse = st.columns(2)
 
     with col_analyse:
