@@ -316,27 +316,34 @@ with tab3:
     theta = np.zeros(pas)
 
     # Remplissage de la premiere ligne (Index 0) pour le depart en ligne droite
-    x_av[0] = -10.0 + empattement
-    y_av[0] = rayon_courbure
     x_arr[0] = -10.0
     y_arr[0] = rayon_courbure
+    x_av[0] = -10.0 + empattement
+    y_av[0] = rayon_courbure
     theta[0] = 0.0
 
     evenement_detecte = "Aucun"
     index_interruption = pas - 1
 
-    # AJOUT DE LA VARIABLE MANQUANTE : Calcul de l'acceleration nominale liee aux curseurs
+    # CORRECTION : Ajout des calculs de derive et de braquage indispensables avant la boucle
     vitesse_ms = vitesse_kmh / 3.6
     acceleration_laterale_g = (vitesse_ms**2) / (rayon_courbure * g)
+    raideur_derive_av = 150000  
+    force_laterale_av = ((masse_totale * 1000) * g * 0.5) * acceleration_laterale_g
+    angle_derive_rad = force_laterale_av / raideur_derive_av
+
+    angle_braquage_theorique_rad = np.arctan(empattement / rayon_courbure)
+    angle_braquage_reel_rad = angle_braquage_theorique_rad + angle_derive_rad
+
     # =============================================================================
-    # BOUCLE DE CALCUL GEOMETRIQUE INVERSEE (ROUGE PARFAIT / BLEU TRACTE DECALÉ)
+    # BOUCLE DE CALCUL GEOMETRIQUE AVEC COMMANDE LISSÉE ET PROGRESSIVE
     # =============================================================================
     angle_volant_actuel = 0.0  
-    vitesse_braquage = 0.20    # Vitesse de rotation du volant par metre parcouru
+    vitesse_braquage = 0.20    
     cap_cible_rad = np.radians(angle_virage_deg)
 
     for i in range(1, pas):
-        # 1. Gestion de la progressivite du volant pour eviter les ruptures brutales
+        # 1. Gestion de la progressivite du volant
         if x_av[i-1] >= 0.0 and theta[i-1] < cap_cible_rad:
             acc_lat_inst_g = (vitesse_ms**2) / (rayon_courbure * g)
             
