@@ -411,9 +411,17 @@ with tab3:
     theta = theta[:index_interruption+1]
     angle_debord = angle_debord[:index_interruption+1]
 
-    # CORRECTION CRITIQUE : Calcul des coordonnees avant APRES le tronquage de x_arr et theta
+    # Calcul des coordonnees avant APRES le tronquage de x_arr et theta
     x_av = x_arr + empattement * np.cos(theta)
     y_av = y_arr + empattement * np.sin(theta)
+
+    # CORRECTION : Re-calcul de la variable decalage_reel pour eviter le NameError final
+    if len(x_arr) > 1 and evenement_detecte != "Basculement":
+        rayons_arriere = np.sqrt(x_arr**2 + (y_arr - y_centre_virage)**2)
+        rayons_avant = np.sqrt(x_av**2 + (y_av - y_centre_virage)**2)
+        decalage_reel = np.max(rayons_avant) - np.min(rayons_arriere)
+    else:
+        decalage_reel = 0.0
 
     # Definition explicite de t_route utilisee pour tracer la route fixe
     t_route = np.linspace(0, np.radians(angle_virage_deg), 100)
