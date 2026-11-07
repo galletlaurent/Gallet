@@ -545,7 +545,6 @@ with tab3:
     zone_metrique_devers.metric(label="Devers configure de la chaussee", value=f"{angle_route_deg:.1f} degres")
     zone_metrique_g.metric(label="Acceleration transversale maximale", value=f"{acceleration_laterale_g:.2f} G")
 
-    # Affichage des conclusions ou alertes selon le statut de l'evenement
     if evenement_detecte == "Basculement":
         with col_graphe:
             conteneur_graphique.empty()
@@ -553,7 +552,7 @@ with tab3:
                 st.image("basculementCE.jpg", caption="Accident : Rupture d'equilibre statique (Renversement).")
             except Exception:
                 st.error("Fichier basculementCE.jpg introuvable.")
-        zone_alerte.error("ACCIDENT DETECTE : Le camion a bascule sous l'effet de la force centrifuge.")
+        zone_alert_error("ACCIDENT DETECTE : Le camion a bascule sous l'effet de la force centrifuge.")
     else:
         # Si pas d'accident ou si l'animation est finie, on affiche le trace Plotly zoomable et mesurable
         import plotly.graph_objects as go
@@ -561,9 +560,9 @@ with tab3:
         fig_plotly.add_trace(go.Scatter(x=x_route_int, y=y_route_int, name="Bord interieur", line=dict(color='black', width=2)))
         fig_plotly.add_trace(go.Scatter(x=x_route_ext, y=y_route_ext, name="Bord exterieur", line=dict(color='black', width=2)))
         
-        # INVERSION : Ligne bleue pour l'AVANT, ligne rouge pour l'ARRIÈRE
-        fig_plotly.add_trace(go.Scatter(x=x_av, y=y_av, name="Trajectoire Roues ARRIERE", line=dict(color='#e74c3c', width=3, dash='dash')))
-        fig_plotly.add_trace(go.Scatter(x=x_arr, y=y_arr, name="Trajectoire Roues AVANT", line=dict(color='#3498db', width=3)))
+        # CORRECTION : Association exacte des variables de trajectoires et des legendes
+        fig_plotly.add_trace(go.Scatter(x=x_av, y=y_av, name="Trajectoire Roues AVANT", line=dict(color='#3498db', width=3)))
+        fig_plotly.add_trace(go.Scatter(x=x_arr, y=y_arr, name="Trajectoire Roues ARRIERE", line=dict(color='#e74c3c', width=3, dash='dash')))
         
         fig_plotly.update_layout(
             xaxis=dict(scaleanchor="y", scaleratio=1),
@@ -573,14 +572,15 @@ with tab3:
         )
         conteneur_graphique.plotly_chart(fig_plotly, use_container_width=True)
 
-        if evenement_detecte == "Glissement":
-            zone_alerte.warning("GLISSEMENT : L'effort lateral demande a surpasse l'adherence disponible (Derapage).")
-        elif evenement_detecte == "Sortie de route":
-            zone_alerte.warning("SORTIE DE VOIE : Le gabarit a franchi les marquages au sol.")
-        else:
-            zone_alerte.success("TRAJECTOIRE REUSSITE : Le camion est reste stable dans sa voie.")
+    if evenement_detecte == "Glissement":
+        zone_alerte.warning("GLISSEMENT : L'effort lateral demande a surpasse l'adherence disponible (Derapage).")
+    elif evenement_detecte == "Sortie de route":
+        zone_alerte.warning("SORTIE DE VOIE : Le gabarit a franchi les marquages au sol.")
+    else:
+        zone_alerte.success("TRAJECTOIRE REUSSITE : Le camion est reste stable dans sa voie.")
 
-    # Bloc final d'exportation du livrable eleve en bas de la colonne d'analyse
+    # # Bloc final d'exportation du livrable eleve en bas de la colonne d'analyse
+    # CORRECTION : Re-integration complete de la variable angle_route_deg
     texte_rapport = f"RAPPORT D'ATELIER\nStatut final : {evenement_detecte}\nDecalage de chasse maximal : {decalage_reel:.2f} m\nDevers de la route : {angle_route_deg:.1f} degres\n"
     st.download_button(
         label="Exporter le rapport d'atelier (Fichier texte)",
