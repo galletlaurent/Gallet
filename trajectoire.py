@@ -201,7 +201,63 @@ tab3 = onglets[3]
 tab4 = onglets[4] 
 tab5 = onglets[5]
 
+def afficher_atelier_semi_remorque(verrouille=False):
+    """Affiche le Quiz et le Texte à trous côte à côte en bas de la page pour l'atelier semi-remorque."""
+    import random
 
+    st.subheader("Atelier Interactif : Cinématique et Dynamique de l'Ensemble Semi-Remorque")
+
+    questions_semi_sources = [
+        {"id": "qs1", "q": "Pourquoi le décalage de chasse d'une semi-remorque est-il plus impressionnant que celui d'un porteur ?", "options": ["À cause de la double articulation (tracteur puis sellette)", "Parce que la vitesse est toujours plus élevée", "En raison du nombre de pneumatiques"], "rep": "À cause de la double articulation (tracteur puis sellette)"},
+        {"id": "qs2", "q": "Quel composant mécanique sert de point de pivot rotatif entre le tracteur et la semi-remorque ?", "options": ["La sellette d'attelage", "L'axe de fusée", "Le timon rigide"], "rep": "La sellette d'attelage"},
+        {"id": "qs3", "q": "En ligne droite avant le virage, comment se comportent les trois trajectoires des essieux ?", "options": ["Elles sont strictement confondues et superposées", "Elles sont déjà écartées parallèlement", "Elles oscillent de gauche à droite"], "rep": "Elles sont strictement confondues et superposées"},
+        {"id": "qs4", "q": "Quel essieu subit la trajectoire directrice imposée par la géométrie de la route ?", "options": ["L'essieu avant du tracteur", "L'essieu arrière du tracteur", "L'essieu arrière de la semi"], "rep": "L'essieu avant du tracteur"},
+        {"id": "qs5", "q": "Quelle ligne de couleur matérialise le balayage de chasse extrême à l'intérieur du virage ?", "options": ["La ligne rouge (arrière de la semi)", "La ligne bleue (avant du tracteur)", "La ligne verte (arrière du tracteur)"], "rep": "La ligne rouge (arrière de la semi)"},
+        {"id": "qs6", "q": "Comment réagit le train arrière de la semi-remorque lors de l'amorce du virage ?", "options": ["Il continue tout droit avec un retard spatial en X", "Il pivote instantanément au même repère que l'avant", "Il s'écarte vers l'extérieur du virage"], "rep": "Il continue tout droit avec un retard spatial en X"},
+        {"id": "qs7", "q": "Quel est l'impact d'une grande longueur de semi (L2) sur le couloir de balayage ?", "options": ["Elle augmente massivement le décalage de chasse", "Elle réduit la force centrifuge", "Elle stabilise le véhicule sur la ligne bleue"], "rep": "Elle augmente massivement le décalage de chasse"},
+        {"id": "qs8", "q": "Quelle configuration présente le centre de gravité (CG) le plus haut et le plus instable ?", "options": ["La semi-remorque chargée", "Le porteur à vide", "Le tracteur solo"], "rep": "La semi-remorque chargée"},
+        {"id": "qs9", "q": "Quel accident dynamique risque de se produire si les pneus du tracteur perdent leur adhérence latérale ?", "options": ["Une mise en portefeuille", "Un cabrage de la cabine", "Une augmentation du rayon de courbure"], "rep": "Une mise en portefeuille"},
+        {"id": "qs10", "q": "Pour éviter que les roues de la semi ne montent sur le trottoir intérieur, que doit faire le conducteur ?", "options": ["Ouvrir au maximum son virage vers l'extérieur", "Serrer la corde immédiatement", "Freiner brutalement au point 0"], "rep": "Ouvrir au maximum son virage vers l'extérieur"}
+    ]
+
+    if "ordre_quiz_semi_aleatoire" not in st.session_state:
+        random.shuffle(questions_semi_sources)
+        st.session_state.ordre_quiz_semi_aleatoire = questions_semi_sources
+
+    if "champs_semi_clean" not in st.session_state:
+        st.session_state.champs_trajectoire_clean = [
+            ("1. La trajectoire d'une semi-remorque est une cascade cinématique à .......... articulations.", ["Choisir...", "deux", "trois"], "deux", "semi_t1"),
+            ("2. Avant le point de rupture, l'alignement initial des trois essieux est parfaitement ..........", ["Choisir...", "horizontal", "décalé"], "horizontal", "semi_t2"),
+            ("3. L'essieu arrière de la semi-remorque subit une équation différentielle de .......... pure.", ["Choisir...", "poursuite", "braquage"], "poursuite", "semi_t3"),
+            ("4. Plus la distance L2 entre la sellette et l'essieu est grande, plus l'arrière plonge à la ..........", ["Choisir...", "corde", "tangente"], "corde", "semi_t4"),
+            ("5. La ligne verte représente la trajectoire de l'essieu arrière du ..........", ["Choisir...", "tracteur", "porteur"], "tracteur", "semi_t5"),
+            ("6. Le phénomène de glissement latéral d'un ensemble articulé lourd s'appelle la mise en ..........", ["Choisir...", "portefeuille", "renversement"], "portefeuille", "semi_t6"),
+            ("7. La hauteur du centre de gravité augmente de façon importante avec le poids du ..........", ["Choisir...", "chargement", "châssis"], "chargement", "semi_t7"),
+            ("8. L'accélération transversale subie par l'ensemble s'exprime en unités ..........", ["Choisir...", "G", "Newton"], "G", "semi_t8"),
+            ("9. Sur le graphique, la trajectoire des roues avant du tracteur est représentée en ..........", ["Choisir...", "bleu", "rouge"], "bleu", "semi_t9"),
+            ("10. Le décalage géométrique cumulé de l'ensemble constitue le balayage de .......... global.", ["Choisir...", "chasse", "dérive"], "chasse", "semi_t10")
+        ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_semi_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"semi_at5_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_trajectoire_clean:
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_semi_clean", disabled=verrouille, label_visibility="collapsed")
 
 
 
@@ -1153,7 +1209,179 @@ with tab5:
         else:
             zone_alerte.success("TRAJECTOIRE REUSSITE : L'ensemble articule est reste stable dans sa voie.")
 
+    # -------------------------------------------------------------------------
+    # PARTIE 3 : LOGIQUE DE VALIDATION ET MOTEUR DE CORRECTION SCELLÉ
+    # -------------------------------------------------------------------------
+    if "suite_verrouille_tab5_semi" not in st.session_state:
+        st.session_state.suite_verrouille_tab5_semi = False
+    verrou_at5 = st.session_state.suite_verrouille_tab5_semi
 
+    # Rendu des questionnaires d'évaluation de l'Atelier 5
+    afficher_atelier_semi_remorque(verrouille=verrou_at5)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 5")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat5 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier sur la trajectoire de l'ensemble semi-remorque.",
+        key="check_certif_semi5_final_net",
+        disabled=verrou_at5,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_suite5_semi_official", use_container_width=True, disabled=verrou_at5):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat5: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction automatisée du Quiz par parcours sécurisé de clés
+            score_q5 = 0.0
+            if "ordre_quiz_semi_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_semi_aleatoire:
+                    saisie = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"semi_at5_final_g_{q_item['id']}"):
+                            saisie = st.session_state[k]
+                            break
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q5 += 1.0
+
+            # 2. Correction automatisée du Texte à trous par parcours sécurisé de clés
+            score_t5 = 0.0
+            if "champs_trajectoire_clean" in st.session_state:
+                for ligne in st.session_state.champs_trajectoire_clean:
+                    cle_variable = ligne[-1]
+                    attendu_texte = ligne[2]
+                    saisie_texte = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"{cle_variable}_semi_clean"):
+                            saisie_texte = st.session_state[k]
+                            break
+                    if str(saisie_texte).strip() == str(attendu_texte).strip(): 
+                        score_t5 += 1.0
+
+            st.session_state.score_suite5_semi_p1 = round(float(score_q5), 1)
+            st.session_state.score_suite5_semi_p2 = round(float(score_t5), 1)
+            st.session_state.score_final_suite5_semi = round(float(score_q5 + score_t5), 1)
+            st.session_state.suite_verrouille_tab5_semi = True
+            st.rerun()
+
+    # -------------------------------------------------------------------------
+    # PARTIE 4 : EXPORTATION DU RAPPORT INDIVIDUEL HTML SCELLÉ
+    # -------------------------------------------------------------------------
+    if st.session_state.get("suite_verrouille_tab5_semi", False):
+        from datetime import datetime
+        scr1_t5 = st.session_state.get("score_suite5_semi_p1", 0.0)
+        scr2_t5 = st.session_state.get("score_suite5_semi_p2", 0.0)
+        tot_s_t5 = st.session_state.get("score_final_suite5_semi", 0.0)
+        timestamp_semi5 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER ENSEMBLE ARTICULÉ SCELLÉ | Note de session : {tot_s_t5:.1f} / 20")
+
+        html_export_semi5 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Ensemble Articulé - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Physique-Cinématique</h1>
+                <p>Atelier 5 : Inscription en Courbe et Stabilité des Ensembles Articulés Lourds</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_semi5}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t5:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t5:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse de Cours : <strong>{scr2_t5:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 5 : <strong>{tot_s_t5:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_semi_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_semi_aleatoire, 1):
+                saisie = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"semi_at5_final_g_{q_item['id']}"):
+                        saisie = st.session_state[k]
+                        break
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_semi5 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_semi5 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_trajectoire_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_trajectoire_clean, 1):
+                cle_variable = ligne[-1]
+                attendu_texte = ligne[2]
+                phrase_enonce = ligne[0]
+                saisie_texte = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"{cle_variable}_semi_clean"):
+                        saisie_texte = st.session_state[k]
+                        break
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_semi5 += f"<tr><td>{num}</td><td>{phrase_enonce}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_semi5 += f"""
+                </tbody>
+            </table>
+            
+            <div class="sub-title">DONNÉES COMPLÉMENTAIRES D'ATELIER TECHNIQUE</div>
+            <p style="font-size: 13px; color: #64748b;">
+                Valeur maximale enregistrée pour le balayage de chasse cumulé : <strong>{decalage_reel_semi:.2f} m</strong><br>
+                Angle de dévers configuré pour la chaussée : <strong>{angle_route_semi:.1f} degrés</strong>
+            </p>
+        </body>
+        </html>
+        """
+
+        st.download_button(
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL SCELLÉ (FORMAT HTML)",
+            data=html_export_semi5,
+            file_name=f"Rapport_Semi_Remorque_{n_eleve}_{p_eleve}.html",
+            mime="text/html",
+            key="btn_download_html_official_semi5",
+            use_container_width=True
+        )
 
 
 
