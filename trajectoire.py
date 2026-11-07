@@ -358,7 +358,7 @@ with tab3:
         # 2. Cinematique de l'essieu arriere (Ligne bleue tractee en retrait)
         if x_av[i] < 0.0:
             # CORRECTION : Ligne droite initiale parfaite, aucun dephasage possible
-            x_arr[i] = x_av[i] + empattement
+            x_arr[i] = x_av[i] - empattement
             y_arr[i] = rayon_courbure
         else:
             # L'arriere ne commence a pivoter QUE si l'avant a depasse le repere 0
