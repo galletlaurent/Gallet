@@ -563,7 +563,6 @@ with tab3:
                 st.error("Fichier basculementCE.jpg introuvable.")
         zone_alerte.error("ACCIDENT DETECTE : Le camion a bascule sous l'effet de la force centrifuge.")
     else:
-
         with col_graphe:
             conteneur_graphique.empty()
             
@@ -572,7 +571,7 @@ with tab3:
             fig_plotly.add_trace(go.Scatter(x=x_route_int, y=y_route_int, name="Bord interieur", line=dict(color='black', width=2)))
             fig_plotly.add_trace(go.Scatter(x=x_route_ext, y=y_route_ext, name="Bord exterieur", line=dict(color='black', width=2)))
             
-            # RECTIFICATION DE LA LEGENDE : x_av = Roues AVANT, x_arr = Roues ARRIERE
+            # RECTIFICATION : x_av correspond aux roues AVANT (Bleu lisse) et x_arr aux roues ARRIERE (Rouge decale)
             fig_plotly.add_trace(go.Scatter(x=x_av, y=y_av, name="Trajectoire Roues AVANT", line=dict(color='#3498db', width=3)))
             fig_plotly.add_trace(go.Scatter(x=x_arr, y=y_arr, name="Trajectoire Roues ARRIERE", line=dict(color='#e74c3c', width=3, dash='dash')))
             
@@ -583,7 +582,6 @@ with tab3:
                 title="Visualisation interactive (Zoomable pour mesures fines)"
             )
             st.plotly_chart(fig_plotly, use_container_width=True)
-
         if evenement_detecte == "Glissement":
             zone_alerte.warning("GLISSEMENT : L'effort lateral demande a surpasse l'adherence disponible (Derapage).")
         elif evenement_detecte == "Sortie de route":
