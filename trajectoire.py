@@ -403,6 +403,7 @@ with tab3:
                 evenement_detecte = "Sortie de route"
 
     # Redimensionnement applique selon le point d'arret calcule
+    # Tronquage des vecteurs au point d'arret reel
     x_arr = x_arr[:index_interruption+1]
     y_arr = y_arr[:index_interruption+1]
     theta = theta[:index_interruption+1]
@@ -417,19 +418,22 @@ with tab3:
     else:
         decalage_reel = 0.0
 
-    t_route = np.linspace(0, np.radians(angle_virage_deg), 100)
+    # CORRECTION CRITIQUE : Alignement de l'arc de la route sur le cap final reellement atteint par le camion
+    cap_final_reel_rad = theta[-1]
+    t_route = np.linspace(0, cap_final_reel_rad, 100)
 
-    # Generation des traces de routes fixes concentriques
+    # Reconstruction de la chaussee fixe synchronisee
     x_droite = np.linspace(-10, 0, 10)
     x_arc_int = r_int * np.sin(t_route)
     y_arc_int = y_centre_virage - r_int * np.cos(t_route)
     x_arc_ext = r_ext * np.sin(t_route)
     y_arc_ext = y_centre_virage - r_ext * np.cos(t_route)
     
-    x_fin_int = x_arc_int[-1] + np.linspace(0, 15, 10) * np.cos(np.radians(angle_virage_deg))
-    y_fin_int = y_arc_int[-1] + np.linspace(0, 15, 10) * np.sin(np.radians(angle_virage_deg))
-    x_fin_ext = x_arc_ext[-1] + np.linspace(0, 15, 10) * np.cos(np.radians(angle_virage_deg))
-    y_fin_ext = y_arc_ext[-1] + np.linspace(0, 15, 10) * np.sin(np.radians(angle_virage_deg))
+    # Prolongation des lignes droites de sortie basee sur le vrai vecteur de sortie
+    x_fin_int = x_arc_int[-1] + np.linspace(0, 15, 10) * np.cos(cap_final_reel_rad)
+    y_fin_int = y_arc_int[-1] + np.linspace(0, 15, 10) * np.sin(cap_final_reel_rad)
+    x_fin_ext = x_arc_ext[-1] + np.linspace(0, 15, 10) * np.cos(cap_final_reel_rad)
+    y_fin_ext = y_arc_ext[-1] + np.linspace(0, 15, 10) * np.sin(cap_final_reel_rad)
     
     x_route_int = np.concatenate([x_droite, x_arc_int, x_fin_int])
     y_route_int = np.concatenate([np.full_like(x_droite, rayon_courbure - largeur_voie/2), y_arc_int, y_fin_int])
