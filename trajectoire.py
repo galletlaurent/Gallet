@@ -730,9 +730,6 @@ with tab1:
         st.session_state.suite_verrouille_tab1_b = False
     verrou_at1_b = st.session_state.suite_verrouille_tab1_b
 
-    # APPEL CRITIQUE : C'est cette ligne qui fait apparaitre le Quiz et le Texte à trous
-    afficher_atelier_permis_b(verrouille=verrou_at1_b)
-
     st.write("---")
     st.subheader("Synthese et validation de l'Atelier 1")
     
@@ -752,29 +749,21 @@ with tab1:
         elif not case_certif_b: 
             st.error("Action refusee : Cochez la case de certification.")
         else:
-            # Correction automatique du Quiz
+            # 1. Correction du Quiz Technique (1 point par bonne reponse)
             score_qb = 0.0
             if "ordre_quiz_b_aleatoire" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_b_aleatoire:
-                    saisie = "Choisir..."
-                    for k in st.session_state.keys():
-                        if k.startswith(f"b_at1_final_g_{q_item['id']}"):
-                            saisie = st.session_state[k]
-                            break
+                    saisie = st.session_state.get(f"b_at1_final_g_{q_item['id']}", "Choisir...")
                     if str(saisie).strip() == str(q_item["rep"]).strip(): 
                         score_qb += 1.0
 
-            # Correction automatique du Texte à trous
+            # 2. Correction du Texte a trous (1 point par bonne reponse)
             score_tb = 0.0
             if "champs_b_clean" in st.session_state:
                 for ligne in st.session_state.champs_b_clean:
-                    cle_variable = ligne[-1]
+                    cle_variable = ligne[3]
                     attendu_texte = ligne[2]
-                    saisie_texte = "Choisir..."
-                    for k in st.session_state.keys():
-                        if k.startswith(f"{cle_variable}_b_clean"):
-                            saisie_texte = st.session_state[k]
-                            break
+                    saisie_texte = st.session_state.get(f"{cle_variable}_b_clean", "Choisir...")
                     if str(saisie_texte).strip() == str(attendu_texte).strip(): 
                         score_tb += 1.0
 
@@ -785,7 +774,7 @@ with tab1:
             st.rerun()
 
     # -------------------------------------------------------------------------
-    # GENERATION ET EXPORTATION DU RAPPORT HTML SCELLÉ (ATELIER 1)
+    # PARTIE 4 : EXPORTATION DU RAPPORT INDIVIDUEL HTML SCELLÉ
     # -------------------------------------------------------------------------
     if st.session_state.get("suite_verrouille_tab1_b", False):
         from datetime import datetime
@@ -825,11 +814,53 @@ with tab1:
             <div class="sub-title">Recapitulatif des Notes Generees</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
                 Note obtenue au Quiz Technique : <strong>{scr1_b:.1f} / 10</strong><br>
-                Note obtenue a la Synthese de Cours : <strong>{scr2_b:.1f} / 10</strong><br>
+                Note obtenue a la Synthèse de Cours : <strong>{scr2_b:.1f} / 10</strong><br>
                 Note Totale de l'Atelier 1 : <strong>{tot_s_b:.1f} / 20</strong>
             </p>
             
-            <div class="sub-title">CORRECTION DETAILLEE</div>
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_b_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_b_aleatoire, 1):
+                saisie = st.session_state.get(f"b_at1_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_b += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_b += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_b_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_b_clean, 1):
+                cle_variable = ligne[3]
+                phrase_enonce = ligne[0]
+                attendu_texte = ligne[2]
+                saisie_texte = st.session_state.get(f"{cle_variable}_b_clean", "Choisir...")
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_b += f"<tr><td>{num}</td><td>{phrase_enonce}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_b += f"""
+                </tbody>
+            </table>
+            
+            <div class="sub-title">DONNEES COMPLEMENTAIRES D'ATELIER TECHNIQUE</div>
             <p style="font-size: 13px; color: #64748b;">
                 Valeur maximale enregistree pour le decalage de chasse : <strong>{decalage_reel:.2f} m</strong><br>
                 Acceleration transversale maximale atteinte : <strong>{acceleration_laterale_g:.2f} G</strong>
@@ -846,7 +877,6 @@ with tab1:
             key="btn_download_html_official_b",
             use_container_width=True
         )
-
 
 
 
