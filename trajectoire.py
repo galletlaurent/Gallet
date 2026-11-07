@@ -730,26 +730,29 @@ with tab1:
         st.session_state.suite_verrouille_tab1_b = False
     verrou_at1_b = st.session_state.suite_verrouille_tab1_b
 
+    # APPEL CRITIQUE : C'est cette ligne qui fait apparaitre le Quiz et le Texte à trous
+    afficher_atelier_permis_b(verrouille=verrou_at1_b)
+
     st.write("---")
-    st.subheader("Synthèse et validation de l'Atelier 1")
+    st.subheader("Synthese et validation de l'Atelier 1")
     
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_b = st.checkbox(
-        "Je certifie avoir complété les questions de l'Atelier Véhicule Léger sur la dynamique de glissement.",
+        "Je certifie avoir complete les questions de l'Atelier Vehicule Leger sur la dynamique de glissement.",
         key="check_certif_b_final_net",
         disabled=verrou_at1_b,
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_suite1_b_official", use_container_width=True, disabled=verrou_at1_b):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
-            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_b: 
-            st.error("Action refusée : Cochez la case de certification.")
+            st.error("Action refusee : Cochez la case de certification.")
         else:
-            # 1. Correction automatisée du Quiz par parcours sécurisé de clés
+            # Correction automatique du Quiz
             score_qb = 0.0
             if "ordre_quiz_b_aleatoire" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_b_aleatoire:
@@ -761,7 +764,7 @@ with tab1:
                     if str(saisie).strip() == str(q_item["rep"]).strip(): 
                         score_qb += 1.0
 
-            # 2. Correction automatisée du Texte à trous par parcours sécurisé de clés
+            # Correction automatique du Texte à trous
             score_tb = 0.0
             if "champs_b_clean" in st.session_state:
                 for ligne in st.session_state.champs_b_clean:
@@ -782,16 +785,16 @@ with tab1:
             st.rerun()
 
     # -------------------------------------------------------------------------
-    # PARTIE 4 : EXPORTATION DU RAPPORT INDIVIDUEL HTML SCELLÉ
+    # GENERATION ET EXPORTATION DU RAPPORT HTML SCELLÉ (ATELIER 1)
     # -------------------------------------------------------------------------
     if st.session_state.get("suite_verrouille_tab1_b", False):
         from datetime import datetime
         scr1_b = st.session_state.get("score_suite1_b_p1", 0.0)
         scr2_b = st.session_state.get("score_suite1_b_p2", 0.0)
         tot_s_b = st.session_state.get("score_final_suite1_b", 0.0)
-        timestamp_b = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        timestamp_b = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER VÉHICULE LÉGER SCELLÉ | Note de session : {tot_s_b:.1f} / 20")
+        st.success(f"ATELIER VEHICULE LEGER SCELLE | Note de session : {tot_s_b:.1f} / 20")
 
         html_export_b = f"""<!DOCTYPE html>
         <html>
@@ -812,81 +815,31 @@ with tab1:
         </head>
         <body>
             <div class="header-box">
-                <h1>Rapport d'Évaluation de Physique-Cinématique</h1>
-                <p>Atelier 1 : Dynamique et Inscription en Courbe du Véhicule Léger (Permis B)</p>
-                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_b}</p>
+                <h1>Rapport d'Evaluation de Physique-Cinematique</h1>
+                <p>Atelier 1 : Dynamique et Inscription en Courbe du Vehicule Leger (Permis B)</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_b}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_b:.1f}</span> / 20</div>
             </div>
             
-            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
                 Note obtenue au Quiz Technique : <strong>{scr1_b:.1f} / 10</strong><br>
-                Note obtenue à la Synthèse de Cours : <strong>{scr2_b:.1f} / 10</strong><br>
+                Note obtenue a la Synthese de Cours : <strong>{scr2_b:.1f} / 10</strong><br>
                 Note Totale de l'Atelier 1 : <strong>{tot_s_b:.1f} / 20</strong>
             </p>
             
-            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
-            <table>
-                <thead>
-                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-                </thead>
-                <tbody>
-        """
-
-        if "ordre_quiz_b_aleatoire" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz_b_aleatoire, 1):
-                saisie = "Choisir..."
-                for k in st.session_state.keys():
-                    if k.startswith(f"b_at1_final_g_{q_item['id']}"):
-                        saisie = st.session_state[k]
-                        break
-                attendu = q_item["rep"]
-                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_b += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-
-        html_export_b += """
-                </tbody>
-            </table>
-            
-            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
-            <table>
-                <thead>
-                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
-                </thead>
-                <tbody>
-        """
-
-        if "champs_b_clean" in st.session_state:
-            for num, ligne in enumerate(st.session_state.champs_b_clean, 1):
-                cle_variable = ligne[-1]
-                phrase_enonce = ligne[0]
-                attendu_texte = ligne[2]
-                saisie_texte = "Choisir..."
-                for k in st.session_state.keys():
-                    if k.startswith(f"{cle_variable}_b_clean"):
-                        saisie_texte = st.session_state[k]
-                        break
-                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
-                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
-                html_export_b += f"<tr><td>{num}</td><td>{phrase_enonce}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
-
-        html_export_b += f"""
-                </tbody>
-            </table>
-            
-            <div class="sub-title">DONNÉES COMPLÉMENTAIRES D'ATELIER TECHNIQUE</div>
+            <div class="sub-title">CORRECTION DETAILLEE</div>
             <p style="font-size: 13px; color: #64748b;">
-                Valeur maximale enregistrée pour le décalage de chasse : <strong>{decalage_reel:.2f} m</strong><br>
-                Accélération transversale maximale atteinte : <strong>{acceleration_laterale_g:.2f} G</strong>
+                Valeur maximale enregistree pour le decalage de chasse : <strong>{decalage_reel:.2f} m</strong><br>
+                Acceleration transversale maximale atteinte : <strong>{acceleration_laterale_g:.2f} G</strong>
             </p>
         </body>
         </html>
         """
 
         st.download_button(
-            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL SCELLÉ (FORMAT HTML)",
+            label="TELECHARGER LE RAPPORT INDIVIDUEL SCELLE (FORMAT HTML)",
             data=html_export_b,
             file_name=f"Rapport_Permis_B_{n_eleve}_{p_eleve}.html",
             mime="text/html",
