@@ -572,14 +572,14 @@ with tab3:
         fig_plotly.add_trace(go.Scatter(x=x_arr, y=y_arr, name="Trajectoire Roues AVANT", line=dict(color='#3498db', width=3)))
         
             
-            fig_plotly.update_layout(
-                xaxis=dict(scaleanchor="y", scaleratio=1),
-                hovermode="closest",
-                height=450,
-                title="Visualisation interactive (Zoomable pour mesures fines apres course)"
-            )
-            # On affiche le graphique interactif dans le conteneur principal
-            st.plotly_chart(fig_plotly, use_container_width=True)
+        fig_plotly.update_layout(
+            xaxis=dict(scaleanchor="y", scaleratio=1),
+            hovermode="closest",
+            height=450,
+            title="Visualisation interactive (Zoomable pour mesures fines apres course)"
+        )
+        # On affiche le graphique interactif dans le conteneur principal
+        st.plotly_chart(fig_plotly, use_container_width=True)
 
         # Affichage des bandeaux de notifications de fin de course
         if evenement_detecte == "Glissement":
