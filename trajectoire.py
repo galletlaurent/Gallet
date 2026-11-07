@@ -209,7 +209,7 @@ def afficher_atelier_trajectoire_gabarit(verrouille=False):
     st.subheader("Atelier Interactif : Cinématique et Dynamique du Poids Lourd")
 
     questions_trajectoire_sources = [
-        {"id": "qt1", "q": "Lors d'un virage, quelle ligne décrit une trajectoire circulaire parfaite ?", "options": ["Les roues avant (ligne bleue)", "Les roues arrière (ligne rouge)", "Le centre de gravité uniquement"], "rep": "Les roues avant (ligne bleue)"},
+        {"id": "qt1", "q": "Lors d'un virage, quelle ligne décrit une trajectoire circulaire parfaite ?", "options": ["Les roues avant (ligne rouge)", "Les roues arrière (ligne bleue)", "Le centre de gravité uniquement"], "rep": "Les roues avant (ligne rouge)"},
         {"id": "qt2", "q": "Quel phénomène physique force les roues arrière à couper le virage vers l'intérieur ?", "options": ["Le décalage de chasse géométrique", "La force centrifuge", "Le devers de la route"], "rep": "Le décalage de chasse géométrique"},
         {"id": "qt3", "q": "Où se situe le point de décrochage (amorce de la courbe) pour les roues arrière ?", "options": ["Décalé en X après la ligne de rupture", "Pile sur la ligne verticale 0", "Avant la ligne de rupture"], "rep": "Décalé en X après la ligne de rupture"},
         {"id": "qt4", "q": "Quelle force pousse le camion vers l'extérieur du virage perpendiculairement à sa trajectoire ?", "options": ["La force centrifuge", "La réaction normale", "Le poids du chargement"], "rep": "La force centrifuge"},
@@ -235,63 +235,7 @@ def afficher_atelier_trajectoire_gabarit(verrouille=False):
             ("6. Plus le centre de gravité du chargement est haut, plus le risque de .......... est élevé.", ["Choisir...", "basculement", "glissement"], "basculement", "traj_t6"),
             ("7. L'angle de .......... de la route aide à compenser les effets de la force centrifuge.", ["Choisir...", "dévers", "braquage"], "dévers", "traj_t7"),
             ("8. Si les pneus perdent leur adhérence latérale, le camion subit un ..........", ["Choisir...", "glissement", "renversement"], "glissement", "traj_t8"),
-            ("9. La ligne courbe dessinée en bleu représente la trajectoire des roues ..........", ["Choisir...", "avant", "arrière"], "avant", "traj_t9"),
-            ("10. Le franchissement des lignes noires de la chaussée constitue une .......... de route.", ["Choisir...", "sortie", "stabilité"], "sortie", "traj_t10")
-        ]
-
-    col_quiz, col_trous = st.columns(2)
-    
-    with col_quiz:
-        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
-        for idx, q_data in enumerate(st.session_state.ordre_quiz_trajectoire_aleatoire, 1):
-            st.write(f"**{idx}.** {q_data['q']}")
-            st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"traj_at3_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
-
-    with col_trous:
-        st.markdown("##### Synthèse de l'Atelier (Texte à trous - 10 cases - 10 pts)")
-        for ligne in st.session_state.champs_trajectoire_clean:
-            enonce = ligne[0]
-            choix = ligne[1]
-            cle = ligne[-1]
-            
-            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
-            with c_txt: 
-                st.write(enonce)
-            with c_sel: 
-                st.selectbox("", choix, key=f"{cle}_traj_clean", disabled=verrouille, label_visibility="collapsed")def afficher_atelier_trajectoire_gabarit(verrouille=False):
-    """Affiche le Quiz et le Texte à trous côte à côte en bas de la page pour l'atelier trajectoire."""
-    import random
-
-    st.subheader("Atelier Interactif : Cinématique et Dynamique du Poids Lourd")
-
-    questions_trajectoire_sources = [
-        {"id": "qt1", "q": "Lors d'un virage, quelle ligne décrit une trajectoire circulaire parfaite ?", "options": ["Les roues avant (ligne bleue)", "Les roues arrière (ligne rouge)", "Le centre de gravité uniquement"], "rep": "Les roues avant (ligne bleue)"},
-        {"id": "qt2", "q": "Quel phénomène physique force les roues arrière à couper le virage vers l'intérieur ?", "options": ["Le décalage de chasse géométrique", "La force centrifuge", "Le devers de la route"], "rep": "Le décalage de chasse géométrique"},
-        {"id": "qt3", "q": "Où se situe le point de décrochage (amorce de la courbe) pour les roues arrière ?", "options": ["Décalé en X après la ligne de rupture", "Pile sur la ligne verticale 0", "Avant la ligne de rupture"], "rep": "Décalé en X après la ligne de rupture"},
-        {"id": "qt4", "q": "Quelle force pousse le camion vers l'extérieur du virage perpendiculairement à sa trajectoire ?", "options": ["La force centrifuge", "La réaction normale", "Le poids du chargement"], "rep": "La force centrifuge"},
-        {"id": "qt5", "q": "Comment appelle-t-on l'inclinaison de la chaussée vers l'intérieur d'un virage ?", "options": ["Le dévers de la route", "L'angle d'Ackermann", "La raideur de dérive"], "rep": "Le dévers de la route"},
-        {"id": "qt6", "q": "Quel est l'effet d'un dévers positif sur le risque de basculement du camion ?", "options": ["Il augmente la stabilité", "Il provoque un glissement immédiat", "Il amplifie la force centrifuge"], "rep": "Il augmente la stabilité"},
-        {"id": "qt7", "q": "Si la vitesse du véhicule double dans un même virage, par combien est multipliée la force centrifuge ?", "options": ["Par quatre", "Par deux", "Elle reste identique"], "rep": "Par quatre"},
-        {"id": "qt8", "q": "Quelle force de contact parallèle au sol empêche les pneumatiques de déraper ?", "options": ["La force de frottement", "La réaction normale", "Le poids total"], "rep": "La force de frottement"},
-        {"id": "qt9", "q": "Quelle est l'unité de mesure de l'accélération transversale subie par le véhicule ?", "options": ["Le G (fraction de la gravité)", "Le Newton (N)", "Le Pascal (Pa)"], "rep": "Le G (fraction de la gravité)"},
-        {"id": "qt10", "q": "Si le moment de renversement dépasse le moment stabilisateur, que subit le véhicule ?", "options": ["Un basculement", "Un glissement", "Une trajectoire rectiligne"], "rep": "Un basculement"}
-    ]
-
-    if "ordre_quiz_trajectoire_aleatoire" not in st.session_state:
-        random.shuffle(questions_trajectoire_sources)
-        st.session_state.ordre_quiz_trajectoire_aleatoire = questions_trajectoire_sources
-
-    if "champs_trajectoire_clean" not in st.session_state:
-        st.session_state.champs_trajectoire_clean = [
-            ("1. Les roues avant décrivent une courbe guidée tandis que les roues arrière subissent une ..........", ["Choisir...", "chasse", "dérive"], "chasse", "traj_t1"),
-            ("2. L'essieu arrière reste droit au départ et ne commence à tourner qu'avec un décalage en ..........", ["Choisir...", "X", "Y"], "X", "traj_t2"),
-            ("3. En fin de virage, la stabilisation rectiligne de l'essieu arrière s'effectue avec un décalage en ..........", ["Choisir...", "Y", "X"], "Y", "traj_t3"),
-            ("4. La force centrifuge est directement proportionnelle au carré de la .......... du véhicule.", ["Choisir...", "vitesse", "masse"], "vitesse", "traj_t4"),
-            ("5. La force perpendiculaire à la chaussée inclinée s'appelle la réaction ..........", ["Choisir...", "normale", "tangentielle"], "normale", "traj_t5"),
-            ("6. Plus le centre de gravité du chargement est haut, plus le risque de .......... est élevé.", ["Choisir...", "basculement", "glissement"], "basculement", "traj_t6"),
-            ("7. L'angle de .......... de la route aide à compenser les effets de la force centrifuge.", ["Choisir...", "dévers", "braquage"], "dévers", "traj_t7"),
-            ("8. Si les pneus perdent leur adhérence latérale, le camion subit un ..........", ["Choisir...", "glissement", "renversement"], "glissement", "traj_t8"),
-            ("9. La ligne courbe dessinée en bleu représente la trajectoire des roues ..........", ["Choisir...", "avant", "arrière"], "avant", "traj_t9"),
+            ("9. La ligne courbe dessinée en rouge représente la trajectoire des roues ..........", ["Choisir...", "avant", "arrière"], "avant", "traj_t9"),
             ("10. Le franchissement des lignes noires de la chaussée constitue une .......... de route.", ["Choisir...", "sortie", "stabilité"], "sortie", "traj_t10")
         ]
 
@@ -315,14 +259,6 @@ def afficher_atelier_trajectoire_gabarit(verrouille=False):
                 st.write(enonce)
             with c_sel: 
                 st.selectbox("", choix, key=f"{cle}_traj_clean", disabled=verrouille, label_visibility="collapsed")
-
-
-
-
-
-
-
-
 
 
 
