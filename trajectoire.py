@@ -325,6 +325,9 @@ with tab3:
     evenement_detecte = "Aucun"
     index_interruption = pas - 1
 
+    # AJOUT DE LA VARIABLE MANQUANTE : Calcul de l'acceleration nominale liee aux curseurs
+    vitesse_ms = vitesse_kmh / 3.6
+    acceleration_laterale_g = (vitesse_ms**2) / (rayon_courbure * g)
     # =============================================================================
     # BOUCLE DE CALCUL GEOMETRIQUE INVERSEE (ROUGE PARFAIT / BLEU TRACTE DECALÉ)
     # =============================================================================
