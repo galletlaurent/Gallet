@@ -189,8 +189,8 @@ onglets = st.tabs([
     "Identification",
     "Permis B",
     "Permis B et caravane",
-    "Permis C",
-    "Permis C et caravane",
+    "Permis CE",
+    "Permis CE et caravane",
     "Permis C",
 ])
 
@@ -832,6 +832,15 @@ with tab5:
         empattement_tracteur = st.slider("Empattement du tracteur - L1 (m)", 3.0, 5.0, 3.8, step=0.1, key="emp_trac_semi")
 
     with col_p2:
+        # Configuration detailee de la repartition des masses lourdes
+        masse_tracteur = st.slider("Masse a vide du tracteur (t)", 5.0, 10.0, 7.5, step=0.5, key="m_trac_semi")
+        masse_semi_vide = st.slider("Masse a vide de la semi-remorque (t)", 4.0, 12.0, 6.0, step=0.5, key="m_semi_vide")
+        masse_charge_semi = st.slider("Masse du chargement (t)", 0.0, 30.0, 20.0, step=0.5, key="m_charge_semi")
+        
+        # Calcul de la masse totale de l'ensemble routier articule
+        masse_totale_semi = masse_tracteur + masse_semi_vide + masse_charge_semi
+        st.write(f"Masse totale de l'ensemble : {masse_totale_semi:.1f} tonnes")
+        
         distance_sellette = st.slider("Avance de la sellette / essieu AR (m)", 0.0, 1.0, 0.3, step=0.05, key="sellette_semi")
         longueur_semi = st.slider("Distance sellette - Essieux semi - L2 (m)", 6.0, 10.0, 7.5, step=0.1, key="long_semi")
 
@@ -848,7 +857,9 @@ with tab5:
     g = 9.81
     seuil_glissement_mu = 0.35
     largeur_camion = 2.5
-    hauteur_cg_semi = 1.8  
+    
+    # Centre de gravite adaptatif dependant du poids du chargement integre
+    hauteur_cg_semi = 1.1 + (masse_charge_semi / (masse_tracteur + masse_semi_vide)) * 1.2
 
     r_int_semi = rayon_courbure_semi - (largeur_voie / 2)
     r_ext_semi = rayon_courbure_semi + (largeur_voie / 2)
@@ -870,18 +881,18 @@ with tab5:
     theta_semi = np.zeros(pas_semi)
 
     # Initialisation stricte par index (Alignement horizontal initial)
-    x_trac_av[0] = -10.0
-    y_trac_av[0] = rayon_courbure_semi
+    x_trac_av = -10.0
+    y_trac_av = rayon_courbure_semi
     
-    x_trac_ar[0] = x_trac_av[0] - empattement_tracteur
-    y_trac_ar[0] = rayon_courbure_semi
-    theta_trac[0] = 0.0
+    x_trac_ar = x_trac_av - empattement_tracteur
+    y_trac_ar = rayon_courbure_semi
+    theta_trac = 0.0
 
     # Position de la sellette d'attelage
-    x_sellette_init = x_trac_ar[0] + distance_sellette
-    x_semi_ar[0] = x_sellette_init - longueur_semi
-    y_semi_ar[0] = rayon_courbure_semi
-    theta_semi[0] = 0.0
+    x_sellette_init = x_trac_ar + distance_sellette
+    x_semi_ar = x_sellette_init - longueur_semi
+    y_semi_ar = rayon_courbure_semi
+    theta_semi = 0.0
 
     evenement_detecte_semi = "Aucun"
     index_interruption_semi = pas_semi - 1
@@ -931,8 +942,8 @@ with tab5:
 
         # 4. Calcul de la dynamique des forces et verifications de securite
         if x_trac_av[i] >= 0.0 and theta_trac[i] < cap_cible_semi_rad:
-            val_P_semi = masse_totale * 1000 * g
-            val_Fc_semi = masse_totale * 1000 * (vitesse_ms_semi**2 / rayon_courbure_semi)
+            val_P_semi = masse_totale_semi * 1000 * g
+            val_Fc_semi = masse_totale_semi * 1000 * (vitesse_ms_semi**2 / rayon_courbure_semi)
             
             P_normale = val_P_semi * np.cos(beta_semi)
             Fc_normale = val_Fc_semi * np.sin(beta_semi)
@@ -977,8 +988,6 @@ with tab5:
         decalage_reel_semi = np.max(rayons_avant) - np.min(rayons_semi)
     else:
         decalage_reel_semi = 0.0
-
-
 
 
 
