@@ -484,14 +484,21 @@ with tab3:
     import time
     from matplotlib.patches import Polygon
 
+    points_animation = range(0, len(x_arr), max(1, len(x_arr) // 40)) if declencher_animation else [len(x_arr) - 1]
+    
+    import time
+    from matplotlib.patches import Polygon
+
     for k in points_animation:
-        # Trace de la trajectoire au sol (Matplotlib pendant l'animation pour afficher le rectangle mouvant)
+        # Tracé standard Matplotlib de la trajectoire au sol pendant la course
         fig_anim, ax_anim = plt.subplots(figsize=(7, 5))
         ax_anim.plot(x_route_int, y_route_int, color='black', linewidth=2)
         ax_anim.plot(x_route_ext, y_route_ext, color='black', linewidth=2)
+        
         if k > 0:
-            ax_anim.plot(x_av[:k], y_av[:k], color='#e74c3c', linewidth=2)
-            ax_anim.plot(x_arr[:k], y_arr[:k], color='#3498db', linewidth=2, linestyle='--')
+            # INTERACTION COULEUR : Rouge pour l'AVANT (Lisse), Bleu pour l'ARRIÈRE (Chasse)
+            ax_anim.plot(x_av[:k], y_av[:k], color='#e74c3c', linewidth=2, label="Trajectoire Roues AV")
+            ax_anim.plot(x_arr[:k], y_arr[:k], color='#3498db', linewidth=2, linestyle='--', label="Trajectoire Roues AR")
         
         cos_tk, sin_tk = np.cos(theta[k]), np.sin(theta[k])
         arriere_gauche = [x_arr[k] - 1.0 * cos_tk - (largeur_camion/2) * (-sin_tk), y_arr[k] - 1.0 * sin_tk - (largeur_camion/2) * cos_tk]
@@ -502,11 +509,12 @@ with tab3:
         ax_anim.axis("equal")
         ax_anim.set_xlim(-12, max(x_route_ext) + 5)
         ax_anim.set_ylim(-5, max(y_route_ext) + 5)
+        
         if declencher_animation:
             conteneur_graphique.pyplot(fig_anim)
         plt.close(fig_anim)
 
-        # Tracé du schema vectoriel des forces (Synchrone et dynamique)
+        # Tracé du schéma vectoriel des forces (Vue arrière synchrone)
         fig_forces, ax_f = plt.subplots(figsize=(5, 3.5))
         ax_f.plot([-2, 2], [-2 * np.sin(beta), 2 * np.sin(beta)], color='black', linewidth=3)
         
@@ -549,36 +557,30 @@ with tab3:
         zone_schema_forces.pyplot(fig_forces)
         plt.close(fig_forces)
 
-        # Actualisation textuelle des valeurs pendant la course
-        decalage_inst = np.abs(np.sqrt(x_av[k]**2 + (y_av[k] - y_centre_virage)**2) - np.sqrt(x_arr[k]**2 + (y_arr[k] - y_centre_virage)**2)) if x_arr[k] >= 0 else 0.0
+        # Actualisation des compteurs en direct
+        decalage_inst = np.abs(np.sqrt(x_av[k]**2 + (y_av[k] - y_centre_virage)**2) - np.sqrt(x_arr[k]**2 + (y_arr[k] - y_centre_virage)**2)) if x_av[k] >= empattement else 0.0
         zone_metrique_chasse.metric(label="Decalage de chasse instantane", value=f"{decalage_inst:.2f} m")
         zone_metrique_devers.metric(label="Angle de devers de la route", value=f"{angle_route_deg:.1f} degres")
-        zone_metrique_g.metric(label="Acceleration transversale", value=f"{(vitesse_ms**2)/(rayon_courbure*g) if x_arr[k]>=0 else 0.0:.2f} G")
+        zone_metrique_g.metric(label="Acceleration transversale", value=f"{(vitesse_ms**2)/(rayon_courbure*g) if x_av[k]>=empattement else 0.0:.2f} G")
         
         if declencher_animation:
             time.sleep(0.04)
 
-    # =============================================================================
-    # FIN DE LA BOUCLE D'ANIMATION : PASSAGE FORCE AU GRAPHIQUE PLOTLY INTERACTIF
-    # =============================================================================
+    # --- VERDICT ET AFFICHAGE INTERACTIF FINAL (PLOTLY ZOOMABLE) ---
     animation_terminee = True
-    
-    # On met a jour definitivement les indicateurs physiques de fin de parcours
     zone_metrique_chasse.metric(label="Decalage de chasse maximal", value=f"{decalage_reel:.2f} m")
     zone_metrique_devers.metric(label="Devers configure de la chaussee", value=f"{angle_route_deg:.1f} degres")
     zone_metrique_g.metric(label="Acceleration transversale maximale", value=f"{acceleration_laterale_g:.2f} G")
 
-    # Affichage specifique selon le statut final de la trajectoire
     if evenement_detecte == "Basculement":
         with col_graphe:
-            conteneur_graphique.empty()  # On nettoie la zone
+            conteneur_graphique.empty()
             try:
                 st.image("basculementCE.jpg", caption="Accident : Rupture d'equilibre statique (Renversement).")
             except Exception:
                 st.error("Fichier basculementCE.jpg introuvable.")
         zone_alerte.error("ACCIDENT DETECTE : Le camion a bascule sous l'effet de la force centrifuge.")
     else:
-        # CORRECTION CRITIQUE : On vide le conteneur Matplotlib pour injecter le Plotly zoomable
         with col_graphe:
             conteneur_graphique.empty()
             
@@ -587,22 +589,18 @@ with tab3:
             fig_plotly.add_trace(go.Scatter(x=x_route_int, y=y_route_int, name="Bord interieur", line=dict(color='black', width=2)))
             fig_plotly.add_trace(go.Scatter(x=x_route_ext, y=y_route_ext, name="Bord exterieur", line=dict(color='black', width=2)))
             
-        
-        # INVERSION : Ligne bleue pour l'AVANT, ligne rouge pour l'ARRIÈRE
-        fig_plotly.add_trace(go.Scatter(x=x_av, y=y_av, name="Trajectoire Roues ARRIERE", line=dict(color='#e74c3c', width=3, dash='dash')))
-        fig_plotly.add_trace(go.Scatter(x=x_arr, y=y_arr, name="Trajectoire Roues AVANT", line=dict(color='#3498db', width=3)))
-        
+            # ATTRIBUTION FINALE CONFORME : x_av = Rouge (Avant lisse), x_arr = Bleu (Arriere decale)
+            fig_plotly.add_trace(go.Scatter(x=x_av, y=y_av, name="Trajectoire Roues AVANT", line=dict(color='#e74c3c', width=3)))
+            fig_plotly.add_trace(go.Scatter(x=x_arr, y=y_arr, name="Trajectoire Roues ARRIERE", line=dict(color='#3498db', width=3, dash='dash')))
             
-        fig_plotly.update_layout(
-            xaxis=dict(scaleanchor="y", scaleratio=1),
-            hovermode="closest",
-            height=450,
-            title="Visualisation interactive (Zoomable pour mesures fines apres course)"
-        )
-        # On affiche le graphique interactif dans le conteneur principal
-        st.plotly_chart(fig_plotly, use_container_width=True)
+            fig_plotly.update_layout(
+                xaxis=dict(scaleanchor="y", scaleratio=1),
+                hovermode="closest",
+                height=450,
+                title="Visualisation interactive (Zoomable pour mesures fines)"
+            )
+            st.plotly_chart(fig_plotly, use_container_width=True)
 
-        # Affichage des bandeaux de notifications de fin de course
         if evenement_detecte == "Glissement":
             zone_alerte.warning("GLISSEMENT : L'effort lateral demande a surpasse l'adherence disponible (Derapage).")
         elif evenement_detecte == "Sortie de route":
@@ -610,7 +608,7 @@ with tab3:
         else:
             zone_alerte.success("TRAJECTOIRE REUSSITE : Le camion est reste stable dans sa voie.")
 
-    # Bloc final d'exportation du livrable eleve en bas de la colonne d'analyse
+    # Bloc d'exportation du livrable texte de fin d'atelier
     texte_rapport = f"RAPPORT D'ATELIER\nStatut final : {evenement_detecte}\nDecalage de chasse maximal : {decalage_reel:.2f} m\nDevers de la route : {angle_route_deg:.1f} degres\n"
     st.download_button(
         label="Exporter le rapport d'atelier (Fichier texte)",
@@ -619,7 +617,6 @@ with tab3:
         mime="text/plain",
         key="btn_download_c_final"
     )
-
 
 
 
