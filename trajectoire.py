@@ -14,6 +14,7 @@ import os
 import random
 import time
 import matplotlib.patches as patches
+from matplotlib.patches import Polygon
 import matplotlib.pyplot as plt
 import numpy as np
 import plotly.graph_objects as go
