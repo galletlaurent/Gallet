@@ -308,9 +308,10 @@ with tab3:
     x_arr, y_arr = np.zeros(pas), np.zeros(pas)
     theta = np.zeros(pas)
 
-    x_arr = -10.0
-    y_arr = rayon_courbure
-    theta = 0.0
+    # CORRECTION : Affectation à l'index 0 pour conserver les tableaux NumPy
+    x_arr[0] = -10.0
+    y_arr[0] = rayon_courbure
+    theta[0] = 0.0
 
     for i in range(1, pas):
         if x_arr[i-1] >= 0 and theta[i-1] < np.radians(angle_virage_deg):
