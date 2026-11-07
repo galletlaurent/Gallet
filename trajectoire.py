@@ -693,7 +693,7 @@ with tab1:
         with col_graphe:
             conteneur_graphique.empty()
             try:
-                st.image("basculementB.jpg", caption="Accident : Perte d'equilibre transversal (Renversement).")
+                st.image("basculementB.jpg", caption="Accident : Perte d'equilibre transversal (Renversement)."use_container_width=True)
             except Exception:
                 st.error("Fichier basculementB.jpg introuvable.")
         zone_alerte.error("ACCIDENT DETECTE : La voiture a bascule sous l'effet de la force centrifuge excessive.")
