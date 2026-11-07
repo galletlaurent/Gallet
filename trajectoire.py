@@ -335,15 +335,17 @@ with tab3:
     # BOUCLE DE CALCUL RESOLUTION PHYSIQUE AVEC SOUCHAGE ET BRAQUAGE PROGRESSIF
     # =============================================================================
     angle_volant_actuel = 0.0  
-    vitesse_braquage = 0.15    # Augmentation de la vitesse de reponse du volant pour un meilleur suivi
+    vitesse_braquage = 0.15    
     cap_cible_rad = np.radians(angle_virage_deg)
+    
+    # ANTICIPATION : Distance en metres avant X=0 ou le conducteur commence a tourner
+    distance_anticipation = -2.0 
 
     for i in range(1, pas):
-        # 1. Gestion des phases de braquage selon le cap reellement atteint
-        if x_arr[i-1] >= 0 and theta[i-1] < cap_cible_rad:
-            acc_lat_inst_g = (vitesse_ms**2) / (rayon_courbure * g)
+        # 1. Gestion des phases de braquage anticipé selon la position X et le cap
+        if x_arr[i-1] >= distance_anticipation and theta[i-1] < cap_cible_rad:
+            acc_lat_inst_g = (vitesse_ms**2) / (rayon_courbure * g) if x_arr[i-1] >= 0 else 0.0
             
-            # Le conducteur tourne le volant jusqu'a la valeur cible requise
             if angle_volant_actuel < angle_braquage_reel_rad:
                 angle_volant_actuel += vitesse_braquage * ds
             else:
@@ -352,11 +354,11 @@ with tab3:
             
             # Equations d'equilibre mecanique sur plan incline
             P_normale = masse_totale * 1000 * g * np.cos(beta)
-            Fc_normale = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) * np.sin(beta)
+            Fc_normale = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) * np.sin(beta) if x_arr[i-1] >= 0 else 0.0
             N = P_normale + Fc_normale
             
             P_tangente = masse_totale * 1000 * g * np.sin(beta)
-            Fc_tangente = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) * np.cos(beta)
+            Fc_tangente = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) * np.cos(beta) if x_arr[i-1] >= 0 else 0.0
             F_frottement_requise = Fc_tangente - P_tangente
             F_frottement_max = seuil_glissement_mu * N
             
@@ -373,27 +375,25 @@ with tab3:
                 
         else:
             acc_lat_inst_g = 0.0
-            # Redressement rapide du volant une fois le virage geometrique complete
             if angle_volant_actuel > 0.0:
                 angle_volant_actuel -= vitesse_braquage * ds
             else:
                 angle_volant_actuel = 0.0
             alpha = angle_volant_actuel
 
-        # 2. Deplacement cinematique avec verrouillage de trajectoire en sortie
-        if x_arr[i-1] >= 0 and theta[i-1] < cap_cible_rad:
+        # 2. Deplacement cinematique applique continu
+        if x_arr[i-1] >= distance_anticipation and theta[i-1] < cap_cible_rad:
             x_arr[i] = x_arr[i-1] + ds * np.cos(theta[i-1])
             y_arr[i] = y_arr[i-1] + ds * np.sin(theta[i-1])
             theta[i] = theta[i-1] + (ds / empattement) * np.tan(alpha - angle_derive_rad)
             
         elif theta[i-1] >= cap_cible_rad:
-            # CORRECTION : Verrouillage strict du cap pour forcer la ligne droite de sortie
             x_arr[i] = x_arr[i-1] + ds * np.cos(cap_cible_rad)
             y_arr[i] = y_arr[i-1] + ds * np.sin(cap_cible_rad)
             theta[i] = cap_cible_rad
             
         else:
-            # Approche initiale en ligne droite parfaite avant X = 0
+            # Approche initiale en ligne droite parfaite avant l'anticipation
             x_arr[i] = x_arr[i-1] + ds
             y_arr[i] = rayon_courbure
             theta[i] = 0.0
@@ -406,7 +406,7 @@ with tab3:
             r_ar = np.sqrt(x_arr[i]**2 + (y_arr[i] - y_centre_virage)**2)
             if (r_av > r_ext or r_av < r_int or r_ar > r_ext or r_ar < r_int) and evenement_detecte == "Aucun":
                 evenement_detecte = "Sortie de route"
-    # Redimensionnement applique selon le point d'arret calcule
+
     # Tronquage des vecteurs au point d'arret reel
     x_arr = x_arr[:index_interruption+1]
     y_arr = y_arr[:index_interruption+1]
