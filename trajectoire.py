@@ -337,14 +337,23 @@ with tab3:
     angle_volant_actuel = 0.0  
     vitesse_braquage = 0.15    
     cap_cible_rad = np.radians(angle_virage_deg)
-    
-    # ANTICIPATION : Distance en metres avant X=0 ou le conducteur commence a tourner
     distance_anticipation = -2.0 
 
+    # Pour ce modele, on initialise la position de l'essieu avant (x_av, y_av)
+    # et l'essieu arriere (x_arr, y_arr) est deduit en restant en retrait de la longueur de l'empattement
+    x_av[0] = -10.0 + empattement
+    y_av[0] = rayon_courbure
+    x_arr[0] = -10.0
+    y_arr[0] = rayon_courbure
+    theta[0] = 0.0
+
     for i in range(1, pas):
-        # 1. Gestion des phases de braquage anticipé selon la position X et le cap
-        if x_arr[i-1] >= distance_anticipation and theta[i-1] < cap_cible_rad:
-            acc_lat_inst_g = (vitesse_ms**2) / (rayon_courbure * g) if x_arr[i-1] >= 0 else 0.0
+        # Position X de reference basee sur l'essieu avant
+        x_ref = x_av[i-1] - empattement
+
+        # 1. Gestion des phases de braquage anticipé
+        if x_ref >= distance_anticipation and theta[i-1] < cap_cible_rad:
+            acc_lat_inst_g = (vitesse_ms**2) / (rayon_courbure * g) if x_ref >= 0 else 0.0
             
             if angle_volant_actuel < angle_braquage_reel_rad:
                 angle_volant_actuel += vitesse_braquage * ds
@@ -354,11 +363,11 @@ with tab3:
             
             # Equations d'equilibre mecanique sur plan incline
             P_normale = masse_totale * 1000 * g * np.cos(beta)
-            Fc_normale = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) * np.sin(beta) if x_arr[i-1] >= 0 else 0.0
+            Fc_normale = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) * np.sin(beta) if x_ref >= 0 else 0.0
             N = P_normale + Fc_normale
             
             P_tangente = masse_totale * 1000 * g * np.sin(beta)
-            Fc_tangente = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) * np.cos(beta) if x_arr[i-1] >= 0 else 0.0
+            Fc_tangente = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) * np.cos(beta) if x_ref >= 0 else 0.0
             F_frottement_requise = Fc_tangente - P_tangente
             F_frottement_max = seuil_glissement_mu * N
             
@@ -381,28 +390,39 @@ with tab3:
                 angle_volant_actuel = 0.0
             alpha = angle_volant_actuel
 
-        # 2. Deplacement cinematique applique continu
-        if x_arr[i-1] >= distance_anticipation and theta[i-1] < cap_cible_rad:
-            x_arr[i] = x_arr[i-1] + ds * np.cos(theta[i-1])
-            y_arr[i] = y_arr[i-1] + ds * np.sin(theta[i-1])
-            theta[i] = theta[i-1] + (ds / empattement) * np.tan(alpha - angle_derive_rad)
+        # 2. Deplacement cinematique applique depuis l'avant
+        if x_ref >= distance_anticipation and theta[i-1] < cap_cible_rad:
+            # L'essieu avant suit le cap de la route + correction de dérive
+            theta[i] = theta[i-1] + (ds / empattement) * np.sin(alpha - angle_derive_rad)
+            
+            x_av[i] = x_av[i-1] + ds * np.cos(theta[i] + (alpha - angle_derive_rad))
+            y_av[i] = y_av[i-1] + ds * np.sin(theta[i] + (alpha - angle_derive_rad))
+            
+            # L'essieu arriere subit la contrainte et est traine par l'avant
+            x_arr[i] = x_av[i] - empattement * np.cos(theta[i])
+            y_arr[i] = y_av[i] - empattement * np.sin(theta[i])
             
         elif theta[i-1] >= cap_cible_rad:
-            x_arr[i] = x_arr[i-1] + ds * np.cos(cap_cible_rad)
-            y_arr[i] = y_arr[i-1] + ds * np.sin(cap_cible_rad)
+            # Sortie de virage rectiligne verrouillee pour l'avant
             theta[i] = cap_cible_rad
+            x_av[i] = x_av[i-1] + ds * np.cos(cap_cible_rad)
+            y_av[i] = y_av[i-1] + ds * np.sin(cap_cible_rad)
+            
+            x_arr[i] = x_av[i] - empattement * np.cos(cap_cible_rad)
+            y_arr[i] = y_av[i] - empattement * np.sin(cap_cible_rad)
             
         else:
-            # Approche initiale en ligne droite parfaite avant l'anticipation
-            x_arr[i] = x_arr[i-1] + ds
-            y_arr[i] = rayon_courbure
+            # Approche initiale en ligne droite parfaite alignee
             theta[i] = 0.0
+            x_av[i] = x_av[i-1] + ds
+            y_av[i] = rayon_courbure
+            
+            x_arr[i] = x_av[i] - empattement
+            y_arr[i] = rayon_courbure
 
         # 3. Verification geometrique du franchissement de voie
-        x_av_inst = x_arr[i] + empattement * np.cos(theta[i])
-        y_av_inst = y_arr[i] + empattement * np.sin(theta[i])
-        if x_arr[i] >= 0:
-            r_av = np.sqrt(x_av_inst**2 + (y_av_inst - y_centre_virage)**2)
+        if x_ref >= 0:
+            r_av = np.sqrt(x_av[i]**2 + (y_av[i] - y_centre_virage)**2)
             r_ar = np.sqrt(x_arr[i]**2 + (y_arr[i] - y_centre_virage)**2)
             if (r_av > r_ext or r_av < r_int or r_ar > r_ext or r_ar < r_int) and evenement_detecte == "Aucun":
                 evenement_detecte = "Sortie de route"
