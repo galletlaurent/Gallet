@@ -289,8 +289,9 @@ with tab3:
     with col_param3:
         rayon_courbure = st.slider("Rayon de la route (m)", 15, 60, 25, key="rc_c")
         angle_virage_deg = st.slider("Angle du virage (degres)", 45, 135, 90, key="av_c")
-        # Ajout direct ici au centre de l'ecran
-        angle_debord_initial_deg = st.slider("Angle de debord initial du train (degres)", 0, 20, 5, key="debord_init_c")
+        
+        # CORRECTION SYNCHRONISATION : On utilise la cle unique "debord_init_c_final"
+        angle_debord_initial_deg = st.slider("Angle de debord initial du train (degres)", 0, 20, 5, key="debord_init_c_final")
         largeur_voie = 3.5
 
     # Calculs Mecaniques et Dynamiques
@@ -315,30 +316,23 @@ with tab3:
     # Configuration geometrique et devers de la route
     y_centre_virage = 2 * rayon_courbure
     
-    # Parametres physiques de la route (Plages et cles uniques st.sidebar)
-    angle_route_deg = st.sidebar.slider("Angle de devers de la route (degres)", 0, 15, 4, key="devers_c_final")
+    # Prise en compte du curseur synchronise
     beta = np.radians(angle_route_deg)
-    
-    # Ajout explicite du curseur d'angle de debord initial dans la barre
-    angle_debord_initial_deg = st.sidebar.slider("Angle de debord initial du train (degres)", 0, 20, 5, key="debord_init_c_final")
     beta_debord_init = np.radians(angle_debord_initial_deg)
     
     g = 9.81
     seuil_glissement_mu = 0.35
     hauteur_cg = 1.1 + (masse_charge / masse_totale) * 0.9
-    largeur_voie = 3.5
     largeur_camion = 2.5
 
     r_int = rayon_courbure - (largeur_voie / 2)
     r_ext = rayon_courbure + (largeur_voie / 2)
 
-    # Creation des structures de tableaux fixes
     x_arr = np.zeros(pas)
     y_arr = np.zeros(pas)
     theta = np.zeros(pas)
-    angle_debord = np.zeros(pas)  # Redevient un tableau propre pour stocker les variations
+    angle_debord = np.zeros(pas)
 
-    # Initialisation stricte par index pour preserver les matrices numpy
     x_arr[0] = -10.0
     y_arr[0] = rayon_courbure
     theta[0] = 0.0
@@ -347,14 +341,14 @@ with tab3:
     evenement_detecte = "Aucun"
     index_interruption = pas - 1
 
-    # Simulation pas a pas avec les lois d'equilibre sur plan incline
-    # Simulation pas a pas avec calcul geometrique et dynamique de l'angle de debord
     for i in range(1, pas):
         if x_arr[i-1] >= 0 and theta[i-1] < np.radians(angle_virage_deg):
             acc_lat_inst_g = (vitesse_ms**2) / (rayon_courbure * g)
-            alpha = angle_braquage_reel_rad
             
-            # Equations d'equilibre mecanique sur plan incline
+            # INTEGRATION REELLE : L'angle de debord initial modifie l'angle effectif des roues arrière
+            alpha = angle_braquage_reel_rad + beta_debord_init
+            
+            # Équations mecaniques sur plan incliné
             P_normale = masse_totale * 1000 * g * np.cos(beta)
             Fc_normale = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) * np.sin(beta)
             N = P_normale + Fc_normale
@@ -365,7 +359,7 @@ with tab3:
             F_frottement_requise = Fc_tangente - P_tangente
             F_frottement_max = seuil_glissement_mu * N
             
-            # 1. Verification du critere de renversement (Moments)
+            # Verifications de securite
             Moment_renversement = Fc_tangente * hauteur_cg
             Moment_stabilisateur = N * (largeur_camion / 2) + P_tangente * hauteur_cg
             
@@ -373,37 +367,30 @@ with tab3:
                 evenement_detecte = "Basculement"
                 index_interruption = i - 1
                 break
-                
-            # 2. Verification du critere de glissement des pneumatiques
             if np.abs(F_frottement_requise) >= F_frottement_max and evenement_detecte == "Aucun":
                 evenement_detecte = "Glissement"
         else:
             acc_lat_inst_g = 0.0
             alpha = 0.0
 
-        # Evolution cinematique differentielle
         if x_arr[i-1] >= 0 and theta[i-1] < np.radians(angle_virage_deg):
             x_arr[i] = x_arr[i-1] + ds * np.cos(theta[i-1])
             y_arr[i] = y_arr[i-1] + ds * np.sin(theta[i-1])
             theta[i] = theta[i-1] + (ds / empattement) * np.tan(alpha - angle_derive_rad)
             
-            # CALCUL DYNAMIQUE REEL : Denivelation angulaire geometrique instantanee
-            # Base sur le cap theta actuel et l'effet cinematique d'Ackermann evolutif
             changement_cap_deg = np.degrees(theta[i] - theta[i-1])
             angle_debord[i] = angle_debord[i-1] + (changement_cap_deg * (empattement / rayon_courbure))
-            
         elif theta[i-1] >= np.radians(angle_virage_deg):
             x_arr[i] = x_arr[i-1] + ds * np.cos(np.radians(angle_virage_deg))
             y_arr[i] = y_arr[i-1] + ds * np.sin(np.radians(angle_virage_deg))
             theta[i] = np.radians(angle_virage_deg)
-            # Retours progressifs vers l'alignement en ligne droite de sortie
             angle_debord[i] = max(0.0, angle_debord[i-1] - 0.5)
         else:
             x_arr[i] = x_arr[i-1] + ds
             y_arr[i] = rayon_courbure
             theta[i] = 0.0
             angle_debord[i] = float(angle_debord_initial_deg)
-
+            
         # 3. Verification geometrique du franchissement de voie
         x_av_inst = x_arr[i] + empattement * np.cos(theta[i])
         y_av_inst = y_arr[i] + empattement * np.sin(theta[i])
