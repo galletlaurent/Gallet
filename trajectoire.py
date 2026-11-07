@@ -1252,12 +1252,15 @@ with tab2:
         if evenement_detecte_cara == "Glissement":
             zone_alerte.warning("GLISSEMENT : L'ensemble a surpasse l'adherence disponible (Mise en lacet / Derapage).")
         elif evenement_detecte_cara == "Sortie de route":
-            zone_alerte.warning("SORTIE DE VOIE : La caravane a chevauche le marquage au sol.")
+            zone_alerte.warning("SORTIE DE VOIE : La caravane a chevauché le marquage au sol.")
         else:
-            zone_alerte.success("TRAJECTOIRE REUSSITE : L'attelage est reste stable dans sa voie.")
+            zone_alerte.success("TRAJECTOIRE REUSSITE : L'attelage est resté stable dans sa voie.")
     if "suite_verrouille_tab2_cara" not in st.session_state:
         st.session_state.suite_verrouille_tab2_cara = False
     verrou_at2_cara = st.session_state.suite_verrouille_tab2_cara
+
+    # CORRECTION : Insertion de l'appel manquant pour afficher le Quiz et le Texte à trous
+    afficher_atelier_permis_b_caravane(verrouille=verrou_at2_cara)
 
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 2")
