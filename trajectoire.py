@@ -334,14 +334,16 @@ with tab3:
     # =============================================================================
     # BOUCLE DE CALCUL RESOLUTION PHYSIQUE AVEC SOUCHAGE ET BRAQUAGE PROGRESSIF
     # =============================================================================
-    angle_volant_actuel = 0.0  # Initialisation de l'angle de braquage reel instantane
-    vitesse_braquage = 0.05    # Vitesse de rotation des roues par metre parcouru (lissage)
+    angle_volant_actuel = 0.0  
+    vitesse_braquage = 0.15    # Augmentation de la vitesse de reponse du volant pour un meilleur suivi
+    cap_cible_rad = np.radians(angle_virage_deg)
 
     for i in range(1, pas):
-        # 1. Gestion progressive du volant du conducteur
-        if x_arr[i-1] >= 0 and theta[i-1] < np.radians(angle_virage_deg):
+        # 1. Gestion des phases de braquage selon le cap reellement atteint
+        if x_arr[i-1] >= 0 and theta[i-1] < cap_cible_rad:
             acc_lat_inst_g = (vitesse_ms**2) / (rayon_courbure * g)
-            # Le conducteur tourne progressivement le volant jusqu'a la valeur cible
+            
+            # Le conducteur tourne le volant jusqu'a la valeur cible requise
             if angle_volant_actuel < angle_braquage_reel_rad:
                 angle_volant_actuel += vitesse_braquage * ds
             else:
@@ -368,32 +370,35 @@ with tab3:
                 break
             if np.abs(F_frottement_requise) >= F_frottement_max and evenement_detecte == "Aucun":
                 evenement_detecte = "Glissement"
+                
         else:
             acc_lat_inst_g = 0.0
-            # Redressement progressif du volant en sortie de virage
+            # Redressement rapide du volant une fois le virage geometrique complete
             if angle_volant_actuel > 0.0:
                 angle_volant_actuel -= vitesse_braquage * ds
             else:
                 angle_volant_actuel = 0.0
             alpha = angle_volant_actuel
 
-        # 2. Deplacement cinematique applique continu
-        if x_arr[i-1] >= 0 and theta[i-1] < np.radians(angle_virage_deg):
+        # 2. Deplacement cinematique avec verrouillage de trajectoire en sortie
+        if x_arr[i-1] >= 0 and theta[i-1] < cap_cible_rad:
             x_arr[i] = x_arr[i-1] + ds * np.cos(theta[i-1])
             y_arr[i] = y_arr[i-1] + ds * np.sin(theta[i-1])
             theta[i] = theta[i-1] + (ds / empattement) * np.tan(alpha - angle_derive_rad)
-        elif theta[i-1] >= np.radians(angle_virage_deg):
-            # Sortie de virage : la transition se fait desormais selon le cap de fin accumule
-            x_arr[i] = x_arr[i-1] + ds * np.cos(theta[i-1])
-            y_arr[i] = y_arr[i-1] + ds * np.sin(theta[i-1])
-            theta[i] = theta[i-1] + (ds / empattement) * np.tan(alpha)
+            
+        elif theta[i-1] >= cap_cible_rad:
+            # CORRECTION : Verrouillage strict du cap pour forcer la ligne droite de sortie
+            x_arr[i] = x_arr[i-1] + ds * np.cos(cap_cible_rad)
+            y_arr[i] = y_arr[i-1] + ds * np.sin(cap_cible_rad)
+            theta[i] = cap_cible_rad
+            
         else:
-            # Approche initiale en ligne droite parfaite
+            # Approche initiale en ligne droite parfaite avant X = 0
             x_arr[i] = x_arr[i-1] + ds
             y_arr[i] = rayon_courbure
             theta[i] = 0.0
 
-        # 3. Condition geometrique de sortie de route
+        # 3. Verification geometrique du franchissement de voie
         x_av_inst = x_arr[i] + empattement * np.cos(theta[i])
         y_av_inst = y_arr[i] + empattement * np.sin(theta[i])
         if x_arr[i] >= 0:
@@ -401,7 +406,6 @@ with tab3:
             r_ar = np.sqrt(x_arr[i]**2 + (y_arr[i] - y_centre_virage)**2)
             if (r_av > r_ext or r_av < r_int or r_ar > r_ext or r_ar < r_int) and evenement_detecte == "Aucun":
                 evenement_detecte = "Sortie de route"
-
     # Redimensionnement applique selon le point d'arret calcule
     # Tronquage des vecteurs au point d'arret reel
     x_arr = x_arr[:index_interruption+1]
