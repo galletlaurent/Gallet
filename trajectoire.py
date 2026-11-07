@@ -202,6 +202,131 @@ tab4 = onglets[4]
 tab5 = onglets[5]
 
 
+def afficher_atelier_trajectoire_gabarit(verrouille=False):
+    """Affiche le Quiz et le Texte à trous côte à côte en bas de la page pour l'atelier trajectoire."""
+    import random
+
+    st.subheader("Atelier Interactif : Cinématique et Dynamique du Poids Lourd")
+
+    questions_trajectoire_sources = [
+        {"id": "qt1", "q": "Lors d'un virage, quelle ligne décrit une trajectoire circulaire parfaite ?", "options": ["Les roues avant (ligne bleue)", "Les roues arrière (ligne rouge)", "Le centre de gravité uniquement"], "rep": "Les roues avant (ligne bleue)"},
+        {"id": "qt2", "q": "Quel phénomène physique force les roues arrière à couper le virage vers l'intérieur ?", "options": ["Le décalage de chasse géométrique", "La force centrifuge", "Le devers de la route"], "rep": "Le décalage de chasse géométrique"},
+        {"id": "qt3", "q": "Où se situe le point de décrochage (amorce de la courbe) pour les roues arrière ?", "options": ["Décalé en X après la ligne de rupture", "Pile sur la ligne verticale 0", "Avant la ligne de rupture"], "rep": "Décalé en X après la ligne de rupture"},
+        {"id": "qt4", "q": "Quelle force pousse le camion vers l'extérieur du virage perpendiculairement à sa trajectoire ?", "options": ["La force centrifuge", "La réaction normale", "Le poids du chargement"], "rep": "La force centrifuge"},
+        {"id": "qt5", "q": "Comment appelle-t-on l'inclinaison de la chaussée vers l'intérieur d'un virage ?", "options": ["Le dévers de la route", "L'angle d'Ackermann", "La raideur de dérive"], "rep": "Le dévers de la route"},
+        {"id": "qt6", "q": "Quel est l'effet d'un dévers positif sur le risque de basculement du camion ?", "options": ["Il augmente la stabilité", "Il provoque un glissement immédiat", "Il amplifie la force centrifuge"], "rep": "Il augmente la stabilité"},
+        {"id": "qt7", "q": "Si la vitesse du véhicule double dans un même virage, par combien est multipliée la force centrifuge ?", "options": ["Par quatre", "Par deux", "Elle reste identique"], "rep": "Par quatre"},
+        {"id": "qt8", "q": "Quelle force de contact parallèle au sol empêche les pneumatiques de déraper ?", "options": ["La force de frottement", "La réaction normale", "Le poids total"], "rep": "La force de frottement"},
+        {"id": "qt9", "q": "Quelle est l'unité de mesure de l'accélération transversale subie par le véhicule ?", "options": ["Le G (fraction de la gravité)", "Le Newton (N)", "Le Pascal (Pa)"], "rep": "Le G (fraction de la gravité)"},
+        {"id": "qt10", "q": "Si le moment de renversement dépasse le moment stabilisateur, que subit le véhicule ?", "options": ["Un basculement", "Un glissement", "Une trajectoire rectiligne"], "rep": "Un basculement"}
+    ]
+
+    if "ordre_quiz_trajectoire_aleatoire" not in st.session_state:
+        random.shuffle(questions_trajectoire_sources)
+        st.session_state.ordre_quiz_trajectoire_aleatoire = questions_trajectoire_sources
+
+    if "champs_trajectoire_clean" not in st.session_state:
+        st.session_state.champs_trajectoire_clean = [
+            ("1. Les roues avant décrivent une courbe guidée tandis que les roues arrière subissent une ..........", ["Choisir...", "chasse", "dérive"], "chasse", "traj_t1"),
+            ("2. L'essieu arrière reste droit au départ et ne commence à tourner qu'avec un décalage en ..........", ["Choisir...", "X", "Y"], "X", "traj_t2"),
+            ("3. En fin de virage, la stabilisation rectiligne de l'essieu arrière s'effectue avec un décalage en ..........", ["Choisir...", "Y", "X"], "Y", "traj_t3"),
+            ("4. La force centrifuge est directement proportionnelle au carré de la .......... du véhicule.", ["Choisir...", "vitesse", "masse"], "vitesse", "traj_t4"),
+            ("5. La force perpendiculaire à la chaussée inclinée s'appelle la réaction ..........", ["Choisir...", "normale", "tangentielle"], "normale", "traj_t5"),
+            ("6. Plus le centre de gravité du chargement est haut, plus le risque de .......... est élevé.", ["Choisir...", "basculement", "glissement"], "basculement", "traj_t6"),
+            ("7. L'angle de .......... de la route aide à compenser les effets de la force centrifuge.", ["Choisir...", "dévers", "braquage"], "dévers", "traj_t7"),
+            ("8. Si les pneus perdent leur adhérence latérale, le camion subit un ..........", ["Choisir...", "glissement", "renversement"], "glissement", "traj_t8"),
+            ("9. La ligne courbe dessinée en bleu représente la trajectoire des roues ..........", ["Choisir...", "avant", "arrière"], "avant", "traj_t9"),
+            ("10. Le franchissement des lignes noires de la chaussée constitue une .......... de route.", ["Choisir...", "sortie", "stabilité"], "sortie", "traj_t10")
+        ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_trajectoire_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"traj_at3_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_trajectoire_clean:
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_traj_clean", disabled=verrouille, label_visibility="collapsed")def afficher_atelier_trajectoire_gabarit(verrouille=False):
+    """Affiche le Quiz et le Texte à trous côte à côte en bas de la page pour l'atelier trajectoire."""
+    import random
+
+    st.subheader("Atelier Interactif : Cinématique et Dynamique du Poids Lourd")
+
+    questions_trajectoire_sources = [
+        {"id": "qt1", "q": "Lors d'un virage, quelle ligne décrit une trajectoire circulaire parfaite ?", "options": ["Les roues avant (ligne bleue)", "Les roues arrière (ligne rouge)", "Le centre de gravité uniquement"], "rep": "Les roues avant (ligne bleue)"},
+        {"id": "qt2", "q": "Quel phénomène physique force les roues arrière à couper le virage vers l'intérieur ?", "options": ["Le décalage de chasse géométrique", "La force centrifuge", "Le devers de la route"], "rep": "Le décalage de chasse géométrique"},
+        {"id": "qt3", "q": "Où se situe le point de décrochage (amorce de la courbe) pour les roues arrière ?", "options": ["Décalé en X après la ligne de rupture", "Pile sur la ligne verticale 0", "Avant la ligne de rupture"], "rep": "Décalé en X après la ligne de rupture"},
+        {"id": "qt4", "q": "Quelle force pousse le camion vers l'extérieur du virage perpendiculairement à sa trajectoire ?", "options": ["La force centrifuge", "La réaction normale", "Le poids du chargement"], "rep": "La force centrifuge"},
+        {"id": "qt5", "q": "Comment appelle-t-on l'inclinaison de la chaussée vers l'intérieur d'un virage ?", "options": ["Le dévers de la route", "L'angle d'Ackermann", "La raideur de dérive"], "rep": "Le dévers de la route"},
+        {"id": "qt6", "q": "Quel est l'effet d'un dévers positif sur le risque de basculement du camion ?", "options": ["Il augmente la stabilité", "Il provoque un glissement immédiat", "Il amplifie la force centrifuge"], "rep": "Il augmente la stabilité"},
+        {"id": "qt7", "q": "Si la vitesse du véhicule double dans un même virage, par combien est multipliée la force centrifuge ?", "options": ["Par quatre", "Par deux", "Elle reste identique"], "rep": "Par quatre"},
+        {"id": "qt8", "q": "Quelle force de contact parallèle au sol empêche les pneumatiques de déraper ?", "options": ["La force de frottement", "La réaction normale", "Le poids total"], "rep": "La force de frottement"},
+        {"id": "qt9", "q": "Quelle est l'unité de mesure de l'accélération transversale subie par le véhicule ?", "options": ["Le G (fraction de la gravité)", "Le Newton (N)", "Le Pascal (Pa)"], "rep": "Le G (fraction de la gravité)"},
+        {"id": "qt10", "q": "Si le moment de renversement dépasse le moment stabilisateur, que subit le véhicule ?", "options": ["Un basculement", "Un glissement", "Une trajectoire rectiligne"], "rep": "Un basculement"}
+    ]
+
+    if "ordre_quiz_trajectoire_aleatoire" not in st.session_state:
+        random.shuffle(questions_trajectoire_sources)
+        st.session_state.ordre_quiz_trajectoire_aleatoire = questions_trajectoire_sources
+
+    if "champs_trajectoire_clean" not in st.session_state:
+        st.session_state.champs_trajectoire_clean = [
+            ("1. Les roues avant décrivent une courbe guidée tandis que les roues arrière subissent une ..........", ["Choisir...", "chasse", "dérive"], "chasse", "traj_t1"),
+            ("2. L'essieu arrière reste droit au départ et ne commence à tourner qu'avec un décalage en ..........", ["Choisir...", "X", "Y"], "X", "traj_t2"),
+            ("3. En fin de virage, la stabilisation rectiligne de l'essieu arrière s'effectue avec un décalage en ..........", ["Choisir...", "Y", "X"], "Y", "traj_t3"),
+            ("4. La force centrifuge est directement proportionnelle au carré de la .......... du véhicule.", ["Choisir...", "vitesse", "masse"], "vitesse", "traj_t4"),
+            ("5. La force perpendiculaire à la chaussée inclinée s'appelle la réaction ..........", ["Choisir...", "normale", "tangentielle"], "normale", "traj_t5"),
+            ("6. Plus le centre de gravité du chargement est haut, plus le risque de .......... est élevé.", ["Choisir...", "basculement", "glissement"], "basculement", "traj_t6"),
+            ("7. L'angle de .......... de la route aide à compenser les effets de la force centrifuge.", ["Choisir...", "dévers", "braquage"], "dévers", "traj_t7"),
+            ("8. Si les pneus perdent leur adhérence latérale, le camion subit un ..........", ["Choisir...", "glissement", "renversement"], "glissement", "traj_t8"),
+            ("9. La ligne courbe dessinée en bleu représente la trajectoire des roues ..........", ["Choisir...", "avant", "arrière"], "avant", "traj_t9"),
+            ("10. Le franchissement des lignes noires de la chaussée constitue une .......... de route.", ["Choisir...", "sortie", "stabilité"], "sortie", "traj_t10")
+        ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_trajectoire_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"traj_at3_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_trajectoire_clean:
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_traj_clean", disabled=verrouille, label_visibility="collapsed")
+
+
+
+
+
+
+
+
+
+
+
+
 with tab0:
     st.subheader("Identification de l'élève")
     st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
@@ -576,16 +701,176 @@ with tab3:
         else:
             zone_alerte.success("TRAJECTOIRE REUSSITE : Le camion est reste stable dans sa voie.")
 
-        # Bloc final d'exportation du livrable texte en bas de la colonne d'analyse
-        texte_rapport = f"RAPPORT D'ATELIER\nStatut final : {evenement_detecte}\nDecalage de chasse maximal : {decalage_reel:.2f} m\nDevers de la route : {angle_route_deg:.1f} degres\n"
-        st.download_button(
-            label="Exporter le rapport d'atelier (Fichier texte)",
-            data=texte_rapport,
-            file_name=preparer_nom_fichier(nom_onglet="Permis_C"),
-            mime="text/plain",
-            key="btn_download_c_final"
-        )
+    if "suite_verrouille_tab3_trajectoire" not in st.session_state:
+        st.session_state.suite_verrouille_tab3_trajectoire = False
+    verrou_at3 = st.session_state.suite_verrouille_tab3_trajectoire
 
+    # Rendu des questionnaires d'évaluation de l'Atelier 3
+    afficher_atelier_trajectoire_gabarit(verrouille=verrou_at3)
+    
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 3")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat3 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Cinématique et Dynamique sur la trajectoire des essieux.",
+        key="check_certif_traj3_final_net",
+        disabled=verrou_at3,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_suite3_traj_official", use_container_width=True, disabled=verrou_at3):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_stat3: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction automatisée du Quiz par parcours sécurisé de clés
+            score_q3 = 0.0
+            if "ordre_quiz_trajectoire_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_trajectoire_sources:
+                    saisie = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"traj_at3_final_g_{q_item['id']}_"):
+                            saisie = st.session_state[k]
+                            break
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q3 += 1.0
+
+            # 2. Correction automatisée du Texte à trous par parcours sécurisé de clés
+            score_t3 = 0.0
+            if "champs_trajectoire_clean" in st.session_state:
+                for ligne in st.session_state.champs_trajectoire_clean:
+                    cle_variable = ligne[-1]
+                    attendu_texte = ligne[2]
+                    saisie_texte = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"{cle_variable}_traj_clean_"):
+                            saisie_texte = st.session_state[k]
+                            break
+                    if str(saisie_texte).strip() == str(attendu_texte).strip(): 
+                        score_t3 += 1.0
+
+            st.session_state.score_suite3_traj_p1 = round(float(score_q3), 1)
+            st.session_state.score_suite3_traj_p2 = round(float(score_t3), 1)
+            st.session_state.score_final_suite3_traj = round(float(score_q3 + score_t3), 1)
+            st.session_state.suite_verrouille_tab3_trajectoire = True
+            st.rerun()
+
+    # -------------------------------------------------------------------------
+    # PARTIE 4 : EXPORTATION DU RAPPORT INDIVIDUEL HTML SCELLÉ
+    # -------------------------------------------------------------------------
+    if st.session_state.get("suite_verrouille_tab3_trajectoire", False):
+        from datetime import datetime
+        scr1_t3 = st.session_state.get("score_suite3_traj_p1", 0.0)
+        scr2_t3 = st.session_state.get("score_suite3_traj_p2", 0.0)
+        tot_s_t3 = st.session_state.get("score_final_suite3_traj", 0.0)
+        timestamp_suite3 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER CINÉMATIQUE SCELLÉ | Note de session : {tot_s_t3:.1f} / 20")
+
+        html_export_traj3 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Trajectoire Camion - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Physique-Cinématique</h1>
+                <p>Atelier 3 : Modélisation et Étude des Trajectoires et Gabarits d'Inscription en Courbe</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_suite3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t3:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t3:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse de Cours : <strong>{scr2_t3:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 3 : <strong>{tot_s_t3:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_trajectoire_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_trajectoire_aleatoire, 1):
+                saisie = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"traj_at3_final_g_{q_item['id']}_"):
+                        saisie = st.session_state[k]
+                        break
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_traj3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_traj3 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_trajectoire_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_trajectoire_clean, 1):
+                cle_variable = ligne[-1]
+                attendu_texte = ligne[2]
+                phrase_enonce = ligne[0]
+                saisie_texte = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"{cle_variable}_traj_clean_"):
+                        saisie_texte = st.session_state[k]
+                        break
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_traj3 += f"<tr><td>{num}</td><td>{phrase_enonce}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_traj3 += f"""
+                </tbody>
+            </table>
+            
+            <div class="sub-title">DONNÉES COMPLÉMENTAIRES D'ATELIER TECHNIQUE</div>
+            <p style="font-size: 13px; color: #64748b;">
+                Valeur maximale enregistrée pour le décalage de chasse : <strong>{st.session_state.get('decalage_reel', 0.0):.2f} m</strong><br>
+                Angle de dévers configuré pour la chaussée : <strong>{st.session_state.get('angle_route_deg', 0.0):.1f} degrés</strong>
+            </p>
+        </body>
+        </html>
+        """
+
+        st.download_button(
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL SCELLÉ (FORMAT HTML)",
+            data=html_export_traj3,
+            file_name=f"Rapport_Trajectoire_{n_eleve}_{p_eleve}.html",
+            mime="text/html",
+            key="btn_download_html_official_traj3",
+            use_container_width=True
+        )
 
 
 
