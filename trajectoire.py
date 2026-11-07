@@ -549,11 +549,21 @@ with tab3:
         # Affichage dynamique des indicateurs textuels
         decalage_inst = np.abs(np.sqrt(x_av[k]**2 + (y_av[k] - y_centre_virage)**2) - np.sqrt(x_arr[k]**2 + (y_arr[k] - y_centre_virage)**2)) if x_arr[k] >= 0 else 0.0
         zone_metrique_chasse.metric(label="Decalage de chasse instantane", value=f"{decalage_inst:.2f} m")
+        
+        # CORRECTION : Affichage de la valeur reelle stockee a l'index k
         zone_metrique_debord.metric(label="Angle de debord du train AR", value=f"{angle_debord[k]:.1f} degres")
         zone_metrique_g.metric(label="Acceleration transversale", value=f"{(vitesse_ms**2)/(rayon_courbure*g) if x_arr[k]>=0 else 0.0:.2f} G")
         
         if declencher_animation:
             time.sleep(0.04)
+    animation_terminee = True
+
+    # COPIER-COLLER LE BLOC ICI, JUSTE APRES L'ANIMATION :
+    if not declencher_animation or animation_terminee:
+        zone_metrique_chasse.metric(label="Decalage de chasse maximal", value=f"{decalage_reel:.2f} m")
+        angle_max_atteint = np.max(angle_debord)
+        zone_metrique_debord.metric(label="Angle de debord maximal du train AR", value=f"{angle_max_atteint:.1f} degres")
+        zone_metrique_g.metric(label="Acceleration transversale maximale", value=f"{acceleration_laterale_g:.2f} G")
             
     # Gestion de l'affichage de fin de parcours (Arret sur accident ou Graphique zoomable)
     if evenement_detecte == "Basculement":
