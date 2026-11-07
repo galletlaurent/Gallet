@@ -289,34 +289,15 @@ with tab3:
     with col_param3:
         rayon_courbure = st.slider("Rayon de la route (m)", 15, 60, 25, key="rc_c")
         angle_virage_deg = st.slider("Angle du virage (degres)", 45, 135, 90, key="av_c")
-        
-        # CORRECTION SYNCHRONISATION : On utilise la cle unique "debord_init_c_final"
+        # Curseur de debord synchronise avec la bonne cle unique
         angle_debord_initial_deg = st.slider("Angle de debord initial du train (degres)", 0, 20, 5, key="debord_init_c_final")
         largeur_voie = 3.5
 
-    # Calculs Mecaniques et Dynamiques
-    acceleration_laterale_g = (vitesse_ms**2) / (rayon_courbure * 9.81)
-
-    raideur_derive_av = 150000  # N/rad
-    force_laterale_av = ((masse_totale * 1000) * 9.81 * 0.5) * acceleration_laterale_g
-    angle_derive_rad = force_laterale_av / raideur_derive_av
-
-    angle_braquage_theorique_rad = np.arctan(empattement / rayon_courbure)
-    angle_braquage_reel_rad = angle_braquage_theorique_rad + angle_derive_rad
-
-    # Integration Numerique des Trajectoires
-    ds = 0.05  # Pas d'espace de 5 cm
-    distance_totale = rayon_courbure * np.radians(angle_virage_deg) + 20.0
-    pas = int(distance_totale / ds)
-
-    # Configuration geometrique de la route de reference (Virage parfait)
-    # Generation d'un arc de cercle propre pour le centre de la route
-    angles_route = np.linspace(0, np.radians(angle_virage_deg), pas)
+    # CORRECTION : On cree d'abord le curseur de devers de la route pour qu'il existe en memoire
+    angle_route_deg = st.sidebar.slider("Angle de devers de la route (degres)", 0, 15, 4, key="devers_c_sidebar")
     
-    # Configuration geometrique et devers de la route
+    # Configuration geometrique et devers de la route (Lecture desormais possible)
     y_centre_virage = 2 * rayon_courbure
-    
-    # Prise en compte du curseur synchronise
     beta = np.radians(angle_route_deg)
     beta_debord_init = np.radians(angle_debord_initial_deg)
     
@@ -328,15 +309,17 @@ with tab3:
     r_int = rayon_courbure - (largeur_voie / 2)
     r_ext = rayon_courbure + (largeur_voie / 2)
 
+    # Creation des structures de tableaux fixes
     x_arr = np.zeros(pas)
     y_arr = np.zeros(pas)
     theta = np.zeros(pas)
     angle_debord = np.zeros(pas)
 
-    x_arr[0] = -10.0
-    y_arr[0] = rayon_courbure
-    theta[0] = 0.0
-    angle_debord[0] = float(angle_debord_initial_deg)
+    # Initialisation stricte par index
+    x_arr = -10.0
+    y_arr = rayon_courbure
+    theta = 0.0
+    angle_debord = float(angle_debord_initial_deg)
 
     evenement_detecte = "Aucun"
     index_interruption = pas - 1
