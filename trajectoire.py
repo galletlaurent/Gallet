@@ -309,14 +309,15 @@ with tab3:
     # Generation d'un arc de cercle propre pour le centre de la route
     angles_route = np.linspace(0, np.radians(angle_virage_deg), pas)
     
+    # Configuration geometrique et devers de la route
     y_centre_virage = 2 * rayon_courbure
     
-    # Parametres d'angle de la route (devers) et variables physiques
-    angle_route_deg = st.sidebar.slider("Angle de devers de la route (degres)", 0, 15, 4, key="devers_c")
+    # Parametres physiques de la route (Plages et cles uniques st.sidebar)
+    angle_route_deg = st.sidebar.slider("Angle de devers de la route (degres)", 0, 15, 4, key="devers_c_final")
     beta = np.radians(angle_route_deg)
     
-    # Ajout du curseur d'angle de debord initial demande
-    angle_debord_initial_deg = st.sidebar.slider("Angle de debord initial du train (degres)", 0, 20, 0, key="debord_init_c")
+    # Ajout explicite du curseur d'angle de debord initial dans la barre
+    angle_debord_initial_deg = st.sidebar.slider("Angle de debord initial du train (degres)", 0, 20, 5, key="debord_init_c_final")
     beta_debord_init = np.radians(angle_debord_initial_deg)
     
     g = 9.81
@@ -334,7 +335,7 @@ with tab3:
     theta = np.zeros(pas)
     angle_debord = np.zeros(pas)
 
-    # Initialisation stricte par index
+    # Initialisation stricte par index pour preserver les matrices numpy
     x_arr[0] = -10.0
     y_arr[0] = rayon_courbure
     theta[0] = 0.0
@@ -344,12 +345,13 @@ with tab3:
     index_interruption = pas - 1
 
     # Simulation pas a pas avec les lois d'equilibre sur plan incline
+    # Simulation pas a pas avec calcul geometrique et dynamique de l'angle de debord
     for i in range(1, pas):
         if x_arr[i-1] >= 0 and theta[i-1] < np.radians(angle_virage_deg):
             acc_lat_inst_g = (vitesse_ms**2) / (rayon_courbure * g)
             alpha = angle_braquage_reel_rad
             
-            # Equations sur plan incline
+            # Equations d'equilibre mecanique sur plan incline
             P_normale = masse_totale * 1000 * g * np.cos(beta)
             Fc_normale = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) * np.sin(beta)
             N = P_normale + Fc_normale
@@ -360,7 +362,7 @@ with tab3:
             F_frottement_requise = Fc_tangente - P_tangente
             F_frottement_max = seuil_glissement_mu * N
             
-            # 1. Critere de basculement par les moments
+            # 1. Verification du critere de renversement (Moments)
             Moment_renversement = Fc_tangente * hauteur_cg
             Moment_stabilisateur = N * (largeur_camion / 2) + P_tangente * hauteur_cg
             
@@ -369,34 +371,33 @@ with tab3:
                 index_interruption = i - 1
                 break
                 
-            # 2. Critere de glissement des pneumatiques
+            # 2. Verification du critere de glissement des pneumatiques
             if np.abs(F_frottement_requise) >= F_frottement_max and evenement_detecte == "Aucun":
                 evenement_detecte = "Glissement"
         else:
             acc_lat_inst_g = 0.0
             alpha = 0.0
 
-        # Deplacement cinematique
+        # Evolution cinematique differentielle
         if x_arr[i-1] >= 0 and theta[i-1] < np.radians(angle_virage_deg):
             x_arr[i] = x_arr[i-1] + ds * np.cos(theta[i-1])
             y_arr[i] = y_arr[i-1] + ds * np.sin(theta[i-1])
-            # Integration prenant en compte l'angle de debord dans le changement de cap
             theta[i] = theta[i-1] + (ds / empattement) * np.tan(alpha - angle_derive_rad)
             
-            # Calcul cinematique de l'angle de debord dynamique cumule
+            # Calcul geometrique reel : debord = angle d'Ackermann + dephasage manuel initial
             angle_debord[i] = np.degrees(np.arctan(empattement / rayon_courbure)) + angle_debord_initial_deg
         elif theta[i-1] >= np.radians(angle_virage_deg):
             x_arr[i] = x_arr[i-1] + ds * np.cos(np.radians(angle_virage_deg))
             y_arr[i] = y_arr[i-1] + ds * np.sin(np.radians(angle_virage_deg))
             theta[i] = np.radians(angle_virage_deg)
-            angle_debord[i] = 0.0
+            angle_debord[i] = angle_debord_initial_deg  # Le debord se stabilise en sortie
         else:
             x_arr[i] = x_arr[i-1] + ds
             y_arr[i] = rayon_courbure
             theta[i] = 0.0
             angle_debord[i] = angle_debord_initial_deg
 
-        # 3. Critere de sortie de route geometrique
+        # 3. Verification geometrique du franchissement de voie
         x_av_inst = x_arr[i] + empattement * np.cos(theta[i])
         y_av_inst = y_arr[i] + empattement * np.sin(theta[i])
         if x_arr[i] >= 0:
@@ -405,17 +406,15 @@ with tab3:
             if (r_av > r_ext or r_av < r_int or r_ar > r_ext or r_ar < r_int) and evenement_detecte == "Aucun":
                 evenement_detecte = "Sortie de route"
 
-    # Tronquage des vecteurs de base au point d'arret reel
+    # Tronquage des structures selon la duree reelle avant accident
     x_arr = x_arr[:index_interruption+1]
     y_arr = y_arr[:index_interruption+1]
     theta = theta[:index_interruption+1]
     angle_debord = angle_debord[:index_interruption+1]
 
-    # Calcul des coordonnees avant APRES le tronquage de x_arr et theta
     x_av = x_arr + empattement * np.cos(theta)
     y_av = y_arr + empattement * np.sin(theta)
 
-    # CORRECTION : Re-calcul de la variable decalage_reel pour eviter le NameError final
     if len(x_arr) > 1 and evenement_detecte != "Basculement":
         rayons_arriere = np.sqrt(x_arr**2 + (y_arr - y_centre_virage)**2)
         rayons_avant = np.sqrt(x_av**2 + (y_av - y_centre_virage)**2)
@@ -423,26 +422,19 @@ with tab3:
     else:
         decalage_reel = 0.0
 
-    # Definition explicite de t_route utilisee pour tracer la route fixe
     t_route = np.linspace(0, np.radians(angle_virage_deg), 100)
-
-    # Elements fixes de la route pour le trace
+    
     x_droite = np.linspace(-10, 0, 10)
     x_arc_int = r_int * np.sin(t_route)
     y_arc_int = y_centre_virage - r_int * np.cos(t_route)
     x_arc_ext = r_ext * np.sin(t_route)
     y_arc_ext = y_centre_virage - r_ext * np.cos(t_route)
     
-    x_fin_int = x_arc_int[-1] + np.linspace(0, 15, 10) * np.cos(np.radians(angle_virage_deg))
-    y_fin_int = y_arc_int[-1] + np.linspace(0, 15, 10) * np.sin(np.radians(angle_virage_deg))
-    x_fin_ext = x_arc_ext[-1] + np.linspace(0, 15, 10) * np.cos(np.radians(angle_virage_deg))
-    y_fin_ext = y_arc_ext[-1] + np.linspace(0, 15, 10) * np.sin(np.radians(angle_virage_deg))
-    
     x_route_int = np.concatenate([x_droite, x_arc_int, x_fin_int])
     y_route_int = np.concatenate([np.full_like(x_droite, rayon_courbure - largeur_voie/2), y_arc_int, y_fin_int])
     x_route_ext = np.concatenate([x_droite, x_arc_ext, x_fin_ext])
     y_route_ext = np.concatenate([np.full_like(x_droite, rayon_courbure + largeur_voie/2), y_arc_ext, y_fin_ext])
-    
+
     col_graphe, col_analyse = st.columns(2)
 
     with col_analyse:
@@ -460,16 +452,12 @@ with tab3:
         conteneur_graphique = st.empty()
 
     points_animation = range(0, len(x_arr), max(1, len(x_arr) // 40)) if declencher_animation else [len(x_arr) - 1]
-    
-    import time
-    from matplotlib.patches import Polygon
 
     for k in points_animation:
-        # Trace de la trajectoire au sol
+        # Trace standard Matplotlib de la trajectoire au sol (Inchange)
         fig_anim, ax_anim = plt.subplots(figsize=(7, 5))
         ax_anim.plot(x_route_int, y_route_int, color='black', linewidth=2)
         ax_anim.plot(x_route_ext, y_route_ext, color='black', linewidth=2)
-        
         if k > 0:
             ax_anim.plot(x_av[:k], y_av[:k], color='#e74c3c', linewidth=2)
             ax_anim.plot(x_arr[:k], y_arr[:k], color='#3498db', linewidth=2, linestyle='--')
@@ -479,7 +467,6 @@ with tab3:
         arriere_droit  = [x_arr[k] - 1.0 * cos_tk + (largeur_camion/2) * (-sin_tk), y_arr[k] - 1.0 * sin_tk + (largeur_camion/2) * cos_tk]
         avant_droit    = [x_arr[k] + (empattement + 1.0) * cos_tk + (largeur_camion/2) * (-sin_tk), y_arr[k] + (empattement + 1.0) * sin_tk + (largeur_camion/2) * cos_tk]
         avant_gauche   = [x_arr[k] + (empattement + 1.0) * cos_tk - (largeur_camion/2) * (-sin_tk), y_arr[k] + (empattement + 1.0) * sin_tk - (largeur_camion/2) * cos_tk]
-        
         ax_anim.add_patch(Polygon(np.array([arriere_gauche, arriere_droit, avant_droit, avant_gauche]), closed=True, facecolor='#2c3e50', alpha=0.8))
         ax_anim.axis("equal")
         ax_anim.set_xlim(-12, max(x_route_ext) + 5)
@@ -487,40 +474,65 @@ with tab3:
         conteneur_graphique.pyplot(fig_anim)
         plt.close(fig_anim)
 
-        # Trace dynamique du schéma vectoriel des forces
+        # TRACÉ DU SCHÉMA DES FORCES CORRIGÉ ET COHÉRENT (VUE ARRIÈRE)
         fig_forces, ax_f = plt.subplots(figsize=(5, 4))
+        
+        # Ligne d'assiette du sol deversé
         ax_f.plot([-2, 2], [-2 * np.sin(beta), 2 * np.sin(beta)], color='black', linewidth=3)
         
-        cam_box = np.array([[-largeur_camion/2, 0], [largeur_camion/2, 0], [largeur_camion/2, hauteur_cg * 1.5], [-largeur_camion/2, hauteur_cg * 1.5]])
+        # Chassis du camion orienté selon l'angle beta
+        cam_box = np.array([[-largeur_camion/2, 0], [largeur_camion/2, 0], [largeur_camion/2, hauteur_cg * 1.4], [-largeur_camion/2, hauteur_cg * 1.4]])
         R_mat = np.array([[np.cos(beta), -np.sin(beta)], [np.sin(beta), np.cos(beta)]])
-        ax_f.add_patch(Polygon(np.dot(cam_box, R_mat.T), closed=True, facecolor='#7f8c8d', alpha=0.4))
+        cam_box_rot = np.dot(cam_box, R_mat.T)
+        ax_f.add_patch(Polygon(cam_box_rot, closed=True, facecolor='#7f8c8d', alpha=0.3))
         
+        # Positionnement exacte du Centre de Gravite G
         G_coord = np.dot(np.array([0, hauteur_cg]), R_mat.T)
-        ax_f.scatter(G_coord[0], G_coord[1], color='black', s=80, zorder=5)
+        ax_f.scatter(G_coord[0], G_coord[1], color='black', s=90, zorder=5)
         
+        # Calcul des coordonnees réelles au sol des pneumatiques gauche et droit tournes
+        roue_gauche = np.dot(np.array([-largeur_camion/2, 0]), R_mat.T)
+        roue_droite = np.dot(np.array([largeur_camion/2, 0]), R_mat.T)
+        
+        # Dessin des roues sous la carrosserie pour la logique visuelle
+        ax_f.scatter([roue_gauche[0], roue_droite[0]], [roue_gauche[1], roue_droite[1]], color='black', s=150, marker='s', zorder=4)
+        
+        # Normalisation d'echelle des vecteurs forces
         f_scale = 1.0 / (masse_totale * 1000 * g)
         val_P = masse_totale * 1000 * g
         val_Fc = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) if x_arr[k] >= 0 else 0.0
         
-        ax_f.arrow(G_coord[0], G_coord[1], 0, -val_P * f_scale * 1.5, head_width=0.1, head_length=0.15, color='#2ecc71', label='Poids (P)')
-        ax_f.arrow(G_coord[0], G_coord[1], val_Fc * f_scale * 1.5, 0, head_width=0.1, head_length=0.15, color='#e74c3c', label='Force Centrifuge (Fc)')
+        # Application des forces de repere a distance du CG : Poids et Centrifuge
+        ax_f.arrow(G_coord[0], G_coord[1], 0, -val_P * f_scale * 1.3, head_width=0.08, head_length=0.12, color='#2ecc71', label='Poids (P)')
+        ax_f.arrow(G_coord[0], G_coord[1], val_Fc * f_scale * 1.3, 0, head_width=0.08, head_length=0.12, color='#e74c3c', label='Force Centrifuge (Fc)')
         
-        base_sol = np.dot(np.array([0, 0]), R_mat.T)
-        val_N = val_P * np.cos(beta) + val_Fc * np.sin(beta)
-        val_Ff = val_Fc * np.cos(beta) - val_P * np.sin(beta) if x_arr[k] >= 0 else 0.0
+        # Calcul de la repartition symmetrique des reactions normales du sol sous chaque roue
+        val_N_totale = val_P * np.cos(beta) + val_Fc * np.sin(beta)
+        val_Ff_totale = val_Fc * np.cos(beta) - val_P * np.sin(beta) if x_arr[k] >= 0 else 0.0
         
-        ax_f.arrow(base_sol[0], base_sol[1], -val_N * f_scale * 1.5 * np.sin(beta), val_N * f_scale * 1.5 * np.cos(beta), head_width=0.1, head_length=0.15, color='#9b59b6', label='Reaction Normale (N)')
-        if np.abs(val_Ff) > 0:
-            ax_f.arrow(base_sol[0], base_sol[1], -val_Ff * f_scale * 1.5 * np.cos(beta), -val_Ff * f_scale * 1.5 * np.sin(beta), head_width=0.1, head_length=0.15, color='#3498db', label='Frottement Pneus (Ff)')
+        # Tracé des forces de contact appliquées LOGIQUEMENT sous chaque pneumatique (Roue gauche et droite)
+        # Force de Reaction Normale (N, violette) : Perpendiculaire au sol deversé sous chaque roue
+        ax_f.arrow(roue_gauche[0], roue_gauche[1], -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta), head_width=0.08, head_length=0.12, color='#9b59b6', label='Reaction Normale (N)')
+        ax_f.arrow(roue_droite[0], roue_droite[1], -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta), head_width=0.08, head_length=0.12, color='#9b59b6')
+        
+        # Force d'Adhérence/Frottement (Ff, bleue) : Parallèle au sol, appliquée sous chaque pneu
+        if np.abs(val_Ff_totale) > 0:
+            ax_f.arrow(roue_gauche[0], roue_gauche[1], -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta), head_width=0.08, head_length=0.12, color='#3498db', label='Frottement Pneus (Ff)')
+            ax_f.arrow(roue_droite[0], roue_droite[1], -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta), head_width=0.08, head_length=0.12, color='#3498db')
 
-        ax_f.set_xlim(-2.5, 2.5)
-        ax_f.set_ylim(-1.0, 3.5)
+        ax_f.set_xlim(-2.2, 2.2)
+        ax_f.set_ylim(-1.0, 3.2)
         ax_f.axis('off')
-        ax_f.legend(loc="upper right", fontsize='small')
+        
+        # Nettoyage de la legende pour ne pas dupliquer les etiquettes des deux roues
+        handles, labels = ax_f.get_legend_handles_labels()
+        by_label = dict(zip(labels, handles))
+        ax_f.legend(by_label.values(), by_label.keys(), loc="upper right", fontsize='small')
+        
         zone_schema_forces.pyplot(fig_forces)
         plt.close(fig_forces)
 
-        # Rafraichissement des donnees numeriques en direct
+        # Affichage dynamique des indicateurs textuels
         decalage_inst = np.abs(np.sqrt(x_av[k]**2 + (y_av[k] - y_centre_virage)**2) - np.sqrt(x_arr[k]**2 + (y_arr[k] - y_centre_virage)**2)) if x_arr[k] >= 0 else 0.0
         zone_metrique_chasse.metric(label="Decalage de chasse instantane", value=f"{decalage_inst:.2f} m")
         zone_metrique_debord.metric(label="Angle de debord du train AR", value=f"{angle_debord[k]:.1f} degres")
