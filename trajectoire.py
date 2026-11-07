@@ -537,15 +537,67 @@ with tab3:
         if declencher_animation:
             time.sleep(0.04)
 
-    # --- AFFICHAGE DE FIN DE PARCOURS (STATIQUE / INTERACTIF) ---
+    # =============================================================================
+    # FIN DE LA BOUCLE D'ANIMATION : PASSAGE FORCE AU GRAPHIQUE PLOTLY INTERACTIF
+    # =============================================================================
     animation_terminee = True
     
-    # On fige les valeurs maximales sur les metriques
+    # On met a jour definitivement les indicateurs physiques de fin de parcours
     zone_metrique_chasse.metric(label="Decalage de chasse maximal", value=f"{decalage_reel:.2f} m")
     zone_metrique_devers.metric(label="Devers configure de la chaussee", value=f"{angle_route_deg:.1f} degres")
     zone_metrique_g.metric(label="Acceleration transversale maximale", value=f"{acceleration_laterale_g:.2f} G")
 
+    # Affichage specifique selon le statut final de la trajectoire
+    if evenement_detecte == "Basculement":
+        with col_graphe:
+            conteneur_graphique.empty()  # On nettoie la zone
+            try:
+                st.image("basculementCE.jpg", caption="Accident : Rupture d'equilibre statique (Renversement).")
+            except Exception:
+                st.error("Fichier basculementCE.jpg introuvable.")
+        zone_alerte.error("ACCIDENT DETECTE : Le camion a bascule sous l'effet de la force centrifuge.")
+    else:
+        # CORRECTION CRITIQUE : On vide le conteneur Matplotlib pour injecter le Plotly zoomable
+        with col_graphe:
+            conteneur_graphique.empty()
+            
+            import plotly.graph_objects as go
+            fig_plotly = go.Figure()
+            fig_plotly.add_trace(go.Scatter(x=x_route_int, y=y_route_int, name="Bord interieur", line=dict(color='black', width=2)))
+            fig_plotly.add_trace(go.Scatter(x=x_route_ext, y=y_route_ext, name="Bord exterieur", line=dict(color='black', width=2)))
+            
+        
+        # INVERSION : Ligne bleue pour l'AVANT, ligne rouge pour l'ARRIÈRE
+        fig_plotly.add_trace(go.Scatter(x=x_av, y=y_av, name="Trajectoire Roues ARRIERE", line=dict(color='#e74c3c', width=3, dash='dash')))
+        fig_plotly.add_trace(go.Scatter(x=x_arr, y=y_arr, name="Trajectoire Roues AVANT", line=dict(color='#3498db', width=3)))
+        
+            
+            fig_plotly.update_layout(
+                xaxis=dict(scaleanchor="y", scaleratio=1),
+                hovermode="closest",
+                height=450,
+                title="Visualisation interactive (Zoomable pour mesures fines apres course)"
+            )
+            # On affiche le graphique interactif dans le conteneur principal
+            st.plotly_chart(fig_plotly, use_container_width=True)
 
+        # Affichage des bandeaux de notifications de fin de course
+        if evenement_detecte == "Glissement":
+            zone_alerte.warning("GLISSEMENT : L'effort lateral demande a surpasse l'adherence disponible (Derapage).")
+        elif evenement_detecte == "Sortie de route":
+            zone_alerte.warning("SORTIE DE VOIE : Le gabarit a franchi les marquages au sol.")
+        else:
+            zone_alerte.success("TRAJECTOIRE REUSSITE : Le camion est reste stable dans sa voie.")
+
+    # Bloc final d'exportation du livrable eleve en bas de la colonne d'analyse
+    texte_rapport = f"RAPPORT D'ATELIER\nStatut final : {evenement_detecte}\nDecalage de chasse maximal : {decalage_reel:.2f} m\nDevers de la route : {angle_route_deg:.1f} degres\n"
+    st.download_button(
+        label="Exporter le rapport d'atelier (Fichier texte)",
+        data=texte_rapport,
+        file_name=preparer_nom_fichier(nom_onglet="Permis_C"),
+        mime="text/plain",
+        key="btn_download_c_final"
+    )
 
 
 
