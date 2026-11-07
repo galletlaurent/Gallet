@@ -201,6 +201,67 @@ tab3 = onglets[3]
 tab4 = onglets[4] 
 tab5 = onglets[5]
 
+def afficher_atelier_permis_b(verrouille=False):
+    """Affiche le Quiz et le Texte à trous côte à côte en bas de la page pour le permis B."""
+    import random
+
+    st.subheader("Atelier Interactif : Cinématique et Dynamique du Véhicule Léger")
+
+    questions_sources = [
+        {"id": "qb1", "q": "Pourquoi le décalage de chasse d'une voiture est-il beaucoup plus faible que celui d'un porteur ?", "options": ["Parce que son empattement est plus court", "Parce qu'elle roule plus vite", "En raison de son aérodynamisme"], "rep": "Parce que son empattement est plus court"},
+        {"id": "qb2", "q": "Quelle force retient la voiture vers l'intérieur du virage pour contrecarrer la force centrifuge ?", "options": ["La force de frottement latéral des pneus", "Le poids du moteur", "La réaction normale du châssis"], "rep": "La force de frottement latéral des pneus"},
+        {"id": "qb3", "q": "Quel paramètre géométrique du véhicule influe directement sur la valeur du décalage de chasse ?", "options": ["L'empattement (distance entre essieux)", "La largeur des pneumatiques", "La masse totale"], "rep": "L'empattement (distance entre essieux)"},
+        {"id": "qb4", "q": "Quelle est l'unité de mesure de l'accélération transversale subie par les passagers ?", "options": ["Le G (fraction de g)", "Le Newton (N)", "Le Pascal (Pa)"], "rep": "Le G (fraction de g)"},
+        {"id": "qb5", "q": "Si le véhicule glisse vers l'extérieur du virage sans tourner assez, on parle de :", "options": ["Sous-virage (perte d'adhérence AV)", "Survirage (perte d'adhérence AR)", "Mise en portefeuille"], "rep": "Sous-virage (perte d'adhérence AV)"},
+        {"id": "qb6", "q": "Pourquoi une voiture a-t-elle moins de risques de basculer qu'un camion porteur ?", "options": ["Son centre de gravité est beaucoup plus bas", "Ses pneus sont plus larges", "Elle possède un devers naturel"], "rep": "Son centre de gravité beaucoup plus bas"},
+        {"id": "qb7", "q": "Quelle action du conducteur augmente instantanément la force centrifuge au milieu de la courbe ?", "options": ["Une augmentation de la vitesse", "Un coup de frein sec", "Un débrayage"], "rep": "Une augmentation de la vitesse"},
+        {"id": "qb8", "q": "Quel élément de l'infrastructure routière permet de réduire l'effort de friction demandé aux pneus ?", "options": ["Le dévers positif de la chaussée", "Les bandes rugueuses", "Les lignes blanches"], "rep": "Le dévers positif de la chaussée"},
+        {"id": "qb9", "q": "Sur le graphique, quelle ligne de couleur correspond à l'essieu avant directeur ?", "options": ["La ligne rouge", "La ligne bleue", "La ligne noire concentrique"], "rep": "La ligne rouge"},
+        {"id": "qb10", "q": "L'adhérence maximale disponible entre le pneu et le sol dépend du coefficient de :", "options": ["Frottement (mu)", "Raideur de dérive", "Renversement statique"], "rep": "Frottement (mu)"}
+    ]
+
+    if "ordre_quiz_b_aleatoire" not in st.session_state:
+        random.shuffle(questions_sources)
+        st.session_state.ordre_quiz_b_aleatoire = questions_sources
+
+    if "champs_b_clean" not in st.session_state:
+        st.session_state.champs_b_clean = [
+            ("1. Le décalage de chasse d'une voiture est réduit car son .......... est court.", ["Choisir...", "empattement", "porte-à-faux"], "empattement", "b_t1"),
+            ("2. Les roues avant guident la trajectoire et sont tracées en ..........", ["Choisir...", "rouge", "bleu"], "rouge", "b_t2"),
+            ("3. La force centrifuge pousse la voiture vers l'.......... de la courbe.", ["Choisir...", "extérieur", "intérieur"], "extérieur", "b_t3"),
+            ("4. À vitesse élevée, si l'effort requis dépasse l'adhérence, il y a ..........", ["Choisir...", "glissement", "basculement"], "glissement", "b_t4"),
+            ("5. La force verticale exercée par la route sur les roues est la réaction ..........", ["Choisir...", "normale", "tangentielle"], "normale", "b_t5"),
+            ("6. Le risque de renversement est minime car le centre de gravité est ..........", ["Choisir...", "bas", "haut"], "bas", "b_t6"),
+            ("7. L'inclinaison de la route appelée .......... améliore la tenue de route.", ["Choisir...", "dévers", "pente"], "dévers", "b_t7"),
+            ("8. L'accélération transversale maximale s'exprime en unités ..........", ["Choisir...", "G", "Newton"], "G", "b_t8"),
+            ("9. Les roues arrière coupent légèrement le virage et sont tracées en ..........", ["Choisir...", "bleu", "rouge"], "bleu", "b_t9"),
+            ("10. Si le véhicule franchit les marquages au sol, il y a .......... de route.", ["Choisir...", "sortie", "stabilité"], "sortie", "b_t10")
+        ]
+
+    col_quiz, col_trous = st.columns(2)
+    
+    with col_quiz:
+        st.markdown("##### Quiz Technique (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_b_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"b_at1_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse de l'Atelier (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_b_clean:
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_b_clean", disabled=verrouille, label_visibility="collapsed")
+
+
+
+
 def afficher_atelier_semi_remorque(verrouille=False):
     """Affiche le Quiz et le Texte à trous côte à côte en bas de la page pour l'atelier semi-remorque."""
     import random
@@ -374,6 +435,469 @@ with tab0:
 with tab1:
     st.header("Simulation Permis B")
     st.info("Espace reserve pour la simulation de trajectoire d'un vehicule leger.")
+
+    col_param1, col_param2, col_param3 = st.columns(3)
+    
+    with col_param1:
+        vitesse_kmh = st.slider("Vitesse de la voiture (km/h)", 10, 130, 50, step=5, key="vitesse_b")
+        vitesse_ms = vitesse_kmh / 3.6
+        empattement = st.slider("Empattement - Distance entre essieux (m)", 2.2, 3.5, 2.7, step=0.1, key="emp_b")
+
+    with col_param2:
+        masse_vide = st.slider("Masse a vide du vehicule (kg)", 800, 2500, 1300, step=50, key="mv_b")
+        masse_passagers = st.slider("Masse des occupants et bagages (kg)", 0, 500, 150, step=10, key="mc_b")
+        masse_totale = (masse_vide + masse_passagers) / 1000.0  # Conversion en tonnes pour les formules
+        st.write(f"Masse totale actuelle : {masse_vide + masse_passagers} kg")
+
+    with col_param3:
+        rayon_courbure = st.slider("Rayon de la courbe (m)", 30, 150, 60, key="rc_b")
+        angle_virage_deg = st.slider("Angle du virage (degres)", 45, 135, 90, key="av_b")
+        angle_route_deg = st.slider("Angle de devers de la route (degres)", 0, 15, 2, key="devers_b_central")
+        largeur_voie = 3.0
+
+    # Configuration de l'infrastructure
+    y_centre_virage = 2 * rayon_courbure
+    beta = np.radians(angle_route_deg)
+    
+    g = 9.81
+    seuil_glissement_mu = 0.65  # Adhérence plus élevée pour des pneus tourisme récents
+    hauteur_cg = 0.55 + (masse_passagers / (masse_vide + masse_passagers)) * 0.10  # CG bas
+    largeur_voiture = 1.8
+
+    r_int = rayon_courbure - (largeur_voie / 2)
+    r_ext = rayon_courbure + (largeur_voie / 2)
+
+    # Creation des structures matricielles fixes
+    ds = 0.05  
+    distance_totale = rayon_courbure * np.radians(angle_virage_deg) + 30.0
+    pas = int(distance_totale / ds)
+
+    x_arr = np.zeros(pas)
+    y_arr = np.zeros(pas)
+    x_av = np.zeros(pas)
+    y_av = np.zeros(pas)
+    theta = np.zeros(pas)
+
+    # Initialisation : l'avant est a -10m, l'arriere est en retrait de l'empattement
+    x_av = -10.0
+    y_av = rayon_courbure
+    x_arr = -10.0 - empattement
+    y_arr = rayon_courbure
+    theta = 0.0
+
+    evenement_detecte = "Aucun"
+    index_interruption = pas - 1
+
+    # Calcul dynamique preliminaire de l'acceleration nominale
+    acceleration_laterale_g = (vitesse_ms**2) / (rayon_courbure * g)
+
+    # =============================================================================
+    # BOUCLE DE CALCUL GEOMETRIQUE RESOLUTION DE TRAJECTOIRE
+    # =============================================================================
+    cap_cible_rad = np.radians(angle_virage_deg)
+
+    for i in range(1, pas):
+        # 1. Trajectoire de reference de l'essieu avant (Ligne rouge lisse)
+        if x_av[i-1] < 0.0:
+            x_av[i] = x_av[i-1] + ds
+            y_av[i] = rayon_courbure
+            theta[i] = 0.0
+        elif x_av[i-1] >= 0.0 and theta[i-1] < cap_cible_rad:
+            cap_av_rad = ds / rayon_courbure
+            theta[i] = theta[i-1] + cap_av_rad
+            x_av[i] = rayon_courbure * np.sin(theta[i])
+            y_av[i] = y_centre_virage - rayon_courbure * np.cos(theta[i])
+        else:
+            x_av[i] = x_av[i-1] + ds * np.cos(cap_cible_rad)
+            y_av[i] = y_av[i-1] + ds * np.sin(cap_cible_rad)
+            theta[i] = cap_cible_rad
+
+        # 2. Cinematique de l'essieu arriere tracte (Ligne bleue decalee)
+        dx = x_av[i] - x_arr[i-1]
+        dy = y_av[i] - y_arr[i-1]
+        distance_inter_essieux = np.hypot(dx, dy)
+        
+        x_arr[i] = x_av[i] - empattement * (dx / distance_inter_essieux)
+        y_arr[i] = y_av[i] - empattement * (dy / distance_inter_essieux)
+
+        # 3. Calcul de la dynamique des forces liees au devers pour les alertes
+        if x_av[i] >= 0.0 and theta[i] < cap_cible_rad:
+            acc_lat_inst_g = (vitesse_ms**2) / (rayon_courbure * g)
+            
+            P_normale = (masse_totale * 1000) * g * np.cos(beta)
+            Fc_normale = (masse_totale * 1000) * (vitesse_ms**2 / rayon_courbure) * np.sin(beta)
+            N = P_normale + Fc_normale
+            
+            P_tangente = (masse_totale * 1000) * g * np.sin(beta)
+            Fc_tangente = (masse_totale * 1000) * (vitesse_ms**2 / rayon_courbure) * np.cos(beta)
+            F_frottement_requise = Fc_tangente - P_tangente
+            F_frottement_max = seuil_glissement_mu * N
+            
+            Moment_renversement = Fc_tangente * hauteur_cg
+            Moment_stabilisateur = N * (largeur_voiture / 2) + P_tangente * hauteur_cg
+            
+            if Moment_renversement >= Moment_stabilisateur:
+                evenement_detecte = "Basculement"
+                index_interruption = i
+                break
+            if np.abs(F_frottement_requise) >= F_frottement_max and evenement_detecte == "Aucun":
+                evenement_detecte = "Glissement"
+                
+        # 4. Verification geometrique du franchissement de voie
+        if x_av[i] >= 0.0:
+            r_av = np.sqrt(x_av[i]**2 + (y_av[i] - y_centre_virage)**2)
+            r_ar = np.sqrt(x_arr[i]**2 + (y_arr[i] - y_centre_virage)**2)
+            if (r_av > r_ext or r_av < r_int or r_ar > r_ext or r_ar < r_int) and evenement_detecte == "Aucun":
+                evenement_detecte = "Sortie de route"
+
+    # Tronquage des vecteurs au point d'arret reel
+    x_arr = x_arr[:index_interruption+1]
+    y_arr = y_arr[:index_interruption+1]
+    theta = theta[:index_interruption+1]
+    x_av = x_av[:index_interruption+1]
+    y_av = y_av[:index_interruption+1]
+
+    if len(x_av) > 1 and evenement_detecte != "Basculement":
+        rayons_arriere = np.sqrt(x_arr**2 + (y_arr - y_centre_virage)**2)
+        rayons_avant = np.sqrt(x_av**2 + (y_av - y_centre_virage)**2)
+        decalage_reel = np.max(rayons_avant) - np.min(rayons_arriere)
+    else:
+        decalage_reel = 0.0
+
+    t_route = np.linspace(0, np.radians(angle_virage_deg), 100)
+
+    # Reconstruction de la chaussee fixe concentrique
+    x_droite = np.linspace(-10, 0, 10)
+    x_arc_int = r_int * np.sin(t_route)
+    y_arc_int = y_centre_virage - r_int * np.cos(t_route)
+    x_arc_ext = r_ext * np.sin(t_route)
+    y_arc_ext = y_centre_virage - r_ext * np.cos(t_route)
+    
+    x_fin_int = x_arc_int[-1] + np.linspace(0, 15, 10) * np.cos(np.radians(angle_virage_deg))
+    y_fin_int = y_arc_int[-1] + np.linspace(0, 15, 10) * np.sin(np.radians(angle_virage_deg))
+    x_fin_ext = x_arc_ext[-1] + np.linspace(0, 15, 10) * np.cos(np.radians(angle_virage_deg))
+    y_fin_ext = y_arc_ext[-1] + np.linspace(0, 15, 10) * np.sin(np.radians(angle_virage_deg))
+    
+    x_route_int = np.concatenate([x_droite, x_arc_int, x_fin_int])
+    y_route_int = np.concatenate([np.full_like(x_droite, rayon_courbure - largeur_voie/2), y_arc_int, y_fin_int])
+    x_route_ext = np.concatenate([x_droite, x_arc_ext, x_fin_ext])
+    y_route_ext = np.concatenate([np.full_like(x_droite, rayon_courbure + largeur_voie/2), y_arc_ext, y_fin_ext])
+
+    # =============================================================================
+    # RENDU DE L'ECRAN EN DEUX COLONNES STREAMLIT
+    # =============================================================================
+    col_graphe, col_analyse = st.columns(2)
+
+    with col_analyse:
+        st.subheader("Indicateurs Physiques Synchrones")
+        zone_metrique_chasse = st.empty()
+        zone_metrique_devers = st.empty()
+        zone_metrique_g = st.empty()
+        zone_alerte = st.empty()
+        
+        declencher_animation = st.button("Lancer la simulation pas-a-pas", key="btn_anim_b")
+        
+        st.subheader("Schema Vectoriel du Bilan des Forces (Vue arriere)")
+        zone_schema_forces = st.empty()
+
+    with col_graphe:
+        conteneur_graphique = st.empty()
+
+    points_animation = range(0, len(x_arr), max(1, len(x_arr) // 40)) if declencher_animation else [len(x_arr) - 1]
+    
+    import time
+    from matplotlib.patches import Polygon
+
+    for k in points_animation:
+        fig_anim, ax_anim = plt.subplots(figsize=(7, 5))
+        ax_anim.plot(x_route_int, y_route_int, color='black', linewidth=2)
+        ax_anim.plot(x_route_ext, y_route_ext, color='black', linewidth=2)
+        
+        if k > 0:
+            ax_anim.plot(x_av[:k], y_av[:k], color='#e74c3c', linewidth=2, label="Trajectoire Roues AV")
+            ax_anim.plot(x_arr[:k], y_arr[:k], color='#3498db', linewidth=2, linestyle='--', label="Trajectoire Roues AR")
+        
+        cos_tk, sin_tk = np.cos(theta[k]), np.sin(theta[k])
+        arriere_gauche = [x_arr[k] - 0.7 * cos_tk - (largeur_voiture/2) * (-sin_tk), y_arr[k] - 0.7 * sin_tk - (largeur_voiture/2) * cos_tk]
+        arriere_droit  = [x_arr[k] - 0.7 * cos_tk + (largeur_voiture/2) * (-sin_tk), y_arr[k] - 0.7 * sin_tk + (largeur_voiture/2) * cos_tk]
+        avant_droit    = [x_arr[k] + (empattement + 0.7) * cos_tk + (largeur_voiture/2) * (-sin_tk), y_arr[k] + (empattement + 0.7) * sin_tk + (largeur_voiture/2) * cos_tk]
+        avant_gauche   = [x_arr[k] + (empattement + 0.7) * cos_tk - (largeur_voiture/2) * (-sin_tk), y_arr[k] + (empattement + 0.7) * sin_tk - (largeur_voiture/2) * cos_tk]
+        ax_anim.add_patch(Polygon(np.array([arriere_gauche, arriere_droit, avant_droit, avant_gauche]), closed=True, facecolor='#34495e', alpha=0.8))
+        ax_anim.axis("equal")
+        ax_anim.set_xlim(-12, max(x_route_ext) + 5)
+        ax_anim.set_ylim(-5, max(y_route_ext) + 5)
+        
+        if declencher_animation:
+            conteneur_graphique.pyplot(fig_anim)
+        plt.close(fig_anim)
+
+        # Tracé des forces vectorielles adaptées à la voiture
+        fig_forces, ax_f = plt.subplots(figsize=(5, 3.5))
+        ax_f.plot([-2, 2], [-2 * np.sin(beta), 2 * np.sin(beta)], color='black', linewidth=3)
+        cam_box = np.array([[-largeur_voiture/2, 0], [largeur_voiture/2, 0], [largeur_voiture/2, hauteur_cg * 1.4], [-largeur_voiture/2, hauteur_cg * 1.4]])
+        R_mat = np.array([[np.cos(beta), -np.sin(beta)], [np.sin(beta), np.cos(beta)]])
+        cam_box_rot = np.dot(cam_box, R_mat.T)
+        ax_f.add_patch(Polygon(cam_box_rot, closed=True, facecolor='#bdc3c7', alpha=0.5))
+        
+        G_coord = np.dot(np.array([0, hauteur_cg]), R_mat.T)
+        ax_f.scatter(G_coord[0], G_coord[1], color='black', s=90, zorder=5)
+        
+        roue_gauche = np.dot(np.array([-largeur_voiture/2, 0]), R_mat.T)
+        roue_droite = np.dot(np.array([largeur_voiture/2, 0]), R_mat.T)
+        ax_f.scatter([roue_gauche[0], roue_droite[0]], [roue_gauche[1], roue_droite[1]], color='black', s=120, marker='s', zorder=4)
+        
+        f_scale = 1.0 / (masse_totale * 1000 * g)
+        val_P = masse_totale * 1000 * g
+        val_Fc = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) if evenement_detecte != "Basculement" else 0.0
+        
+        ax_f.arrow(G_coord[0], G_coord[1], 0, -val_P * f_scale * 1.3, head_width=0.08, head_length=0.12, color='#2ecc71', label='Poids (P)')
+        ax_f.arrow(G_coord[0], G_coord[1], val_Fc * f_scale * 1.3, 0, head_width=0.08, head_length=0.12, color='#e74c3c', label='Force Centrifuge (Fc)')
+        
+        val_N_totale = val_P * np.cos(beta) + val_Fc * np.sin(beta)
+        val_Ff_totale = val_Fc * np.cos(beta) - val_P * np.sin(beta) if evenement_detecte != "Basculement" else 0.0
+        
+        ax_f.arrow(roue_gauche[0], roue_gauche[1], -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta), head_width=0.08, head_length=0.12, color='#9b59b6', label='Reaction Normale (N)')
+        ax_f.arrow(roue_droite[0], roue_droite[1], -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta), head_width=0.08, head_length=0.12, color='#9b59b6')
+        
+        if np.abs(val_Ff_totale) > 0:
+            ax_f.arrow(roue_gauche[0], roue_gauche[1], -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta), head_width=0.08, head_length=0.12, color='#3498db', label='Frottement Pneus (Ff)')
+            ax_f.arrow(roue_droite[0], roue_droite[1], -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta), head_width=0.08, head_length=0.12, color='#3498db')
+
+        ax_f.set_xlim(-1.8, 1.8)
+        ax_f.set_ylim(-0.8, 2.5)
+        ax_f.axis('off')
+        
+        handles, labels = ax_f.get_legend_handles_labels()
+        by_label = dict(zip(labels, handles))
+        ax_f.legend(by_label.values(), by_label.keys(), loc="upper right", fontsize='small')
+        zone_schema_forces.pyplot(fig_forces)
+        plt.close(fig_forces)
+
+        decalage_inst = np.abs(np.sqrt(x_av[k]**2 + (y_av[k] - y_centre_virage)**2) - np.sqrt(x_arr[k]**2 + (y_arr[k] - y_centre_virage)**2)) if x_av[k] >= 0.0 else 0.0
+        zone_metrique_chasse.metric(label="Decalage de chasse instantane", value=f"{decalage_inst:.2f} m")
+        zone_metrique_devers.metric(label="Angle de devers de la route", value=f"{angle_route_deg:.1f} degres")
+        zone_metrique_g.metric(label="Acceleration transversale", value=f"{(vitesse_ms**2)/(rayon_courbure*g) if x_av[k]>=0.0 else 0.0:.2f} G")
+        
+        if declencher_animation:
+            time.sleep(0.04)
+
+    # --- VERDICT ET TRACÉ PLOTLY ZOOMABLE FINAL ---
+    animation_terminee = True
+    zone_metrique_chasse.metric(label="Decalage de chasse maximal", value=f"{decalage_reel:.2f} m")
+    zone_metrique_devers.metric(label="Devers configure de la chaussee", value=f"{angle_route_deg:.1f} degres")
+    zone_metrique_g.metric(label="Acceleration transversale maximale", value=f"{acceleration_laterale_g:.2f} G")
+
+    if evenement_detecte == "Basculement":
+        with col_graphe:
+            conteneur_graphique.empty()
+            try:
+                st.image("basculementB.jpg", caption="Accident : Perte d'equilibre transversal (Renversement).")
+            except Exception:
+                st.error("Fichier basculementB.jpg introuvable.")
+        zone_alerte.error("ACCIDENT DETECTE : La voiture a bascule sous l'effet de la force centrifuge excessive.")
+    else:
+        with col_graphe:
+            conteneur_graphique.empty()
+            
+            import plotly.graph_objects as go
+            fig_plotly = go.Figure()
+            fig_plotly.add_trace(go.Scatter(x=x_route_int, y=y_route_int, name="Bord interieur", line=dict(color='black', width=2)))
+            fig_plotly.add_trace(go.Scatter(x=x_route_ext, y=y_route_ext, name="Bord exterieur", line=dict(color='black', width=2)))
+            
+            fig_plotly.add_trace(go.Scatter(x=x_av, y=y_av, name="Trajectoire Roues AVANT", line=dict(color='#e74c3c', width=3)))
+            fig_plotly.add_trace(go.Scatter(x=x_arr, y=y_arr, name="Trajectoire Roues ARRIERE", line=dict(color='#3498db', width=3, dash='dash')))
+            
+            fig_plotly.update_layout(
+                xaxis=dict(scaleanchor="y", scaleratio=1),
+                hovermode="closest",
+                height=450,
+                title="Visualisation interactive (Zoomable pour mesures fines)"
+            )
+            st.plotly_chart(fig_plotly, use_container_width=True)
+
+        if evenement_detecte == "Glissement":
+            zone_alerte.warning("GLISSEMENT : La voiture a glisse vers l'exterieur sous l'effet du sous-virage (Derapage).")
+        elif evenement_detecte == "Sortie de route":
+            zone_alerte.warning("SORTIE DE VOIE : Le vehicule a franchi la ligne continue.")
+        else:
+            zone_alerte.success("TRAJECTOIRE REUSSITE : Le vehicule est reste stable dans sa voie.")
+    # -------------------------------------------------------------------------
+    # PARTIE 3 : LOGIQUE DE VALIDATION ET MOTEUR DE CORRECTION SCELLÉ
+    # -------------------------------------------------------------------------
+    if "suite_verrouille_tab1_b" not in st.session_state:
+        st.session_state.suite_verrouille_tab1_b = False
+    verrou_at1_b = st.session_state.suite_verrouille_tab1_b
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 1")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_b = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Véhicule Léger sur la dynamique de glissement.",
+        key="check_certif_b_final_net",
+        disabled=verrou_at1_b,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_suite1_b_official", use_container_width=True, disabled=verrou_at1_b):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_b: 
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            # 1. Correction automatisée du Quiz par parcours sécurisé de clés
+            score_qb = 0.0
+            if "ordre_quiz_b_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_b_aleatoire:
+                    saisie = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"b_at1_final_g_{q_item['id']}"):
+                            saisie = st.session_state[k]
+                            break
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_qb += 1.0
+
+            # 2. Correction automatisée du Texte à trous par parcours sécurisé de clés
+            score_tb = 0.0
+            if "champs_b_clean" in st.session_state:
+                for ligne in st.session_state.champs_b_clean:
+                    cle_variable = ligne[-1]
+                    attendu_texte = ligne[2]
+                    saisie_texte = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"{cle_variable}_b_clean"):
+                            saisie_texte = st.session_state[k]
+                            break
+                    if str(saisie_texte).strip() == str(attendu_texte).strip(): 
+                        score_tb += 1.0
+
+            st.session_state.score_suite1_b_p1 = round(float(score_qb), 1)
+            st.session_state.score_suite1_b_p2 = round(float(score_tb), 1)
+            st.session_state.score_final_suite1_b = round(float(score_qb + score_tb), 1)
+            st.session_state.suite_verrouille_tab1_b = True
+            st.rerun()
+
+    # -------------------------------------------------------------------------
+    # PARTIE 4 : EXPORTATION DU RAPPORT INDIVIDUEL HTML SCELLÉ
+    # -------------------------------------------------------------------------
+    if st.session_state.get("suite_verrouille_tab1_b", False):
+        from datetime import datetime
+        scr1_b = st.session_state.get("score_suite1_b_p1", 0.0)
+        scr2_b = st.session_state.get("score_suite1_b_p2", 0.0)
+        tot_s_b = st.session_state.get("score_final_suite1_b", 0.0)
+        timestamp_b = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER VÉHICULE LÉGER SCELLÉ | Note de session : {tot_s_b:.1f} / 20")
+
+        html_export_b = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Permis B - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation de Physique-Cinématique</h1>
+                <p>Atelier 1 : Dynamique et Inscription en Courbe du Véhicule Léger (Permis B)</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_b}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_b:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_b:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse de Cours : <strong>{scr2_b:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 1 : <strong>{tot_s_b:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_b_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_b_aleatoire, 1):
+                saisie = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"b_at1_final_g_{q_item['id']}"):
+                        saisie = st.session_state[k]
+                        break
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_b += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_b += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours complétée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_b_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_b_clean, 1):
+                cle_variable = ligne[-1]
+                phrase_enonce = ligne[0]
+                attendu_texte = ligne[2]
+                saisie_texte = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"{cle_variable}_b_clean"):
+                        saisie_texte = st.session_state[k]
+                        break
+                v_lbl_t = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+                html_export_b += f"<tr><td>{num}</td><td>{phrase_enonce}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_b += f"""
+                </tbody>
+            </table>
+            
+            <div class="sub-title">DONNÉES COMPLÉMENTAIRES D'ATELIER TECHNIQUE</div>
+            <p style="font-size: 13px; color: #64748b;">
+                Valeur maximale enregistrée pour le décalage de chasse : <strong>{decalage_reel:.2f} m</strong><br>
+                Accélération transversale maximale atteinte : <strong>{acceleration_laterale_g:.2f} G</strong>
+            </p>
+        </body>
+        </html>
+        """
+
+        st.download_button(
+            label="TÉLÉCHARGER LE RAPPORT INDIVIDUEL SCELLÉ (FORMAT HTML)",
+            data=html_export_b,
+            file_name=f"Rapport_Permis_B_{n_eleve}_{p_eleve}.html",
+            mime="text/html",
+            key="btn_download_html_official_b",
+            use_container_width=True
+        )
+
+
+
+
+
+
+
 
 with tab2:
     st.header("Simulation Permis B et caravane")
