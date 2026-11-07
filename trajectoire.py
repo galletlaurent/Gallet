@@ -334,48 +334,55 @@ with tab3:
     cap_cible_rad = np.radians(angle_virage_deg)
 
     for i in range(1, pas):
-        # 1. Trajectoire ideale de l'essieu avant (Ligne bleue lisse)
+        # 1. Trajectoire ideale imposee a l'essieu avant (Ligne rouge lisse)
         if x_av[i-1] < 0.0:
+            # Phase d'approche : Ligne droite horizontale propre
             x_av[i] = x_av[i-1] + ds
             y_av[i] = rayon_courbure
             theta[i] = 0.0
+            
         elif x_av[i-1] >= 0.0 and theta[i-1] < cap_cible_rad:
+            # CORRECTION : Le virage commence de facon fluide des que l'essieu avant franchit 0
             cap_av_rad = ds / rayon_courbure
             theta[i] = theta[i-1] + cap_av_rad
+            
             x_av[i] = rayon_courbure * np.sin(theta[i])
             y_av[i] = y_centre_virage - rayon_courbure * np.cos(theta[i])
+            
         else:
+            # Phase de sortie : Prolongation rectiligne suivant le cap final
             x_av[i] = x_av[i-1] + ds * np.cos(cap_cible_rad)
             y_av[i] = y_av[i-1] + ds * np.sin(cap_cible_rad)
             theta[i] = cap_cible_rad
 
-        # 2. Trajectoire de l'essieu arriere (Ligne rouge decalee)
-        # DECALAGE AU DEPART EN X : L'arriere reste droit tant que l'avant n'a pas franchi la distance de l'empattement
-        if x_av[i] < empattement:
+        # 2. Cinematique de l'essieu arriere (Ligne bleue tractee en retrait)
+        if x_av[i] < 0.0:
+            # CORRECTION : Ligne droite initiale parfaite, aucun dephasage possible
             x_arr[i] = x_av[i] - empattement
             y_arr[i] = rayon_courbure
-        # DECALAGE A LA FIN EN Y : L'arriere continue de tourner tant que sa propre position Y n'a pas atteint la fin du virage
-        elif y_arr[i-1] < rayon_courbure:
+        else:
+            # L'arriere ne commence a pivoter QUE si l'avant a depasse le repere 0
             dx = x_av[i] - x_arr[i-1]
             dy = y_av[i] - y_arr[i-1]
             distance_inter_essieux = np.hypot(dx, dy)
+            
+            # Maintien rigide de la carrosserie en retrait
             x_arr[i] = x_av[i] - empattement * (dx / distance_inter_essieux)
             y_arr[i] = y_av[i] - empattement * (dy / distance_inter_essieux)
-        else:
-            # Stabilisation en ligne droite verticale parallele
-            x_arr[i] = rayon_courbure - empattement
-            y_arr[i] = y_arr[i-1] + ds
 
-        # 3. Calcul de la dynamique des forces pour les alertes
+        # 3. Calcul de la dynamique des forces liees au devers pour les alertes
         if x_av[i] >= 0.0 and theta[i] < cap_cible_rad:
             acc_lat_inst_g = (vitesse_ms**2) / (rayon_courbure * g)
+            
             P_normale = masse_totale * 1000 * g * np.cos(beta)
             Fc_normale = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) * np.sin(beta)
             N = P_normale + Fc_normale
+            
             P_tangente = masse_totale * 1000 * g * np.sin(beta)
             Fc_tangente = masse_totale * 1000 * (vitesse_ms**2 / rayon_courbure) * np.cos(beta)
             F_frottement_requise = Fc_tangente - P_tangente
             F_frottement_max = seuil_glissement_mu * N
+            
             Moment_renversement = Fc_tangente * hauteur_cg
             Moment_stabilisateur = N * (largeur_camion / 2) + P_tangente * hauteur_cg
             
@@ -386,13 +393,7 @@ with tab3:
             if np.abs(F_frottement_requise) >= F_frottement_max and evenement_detecte == "Aucun":
                 evenement_detecte = "Glissement"
                 
-        # 4. Verification du gabarit
-        if x_av[i] >= 0.0:
-            r_av = np.sqrt(x_av[i]**2 + (y_av[i] - y_centre_virage)**2)
-            r_ar = np.sqrt(x_arr[i]**2 + (y_arr[i] - y_centre_virage)**2)
-            if (r_av > r_ext or r_av < r_int or r_ar > r_ext or r_ar < r_int) and evenement_detecte == "Aucun":
-                evenement_detecte = "Sortie de route"
-        # 3. Verification du gabarit par rapport aux limites de la route
+        # 4. Verification geometrique des franchissements de ligne
         if x_av[i] >= 0.0:
             r_av = np.sqrt(x_av[i]**2 + (y_av[i] - y_centre_virage)**2)
             r_ar = np.sqrt(x_arr[i]**2 + (y_arr[i] - y_centre_virage)**2)
