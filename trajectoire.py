@@ -1108,6 +1108,7 @@ with tab2:
         plt.close(fig_anim)
 
         # Schema des forces vectorielles de la caravane
+        # Schema des forces vectorielles de la caravane corrige
         fig_forces, ax_f = plt.subplots(figsize=(5, 3.5))
         ax_f.plot([-2, 2], [-2 * np.sin(beta_cara), 2 * np.sin(beta_cara)], color='black', linewidth=3)
         cam_box = np.array([[-largeur_ensemble/2, 0], [largeur_ensemble/2, 0], [largeur_ensemble/2, hauteur_cg_cara * 1.4], [-largeur_ensemble/2, hauteur_cg_cara * 1.4]])
@@ -1116,29 +1117,30 @@ with tab2:
         ax_f.add_patch(Polygon(cam_box_rot, closed=True, facecolor='#7f8c8d', alpha=0.3))
         
         G_coord = np.dot(np.array([0, hauteur_cg_cara]), R_mat.T)
-        ax_f.scatter(G_coord, G_coord, color='black', s=90, zorder=5)
+        ax_f.scatter(G_coord[0], G_coord[1], color='black', s=90, zorder=5)
         
         roue_gauche = np.dot(np.array([-largeur_ensemble/2, 0]), R_mat.T)
         roue_droite = np.dot(np.array([largeur_ensemble/2, 0]), R_mat.T)
-        ax_f.scatter([roue_gauche, roue_droite], [roue_gauche, roue_droite], color='black', s=120, marker='s', zorder=4)
+        ax_f.scatter([roue_gauche[0], roue_droite[0]], [roue_gauche[1], roue_droite[1]], color='black', s=120, marker='s', zorder=4)
         
         f_scale = 1.0 / (masse_totale_cara * 1000 * g)
         val_P = masse_totale_cara * 1000 * g
         val_Fc = masse_totale_cara * 1000 * (vitesse_ms_cara**2 / rayon_courbure_cara) if evenement_detecte_cara != "Basculement" else 0.0
         
-        ax_f.arrow(G_coord, G_coord, 0, -val_P * f_scale * 1.3, head_width=0.08, head_length=0.12, color='#2ecc71', label='Poids (P)')
-        ax_f.arrow(G_coord, G_coord, val_Fc * f_scale * 1.3, 0, head_width=0.08, head_length=0.12, color='#e74c3c', label='Force Centrifuge (Fc)')
+        # CORRECTION : Extraction des index [0] et [1] pour Matplotlib
+        ax_f.arrow(G_coord[0], G_coord[1], 0, -val_P * f_scale * 1.3, head_width=0.08, head_length=0.12, color='#2ecc71', label='Poids (P)')
+        ax_f.arrow(G_coord[0], G_coord[1], val_Fc * f_scale * 1.3, 0, head_width=0.08, head_length=0.12, color='#e74c3c', label='Force Centrifuge (Fc)')
         
         val_N_totale = val_P * np.cos(beta_cara) + val_Fc * np.sin(beta_cara)
         val_Ff_totale = val_Fc * np.cos(beta_cara) - val_P * np.sin(beta_cara) if evenement_detecte_cara != "Basculement" else 0.0
         
-        ax_f.arrow(roue_gauche, roue_gauche, -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta_cara), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta_cara), head_width=0.08, head_length=0.12, color='#9b59b6', label='Reaction Normale (N)')
-        ax_f.arrow(roue_droite, roue_droite, -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta_cara), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta_cara), head_width=0.08, head_length=0.12, color='#9b59b6')
+        # CORRECTION : Extraction des index [0] et [1] pour les fleches des roues
+        ax_f.arrow(roue_gauche[0], roue_gauche[1], -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta_cara), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta_cara), head_width=0.08, head_length=0.12, color='#9b59b6', label='Reaction Normale (N)')
+        ax_f.arrow(roue_droite[0], roue_droite[1], -(val_N_totale/2) * f_scale * 1.3 * np.sin(beta_cara), (val_N_totale/2) * f_scale * 1.3 * np.cos(beta_cara), head_width=0.08, head_length=0.12, color='#9b59b6')
         
         if np.abs(val_Ff_totale) > 0:
-            ax_f.arrow(roue_gauche, roue_gauche, -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta_cara), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta_cara), head_width=0.08, head_length=0.12, color='#3498db', label='Frottement Pneus (Ff)')
-            ax_f.arrow(roue_droite, roue_droite, -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta_cara), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta_cara), head_width=0.08, head_length=0.12, color='#3498db')
-
+            ax_f.arrow(roue_gauche[0], roue_gauche[1], -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta_cara), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta_cara), head_width=0.08, head_length=0.12, color='#3498db', label='Frottement Pneus (Ff)')
+            ax_f.arrow(roue_droite[0], roue_droite[1], -(val_Ff_totale/2) * f_scale * 1.3 * np.cos(beta_cara), -(val_Ff_totale/2) * f_scale * 1.3 * np.sin(beta_cara), head_width=0.08, head_length=0.12, color='#3498db')
         ax_f.set_xlim(-1.8, 1.8)
         ax_f.set_ylim(-0.8, 2.5)
         ax_f.axis('off')
