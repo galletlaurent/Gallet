@@ -282,15 +282,16 @@ with tab1:
     with histp1:
         st.header("Historique")
         try:
-            st.image("histpesanteur.jpg", caption="la pesanteur.",width=600)
+            st.image("histpesanteur.jpg", caption="la pesanteur.", width=600)
         except Exception:
-            st.error("Fichier impesanteur.jpg introuvable.")
+            st.error("Fichier histpesanteur.jpg introuvable.")
+
     with histp2:
-        try:
         st.header("BD humoristique")
-            st.image("humpesanteur.jpg", caption="la pesanteur.",width=600)
+        try:
+            st.image("humpesanteur.jpg", caption="la pesanteur.", width=600)
         except Exception:
-            st.error("Fichier impesanteur.jpg introuvable.")
+            st.error("Fichier humpesanteur.jpg introuvable.")
             
     st.title("Laboratoire Interactif : La Force de Pesanteur (Le Poids)")
     st.write("Modifiez la masse et la gravité pour observer l'évolution de la force de pesanteur.")
