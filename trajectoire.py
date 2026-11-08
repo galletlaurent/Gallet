@@ -549,7 +549,7 @@ with tab0:
 
 
 with tab1:
-    st.header("Simulation Permis B"
+    st.header("Simulation Permis B")
     col_imB1, col_imB2, col_imB3 = st.columns(3)
 
     with col_imB1:    
