@@ -437,6 +437,66 @@ def afficher_atelier_trajectoire_gabarit(verrouille=False):
                 st.selectbox("", choix, key=f"{cle}_traj_clean", disabled=verrouille, label_visibility="collapsed")
 
 
+def afficher_atelier_permis_ce_caravane(verrouille=False):
+    """Affiche le Quiz et le Texte à trous côte à côte en bas de la page pour le permis CE + caravane/remorque lourde."""
+    import random
+
+    st.subheader("Atelier Interactif : Cinématique et Dynamique de l'Attelage Lourd (CE)")
+
+    questions_sources_ce = [
+        {"id": "qce1", "q": "Pourquoi un ensemble articulé CE coupe-t-il fortement le virage vers l'intérieur de la courbe ?", "options": ["En raison de la chasse cinématique accrue due aux dimensions de la remorque", "À cause d'un manque de puissance du tracteur", "Parce que le pont arrière est bloqué"], "rep": "En raison de la chasse cinématique accrue due aux dimensions de la remorque"},
+        {"id": "qce2", "q": "Quel organe d'accouplement remplace la rotule légère sur un ensemble articulé lourd de type CE ?", "options": ["La sellette d'attelage (ou crochet de remorque lourd)", "La rotule standard", "L'essieu rétractable"], "rep": "La sellette d'attelage (ou crochet de remorque lourd)"},
+        {"id": "qce3", "q": "Quel paramètre géométrique amplifie considérablement la surface de balayage de la remorque lourde ?", "options": ["La distance axe pivot - essieu de la remorque", "Le PTRA imprimé sur la carte grise", "Le carénage aérodynamique latéral"], "rep": "La distance axe pivot - essieu de la remorque"},
+        {"id": "qce4", "q": "Comment se comportent les trajectoires du camion et de sa remorque en phase d'approche rectiligne ?", "options": ["Les trajectoires des essieux sont parfaitement confondues", "Elles sont décalées d'un mètre sur la droite", "Elles oscillent en permanence"], "rep": "Les trajectoires des essieux sont parfaitement confondues"},
+        {"id": "qce5", "q": "Quel risque dynamique majeur guette un ensemble CE à centre de gravité élevé en courbe serrée ?", "options": ["Le basculement ou renversement latéral", "L'allongement de l'empattement du camion", "Le rétrécissement instantané des voies"], "rep": "Le basculement ou renversement latéral"},
+        {"id": "qce6", "q": "Sur quel repère précis l'essieu avant du camion commence-t-il sa rotation géométrique ?", "options": ["Pile à l'intersection de la ligne verticale 0", "Trois mètres après la sortie de courbe", "Au milieu de la ligne droite de départ"], "rep": "Pile à l'intersection de la ligne verticale 0"},
+        {"id": "qce7", "q": "Dans l'interface graphique du simulateur CE, comment est représentée la trajectoire du train suiveur ?", "options": ["Par une ligne bleue pointillée", "Par une ligne rouge continue", "Par une double bande noire rigide"], "rep": "Par une ligne bleue pointillée"},
+        {"id": "qce8", "q": "Quel phénomène de perte d'adhérence pneu/sol peut provoquer une mise en portefeuille de l'ensemble CE ?", "options": ["Le glissement latéral (perte d'adhérence)", "Le devers positif de l'infrastructure", "La stabilisation cinématique"], "rep": "Le glissement latéral (perte d'adhérence)"},
+        {"id": "qce9", "q": "Quelle caractéristique géométrique de la route permet de contrer en partie l'effet centrifuge subi par le poids lourd ?", "options": ["L'angle de dévers de la chaussée", "La largeur de la ligne blanche axiale", "L'état de rugosité de la berme"], "rep": "L'angle de dévers de la chaussée"},
+        {"id": "qce10", "q": "Pour éviter que l'essieu de la remorque ne monte sur le trottoir intérieur, le conducteur CE doit :", "options": ["Ouvrir largement sa trajectoire vers l'extérieur (gabarit lourd)", "Serrer immédiatement le point de corde", "Donner un coup de frein brusque au point 0"], "rep": "Ouvrir largement sa trajectoire vers l'extérieur (gabarit lourd)"}
+    ]
+
+    if "ordre_quiz_ce_cara_aleatoire" not in st.session_state:
+        random.shuffle(questions_sources_ce)
+        st.session_state.ordre_quiz_ce_cara_aleatoire = questions_sources_ce
+
+    if "champs_ce_cara_clean" not in st.session_state:
+        st.session_state.champs_ce_cara_clean = [
+            ("1. La remorque lourde CE est connectée au tracteur par un système de ..........", ["Choisir...", "sellette", "rotule"], "sellette", "ce_t1"),
+            ("2. Les roues directrices du camion guident l'ensemble et apparaissent en ..........", ["Choisir...", "rouge", "bleu"], "rouge", "ce_t2"),
+            ("3. L'essieu arrière de la remorque lourde coupe la trajectoire en ..........", ["Choisir...", "bleu", "rouge"], "bleu", "ce_t3"),
+            ("4. Le grand gabarit d'un ensemble articulé augmente l'effet de .......... géométrique.", ["Choisir...", "chasse", "braquage"], "chasse", "ce_t4"),
+            ("5. En approche sur la section rectiligne, les lignes de trajectoire sont ..........", ["Choisir...", "confondues", "séparées"], "confondues", "ce_t5"),
+            ("6. Une perte d'adhérence du train arrière du tracteur peut mener à une mise en ..........", ["Choisir...", "portefeuille", "ligne"], "portefeuille", "ce_t6"),
+            ("7. Le profil incliné de la route, ou .........., aide à stabiliser les masses lourdes.", ["Choisir...", "dévers", "pente"], "dévers", "ce_t7"),
+            ("8. L'accélération transversale subie par le véhicule se mesure en unités ..........", ["Choisir...", "G", "Pascal"], "G", "ce_t8"),
+            ("9. L'inscription dans la courbe se déclenche précisément au repère ..........", ["Choisir...", "vertical 0", "horizontal 5"], "vertical 0", "ce_t9"),
+            ("10. Un empiétement hors des limites de la voie matérialise une .......... de route.", ["Choisir...", "sortie", "conformité"], "sortie", "ce_t10")
+        ]
+
+    col_quiz_ce, col_trous_ce = st.columns(2)
+    
+    with col_quiz_ce:
+        st.markdown("##### Quiz Technique CE (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_ce_cara_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", options=["Choisir..."] + q_data["options"], key=f"ce_at4_final_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous_ce:
+        st.markdown("##### Synthèse de l'Atelier CE (Texte à trous - 10 cases - 10 pts)")
+        for ligne in st.session_state.champs_ce_cara_clean:
+            enonce = ligne[0]
+            choix = ligne[1]
+            cle = ligne[-1]
+            
+            c_txt, c_sel = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_txt: 
+                st.write(enonce)
+            with c_sel: 
+                st.selectbox("", choix, key=f"{cle}_ce_cara_clean", disabled=verrouille, label_visibility="collapsed")
+
+
+
 with tab0:
     st.subheader("Identification de l'élève")
     st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
@@ -1283,6 +1343,10 @@ with tab2:
             zone_alerte.warning("SORTIE DE VOIE : La caravane a chevauché le marquage au sol.")
         else:
             zone_alerte.success("TRAJECTOIRE REUSSITE : L'attelage est resté stable dans sa voie.")
+
+
+
+            
     if "suite_verrouille_tab2_cara" not in st.session_state:
         st.session_state.suite_verrouille_tab2_cara = False
     verrou_at2_cara = st.session_state.suite_verrouille_tab2_cara
@@ -1931,7 +1995,530 @@ with tab3:
 
 with tab4:
     st.header("Simulation Permis CE et caravane")
-    st.info("Espace reserve pour la simulation d'un camion rigide tractant une remorque de type caravane.")
+    col_param1, col_param2, col_param3 = st.columns(3)
+    
+    with col_param1:
+        vitesse_kmh_ce_cara = st.slider("Vitesse de l'ensemble (km/h)", 10, 110, 50, step=5, key="vitesse_ce_cara")
+        vitesse_ms_ce_cara = vitesse_kmh_ce_cara / 3.6
+        empattement_camion = st.slider("Empattement du camion (m)", 2.2, 5.5, 3.8, step=0.1, key="emp_camion_ce_cara")
+
+    with col_param2:
+        longueur_fleche_ce = st.slider("Distance rotule - Essieu remorque (m)", 3.0, 9.0, 5.5, step=0.1, key="long_ce_cara")
+        porte_a_faux_ar_camion = st.slider("Porte-a-faux arriere du camion (m)", 0.5, 2.0, 1.2, step=0.05, key="paf_camion_ce_cara")
+        
+        masse_camion = st.slider("Masse du camion (kg)", 3500, 19000, 8000, step=100, key="m_camion_ce_cara")
+        masse_remorque_ce = st.slider("Masse de la remorque/caravane (kg)", 750, 10000, 3500, step=100, key="m_remorque_ce_cara")
+        masse_totale_ce_cara = (masse_camion + masse_remorque_ce) / 1000.0
+        st.write(f"Masse totale de l'ensemble : {masse_camion + masse_remorque_ce} kg")
+
+    with col_param3:
+        rayon_courbure_ce_cara = st.slider("Rayon de la courbe (m)", 20, 120, 45, key="rc_ce_cara")
+        angle_virage_ce_cara = st.slider("Angle du virage (degres)", 45, 135, 90, key="av_ce_cara")
+        angle_route_ce_cara = st.slider("Angle de devers de la route (degres)", 0, 15, 2, key="devers_ce_cara_central")
+        largeur_voie_ce = 3.5  # Légèrement élargie pour le gabarit lourd
+
+    # Configuration de l'infrastructure
+    y_centre_virage_ce_cara = 2 * rayon_courbure_ce_cara
+    beta_ce_cara = np.radians(angle_route_ce_cara)
+    
+    g = 9.81
+    seuil_glissement_mu = 0.55
+    largeur_ensemble_ce = 2.5  # Gabarit routier poids lourd standard
+    hauteur_cg_ce_cara = 1.40  # Centre de gravité plus élevé pour du matériel CE
+
+    r_int_ce_cara = rayon_courbure_ce_cara - (largeur_voie_ce / 2)
+    r_ext_ce_cara = rayon_courbure_ce_cara + (largeur_voie_ce / 2)
+
+    # Calcul préliminaire du pas d'espace
+    ds_ce_cara = 0.05  
+    distance_totale_ce_cara = rayon_courbure_ce_cara * np.radians(angle_virage_ce_cara) + 25.0
+    pas_ce_cara = int(distance_totale_ce_cara / ds_ce_cara)
+
+    # Création des structures de tableaux pour les essieux
+    x_v_av = np.zeros(pas_ce_cara)
+    y_v_av = np.zeros(pas_ce_cara)
+    x_v_ar = np.zeros(pas_ce_cara)
+    y_v_ar = np.zeros(pas_ce_cara)
+    x_c_ar = np.zeros(pas_ce_cara)
+    y_c_ar = np.zeros(pas_ce_cara)
+    
+    theta_v = np.zeros(pas_ce_cara)
+    theta_c = np.zeros(pas_ce_cara)
+
+    # Initialisation stricte a l'index 0 en ligne droite horizontale
+    x_v_av[0] = -10.0
+    y_v_av[0] = rayon_courbure_ce_cara
+    
+    x_v_ar[0] = x_v_av[0] - empattement_camion
+    y_v_ar[0] = rayon_courbure_ce_cara
+    theta_v[0] = 0.0
+
+    x_rotule_init = x_v_ar[0] - porte_a_faux_ar_camion
+    x_c_ar[0] = x_rotule_init - longueur_fleche_ce
+    y_c_ar[0] = rayon_courbure_ce_cara
+    theta_c[0] = 0.0
+
+    evenement_detecte_ce_cara = "Aucun"
+    index_interruption_ce_cara = pas_ce_cara - 1
+    acceleration_laterale_ce_cara_g = (vitesse_ms_ce_cara**2) / (rayon_courbure_ce_cara * g)
+
+    # =============================================================================
+    # BOUCLE DE CALCUL GÉOMÉTRIQUE RÉSOLUTION ATTELAGE LOURD (TAB 4)
+    # =============================================================================
+    cap_cible_ce_cara_rad = np.radians(angle_virage_ce_cara)
+
+    for i in range(1, pas_ce_cara):
+        # 1. Cinématique de l'essieu avant du camion
+        if x_v_av[i-1] < 0.0:
+            x_v_av[i] = x_v_av[i-1] + ds_ce_cara
+            y_v_av[i] = rayon_courbure_ce_cara
+            theta_v[i] = 0.0
+        elif x_v_av[i-1] >= 0.0 and theta_v[i-1] < cap_cible_ce_cara_rad:
+            cap_av_rad = ds_ce_cara / rayon_courbure_ce_cara
+            theta_v[i] = theta_v[i-1] + cap_av_rad
+            x_v_av[i] = rayon_courbure_ce_cara * np.sin(theta_v[i])
+            y_v_av[i] = y_centre_virage_ce_cara - rayon_courbure_ce_cara * np.cos(theta_v[i])
+        else:
+            x_v_av[i] = x_v_av[i-1] + ds_ce_cara * np.cos(cap_cible_ce_cara_rad)
+            y_v_av[i] = y_v_av[i-1] + ds_ce_cara * np.sin(cap_cible_ce_cara_rad)
+            theta_v[i] = cap_cible_ce_cara_rad
+
+        # 2. Cinématique de l'essieu arrière du camion
+        dx_v = x_v_av[i] - x_v_ar[i-1]
+        dy_v = y_v_av[i] - y_v_ar[i-1]
+        dist_v = np.hypot(dx_v, dy_v)
+        x_v_ar[i] = x_v_av[i] - empattement_camion * (dx_v / dist_v)
+        y_v_ar[i] = y_v_av[i] - empattement_camion * (dy_v / dist_v)
+
+        # Repère spatial de la rotule d'attelage arrière
+        x_rot = x_v_ar[i] - porte_a_faux_ar_camion * np.cos(theta_v[i])
+        y_rot = y_v_ar[i] - porte_a_faux_ar_camion * np.sin(theta_v[i])
+
+        # 3. Cinématique de l'essieu de la remorque/caravane lourde
+        dx_c = x_rot - x_c_ar[i-1]
+        dy_c = y_rot - y_c_ar[i-1]
+        dist_c = np.hypot(dx_c, dy_c)
+        theta_c[i] = np.arctan2(dy_c, dx_c)
+        x_c_ar[i] = x_rot - longueur_fleche_ce * (dx_c / dist_c)
+        y_c_ar[i] = y_rot - longueur_fleche_ce * (dy_c / dist_c)
+
+        # 4. Calcul de la dynamique des forces liées au dévers
+        if x_v_av[i] >= 0.0 and theta_v[i] < cap_cible_ce_cara_rad:
+            val_P_ce_cara = masse_totale_ce_cara * 1000 * g
+            val_Fc_ce_cara = masse_totale_ce_cara * 1000 * (vitesse_ms_ce_cara**2 / rayon_courbure_ce_cara)
+            
+            P_normale = val_P_ce_cara * np.cos(beta_ce_cara)
+            Fc_normale = val_Fc_ce_cara * np.sin(beta_ce_cara)
+            N = P_normale + Fc_normale
+            
+            P_tangente = val_P_ce_cara * np.sin(beta_ce_cara)
+            Fc_tangente = val_Fc_ce_cara * np.cos(beta_ce_cara)
+            F_frottement_requise = Fc_tangente - P_tangente
+            F_frottement_max = seuil_glissement_mu * N
+            
+            Moment_renversement = Fc_tangente * hauteur_cg_ce_cara
+            Moment_stabilisateur = N * (largeur_ensemble_ce / 2) + P_tangente * hauteur_cg_ce_cara
+            
+            if Moment_renversement >= Moment_stabilisateur:
+                evenement_detecte_ce_cara = "Basculement"
+                index_interruption_ce_cara = i
+                break
+            if np.abs(F_frottement_requise) >= F_frottement_max and evenement_detecte_ce_cara == "Aucun":
+                evenement_detecte_ce_cara = "Glissement"
+                
+        # 5. Vérification géométrique du franchissement de voie
+        if x_v_av[i] >= 0.0:
+            r_av = np.sqrt(x_v_av[i]**2 + (y_v_av[i] - y_centre_virage_ce_cara)**2)
+            r_car = np.sqrt(x_c_ar[i]**2 + (y_c_ar[i] - y_centre_virage_ce_cara)**2)
+            if (r_av > r_ext_ce_cara or r_av < r_int_ce_cara or r_car > r_ext_ce_cara or r_car < r_int_ce_cara) and evenement_detecte_ce_cara == "Aucun":
+                evenement_detecte_ce_cara = "Sortie de route"
+
+    # Affichage du statut après la boucle
+    st.info(f"Résultat de la simulation : {evenement_detecte_ce_cara}")
+
+    # Préparation et affichage du bouton d'exportation de données
+    nom_fic_ce = preparer_nom_fichier("Permis_CE_Caravane")
+    st.download_button(
+        label="Exporter les données CE et Caravane",
+        data=f"Statut: {evenement_detecte_ce_cara}\nAccélération latérale: {acceleration_laterale_ce_cara_g:.2f} g",
+        file_name=nom_fic_ce,
+        mime="text/plain",
+        key="btn_dl_ce_cara"
+    )
+
+    # Tronquage des vecteurs au point d'arret reel (TAB 4 - CE et caravane)
+    x_v_av = x_v_av[:index_interruption_ce_cara+1]
+    y_v_av = y_v_av[:index_interruption_ce_cara+1]
+    x_v_ar = x_v_ar[:index_interruption_ce_cara+1]
+    y_v_ar = y_v_ar[:index_interruption_ce_cara+1]
+    x_c_ar = x_c_ar[:index_interruption_ce_cara+1]
+    y_c_ar = y_c_ar[:index_interruption_ce_cara+1]
+    theta_v = theta_v[:index_interruption_ce_cara+1]
+
+    if len(x_v_av) > 1 and evenement_detecte_ce_cara != "Basculement":
+        rayons_ce_cara_ar = np.sqrt(x_c_ar**2 + (y_c_ar - y_centre_virage_ce_cara)**2)
+        rayons_avant_ce = np.sqrt(x_v_av**2 + (y_v_av - y_centre_virage_ce_cara)**2)
+        decalage_reel_ce_cara = np.max(rayons_avant_ce) - np.min(rayons_ce_cara_ar)
+    else:
+        decalage_reel_ce_cara = 0.0
+
+    t_route_ce_cara = np.linspace(0, np.radians(angle_virage_ce_cara), 100)
+
+    # Reconstruction de la chaussee fixe concentrique (Adaptée au gabarit CE)
+    x_dr_ce_cara = np.linspace(-10, 0, 10)
+    x_arc_int_ce_cara = r_int_ce_cara * np.sin(t_route_ce_cara)
+    y_arc_int_ce_cara = y_centre_virage_ce_cara - r_int_ce_cara * np.cos(t_route_ce_cara)
+    x_arc_ext_ce_cara = r_ext_ce_cara * np.sin(t_route_ce_cara)
+    y_arc_ext_ce_cara = y_centre_virage_ce_cara - r_ext_ce_cara * np.cos(t_route_ce_cara)
+    
+    x_fin_int_ce_cara = x_arc_int_ce_cara[-1] + np.linspace(0, 15, 10) * np.cos(np.radians(angle_virage_ce_cara))
+    y_fin_int_ce_cara = y_arc_int_ce_cara[-1] + np.linspace(0, 15, 10) * np.sin(np.radians(angle_virage_ce_cara))
+    x_fin_ext_ce_cara = x_arc_ext_ce_cara[-1] + np.linspace(0, 15, 10) * np.cos(np.radians(angle_virage_ce_cara))
+    y_fin_ext_ce_cara = y_arc_ext_ce_cara[-1] + np.linspace(0, 15, 10) * np.sin(np.radians(angle_virage_ce_cara))
+    
+    x_route_int_ce_cara = np.concatenate([x_dr_ce_cara, x_arc_int_ce_cara, x_fin_int_ce_cara])
+    y_route_int_ce_cara = np.concatenate([np.full_like(x_dr_ce_cara, rayon_courbure_ce_cara - largeur_voie_ce/2), y_arc_int_ce_cara, y_fin_int_ce_cara])
+    x_route_ext_ce_cara = np.concatenate([x_dr_ce_cara, x_arc_ext_ce_cara, x_fin_ext_ce_cara])
+    y_route_ext_ce_cara = np.concatenate([np.full_like(x_dr_ce_cara, rayon_courbure_ce_cara + largeur_voie_ce/2), y_arc_ext_ce_cara, y_fin_ext_ce_cara])
+
+    # =============================================================================
+    # RENDU ET COLONNES D'AFFICHAGE (ONGLET 4 - CE et caravane)
+    # =============================================================================
+    col_graphe_ce, col_analyse_ce = st.columns(2)
+
+    with col_analyse_ce:
+        st.subheader("Indicateurs Physiques Synchrones (CE)")
+        zone_metrique_chasse_ce = st.empty()
+        zone_metrique_devers_ce = st.empty()
+        zone_metrique_g_ce = st.empty()
+        zone_alerte_ce = st.empty()
+        
+        declencher_animation_ce = st.button("Lancer la simulation pas-a-pas", key="btn_anim_ce_cara")
+        
+        st.subheader("Schéma Vectoriel du Bilan des Forces (Vue arrière CE)")
+        zone_schema_forces_ce = st.empty()
+
+    with col_graphe_ce:
+        conteneur_graphique_ce = st.empty()
+
+    points_animation_ce = range(0, len(x_v_av), max(1, len(x_v_av) // 40)) if declencher_animation_ce else [len(x_v_av) - 1]
+    
+    import time
+    from matplotlib.patches import Polygon
+
+    for k in points_animation_ce:
+        fig_anim_ce, ax_anim_ce = plt.subplots(figsize=(7, 5))
+        ax_anim_ce.plot(x_route_int_ce_cara, y_route_int_ce_cara, color='black', linewidth=2)
+        ax_anim_ce.plot(x_route_ext_ce_cara, y_route_ext_ce_cara, color='black', linewidth=2)
+        
+        if k > 0:
+            # ROUGE pour l'AVANT du camion (x_v_av), BLEU pour l'ARRIERE de la remorque/caravane (x_c_ar)
+            ax_anim_ce.plot(x_v_av[:k], y_v_av[:k], color='#e74c3c', linewidth=2, label="Trajectoire Roues AV Camion")
+            ax_anim_ce.plot(x_c_ar[:k], y_c_ar[:k], color='#3498db', linewidth=2, linestyle='--', label="Trajectoire Essieu Remorque")
+        
+        ax_anim_ce.scatter(x_v_av[k], y_v_av[k], color='#e74c3c', s=50)
+        ax_anim_ce.scatter(x_c_ar[k], y_c_ar[k], color='#3498db', s=50)
+        ax_anim_ce.axis("equal")
+        ax_anim_ce.set_xlim(-12, max(x_route_ext_ce_cara) + 5)
+        ax_anim_ce.set_ylim(-5, max(y_route_ext_ce_cara) + 5)
+        
+        if declencher_animation_ce:
+            conteneur_graphique_ce.pyplot(fig_anim_ce)
+        plt.close(fig_anim_ce)
+
+        # Schéma des forces vectorielles de la caravane lourde
+        fig_forces_ce, ax_f_ce = plt.subplots(figsize=(5, 3.5))
+        ax_f_ce.plot([-2, 2], [-2 * np.sin(beta_ce_cara), 2 * np.sin(beta_ce_cara)], color='black', linewidth=3)
+        cam_box_ce = np.array([[-largeur_ensemble_ce/2, 0], [largeur_ensemble_ce/2, 0], [largeur_ensemble_ce/2, hauteur_cg_ce_cara * 1.4], [-largeur_ensemble_ce/2, hauteur_cg_ce_cara * 1.4]])
+        R_mat_ce = np.array([[np.cos(beta_ce_cara), -np.sin(beta_ce_cara)], [np.sin(beta_ce_cara), np.cos(beta_ce_cara)]])
+        cam_box_rot_ce = np.dot(cam_box_ce, R_mat_ce.T)
+        ax_f_ce.add_patch(Polygon(cam_box_rot_ce, closed=True, facecolor='#7f8c8d', alpha=0.3))
+        
+        G_coord_ce = np.dot(np.array([0, hauteur_cg_ce_cara]), R_mat_ce.T)
+        ax_f_ce.scatter(G_coord_ce[0], G_coord_ce[1], color='black', s=90, zorder=5)
+        
+        roue_gauche_ce = np.dot(np.array([-largeur_ensemble_ce/2, 0]), R_mat_ce.T)
+        roue_droite_ce = np.dot(np.array([largeur_ensemble_ce/2, 0]), R_mat_ce.T)
+        ax_f_ce.scatter([roue_gauche_ce[0], roue_droite_ce[0]], [roue_gauche_ce[1], roue_droite_ce[1]], color='black', s=120, marker='s', zorder=4)
+        
+        f_scale_ce = 1.0 / (masse_totale_ce_cara * 1000 * g)
+        val_P_ce = masse_totale_ce_cara * 1000 * g
+        val_Fc_ce = masse_totale_ce_cara * 1000 * (vitesse_ms_ce_cara**2 / rayon_courbure_ce_cara) if evenement_detecte_ce_cara != "Basculement" else 0.0
+        
+        # Flèches vectorielles Poids et Force Centrifuge
+        ax_f_ce.arrow(G_coord_ce[0], G_coord_ce[1], 0, -val_P_ce * f_scale_ce * 1.3, head_width=0.08, head_length=0.12, color='#2ecc71', label='Poids (P)')
+        ax_f_ce.arrow(G_coord_ce[0], G_coord_ce[1], val_Fc_ce * f_scale_ce * 1.3, 0, head_width=0.08, head_length=0.12, color='#e74c3c', label='Force Centrifuge (Fc)')
+        
+        val_N_totale_ce = val_P_ce * np.cos(beta_ce_cara) + val_Fc_ce * np.sin(beta_ce_cara)
+        val_Ff_totale_ce = val_Fc_ce * np.cos(beta_ce_cara) - val_P_ce * np.sin(beta_ce_cara) if evenement_detecte_ce_cara != "Basculement" else 0.0
+        
+        # Flèches de réaction normale pour les roues
+        ax_f_ce.arrow(roue_gauche_ce[0], roue_gauche_ce[1], -(val_N_totale_ce/2) * f_scale_ce * 1.3 * np.sin(beta_ce_cara), (val_N_totale_ce/2) * f_scale_ce * 1.3 * np.cos(beta_ce_cara), head_width=0.08, head_length=0.12, color='#9b59b6', label='Réaction Normale (N)')
+        ax_f_ce.arrow(roue_droite_ce[0], roue_droite_ce[1], -(val_N_totale_ce/2) * f_scale_ce * 1.3 * np.sin(beta_ce_cara), (val_N_totale_ce/2) * f_scale_ce * 1.3 * np.cos(beta_ce_cara), head_width=0.08, head_length=0.12, color='#9b59b6')
+        
+        if np.abs(val_Ff_totale_ce) > 0:
+            ax_f_ce.arrow(roue_gauche_ce[0], roue_gauche_ce[1], -(val_Ff_totale_ce/2) * f_scale_ce * 1.3 * np.cos(beta_ce_cara), -(val_Ff_totale_ce/2) * f_scale_ce * 1.3 * np.sin(beta_ce_cara), head_width=0.08, head_length=0.12, color='#3498db', label='Frottement Pneus (Ff)')
+            ax_f_ce.arrow(roue_droite_ce[0], roue_droite_ce[1], -(val_Ff_totale_ce/2) * f_scale_ce * 1.3 * np.cos(beta_ce_cara), -(val_Ff_totale_ce/2) * f_scale_ce * 1.3 * np.sin(beta_ce_cara), head_width=0.08, head_length=0.12, color='#3498db')
+        ax_f_ce.set_xlim(-1.8, 1.8)
+        ax_f_ce.set_ylim(-0.8, 2.5)
+        ax_f_ce.axis('off')
+        
+        handles_ce, labels_ce = ax_f_ce.get_legend_handles_labels()
+        by_label_ce = dict(zip(labels_ce, handles_ce))
+        ax_f_ce.legend(by_label_ce.values(), by_label_ce.keys(), loc="upper right", fontsize='small')
+        zone_schema_forces_ce.pyplot(fig_forces_ce)
+        plt.close(fig_forces_ce)
+
+        decalage_inst_ce = np.abs(np.sqrt(x_v_av[k]**2 + (y_v_av[k] - y_centre_virage_ce_cara)**2) - np.sqrt(x_c_ar[k]**2 + (y_c_ar[k] - y_centre_virage_ce_cara)**2)) if x_v_av[k] >= 0.0 else 0.0
+        zone_metrique_chasse_ce.metric(label="Balayage instantané", value=f"{decalage_inst_ce:.2f} m")
+        zone_metrique_devers_ce.metric(label="Angle de dévers de la route", value=f"{angle_route_ce_cara:.1f} degrés")
+        zone_metrique_g_ce.metric(label="Accélération transversale", value=f"{(vitesse_ms_ce_cara**2)/(rayon_courbure_ce_cara*g) if x_v_av[k]>=0.0 else 0.0:.2f} G")
+        
+        if declencher_animation_ce:
+            time.sleep(0.04)
+
+    # Si l'animation n'est pas lancée, on affiche quand même le graphique final dans son conteneur fixe
+    if not declencher_animation_ce:
+        fig_final_ce, ax_final_ce = plt.subplots(figsize=(7, 5))
+        ax_final_ce.plot(x_route_int_ce_cara, y_route_int_ce_cara, color='black', linewidth=2)
+        ax_final_ce.plot(x_route_ext_ce_cara, y_route_ext_ce_cara, color='black', linewidth=2)
+        ax_final_ce.plot(x_v_av, y_v_av, color='#e74c3c', linewidth=2, label="Trajectoire Roues AV Camion")
+        ax_final_ce.plot(x_c_ar, y_c_ar, color='#3498db', linewidth=2, linestyle='--', label="Trajectoire Essieu Remorque")
+        ax_final_ce.scatter(x_v_av[-1], y_v_av[-1], color='#e74c3c', s=50)
+        ax_final_ce.scatter(x_c_ar[-1], y_c_ar[-1], color='#3498db', s=50)
+        ax_final_ce.axis("equal")
+        ax_final_ce.legend(loc="lower left")
+        conteneur_graphique_ce.pyplot(fig_final_ce)
+        plt.close(fig_final_ce)
+
+
+
+    # --- VERDICT ET TRACÉ PLOTLY ZOOMABLE FINAL (TAB 4 - CE et caravane) ---
+    animation_terminee_ce = True
+    zone_metrique_chasse_ce.metric(label="Balayage global maximal (Chasse)", value=f"{decalage_reel_ce_cara:.2f} m")
+    zone_metrique_devers_ce.metric(label="Dévers configuré de la chaussée", value=f"{angle_route_ce_cara:.1f} degrés")
+    zone_metrique_g_ce.metric(label="Accélération transversale maximale", value=f"{acceleration_laterale_ce_cara_g:.2f} G")
+    
+    if evenement_detecte_ce_cara == "Glissement":
+        with col_graphe_ce:
+            conteneur_graphique_ce.empty()
+            try:
+                # Rendu de la photo de mise en lacet / dérapage poids lourd agrandie
+                st.image("derapageCEcar.jpg", caption="Accident : Perte d'adhérence latérale PL (Mise en lacet / Louvoiement).", width=800)
+            except Exception:
+                st.error("Fichier derapageCEcar.jpg introuvable.")
+        zone_alerte_ce.warning("GLISSEMENT : L'ensemble lourd a surpassé l'adhérence disponible (Mise en lacet / Dérapage).")
+        
+    elif evenement_detecte_ce_cara == "Sortie de route":
+        zone_alerte_ce.warning("SORTIE DE VOIE : La remorque/caravane a chevauché le marquage au sol.")
+        
+    else:
+        zone_alerte_ce.success("TRAJECTOIRE RÉUSSITE : L'attelage lourd est resté stable dans sa voie.")
+        
+    if evenement_detecte_ce_cara == "Basculement":
+        with col_graphe_ce:
+            conteneur_graphique_ce.empty()
+            try:
+                st.image("basculementCEcar.jpg", caption="Accident : Rupture d'équilibre statique PL (Renversement).", width=800)
+            except Exception:
+                st.error("Fichier basculementCEcar.jpg introuvable.")
+        zone_alerte_ce.error("ACCIDENT DÉTECTÉ : L'ensemble CE a basculé sous l'effet de la force centrifuge excessive.")
+    else:
+        with col_graphe_ce:
+            conteneur_graphique_ce.empty()
+            
+            import plotly.graph_objects as go
+            fig_plotly_ce = go.Figure()
+            fig_plotly_ce.add_trace(go.Scatter(x=x_route_int_ce_cara, y=y_route_int_ce_cara, name="Bord intérieur", line=dict(color='black', width=2)))
+            fig_plotly_ce.add_trace(go.Scatter(x=x_route_ext_ce_cara, y=y_route_ext_ce_cara, name="Bord extérieur", line=dict(color='black', width=2)))
+            
+            fig_plotly_ce.add_trace(go.Scatter(x=x_v_av, y=y_v_av, name="Trajectoire Roues AVANT", line=dict(color='#e74c3c', width=3)))
+            fig_plotly_ce.add_trace(go.Scatter(x=x_c_ar, y=y_c_ar, name="Trajectoire Roues ARRIÈRE", line=dict(color='#3498db', width=3, dash='dash')))
+            
+            fig_plotly_ce.update_layout(
+                xaxis=dict(scaleanchor="y", scaleratio=1),
+                hovermode="closest",
+                height=450,
+                title="Visualisation interactive CE (Zoomable pour mesures fines)"
+            )
+            st.plotly_chart(fig_plotly_ce, use_container_width=True)
+
+        if evenement_detecte_ce_cara == "Glissement":
+            zone_alerte_ce.warning("GLISSEMENT : L'ensemble lourd a surpassé l'adhérence disponible (Mise en lacet / Dérapage).")
+        elif evenement_detecte_ce_cara == "Sortie de route":
+            zone_alerte_ce.warning("SORTIE DE VOIE : La remorque/caravane a chevauché le marquage au sol.")
+        else:
+            zone_alerte_ce.success("TRAJECTOIRE RÉUSSITE : L'attelage lourd est resté stable dans sa voie.")
+
+    if "suite_verrouille_tab4_ce_cara" not in st.session_state:
+        st.session_state.suite_verrouille_tab4_ce_cara = False
+    verrou_at4 = st.session_state.suite_verrouille_tab4_ce_cara
+
+    # Rendu des questionnaires d'évaluation de l'Atelier 4
+    afficher_atelier_permis_ce_caravane(verrouille=verrou_at4)
+    
+    st.write("---")
+    st.subheader("Synthese et validation de l'Atelier 4")
+    
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat4 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier sur la trajectoire de l'ensemble CE et caravane.",
+        key="check_certif_ce_cara4_final_net",
+        disabled=verrou_at4,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_suite4_ce_cara_official", use_container_width=True, disabled=verrou_at4):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat4: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            # 1. Correction automatisee du Quiz CE
+            score_q4 = 0.0
+            if "ordre_quiz_ce_cara_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_ce_cara_aleatoire:
+                    saisie = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"ce_at4_final_g_{q_item['id']}"):
+                            saisie = st.session_state[k]
+                            break
+                    if str(saisie).strip() == str(q_item["rep"]).strip(): 
+                        score_q4 += 1.0
+
+            # 2. Correction automatisee du Texte a trous CE
+            score_t4 = 0.0
+            if "champs_ce_cara_clean" in st.session_state:
+                for ligne in st.session_state.champs_ce_cara_clean:
+                    cle_variable = ligne[-1]
+                    attendu_texte = ligne
+                    saisie_texte = "Choisir..."
+                    for k in st.session_state.keys():
+                        if k.startswith(f"{cle_variable}_ce_cara_clean"):
+                            saisie_texte = st.session_state[k]
+                            break
+                    if str(saisie_texte).strip() == str(attendu_texte).strip(): 
+                        score_t4 += 1.0
+
+            st.session_state.score_suite4_ce_cara_p1 = round(float(score_q4), 1)
+            st.session_state.score_suite4_ce_cara_p2 = round(float(score_t4), 1)
+            st.session_state.score_final_suite4_ce_cara = round(float(score_q4 + score_t4), 1)
+            st.session_state.suite_verrouille_tab4_ce_cara = True
+            st.rerun()
+
+    # -------------------------------------------------------------------------
+    # EXPORTATION DU RAPPORT INDIVIDUEL HTML SCELLE CE
+    # -------------------------------------------------------------------------
+    if st.session_state.get("suite_verrouille_tab4_ce_cara", False):
+        from datetime import datetime
+        scr1_t4 = st.session_state.get("score_suite4_ce_cara_p1", 0.0)
+        scr2_t4 = st.session_state.get("score_suite4_ce_cara_p2", 0.0)
+        tot_s_t4 = st.session_state.get("score_final_suite4_ce_cara", 0.0)
+        timestamp_ce4 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER ENSEMBLE CE ET CARAVANE SCELLE | Note de session : {tot_s_t4:.1f} / 20")
+
+        html_export_semi5 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Ensemble CE et Caravane - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation de Physique-Cinematique</h1>
+                <p>Atelier 4 : Inscription en Courbe et Stabilite des Ensembles Routiers CE</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_ce4}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s_t4:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #0f172a;">
+                Note obtenue au Quiz Technique : <strong>{scr1_t4:.1f} / 10</strong><br>
+                Note obtenue a la Synthese de Cours : <strong>{scr2_t4:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 4 : <strong>{tot_s_t4:.1f} / 20</strong>
+            </p>
+            
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_ce_cara_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_ce_cara_aleatoire, 1):
+                saisie = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"ce_at4_final_g_{q_item['id']}"):
+                        saisie = st.session_state[k]
+                        break
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_semi5 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_semi5 += """
+                </tbody>
+            </table>
+            
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "champs_ce_cara_clean" in st.session_state:
+            for num, ligne in enumerate(st.session_state.champs_ce_cara_clean, 1):
+                cle_variable = ligne[-1]
+                attendu_texte = ligne
+                phrase_enonce = ligne
+                saisie_texte = "Choisir..."
+                for k in st.session_state.keys():
+                    if k.startswith(f"{cle_variable}_ce_cara_clean"):
+                        saisie_texte = st.session_state[k]
+                        break
+                v_lbl = "CORRECT" if str(saisie_texte).strip() == str(attendu_texte).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_semi5 += f"<tr><td>{num}</td><td>{phrase_enonce}</td><td>{saisie_texte}</td><td>{attendu_texte}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_semi5 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        nom_fichier_html_ce = preparer_nom_fichier("Rapport_Atelier4_CE_Caravane").replace(".txt", ".html")
+
+        st.download_button(
+            label="TELECHARGER LE RAPPORT SCELLE (HTML)",
+            data=html_export_semi5,
+            file_name=nom_fichier_html_ce,
+            mime="text/html",
+            key="btn_download_html_official_ce_cara",
+            use_container_width=True
+        )
+
+
+
 
 with tab5:
     st.header("Simulation Permis C )")
