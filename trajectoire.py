@@ -1121,6 +1121,7 @@ with tab1:
 with tab2:
     
     st.header("Simulation Permis B et remorque( BE)")
+    
     col_imBE1, col_imBE2, col_imBE3 = st.columns(3)
     with col_imBE1:    
         try:
@@ -1719,6 +1720,115 @@ with tab3:
     Cette section montre l'influence de la vitesse, du poids et de la geometrie sur le phenomene de chasse 
     (le decalage des roues arriere vers l'interieur du virage).
     """)
+    col_imCE1, col_imCE2, col_imCE3 = st.columns(3)
+    with col_imCE1:    
+        try:
+            st.image("imCE1.jpg", caption="véhicule catégorie CE.",width=600)
+        except Exception:
+            st.error("Fichier imCE1.jpg introuvable.")
+    with col_imCE2:    
+        try:
+            st.image("imCE2.jpg", caption="véhicule catégorie CE.",width=600)
+        except Exception:
+            st.error("Fichier imCE2.jpg introuvable.")
+    with col_imCE3:    
+        try:
+            st.image("imCE3.jpg", caption="véhicule catégorie CE.",width=600)
+        except Exception:
+            st.error("Fichier imCE3.jpg introuvable.")
+
+    st.title("Tout savoir sur le Permis CE")
+    st.write(
+        "Le permis CE est la catégorie reine des permis de conduire routiers. Il autorise la "
+        "conduite des véhicules de transport de marchandises de la catégorie C attelés "
+        "d'une remorque ou d'une semi-remorque lourde."
+    )
+
+    # --- SECTION 1 : DEFINITION ET REGLES ---
+    st.header("1. Qu'est-ce que le permis CE ?")
+
+    st.markdown("""
+    Le permis CE est requis dès que vous remplissez simultanément ces conditions :
+    * **Véhicule tracteur** : Véhicule de catégorie C (PTAC supérieur à 3 500 kg destiné au transport de marchandises).
+    * **Remorque attelée** : Le PTAC de la remorque ou de la semi-remorque est supérieur à **750 kg**.
+
+    Note : Le PTAC (Poids Total Autorisé en Charge) se trouve à la case F2 de la carte grise. Le PTRA (Poids Total Roulant Autorisé) se trouve à la case F3 du véhicule tracteur.
+    """)
+
+    # Tableau récapitulatif des ensembles lourds
+    st.subheader("Tableau de synthèse des catégories de permis poids lourds")
+    st.markdown("""
+
+    | Catégorie | Véhicule Tracteur (PTAC) | Remorque (PTAC) | Poids Total Roulant Maximum |
+    | :--- | :--- | :--- | :--- |
+    | **Permis C** | Supérieur à 3 500 kg | Inférieur ou égal à 750 kg | Limité au PTAC du camion seul (+ 750 kg) |
+    | **Permis C1E** | Entre 3 500 kg et 7 500 kg | Supérieur à 750 kg | Somme des PTAC limitée à 12 000 kg |
+    | **Permis CE obligatoire** | Supérieur à 3 500 kg | Supérieur à 750 kg | Limité au PTRA du camion (jusqu'à 44 000 kg) |
+    """)
+
+    # --- SECTION 2 : SIMULATEUR INTERACTIF ---
+    st.header("2. Quel permis pour votre ensemble routier ?")
+    st.write("Saisissez les données (F2 et F3) de vos cartes grises pour vérifier la catégorie requise :")
+
+    # Formulaire de saisie des données avec valeurs par défaut typiques d'un super lourd
+    col1, col2 = st.columns(2)
+
+    with col1:
+        ptac_camion = st.number_input(
+            "PTAC du Camion (F2 en kg)", 
+            min_value=0, 
+            max_value=32000, 
+            value=19000, 
+            step=500
+        )
+        ptra_camion = st.number_input(
+            "PTRA du Camion (F3 en kg)", 
+            min_value=0, 
+            max_value=44000, 
+            value=44000, 
+            step=500
+        )
+
+    with col2:
+        ptac_remorque = st.number_input(
+            "PTAC de la Remorque (F2 en kg)", 
+            min_value=0, 
+            max_value=38000, 
+            value=24000, 
+            step=500
+        )
+
+    # Calculs logiques
+    somme_ptac = ptac_camion + ptac_remorque
+
+    st.subheader("Résultat de l'analyse")
+    st.info(f"Masse totale théorique de l'ensemble : {somme_ptac} kg (Limite technique PTRA : {ptra_camion} kg)")
+
+    # Logique de décision selon la réglementation française du transport routier
+    if ptac_camion <= 3500:
+        st.error("Le véhicule tracteur ne relève pas de la catégorie Poids Lourd (inférieur ou égal à 3 500 kg). Référez-vous aux règles du permis B / BE.")
+    elif somme_ptac > ptra_camion:
+        st.error(f"Surcharge technique : La somme des PTAC ({somme_ptac} kg) dépasse le PTRA autorisé du camion ({ptra_camion} kg). Cet attelage est interdit.")
+    elif ptac_remorque <= 750:
+        st.success("Permis C suffisant : La remorque ne dépasse pas 750 kg.")
+    else:
+        if ptac_camion <= 7500 and somme_ptac <= 12000:
+            st.warning("Permis C1E suffisant : Le camion fait moins de 7 500 kg et le total ne dépasse pas 12 000 kg.")
+        else:
+            st.error(
+                f"Permis CE Obligatoire : La remorque dépasse 750 kg et le cumul dépasse les limites du permis C1E. "
+                "Vous devez être titulaire du permis CE pour conduire cet ensemble articulé."
+            )
+
+    # --- SECTION 3 : INFOS OBTENTION ---
+    with st.expander("En savoir plus sur les conditions du permis CE"):
+        st.markdown("""
+        * **Prérequis indispensables** : Être titulaire du permis C en cours de validité.
+        * **Âge minimal** : 21 ans (sauf en cas de formation professionnelle longue de type CAP/Bac Pro Conducteur Routier ou FIMO passée en parallèle).
+        * **Contrôle médical** : Avis médical obligatoire délivré par un médecin agréé par la préfecture avant l'examen et lors des renouvellements.
+        * **Durée de validité** : Soumise à renouvellement régulier selon l'âge du conducteur (tous les 5 ans pour les moins de 60 ans, puis réduction de la durée au-delà).
+        """)
+
 
     col_param1, col_param2, col_param3 = st.columns(3)
     
@@ -2201,6 +2311,172 @@ with tab3:
 
 with tab4:
     st.header("Simulation Permis CE et caravane")
+
+    col_imCEcar1, col_imCEcar2, col_imCEcar3 = st.columns(3)
+    with col_imCEcar1:    
+        try:
+            st.image("imCEcar1.jpg", caption="véhicule catégorie CE et remorque.",width=600)
+        except Exception:
+            st.error("Fichier imCE1car.jpg introuvable.")
+    with col_imCEcar2:    
+        try:
+            st.image("imCE2car.jpg", caption="véhicule catégorie CE et remorque.",width=600)
+        except Exception:
+            st.error("Fichier imCE2car.jpg introuvable.")
+    with col_imCEcar3:    
+        try:
+            st.image("imCE3car.jpg", caption="véhicule catégorie CE et remorque.",width=600)
+        except Exception:
+            st.error("Fichier imCEcar3.jpg introuvable.")
+
+
+    st.write(
+        "Cette application définit les règles du permis CE pour un train routier et vérifie "
+        "la conformité de l'attelage avec les limites légales de poids, d'essieux et de ratio de remorquage."
+    )
+
+    # --- SECTION 1 : DEFINITION ---
+    st.header("1. Qu'est-ce qu'un train routier en catégorie CE ?")
+    st.markdown("""
+    Un **train routier** est constitué d'un camion rigide (porteur) de catégorie C auquel on ajoute une remorque. 
+    Le **permis CE est obligatoire** dès que le PTAC de la remorque est **supérieur à 750 kg**.
+    """)
+
+    # --- SECTION 2 : SIMULATEUR ---
+    st.header("2. Saisie des caractéristiques de l'ensemble")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.subheader("Le Camion Porteur")
+        essieux_porteur = st.radio(
+            "Nombre d'essieux du porteur :",
+            options=[2, 3, 4],
+            format_func=lambda x: f"{x} essieux"
+        )
+        
+        # Détermination de la limite légale du porteur selon les essieux
+        limite_porteur = 19000 if essieux_porteur == 2 else (26000 if essieux_porteur == 3 else 32000)
+        st.caption(f"Limite légale pour ce porteur : {limite_porteur:,} kg".replace(",", " "))
+
+        ptac_porteur = st.number_input(
+            "PTAC du Porteur (F2 en kg)", 
+            min_value=3501, 
+            max_value=32000, 
+            value=min(19000, limite_porteur), 
+            step=500
+        )
+        ptra_porteur = st.number_input(
+            "PTRA du Porteur (F3 en kg)", 
+            min_value=3501, 
+            max_value=44000, 
+            value=44000, 
+            step=500
+        )
+
+    with col2:
+        st.subheader("La Remorque")
+        essieux_remorque = st.radio(
+            "Nombre d'essieux de la remorque :",
+            options=[2, 3],
+            format_func=lambda x: f"{x} essieux ou plus"
+        )
+        
+        limite_remorque = 19000 if essieux_remorque == 2 else 26000
+        st.caption(f"Limite légale pour cette remorque : {limite_remorque:,} kg".replace(",", " "))
+
+        ptac_remorque = st.number_input(
+            "PTAC de la Remorque ajoutée (F2 en kg)", 
+            min_value=0, 
+            max_value=26000, 
+            value=min(18000, limite_remorque), 
+            step=500
+        )
+
+    # Calculs globaux
+    somme_ptac = ptac_porteur + ptac_remorque
+    total_essieux = essieux_porteur + essieux_remorque
+    limite_ensemble_code_route = 40000 if total_essieux <= 4 else 44000
+
+    # Calcul du ratio de remorquage légal (Article R312-3)
+    if ptac_porteur > 0:
+        ratio_actuel = ptac_remorque / ptac_porteur
+        
+        # Si le total dépasse 32t, le ratio maximal de 1.3 est majoré de manière progressive jusqu'à 1.5 maximum
+        if somme_ptac <= 32000:
+            ratio_max_legal = 1.3
+        else:
+            # Formule officielle : 1.3 + 0.8 * ((somme_poids - 32000) / 32000)
+            majoration = 0.8 * ((somme_ptac - 32000) / 32000)
+            ratio_max_legal = min(1.3 + majoration, 1.5)
+    else:
+        ratio_actuel = 0
+        ratio_max_legal = 1.3
+
+    st.header("3. Analyse réglementaire et technique")
+
+    erreur_poids = False
+
+    # 1. Vérifications des limites légales de masse par élément (Article R312-4)
+    if ptac_porteur > limite_porteur:
+        st.error(f"Non-conformité du porteur : Le PTAC saisi ({ptac_porteur} kg) dépasse la limite légale de {limite_porteur} kg pour {essieux_porteur} essieux.")
+        erreur_poids = True
+
+    if ptac_remorque > limite_remorque:
+        st.error(f"Non-conformité de la remorque : Le PTAC saisi ({ptac_remorque} kg) dépasse la limite légale de {limite_remorque} kg pour son nombre d'essieux.")
+        erreur_poids = True
+
+    if somme_ptac > limite_ensemble_code_route:
+        st.error(f"Non-conformité de l'ensemble : La somme des PTAC ({somme_ptac} kg) dépasse la limite nationale absolue de {limite_ensemble_code_route} kg pour un ensemble à {total_essieux} essieux.")
+        erreur_poids = True
+
+    # 2. Vérification de la cohérence technique du véhicule (PTRA)
+    if somme_ptac > ptra_porteur:
+        st.error(f"Incompatibilité technique : La somme des PTAC ({somme_ptac} kg) est supérieure au PTRA autorisé par le constructeur du porteur ({ptra_porteur} kg).")
+        erreur_poids = True
+
+    # 3. Vérification du rapport de poids entre remorque et porteur (Article R312-3)
+    if ratio_actuel > ratio_max_legal:
+        st.error(
+            f"Non-conformité du rapport de poids (Article R312-3) : La remorque est {ratio_actuel:.2f} fois plus lourde "
+            f"que le porteur. La limite maximale autorisée pour cette configuration est de {ratio_max_legal:.2f} fois."
+        )
+        erreur_poids = True
+    elif ratio_actuel > 1.3:
+        st.warning(
+            f"Rapport de poids sous surveillance : La remorque est {ratio_actuel:.2f} fois plus lourde que le porteur. "
+            f"L'ensemble dépassant 32 tonnes, cela est toléré dans la limite maximale calculée de {ratio_max_legal:.2f} fois."
+        )
+
+    # 4. Détermination du permis requis si aucune infraction n'est détectée
+    if not erreur_poids:
+        st.success(f"Configuration valide à {total_essieux} essieux. Masse totale théorique cumulée : {somme_ptac} kg.")
+        
+        if ptac_remorque <= 750:
+            st.info("Permis C suffisant : La remorque ajoutée ne dépasse pas 750 kg. Le permis CE n'est pas nécessaire.")
+        else:
+            if ptac_porteur <= 7500 and somme_ptac <= 12000:
+                st.warning("Permis C1E suffisant : Le porteur fait moins de 7,5 tonnes et la somme des PTAC ne dépasse pas 12 000 kg.")
+            else:
+                st.error("Permis CE obligatoire : La remorque ajoutée dépasse 750 kg et l'ensemble dépasse les critères du permis C1E. Le permis CE est requis.")
+
+    # --- SECTION 4 : REGLES DE SECURITE ---
+    with st.expander("Informations complémentaires sur l'Article R312-3 du Code de la route"):
+        st.markdown("""
+        Le Code de la route encadre strictement le rapport de force entre le véhicule tracteur et sa remorque pour des raisons de sécurité (stabilité au freinage) :
+        * **Règle générale** : Le poids réel de la remorque ne doit pas dépasser **1,3 fois** le poids réel du camion porteur.
+        * **Exception poids lourds (>32t)** : Si l'ensemble routier dépasse un poids réel de 32 tonnes, une tolérance progressive est appliquée selon le tonnage, sans jamais pouvoir dépasser une limite absolue de **1,5 fois** le poids du porteur.
+        """)
+
+    # --- SECTION 5 : LIMITES DU CODE DE LA ROUTE ---
+    with st.expander("Rappel des limites de poids maximales du Code de la Route (Article R312-4)"):
+        st.markdown("""
+        En France, un train routier (porteur + remorque) ne peut pas circuler au-dessus des limites légales suivantes, même si la somme des cartes grises est supérieure :
+        * **Poids maximal de l'ensemble (PTRA)** : Limité à **40 tonnes** (ou 44 tonnes si l'ensemble comporte plus de 4 essieux pour du transport combiné ou routier national).
+        * **Limite du porteur seul** : 19 tonnes (2 essieux), 26 tonnes (3 essieux), 32 tonnes (4 essieux).
+        * **Limite de la remorque seule** : 19 tonnes (2 essieux), 26 tonnes (3 essieux ou plus).
+        """)
+    
     col_param1, col_param2, col_param3 = st.columns(3)
     
     with col_param1:
@@ -2728,7 +3004,22 @@ with tab4:
 
 with tab5:
     st.header("Simulation Permis C )")
-    st.info("Espace reserve pour le second module applique au Permis C.")
+    col_imC1, col_imC2, col_imC3 = st.columns(3)
+    with col_imC1:    
+        try:
+            st.image("imC1.jpg", caption="véhicule catégorie C.",width=600)
+        except Exception:
+            st.error("Fichier imC1.jpg introuvable.")
+    with col_imC2:    
+        try:
+            st.image("imC.jpg", caption="véhicule catégorie C.",width=600)
+        except Exception:
+            st.error("Fichier imE.jpg introuvable.")
+    with col_imC3:    
+        try:
+            st.image("imC3.jpg", caption="véhicule catégorie C.",width=600)
+        except Exception:
+            st.error("Fichier imC3.jpg introuvable.")
 
     col_p1, col_p2, col_p3 = st.columns(3)
     
