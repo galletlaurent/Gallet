@@ -514,7 +514,7 @@ with tab5:
         st.subheader("Paramètres Physiques et Graphique")
         
         # Curseurs interactifs
-        masse = st.slider("Masse de l'objet (m en kg)", min_value=0.1, max_value=5.0, value=1.0, step=0.1)
+        masse = st.slider("Masse de l'objet (m en kg)", min_value=0.1, max_value=5.0, value=1.0, step=0.1, key="masse_centrifuge")
         rayon = st.slider("Rayon de rotation (r en mètres)", min_value=0.5, max_value=3.0, value=1.5, step=0.1)
         
         vitesse_angulaire = np.linspace(0, 10, 100)
@@ -635,7 +635,7 @@ with tab8:
     with col2:
         st.subheader("Paramètres Physiques et Graphique")
         
-        masse = st.slider("Masse de l'objet (m en kg)", min_value=0.1, max_value=5.0, value=1.0, step=0.1)
+        masse = st.slider("Masse de l'objet (m en kg)", min_value=0.1, max_value=5.0, value=1.0, step=0.1, key="masse_centripete")
         rayon = st.slider("Rayon du virage (r en mètres)", min_value=0.5, max_value=5.0, value=2.0, step=0.1)
         
         # Variation de la vitesse linéaire de 0 à 20 m/s
@@ -944,8 +944,8 @@ with tab14:
         st.subheader("Paramètres Physiques et Graphique")
         
         # Choix du véhicule (Voiture standard vs Camion TP chargé)
-        masse_kg = st.slider("Masse totale du véhicule (en kg)", min_value=1000, max_value=40000, value=1500, step=500)
-        
+        masse_kg = st.slider("Masse totale du véhicule (en kg)", min_value=1000, max_value=40000, value=1500, step=500, key="masse_choc_routier")
+
         # Distance de déformation de la carrosserie / zone d'impact en mètres (ex: 0.8 mètre)
         distance_arret = st.slider("Distance de déformation lors du choc (en mètres)", min_value=0.2, max_value=2.0, value=0.8, step=0.1)
         
