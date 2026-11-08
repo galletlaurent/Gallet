@@ -2341,12 +2341,12 @@ with tab4:
             st.error("Fichier imCE1car.jpg introuvable.")
     with col_imCEcar2:    
         try:
-            st.image("imCE2car.jpg", caption="véhicule catégorie CE et remorque.",width=600)
+            st.image("imCEcar2.jpg", caption="véhicule catégorie CE et remorque.",width=600)
         except Exception:
             st.error("Fichier imCE2car.jpg introuvable.")
     with col_imCEcar3:    
         try:
-            st.image("imCE3car.jpg", caption="véhicule catégorie CE et remorque.",width=600)
+            st.image("imCEcar3.jpg", caption="véhicule catégorie CE et remorque.",width=600)
         except Exception:
             st.error("Fichier imCEcar3.jpg introuvable.")
 
@@ -3045,7 +3045,7 @@ with tab5:
 
 
     # --- SECTION 1 : DEFINITION ET REGLES ---
-    st.title("Tout savoir sur le Permis C")
+    st.title("Tout savoir sur le Permis CE")
     st.write(
         "Le permis CE est la catégorie reine des permis de conduire routiers. Il autorise la "
         "conduite des véhicules de transport de marchandises de la catégorie C attelés "
