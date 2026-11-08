@@ -311,7 +311,7 @@ with tab1:
             st.warning("Fichier 'demo_pesanteur.avi' introuvable. Affichage d'une vidéo de démonstration alternative :")
             st.video("https://youtube.com")
         try:
-            st.image("pesanteur.jpg", caption="la pesanteur.",width=600)
+            st.image("pesanteur.jpg", caption="Force de  pesanteur.",width=600)
         except Exception:
             st.error("Fichier pesanteur.jpg introuvable.")
 
@@ -386,6 +386,11 @@ with tab2:
             st.warning("Fichier 'demo_magnetique.avi' introuvable. Affichage d'une vidéo de démonstration alternative :")
             st.video("https://youtube.com")
 
+        try:
+            st.image("magne.jpg", caption="Loi de Lorentz : la force magnétique .",width=600)
+        except Exception:
+            st.error("Fichier magne.jpg introuvable.")
+
     with col2:
         st.subheader("Paramètres Physiques et Graphique")
         
@@ -451,6 +456,11 @@ with tab3:
         except FileNotFoundError:
             st.warning("Fichier 'demo_electrique.avi' introuvable. Affichage d'une vidéo de démonstration alternative :")
             st.video("https://youtube.com")
+        try:
+            st.image("elect.jpg", caption="Loi de Coulomb : la force électrique.",width=600)
+        except Exception:
+            st.error("Fichier elect.jpg introuvable.")
+
 
     with col2:
         st.subheader("Paramètres Physiques et Graphique")
@@ -520,7 +530,12 @@ with tab4:
         except FileNotFoundError:
             st.warning("Fichier 'demo_gravite.avi' introuvable. Affichage d'une vidéo de démonstration alternative :")
             st.video("https://youtube.com")
+        try:
+            st.image("gravit.jpg", caption="Force gravitationnelle.",width=600)
+        except Exception:
+            st.error("Fichier gravit.jpg introuvable.")
 
+            
     with col2:
         st.subheader("Paramètres Physiques et Graphique")
         
@@ -589,7 +604,11 @@ with tab5:
         except FileNotFoundError:
             st.warning("Fichier 'demo_centrifuge.avi' introuvable. Affichage d'une vidéo de démonstration alternative :")
             st.video("https://youtube.com")
-
+        try:
+            st.image("centrifuge.jpg", caption="Force centrifuge.",width=600)
+        except Exception:
+            st.error("Fichier centrifuge.jpg introuvable.")
+            
     with col2:
         st.subheader("Paramètres Physiques et Graphique")
         
@@ -644,7 +663,12 @@ with tab6:
         except FileNotFoundError:
             st.warning("Fichier 'demo_ressort.avi' introuvable. Vidéo alternative :")
             st.video("https://www.youtube.com/watch?v=dKBCNUfZSQk")
+        try:
+            st.image("ressort.jpg", caption=" Loi de Hooke :  force de rappel.",width=600)
+        except Exception:
+            st.error("Fichier ressort.jpg introuvable.")
 
+            
     with col2:
         st.subheader("Paramètres Physiques et Graphique")
         
@@ -699,7 +723,12 @@ with tab7:
         except FileNotFoundError:
             st.warning("Fichier 'demo_frottement.avi' introuvable. Vidéo alternative :")
             st.video("https://youtube.com")
+        try:
+            st.image("fluide.jpg", caption="Frottement fluide.",width=600)
+        except Exception:
+            st.error("Fichier fluide.jpg introuvable.")
 
+            
     with col2:
         st.subheader("Paramètres Physiques et Graphique")
         
@@ -755,7 +784,11 @@ with tab8:
         except FileNotFoundError:
             st.warning("Fichier 'demo_centripete.avi' introuvable. Vidéo alternative :")
             st.video("https://youtube.com")
-
+        try:
+            st.image("centripete.jpg", caption=" Force centripète.",width=600)
+        except Exception:
+            st.error("Fichier centripete.jpg introuvable.")
+            
     with col2:
         st.subheader("Paramètres Physiques et Graphique")
         
@@ -812,7 +845,11 @@ with tab9:
         except FileNotFoundError:
             st.warning("Fichier 'demo_archimede.avi' introuvable. Affichage d'une vidéo de démonstration alternative :")
             st.video("https://youtube.com")
-
+        try:
+            st.image("archi.jpg", caption="Poussée d'Archimède.",width=600)
+        except Exception:
+            st.error("Fichier archi.jpg introuvable.")
+            
     with col2:
         st.subheader("Paramètres Physiques et Graphique")
         
@@ -890,7 +927,11 @@ with tab10:
         except FileNotFoundError:
             st.warning("Fichier 'demo_friction.avi' introuvable. Affichage d'une vidéo de démonstration alternative :")
             st.video("https://youtube.com")
-
+        try:
+            st.image("friction.jpg", caption="Force de friction solide.",width=600)
+        except Exception:
+            st.error("Fichier friction.jpg introuvable.")
+            
     with col2:
         st.subheader("Paramètres Physiques et Graphique")
         
@@ -972,7 +1013,11 @@ with tab11:
         except FileNotFoundError:
             st.warning("Fichier 'demo_tension.avi' introuvable. Vidéo alternative :")
             st.video("https://youtube.com")
-
+        try:
+            st.image("tension.jpg", caption="Force de tension.",width=600)
+        except Exception:
+            st.error("Fichier tension.jpg introuvable.")
+            
     with col2:
         st.subheader("Paramètres Physiques et Graphique")
         
@@ -1031,7 +1076,11 @@ with tab12:
         except FileNotFoundError:
             st.warning("Fichier 'demo_poussee.avi' introuvable. Vidéo alternative :")
             st.video("https://youtube.com")
-
+        try:
+            st.image("poussee.jpg", caption="Force de poussée.",width=600)
+        except Exception:
+            st.error("Fichier poussee.jpg introuvable.")
+            
     with col2:
         st.subheader("Paramètres Physiques et Graphique")
         
@@ -1085,7 +1134,11 @@ with tab13:
         except FileNotFoundError:
             st.warning("Fichier 'demo_trainee.avi' introuvable. Vidéo alternative :")
             st.video("https://youtube.com")
-
+        try:
+            st.image("traine.jpg", caption="Force de Traînée Aérodynamique.",width=600)
+        except Exception:
+            st.error("Fichier traine.jpg introuvable.")
+            
     with col2:
         st.subheader("Paramètres Physiques et Graphique")
         
@@ -1153,7 +1206,11 @@ with tab14:
         except FileNotFoundError:
             st.warning("Fichier 'demo_choc.avi' introuvable. Vidéo alternative :")
             st.video("https://youtube.com")
-
+        try:
+            st.image("crashtest.jpg", caption="Force d'Impact d'un Accident de la Route.",width=600)
+        except Exception:
+            st.error("Fichier crashtest.jpg introuvable.")
+            
     with col2:
         st.subheader("Paramètres Physiques et Graphique")
         
@@ -1219,7 +1276,11 @@ with tab15:
         except FileNotFoundError:
             st.warning("Fichier 'demo_verin.avi' introuvable. Vidéo alternative :")
             st.video("https://youtube.com")
-
+        try:
+            st.image("verin.jpg", caption="Force d'Arrachement de Vérin.",width=600)
+        except Exception:
+            st.error("Fichier verin.jpg introuvable.")
+            
     with col2:
         st.subheader("Paramètres Physiques et Graphique")
         
@@ -1279,7 +1340,11 @@ with tab16:
         except FileNotFoundError:
             st.warning("Fichier 'demo_freinage.avi' introuvable. Vidéo alternative :")
             st.video("https://youtube.com")
-
+        try:
+            st.image("frein.jpg", caption="force de freinage hydraulique.",width=600)
+        except Exception:
+            st.error("Fichier freinr.jpg introuvable.")
+            
     with col2:
         st.subheader("Paramètres Physiques et Graphique")
         
