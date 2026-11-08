@@ -3034,9 +3034,9 @@ with tab5:
             st.error("Fichier imC1.jpg introuvable.")
     with col_imC2:    
         try:
-            st.image("imC.jpg", caption="véhicule catégorie C.",width=600)
+            st.image("imC2.jpg", caption="véhicule catégorie C.",width=600)
         except Exception:
-            st.error("Fichier imE.jpg introuvable.")
+            st.error("Fichier imC2.jpg introuvable.")
     with col_imC3:    
         try:
             st.image("imC3.jpg", caption="véhicule catégorie C.",width=600)
