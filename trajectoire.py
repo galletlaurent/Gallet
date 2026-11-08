@@ -1737,12 +1737,7 @@ with tab3:
         except Exception:
             st.error("Fichier imCE3.jpg introuvable.")
 
-    st.title("Tout savoir sur le Permis C")
-    st.write(
-        "Le permis CE est la catégorie reine des permis de conduire routiers. Il autorise la "
-        "conduite des véhicules de transport de marchandises de la catégorie C attelés "
-        "d'une remorque ou d'une semi-remorque lourde."
-    )
+ 
 
     st.title("Tout savoir sur les Permis C et C1")
     st.write(
@@ -3050,8 +3045,14 @@ with tab5:
 
 
     # --- SECTION 1 : DEFINITION ET REGLES ---
+    st.title("Tout savoir sur le Permis C")
+    st.write(
+        "Le permis CE est la catégorie reine des permis de conduire routiers. Il autorise la "
+        "conduite des véhicules de transport de marchandises de la catégorie C attelés "
+        "d'une remorque ou d'une semi-remorque lourde."
+    )
+    
     st.header("1. Qu'est-ce que le permis CE ?")
-
     st.markdown("""
     Le permis CE est requis dès que vous remplissez simultanément ces conditions :
     * **Véhicule tracteur** : Véhicule de catégorie C (PTAC supérieur à 3 500 kg destiné au transport de marchandises).
