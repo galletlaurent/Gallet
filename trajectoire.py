@@ -549,7 +549,24 @@ with tab0:
 
 
 with tab1:
-    st.header("Simulation Permis B")
+    st.header("Simulation Permis B"
+    col_imB1, col_imB2, col_imB3 = st.columns(3)
+
+    with col_imB1:    
+        try:
+            st.image("imBcar1.jpg", caption="véhicule catégorie B.",width=800)
+        except Exception:
+            st.error("Fichier imBcar1.jpg introuvable.")
+    with col_imB2:    
+        try:
+            st.image("imBcar2.jpg", caption="véhicule catégorie B.",width=800)
+        except Exception:
+            st.error("Fichier imBcar2.jpg introuvable.")
+    with col_imB3:    
+        try:
+            st.image("imBcar3.jpg", caption="véhicule catégorie B.",width=800)
+        except Exception:
+            st.error("Fichier imBcar3.jpg introuvable.")
 
 
     col_param1, col_param2, col_param3 = st.columns(3)
