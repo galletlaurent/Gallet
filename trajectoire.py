@@ -1119,7 +1119,7 @@ with tab1:
 
 
 with tab2:
-        col_imBE1, col_imBE2, col_imBE3 = st.columns(3)
+    col_imBE1, col_imBE2, col_imBE3 = st.columns(3)
     with col_imBE1:    
         try:
             st.image("imBE1.jpg", caption="véhicule catégorie BE.",width=700)
