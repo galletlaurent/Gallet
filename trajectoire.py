@@ -1125,7 +1125,7 @@ with tab2:
     col_imBE1, col_imBE2, col_imBE3 = st.columns(3)
     with col_imBE1:    
         try:
-            st.image("imBE1.jpg", caption="véhicule catégorie BE.",width=600)
+            st.image("imBE1.jpg", caption="véhicule catégorie BE.",width=700)
         except Exception:
             st.error("Fichier imBE1.jpg introuvable.")
     with col_imBE2:    
@@ -1135,7 +1135,7 @@ with tab2:
             st.error("Fichier imBE2.jpg introuvable.")
     with col_imBE3:    
         try:
-            st.image("imBE3.jpg", caption="véhicule catégorie BE.",width=600)
+            st.image("imBE3.jpg", caption="véhicule catégorie BE.",width=700)
         except Exception:
             st.error("Fichier imBE3.jpg introuvable.")
             
@@ -3034,12 +3034,12 @@ with tab5:
             st.error("Fichier imC1.jpg introuvable.")
     with col_imC2:    
         try:
-            st.image("imC2.jpg", caption="véhicule catégorie C.",width=600)
+            st.image("imC2.jpg", caption="véhicule catégorie C.",width=700)
         except Exception:
             st.error("Fichier imC2.jpg introuvable.")
     with col_imC3:    
         try:
-            st.image("imC3.jpg", caption="véhicule catégorie C.",width=600)
+            st.image("imC3.jpg", caption="véhicule catégorie C.",width=700)
         except Exception:
             st.error("Fichier imC3.jpg introuvable.")
 
