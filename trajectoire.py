@@ -1119,6 +1119,9 @@ with tab1:
 
 
 with tab2:
+    
+    st.header("Simulation Permis B et remorque( BE)")
+    
     col_imBE1, col_imBE2, col_imBE3 = st.columns(3)
     with col_imBE1:    
         try:
@@ -1135,9 +1138,6 @@ with tab2:
             st.image("imBE3.jpg", caption="véhicule catégorie BE.",width=700)
         except Exception:
             st.error("Fichier imBE3.jpg introuvable.")
-    st.header("Simulation Permis B et remorque( BE)")
-    
-
             
     st.title("Tout savoir sur le Permis BE")
     st.write(
