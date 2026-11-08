@@ -1119,9 +1119,6 @@ with tab1:
 
 
 with tab2:
-    
-    st.header("Simulation Permis B et remorque( BE)")
-    
     col_imBE1, col_imBE2, col_imBE3 = st.columns(3)
     with col_imBE1:    
         try:
@@ -1138,6 +1135,9 @@ with tab2:
             st.image("imBE3.jpg", caption="véhicule catégorie BE.",width=700)
         except Exception:
             st.error("Fichier imBE3.jpg introuvable.")
+    st.header("Simulation Permis B et remorque( BE)")
+    
+
             
     st.title("Tout savoir sur le Permis BE")
     st.write(
@@ -2336,17 +2336,17 @@ with tab4:
     col_imCEcar1, col_imCEcar2, col_imCEcar3 = st.columns(3)
     with col_imCEcar1:    
         try:
-            st.image("imCEcar1.jpg", caption="véhicule catégorie CE et remorque.",width=600)
+            st.image("imCEcar1.jpg", caption="véhicule catégorie C et remorque.",width=600)
         except Exception:
             st.error("Fichier imCE1car.jpg introuvable.")
     with col_imCEcar2:    
         try:
-            st.image("imCEcar2.jpg", caption="véhicule catégorie CE et remorque.",width=600)
+            st.image("imCEcar2.jpg", caption="véhicule catégorie C et remorque.",width=600)
         except Exception:
             st.error("Fichier imCE2car.jpg introuvable.")
     with col_imCEcar3:    
         try:
-            st.image("imCEcar3.jpg", caption="véhicule catégorie CE et remorque.",width=600)
+            st.image("imCEcar3.jpg", caption="véhicule catégorie C et remorque.",width=600)
         except Exception:
             st.error("Fichier imCEcar3.jpg introuvable.")
 
@@ -2357,10 +2357,10 @@ with tab4:
     )
 
     # --- SECTION 1 : DEFINITION ---
-    st.header("1. Qu'est-ce qu'un train routier en catégorie CE ?")
+    st.header("1. Qu'est-ce qu'un train routier en catégorie C ?")
     st.markdown("""
     Un **train routier** est constitué d'un camion rigide (porteur) de catégorie C auquel on ajoute une remorque. 
-    Le **permis CE est obligatoire** dès que le PTAC de la remorque est **supérieur à 750 kg**.
+    Le **permis C est obligatoire** dès que le PTAC de la remorque est **supérieur à 750 kg**.
     """)
 
     # --- SECTION 2 : SIMULATEUR ---
@@ -3024,7 +3024,7 @@ with tab4:
 
 
 with tab5:
-    st.header("Simulation Permis C )")
+    st.header("Simulation Permis (C )")
     
     col_imC1, col_imC2, col_imC3 = st.columns(3)
     with col_imC1:    
@@ -3045,14 +3045,14 @@ with tab5:
 
 
     # --- SECTION 1 : DEFINITION ET REGLES ---
-    st.title("Tout savoir sur le Permis CE")
+    st.title("Tout savoir sur le Permis C")
     st.write(
         "Le permis CE est la catégorie reine des permis de conduire routiers. Il autorise la "
         "conduite des véhicules de transport de marchandises de la catégorie C attelés "
         "d'une remorque ou d'une semi-remorque lourde."
     )
     
-    st.header("1. Qu'est-ce que le permis CE ?")
+    st.header("1. Qu'est-ce que le permis C ?")
     st.markdown("""
     Le permis CE est requis dès que vous remplissez simultanément ces conditions :
     * **Véhicule tracteur** : Véhicule de catégorie C (PTAC supérieur à 3 500 kg destiné au transport de marchandises).
