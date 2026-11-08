@@ -280,14 +280,14 @@ with tab1:
 
     histp1, histp2 = st.columns(2)
     with histp1:
-        st.subheader("Historique")
+        st.header("Historique")
         try:
             st.image("histpesanteur.jpg", caption="la pesanteur.",width=600)
         except Exception:
             st.error("Fichier impesanteur.jpg introuvable.")
     with histp2:
         try:
-        st.subheader("BD humoristique")
+        st.header("BD humoristique")
             st.image("humpesanteur.jpg", caption="la pesanteur.",width=600)
         except Exception:
             st.error("Fichier impesanteur.jpg introuvable.")
