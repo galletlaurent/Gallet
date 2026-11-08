@@ -356,8 +356,17 @@ with tab2:
     histmagne1, histmagne2 = st.columns(2)
     with histmagne1:
         st.subheader("Historique")
+        try:
+            st.image("histmagnetique.jpg", caption="Le magnétisme dans l'histoire.", width=600)
+        except Exception:
+            st.error("Fichier histmagnetique.jpg introuvable.")
+
     with histmagne2:
         st.subheader("BD humoristique")
+        try:
+            st.image("humpmagnetique.jpg", caption="Humour et magnétisme.", width=600)
+        except Exception:
+            st.error("Fichier humpmagnetique.jpg introuvable.")
 
     st.title("Laboratoire Interactif : La Force Magnétique (Loi de Lorentz)")
     st.write("Modifiez l'intensité du champ magnétique et la charge de la particule pour observer l'évolution de la force magnétique.")
@@ -413,8 +422,17 @@ with tab3:
     histelec1, histelec2 = st.columns(2)
     with histelec1:
         st.subheader("Historique")
+        try:
+            st.image("histelectrique.jpg", caption="L'électricité dans l'histoire.", width=600)
+        except Exception:
+            st.error("Fichier histelectrique.jpg introuvable.")
+
     with histelec2:
         st.subheader("BD humoristique")
+        try:
+            st.image("humpelectrique.jpg", caption="Humour et électricité.", width=600)
+        except Exception:
+            st.error("Fichier humpelectrique.jpg introuvable.")
 
     st.title("Laboratoire Interactif : La Force Électrique (Loi de Coulomb)")
     st.write("Modifiez les charges électriques pour observer l'évolution de la force en fonction de la distance.")
@@ -473,8 +491,17 @@ with tab4:
     histgrav1, histgrav2 = st.columns(2)
     with histgrav1:
         st.subheader("Historique")
+        try:
+            st.image("histgravite.jpg", caption="La gravitation dans l'histoire.", width=600)
+        except Exception:
+            st.error("Fichier histgravite.jpg introuvable.")
+
     with histgrav2:
         st.subheader("BD humoristique")
+        try:
+            st.image("humpgravite.jpg", caption="Humour et gravitation.", width=600)
+        except Exception:
+            st.error("Fichier humpgravite.jpg introuvable.")
 
     st.title("Laboratoire Interactif : La Force Gravitationnelle")
     st.write("Modifiez les masses et la distance pour observer l'évolution de l'attraction gravitationnelle.")
@@ -530,11 +557,20 @@ with tab4:
 with tab5:
     st.set_page_config(page_title="Physique Interactive : Force Centrifuge", layout="wide")
 
-    histgcentfu1, histcentfu2 = st.columns(2)
+    histcentfu1, histcentfu2 = st.columns(2)
     with histcentfu1:
         st.subheader("Historique")
+        try:
+            st.image("histcentrifuge.jpg", caption="La force centrifuge dans l'histoire.", width=600)
+        except Exception:
+            st.error("Fichier histcentrifuge.jpg introuvable.")
+
     with histcentfu2:
         st.subheader("BD humoristique")
+        try:
+            st.image("humpcentrifuge.jpg", caption="Humour et force centrifuge.", width=600)
+        except Exception:
+            st.error("Fichier humpcentrifuge.jpg introuvable.")
 
     st.title("Laboratoire Interactif : La Force Centrifuge")
     st.write("Modifiez les paramètres à l'aide des curseurs pour voir l'impact direct sur la force apparente.")
@@ -578,11 +614,20 @@ with tab5:
 with tab6:
     st.set_page_config(page_title="Physique Interactive : Loi de Hooke", layout="wide")
 
-    histgressort1, histressort2 = st.columns(2)
+    histressort1, histressort2 = st.columns(2)
     with histressort1:
         st.subheader("Historique")
+        try:
+            st.image("histressort.jpg", caption="L'élasticité et les ressorts dans l'histoire.", width=600)
+        except Exception:
+            st.error("Fichier histressort.jpg introuvable.")
+
     with histressort2:
         st.subheader("BD humoristique")
+        try:
+            st.image("humpressort.jpg", caption="Humour et loi de Hooke.", width=600)
+        except Exception:
+            st.error("Fichier humpressort.jpg introuvable.")
 
     st.title("Laboratoire Interactif : Force de Rappel d'un Ressort")
     st.write("Modifiez la raideur du ressort pour observer la force générée selon son allongement.")
@@ -627,8 +672,17 @@ with tab7:
     histfrotflu1, histfrotflu2 = st.columns(2)
     with histfrotflu1:
         st.subheader("Historique")
+        try:
+            st.image("histfrottement_fluide.jpg", caption="L'étude des fluides et des frottements dans l'histoire.", width=600)
+        except Exception:
+            st.error("Fichier histfrottement_fluide.jpg introuvable.")
+
     with histfrotflu2:
         st.subheader("BD humoristique")
+        try:
+            st.image("humpfrottement_fluide.jpg", caption="Humour et résistance des fluides.", width=600)
+        except Exception:
+            st.error("Fichier humpfrottement_fluide.jpg introuvable.")
 
     st.title("Laboratoire Interactif : La Force de Frottement Fluide")
     st.write("Modifiez le coefficient de frottement pour observer la résistance du fluide en fonction de la vitesse.")
@@ -673,8 +727,17 @@ with tab8:
     histcentipede1, histcentipede2 = st.columns(2)
     with histcentipede1:
         st.subheader("Historique")
+        try:
+            st.image("histcentripete.jpg", caption="La force centripète dans l'histoire.", width=600)
+        except Exception:
+            st.error("Fichier histcentripete.jpg introuvable.")
+
     with histcentipede2:
         st.subheader("BD humoristique")
+        try:
+            st.image("humpcentripete.jpg", caption="Humour et trajectoires circulaires.", width=600)
+        except Exception:
+            st.error("Fichier humpcentripete.jpg introuvable.")
 
 
     st.title("Laboratoire Interactif : La Force Centripète")
@@ -720,8 +783,17 @@ with tab9:
     histarchi1, histarchi2 = st.columns(2)
     with histarchi1:
         st.subheader("Historique")
+        try:
+            st.image("histarchimede.jpg", caption="La poussée d'Archimède dans l'histoire.", width=600)
+        except Exception:
+            st.error("Fichier histarchimede.jpg introuvable.")
+
     with histarchi2:
         st.subheader("BD humoristique")
+        try:
+            st.image("humparchimede.jpg", caption="Humour et Eurêka !", width=600)
+        except Exception:
+            st.error("Fichier humparchimede.jpg introuvable.")
 
     st.title("Laboratoire Interactive : La Poussée d'Archimède")
     st.write("Modifiez le volume de l'objet et le fluide pour observer la force d'Archimède s'exerçant de bas en haut.")
@@ -789,8 +861,17 @@ with tab10:
     histfric1, histfric2 = st.columns(2)
     with histfric1:
         st.subheader("Historique")
+        try:
+            st.image("histfriction.jpg", caption="Les lois du frottement sec dans l'histoire.", width=600)
+        except Exception:
+            st.error("Fichier histfriction.jpg introuvable.")
+
     with histfric2:
         st.subheader("BD humoristique")
+        try:
+            st.image("humpfriction.jpg", caption="Humour et friction solide.", width=600)
+        except Exception:
+            st.error("Fichier humpfriction.jpg introuvable.")
 
     st.title("Laboratoire Interactif : La Force de Friction Solide")
     st.write("Sélectionnez les matériaux en contact et modifiez la masse pour observer la transition entre frottement statique et cinétique.")
@@ -864,9 +945,17 @@ with tab11:
     histcorde1, histcorde2 = st.columns(2)
     with histcorde1:
         st.subheader("Historique")
+        try:
+            st.image("histtension_corde.jpg", caption="L'étude de la tension mécanique dans l'histoire.", width=600)
+        except Exception:
+            st.error("Fichier histtension_corde.jpg introuvable.")
+
     with histcorde2:
         st.subheader("BD humoristique")
-
+        try:
+            st.image("humptension_corde.jpg", caption="Humour, cordes et poulies.", width=600)
+        except Exception:
+            st.error("Fichier humptension_corde.jpg introuvable.")
 
     st.title("Laboratoire Interactif : La Force de Tension (Machine d'Atwood)")
     st.write("Modifiez la masse fixe et faites varier la masse suspendue pour observer l'évolution de la tension du câble.")
@@ -915,8 +1004,17 @@ with tab12:
     histpropulsion1, histpropulsion2 = st.columns(2)
     with histpropulsion1:
         st.subheader("Historique")
+        try:
+            st.image("histpropulsion.jpg", caption="L'histoire de la propulsion et du principe d'action-réaction.", width=600)
+        except Exception:
+            st.error("Fichier histpropulsion.jpg introuvable.")
+
     with histpropulsion2:
         st.subheader("BD humoristique")
+        try:
+            st.image("humppropulsion.jpg", caption="Humour et force de propulsion.", width=600)
+        except Exception:
+            st.error("Fichier humppropulsion.jpg introuvable.")
 
     st.title("Laboratoire Interactif : La Force de Poussée (Propulsion)")
     st.write("Modifiez le débit de matière éjectée pour observer la force de poussée en fonction de la vitesse d'éjection.")
@@ -960,8 +1058,17 @@ with tab13:
     histaero1, histaero2 = st.columns(2)
     with histaero1:
         st.subheader("Historique")
+        try:
+            st.image("histaerodynamique.jpg", caption="L'aérodynamisme et la résistance de l'air dans l'histoire.", width=600)
+        except Exception:
+            st.error("Fichier histaerodynamique.jpg introuvable.")
+
     with histaero2:
         st.subheader("BD humoristique")
+        try:
+            st.image("humpaerodynamique.jpg", caption="Humour et aérodynamisme.", width=600)
+        except Exception:
+            st.error("Fichier humpaerodynamique.jpg introuvable.")
 
     st.title("Laboratoire Interactif : La Force de Traînée Aérodynamique")
     st.write("Modifiez le profil de l'objet pour observer la résistance de l'air à haute vitesse.")
@@ -1019,8 +1126,17 @@ with tab14:
     histchoc1, histchoc2 = st.columns(2)
     with histchoc1:
         st.subheader("Historique")
+        try:
+            st.image("histchoc_routier.jpg", caption="L'évolution de la sécurité routière et des crash-tests dans l'histoire.", width=600)
+        except Exception:
+            st.error("Fichier histchoc_routier.jpg introuvable.")
+
     with histchoc2:
         st.subheader("BD humoristique")
+        try:
+            st.image("humpchoc_routier.jpg", caption="Humour et sécurité routière.", width=600)
+        except Exception:
+            st.error("Fichier humpchoc_routier.jpg introuvable.")
 
     st.title("Laboratoire Interactif : Force d'Impact d'un Accident de la Route")
     st.write("Ajustez la masse du véhicule et observez la croissance exponentielle de la force de collision avec la vitesse.")
@@ -1076,8 +1192,17 @@ with tab15:
     histverin1, histverin2 = st.columns(2)
     with histverin1:
         st.subheader("Historique")
+        try:
+            st.image("histverin.jpg", caption="L'histoire de l'hydraulique et de la force des vérins.", width=600)
+        except Exception:
+            st.error("Fichier histverin.jpg introuvable.")
+
     with histverin2:
         st.subheader("BD humoristique")
+        try:
+            st.image("humpverin.jpg", caption="Humour, hydraulique et vérins.", width=600)
+        except Exception:
+            st.error("Fichier humpverin.jpg introuvable.")
 
     st.title("Laboratoire Interactif : Force d'Arrachement de Vérin (Pelle Hydraulique)")
     st.write("Modifiez le diamètre de l'alésage du vérin pour voir la force maximale disponible pour creuser.")
@@ -1127,8 +1252,17 @@ with tab16:
     histfrein1, histfrein2 = st.columns(2)
     with histfrein1:
         st.subheader("Historique")
+        try:
+            st.image("histfrein.jpg", caption="L'évolution des systèmes de freinage mécanique et hydraulique dans l'histoire.", width=600)
+        except Exception:
+            st.error("Fichier histfrein.jpg introuvable.")
+
     with histfrein2:
         st.subheader("BD humoristique")
+        try:
+            st.image("humpfrein.jpg", caption="Humour et systèmes de freinage.", width=600)
+        except Exception:
+            st.error("Fichier humpfrein.jpg introuvable.")
 
     st.title("Laboratoire Interactif : Force de Freinage Hydraulique")
     st.write("Modifiez le diamètre des pistons et la pression du circuit pour calculer la force de freinage appliquée au disque.")
