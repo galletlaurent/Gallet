@@ -189,9 +189,9 @@ onglets = st.tabs([
     "Identification",
     "Permis B",
     "Permis B et caravane",
-    "Permis CE",
-    "Permis CE et caravane",
     "Permis C",
+    "Permis C et caravane",
+    "Permis CE",
 ])
 
 tab0 = onglets[0] 
@@ -1715,7 +1715,7 @@ with tab2:
 # CONTENU DE L'ONGLET 3 : PERMIS C (PREMIER ATELIER - DYNAMIQUE RIGIDE)
 # =============================================================================
 with tab3:
-    st.header("Simulation de Trajectoire - Camion Rigide Categorie CE")
+    st.header("Simulation de Trajectoire - Camion Rigide Categorie C")
     st.markdown("""
     Cette section montre l'influence de la vitesse, du poids et de la geometrie sur le phenomene de chasse 
     (le decalage des roues arriere vers l'interieur du virage).
@@ -1723,69 +1723,67 @@ with tab3:
     col_imCE1, col_imCE2, col_imCE3 = st.columns(3)
     with col_imCE1:    
         try:
-            st.image("imCE1.jpg", caption="véhicule catégorie CE.",width=600)
+            st.image("imCE1.jpg", caption="véhicule catégorie C.",width=600)
         except Exception:
             st.error("Fichier imCE1.jpg introuvable.")
     with col_imCE2:    
         try:
-            st.image("imCE2.jpg", caption="véhicule catégorie CE.",width=600)
+            st.image("imCE2.jpg", caption="véhicule catégorie C.",width=600)
         except Exception:
             st.error("Fichier imCE2.jpg introuvable.")
     with col_imCE3:    
         try:
-            st.image("imCE3.jpg", caption="véhicule catégorie CE.",width=600)
+            st.image("imCE3.jpg", caption="véhicule catégorie C.",width=600)
         except Exception:
             st.error("Fichier imCE3.jpg introuvable.")
 
-    st.title("Tout savoir sur le Permis CE")
+    st.title("Tout savoir sur le Permis C")
     st.write(
         "Le permis CE est la catégorie reine des permis de conduire routiers. Il autorise la "
         "conduite des véhicules de transport de marchandises de la catégorie C attelés "
         "d'une remorque ou d'une semi-remorque lourde."
     )
 
+    st.title("Tout savoir sur les Permis C et C1")
+    st.write(
+        "Cette application définit les règles applicables aux permis poids lourds rigides, "
+        "et permet de vérifier vos obligations réglementaires concernant le chronotachygraphe et la taxe à l'essieu."
+    )
+
     # --- SECTION 1 : DEFINITION ET REGLES ---
-    st.header("1. Qu'est-ce que le permis CE ?")
+    st.header("1. Différences entre le Permis C et le Permis C1")
 
     st.markdown("""
-    Le permis CE est requis dès que vous remplissez simultanément ces conditions :
-    * **Véhicule tracteur** : Véhicule de catégorie C (PTAC supérieur à 3 500 kg destiné au transport de marchandises).
-    * **Remorque attelée** : Le PTAC de la remorque ou de la semi-remorque est supérieur à **750 kg**.
+    Les permis de catégorie C et C1 concernent les véhicules isolés affectés au transport de marchandises ou de matériel :
+    * **Permis C1 (Poids lourd intermédiaire)** : Conçu pour les véhicules dont le PTAC est supérieur à **3 500 kg** sans dépasser **7 500 kg**.
+    * **Permis C (Poids lourd standard)** : Conçu pour les véhicules dont le PTAC est supérieur à **3 500 kg**, sans aucune limite maximale de poids pour le véhicule seul.
 
-    Note : Le PTAC (Poids Total Autorisé en Charge) se trouve à la case F2 de la carte grise. Le PTRA (Poids Total Roulant Autorisé) se trouve à la case F3 du véhicule tracteur.
-    """)
-
-    # Tableau récapitulatif des ensembles lourds
-    st.subheader("Tableau de synthèse des catégories de permis poids lourds")
-    st.markdown("""
-
-    | Catégorie | Véhicule Tracteur (PTAC) | Remorque (PTAC) | Poids Total Roulant Maximum |
-    | :--- | :--- | :--- | :--- |
-    | **Permis C** | Supérieur à 3 500 kg | Inférieur ou égal à 750 kg | Limité au PTAC du camion seul (+ 750 kg) |
-    | **Permis C1E** | Entre 3 500 kg et 7 500 kg | Supérieur à 750 kg | Somme des PTAC limitée à 12 000 kg |
-    | **Permis CE obligatoire** | Supérieur à 3 500 kg | Supérieur à 750 kg | Limité au PTRA du camion (jusqu'à 44 000 kg) |
+    Pour ces deux catégories, l'utilisation d'une remorque est autorisée sous réserve que son PTAC soit inférieur ou égal à **750 kg**.
     """)
 
     # --- SECTION 2 : SIMULATEUR INTERACTIF ---
-    st.header("2. Quel permis pour votre ensemble routier ?")
-    st.write("Saisissez les données (F2 et F3) de vos cartes grises pour vérifier la catégorie requise :")
+    st.header("2. Vérification de votre configuration")
+    st.write("Sélectionnez votre permis cible et saisissez les poids de vos cartes grises :")
 
-    # Formulaire de saisie des données avec valeurs par défaut typiques d'un super lourd
+    # Sélection du permis détenu/visé
+    permis_selectionne = st.selectbox(
+        "Catégorie de permis à évaluer :",
+        ["Permis C1 (Limité à 7,5 tonnes)", "Permis C (Sans limite supérieure)"]
+    )
+
+    # Paramètres d'usage pour la TSVR et le Chronotachygraphe
+    st.write("Informations complémentaires sur l'usage du véhicule :")
+    usage_prive = st.checkbox("Le véhicule est utilisé exclusivement pour un usage privé / non commercial (ex: Camping-car lourd, transport de loisir propre)")
+
     col1, col2 = st.columns(2)
 
     with col1:
+        valeur_defaut_camion = 5500 if permis_selectionne == "Permis C1 (Limité à 7,5 tonnes)" else 19000
         ptac_camion = st.number_input(
             "PTAC du Camion (F2 en kg)", 
             min_value=0, 
             max_value=32000, 
-            value=19000, 
-            step=500
-        )
-        ptra_camion = st.number_input(
-            "PTRA du Camion (F3 en kg)", 
-            min_value=0, 
-            max_value=44000, 
-            value=44000, 
+            value=valeur_defaut_camion, 
             step=500
         )
 
@@ -1793,40 +1791,68 @@ with tab3:
         ptac_remorque = st.number_input(
             "PTAC de la Remorque (F2 en kg)", 
             min_value=0, 
-            max_value=38000, 
-            value=24000, 
-            step=500
+            max_value=26000, 
+            value=700, 
+            step=50
         )
 
-    # Calculs logiques
-    somme_ptac = ptac_camion + ptac_remorque
-
+    # Calculs et logique
     st.subheader("Résultat de l'analyse")
-    st.info(f"Masse totale théorique de l'ensemble : {somme_ptac} kg (Limite technique PTRA : {ptra_camion} kg)")
 
-    # Logique de décision selon la réglementation française du transport routier
     if ptac_camion <= 3500:
-        st.error("Le véhicule tracteur ne relève pas de la catégorie Poids Lourd (inférieur ou égal à 3 500 kg). Référez-vous aux règles du permis B / BE.")
-    elif somme_ptac > ptra_camion:
-        st.error(f"Surcharge technique : La somme des PTAC ({somme_ptac} kg) dépasse le PTRA autorisé du camion ({ptra_camion} kg). Cet attelage est interdit.")
-    elif ptac_remorque <= 750:
-        st.success("Permis C suffisant : La remorque ne dépasse pas 750 kg.")
+        st.error("Ce véhicule n'est pas un poids lourd (PTAC inférieur ou égal à 3 500 kg). Référez-vous aux règles du permis B.")
     else:
-        if ptac_camion <= 7500 and somme_ptac <= 12000:
-            st.warning("Permis C1E suffisant : Le camion fait moins de 7 500 kg et le total ne dépasse pas 12 000 kg.")
-        else:
+        # 1. Validation du permis
+        permis_valide = True
+        if permis_selectionne == "Permis C1 (Limité à 7,5 tonnes)" and ptac_camion > 7500:
             st.error(
-                f"Permis CE Obligatoire : La remorque dépasse 750 kg et le cumul dépasse les limites du permis C1E. "
-                "Vous devez être titulaire du permis CE pour conduire cet ensemble articulé."
+                f"Permis C1 insuffisant : Le PTAC du véhicule ({ptac_camion} kg) dépasse la limite maximale "
+                "autorisée de 7 500 kg pour cette catégorie. Le permis C standard est requis."
+            )
+            permis_valide = False
+        elif ptac_remorque > 750:
+            permis_requis = "C1E" if (permis_selectionne == "Permis C1 (Limité à 7,5 tonnes)" and (ptac_camion + ptac_remorque) <= 12000) else "CE"
+            st.error(
+                f"Permis insuffisant : La remorque dépasse la limite légale de 750 kg (saisie : {ptac_remorque} kg). "
+                f"Pour tracter cette remorque, vous devez posséder le permis {permis_requis}."
+            )
+            permis_valide = False
+        
+        if permis_valide:
+            st.success(
+                f"Configuration valide avec le {permis_selectionne} : Le véhicule respecte les règles de poids "
+                f"et la remorque reste inférieure ou égale à 750 kg."
             )
 
-    # --- SECTION 3 : INFOS OBTENTION ---
-    with st.expander("En savoir plus sur les conditions du permis CE"):
+        # 2. Obligation du Chronotachygraphe
+        st.subheader("Réglementation sociale européenne (Chronotachygraphe)")
+        if usage_prive:
+            st.info("Chronotachygraphe non obligatoire : Les transports non commerciaux de marchandises dans un but privé sont exemptés de la réglementation sur les temps de conduite.")
+        elif ptac_camion <= 7500:
+            st.warning("Chronotachygraphe sous conditions : Obligatoire pour le transport commercial, sauf exemptions spécifiques (ex: véhicules d'artisans dans un rayon de 100 km autour de l'entreprise).")
+        else:
+            st.error("Chronotachygraphe obligatoire : Le véhicule dépasse 7 500 kg et est utilisé à des fins professionnelles. L'installation de l'appareil et le respect des temps de conduite/repos sont stricts.")
+
+        # 3. Taxe à l'Essieu (TSVR)
+        st.subheader("Situation face à la Taxe à l'Essieu")
+        if usage_prive:
+            st.info("Exemption de TSVR : Le véhicule n'est pas affecté au transport de marchandises dans un cadre professionnel ou commercial.")
+        elif ptac_camion < 12000:
+            st.info(f"Non soumis à la TSVR : Le PTAC du véhicule ({ptac_camion} kg) est inférieur au seuil légal de 12 000 kg.")
+        else:
+            st.error(
+                f"Soumis à la TSVR : Le véhicule est utilisé professionnellement et son PTAC atteint ou dépasse 12 000 kg ({ptac_camion} kg). "
+                "Vous devez déclarer ce véhicule et payer la taxe semestrielle (le montant dépendra du nombre d'essieux et de la suspension)."
+            )
+
+    # --- SECTION 3 : CONDITIONS D'OBTENTION ---
+    with st.expander("En savoir plus sur les conditions d'accès aux permis C/C1"):
         st.markdown("""
-        * **Prérequis indispensables** : Être titulaire du permis C en cours de validité.
-        * **Âge minimal** : 21 ans (sauf en cas de formation professionnelle longue de type CAP/Bac Pro Conducteur Routier ou FIMO passée en parallèle).
-        * **Contrôle médical** : Avis médical obligatoire délivré par un médecin agréé par la préfecture avant l'examen et lors des renouvellements.
-        * **Durée de validité** : Soumise à renouvellement régulier selon l'âge du conducteur (tous les 5 ans pour les moins de 60 ans, puis réduction de la durée au-delà).
+        * **Prérequis commun** : Être titulaire du permis B en cours de validité.
+        * **Âge minimal** : 
+            * 18 ans pour le permis C1.
+            * 21 ans pour le permis C (sauf formation professionnelle longue comme un CAP ou un Bac Pro Conducteur Routier).
+        * **Contrôle médical** : Examen médical obligatoire devant un médecin agréé par la préfecture avant l'examen et lors de chaque renouvellement périodique.
         """)
 
 
@@ -3023,46 +3049,48 @@ with tab5:
             st.error("Fichier imC3.jpg introuvable.")
 
 
-    st.title("Tout savoir sur les Permis C et C1")
-    st.write(
-        "Cette application définit les règles applicables aux permis poids lourds rigides, "
-        "et permet de vérifier vos obligations réglementaires concernant le chronotachygraphe et la taxe à l'essieu."
-    )
-
     # --- SECTION 1 : DEFINITION ET REGLES ---
-    st.header("1. Différences entre le Permis C et le Permis C1")
+    st.header("1. Qu'est-ce que le permis CE ?")
 
     st.markdown("""
-    Les permis de catégorie C et C1 concernent les véhicules isolés affectés au transport de marchandises ou de matériel :
-    * **Permis C1 (Poids lourd intermédiaire)** : Conçu pour les véhicules dont le PTAC est supérieur à **3 500 kg** sans dépasser **7 500 kg**.
-    * **Permis C (Poids lourd standard)** : Conçu pour les véhicules dont le PTAC est supérieur à **3 500 kg**, sans aucune limite maximale de poids pour le véhicule seul.
+    Le permis CE est requis dès que vous remplissez simultanément ces conditions :
+    * **Véhicule tracteur** : Véhicule de catégorie C (PTAC supérieur à 3 500 kg destiné au transport de marchandises).
+    * **Remorque attelée** : Le PTAC de la remorque ou de la semi-remorque est supérieur à **750 kg**.
 
-    Pour ces deux catégories, l'utilisation d'une remorque est autorisée sous réserve que son PTAC soit inférieur ou égal à **750 kg**.
+    Note : Le PTAC (Poids Total Autorisé en Charge) se trouve à la case F2 de la carte grise. Le PTRA (Poids Total Roulant Autorisé) se trouve à la case F3 du véhicule tracteur.
+    """)
+
+    # Tableau récapitulatif des ensembles lourds
+    st.subheader("Tableau de synthèse des catégories de permis poids lourds")
+    st.markdown("""
+
+    | Catégorie | Véhicule Tracteur (PTAC) | Remorque (PTAC) | Poids Total Roulant Maximum |
+    | :--- | :--- | :--- | :--- |
+    | **Permis C** | Supérieur à 3 500 kg | Inférieur ou égal à 750 kg | Limité au PTAC du camion seul (+ 750 kg) |
+    | **Permis C1E** | Entre 3 500 kg et 7 500 kg | Supérieur à 750 kg | Somme des PTAC limitée à 12 000 kg |
+    | **Permis CE obligatoire** | Supérieur à 3 500 kg | Supérieur à 750 kg | Limité au PTRA du camion (jusqu'à 44 000 kg) |
     """)
 
     # --- SECTION 2 : SIMULATEUR INTERACTIF ---
-    st.header("2. Vérification de votre configuration")
-    st.write("Sélectionnez votre permis cible et saisissez les poids de vos cartes grises :")
+    st.header("2. Quel permis pour votre ensemble routier ?")
+    st.write("Saisissez les données (F2 et F3) de vos cartes grises pour vérifier la catégorie requise :")
 
-    # Sélection du permis détenu/visé
-    permis_selectionne = st.selectbox(
-        "Catégorie de permis à évaluer :",
-        ["Permis C1 (Limité à 7,5 tonnes)", "Permis C (Sans limite supérieure)"]
-    )
-
-    # Paramètres d'usage pour la TSVR et le Chronotachygraphe
-    st.write("Informations complémentaires sur l'usage du véhicule :")
-    usage_prive = st.checkbox("Le véhicule est utilisé exclusivement pour un usage privé / non commercial (ex: Camping-car lourd, transport de loisir propre)")
-
+    # Formulaire de saisie des données avec valeurs par défaut typiques d'un super lourd
     col1, col2 = st.columns(2)
 
     with col1:
-        valeur_defaut_camion = 5500 if permis_selectionne == "Permis C1 (Limité à 7,5 tonnes)" else 19000
         ptac_camion = st.number_input(
             "PTAC du Camion (F2 en kg)", 
             min_value=0, 
             max_value=32000, 
-            value=valeur_defaut_camion, 
+            value=19000, 
+            step=500
+        )
+        ptra_camion = st.number_input(
+            "PTRA du Camion (F3 en kg)", 
+            min_value=0, 
+            max_value=44000, 
+            value=44000, 
             step=500
         )
 
@@ -3070,68 +3098,42 @@ with tab5:
         ptac_remorque = st.number_input(
             "PTAC de la Remorque (F2 en kg)", 
             min_value=0, 
-            max_value=26000, 
-            value=700, 
-            step=50
+            max_value=38000, 
+            value=24000, 
+            step=500
         )
 
-    # Calculs et logique
+    # Calculs logiques
+    somme_ptac = ptac_camion + ptac_remorque
+
     st.subheader("Résultat de l'analyse")
+    st.info(f"Masse totale théorique de l'ensemble : {somme_ptac} kg (Limite technique PTRA : {ptra_camion} kg)")
 
+    # Logique de décision selon la réglementation française du transport routier
     if ptac_camion <= 3500:
-        st.error("Ce véhicule n'est pas un poids lourd (PTAC inférieur ou égal à 3 500 kg). Référez-vous aux règles du permis B.")
+        st.error("Le véhicule tracteur ne relève pas de la catégorie Poids Lourd (inférieur ou égal à 3 500 kg). Référez-vous aux règles du permis B / BE.")
+    elif somme_ptac > ptra_camion:
+        st.error(f"Surcharge technique : La somme des PTAC ({somme_ptac} kg) dépasse le PTRA autorisé du camion ({ptra_camion} kg). Cet attelage est interdit.")
+    elif ptac_remorque <= 750:
+        st.success("Permis C suffisant : La remorque ne dépasse pas 750 kg.")
     else:
-        # 1. Validation du permis
-        permis_valide = True
-        if permis_selectionne == "Permis C1 (Limité à 7,5 tonnes)" and ptac_camion > 7500:
-            st.error(
-                f"Permis C1 insuffisant : Le PTAC du véhicule ({ptac_camion} kg) dépasse la limite maximale "
-                "autorisée de 7 500 kg pour cette catégorie. Le permis C standard est requis."
-            )
-            permis_valide = False
-        elif ptac_remorque > 750:
-            permis_requis = "C1E" if (permis_selectionne == "Permis C1 (Limité à 7,5 tonnes)" and (ptac_camion + ptac_remorque) <= 12000) else "CE"
-            st.error(
-                f"Permis insuffisant : La remorque dépasse la limite légale de 750 kg (saisie : {ptac_remorque} kg). "
-                f"Pour tracter cette remorque, vous devez posséder le permis {permis_requis}."
-            )
-            permis_valide = False
-        
-        if permis_valide:
-            st.success(
-                f"Configuration valide avec le {permis_selectionne} : Le véhicule respecte les règles de poids "
-                f"et la remorque reste inférieure ou égale à 750 kg."
-            )
-
-        # 2. Obligation du Chronotachygraphe
-        st.subheader("Réglementation sociale européenne (Chronotachygraphe)")
-        if usage_prive:
-            st.info("Chronotachygraphe non obligatoire : Les transports non commerciaux de marchandises dans un but privé sont exemptés de la réglementation sur les temps de conduite.")
-        elif ptac_camion <= 7500:
-            st.warning("Chronotachygraphe sous conditions : Obligatoire pour le transport commercial, sauf exemptions spécifiques (ex: véhicules d'artisans dans un rayon de 100 km autour de l'entreprise).")
-        else:
-            st.error("Chronotachygraphe obligatoire : Le véhicule dépasse 7 500 kg et est utilisé à des fins professionnelles. L'installation de l'appareil et le respect des temps de conduite/repos sont stricts.")
-
-        # 3. Taxe à l'Essieu (TSVR)
-        st.subheader("Situation face à la Taxe à l'Essieu")
-        if usage_prive:
-            st.info("Exemption de TSVR : Le véhicule n'est pas affecté au transport de marchandises dans un cadre professionnel ou commercial.")
-        elif ptac_camion < 12000:
-            st.info(f"Non soumis à la TSVR : Le PTAC du véhicule ({ptac_camion} kg) est inférieur au seuil légal de 12 000 kg.")
+        if ptac_camion <= 7500 and somme_ptac <= 12000:
+            st.warning("Permis C1E suffisant : Le camion fait moins de 7 500 kg et le total ne dépasse pas 12 000 kg.")
         else:
             st.error(
-                f"Soumis à la TSVR : Le véhicule est utilisé professionnellement et son PTAC atteint ou dépasse 12 000 kg ({ptac_camion} kg). "
-                "Vous devez déclarer ce véhicule et payer la taxe semestrielle (le montant dépendra du nombre d'essieux et de la suspension)."
+                f"Permis CE Obligatoire : La remorque dépasse 750 kg et le cumul dépasse les limites du permis C1E. "
+                "Vous devez être titulaire du permis CE pour conduire cet ensemble articulé."
             )
 
-    # --- SECTION 3 : CONDITIONS D'OBTENTION ---
-    with st.expander("En savoir plus sur les conditions d'accès aux permis C/C1"):
+
+
+    # --- SECTION 3 : INFOS OBTENTION ---
+    with st.expander("En savoir plus sur les conditions du permis CE"):
         st.markdown("""
-        * **Prérequis commun** : Être titulaire du permis B en cours de validité.
-        * **Âge minimal** : 
-            * 18 ans pour le permis C1.
-            * 21 ans pour le permis C (sauf formation professionnelle longue comme un CAP ou un Bac Pro Conducteur Routier).
-        * **Contrôle médical** : Examen médical obligatoire devant un médecin agréé par la préfecture avant l'examen et lors de chaque renouvellement périodique.
+        * **Prérequis indispensables** : Être titulaire du permis C en cours de validité.
+        * **Âge minimal** : 21 ans (sauf en cas de formation professionnelle longue de type CAP/Bac Pro Conducteur Routier ou FIMO passée en parallèle).
+        * **Contrôle médical** : Avis médical obligatoire délivré par un médecin agréé par la préfecture avant l'examen et lors des renouvellements.
+        * **Durée de validité** : Soumise à renouvellement régulier selon l'âge du conducteur (tous les 5 ans pour les moins de 60 ans, puis réduction de la durée au-delà).
         """)
 
     col_p1, col_p2, col_p3 = st.columns(3)
