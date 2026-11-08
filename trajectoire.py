@@ -554,17 +554,17 @@ with tab1:
 
     with col_imB1:    
         try:
-            st.image("imBcar1.jpg", caption="véhicule catégorie B.",width=800)
+            st.image("imBcar1.jpg", caption="véhicule catégorie B.",width=600)
         except Exception:
             st.error("Fichier imBcar1.jpg introuvable.")
     with col_imB2:    
         try:
-            st.image("imBcar2.jpg", caption="véhicule catégorie B.",width=800)
+            st.image("imBcar2.jpg", caption="véhicule catégorie B.",width=600)
         except Exception:
             st.error("Fichier imBcar2.jpg introuvable.")
     with col_imB3:    
         try:
-            st.image("imBcar3.jpg", caption="véhicule catégorie B.",width=800)
+            st.image("imBcar3.jpg", caption="véhicule catégorie B.",width=600)
         except Exception:
             st.error("Fichier imBcar3.jpg introuvable.")
 
