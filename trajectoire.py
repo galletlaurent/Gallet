@@ -568,6 +568,90 @@ with tab1:
         except Exception:
             st.error("Fichier imBcar3.jpg introuvable.")
 
+    st.title("Tout savoir sur le Permis B")
+    st.write(
+        "Le permis B permet de conduire des voitures automobiles, des camionnettes "
+        "et des camping-cars dont le poids n'excède pas 3,5 tonnes."
+    )
+
+    # --- SECTION 1 : DEFINITION ET REGLES ---
+    st.header("1. Qu'est-ce que le permis B ?")
+
+    st.markdown("""
+    Le permis de catégorie B autorise la conduite des véhicules qui remplissent ces conditions :
+    * **Nombre de places** : Conçu pour le transport de 8 passagers maximum (en plus du conducteur).
+    * **PTAC maximal** : Le Poids Total Autorisé en Charge (case F2 de la carte grise) ne doit pas dépasser **3 500 kg**.
+
+    Pour tracter une remorque avec le permis B seul :
+    * La remorque est toujours autorisée si son PTAC est inférieur ou égal à **750 kg**.
+    * Si la remorque dépasse 750 kg, la somme des PTAC (Voiture + Remorque) ne doit pas dépasser **3 500 kg**.
+    """)
+
+    # Tableau récapitulatif de la réglementation pour le permis B
+    st.subheader("Tableau des droits de traction avec le Permis B")
+    st.markdown("""
+
+    | Type de remorque | Conditions de poids | Statut du Permis B |
+    | :--- | :--- | :--- |
+    | **Remorque légère** | PTAC inférieur ou égal à 750 kg | Permis B suffisant (quel que soit le poids de l'auto) |
+    | **Remorque lourde** | PTAC supérieur à 750 kg et cumul des PTAC jusqu'à 3 500 kg | Permis B suffisant |
+    | **Remorque lourde** | PTAC supérieur à 750 kg et cumul des PTAC supérieur à 3 500 kg | Permis B insuffisant (Formation B96 ou Permis BE requis) |
+    """)
+
+    # --- SECTION 2 : SIMULATEUR INTERACTIF ---
+    st.header("2. Votre attelage est-il compatible avec le Permis B seul ?")
+    st.write("Saisissez les poids (F2) de vos cartes grises pour vérifier vos droits :")
+
+    # Formulaire de saisie des données avec valeurs par défaut adaptées au permis B
+    col1, col2 = st.columns(2)
+
+    with col1:
+        ptac_voiture = st.number_input(
+            "PTAC de la Voiture (en kg)", 
+            min_value=0, 
+            max_value=3500, 
+            value=1800, 
+            step=50
+        )
+
+    with col2:
+        ptac_remorque = st.number_input(
+            "PTAC de la Remorque (en kg)", 
+            min_value=0, 
+            max_value=3500, 
+            value=700, 
+            step=50
+        )
+
+    # Calculs logiques
+    somme_ptac = ptac_voiture + ptac_remorque
+
+    st.subheader("Résultat de l'analyse")
+    st.info(f"Poids total de l'ensemble roulant : {somme_ptac} kg")
+
+    # Logique de décision pour le Permis B strict
+    if ptac_voiture > 3500:
+        st.error("Le véhicule tracteur dépasse 3 500 kg. Le permis B ne suffit pas (Permis C1 ou C nécessaire).")
+    elif ptac_remorque <= 750:
+        st.success("Permis B suffisant : La remorque ne dépasse pas 750 kg.")
+    else:
+        if somme_ptac <= 3500:
+            st.success("Permis B suffisant : La remorque dépasse 750 kg mais la somme des PTAC reste inférieure ou égale à 3 500 kg.")
+        else:
+            st.error(
+                f"Permis B insuffisant : La remorque dépasse 750 kg et le total fait {somme_ptac} kg (supérieur à 3 500 kg). "
+                "Vous devez passer la formation B96 (jusqu'à 4 250 kg) ou le permis BE (au-delà)."
+            )
+
+    # --- SECTION 3 : INFOS OBTENTION ---
+    with st.expander("En savoir plus sur les conditions du permis B"):
+        st.markdown("""
+        * **Âge minimal** : 18 ans pour l'examen pratique (dès 17 ans dans le cadre de l'apprentissage anticipé de la conduite / conduite accompagnée).
+        * **Épreuves** :
+            * Épreuve théorique générale (le Code de la route).
+            * Épreuve pratique de conduite de 32 minutes minimum (comprenant la conduite en circulation, deux manœuvres et des questions de vérification).
+        """)
+
 
     col_param1, col_param2, col_param3 = st.columns(3)
     
@@ -1035,7 +1119,8 @@ with tab1:
 
 
 with tab2:
-    st.header("Simulation Permis B et caravane( BE)")
+    
+    st.header("Simulation Permis B et remorque( BE)")
     col_imBE1, col_imBE2, col_imBE3 = st.columns(3)
     with col_imBE1:    
         try:
@@ -1052,7 +1137,94 @@ with tab2:
             st.image("imBE3.jpg", caption="véhicule catégorie BE.",width=600)
         except Exception:
             st.error("Fichier imBE3.jpg introuvable.")
-    
+            
+    st.title("Tout savoir sur le Permis BE")
+    st.write(
+        "Le permis BE (ou permis remorque) est obligatoire pour tracter une remorque lourde "
+        "avec un véhicule de catégorie B."
+    )
+
+    # --- SECTION 1 : DEFINITION ET REGLES ---
+    st.header("1. Qu'est-ce que le permis BE ?")
+
+    st.markdown("""
+    Le permis BE est requis dès que vous remplissez simultanément ces deux conditions :
+    * **PTAC de la remorque** : Supérieur à 750 kg (et inférieur ou égal à 3 500 kg).
+    * **Somme des PTAC** (Voiture + Remorque) : Supérieure à 4 250 kg.
+
+    Note : Le PTAC (Poids Total Autorisé en Charge) se trouve à la case F2 de votre carte grise.
+    """)
+
+    # Tableau récapitulatif de la réglementation
+    st.subheader("Tableau de synthèse des obligations")
+    st.markdown("""
+
+    | Cumul des PTAC (Voiture + Remorque) | Remorque inférieure ou égale à 750 kg | Remorque supérieure à 750 kg |
+    | :--- | :--- | :--- |
+    | **Jusqu'à 3 500 kg** | Permis B | Permis B |
+    | **Entre 3 501 kg et 4 250 kg** | Permis B | Formation B96 (7h sans examen) |
+    | **Plus de 4 250 kg** | Permis B | Permis BE obligatoire |
+    """)
+
+    # --- SECTION 2 : SIMULATEUR INTERACTIF ---
+    st.header("2. Quel permis pour votre attelage ?")
+    st.write("Saisissez les poids (F2) de votre carte grise pour vérifier vos obligations :")
+
+    # Formulaire de saisie des données avec nouvelles valeurs par défaut
+    col1, col2 = st.columns(2)
+
+    with col1:
+        ptac_voiture = st.number_input(
+            "PTAC de la Voiture (en kg)", 
+            min_value=0, 
+            max_value=3500, 
+            value=2500, 
+            step=50
+        )
+
+    with col2:
+        ptac_remorque = st.number_input(
+            "PTAC de la Remorque (en kg)", 
+            min_value=0, 
+            max_value=3500, 
+            value=2000, 
+            step=50
+        )
+
+    # Calculs logiques
+    somme_ptac = ptac_voiture + ptac_remorque
+
+    st.subheader("Résultat de l'analyse")
+    st.info(f"Poids total de l'ensemble roulant : {somme_ptac} kg")
+
+    # Logique de décision selon la réglementation française
+    if ptac_remorque <= 750:
+        st.success("Permis B suffisant : La remorque fait moins de 750 kg.")
+    else:
+        if somme_ptac <= 3500:
+            st.success("Permis B suffisant : La somme des PTAC ne dépasse pas 3 500 kg.")
+        elif 3500 < somme_ptac <= 4250:
+            st.warning(
+                "Formation B96 requise : La somme des PTAC est entre 3 501 kg et 4 250 kg. "
+                "Il s'agit d'une formation de 7 heures en auto-école (sans examen)."
+            )
+        else:
+            st.error(
+                "Permis BE Obligatoire : La remorque dépasse 750 kg et la somme des PTAC "
+                "est supérieure à 4 250 kg. Vous devez passer l'examen du permis BE."
+            )
+
+    # --- SECTION 3 : INFOS EXAMEN ---
+    with st.expander("En savoir plus sur l'examen du permis BE"):
+        st.markdown("""
+        * **Conditions** : Avoir au moins 18 ans et posséder le permis B.
+        * **Code de la route** : Nécessaire si votre dernier permis ou code a plus de 5 ans.
+        * **Épreuves** :
+            * Une épreuve hors circulation (plateau) de 30 min (attelage, vérifications, marche arrière).
+            * Une épreuve en circulation de 30 min sur route.
+        """)
+
+        
     col_param1, col_param2, col_param3 = st.columns(3)
     
     with col_param1:
