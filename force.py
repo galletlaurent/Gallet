@@ -278,6 +278,20 @@ with tab0:
 with tab1:
     st.set_page_config(page_title="Physique Interactive : Force de Pesanteur", layout="wide")
 
+    histp1, histp2 = st.columns(2)
+    with histp1:
+        st.subheader("Historique")
+        try:
+            st.image("histpesanteur.jpg", caption="la pesanteur.",width=600)
+        except Exception:
+            st.error("Fichier impesanteur.jpg introuvable.")
+    with histp2:
+        try:
+        st.subheader("BD humoristique")
+            st.image("humpesanteur.jpg", caption="la pesanteur.",width=600)
+        except Exception:
+            st.error("Fichier impesanteur.jpg introuvable.")
+            
     st.title("Laboratoire Interactif : La Force de Pesanteur (Le Poids)")
     st.write("Modifiez la masse et la gravité pour observer l'évolution de la force de pesanteur.")
 
@@ -295,7 +309,12 @@ with tab1:
         except FileNotFoundError:
             st.warning("Fichier 'demo_pesanteur.avi' introuvable. Affichage d'une vidéo de démonstration alternative :")
             st.video("https://youtube.com")
+        try:
+            st.image("pesanteur.jpg", caption="la pesanteur.",width=600)
+        except Exception:
+            st.error("Fichier pesanteur.jpg introuvable.")
 
+            
     with col2:
         st.subheader("Paramètres Physiques et Graphique")
         
@@ -332,6 +351,12 @@ with tab1:
 
 with tab2:
     st.set_page_config(page_title="Physique Interactive : Force Magnétique", layout="wide")
+
+    histmagne1, histmagne2 = st.columns(2)
+    with histmagne1:
+        st.subheader("Historique")
+    with histmagne2:
+        st.subheader("BD humoristique")
 
     st.title("Laboratoire Interactif : La Force Magnétique (Loi de Lorentz)")
     st.write("Modifiez l'intensité du champ magnétique et la charge de la particule pour observer l'évolution de la force magnétique.")
@@ -383,6 +408,12 @@ with tab2:
 
 with tab3:
     st.set_page_config(page_title="Physique Interactive : Force Électrique", layout="wide")
+
+    histelec1, histelec2 = st.columns(2)
+    with histelec1:
+        st.subheader("Historique")
+    with histelec2:
+        st.subheader("BD humoristique")
 
     st.title("Laboratoire Interactif : La Force Électrique (Loi de Coulomb)")
     st.write("Modifiez les charges électriques pour observer l'évolution de la force en fonction de la distance.")
@@ -438,6 +469,12 @@ with tab3:
 with tab4:
     st.set_page_config(page_title="Physique Interactive : Force Gravitationnelle", layout="wide")
 
+    histgrav1, histgrav2 = st.columns(2)
+    with histgrav1:
+        st.subheader("Historique")
+    with histgrav2:
+        st.subheader("BD humoristique")
+
     st.title("Laboratoire Interactif : La Force Gravitationnelle")
     st.write("Modifiez les masses et la distance pour observer l'évolution de l'attraction gravitationnelle.")
 
@@ -492,6 +529,12 @@ with tab4:
 with tab5:
     st.set_page_config(page_title="Physique Interactive : Force Centrifuge", layout="wide")
 
+    histgcentfu1, histcentfu2 = st.columns(2)
+    with histcentfu1:
+        st.subheader("Historique")
+    with histcentfu2:
+        st.subheader("BD humoristique")
+
     st.title("Laboratoire Interactif : La Force Centrifuge")
     st.write("Modifiez les paramètres à l'aide des curseurs pour voir l'impact direct sur la force apparente.")
 
@@ -534,6 +577,12 @@ with tab5:
 with tab6:
     st.set_page_config(page_title="Physique Interactive : Loi de Hooke", layout="wide")
 
+    histgressort1, histressort2 = st.columns(2)
+    with histressort1:
+        st.subheader("Historique")
+    with histressort2:
+        st.subheader("BD humoristique")
+
     st.title("Laboratoire Interactif : Force de Rappel d'un Ressort")
     st.write("Modifiez la raideur du ressort pour observer la force générée selon son allongement.")
 
@@ -574,6 +623,12 @@ with tab6:
 with tab7:
     st.set_page_config(page_title="Physique Interactive : Frottement Fluide", layout="wide")
 
+    histfrotflu1, histfrotflu2 = st.columns(2)
+    with histfrotflu1:
+        st.subheader("Historique")
+    with histfrotflu2:
+        st.subheader("BD humoristique")
+
     st.title("Laboratoire Interactif : La Force de Frottement Fluide")
     st.write("Modifiez le coefficient de frottement pour observer la résistance du fluide en fonction de la vitesse.")
 
@@ -611,10 +666,15 @@ with tab7:
         st.metric(label="Force de résistance à 30 m/s", value=f"{force_a_30ms:.2f} N")
 
 
-
-
 with tab8:
     st.set_page_config(page_title="Physique Interactive : Force Centripète", layout="wide")
+
+    histcentipede1, histcentipede2 = st.columns(2)
+    with histcentipede1:
+        st.subheader("Historique")
+    with histcentipede2:
+        st.subheader("BD humoristique")
+
 
     st.title("Laboratoire Interactif : La Force Centripète")
     st.write("Modifiez la masse et le rayon de la trajectoire pour observer la force requise pour maintenir le mouvement circulaire.")
@@ -655,6 +715,12 @@ with tab8:
 
 with tab9:
     st.set_page_config(page_title="Physique Interactive : Poussée d'Archimède", layout="wide")
+
+    histarchi1, histarchi2 = st.columns(2)
+    with histarchi1:
+        st.subheader("Historique")
+    with histarchi2:
+        st.subheader("BD humoristique")
 
     st.title("Laboratoire Interactive : La Poussée d'Archimède")
     st.write("Modifiez le volume de l'objet et le fluide pour observer la force d'Archimède s'exerçant de bas en haut.")
@@ -718,6 +784,12 @@ with tab9:
 
 with tab10:
     st.set_page_config(page_title="Physique Interactive : Friction Solide", layout="wide")
+
+    histfric1, histfric2 = st.columns(2)
+    with histfric1:
+        st.subheader("Historique")
+    with histfric2:
+        st.subheader("BD humoristique")
 
     st.title("Laboratoire Interactif : La Force de Friction Solide")
     st.write("Sélectionnez les matériaux en contact et modifiez la masse pour observer la transition entre frottement statique et cinétique.")
@@ -788,6 +860,13 @@ with tab10:
 with tab11:
     st.set_page_config(page_title="Physique Interactive : Tension de Corde", layout="wide")
 
+    histcorde1, histcorde2 = st.columns(2)
+    with histcorde1:
+        st.subheader("Historique")
+    with histcorde2:
+        st.subheader("BD humoristique")
+
+
     st.title("Laboratoire Interactif : La Force de Tension (Machine d'Atwood)")
     st.write("Modifiez la masse fixe et faites varier la masse suspendue pour observer l'évolution de la tension du câble.")
 
@@ -832,6 +911,12 @@ with tab11:
 with tab12:
     st.set_page_config(page_title="Physique Interactive : Force de Poussée", layout="wide")
 
+    histpropulsion1, histpropulsion2 = st.columns(2)
+    with histpropulsion1:
+        st.subheader("Historique")
+    with histpropulsion2:
+        st.subheader("BD humoristique")
+
     st.title("Laboratoire Interactif : La Force de Poussée (Propulsion)")
     st.write("Modifiez le débit de matière éjectée pour observer la force de poussée en fonction de la vitesse d'éjection.")
 
@@ -870,6 +955,12 @@ with tab12:
 
 with tab13:
     st.set_page_config(page_title="Physique Interactive : Traînée Aérodynamique", layout="wide")
+
+    histaero1, histaero2 = st.columns(2)
+    with histaero1:
+        st.subheader("Historique")
+    with histaero2:
+        st.subheader("BD humoristique")
 
     st.title("Laboratoire Interactif : La Force de Traînée Aérodynamique")
     st.write("Modifiez le profil de l'objet pour observer la résistance de l'air à haute vitesse.")
@@ -924,6 +1015,12 @@ with tab13:
 with tab14:
     st.set_page_config(page_title="Sécurité Routière : Force d'Impact", layout="wide")
 
+    histchoc1, histchoc2 = st.columns(2)
+    with histchoc1:
+        st.subheader("Historique")
+    with histchoc2:
+        st.subheader("BD humoristique")
+
     st.title("Laboratoire Interactif : Force d'Impact d'un Accident de la Route")
     st.write("Ajustez la masse du véhicule et observez la croissance exponentielle de la force de collision avec la vitesse.")
 
@@ -975,6 +1072,12 @@ with tab14:
 with tab15:
     st.set_page_config(page_title="TP : Force de Vérin Hydraulique", layout="wide")
 
+    histverin1, histverin2 = st.columns(2)
+    with histverin1:
+        st.subheader("Historique")
+    with histverin2:
+        st.subheader("BD humoristique")
+
     st.title("Laboratoire Interactif : Force d'Arrachement de Vérin (Pelle Hydraulique)")
     st.write("Modifiez le diamètre de l'alésage du vérin pour voir la force maximale disponible pour creuser.")
 
@@ -1019,6 +1122,12 @@ with tab15:
 
 with tab16:
     st.set_page_config(page_title="Maintenance : Freinage Hydraulique", layout="wide")
+
+    histfrein1, histfrein2 = st.columns(2)
+    with histfrein1:
+        st.subheader("Historique")
+    with histfrein2:
+        st.subheader("BD humoristique")
 
     st.title("Laboratoire Interactif : Force de Freinage Hydraulique")
     st.write("Modifiez le diamètre des pistons et la pression du circuit pour calculer la force de freinage appliquée au disque.")
