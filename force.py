@@ -384,7 +384,7 @@ with tab2:
             st.caption("Votre vidéo de démonstration au format AVI (ex: déviation d'un faisceau d'électrons ou aimant)")
         except FileNotFoundError:
             st.warning("Fichier 'demo_magnetique.avi' introuvable. Affichage d'une vidéo de démonstration alternative :")
-            st.video("https://youtube.com")
+
 
         try:
             st.image("magne.jpg", caption="Loi de Lorentz : la force magnétique .",width=600)
