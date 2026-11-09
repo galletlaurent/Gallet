@@ -1213,7 +1213,7 @@ with tab3:
 with tab4:
     st.header("**Réflexion totale : application à la fibre optique**")
 
-    st.markdown("<p style='color:#38bdf8; font-weight:bold; margin-bottom:2px;'>3.A - PHÉNOMÈNE DE RÉFLEXION TOTALE INTERNE</p>", unsafe_allow_html=True)
+    st.markdown("<p style='color:#38bdf8; font-weight:bold; margin-bottom:2px;'>- PHÉNOMÈNE DE RÉFLEXION TOTALE INTERNE</p>", unsafe_allow_html=True)
     
     # Sélecteurs pour la réflexion totale directe (Source en bas)
     choix_lampe_refl = st.selectbox("Source lumineuse (Réflexion totale) :", liste_lampes, key="var_choix_lampe_refl", index=0)
@@ -1279,9 +1279,76 @@ with tab6:
 
 
 with tab7:
-    st.header("**Manipulation  : Application Navale (Le Periscope du sous-marin)**")
+    st.header("Applications de la réflexion totale dans le domaine routier")
+    
+    import random
 
+    # Dictionnaire contenant les 4 applications routières sans émoji
+    APPLICATIONS_ROUTIERES = {
+        "catadioptre": {
+            "titre": "Le Catadioptre (Rétroréflecteur)",
+            "description": """
+            **Principe :** Les catadioptres situés à l'arrière des véhicules ou sur les balises de virage utilisent des prismes d'angle droit (coins de cube). 
+            La lumière des phares d'une voiture entre par la face avant, subit **deux réflexions totales internes successives à 90°** sur les parois intérieures, et repart *exactement* dans la même direction vers les yeux du conducteur. 
+            Cela permet de rendre les obstacles extrêmement visibles la nuit sans consommer d'électricité.
+            """,
+            "image_filename": "catadioptre_routier.jpg"
+        },
+        "mirage": {
+            "titre": "Le Mirage Routier (Effet de flaque d'eau)",
+            "description": """
+            **Principe :** En été, le soleil chauffe intensément le bitume, ce qui crée une couche d'air très chaud (et donc moins dense, avec un indice de réfraction plus faible) juste au-dessus de la route. L'air plus haut reste plus frais (indice plus élevé).
+            Les rayons lumineux du ciel descendent vers le sol et passent d'un milieu plus réfringent à un milieu moins réfringent. L'angle critique est dépassé : le rayon subit une **réflexion totale interne curviligne** juste avant de toucher le sol et remonte vers l'œil du conducteur. Celui-ci croit voir le ciel se refléter sur la route, donnant l'illusion d'une flaque d'eau.
+            """,
+            "image_filename": "mirage_routier.jpg"
+        },
+        "capteur_pluie": {
+            "titre": "Le Capteur de Pluie automatique",
+            "description": """
+            **Principe :** Placé derrière le rétroviseur central, un émetteur LED envoie de la lumière dans le pare-brise avec un angle calculé pour qu'il y ait **réflexion totale interne** sur la face externe du verre sec. La lumière est normalement réfléchie à 100 % vers un récepteur.
+            Dès que des gouttes de pluie tombent sur le pare-brise, l'eau (indice n = 1,33) modifie les conditions optiques par rapport à l'air (n = 1,00). L'angle critique change, la réflexion totale est brisée : une partie de la lumière s'échappe dans la goutte d'eau. Le récepteur reçoit moins de lumière et déclenche automatiquement les essuie-glaces !
+            """,
+            "image_filename": "capteur_pluie_routier.jpg"
+        },
+        "panneau_signalisation": {
+            "titre": "Les Panneaux de Signalisation Rétroréflecteurs",
+            "description": """
+            **Principe :** Le revêtement "brillant" des panneaux de signalisation routière modernes n'est pas un simple miroir, mais un film plastique composé de millions de **microprismes transparents**.
+            La lumière des phares pénètre dans chaque microprisme et subit une série de **réflexions totales internes** sur les facettes arrières. Grâce à la géométrie rigoureuse des prismes, les rayons lumineux sont renvoyés de manière concentrée vers leur source (la voiture) plutôt que d'être dispersés dans la nature. Le panneau semble alors s'illuminer sous l'effet des phares.
+            """,
+            "image_filename": "panneau_signalisation_routier.jpg"
+        }
+    }
 
+    # Initialisation de l'application choisie dans le session_state si elle n'existe pas
+    if "app_routiere_choisie" not in st.session_state:
+        st.session_state.app_routiere_choisie = "catadioptre"
+
+    # Bouton pour générer une application au hasard
+    if st.button("Générer une application routière au hasard"):
+        choix_possibles = list(APPLICATIONS_ROUTIERES.keys())
+        # Évite de retomber sur la même application deux fois de suite
+        choix_filtrés = [c for c in choix_possibles if c != st.session_state.app_routiere_choisie]
+        st.session_state.app_routiere_choisie = random.choice(choix_filtrés)
+        st.rerun()
+
+    # Récupération des données de l'application active
+    app_active = APPLICATIONS_ROUTIERES[st.session_state.app_routiere_choisie]
+
+    # Affichage du contenu
+    st.subheader(app_active["titre"])
+    
+    col_texte, col_image = st.columns()
+    
+    with col_texte:
+        st.markdown(app_active["description"])
+        
+    with col_image:
+        # Bloc de chargement de l'image JPG
+        try:
+            st.image(app_active["image_filename"], caption="Schéma réaliste de l'application", use_container_width=True)
+        except Exception:
+            st.warning(f"Image `{app_active['image_filename']}` introuvable. Veuillez placer ce fichier image dans le dossier de votre script Streamlit.")
 
 
 
