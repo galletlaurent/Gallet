@@ -1857,13 +1857,12 @@ with tab7:
         scr2 = st.session_state.get("score_opt7_p2", 0.0)
         tot_s = st.session_state.get("score_final_opt7", 0.0)
 
-        # Heure locale fixe stable (UTC+1 ou UTC+2)
         from datetime import datetime, timedelta
         timestamp_opt7 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
 
         st.success(f"ATELIER OPTIQUE 7 SCELLE ET VALIDE | Note : {tot_s} / 20")
 
-        # Re-déclaration locale des dictionnaires pour boucler dans la génération HTML
+        # --- CORRECTION : RE-DÉCLARATION LOCALE DES DICTIONNAIRES POUR LA BOUCLE HTML ---
         reponses_attendues_quiz = {
             "catadioptre": {
                 "c1": "Parallèle à l'axe incident", "c2": "Coin de cube (angle droit)", "c3": "90°", 
@@ -1886,6 +1885,11 @@ with tab7:
                 "s8": "Air", "s9": "Angle limite dépassé", "s10": "Sécurité routière"
             }
         }
+        
+        # Définition des variables nécessaires pour les boucles d'exportation
+        dict_q_actif = reponses_attendues_quiz[cas_actif]
+        dict_enonces_actif = dict_textes_questions_quiz[cas_actif].
+        
         reponses_attendues_trous = {
             "catadioptre": {"t1_opt7": "Prismes", "t2_opt7": "Réflexion totale", "t3_opt7": "Conducteur"},
             "mirage": {"t1_opt7": "Air", "t2_opt7": "Curviligne", "t3_opt7": "Ciel"},
