@@ -634,25 +634,66 @@ def dessiner_schema_refraction_simple():
     # Axe vertical : La Normale pointillee
     ax.plot([x0_s, x0_s], [y0_s - 150, y_fond_liquide - 10], color="#94a3b8", linestyle="--", lw=1.5, zorder=2)
     
-    # --- AJOUTS ET CORRECTIONS ---
+    # Textes pour la normale
+    ax.text(x0_s + 8, y0_s - 120, "Normale", color="#94a3b8", fontsize=9, va="center")
 
-    # 1. Tracé du rayon incident (provenant du milieu supérieur gauche vers le centre x0_s, y0_s)
+    # Longueur totale des rayons
     longueur_rayon = 130
+
+    # --- 1. RAYON INCIDENT ET SON ANGLE ---
     x_inc = x0_s - longueur_rayon * math.sin(theta1_rad)
     y_inc = y0_s - longueur_rayon * math.cos(theta1_rad)
+    
+    # Tracé du rayon de base
     ax.plot([x_inc, x0_s], [y_inc, y0_s], color=couleur_laser, lw=3, zorder=4)
+    
+    # Flèche au milieu du rayon incident
+    ax.annotate("", xy=(x0_s - (longueur_rayon/2) * math.sin(theta1_rad), y0_s - (longueur_rayon/2) * math.cos(theta1_rad)), 
+                xytext=(x_inc, y_inc),
+                arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=3, mutation_scale=15), zorder=5)
 
-    # 2. Calcul et tracé du rayon réfracté (Snell-Descartes)
+    # Arc de cercle pour l'angle incident 'i'
+    # Compte tenu de l'inversion Y, l'angle vers le haut-gauche est défini géométriquement
+    arc_i = patches.Arc((x0_s, y0_s), width=50, height=50, angle=0, theta1=270 - theta1_deg, theta2=270, 
+                        color="#f1f5f9", lw=1.5, zorder=5)
+    ax.add_patch(arc_i)
+    
+    # Positionnement du texte 'i'
+    x_text_i = x0_s - 35 * math.sin(theta1_rad / 2)
+    y_text_i = y0_s - 35 * math.cos(theta1_rad / 2)
+    ax.text(x_text_i, y_text_i, "i", color="#f1f5f9", fontsize=11, fontweight="bold", ha="center", va="center")
+
+
+    # --- 2. RAYON RÉFRACTÉ ET SON ANGLE ---
     sin_theta2 = (n1 * math.sin(theta1_rad)) / n2
 
     if abs(sin_theta2) <= 1.0:
-        # Réfraction possible
         theta2_rad = math.asin(sin_theta2)
+        theta2_deg = math.degrees(theta2_rad)
+        
         x_ref = x0_s + longueur_rayon * math.sin(theta2_rad)
-        y_ref = y0_s + longueur_rayon * math.cos(theta2_rad) # Positif car l'axe Y est inversé vers le bas
+        y_ref = y0_s + longueur_rayon * math.cos(theta2_rad)
+        
+        # Tracé du rayon de base
         ax.plot([x0_s, x_ref], [y0_s, y_ref], color=couleur_laser, lw=3, zorder=4)
+        
+        # Flèche au milieu du rayon réfracté
+        ax.annotate("", xy=(x0_s + (longueur_rayon/2) * math.sin(theta2_rad), y0_s + (longueur_rayon/2) * math.cos(theta2_rad)), 
+                    xytext=(x0_s, y0_s),
+                    arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=3, mutation_scale=15), zorder=5)
+
+        # Arc de cercle pour l'angle réfracté 'r' (en bas à droite dans le repère inversé)
+        arc_r = patches.Arc((x0_s, y0_s), width=50, height=50, angle=0, theta1=90, theta2=90 + theta2_deg, 
+                            color="#f1f5f9", lw=1.5, zorder=5)
+        ax.add_patch(arc_r)
+        
+        # Positionnement du texte 'r'
+        x_text_r = x0_s + 35 * math.sin(theta2_rad / 2)
+        y_text_r = y0_s + 35 * math.cos(theta2_rad / 2)
+        ax.text(x_text_r, y_text_r, "r", color="#f1f5f9", fontsize=11, fontweight="bold", ha="center", va="center")
+        
     else:
-        # Réflexion totale interne (si n1 > n2 et angle critique dépassé)
+        # En cas de Réflexion totale interne
         x_refl = x0_s + longueur_rayon * math.sin(theta1_rad)
         y_refl = y0_s - longueur_rayon * math.cos(theta1_rad)
         ax.plot([x0_s, x_refl], [y0_s, y_refl], color=couleur_laser, lw=2, linestyle=":", zorder=4)
