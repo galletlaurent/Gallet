@@ -683,15 +683,14 @@ def dessiner_schema_refraction_simple():
                     arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=3, mutation_scale=15), zorder=5)
 
         # Arc de cercle pour l'angle réfracté 'r' (en bas à droite dans le repère inversé)
-        arc_r = patches.Arc((x0_s, y0_s), width=50, height=50, angle=0, theta1=90, theta2=90 + theta2_deg, 
+        arc_r = patches.Arc((x0_s, y0_s), width=50, height=50, angle=0, theta1=90 - theta2_deg, theta2=90, 
                             color="#f1f5f9", lw=1.5, zorder=5)
         ax.add_patch(arc_r)
         
-        # Positionnement du texte 'r'
+        # Positionnement du texte 'r' (déjà correct, conservé tel quel)
         x_text_r = x0_s + 35 * math.sin(theta2_rad / 2)
         y_text_r = y0_s + 35 * math.cos(theta2_rad / 2)
         ax.text(x_text_r, y_text_r, "r", color="#f1f5f9", fontsize=11, fontweight="bold", ha="center", va="center")
-        
     else:
         # En cas de Réflexion totale interne
         x_refl = x0_s + longueur_rayon * math.sin(theta1_rad)
