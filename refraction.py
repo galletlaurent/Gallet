@@ -1295,19 +1295,29 @@ with tab7:
         ax.axis("off")
         
         if type_application == "catadioptre":
-            ax.fill([45, 65, 45], [15, 35, 55], facecolor="#38bdf8", alpha=0.15, edgecolor="#475569", lw=1.5)
-            ax.plot([45, 45], [15, 55], color="#94a3b8", lw=2)
+            # Structure du prisme
+            x_prisme = [45, 85, 45]
+            y_prisme = [15, 45, 75]
+            ax.fill(x_prisme, y_prisme, facecolor="#38bdf8", alpha=0.15, edgecolor="#475569", lw=1.5)
             
-            ax.annotate("", xy=(45, 25), xytext=(5, 25), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
-            ax.annotate("", xy=(45, 45), xytext=(45, 25), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
-            ax.annotate("", xy=(5, 45), xytext=(45, 45), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
+            x_entree = [45, 45]
+            y_entree = [15, 75]
+            ax.plot(x_entree, y_entree, color="#94a3b8", lw=2)
             
-            ax.text(35, 20, "Entrée", color="#94a3b8", fontsize=8)
-            ax.text(50, 35, "Réflexions\ntotales (2x)", color="#cbd5e1", fontsize=8, ha="left", va="center")
+            # Trajectoire du rayon lumineux
+            ax.annotate("", xy=(65, 35), xytext=(5, 35), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
+            ax.annotate("", xy=(65, 55), xytext=(65, 35), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
+            ax.annotate("", xy=(5, 55), xytext=(65, 55), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
+            
+            ax.text(35, 28, "Entrée", color="#94a3b8", fontsize=8)
+            ax.text(70, 45, "Réflexions\ntotales (2x)", color="#cbd5e1", fontsize=8, ha="left", va="center")
             
         elif type_application == "mirage":
             ax.add_patch(patches.Rectangle((0, 85), 100, 15, facecolor="#f59e0b", alpha=0.25, edgecolor="none"))
-            ax.plot([0, 100], [85, 85], color="#f59e0b", lw=1.5)
+            
+            x_sol = [0, 100]
+            y_sol = [85, 85]
+            ax.plot(x_sol, y_sol, color="#f59e0b", lw=1.5)
             ax.text(50, 95, "Bitume chaud (n plus faible)", color="#f59e0b", fontsize=8, ha="center")
             
             x_vals = [float(x) for x in range(5, 95)]
@@ -1317,7 +1327,9 @@ with tab7:
             ax.annotate("", xy=(30, 28), xytext=(10, 37), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=0, mutation_scale=12))
             ax.annotate("", xy=(90, 37), xytext=(70, 28), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=0, mutation_scale=12))
             
-            ax.plot([50, 50], [70, 85], color="#64748b", linestyle=":", lw=1)
+            x_norm = [50, 50]
+            y_norm = [60, 85]
+            ax.plot(x_norm, y_norm, color="#64748b", linestyle=":", lw=1)
             ax.text(50, 55, "Réflexion totale\nprogressive", color="#cbd5e1", fontsize=8, ha="center")
             
         elif type_application == "capteur_pluie":
@@ -1336,9 +1348,12 @@ with tab7:
             ax.text(54, 52, "Réflexion brisée", color="#cbd5e1", fontsize=8)
             
         elif type_application == "panneau_signalisation":
-            # Correction stricte des valeurs de la boucle for pour éviter l'erreur de syntaxe
-            for offset in:
-            ax.fill([offset, offset + 10, offset + 20], [45, 25, 45], facecolor="#10b981", alpha=0.1, edgecolor="#10b981", lw=1)
+            # Reconstruction géométrique propre à base de listes indépendantes
+            y_h = [45, 25, 45]
+            for i in range(4):
+                offset = 15 + i * 20
+                x_h = [offset, offset + 10, offset + 20]
+                ax.fill(x_h, y_h, facecolor="#10b981", alpha=0.1, edgecolor="#10b981", lw=1)
             
             ax.annotate("", xy=(40, 30), xytext=(15, 85), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
             ax.annotate("", xy=(25, 85), xytext=(45, 30), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
