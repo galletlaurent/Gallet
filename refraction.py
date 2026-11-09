@@ -351,58 +351,182 @@ def afficher_questions_optique7(verrouille=False):
 
         if cas_actif == "catadioptre":
             ct1, ct2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-            with ct1: st.write("Le catadioptre routier utilise un bloc plastique constitue de petits")
+            with ct1: st.write("1. Le catadioptre routier utilise un bloc plastique constitue de petits")
             with ct2: t1 = st.selectbox("", ["Choisir...", "Prismes", "Miroirs", "Fils", "Lentilles"], key="opt7_t1", disabled=verrouille, label_visibility="collapsed")
 
             ct3, ct4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-            with ct3: st.write("tailles en angle droit. Le faisceau lumineux des phares y subit une double")
-            with ct4: t2 = st.selectbox("", ["Choisir...", "Réflexion totale", "Réfraction", "Dispersion", "Absorption"], key="opt7_t2", disabled=verrouille, label_visibility="collapsed")
+            with ct3: st.write("2. tailles en angle droit. Le faisceau lumineux des phares y subit une")
+            with ct4: t2 = st.selectbox("", ["Choisir...", "Réflexion", "Réfraction", "Dispersion", "Absorption"], key="opt7_t2", disabled=verrouille, label_visibility="collapsed")
 
             ct5, ct6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-            with ct5: st.write("interne, ce qui renvoie l'intensite parallelement en direction du")
-            with ct6: t3 = st.selectbox("", ["Choisir...", "Conducteur", "Piéton", "Nuage", "Soleil"], key="opt7_t3", disabled=verrouille, label_visibility="collapsed")
+            with ct5: st.write("3. qui est qualifiée de totale car toute l'intensité est renvoyée dans le milieu")
+            with ct6: t3 = st.selectbox("", ["Choisir...", "Initial", "Extérieur", "Métallique", "Opaque"], key="opt7_t3", disabled=verrouille, label_visibility="collapsed")
+
+            ct7, ct8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct7: st.write("4. sans aucune perte. Les rebonds successifs dévient le rayon d'un angle de")
+            with ct8: t4 = st.selectbox("", ["Choisir...", "90°", "45°", "180°", "0°"], key="opt7_t4", disabled=verrouille, label_visibility="collapsed")
+
+            ct9, ct10 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct9: st.write("5. sur chaque face interne. Le faisceau émergeant repart de facon")
+            with ct10: t5 = st.selectbox("", ["Choisir...", "Parallèle", "Inclinée", "Perpendiculaire", "Diffuse"], key="opt7_t5", disabled=verrouille, label_visibility="collapsed")
+
+            ct11, ct12 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct11: st.write("6. par rapport à l'axe d'entrée. Ce retour rectiligne cible directement le")
+            with ct12: t6 = st.selectbox("", ["Choisir...", "Conducteur", "Piéton", "Nuage", "Soleil"], key="opt7_t6", disabled=verrouille, label_visibility="collapsed")
+
+            ct13, ct14 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct13: st.write("7. de l'automobile. Ce système fonctionne la nuit de manière entièrement")
+            with ct14: t7 = st.selectbox("", ["Choisir...", "Passive", "Active", "Électrique", "Thermique"], key="opt7_t7", disabled=verrouille, label_visibility="collapsed")
+
+            ct15, ct16 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct15: st.write("8. sans consommer de batterie. Pour être visible, l'indice du plastique doit être")
+            with ct16: t8 = st.selectbox("", ["Choisir...", "Supérieur", "Inférieur", "Égal", "Nul"], key="opt7_t8", disabled=verrouille, label_visibility="collapsed")
+
+            ct17, ct18 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct17: st.write("9. à l'indice extérieur de l'")
+            with ct18: t9 = st.selectbox("", ["Choisir...", "Air", "Verre", "Eau", "Goudron"], key="opt7_t9", disabled=verrouille, label_visibility="collapsed")
+
+            ct19, ct20 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct19: st.write("10. afin que la condition limite de Snell-Descartes soit toujours vérifiée pour la sécurité")
+            with ct20: t10 = st.selectbox("", ["Choisir...", "Routière", "Aérienne", "Maritime", "Ferroviaire"], key="opt7_t10", disabled=verrouille, label_visibility="collapsed")
 
         elif cas_actif == "mirage":
             ct1, ct2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-            with ct1: st.write("Le mirage routier apparait en ete lorsque la forte chaleur diminue l'indice de l'")
-            with ct2: t1 = st.selectbox("", ["Choisir...", "Air", "Sol", "Goudron", "Verre"], key="opt7_t1", disabled=verrouille, label_visibility="collapsed")
+            with ct1: st.write("1. Le mirage routier apparaît en été lorsque la forte chaleur surchauffe le")
+            with ct2: t1 = st.selectbox("", ["Choisir...", "Bitume", "Ciel", "Pneu", "Pare-brise"], key="opt7_t1", disabled=verrouille, label_visibility="collapsed")
 
             ct3, ct4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-            with ct3: st.write("au ras du sol. La courbure progressive provoque alors une reflexion totale")
-            with ct4: t2 = st.selectbox("", ["Choisir...", "Curviligne", "Rectiligne", "Brisée", "Ondulée"], key="opt7_t2", disabled=verrouille, label_visibility="collapsed")
+            with ct3: st.write("2. de la chaussée. Cela diminue localement la densité et l'indice de l'")
+            with ct4: t2 = st.selectbox("", ["Choisir...", "Air", "Sol", "Goudron", "Verre"], key="opt7_t2", disabled=verrouille, label_visibility="collapsed")
 
             ct5, ct6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-            with ct5: st.write("du faisceau lumineux descendant, donnant l'illusion visuelle d'un reflet de")
-            with ct6: t3 = st.selectbox("", ["Choisir...", "Ciel", "Bitume", "Feu", "Brouillard"], key="opt7_t3", disabled=verrouille, label_visibility="collapsed")
+            with ct5: st.write("3. au ras du sol. L'indice de réfraction de cette zone devient très")
+            with ct6: t3 = st.selectbox("", ["Choisir...", "Faible", "Élevé", "Infini", "Stable"], key="opt7_t3", disabled=verrouille, label_visibility="collapsed")
+
+            ct7, ct8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct7: st.write("4. par rapport à l'air frais plus haut. Les rayons lumineux descendants du")
+            with ct8: t4 = st.selectbox("", ["Choisir...", "Ciel", "Moteur", "Phares", "Tableau"], key="opt7_t4", disabled=verrouille, label_visibility="collapsed")
+
+            ct9, ct10 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct9: st.write("5. traversent un milieu d'indice continuellement décroissant. La trajectoire est")
+            with ct10: t5 = st.selectbox("", ["Choisir...", "Curviligne", "Rectiligne", "Brisée", "Ondulée"], key="opt7_t5", disabled=verrouille, label_visibility="collapsed")
+
+            ct11, ct12 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct11: st.write("6. car l'angle d'incidence augmente à chaque couche d'air jusqu'à dépasser l'angle")
+            with ct12: t6 = st.selectbox("", ["Choisir...", "Critique", "Droit", "Nul", "Plat"], key="opt7_t6", disabled=verrouille, label_visibility="collapsed")
+
+            ct13, ct14 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct13: st.write("7. On observe alors une réflexion totale progressive qui fait remonter le rayon vers l'")
+            with ct14: t7 = st.selectbox("", ["Choisir...", "Oeil", "Bitume", "Feu", "Brouillard"], key="opt7_t7", disabled=verrouille, label_visibility="collapsed")
+
+            ct15, ct16 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct15: st.write("8. de l'automobiliste. Le cerveau prolonge la direction finale et interprète une image")
+            with ct16: t8 = st.selectbox("", ["Choisir...", "Inversée", "Droite", "Rétrécie", "Invisible"], key="opt7_t8", disabled=verrouille, label_visibility="collapsed")
+
+            ct17, ct18 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct17: st.write("9. de l'azur lointain sur l'asphalte, provoquant la spectaculaire")
+            with ct18: t9 = st.selectbox("", ["Choisir...", "Illusion", "Ombre", "Teinte", "Vapeur"], key="opt7_t9", disabled=verrouille, label_visibility="collapsed")
+
+            ct19, ct20 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct19: st.write("10. d'une fausse flaque d'eau miroitante sur une route totalement")
+            with ct20: t10 = st.selectbox("", ["Choisir...", "Sèche", "Mouillée", "Inondée", "Glacée"], key="opt7_t10", disabled=verrouille, label_visibility="collapsed")
 
         elif cas_actif == "capteur_pluie":
             ct1, ct2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-            with ct1: st.write("Le capteur de pluie utilise une diode emettrice infrarouge dirigee vers le")
+            with ct1: st.write("1. Le capteur automatique d'essuyage est fixé directement contre le")
             with ct2: t1 = st.selectbox("", ["Choisir...", "Pare-brise", "Moteur", "Pneu", "Phare"], key="opt7_t1", disabled=verrouille, label_visibility="collapsed")
 
             ct3, ct4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-            with ct3: st.write("Tant que la vitre est seche, la surface externe engendre une reflexion")
-            with ct4: t2 = st.selectbox("", ["Choisir...", "Totale", "Partielle", "Diffuse", "Nulle"], key="opt7_t2", disabled=verrouille, label_visibility="collapsed")
+            with ct3: st.write("2. Une source émettrice produit un rayon invisible de nature")
+            with ct4: t2 = st.selectbox("", ["Choisir...", "Infrarouge", "Ultraviolete", "Laser", "Visible"], key="opt7_t2", disabled=verrouille, label_visibility="collapsed")
 
             ct5, ct6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-            with ct5: st.write("interne vers la photodiode. L'arrivee d'eau brise cette condition et active les")
-            with ct6: t3 = st.selectbox("", ["Choisir...", "Essuie-glaces", "Freins", "Phares", "Clignotants"], key="opt7_t3", disabled=verrouille, label_visibility="collapsed")
+            with ct5: st.write("3. Ce faisceau est injecté à l'intérieur de l'épaisseur du")
+            with ct6: t3 = st.selectbox("", ["Choisir...", "Verre", "Plastique", "Silicone", "Quartz"], key="opt7_t3", disabled=verrouille, label_visibility="collapsed")
+
+            ct7, ct8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct7: st.write("4. Tant que la surface extérieure reste parfaitement sèche, le contact avec l'")
+            with ct8: t4 = st.selectbox("", ["Choisir...", "Air", "Eau", "Métal", "Givre"], key="opt7_t4", disabled=verrouille, label_visibility="collapsed")
+
+            ct9, ct10 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct9: st.write("5. d'indice n = 1.00 provoque au niveau du dioptre une réflexion")
+            with ct10: t5 = st.selectbox("", ["Choisir...", "Totale", "Partielle", "Diffuse", "Nulle"], key="opt7_t5", disabled=verrouille, label_visibility="collapsed")
+
+            ct11, ct12 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct11: st.write("6. interne. L'intégralité de l'énergie lumineuse est guidée vers le")
+            with ct12: t6 = st.selectbox("", ["Choisir...", "Récepteur", "Générateur", "Prisme", "Miroir"], key="opt7_t6", disabled=verrouille, label_visibility="collapsed")
+
+            ct13, ct14 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct13: st.write("7. Mais lorsque des gouttes d'eau se déposent, l'indice externe passe à")
+                with ct14: t7 = st.selectbox("", ["Choisir...", "1.33", "1.00", "1.50", "2.42"], key="opt7_t7", disabled=verrouille, label_visibility="collapsed")
+
+            ct15, ct16 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct15: st.write("8. Cette élévation d'indice à l'interface modifie l'angle limite : la condition est")
+            with ct16: t8 = st.selectbox("", ["Choisir...", "Brisée", "Rendue stable", "Inversée", "Amplifiée"], key="opt7_t8", disabled=verrouille, label_visibility="collapsed")
+
+            ct17, ct18 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct17: st.write("9. Une partie de la lumière s'échappe à l'extérieur. La photodiode mesure une forte")
+            with ct18: t9 = st.selectbox("", ["Choisir...", "Baisse", "Hausse", "Stabilité", "Dispersion"], key="opt7_t9", disabled=verrouille, label_visibility="collapsed")
+
+            ct19, ct20 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct19: st.write("10. d'intensité, ce qui commande l'enclenchement instantané des")
+            with ct20: t10 = st.selectbox("", ["Choisir...", "Essuie-glaces", "Freins", "Phares", "Clignotants"], key="opt7_t10", disabled=verrouille, label_visibility="collapsed")
 
         else: # panneau_signalisation
             ct1, ct2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-            with col_double_trous_opt7:
-                co7_1, co7_2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-                with co7_1: st.write("Les panneaux routiers reflechissants possedent un film compose de")
-                with co7_2: t1 = st.selectbox("", ["Choisir...", "Microprismes", "Miroirs", "Lentilles", "Fils"], key="opt7_t1", disabled=verrouille, label_visibility="collapsed")
+            with ct1: st.write("1. La rétroréflexion nocturne des panneaux utilise un film plastique à")
+            with ct2: t1 = st.selectbox("", ["Choisir...", "Microprismes", "Miroirs", "Lentilles", "Fils"], key="opt7_t1", disabled=verrouille, label_visibility="collapsed")
 
-                co7_3, co7_4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-                with co7_3: st.write("Le guidage interne de la lumiere s'effectue sans tain metallique grace a l'angle")
-                with co7_4: t2 = st.selectbox("", ["Choisir...", "Limite", "Droit", "Nul", "Plat"], key="opt7_t2", disabled=verrouille, label_visibility="collapsed")
+            ct3, ct4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct3: st.write("2. Le faisceau lumineux provient directement des projecteurs de")
+            with ct4: t2 = st.selectbox("", ["Choisir...", "Phares", "Clignotants", "Feux de stop", "Plafonniers"], key="opt7_t2", disabled=verrouille, label_visibility="collapsed")
 
-                co7_5, co7_6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-                with co7_5: st.write("depasse. Les faisceaux des phares retournent ainsi de maniere concentree vers la")
-                with co7_6: t3 = st.selectbox("", ["Choisir...", "Source", "Lune", "Route", "Gaine"], key="opt7_t3", disabled=verrouille, label_visibility="collapsed")
+            ct5, ct6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct5: st.write("3. de la voiture. La lumière pénètre dans le polymère rigide de nature")
+            with ct6: t3 = st.selectbox("", ["Choisir...", "Transparente", "Opaque", "Réfléchissante", "Métallique"], key="opt7_t3", disabled=verrouille, label_visibility="collapsed")
 
+            ct7, ct8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct7: st.write("4. Elle rencontre les facettes microscopiques arrières de chaque prisme droit")
+            with ct8: t4 = st.selectbox("", ["Choisir...", "D'angle droit", "Arrondies", "Concaves", "Polies"], key="opt7_t4", disabled=verrouille, label_visibility="collapsed")
+
+            ct9, ct10 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct9: st.write("5. Le guidage interne parfait de l'intensité s'effectue par réflexion")
+            with ct10: t5 = st.selectbox("", ["Choisir...", "Totale", "Partielle", "Diffuse", "Réfractée"], key="opt7_t5", disabled=verrouille, label_visibility="collapsed")
+
+            ct11, ct12 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct11: st.write("6. car la valeur d'incidence dépasse l'angle critique de l'interface avec l'")
+            with ct12: t6 = st.selectbox("", ["Choisir...", "Air", "Verre", "Métal", "Eau"], key="opt7_t6", disabled=verrouille, label_visibility="collapsed")
+
+            ct13, ct14 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct13: st.write("7. Grâce à la structure géométrique, la lumière effectue un demi-tour")
+            with ct14: t7 = st.selectbox("", ["Choisir...", "Complet (180°)", "De côté (90°)", "Nul (0°)", "En boucle"], key="opt7_t7", disabled=verrouille, label_visibility="collapsed")
+
+            ct15, ct16 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct15: st.write("8. Les rayons concentrés retournent vers le conducteur au lieu d'être")
+            with ct16: t8 = st.selectbox("", ["Choisir...", "Dispersés", "Absorbés", "Accélérés", "Filtrés"], key="opt7_t8", disabled=verrouille, label_visibility="collapsed")
+
+            ct17, ct18 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct17: st.write("9. dans l'espace ou vers le ciel. La surface du panneau semble posséder une forte")
+            with ct18: t9 = st.selectbox("", ["Choisir...", "Luminosité", "Chaleur", "Transparence", "Opacité"], key="opt7_t9", disabled=verrouille, label_visibility="collapsed")
+
+            ct19, ct20 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct19: st.write("10. apportant une aide à la visibilité indispensable pour assurer la sécurité")
+            with ct20: t10 = st.selectbox("", ["Choisir...", "Routière", "Aérienne", "Maritime", "Industrielle"], key="opt7_t10", disabled=verrouille, label_visibility="collapsed")
+
+        # Ligne de conclusion invariable commune aux 4 structures conditionnelles
+        ct_fin1, ct_fin2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with ct_fin1: st.write("Ces diverses applications routieres mettent en evidence la maitrise des phenomenes optiques pour la securite.")
+
+        dict_trous_opt7 = {
+            "t1_opt7": t1, "t2_opt7": t2, "t3_opt7": t3, "t4_opt7": t4, "t5_opt7": t5,
+            "t6_opt7": t6, "t7_opt7": t7, "t8_opt7": t8, "t9_opt7": t9, "t10_opt7": t10
+        }
+
+    return dict_quiz_opt7, dict_trous_opt7
+
+
+
+            
         # Clôture invariable de l'exercice à trous
         ct7, ct8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
         with ct7: st.write("Ces diverses applications routieres mettent en evidence la maitrise des phenomenes optiques pour la securite.")
