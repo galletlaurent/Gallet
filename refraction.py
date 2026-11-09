@@ -1338,7 +1338,7 @@ with tab7:
         elif type_application == "panneau_signalisation":
             # Correction stricte des valeurs de la boucle for pour éviter l'erreur de syntaxe
             for offset in:
-                ax.fill([offset, offset + 10, offset + 20], [45, 25, 45], facecolor="#10b981", alpha=0.1, edgecolor="#10b981", lw=1)
+            ax.fill([offset, offset + 10, offset + 20], [45, 25, 45], facecolor="#10b981", alpha=0.1, edgecolor="#10b981", lw=1)
             
             ax.annotate("", xy=(40, 30), xytext=(15, 85), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
             ax.annotate("", xy=(25, 85), xytext=(45, 30), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
