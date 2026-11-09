@@ -466,7 +466,7 @@ if "produits_indices" not in st.session_state:
 def dessiner_fibre_optique_avancee_matplotlib():
     """Genere le schema complet d'une fibre optique à sauts d'indice.
     Incorpore l'ouverture numerique (ON), l'angle maximal d'injection dans l'air,
-    et un nombre de rebonds configurable.
+    la normale d'entree horizontale avec son angle i1, et les rebonds internes.
     """
     import math
     import matplotlib.pyplot as plt
@@ -494,7 +494,6 @@ def dessiner_fibre_optique_avancee_matplotlib():
     n_gaine = st.session_state.get("var_n_gaine", 1.40)
     n_air = 1.00  # Milieu extérieur d'injection
     
-    # Curseur pour le nombre de rebonds (ex: st.slider("Nombre de rebonds", 1, 5, 3))
     nb_rebonds_max = st.session_state.get("var_nb_rebonds", 3)
     
     nom_lampe = st.session_state.get("var_choix_lampe_fibre", "Lumiere du Soleil")
@@ -520,11 +519,9 @@ def dessiner_fibre_optique_avancee_matplotlib():
         st.session_state.opt4_txt_box_fibre = txt_math
         return fig
 
-    # 2. CALCULS THÉORIQUES (Ouverture Numérique et Cône d'Acceptance)
-    # Ouverture Numérique (ON)
+    # 2. CALCULS THÉORIQUES
     on = math.sqrt(n_coeur**2 - n_gaine**2)
     
-    # Angle maximal d'injection dans l'air (i_max) pour avoir réflexion totale interne
     if on <= 1.0:
         i_max_rad = math.asin(on / n_air)
         i_max_deg = math.degrees(i_max_rad)
@@ -534,13 +531,10 @@ def dessiner_fibre_optique_avancee_matplotlib():
         i_max_deg = 90.0
         txt_i_max = "90° (Total)"
 
-    # Angle critique interne cœur/gaine (par rapport à la normale verticale)
     theta_c_rad = math.asin(n_gaine / n_coeur)
     theta_c_deg = math.degrees(theta_c_rad)
 
-    # 3. PROPAGATION ET REBONDS MULTIPLES (Boucle dynamique)
-    # Angle d'injection choisi par l'utilisateur à l'entrée de la fibre
-    # (ex: st.slider("Angle d'incidence externe (i1)", 0.0, 70.0, 25.0))
+    # Angle d'injection choisi à l'entrée de la fibre (par rapport à l'HORIZONTALE)
     i1_deg = st.session_state.get("var_angle_injection_externe", 25.0)
     i1_rad = math.radians(i1_deg)
 
@@ -548,28 +542,35 @@ def dessiner_fibre_optique_avancee_matplotlib():
     sin_r1 = (n_air * math.sin(i1_rad)) / n_coeur
     r1_rad = math.asin(sin_r1)
     
-    # Angle du rayon à l'intérieur du cœur par rapport aux parois horizontales (l'axe X)
     alpha_interne_rad = r1_rad
-    # Angle du rayon à l'intérieur du cœur par rapport à la normale à la paroi (axe Y)
     theta_interne_rad = (math.pi / 2.0) - alpha_interne_rad
     theta_interne_deg = math.degrees(theta_interne_rad)
 
+    # --- AJOUT : NORMALE HORIZONTALE D'ENTRÉE ET SON ANGLE ---
+    # Ligne pointillée horizontale représentant l'axe central (normale de la face d'entrée)
+    ax.plot([15, x_entree + 40], [y_centre, y_centre], color="#64748b", linestyle=":", lw=1.2, zorder=2)
+    
     # Rayon incident extérieur (de l'air jusqu'à la face d'entrée)
-    x_source = x_entree - 45.0
-    y_source = y_centre - 45.0 * math.tan(i1_rad)
+    x_source = x_entree - 55.0
+    y_source = y_centre - 55.0 * math.tan(i1_rad)
     ax.annotate("", xy=(x_entree, y_centre), xytext=(x_source, y_source),
                 arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
 
-    # Initialisation du parcours des coordonnées pour la boucle de rebonds
+    # Arc pour l'angle d'incidence i1 à l'entrée (mesuré entre l'horizontale et le rayon incident)
+    # Compte tenu du repère inversé, l'arc s'oriente de 180° à 180° + i1_deg
+    arc_i1 = patches.Arc((x_entree, y_centre), 35, 35, angle=0, theta1=180, theta2=180 + i1_deg, edgecolor="#cbd5e1", lw=1.2, zorder=5)
+    ax.add_patch(arc_i1)
+    ax.text(x_entree - 25, y_centre - 8, "i1", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center")
+
+    # Initialisation du parcours
     x_actuel = x_entree
     y_actuel = y_centre
     signe_y = -1  # Commence en montant vers la gaine du haut
 
-    # Vérification du guidage (Est-ce que l'angle interne dépasse l'angle critique ?)
+    # 3. PROPAGATION ET REBONDS MULTIPLES
     if theta_interne_deg >= theta_c_deg:
         msg, color = "GUIDAGE VALIDÉ : Réflexions totales internes parfaites.", "#10b981"
         
-        # Tracé des rebonds successifs demandés par l'utilisateur
         for rebond in range(nb_rebonds_max):
             if signe_y == -1:
                 y_suivant = y_gaine_haut
@@ -581,7 +582,6 @@ def dessiner_fibre_optique_avancee_matplotlib():
             dx = dy / math.tan(alpha_interne_rad)
             x_suivant = x_actuel + dx
 
-            # Sécurité pour ne pas tracer hors de l'image à droite
             if x_suivant > w - 10:
                 x_suivant = w - 10
                 y_suivant = y_actuel + (signe_y * (x_suivant - x_actuel) * math.tan(alpha_interne_rad))
@@ -593,24 +593,19 @@ def dessiner_fibre_optique_avancee_matplotlib():
             ax.annotate("", xy=(x_suivant, y_suivant), xytext=(x_actuel, y_actuel),
                         arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
 
-            # Dessin de la normale locale et de l'arc au premier point de rebond pour la démonstration
+            # --- CORRECTION DE L'ARC INTERNE (i > ic) ---
             if rebond == 0:
+                # Normale verticale locale à la paroi supérieure
                 ax.plot([x_suivant, x_suivant], [y_suivant - 15, y_suivant + 35], color="#64748b", linestyle=":", lw=1.2)
-                
-                # --- ARC CORRIGÉ POUR LE REBOND SUPERIEUR GAUCHE ---
-                arc_r = patches.Arc((x_suivant, y_suivant), 30, 30, angle=0, 
-                                    theta1=270, theta2=270 + theta_interne_deg, 
-                                    edgecolor="#cbd5e1", lw=1, zorder=5)
+                # L'arc se dessine désormais correctement du côté gauche de cette normale
+                arc_r = patches.Arc((x_suivant, y_suivant), 30, 30, angle=0, theta1=270, theta2=270 + theta_interne_deg, edgecolor="#cbd5e1", lw=1, zorder=5)
                 ax.add_patch(arc_r)
-                
-                # Repositionnement léger du texte associé à gauche de la normale
                 ax.text(x_suivant - 8, y_suivant + 15, "i > ic", color="#cbd5e1", fontsize=7, fontweight="bold", ha="right")
-            # Préparation du rebond suivant (changement de direction verticale)
+
             x_actuel = x_suivant
             y_actuel = y_suivant
             signe_y *= -1
             
-        # Prolongement final vers la sortie droite du graphe si de la place reste disponible
         if x_actuel < w - 10:
             x_fin = w - 10
             y_fin = y_actuel + (signe_y * (x_fin - x_actuel) * math.tan(alpha_interne_rad))
@@ -618,13 +613,11 @@ def dessiner_fibre_optique_avancee_matplotlib():
             
     else:
         msg, color = "RÉFRACTION DANS LA GAINE : Rayon perdu (Angle trop grand).", "#ef4444"
-        # Trajectoire réfractée fuyante hors du cœur à la première paroi
         dy = y_actuel - y_gaine_haut
         dx = dy / math.tan(alpha_interne_rad)
         x_perte = x_actuel + dx
         ax.annotate("", xy=(x_perte, y_gaine_haut), xytext=(x_actuel, y_actuel), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
         
-        # Loi de Descartes pour l'angle de fuite dans la gaine n2
         sin_gaine = (n_coeur * math.sin(theta_interne_rad)) / n_gaine
         angle_gaine_rad = math.asin(sin_gaine)
         dx_fuite = 40 * math.sin(angle_gaine_rad)
@@ -632,7 +625,7 @@ def dessiner_fibre_optique_avancee_matplotlib():
         ax.annotate("", xy=(x_perte + dx_fuite, y_gaine_haut - dy_fuite), xytext=(x_perte, y_gaine_haut), 
                     arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=1.5, linestyle="--"), zorder=4)
 
-    # 4. Textes d'affichage et habillage des données calculées
+    # 4. Textes d'affichage et habillage
     txt_math = (
         f"Données de la Fibre :\n"
         f"• Ouverture Numérique (ON) = {on:.3f}\n"
@@ -646,7 +639,6 @@ def dessiner_fibre_optique_avancee_matplotlib():
     ax.text(25, 20, "ATELIER 3 - OPTIQUE GÉOMÉTRIQUE : LA FIBRE OPTIQUE PRO", color="#38bdf8", fontsize=9, fontweight="bold", ha="left")
     ax.text(25, 35, msg, color=color, fontsize=7, fontweight="bold", ha="left")
     
-    # Étiquettes de légendes sur les milieux
     ax.text(w - 60, y_gaine_haut - 12, "Gaine (n2)", color="#64748b", fontsize=7, fontweight="bold")
     ax.text(w - 60, y_centre, "Cœur (n1)", color="#94a3b8", fontsize=8, fontweight="bold")
     ax.text(w - 60, y_gaine_bas + 15, "Gaine (n2)", color="#64748b", fontsize=7, fontweight="bold")
