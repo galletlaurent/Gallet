@@ -1895,7 +1895,6 @@ with tab7:
             "panneau_signalisation": {"t1_opt7": "Microprismes", "t2_opt7": "Limite", "t3_opt7": "Source"}
         }
 
-
         
         dict_textes_questions_quiz = {
             "catadioptre": {
@@ -1948,8 +1947,62 @@ with tab7:
             }
         }
 
+
+
+        dict_textes_trous_synthese = {
+            "catadioptre": {
+                "t1_opt7": "1. Le catadioptre routier utilise un bloc plastique constitue de petits [Trou 1]...",
+                "t2_opt7": "2. ...tailles en angle droit. Le faisceau lumineux des phares y subit une [Trou 2]...",
+                "t3_opt7": "3. ...qui est qualifiée de totale car toute l'intensité est renvoyée dans le milieu [Trou 3]...",
+                "t4_opt7": "4. ...sans aucune perte. Les rebonds successifs dévient le rayon d'un angle de [Trou 4]...",
+                "t5_opt7": "5. ...sur chaque face interne. Le faisceau émergeant repart de facon [Trou 5]...",
+                "t6_opt7": "6. ...par rapport à l'axe d'entrée. Ce retour rectiligne cible directement le [Trou 6]...",
+                "t7_opt7": "7. ...de l'automobile. Ce système fonctionne la nuit de manière entièrement [Trou 7]...",
+                "t8_opt7": "8. ...sans consommer de batterie. Pour être visible, l'indice du plastique doit être [Trou 8]...",
+                "t9_opt7": "9. ...à l'indice extérieur de l' [Trou 9]...",
+                "t10_opt7": "10. ...afin que la condition limite soit vérifiée pour la sécurité [Trou 10]"
+            },
+            "mirage": {
+                "t1_opt7": "1. Le mirage routier apparaît en été lorsque la forte chaleur surchauffe le [Trou 1]...",
+                "t2_opt7": "2. ...de la chaussée. Cela diminue localement la densité et l'indice de l' [Trou 2]...",
+                "t3_opt7": "3. ...au ras du sol. L'indice de réfraction de cette zone devient très [Trou 3]...",
+                "t4_opt7": "4. ...par rapport à l'air frais plus haut. Les rayons lumineux descendants du [Trou 4]...",
+                "t5_opt7": "5. ...traversent un milieu d'indice continuellement décroissant. La trajectoire est [Trou 5]...",
+                "t6_opt7": "6. ...car l'angle d'incidence augmente à chaque couche d'air jusqu'à dépasser l'angle [Trou 6]...",
+                "t7_opt7": "7. ...On observe alors une réflexion totale progressive qui fait remonter le rayon vers l' [Trou 7]...",
+                "t8_opt7": "8. ...de l'automobiliste. Le cerveau prolonge la direction finale et interprète une image [Trou 8]...",
+                "t9_opt7": "9. ...de l'azur lointain sur l'asphalte, provoquant la spectaculaire [Trou 9]...",
+                "t10_opt7": "10. ...d'une fausse flaque d'eau miroitante sur une route totalement [Trou 10]"
+            },
+            "capteur_pluie": {
+                "t1_opt7": "1. Le capteur automatique d'essuyage est fixé directement contre le [Trou 1]...",
+                "t2_opt7": "2. Une source émettrice produit un rayon invisible de nature [Trou 2]...",
+                "t3_opt7": "3. Ce faisceau est injecté à l'intérieur de l'épaisseur du [Trou 3]...",
+                "t4_opt7": "4. Tant que la surface extérieure reste parfaitement sèche, le contact avec l' [Trou 4]...",
+                "t5_opt7": "5. ...d'indice n = 1.00 provoque au niveau du dioptre une réflexion [Trou 5]...",
+                "t6_opt7": "6. ...interne. L'intégralité de l'énergie lumineuse est guidée vers le [Trou 6]...",
+                "t7_opt7": "7. Mais lorsque des gouttes d'eau se déposent, l'indice externe passe à [Trou 7]...",
+                "t8_opt7": "8. Cette élévation d'indice à l'interface modifie l'angle limite : la condition est [Trou 8]...",
+                "t9_opt7": "9. Une partie de la lumière s'échappe. La photodiode mesure une forte [Trou 9]...",
+                "t10_opt7": "10. ...d'intensité, ce qui commande l'enclenchement instantané des [Trou 10]"
+            },
+            "panneau_signalisation": {
+                "t1_opt7": "1. La rétroréflexion nocturne des panneaux utilise un film plastique à [Trou 1]...",
+                "t2_opt7": "2. Le faisceau lumineux provient directement des projecteurs de [Trou 2]...",
+                "t3_opt7": "3. ...de la voiture. La lumière pénètre dans le polymère rigide de nature [Trou 3]...",
+                "t4_opt7": "4. Elle rencontre les facettes microscopiques arrières de chaque prisme droit [Trou 4]...",
+                "t5_opt7": "5. Le guidage interne parfait de l'intensité s'effectue par réflexion [Trou 5]...",
+                "t6_opt7": "6. ...car la valeur d'incidence dépasse l'angle critique de l'interface avec l' [Trou 6]...",
+                "t7_opt7": "7. Grâce à la structure géométrique, la lumière effectue un demi-tour [Trou 7]...",
+                "t8_opt7": "8. Les rayons concentrés retournent vers le conducteur au lieu d'être [Trou 8]...",
+                "t9_opt7": "9. ...dans l'espace ou vers le ciel. La surface du panneau semble posséder une forte [Trou 9]...",
+                "t10_opt7": "10. ...apportant une aide indispensable pour assurer la sécurité [Trou 10]"
+            }
+        }
+
         dict_q_actif = reponses_attendues_quiz[cas_actif]
         dict_enonces_actif = dict_textes_questions_quiz[cas_actif]
+        dict_phrases_actif = dict_textes_trous_synthese[cas_actif]
 
         html_export_opt7 = f"""<!DOCTYPE html>
         <html>
