@@ -1821,25 +1821,32 @@ with tab7:
 
             # 2. BASE DE CORRECTION DYNAMIQUE DES TROUS (PARTIE 2 : 10 POINTS)
             reponses_attendues_trous = {
-                "catadioptre": {"t1_opt7": "Prismes", "t2_opt7": "Réflexion totale", "t3_opt7": "Conducteur"},
-                "mirage": {"t1_opt7": "Air", "t2_opt7": "Curviligne", "t3_opt7": "Ciel"},
-                "capteur_pluie": {"t1_opt7": "Pare-brise", "t2_opt7": "Totale", "t3_opt7": "Essuie-glaces"},
-                "panneau_signalisation": {"t1_opt7": "Microprismes", "t2_opt7": "Limite", "t3_opt7": "Source"}
+                "catadioptre": {
+                    "t1_opt7": "Phares", "t2_opt7": "Avant", "t3_opt7": "Prismes", "t4_opt7": "Droit", "t5_opt7": "Incident",
+                    "t6_opt7": "Réflexions", "t7_opt7": "Totales", "t8_opt7": "Internes", "t9_opt7": "Parallèle", "t10_opt7": "Conducteur"
+                },
+                "mirage": {
+                    "t1_opt7": "Soleil", "t2_opt7": "Bitume", "t3_opt7": "Chaud", "t4_opt7": "Faible", "t5_opt7": "Supérieures",
+                    "t6_opt7": "Réfringent", "t7_opt7": "Critique", "t8_opt7": "Totale", "t9_opt7": "Ciel", "t10_opt7": "Illusion"
+                },
+                "capteur_pluie": {
+                    "t1_opt7": "Diode", "t2_opt7": "Verre", "t3_opt7": "Supérieur", "t4_opt7": "Air", "t5_opt7": "Totale",
+                    "t6_opt7": "Récepteur", "t7_opt7": "Gouttes", "t8_opt7": "Eau", "t9_opt7": "Brisée", "t10_opt7": "Essuie-glaces"
+                },
+                "panneau_signalisation": {
+                    "t1_opt7": "Film", "t2_opt7": "Microprismes", "t3_opt7": "Phares", "t4_opt7": "Transparents", "t5_opt7": "Facettes",
+                    "t6_opt7": "Interne", "t7_opt7": "Supérieur", "t8_opt7": "Source", "t9_opt7": "Luminosité", "t10_opt7": "Sécurité routière"
+                }
             }
 
-            dictionnaire_trous_actif = reponses_attendues_trous[cas_actif]
+            dict_t_actif = reponses_attendues_trous[cas_actif]
             score_trous_opt7 = 0.0
-            for tk, tv in dictionnaire_trous_actif.items():
+            for tk, tv in dict_t_actif.items():
                 if st.session_state.get(f"opt7_{tk}") == tv:
-                    score_trous_opt7 += 3.33
-            
-            # Ajustement technique pour atteindre exactement 10.0 si tout est juste
-            if score_trous_opt7 >= 9.9:
-                score_trous_opt7 = 10.0
-            score_trous_opt7 = min(10.0, round(score_trous_opt7, 1))
+                    score_trous_opt7 += 1.0
 
-            st.session_state.score_opt7_p1 = score_quiz_opt7
-            st.session_state.score_opt7_p2 = score_trous_opt7
+            st.session_state.score_opt7_p1 = round(score_quiz_opt7, 1)
+            st.session_state.score_opt7_p2 = round(score_trous_opt7, 1)
             st.session_state.score_final_opt7 = round(score_quiz_opt7 + score_trous_opt7, 1)
             st.session_state.opt7_verrouille = True
             st.rerun()
@@ -1957,11 +1964,13 @@ with tab7:
                 <tbody>
         """
 
-        # Boucle dynamique réécrite pour scanner les 10 clés de t1_opt7 à t10_opt7
+        # Appel des correspondances exactes re-déclarées (1 à 10) avec le suffixe complet
+        reponses_trous_officiel = reponses_attendues_trous[cas_actif]
+
         for idx_t in range(1, 11):
             t_key = f"t{idx_t}_opt7"
             saisie = st.session_state.get(f"opt7_{t_key}", "Choisir...")
-            attendu = dict_t_actif.get(t_key, "Inconnu")
+            attendu = reponses_trous_officiel.get(t_key, "Inconnu")
             
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
