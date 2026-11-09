@@ -207,6 +207,213 @@ tab6 = onglets[6]
 tab7 = onglets[7] 
 tab8 = onglets[8] 
 
+
+
+def afficher_questions_optique7(verrouille=False):
+    col_double_quiz_opt7, col_double_trous_opt7 = st.columns(2)
+
+    # Récupération du cas routier actif généré dans l'onglet tab7
+    cas_actif = st.session_state.get("app_routiere_choisie", "catadioptre")
+
+    # =========================================================================
+    # COLONNE GAUCHE : QUIZ SÉLECTIONNÉ SELON LE CAS (10 QUESTIONS)
+    # =========================================================================
+    with col_double_quiz_opt7:
+        st.markdown("##### Quiz d'application routiere (10 questions) - Optique 7 (10 pts)")
+        
+        # Initialisation unique de l'ordre des questions pour le cas actif
+        cle_session_ordre = f"ordre_questions_opt7_{cas_actif}"
+        if cle_session_ordre not in st.session_state:
+            if cas_actif == "catadioptre":
+                base_questions = [
+                    ("c1", "Un catadioptre sert a renvoyer les rayons lumineux de facon :"),
+                    ("c2", "La forme geometrique interne utilisee dans un catadioptre est un :"),
+                    ("c3", "Les facettes arriere du catadioptre forment entre elles un angle de :"),
+                    ("c4", "Le retour de la lumiere s'effectue sans miroir grace au phenomene de :"),
+                    ("c5", "Apres deux reflexions successives a 90 degres, la deviation totale vaut :"),
+                    ("c6", "Pour que le dispositif fonctionne, l'angle d'impact sur la facette doit etre :"),
+                    ("c7", "Le grand avantage du catadioptre par rapport a une lampe classique est qu'il est :"),
+                    ("c8", "Dans le repere d'un prisme droit, les rayons incidents et emergents sont :"),
+                    ("c9", "Si le materiau du catadioptre possede un indice trop faible, la lumiere va :"),
+                    ("c10", "Sur la route, les catadioptres équipent obligatoirement l'arriere des véhicules en :")
+                ]
+            elif cas_actif == "mirage":
+                base_questions = [
+                    ("m1", "Le mirage routier donne l'illusion visuelle de la présence d'une :"),
+                    ("m2", "En ete, la forte chaleur emise par le bitume rend l'air en surface tres :"),
+                    ("m3", "Cet air fortement chauffe possede une densite plus :"),
+                    ("m4", "L'indice de refraction de la couche d'air au ras du sol devient donc plus :"),
+                    ("m5", "Le gradient d'indice genere des couches d'air qui font courber la trajectoire en :"),
+                    ("m6", "La reflexion totale progressive se produit car l'angle d'incidence finit par dépasser l' :"),
+                    ("m7", "Les rayons lumineux qui subissent cette courbe proviennent initialement du :"),
+                    ("m8", "Puisque l'indice varie continuellement avec l'altitude, la trajectoire finale est :"),
+                    ("m9", "L'oeil du conducteur prolonge la trajectoire rectilignement et voit une image :"),
+                    ("m10", "Ce phenomene montre que la lumiere ne se propage en ligne droite que si le milieu est :")
+                ]
+            elif cas_actif == "capteur_pluie":
+                base_questions = [
+                    ("p1", "Le capteur de pluie automatique d'une automobile est generalement place derriere le :"),
+                    ("p2", "La source lumineuse utilisee par l'emetteur est une LED fonctionnant en :"),
+                    ("p3", "Lorsque le pare-brise est sec, le faisceau lumineux subit sur la face externe une :"),
+                    ("p4", "L'angle d'injection initial de la LED dans le verre est calcule pour etre :"),
+                    ("p5", "Dans des conditions seches, la quantite de lumiere renvoyee au recepteur vaut environ :"),
+                    ("p6", "L'indice de refraction de l'eau (n = 1.33) est superieur a celui de l' :"),
+                    ("p7", "L'arrivee d'eau sur le pare-brise modifie la valeur de l'angle :"),
+                    ("p8", "Lorsque la condition aux limites change a cause de la pluie, la reflexion totale est :"),
+                    ("p9", "Une fraction importante de l'intensite lumineuse infrarouge va alors :"),
+                    ("p10", "La baisse de signal electrique mesuree par la photodiode declenche l'action des :")
+                ]
+            else: # panneau_signalisation
+                base_questions = [
+                    ("s1", "Le revetement brillant des panneaux de signalisation routiere modernes est un :"),
+                    ("s2", "Ce film plastique technique renferme une multitude de structures nommees :"),
+                    ("s3", "Contrairement a un miroir classique, le panneau de signalisation renvoie le flux vers :"),
+                    ("s4", "Cette capacite particuliere a renvoyer la lumiere vers sa source s'appelle la :"),
+                    ("s5", "A l'interieur d'un microprisme, les rayons subissent une serie de reflexions :"),
+                    ("s6", "La surface du panneau semble s'illuminer fortement des que la voiture allume ses :"),
+                    ("s7", "La directivite du faisceau evite de disperser inutilement l'energie vers le :"),
+                    ("s8", "La condition de guidage impose que l'indice du plastique soit superieur a celui de l' :"),
+                    ("s9", "Les facettes microscopiques arriere agissent comme des miroirs parfaits grace a l' :"),
+                    ("s10", "Pour l'automobiliste de nuit, ce systeme passif apporte un gain majeur en termes de :")
+                ]
+            import random
+            random.shuffle(base_questions)
+            st.session_state[cle_session_ordre] = base_questions
+
+        dict_quiz_opt7 = {}
+        for num_idx, (q_id, q_txt) in enumerate(st.session_state[cle_session_ordre], 1):
+            cle_qo7 = f"col_g_quiz_opt7_{cas_actif}_{q_id}"
+            cle_opts_unique = f"opts_opt7_shuffled_{cas_actif}_{q_id}"
+            
+            if cle_opts_unique not in st.session_state:
+                if cas_actif == "catadioptre":
+                    if q_id == "c1": copie_opts = ["Parallèle à l'axe incident", "Perpendiculaire à la route", "Diffuse dans toutes les directions", "Divergente vers le fossé"]
+                    elif q_id == "c2": copie_opts = ["Coin de cube (angle droit)", "Cylindre concave", "Disque convexe plan", "Prisme dispersif triangulaire"]
+                    elif q_id == "c3": copie_opts = ["90°", "45°", "60°", "180°"]
+                    elif q_id == "c4": copie_opts = ["Réflexion totale interne", "Réfraction limite", "Dispersion chromatique", "Interférence destructive"]
+                    elif q_id == "c5": copie_opts = ["180° (demi-tour complet)", "90° (quart de tour)", "0° (aucune déviation)", "360° (tour complet)"]
+                    elif q_id == "c6": copie_opts = ["Supérieur à l'angle critique", "Inférieur à l'angle critique", "Parfaitement nul", "Égal à 30°"]
+                    elif q_id == "c7": copie_opts = ["Passif (sans consommation électrique)", "Actif à batterie", "Fluorescent à rayons UV", "Alimenté par l'alternateur"]
+                    elif q_id == "c8": copie_opts = ["Parallèles", "Perpendiculaires", "Sécants à 45°", "Inclinés à 60°"]
+                    elif q_id == "c9": copie_opts = ["S'échapper par réfraction", "Être absorbée à 100%", "Accélérer sa course", "Changer de longueur d'onde"]
+                    elif q_id == "c10": copie_opts = ["Rouge", "Blanc", "Jaune", "Bleu"]
+                elif cas_actif == "mirage":
+                    if q_id == "m1": copie_opts = ["Flaque d'eau", "Plaque de verglas", "Ombre géante", "Brumisation dense"]
+                    elif q_id == "m2": copie_opts = ["Chaud", "Froid", "Humide", "Saturé en ozone"]
+                    elif q_id == "m3": copie_opts = ["Faible", "Élevée", "Infinie", "Stable"]
+                    elif q_id == "m4": copie_opts = ["Faible", "Élevé", "Nul", "Égal à celui du verre"]
+                    elif q_id == "m5": copie_opts = ["U inversé (courbe montante)", "Ligne droite oblique", "Z (zig-zag brisé)", "Spirale descendante"]
+                    elif q_id == "m6": copie_opts = ["Angle critique (limite)", "Angle droit", "Angle nul", "Angle d'incidence normal"]
+                    elif q_id == "m7": copie_opts = ["Ciel", "Sol", "Tableau de bord", "Phares de la voiture"]
+                    elif q_id == "m8": copie_opts = ["Curviligne (courbe)", "Rectiligne (droite)", "Brisée en facettes", "Ondulatoire sinusoïdale"]
+                    elif q_id == "m9": copie_opts = ["Inversée (reflétée)", "Droite et rétrécie", "Floue et décolorée", "Totalement invisible"]
+                    elif q_id == "m10": copie_opts = ["Homogène", "Hétérogène", "Opaque", "Conducteur"]
+                elif cas_actif == "capteur_pluie":
+                    if q_id == "p1": copie_opts = ["Rétroviseur central", "Pare-chocs avant", "Compteur de vitesse", "Gicleur de lave-glace"]
+                    elif q_id == "p2": copie_opts = ["Infrarouge (invisible)", "Ultraviolet", "Laser vert puissant", "Lumière blanche pulsée"]
+                    elif q_id == "p3": copie_opts = ["Réflexion totale interne", "Réfraction vers l'extérieur", "Absorption calorifique", "Dispersion spectrale"]
+                    elif q_id == "p4": copie_opts = ["Supérieur à l'angle critique", "Inférieur à l'angle critique", "Nul (incidence normale)", "Égal à 90°"]
+                    elif q_id == "p5": copie_opts = ["100% (intensité maximale)", "50% (intensité moitié)", "0% (signal nul)", "25% seulement"]
+                    elif q_id == "p6": copie_opts = ["Air (n = 1.00)", "Verre (n = 1.50)", "Plexiglas (n = 1.49)", "Diamant (n = 2.42)"]
+                    elif q_id == "p7": copie_opts = ["Critique (limite)", "De Brewster", "D'injection", "De émergence"]
+                    elif q_id == "p8": copie_opts = ["Brisée (rompue)", "Amplifiée", "Stabilisée", "Inversée"]
+                    elif q_id == "p9": copie_opts = ["S'échapper dans la goutte", "Retourner vers la LED", "Se transformer en chaleur", "Accélérer dans le verre"]
+                    elif q_id == "p10": copie_opts = ["Essuie-glaces", "Phares directionnels", "Freins d'urgence", "Feux de détresse"]
+                else: # panneau_signalisation
+                    if q_id == "s1": copie_opts = ["Film plastique technique", "Miroir d'argent classique", "Vernis fluorescent", "Plaque métallique polie"]
+                    elif q_id == "s2": copie_opts = ["Microprismes transparents", "Lentilles concaves", "Fibres optiques parallèles", "Fils de carbone"]
+                    elif q_id == "s3": copie_opts = ["La voiture d'origine (la source)", "Le ciel uniquement", "Le bas-côté de la chaussée", "Les nuages en hauteur"]
+                    elif q_id == "s4": copie_opts = ["Rétroréflexion", "Réfraction totale", "Dispersion diffuse", "Focalisation optique"]
+                    elif q_id == "s5": copie_opts = ["Totales internes", "Partielles externes", "Réfractées rasantes", "Absorbantes sélectives"]
+                    elif q_id == "s6": copie_opts = ["Phares", "Clignotants", "Feux de stop", "Plafonniers"]
+                    elif q_id == "s7": copie_opts = ["Ciel ou environnement", "Sol immédiat", "Moteur", "Rétroviseur"]
+                    elif q_id == "s8": copie_opts = ["Air", "Verre", "Métal", "Silicone lourd"]
+                    elif q_id == "s9": copie_opts = ["Angle limite dépassé", "Dépôt d'argenture", "Peinture blanche", "Effet laser de champ"]
+                    elif q_id == "s10": copie_opts = ["Sécurité routière", "Vitesse de conduite", "Consommation de carburant", "Confort des sièges"]
+                
+                import random
+                random.shuffle(copie_opts)
+                st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
+
+            val_p = st.session_state.get(cle_qo7, "Choisir...")
+            idx = st.session_state[cle_opts_unique].index(val_p) if val_p in st.session_state[cle_opts_unique] else 0
+
+            cq_txt, cq_sel = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with cq_txt: st.write(f"{num_idx}. {q_txt}")
+            with cq_sel:
+                dict_quiz_opt7[f"{q_id}_opt7"] = st.selectbox("", st.session_state[cle_opts_unique], index=idx, key=cle_qo7, disabled=verrouille, label_visibility="collapsed")
+
+    # =========================================================================
+    # COLONNE DROITE : SYNTHÈSE DE COURS À TROUS VARIANT SELON LE CAS (4 OPTIONS)
+    # =========================================================================
+    with col_double_trous_opt7:
+        st.markdown("##### Synthese de cours (Texte a trous) - Optique 7 (10 pts)")
+
+        if cas_actif == "catadioptre":
+            ct1, ct2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct1: st.write("Le catadioptre routier utilise un bloc plastique constitue de petits")
+            with ct2: t1 = st.selectbox("", ["Choisir...", "Prismes", "Miroirs", "Fils", "Lentilles"], key="opt7_t1", disabled=verrouille, label_visibility="collapsed")
+
+            ct3, ct4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct3: st.write("tailles en angle droit. Le faisceau lumineux des phares y subit une double")
+            with ct4: t2 = st.selectbox("", ["Choisir...", "Réflexion totale", "Réfraction", "Dispersion", "Absorption"], key="opt7_t2", disabled=verrouille, label_visibility="collapsed")
+
+            ct5, ct6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct5: st.write("interne, ce qui renvoie l'intensite parallelement en direction du")
+            with ct6: t3 = st.selectbox("", ["Choisir...", "Conducteur", "Piéton", "Nuage", "Soleil"], key="opt7_t3", disabled=verrouille, label_visibility="collapsed")
+
+        elif cas_actif == "mirage":
+            ct1, ct2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct1: st.write("Le mirage routier apparait en ete lorsque la forte chaleur diminue l'indice de l'")
+            with ct2: t1 = st.selectbox("", ["Choisir...", "Air", "Sol", "Goudron", "Verre"], key="opt7_t1", disabled=verrouille, label_visibility="collapsed")
+
+            ct3, ct4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct3: st.write("au ras du sol. La courbure progressive provoque alors une reflexion totale")
+            with ct4: t2 = st.selectbox("", ["Choisir...", "Curviligne", "Rectiligne", "Brisée", "Ondulée"], key="opt7_t2", disabled=verrouille, label_visibility="collapsed")
+
+            ct5, ct6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct5: st.write("du faisceau lumineux descendant, donnant l'illusion visuelle d'un reflet de")
+            with ct6: t3 = st.selectbox("", ["Choisir...", "Ciel", "Bitume", "Feu", "Brouillard"], key="opt7_t3", disabled=verrouille, label_visibility="collapsed")
+
+        elif cas_actif == "capteur_pluie":
+            ct1, ct2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct1: st.write("Le capteur de pluie utilise une diode emettrice infrarouge dirigee vers le")
+            with ct2: t1 = st.selectbox("", ["Choisir...", "Pare-brise", "Moteur", "Pneu", "Phare"], key="opt7_t1", disabled=verrouille, label_visibility="collapsed")
+
+            ct3, ct4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct3: st.write("Tant que la vitre est seche, la surface externe engendre une reflexion")
+            with ct4: t2 = st.selectbox("", ["Choisir...", "Totale", "Partielle", "Diffuse", "Nulle"], key="opt7_t2", disabled=verrouille, label_visibility="collapsed")
+
+            ct5, ct6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct5: st.write("interne vers la photodiode. L'arrivee d'eau brise cette condition et active les")
+            with ct6: t3 = st.selectbox("", ["Choisir...", "Essuie-glaces", "Freins", "Phares", "Clignotants"], key="opt7_t3", disabled=verrouille, label_visibility="collapsed")
+
+        else: # panneau_signalisation
+            ct1, ct2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with col_double_trous_opt7:
+                co7_1, co7_2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+                with co7_1: st.write("Les panneaux routiers reflechissants possedent un film compose de")
+                with co7_2: t1 = st.selectbox("", ["Choisir...", "Microprismes", "Miroirs", "Lentilles", "Fils"], key="opt7_t1", disabled=verrouille, label_visibility="collapsed")
+
+                co7_3, co7_4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+                with co7_3: st.write("Le guidage interne de la lumiere s'effectue sans tain metallique grace a l'angle")
+                with co7_4: t2 = st.selectbox("", ["Choisir...", "Limite", "Droit", "Nul", "Plat"], key="opt7_t2", disabled=verrouille, label_visibility="collapsed")
+
+                co7_5, co7_6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+                with co7_5: st.write("depasse. Les faisceaux des phares retournent ainsi de maniere concentree vers la")
+                with co7_6: t3 = st.selectbox("", ["Choisir...", "Source", "Lune", "Route", "Gaine"], key="opt7_t3", disabled=verrouille, label_visibility="collapsed")
+
+        # Clôture invariable de l'exercice à trous
+        ct7, ct8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with ct7: st.write("Ces diverses applications routieres mettent en evidence la maitrise des phenomenes optiques pour la securite.")
+
+        dict_trous_opt7 = {
+            "t1_opt7": t1, "t2_opt7": t2, "t3_opt7": t3
+        }
+
+    return dict_quiz_opt7, dict_trous_opt7
+
+
 if "lampes_data" not in st.session_state:
     st.session_state.lampes_data = {
         "Lumière du Soleil": {
@@ -1438,6 +1645,224 @@ with tab7:
             st.image(app_active["image_filename"], caption="Illustration en situation réelle", use_container_width=True)
         except Exception:
             st.warning(f"Fichier image {app_active['image_filename']} introuvable dans le dossier.")  
+
+    st.write("---")
+    st.subheader("Validation et Generation du Bilan Officiel - Optique 7")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    cas_actif = st.session_state.get("app_routiere_choisie", "catadioptre")
+
+    case_certif_opt7 = st.checkbox(
+        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 7.", 
+        key="check_certif_opt7_officiel_20pts", 
+        disabled=st.session_state.get("opt7_verrouille", False)
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 7", key="btn_export_opt7_official_20pts", use_container_width=True, disabled=st.session_state.get("opt7_verrouille", False)):
+        if not st.session_state.get("verrouille", False): 
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_opt7: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            # 1. BASE DE CORRECTION DYNAMIQUE DU QUIZ (PARTIE 1 : 10 POINTS)
+            reponses_attendues_quiz = {
+                "catadioptre": {
+                    "c1": "Parallèle à l'axe incident", "c2": "Coin de cube (angle droit)", "c3": "90°", 
+                    "c4": "Réflexion totale interne", "c5": "180° (demi-tour complet)", "c6": "Supérieur à l'angle critique", 
+                    "c7": "Passif (sans consommation électrique)", "c8": "Parallèles", "c9": "S'échapper par réfraction", "c10": "Rouge"
+                },
+                "mirage": {
+                    "m1": "Flaque d'eau", "m2": "Chaud", "m3": "Faible", "m4": "Faible", 
+                    "m5": "U inversé (courbe montante)", "m6": "Angle critique (limite)", "m7": "Ciel", 
+                    "m8": "Curviligne (courbe)", "m9": "Inversée (reflétée)", "m10": "Homogène"
+                },
+                "capteur_pluie": {
+                    "p1": "Rétroviseur central", "p2": "Infrarouge (invisible)", "p3": "Réflexion totale interne", 
+                    "p4": "Supérieur à l'angle critique", "p5": "100% (intensité maximale)", "p6": "Air (n = 1.00)", 
+                    "p7": "Critique (limite)", "p8": "Brisée (rompue)", "p9": "S'échapper dans la goutte", "p10": "Essuie-glaces"
+                },
+                "panneau_signalisation": {
+                    "s1": "Film plastique technique", "s2": "Microprismes transparents", "s3": "La voiture d'origine (la source)", 
+                    "s4": "Rétroréflexion", "s5": "Totales internes", "s6": "Phares", "s7": "Ciel ou environnement", 
+                    "s8": "Air", "s9": "Angle limite dépassé", "s10": "Sécurité routière"
+                }
+            }
+
+            dictionnaire_quiz_actif = reponses_attendues_quiz[cas_actif]
+            score_quiz_opt7 = 0.0
+            for qk, qv in dictionnaire_quiz_actif.items():
+                cle_saisie = f"col_g_quiz_opt7_{cas_actif}_{qk}"
+                if st.session_state.get(cle_saisie) == qv:
+                    score_quiz_opt7 += 1.0
+            
+            score_quiz_opt7 = min(10.0, round(score_quiz_opt7, 1))
+
+            # 2. BASE DE CORRECTION DYNAMIQUE DES TROUS (PARTIE 2 : 10 POINTS)
+            reponses_attendues_trous = {
+                "catadioptre": {"t1_opt7": "Prismes", "t2_opt7": "Réflexion totale", "t3_opt7": "Conducteur"},
+                "mirage": {"t1_opt7": "Air", "t2_opt7": "Curviligne", "t3_opt7": "Ciel"},
+                "capteur_pluie": {"t1_opt7": "Pare-brise", "t2_opt7": "Totale", "t3_opt7": "Essuie-glaces"},
+                "panneau_signalisation": {"t1_opt7": "Microprismes", "t2_opt7": "Limite", "t3_opt7": "Source"}
+            }
+
+            dictionnaire_trous_actif = reponses_attendues_trous[cas_actif]
+            score_trous_opt7 = 0.0
+            for tk, tv in dictionnaire_trous_actif.items():
+                if st.session_state.get(f"opt7_{tk}") == tv:
+                    score_trous_opt7 += 3.33
+            
+            # Ajustement technique pour atteindre exactement 10.0 si tout est juste
+            if score_trous_opt7 >= 9.9:
+                score_trous_opt7 = 10.0
+            score_trous_opt7 = min(10.0, round(score_trous_opt7, 1))
+
+            st.session_state.score_opt7_p1 = score_quiz_opt7
+            st.session_state.score_opt7_p2 = score_trous_opt7
+            st.session_state.score_final_opt7 = round(score_quiz_opt7 + score_trous_opt7, 1)
+            st.session_state.opt7_verrouille = True
+            st.rerun()
+
+    # BLOC PERMANENT D'AFFICHAGE DU RAPPORT HTML APRÈS VERROUILLAGE
+    if st.session_state.get("opt7_verrouille", False):
+        scr1 = st.session_state.get("score_opt7_p1", 0.0)
+        scr2 = st.session_state.get("score_opt7_p2", 0.0)
+        tot_s = st.session_state.get("score_final_opt7", 0.0)
+
+        # Heure locale fixe stable (UTC+1 ou UTC+2)
+        from datetime import datetime, timedelta
+        timestamp_opt7 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER OPTIQUE 7 SCELLE ET VALIDE | Note : {tot_s} / 20")
+
+        # Re-déclaration locale des dictionnaires pour boucler dans la génération HTML
+        reponses_attendues_quiz = {
+            "catadioptre": {
+                "c1": "Parallèle à l'axe incident", "c2": "Coin de cube (angle droit)", "c3": "90°", 
+                "c4": "Réflexion totale interne", "c5": "180° (demi-tour complet)", "c6": "Supérieur à l'angle critique", 
+                "c7": "Passif (sans consommation électrique)", "c8": "Parallèles", "c9": "S'échapper par réfraction", "c10": "Rouge"
+            },
+            "mirage": {
+                "m1": "Flaque d'eau", "m2": "Chaud", "m3": "Faible", "m4": "Faible", 
+                "m5": "U inversé (courbe montante)", "m6": "Angle critique (limite)", "m7": "Ciel", 
+                "m8": "Curviligne (courbe)", "m9": "Inversée (reflétée)", "m10": "Homogène"
+            },
+            "capteur_pluie": {
+                "p1": "Rétroviseur central", "p2": "Infrarouge (invisible)", "p3": "Réflexion totale interne", 
+                "p4": "Supérieur à l'angle critique", "p5": "100% (intensité maximale)", "p6": "Air (n = 1.00)", 
+                "p7": "Critique (limite)", "p8": "Brisée (rompue)", "p9": "S'échapper dans la goutte", "p10": "Essuie-glaces"
+            },
+            "panneau_signalisation": {
+                "s1": "Film plastique technique", "s2": "Microprismes transparents", "s3": "La voiture d'origine (la source)", 
+                "s4": "Rétroréflexion", "s5": "Totales internes", "s6": "Phares", "s7": "Ciel ou environnement", 
+                "s8": "Air", "s9": "Angle limite dépassé", "s10": "Sécurité routière"
+            }
+        }
+        reponses_attendues_trous = {
+            "catadioptre": {"t1_opt7": "Prismes", "t2_opt7": "Réflexion totale", "t3_opt7": "Conducteur"},
+            "mirage": {"t1_opt7": "Air", "t2_opt7": "Curviligne", "t3_opt7": "Ciel"},
+            "capteur_pluie": {"t1_opt7": "Pare-brise", "t2_opt7": "Totale", "t3_opt7": "Essuie-glaces"},
+            "panneau_signalisation": {"t1_opt7": "Microprismes", "t2_opt7": "Limite", "t3_opt7": "Source"}
+        }
+
+        dict_q_actif = reponses_attendues_quiz[cas_actif]
+        dict_t_actif = reponses_attendues_trous[cas_actif]
+
+        html_export_opt7 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Optique 7 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #0f172a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #38bdf8; color: #0f172a; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #1e293b; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Cas routier etudie : {cas_actif.upper()} | Scelle le : {timestamp_opt7}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+            </div>
+
+            <div class="sub-title">Recapitulatif des scores - Optique 7</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #38bdf8; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
+                &bull; Partie 1 : Questionnaire d'application routiere : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Synthese de Cours (Texte a trous thématique) : <strong>{scr2} / 10</strong>
+            </p>
+
+            <div class="sub-title">PARTIE 1 : QUIZ SUR LES CONNAISSANCES ROUTIÈRES (10 PTS)</div>
+            <table>
+            <thead>
+                <tr>
+                    <th style="width: 10%;">N°</th>
+                    <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                    <th style="width: 25%; text-align: center;">Attendu</th>
+                    <th style="width: 25%; text-align: center;">Verdict</th>
+                </tr>
+            </thead>
+            <tbody>
+        """
+
+        for idx_t, (q_id, attendu) in enumerate(dict_q_actif.items(), 1):
+            cle_saisie = f"col_g_quiz_opt7_{cas_actif}_{q_id}"
+            saisie = st.session_state.get(cle_saisie, "Choisir...")
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt7 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+        html_export_opt7 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 2 : SYNTHESE DE COURS ASSOCIEE (10 PTS)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">N°</th>
+                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 25%; text-align: center;">Attendu</th>
+                        <th style="width: 25%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
+
+        for idx_t, (t_key, t_val) in enumerate(dict_t_actif.items(), 1):
+            saisie = st.session_state.get(f"opt7_{t_key}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt7 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+        html_export_opt7 += """
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #64748b;">
+                Laboratoire d'Optique Physique Appliquee &copy; 2026
+            </div>
+        </body>
+        </html>
+        """
+
+        # Rendu du bouton de téléchargement pour l'élève
+        st.download_button(
+            label="Télécharger le relevé de notes au format HTML",
+            data=html_export_opt7,
+            file_name=f"Bilan_Optique7_{n_eleve}_{cas_actif}.html",
+            mime="text/html",
+            use_container_width=True
+        )
+
 
 with tab8:
     st.header("**Manipulation  : Application Navale (Le Periscope du sous-marin)**")
