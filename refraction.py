@@ -498,8 +498,8 @@ def afficher_questions_optique7(verrouille=False):
             with ct12: t6 = st.selectbox("", ["Choisir...", "Air", "Verre", "Métal", "Eau"], key="opt7_t6", disabled=verrouille, label_visibility="collapsed")
 
             ct13, ct14 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-            with ct13: st.write("7. Grâce à la structure géométrique, la lumière effectue un demi-tour")
-            with ct14: t7 = st.selectbox("", ["Choisir...", "Complet (180°)", "De côté (90°)", "Nul (0°)", "En boucle"], key="opt7_t7", disabled=verrouille, label_visibility="collapsed")
+            with ct13: st.write("7. Mais lorsque des gouttes d'eau se déposent, l'indice externe passe à")
+            with ct14: t7 = st.selectbox("", ["Choisir...", "1.33", "1.00", "1.50", "2.42"], key="opt7_t7", disabled=verrouille, label_visibility="collapsed")
 
             ct15, ct16 = st.columns([0.75, 0.25], vertical_alignment="bottom")
             with ct15: st.write("8. Les rayons concentrés retournent vers le conducteur au lieu d'être")
