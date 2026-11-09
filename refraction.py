@@ -1338,7 +1338,7 @@ with tab7:
     # Affichage du contenu
     st.subheader(app_active["titre"])
     
-    col_texte, col_image = st.columns()
+    col_texte, col_image = st.columns(2)
     
     with col_texte:
         st.markdown(app_active["description"])
