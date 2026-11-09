@@ -1957,11 +1957,16 @@ with tab7:
                 <tbody>
         """
 
-        for idx_t, (t_key, t_val) in enumerate(dict_t_actif.items(), 1):
+        # Boucle dynamique réécrite pour scanner les 10 clés de t1_opt7 à t10_opt7
+        for idx_t in range(1, 11):
+            t_key = f"t{idx_t}_opt7"
             saisie = st.session_state.get(f"opt7_{t_key}", "Choisir...")
-            v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
+            attendu = dict_t_actif.get(t_key, "Inconnu")
+            
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_opt7 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            
+            html_export_opt7 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
         html_export_opt7 += """
                 </tbody>
