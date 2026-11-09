@@ -570,7 +570,7 @@ def dessiner_fibre_optique_avancee_matplotlib():
     # Initialisation du parcours
     x_actuel = x_entree
     y_actuel = y_centre
-    signe_y = -1  # Commence en montant vers la gaine du haut
+    signe_y = 1  # Commence en montant vers la gaine du haut
 
     # 3. PROPAGATION ET REBONDS MULTIPLES
     if theta_interne_deg >= theta_c_deg:
