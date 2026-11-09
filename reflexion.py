@@ -353,7 +353,7 @@ with tab4:
     
     st.slider("Position Avancement Siege Conducteur (cm)", min_value=-15.0, max_value=15.0, value=0.0, step=1.0, key="slide_siege_cond_eval")
     st.slider("Position Avancement Siege Passager (cm)", min_value=-15.0, max_value=15.0, value=0.0, step=1.0, key="slide_siege_pass_eval")
-            st.caption(f"Position active calculee pour le profil : {observateur}")
+    st.caption(f"Position active calculee pour le profil : {observateur}")
 
 
 with tab5:
