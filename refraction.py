@@ -1286,35 +1286,30 @@ with tab7:
     import matplotlib.pyplot as plt
     import matplotlib.patches as patches
 
-    # --- FONCTION DE GÉNÉRATION DES SCHÉMAS GÉOMÉTRIQUES EXPLICATIFS ---
     def dessiner_schema_explicatif_routier(type_application, couleur_faisceau="#ef4444"):
         fig, ax = plt.subplots(figsize=(5, 3.5), facecolor="#0f172a")
         ax.set_facecolor("#0f172a")
         ax.set_xlim(0, 100)
         ax.set_ylim(0, 100)
-        ax.invert_yaxis()  # Inversion de l'axe Y pour la cohérence repère informatique
+        ax.invert_yaxis()
         ax.axis("off")
         
         if type_application == "catadioptre":
-            # Représentation d'un prisme à angle droit (90°) pour le catadioptre
-            ax.fill([40, 70, 40], [20, 45, 45], facecolor="#38bdf8", alpha=0.15, edgecolor="#475569", lw=1.5)
-            ax.plot([40, 40], [20, 45], color="#94a3b8", lw=2)
+            ax.fill([45, 65, 45], [15, 35, 55], facecolor="#38bdf8", alpha=0.15, edgecolor="#475569", lw=1.5)
+            ax.plot([45, 45], [15, 55], color="#94a3b8", lw=2)
             
-            # Trajectoire du rayon laser incident et réfléchi deux fois
-            ax.annotate("", xy=(60, 30), xytext=(5, 30), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
-            ax.annotate("", xy=(60, 40), xytext=(60, 30), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
-            ax.annotate("", xy=(5, 40), xytext=(60, 40), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
+            ax.annotate("", xy=(45, 25), xytext=(5, 25), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
+            ax.annotate("", xy=(45, 45), xytext=(45, 25), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
+            ax.annotate("", xy=(5, 45), xytext=(45, 45), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
             
-            ax.text(45, 23, "Entrée", color="#94a3b8", fontsize=8)
-            ax.text(65, 35, "Réflexions\ntotales (2x)", color="#cbd5e1", fontsize=8, ha="left", va="center")
+            ax.text(35, 20, "Entrée", color="#94a3b8", fontsize=8)
+            ax.text(50, 35, "Réflexions\ntotales (2x)", color="#cbd5e1", fontsize=8, ha="left", va="center")
             
         elif type_application == "mirage":
-            # Sol bitumé surchauffé
             ax.add_patch(patches.Rectangle((0, 85), 100, 15, facecolor="#f59e0b", alpha=0.25, edgecolor="none"))
-            ax.plot([5, 95], [85, 85], color="#f59e0b", lw=1.5)
+            ax.plot([0, 100], [85, 85], color="#f59e0b", lw=1.5)
             ax.text(50, 95, "Bitume chaud (n plus faible)", color="#f59e0b", fontsize=8, ha="center")
             
-            # Tracé de la trajectoire curviligne de la lumière du ciel
             x_vals = [float(x) for x in range(5, 95)]
             y_vals = [25 + 0.0075 * (x - 50)**2 for x in x_vals]
             ax.plot(x_vals, y_vals, color=couleur_faisceau, lw=2.5)
@@ -1322,23 +1317,18 @@ with tab7:
             ax.annotate("", xy=(30, 28), xytext=(10, 37), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=0, mutation_scale=12))
             ax.annotate("", xy=(90, 37), xytext=(70, 28), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=0, mutation_scale=12))
             
-            ax.plot([50, 50], [25, 85], color="#64748b", linestyle=":", lw=1)
+            ax.plot([50, 50], [70, 85], color="#64748b", linestyle=":", lw=1)
             ax.text(50, 55, "Réflexion totale\nprogressive", color="#cbd5e1", fontsize=8, ha="center")
             
         elif type_application == "capteur_pluie":
-            # Section transversale du pare-brise en verre
             ax.add_patch(patches.Rectangle((5, 35), 90, 25, facecolor="#e0f2fe", alpha=0.15, edgecolor="#475569", lw=1.5))
             ax.text(10, 48, "Verre du pare-brise", color="#94a3b8", fontsize=8)
             
-            # Goutte d'eau externe perturbatrice posée au centre supérieur
             goutte = patches.Wedge((50, 35), 14, 180, 360, facecolor="#38bdf8", alpha=0.5, edgecolor="#0284c7")
             ax.add_patch(goutte)
             ax.text(50, 25, "Goutte de pluie", color="#38bdf8", fontsize=8, ha="center")
             
-            # Émetteur infrarouge entrant par le bas
             ax.annotate("", xy=(50, 35), xytext=(20, 75), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
-            
-            # Perte de réflexion totale : transmission partielle à travers l'eau
             ax.annotate("", xy=(60, 10), xytext=(50, 35), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=1.5, linestyle="--"))
             ax.annotate("", xy=(80, 75), xytext=(50, 35), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=1.5, alpha=0.4))
             
@@ -1346,16 +1336,15 @@ with tab7:
             ax.text(54, 52, "Réflexion brisée", color="#cbd5e1", fontsize=8)
             
         elif type_application == "panneau_signalisation":
-            # Structure schématique de microprismes réfléchissants juxtaposés
+            # Correction stricte des valeurs de la boucle for pour éviter l'erreur de syntaxe
             for offset in:
-                ax.fill([offset, offset + 10, offset + 20], [35, 15, 35], facecolor="#10b981", alpha=0.1, edgecolor="#10b981", lw=1)
+                ax.fill([offset, offset + 10, offset + 20], [45, 25, 45], facecolor="#10b981", alpha=0.1, edgecolor="#10b981", lw=1)
             
-            # Rayon incident arrivant d'une voiture et retournant parallèlement
-            ax.annotate("", xy=(40, 20), xytext=(15, 85), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
-            ax.annotate("", xy=(25, 85), xytext=(45, 20), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
+            ax.annotate("", xy=(40, 30), xytext=(15, 85), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
+            ax.annotate("", xy=(25, 85), xytext=(45, 30), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
             
             ax.text(50, 70, "Retour du faisceau\nvers le conducteur", color="#cbd5e1", fontsize=8, ha="center")
-            ax.text(50, 85, "Revêtement microprismatique", color="#10b981", fontsize=8, ha="center")
+            ax.text(50, 15, "Revêtement microprismatique", color="#10b981", fontsize=8, ha="center")
             
         return fig
 
