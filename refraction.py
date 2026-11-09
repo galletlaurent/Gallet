@@ -1909,7 +1909,7 @@ with tab7:
             "mirage": {
                 "m1": "Le mirage routier donne l'illusion visuelle de la présence d'une :",
                 "m2": "En ete, la forte chaleur emise par le bitume rend l'air en surface tres :",
-                "m3", "Cet air fortement chauffe possede une densite plus :",
+                "m3": "Cet air fortement chauffe possede une densite plus :",
                 "m4": "L'indice de refraction de la couche d'air au ras du sol devient donc plus :",
                 "m5": "Le gradient d'indice genere des couches d'air qui font courber la trajectoire en :",
                 "m6": "La reflexion totale progressive se produit car l'angle d'incidence finit par dépasser l' :",
