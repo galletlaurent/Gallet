@@ -558,11 +558,11 @@ def dessiner_double_refraction_lame_matplotlib():
             txt_math = f"Lame :\n• i1 = {theta1_deg:.1f}°\n• r1 = {theta2_deg:.1f}°\n• s = {theta3_deg:.1f}°\n• dx = {abs(dx_mm):.2f} mm"
 
             # Arc pour l'angle d'émergence s (en bas à droite du point de sortie)
-            arc_s = patches.Arc((x_sortie, y_dioptre2), 40, 40, angle=0, theta1=90, theta2=90 + theta3_deg, edgecolor="#ef4444", lw=1.2, zorder=5)
+            arc_s = patches.Arc((x_sortie, y_dioptre2), 40, 40, angle=0, theta1=90 - theta3_deg, theta2=90, edgecolor="#ef4444", lw=1.2, zorder=5)
             ax.add_patch(arc_s)
 
         # Arc pour l'angle de réfraction r1 (en bas à droite du point d'incidence dans la lame)
-        arc_r1 = patches.Arc((x0, y_dioptre1), 40, 40, angle=0, theta1=90, theta2=90 + theta2_deg, edgecolor="#cbd5e1", lw=1.2, zorder=5)
+        arc_r1 = patches.Arc((x0, y_dioptre1), 40, 40, angle=0, theta1=90 - theta2_deg, theta2=90, edgecolor="#cbd5e1", lw=1.2, zorder=5)
         ax.add_patch(arc_r1)
 
     ax.text(25, 20, "ATELIER 2 - DOUBLE DIOPTRE ET TRAJECTOIRES", color="#38bdf8", fontsize=9, fontweight="bold", ha="left")
