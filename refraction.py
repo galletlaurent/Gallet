@@ -632,46 +632,31 @@ def dessiner_schema_refraction_simple():
     ax.plot([x0_s - 300, x0_s + 300], [y0_s, y0_s], color="#475569", lw=2, zorder=3)
     
     # Axe vertical : La Normale pointillee
-    ax.plot([x0_s, x0_s], [y0_s - 150, y_fond_liquide - 10], color="#94a3b8", linestyle=(0, (4, 4)), lw=1.5) 
-    ax.text(x0_s + 8, y0_s - 120, "Normale", color="#64748b", fontsize=8, fontweight="bold", ha="left")
+    ax.plot([x0_s, x0_s], [y0_s - 150, y_fond_liquide - 10], color="#94a3b8", linestyle="--", lw=1.5, zorder=2)
     
-    # Rayon incident (Longueur 140 pixels)
-    x_inc = x0_s - 130 * math.sin(theta1_rad)
-    y_inc = y0_s - 130 * math.cos(theta1_rad)
-    ax.annotate("", xy=(x0_s, y0_s), xytext=(x_inc, y_inc), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
-    ax.text(x_inc - 10, y_inc, "Rayon incident", color=couleur_laser, fontsize=8, fontweight="bold", style="italic", ha="right", va="center")
+    # --- AJOUTS ET CORRECTIONS ---
 
-    # Arc geometrique pour l'incidence i
-    arc_i = patches.Arc((x0_s, y0_s), 60, 60, angle=270, theta1=-theta1_deg, theta2=0, edgecolor=couleur_laser, lw=1.5)
-    ax.add_patch(arc_i)
-    ax.text(x0_s - 18, y0_s - 38, "i", color=couleur_laser, fontsize=9, fontweight="bold", ha="center")
+    # 1. Tracé du rayon incident (provenant du milieu supérieur gauche vers le centre x0_s, y0_s)
+    longueur_rayon = 130
+    x_inc = x0_s - longueur_rayon * math.sin(theta1_rad)
+    y_inc = y0_s - longueur_rayon * math.cos(theta1_rad)
+    ax.plot([x_inc, x0_s], [y_inc, y0_s], color=couleur_laser, lw=3, zorder=4)
 
-    # Application de la loi physique de Snell-Descartes et gestion de la R.T.I.
-    sin_r = (n1 * math.sin(theta1_rad)) / n2
-    if sin_r > 1.0:
-        # Reflexion totale interne
-        x_tot = x0_s + 130 * math.sin(theta1_rad)
-        y_tot = y0_s - 130 * math.cos(theta1_rad)
-        ax.annotate("", xy=(x_tot, y_tot), xytext=(x0_s, y0_s), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
-        ax.text(x_tot + 10, y_tot, "Reflechi", color="#ef4444", fontsize=8, fontweight="bold", style="italic", ha="left", va="center")
-        txt_box_simple = f"Simple :\n- i = {theta1_deg:.1f}°\n- r = Reflexion totale\n- Rapport n1/n2 = {n1/n2:.2f}"
+    # 2. Calcul et tracé du rayon réfracté (Snell-Descartes)
+    sin_theta2 = (n1 * math.sin(theta1_rad)) / n2
+
+    if abs(sin_theta2) <= 1.0:
+        # Réfraction possible
+        theta2_rad = math.asin(sin_theta2)
+        x_ref = x0_s + longueur_rayon * math.sin(theta2_rad)
+        y_ref = y0_s + longueur_rayon * math.cos(theta2_rad) # Positif car l'axe Y est inversé vers le bas
+        ax.plot([x0_s, x_ref], [y0_s, y_ref], color=couleur_laser, lw=3, zorder=4)
     else:
-        theta2_rad = math.asin(sin_r)
-        theta2_deg = math.degrees(theta2_rad)
-        
-        x_frac = x0_s + 130 * math.sin(theta2_rad)
-        y_frac = y0_s + 130 * math.cos(theta2_rad)
-        ax.annotate("", xy=(x_frac, y_frac), xytext=(x0_s, y0_s), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
-        ax.text(x_frac + 10, y_frac, "Rayon refracte", color="#cbd5e1", fontsize=8, fontweight="bold", ha="left", va="center")
+        # Réflexion totale interne (si n1 > n2 et angle critique dépassé)
+        x_refl = x0_s + longueur_rayon * math.sin(theta1_rad)
+        y_refl = y0_s - longueur_rayon * math.cos(theta1_rad)
+        ax.plot([x0_s, x_refl], [y0_s, y_refl], color=couleur_laser, lw=2, linestyle=":", zorder=4)
 
-        # Arc geometrique pour la refraction r sous le dioptre
-        arc_r = patches.Arc((x0_s, y0_s), 60, 60, angle=90, theta1=-theta2_deg, theta2=0, edgecolor="#cbd5e1", lw=1.5)
-        ax.add_patch(arc_r)
-        ax.text(x0_s + 18, y0_s + 38, "r", color="#cbd5e1", fontsize=9, fontweight="bold", ha="center")
-        txt_box_simple = f"Simple :\n- i = {theta1_deg:.1f}°\n- r = {theta2_deg:.1f}°\n- Rapport n1/n2 = {n1/n2:.2f}"
-
-    # Sauvegarde locale pour l'affichage de la boite de donnees
-    st.session_state.opt4_txt_box_simple = txt_box_simple
     return fig
 
 def dessiner_graphique_sinus_matplotlib():
@@ -813,12 +798,12 @@ with tab2:
             st.rerun()
 
 
-        # APPEL DE VOTRE DESSIN DU DIOPTRE SIMPLE DE REFRACTION
-        fig_cuve_simple = dessiner_schema_refraction_simple()
-        st.pyplot(fig_cuve_simple, use_container_width=True)
-        
-        # Boite blanche de resultats sous le graphique de la cuve
-        st.info(st.session_state.get("opt4_txt_box_simple", "Ajustez le curseur pour initialiser."))
+    # APPEL DE VOTRE DESSIN DU DIOPTRE SIMPLE DE REFRACTION
+    fig_cuve_simple = dessiner_schema_refraction_simple()
+    st.pyplot(fig_cuve_simple, use_container_width=True)
+    
+    # Boite blanche de resultats sous le graphique de la cuve
+    st.info(st.session_state.get("opt4_txt_box_simple", "Ajustez le curseur pour initialiser."))
         
     st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
     st.markdown("##### Tableau des points de mesures memorises (Loi de Snell-Descartes)")
