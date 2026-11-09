@@ -1935,7 +1935,7 @@ with tab7:
                 "s2": "Ce film plastique technique renferme une multitude de structures nommees :",
                 "s3": "Contrairement a un miroir classique, le panneau de signalisation renvoie le flux vers :",
                 "s4": "Cette capacite particuliere a renvoyer la lumiere vers sa source s'appelle la :",
-                "s5", "A l'interieur d'un microprisme, les rayons subissent une serie de reflexions :",
+                "s5": "A l'interieur d'un microprisme, les rayons subissent une serie de reflexions :",
                 "s6": "La surface du panneau semble s'illuminer fortement des que la voiture allume ses :",
                 "s7": "La directivite du faisceau evite de disperser inutilement l'energie vers le :",
                 "s8": "La condition de guidage impose que l'indice du plastique soit superieur a celui de l' :",
