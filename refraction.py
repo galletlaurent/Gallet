@@ -502,7 +502,8 @@ def dessiner_double_refraction_lame_matplotlib():
     ax.plot([15, w - 15], [y_dioptre1, y_dioptre1], color="#475569", lw=2, zorder=3)
     ax.plot([15, w - 15], [y_dioptre2, y_dioptre2], color="#475569", lw=2, zorder=3)
 
-    ax.plot([x0, x0], [20, y_dioptre2 - 20], color="#94a3b8", linestyle=(0, (4, 4)), lw=1.2)
+    # Axe de la Normale 1 (S'arrête au premier dioptre pour la clarté)
+    ax.plot([x0, x0], [20, y_dioptre1 + 40], color="#94a3b8", linestyle=(0, (4, 4)), lw=1.2, zorder=2)
     ax.text(x0 + 6, 25, "Normale 1", color="#64748b", fontsize=7, fontweight="bold", ha="left")
 
     x_inc = x0 - 70 * math.sin(theta1_rad)
@@ -525,9 +526,12 @@ def dessiner_double_refraction_lame_matplotlib():
         dx_px = epaisseur_lame_px * math.tan(theta2_rad)
         x_sortie = x0 + dx_px
         ax.annotate("", xy=(x_sortie, y_dioptre2), xytext=(x0, y_dioptre1), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
-        ax.text(x0 + (dx_px/2) + 8, y_dioptre1 + (epaisseur_lame_px/2), "r1", color="#cbd5e1", fontsize=8, fontweight="bold", ha="left", va="center")
+        
+        # Positionnement optimisé du texte de r1 près de son arc
+        ax.text(x0 + 15 * math.sin(theta2_rad/2) + 5, y_dioptre1 + 25 * math.cos(theta2_rad/2), "r1", color="#cbd5e1", fontsize=8, fontweight="bold", ha="left", va="center")
 
-        ax.plot([x_sortie, x_sortie], [y_dioptre1 + 15, h - 15], color="#94a3b8", linestyle=(0, (4, 4)), lw=1.2)
+        # Axe de la Normale 2 (Dépasse un peu à l'intérieur de la lame)
+        ax.plot([x_sortie, x_sortie], [y_dioptre2 - 40, h - 15], color="#94a3b8", linestyle=(0, (4, 4)), lw=1.2, zorder=2)
         ax.text(x_sortie + 6, y_dioptre2 + 15, "Normale 2", color="#64748b", fontsize=7, fontweight="bold", ha="left")
 
         sin_theta3 = (n2 * math.sin(theta2_rad)) / n3
@@ -545,17 +549,28 @@ def dessiner_double_refraction_lame_matplotlib():
             x_emerg = x_sortie + 70 * math.sin(theta3_rad)
             y_emerg = y_dioptre2 + 70 * math.cos(theta3_rad)
             ax.annotate("", xy=(x_emerg, y_emerg), xytext=(x_sortie, y_dioptre2), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
-            ax.text(x_emerg + 8, y_emerg - 5, "s", color="#ef4444", fontsize=8, fontweight="bold", ha="left", va="center")
+            
+            # Positionnement de l'étiquette s (angle d'émergence) près de son arc
+            ax.text(x_sortie + 20 * math.sin(theta3_rad/2) + 6, y_dioptre2 + 25 * math.cos(theta3_rad/2), "s", color="#ef4444", fontsize=8, fontweight="bold", ha="left", va="center")
 
             dx_mm = (epaisseur_lame_px * 0.20) * math.sin(theta1_rad - theta2_rad) / math.cos(theta2_rad)
             msg, color = "DOUBLE DIOPTRE : Trajectoires de sorties calculees librement.", "#10b981"
             txt_math = f"Lame :\n• i1 = {theta1_deg:.1f}°\n• r1 = {theta2_deg:.1f}°\n• s = {theta3_deg:.1f}°\n• dx = {abs(dx_mm):.2f} mm"
 
+            # Arc pour l'angle d'émergence s (en bas à droite du point de sortie)
+            arc_s = patches.Arc((x_sortie, y_dioptre2), 40, 40, angle=0, theta1=90, theta2=90 + theta3_deg, edgecolor="#ef4444", lw=1.2, zorder=5)
+            ax.add_patch(arc_s)
+
+        # Arc pour l'angle de réfraction r1 (en bas à droite du point d'incidence dans la lame)
+        arc_r1 = patches.Arc((x0, y_dioptre1), 40, 40, angle=0, theta1=90, theta2=90 + theta2_deg, edgecolor="#cbd5e1", lw=1.2, zorder=5)
+        ax.add_patch(arc_r1)
+
     ax.text(25, 20, "ATELIER 2 - DOUBLE DIOPTRE ET TRAJECTOIRES", color="#38bdf8", fontsize=9, fontweight="bold", ha="left")
     ax.text(25, 35, msg, color=color, fontsize=7, fontweight="bold", ha="left")
     ax.text(x_inc - 8, y_inc + 12, "Rayon incident (i1)", color="#cbd5e1", fontsize=7, style="italic", ha="right")
 
-    arc_i1 = patches.Arc((x0, y_dioptre1), 40, 40, angle=270, theta1=-theta1_deg, theta2=0, edgecolor=couleur_laser, lw=1.2)
+    # Arc corrigé pour l'angle incident i1 (en haut à gauche, du rayon jusqu'à la normale à 270°)
+    arc_i1 = patches.Arc((x0, y_dioptre1), 40, 40, angle=0, theta1=270 - theta1_deg, theta2=270, edgecolor="#cbd5e1", lw=1.2, zorder=5)
     ax.add_patch(arc_i1)
 
     st.session_state.opt4_txt_box_double = txt_math
