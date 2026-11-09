@@ -1893,8 +1893,58 @@ with tab7:
             "panneau_signalisation": {"t1_opt7": "Microprismes", "t2_opt7": "Limite", "t3_opt7": "Source"}
         }
 
-        dict_q_actif = reponses_attendues_quiz[cas_actif]
-        dict_t_actif = reponses_attendues_trous[cas_actif]
+        dict_textes_questions_quiz = {
+            "catadioptre": {
+                "c1": "Un catadioptre sert a renvoyer les rayons lumineux de facon :",
+                "c2": "La forme geometrique interne utilisee dans un catadioptre est un :",
+                "c3": "Les facettes arriere du catadioptre forment entre elles un angle de :",
+                "c4": "Le retour de la lumiere s'effectue sans miroir grace au phenomene de :",
+                "c5": "Apres deux reflexions successives a 90 degres, la deviation totale vaut :",
+                "c6": "Pour que le dispositif fonctionne, l'angle d'impact sur la facette doit etre :",
+                "c7": "Le grand avantage du catadioptre par rapport a une lampe classique est qu'il est :",
+                "c8": "Dans le repere d'un prisme droit, les rayons incidents et emergents sont :",
+                "c9": "Si le materiau du catadioptre possede un indice trop faible, la lumiere va :",
+                "c10": "Sur la route, les catadioptres équipent obligatoirement l'arriere des véhicules en :"
+            },
+            "mirage": {
+                "m1": "Le mirage routier donne l'illusion visuelle de la présence d'une :",
+                "m2": "En ete, la forte chaleur emise par le bitume rend l'air en surface tres :",
+                "m3", "Cet air fortement chauffe possede une densite plus :",
+                "m4": "L'indice de refraction de la couche d'air au ras du sol devient donc plus :",
+                "m5": "Le gradient d'indice genere des couches d'air qui font courber la trajectoire en :",
+                "m6": "La reflexion totale progressive se produit car l'angle d'incidence finit par dépasser l' :",
+                "m7": "Les rayons lumineux qui subissent cette courbe proviennent initialement du :",
+                "m8": "Puisque l'indice varie continuellement avec l'altitude, la trajectoire finale est :",
+                "m9": "L'oeil du conducteur prolonge la trajectoire rectilignement et voit une image :",
+                "m10": "Ce phenomene montre que la lumiere ne se propage en ligne droite que si le milieu est :"
+            },
+            "capteur_pluie": {
+                "p1": "Le capteur de pluie automatique d'une automobile est generalement place derriere le :",
+                "p2": "La source lumineuse utilisee par l'emetteur is une LED fonctionnant en :",
+                "p3": "Lorsque le pare-brise est sec, le faisceau lumineux subit sur la face externe une :",
+                "p4": "L'angle d'injection initial de la LED dans le verre est calcule pour etre :",
+                "p5": "Dans des conditions seches, la quantite de lumiere renvoyee au recepteur vaut environ :",
+                "p6": "L'indice de refraction de l'eau (n = 1.33) est superieur a celui de l' :",
+                "p7": "L'arrivee d'eau sur le pare-brise modifie la valeur de l'angle :",
+                "p8": "Lorsque la condition aux limites change a cause de la pluie, la reflexion totale est :",
+                "p9": "Une fraction importante de l'intensite lumineuse infrarouge va alors :",
+                "p10": "La baisse de signal electrique mesuree par la photodiode declenche l'action des :"
+            },
+            "panneau_signalisation": {
+                "s1": "Le revetement brillant des panneaux de signalisation routiere modernes est un :",
+                "s2": "Ce film plastique technique renferme une multitude de structures nommees :",
+                "s3": "Contrairement a un miroir classique, le panneau de signalisation renvoie le flux vers :",
+                "s4": "Cette capacite particuliere a renvoyer la lumiere vers sa source s'appelle la :",
+                "s5", "A l'interieur d'un microprisme, les rayons subissent une serie de reflexions :",
+                "s6": "La surface du panneau semble s'illuminer fortement des que la voiture allume ses :",
+                "s7": "La directivite du faisceau evite de disperser inutilement l'energie vers le :",
+                "s8": "La condition de guidage impose que l'indice du plastique soit superieur a celui de l' :",
+                "s9": "Les facettes microscopiques arriere agissent comme des miroirs parfaits grace a l' :",
+                "s10": "Pour l'automobiliste de nuit, ce systeme passif apporte un gain majeur en termes de :"
+            }
+        }
+
+        dict_enonces_actif = dict_textes_questions_quiz[cas_actif]
 
         html_export_opt7 = f"""<!DOCTYPE html>
         <html>
@@ -1929,24 +1979,28 @@ with tab7:
 
             <div class="sub-title">PARTIE 1 : QUIZ SUR LES CONNAISSANCES ROUTIÈRES (10 PTS)</div>
             <table>
-            <thead>
-                <tr>
-                    <th style="width: 10%;">N°</th>
-                    <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                    <th style="width: 25%; text-align: center;">Attendu</th>
-                    <th style="width: 25%; text-align: center;">Verdict</th>
-                </tr>
-            </thead>
-            <tbody>
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">N°</th>
+                        <th style="width: 45%;">Question posée</th>
+                        <th style="width: 20%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 15%; text-align: center;">Attendu</th>
+                        <th style="width: 15%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
         """
 
+        # Remplissage du tableau de la Partie 1 avec l'énoncé de la question
         for idx_t, (q_id, attendu) in enumerate(dict_q_actif.items(), 1):
             cle_saisie = f"col_g_quiz_opt7_{cas_actif}_{q_id}"
             saisie = st.session_state.get(cle_saisie, "Choisir...")
+            enonce_q = dict_enonces_actif.get(q_id, "Question d'optique routière")
+            
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_opt7 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
-
+            html_export_opt7 += f"<tr><td>{idx_t}</td><td>{enonce_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            
         html_export_opt7 += """
                 </tbody>
             </table>
@@ -1955,7 +2009,7 @@ with tab7:
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 10%;">N°</th>
+                        <th style="width: 10%;">Emplacement</th>
                         <th style="width: 40%; text-align: center;">Saisie Eleve</th>
                         <th style="width: 25%; text-align: center;">Attendu</th>
                         <th style="width: 25%; text-align: center;">Verdict</th>
@@ -1964,9 +2018,8 @@ with tab7:
                 <tbody>
         """
 
-        # Appel des correspondances exactes re-déclarées (1 à 10) avec le suffixe complet
+        # Remplissage du tableau de la Partie 2 pour les 10 trous
         reponses_trous_officiel = reponses_attendues_trous[cas_actif]
-
         for idx_t in range(1, 11):
             t_key = f"t{idx_t}_opt7"
             saisie = st.session_state.get(f"opt7_{t_key}", "Choisir...")
