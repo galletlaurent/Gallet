@@ -596,11 +596,15 @@ def dessiner_fibre_optique_avancee_matplotlib():
             # Dessin de la normale locale et de l'arc au premier point de rebond pour la démonstration
             if rebond == 0:
                 ax.plot([x_suivant, x_suivant], [y_suivant - 15, y_suivant + 35], color="#64748b", linestyle=":", lw=1.2)
-                # Correction de l'orientation de l'arc (Y inversé, quart inférieur droit)
-                arc_r = patches.Arc((x_suivant, y_suivant), 30, 30, angle=0, theta1=90 - theta_interne_deg, theta2=90, edgecolor="#cbd5e1", lw=1)
+                
+                # --- ARC CORRIGÉ POUR LE REBOND SUPERIEUR GAUCHE ---
+                arc_r = patches.Arc((x_suivant, y_suivant), 30, 30, angle=0, 
+                                    theta1=270, theta2=270 + theta_interne_deg, 
+                                    edgecolor="#cbd5e1", lw=1, zorder=5)
                 ax.add_patch(arc_r)
-                ax.text(x_suivant + 5, y_suivant + 15, "i > ic", color="#cbd5e1", fontsize=7, fontweight="bold")
-
+                
+                # Repositionnement léger du texte associé à gauche de la normale
+                ax.text(x_suivant - 8, y_suivant + 15, "i > ic", color="#cbd5e1", fontsize=7, fontweight="bold", ha="right")
             # Préparation du rebond suivant (changement de direction verticale)
             x_actuel = x_suivant
             y_actuel = y_suivant
@@ -1176,7 +1180,7 @@ with tab3:
     st.header("**Manipulation  : Illusion d'optique (Affichage Tete Haute - HUD)**")
             
 
-    st.markdown("<p style='color:#991b1b; font-weight:bold; margin-bottom:2px;'>2. DOUBLE REFRACTION</p>", unsafe_allow_html=True)
+    st.markdown("<p style='color:#991b1b; font-weight:bold; margin-bottom:2px;'> DOUBLE REFRACTION</p>", unsafe_allow_html=True)
     
     choix_lampe2 = st.selectbox("Source lumineuse  :", liste_lampes, key="var_choix_lampe_double2", disabled=st.session_state.opt4_verrouille)
     angle_double = st.slider("Angle d'incidence double (°) :", min_value=0.0, max_value=90.0, value=45.0, step=1.0, key="var_angle_double", disabled=st.session_state.opt4_verrouille)
@@ -1198,7 +1202,7 @@ with tab3:
 with tab4:
     st.header("**Réflexion totale : application à la fibre optique**")
 
-    st.markdown("<p style='color:#38bdf8; font-weight:bold; margin-bottom:2px;'>3. LA FIBRE OPTIQUE PRO</p>", unsafe_allow_html=True)
+    st.markdown("<p style='color:#38bdf8; font-weight:bold; margin-bottom:2px;'> LA FIBRE OPTIQUE PRO</p>", unsafe_allow_html=True)
     
     # 1. Sélection des composants et de la lampe
     choix_lampe_fibre = st.selectbox("Source lumineuse (Fibre) :", liste_lampes, key="var_choix_lampe_fibre", index=0)
