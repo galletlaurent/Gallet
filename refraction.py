@@ -1646,6 +1646,13 @@ with tab7:
         except Exception:
             st.warning(f"Fichier image {app_active['image_filename']} introuvable dans le dossier.")  
 
+    st.markdown("---")
+    
+    # Appel de la fonction pour générer et afficher les questions à l'écran
+    dict_quiz_opt7, dict_trous_opt7 = afficher_questions_optique7(
+        verrouille=st.session_state.get("opt7_verrouille", False)
+    )
+
     st.write("---")
     st.subheader("Validation et Generation du Bilan Officiel - Optique 7")
 
