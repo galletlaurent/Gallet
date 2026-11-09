@@ -699,7 +699,7 @@ def dessiner_reflexion_totale_directe_matplotlib():
     ax.add_patch(patches.Rectangle((15, y_dioptre), w - 30, h - 10 - y_dioptre, facecolor="#e0f2fe", alpha=0.2, edgecolor="none"))
     ax.plot([15, w - 15], [y_dioptre, y_dioptre], color="#475569", lw=2, zorder=3)
 
-    # Axe de la Normale verticale passant par le centre
+    # Axe de la Normale verticale (S'arrête là où il faut selon le cas pour la clarté)
     ax.plot([x0, x0], [20, h - 20], color="#94a3b8", linestyle=(0, (4, 4)), lw=1.2, zorder=2)
     ax.text(x0 + 6, 25, "Normale", color="#64748b", fontsize=7, fontweight="bold", ha="left")
 
@@ -709,12 +709,13 @@ def dessiner_reflexion_totale_directe_matplotlib():
     y_inc = y_dioptre + longueur_rayon * math.cos(theta1_rad) # Plus grand car l'axe Y descend
     ax.annotate("", xy=(x0, y_dioptre), xytext=(x_inc, y_inc), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
 
-    # Arc et étiquette pour l'angle d'incidence i1 (en bas à gauche)
+    # Arc et étiquette pour l'angle d'incidence i (en bas à gauche du point d'impact)
+    # L'angle 90° pointe vers le bas. L'arc va de 90° à 90° + theta1
     arc_i = patches.Arc((x0, y_dioptre), 40, 40, angle=0, theta1=90, theta2=90 + theta1_deg, edgecolor="#cbd5e1", lw=1.2, zorder=5)
     ax.add_patch(arc_i)
     ax.text(x0 - 15 * math.sin(theta1_rad/2) - 8, y_dioptre + 25 * math.cos(theta1_rad/2), "i", color="#cbd5e1", fontsize=8, fontweight="bold", ha="right")
 
-    # Condition de calcul
+    # Calcul de la condition limite
     if n1 > n2:
         sin_lim = n2 / n1
         angle_critique_deg = math.degrees(math.asin(sin_lim))
@@ -725,12 +726,14 @@ def dessiner_reflexion_totale_directe_matplotlib():
     sin_theta2 = (n1 * math.sin(theta1_rad)) / n2
 
     if sin_theta2 > 1.0:
-        # Cas de la Réflexion totale interne pure
+        # --- CAS DE LA RÉFLEXION TOTALE INTERNE PURE ---
+        # Le rayon rebondit vers le bas à droite
         x_refl = x0 + longueur_rayon * math.sin(theta1_rad)
         y_refl = y_dioptre + longueur_rayon * math.cos(theta1_rad)
         ax.annotate("", xy=(x_refl, y_refl), xytext=(x0, y_dioptre), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
         
-        # Arc pour l'angle réfléchi (en bas à droite)
+        # Arc pour l'angle réfléchi r (en bas à droite du point d'impact)
+        # Il va de 90 - theta1 jusqu'à 90° pour épouser la normale du bas
         arc_r_refl = patches.Arc((x0, y_dioptre), 40, 40, angle=0, theta1=90 - theta1_deg, theta2=90, edgecolor=couleur_laser, lw=1.2, zorder=5)
         ax.add_patch(arc_r_refl)
         ax.text(x0 + 15 * math.sin(theta1_rad/2) + 8, y_dioptre + 25 * math.cos(theta1_rad/2), "r", color=couleur_laser, fontsize=8, fontweight="bold", ha="left")
@@ -738,21 +741,23 @@ def dessiner_reflexion_totale_directe_matplotlib():
         msg, color = "RÉFLEXION TOTALE INTERNE : Le rayon reste piégé.", "#ef4444"
         txt_math = f"Indices : n1={n1:.2f} > n2={n2:.2f}\nAngle critique = {angle_critique_deg:.1f}°\ni = {theta1_deg:.1f}° > Angle critique\n-> 100% Réfléchi !"
     else:
-        # Cas de la réfraction classique vers le haut
+        # --- CAS DE LA RÉFRACTION CLASSIQUE ---
+        # Le rayon s'échappe vers le haut à droite
         theta2_rad = math.asin(sin_theta2)
         theta2_deg = math.degrees(theta2_rad)
         
         x_ref = x0 + longueur_rayon * math.sin(theta2_rad)
-        y_ref = y_dioptre - longueur_rayon * math.cos(theta2_rad)
+        y_ref = y_dioptre - longueur_rayon * math.cos(theta2_rad) # Moins car il monte dans le repère inversé
         ax.annotate("", xy=(x_ref, y_ref), xytext=(x0, y_dioptre), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
         
-        # Arc pour l'angle réfracté r (en haut à droite, ajusté pour l'axe Y inversé)
+        # Arc pour l'angle réfracté r (en haut à droite de la normale)
+        # L'angle 270° pointe vers le haut. On tourne de 270° à 270° + theta2
         arc_r = patches.Arc((x0, y_dioptre), 40, 40, angle=0, theta1=270, theta2=270 + theta2_deg, edgecolor="#cbd5e1", lw=1.2, zorder=5)
         ax.add_patch(arc_r)
         ax.text(x0 + 15 * math.sin(theta2_rad/2) + 8, y_dioptre - 25 * math.cos(theta2_rad/2), "r", color="#cbd5e1", fontsize=8, fontweight="bold", ha="left")
 
         msg, color = "RÉFRACTION CLASSIQUE : Le rayon traverse l'interface.", "#10b981"
-        txt_math = f"Indices : n1={n1:.2f}, n2={n2:.2f}\nAngle critique = {angle_critique_deg:.1f}° (si applicable)\ni = {theta1_deg:.1f}°\nr = {theta2_deg:.1f}°"
+        txt_math = f"Indices : n1={n1:.2f}, n2={n2:.2f}\nAngle critique = {angle_critique_deg:.1f}°\ni = {theta1_deg:.1f}°\nr = {theta2_deg:.1f}°"
 
     # Habillage textuel
     ax.text(25, 20, "ATELIER DE SPÉCIALITÉ - RÉFLEXION TOTALE INTERNE", color="#38bdf8", fontsize=9, fontweight="bold", ha="left")
@@ -1207,6 +1212,31 @@ with tab3:
 
 with tab4:
     st.header("**Réflexion totale : application à la fibre optique**")
+
+    st.markdown("<p style='color:#38bdf8; font-weight:bold; margin-bottom:2px;'>3.A - PHÉNOMÈNE DE RÉFLEXION TOTALE INTERNE</p>", unsafe_allow_html=True)
+    
+    # Sélecteurs pour la réflexion totale directe (Source en bas)
+    choix_lampe_refl = st.selectbox("Source lumineuse (Réflexion totale) :", liste_lampes, key="var_choix_lampe_refl", index=0)
+    
+    col_refl1, col_refl2 = st.columns(2)
+    with col_refl1:
+        milieu_bas = st.selectbox("Milieu inférieur (dense, n1) :", liste_milieux, index=2, key="var_choix_milieu_bas") # Ex: Verre Couronne
+    with col_refl2:
+        milieu_haut = st.selectbox("Milieu supérieur (léger, n2) :", liste_milieux, index=0, key="var_choix_milieu_haut") # Ex: Air
+        
+    angle_incidence_bas = st.slider("Angle d'incidence depuis le bas (i) (°) :", min_value=0.0, max_value=90.0, value=50.0, step=0.5, key="var_angle_incidence_bas")
+
+    st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
+
+    # Rendu du schéma de la Réflexion Totale
+    fig_refl_totale = dessiner_reflexion_totale_directe_matplotlib()
+    st.pyplot(fig_refl_totale, use_container_width=True)
+
+    # Boîte blanche d'information pour la réflexion totale
+    st.info(st.session_state.get("opt4_txt_box_refl_totale", "Ajustez les curseurs pour initialiser la simulation de réflexion totale."))
+
+    st.markdown("---") # Ligne de séparation visuelle entre les deux ateliers
+
 
     st.markdown("<p style='color:#38bdf8; font-weight:bold; margin-bottom:2px;'> LA FIBRE OPTIQUE PRO</p>", unsafe_allow_html=True)
     
