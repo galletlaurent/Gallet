@@ -458,7 +458,7 @@ def afficher_questions_optique7(verrouille=False):
 
             ct13, ct14 = st.columns([0.75, 0.25], vertical_alignment="bottom")
             with ct13: st.write("7. Mais lorsque des gouttes d'eau se déposent, l'indice externe passe à")
-                with ct14: t7 = st.selectbox("", ["Choisir...", "1.33", "1.00", "1.50", "2.42"], key="opt7_t7", disabled=verrouille, label_visibility="collapsed")
+            with ct14: t7 = st.selectbox("", ["Choisir...", "1.33", "1.00", "1.50", "2.42"], key="opt7_t7", disabled=verrouille, label_visibility="collapsed")
 
             ct15, ct16 = st.columns([0.75, 0.25], vertical_alignment="bottom")
             with ct15: st.write("8. Cette élévation d'indice à l'interface modifie l'angle limite : la condition est")
