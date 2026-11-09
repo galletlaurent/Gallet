@@ -526,18 +526,6 @@ def afficher_questions_optique7(verrouille=False):
 
 
 
-            
-        # Clôture invariable de l'exercice à trous
-        ct7, ct8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with ct7: st.write("Ces diverses applications routieres mettent en evidence la maitrise des phenomenes optiques pour la securite.")
-
-        dict_trous_opt7 = {
-            "t1_opt7": t1, "t2_opt7": t2, "t3_opt7": t3
-        }
-
-    return dict_quiz_opt7, dict_trous_opt7
-
-
 if "lampes_data" not in st.session_state:
     st.session_state.lampes_data = {
         "Lumière du Soleil": {
