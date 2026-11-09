@@ -1889,10 +1889,22 @@ with tab7:
 
         
         reponses_attendues_trous = {
-            "catadioptre": {"t1_opt7": "Prismes", "t2_opt7": "Réflexion totale", "t3_opt7": "Conducteur"},
-            "mirage": {"t1_opt7": "Air", "t2_opt7": "Curviligne", "t3_opt7": "Ciel"},
-            "capteur_pluie": {"t1_opt7": "Pare-brise", "t2_opt7": "Totale", "t3_opt7": "Essuie-glaces"},
-            "panneau_signalisation": {"t1_opt7": "Microprismes", "t2_opt7": "Limite", "t3_opt7": "Source"}
+            "catadioptre": {
+                "t1_opt7": "Phares", "t2_opt7": "Avant", "t3_opt7": "Prismes", "t4_opt7": "Droit", "t5_opt7": "Incident",
+                "t6_opt7": "Réflexions", "t7_opt7": "Totales", "t8_opt7": "Internes", "t9_opt7": "Parallèle", "t10_opt7": "Conducteur"
+            },
+            "mirage": {
+                "t1_opt7": "Soleil", "t2_opt7": "Bitume", "t3_opt7": "Chaud", "t4_opt7": "Faible", "t5_opt7": "Supérieures",
+                "t6_opt7": "Réfringent", "t7_opt7": "Critique", "t8_opt7": "Totale", "t9_opt7": "Ciel", "t10_opt7": "Illusion"
+            },
+            "capteur_pluie": {
+                "t1_opt7": "Diode", "t2_opt7": "Verre", "t3_opt7": "Supérieur", "t4_opt7": "Air", "t5_opt7": "Totale",
+                "t6_opt7": "Récepteur", "t7_opt7": "Gouttes", "t8_opt7": "Eau", "t9_opt7": "Brisée", "t10_opt7": "Essuie-glaces"
+            },
+            "panneau_signalisation": {
+                "t1_opt7": "Film", "t2_opt7": "Microprismes", "t3_opt7": "Phares", "t4_opt7": "Transparents", "t5_opt7": "Facettes",
+                "t6_opt7": "Interne", "t7_opt7": "Supérieur", "t8_opt7": "Source", "t9_opt7": "Luminosité", "t10_opt7": "Sécurité routière"
+            }
         }
 
         
