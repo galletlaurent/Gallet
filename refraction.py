@@ -463,6 +463,296 @@ if "produits_indices" not in st.session_state:
         "Gazole / Diesel (n = 1.45)": 1.45,
     }
 
+def dessiner_fibre_optique_avancee_matplotlib():
+    """Genere le schema complet d'une fibre optique à sauts d'indice.
+    Incorpore l'ouverture numerique (ON), l'angle maximal d'injection dans l'air,
+    et un nombre de rebonds configurable.
+    """
+    import math
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+
+    # Dimensions du canevas
+    w = 600
+    h = 280
+    
+    # Structure de la fibre (interfaces horizontales)
+    y_gaine_haut = 60.0
+    y_gaine_bas = 220.0
+    hauteur_coeur = y_gaine_bas - y_gaine_haut
+    y_centre = h / 2.0
+
+    fig, ax = plt.subplots(figsize=(7.5, 3.8), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, w)
+    ax.set_ylim(0, h)
+    ax.invert_yaxis()  # Alignement repere informatique inversé
+    ax.axis("off")
+
+    # 1. Récupération des variables de session Streamlit
+    n_coeur = st.session_state.get("var_n_coeur", 1.50)
+    n_gaine = st.session_state.get("var_n_gaine", 1.40)
+    n_air = 1.00  # Milieu extérieur d'injection
+    
+    # Curseur pour le nombre de rebonds (ex: st.slider("Nombre de rebonds", 1, 5, 3))
+    nb_rebonds_max = st.session_state.get("var_nb_rebonds", 3)
+    
+    nom_lampe = st.session_state.get("var_choix_lampe_fibre", "Lumiere du Soleil")
+    couleur_laser = st.session_state.lampes_data[nom_lampe]["couleur_source"] if "lampes_data" in st.session_state else "#ef4444"
+
+    # Fond visuel : Gaines et Coeur
+    ax.add_patch(patches.Rectangle((0, 10), w, y_gaine_haut - 10, facecolor="#38bdf8", alpha=0.05, edgecolor="none"))
+    ax.add_patch(patches.Rectangle((0, y_gaine_haut), w, hauteur_coeur, facecolor="#e0f2fe", alpha=0.12, edgecolor="none"))
+    ax.add_patch(patches.Rectangle((0, y_gaine_bas), w, h - 10 - y_gaine_bas, facecolor="#38bdf8", alpha=0.05, edgecolor="none"))
+    
+    # Lignes d'interfaces horizontales
+    ax.plot([0, w], [y_gaine_haut, y_gaine_haut], color="#475569", lw=1.5, zorder=3)
+    ax.plot([0, w], [y_gaine_bas, y_gaine_bas], color="#475569", lw=1.5, zorder=3)
+
+    # Face d'entrée de la fibre (Dioptre d'entrée vertical à x = 60)
+    x_entree = 60.0
+    ax.plot([x_entree, x_entree], [y_gaine_haut, y_gaine_bas], color="#94a3b8", lw=2, zorder=3)
+
+    if n_coeur <= n_gaine:
+        msg, color = "ERREUR : L'indice du cœur doit être strictement supérieur à celui de la gaine.", "#ef4444"
+        txt_math = "Guidage impossible (n_coeur <= n_gaine)"
+        ax.text(25, 35, msg, color=color, fontsize=7, fontweight="bold", ha="left")
+        st.session_state.opt4_txt_box_fibre = txt_math
+        return fig
+
+    # 2. CALCULS THÉORIQUES (Ouverture Numérique et Cône d'Acceptance)
+    # Ouverture Numérique (ON)
+    on = math.sqrt(n_coeur**2 - n_gaine**2)
+    
+    # Angle maximal d'injection dans l'air (i_max) pour avoir réflexion totale interne
+    if on <= 1.0:
+        i_max_rad = math.asin(on / n_air)
+        i_max_deg = math.degrees(i_max_rad)
+        txt_i_max = f"{i_max_deg:.1f}°"
+    else:
+        i_max_rad = math.radians(90.0)
+        i_max_deg = 90.0
+        txt_i_max = "90° (Total)"
+
+    # Angle critique interne cœur/gaine (par rapport à la normale verticale)
+    theta_c_rad = math.asin(n_gaine / n_coeur)
+    theta_c_deg = math.degrees(theta_c_rad)
+
+    # 3. PROPAGATION ET REBONDS MULTIPLES (Boucle dynamique)
+    # Angle d'injection choisi par l'utilisateur à l'entrée de la fibre
+    # (ex: st.slider("Angle d'incidence externe (i1)", 0.0, 70.0, 25.0))
+    i1_deg = st.session_state.get("var_angle_injection_externe", 25.0)
+    i1_rad = math.radians(i1_deg)
+
+    # Réfraction au dioptre d'entrée (Air -> Cœur)
+    sin_r1 = (n_air * math.sin(i1_rad)) / n_coeur
+    r1_rad = math.asin(sin_r1)
+    
+    # Angle du rayon à l'intérieur du cœur par rapport aux parois horizontales (l'axe X)
+    alpha_interne_rad = r1_rad
+    # Angle du rayon à l'intérieur du cœur par rapport à la normale à la paroi (axe Y)
+    theta_interne_rad = (math.pi / 2.0) - alpha_interne_rad
+    theta_interne_deg = math.degrees(theta_interne_rad)
+
+    # Rayon incident extérieur (de l'air jusqu'à la face d'entrée)
+    x_source = x_entree - 45.0
+    y_source = y_centre - 45.0 * math.tan(i1_rad)
+    ax.annotate("", xy=(x_entree, y_centre), xytext=(x_source, y_source),
+                arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
+
+    # Initialisation du parcours des coordonnées pour la boucle de rebonds
+    x_actuel = x_entree
+    y_actuel = y_centre
+    signe_y = -1  # Commence en montant vers la gaine du haut
+
+    # Vérification du guidage (Est-ce que l'angle interne dépasse l'angle critique ?)
+    if theta_interne_deg >= theta_c_deg:
+        msg, color = "GUIDAGE VALIDÉ : Réflexions totales internes parfaites.", "#10b981"
+        
+        # Tracé des rebonds successifs demandés par l'utilisateur
+        for rebond in range(nb_rebonds_max):
+            if signe_y == -1:
+                y_suivant = y_gaine_haut
+                dy = y_actuel - y_gaine_haut
+            else:
+                y_suivant = y_gaine_bas
+                dy = y_gaine_bas - y_actuel
+
+            dx = dy / math.tan(alpha_interne_rad)
+            x_suivant = x_actuel + dx
+
+            # Sécurité pour ne pas tracer hors de l'image à droite
+            if x_suivant > w - 10:
+                x_suivant = w - 10
+                y_suivant = y_actuel + (signe_y * (x_suivant - x_actuel) * math.tan(alpha_interne_rad))
+                ax.annotate("", xy=(x_suivant, y_suivant), xytext=(x_actuel, y_actuel),
+                            arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
+                break
+
+            # Tracé du segment de rebond
+            ax.annotate("", xy=(x_suivant, y_suivant), xytext=(x_actuel, y_actuel),
+                        arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
+
+            # Dessin de la normale locale et de l'arc au premier point de rebond pour la démonstration
+            if rebond == 0:
+                ax.plot([x_suivant, x_suivant], [y_suivant - 15, y_suivant + 35], color="#64748b", linestyle=":", lw=1.2)
+                # Correction de l'orientation de l'arc (Y inversé, quart inférieur droit)
+                arc_r = patches.Arc((x_suivant, y_suivant), 30, 30, angle=0, theta1=90 - theta_interne_deg, theta2=90, edgecolor="#cbd5e1", lw=1)
+                ax.add_patch(arc_r)
+                ax.text(x_suivant + 5, y_suivant + 15, "i > ic", color="#cbd5e1", fontsize=7, fontweight="bold")
+
+            # Préparation du rebond suivant (changement de direction verticale)
+            x_actuel = x_suivant
+            y_actuel = y_suivant
+            signe_y *= -1
+            
+        # Prolongement final vers la sortie droite du graphe si de la place reste disponible
+        if x_actuel < w - 10:
+            x_fin = w - 10
+            y_fin = y_actuel + (signe_y * (x_fin - x_actuel) * math.tan(alpha_interne_rad))
+            ax.plot([x_actuel, x_fin], [y_actuel, y_fin], color=couleur_laser, lw=2.5, zorder=4)
+            
+    else:
+        msg, color = "RÉFRACTION DANS LA GAINE : Rayon perdu (Angle trop grand).", "#ef4444"
+        # Trajectoire réfractée fuyante hors du cœur à la première paroi
+        dy = y_actuel - y_gaine_haut
+        dx = dy / math.tan(alpha_interne_rad)
+        x_perte = x_actuel + dx
+        ax.annotate("", xy=(x_perte, y_gaine_haut), xytext=(x_actuel, y_actuel), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
+        
+        # Loi de Descartes pour l'angle de fuite dans la gaine n2
+        sin_gaine = (n_coeur * math.sin(theta_interne_rad)) / n_gaine
+        angle_gaine_rad = math.asin(sin_gaine)
+        dx_fuite = 40 * math.sin(angle_gaine_rad)
+        dy_fuite = 40 * math.cos(angle_gaine_rad)
+        ax.annotate("", xy=(x_perte + dx_fuite, y_gaine_haut - dy_fuite), xytext=(x_perte, y_gaine_haut), 
+                    arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=1.5, linestyle="--"), zorder=4)
+
+    # 4. Textes d'affichage et habillage des données calculées
+    txt_math = (
+        f"Données de la Fibre :\n"
+        f"• Ouverture Numérique (ON) = {on:.3f}\n"
+        f"• Cône d'Acceptance (i_max) = {txt_i_max}\n"
+        f"• Incidence choisie i1 = {i1_deg:.1f}°\n"
+        f"• Angle critique interne (ic) = {theta_c_deg:.1f}°\n"
+        f"• Angle d'impact interne = {theta_interne_deg:.1f}°\n"
+        f"• Nombre de rebonds tracés = {nb_rebonds_max}"
+    )
+
+    ax.text(25, 20, "ATELIER 3 - OPTIQUE GÉOMÉTRIQUE : LA FIBRE OPTIQUE PRO", color="#38bdf8", fontsize=9, fontweight="bold", ha="left")
+    ax.text(25, 35, msg, color=color, fontsize=7, fontweight="bold", ha="left")
+    
+    # Étiquettes de légendes sur les milieux
+    ax.text(w - 60, y_gaine_haut - 12, "Gaine (n2)", color="#64748b", fontsize=7, fontweight="bold")
+    ax.text(w - 60, y_centre, "Cœur (n1)", color="#94a3b8", fontsize=8, fontweight="bold")
+    ax.text(w - 60, y_gaine_bas + 15, "Gaine (n2)", color="#64748b", fontsize=7, fontweight="bold")
+    ax.text(x_entree - 10, y_gaine_bas - 15, "Face\nd'entrée", color="#94a3b8", fontsize=6, ha="right", style="italic")
+
+    st.session_state.opt4_txt_box_fibre = txt_math
+    return fig
+
+def dessiner_reflexion_totale_directe_matplotlib():
+    """Genere le schema d'une reflexion totale interne pure (Source en bas, Dioptre horizontal).
+    Version vectorielle haute definition synchrone pour Streamlit.
+    """
+    import math
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
+
+    w = 600
+    h = 280
+    x0 = 300.0  
+    y_dioptre = 110.0  # Position horizontale de la surface
+
+    fig, ax = plt.subplots(figsize=(7.5, 3.8), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(15, w - 15)
+    ax.set_ylim(0, h)
+    ax.invert_yaxis()  # Alignement sur le repere informatique inversé
+    ax.axis("off")
+
+    # Lecture des paramètres de la session active
+    m1_nom = st.session_state.get("var_choix_milieu_bas", "Verre Couronne (n = 1.52)")
+    m2_nom = st.session_state.get("var_choix_milieu_haut", "Air (n = 1.00)")
+    
+    n1 = st.session_state.produits_indices[m1_nom] if "produits_indices" in st.session_state else 1.52
+    n2 = st.session_state.produits_indices[m2_nom] if "produits_indices" in st.session_state else 1.00
+
+    nom_lampe = st.session_state.get("var_choix_lampe_refl", "Lumiere du Soleil")
+    couleur_laser = st.session_state.lampes_data[nom_lampe]["couleur_source"] if "lampes_data" in st.session_state else "#ef4444"
+
+    theta1_deg = st.session_state.get("var_angle_incidence_bas", 50.0)
+    theta1_rad = math.radians(theta1_deg)
+
+    # Tracé des milieux (Milieu léger en haut, Milieu dense transparent en bas)
+    ax.add_patch(patches.Rectangle((15, 10), w - 30, y_dioptre - 10, facecolor="#f8fafc", alpha=0.1, edgecolor="none"))
+    ax.add_patch(patches.Rectangle((15, y_dioptre), w - 30, h - 10 - y_dioptre, facecolor="#e0f2fe", alpha=0.2, edgecolor="none"))
+    ax.plot([15, w - 15], [y_dioptre, y_dioptre], color="#475569", lw=2, zorder=3)
+
+    # Axe de la Normale verticale passant par le centre
+    ax.plot([x0, x0], [20, h - 20], color="#94a3b8", linestyle=(0, (4, 4)), lw=1.2, zorder=2)
+    ax.text(x0 + 6, 25, "Normale", color="#64748b", fontsize=7, fontweight="bold", ha="left")
+
+    # Rayon incident provenant DU BAS et allant vers le centre (x0, y_dioptre)
+    longueur_rayon = 100
+    x_inc = x0 - longueur_rayon * math.sin(theta1_rad)
+    y_inc = y_dioptre + longueur_rayon * math.cos(theta1_rad) # Plus grand car l'axe Y descend
+    ax.annotate("", xy=(x0, y_dioptre), xytext=(x_inc, y_inc), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
+
+    # Arc et étiquette pour l'angle d'incidence i1 (en bas à gauche)
+    arc_i = patches.Arc((x0, y_dioptre), 40, 40, angle=0, theta1=90, theta2=90 + theta1_deg, edgecolor="#cbd5e1", lw=1.2, zorder=5)
+    ax.add_patch(arc_i)
+    ax.text(x0 - 15 * math.sin(theta1_rad/2) - 8, y_dioptre + 25 * math.cos(theta1_rad/2), "i", color="#cbd5e1", fontsize=8, fontweight="bold", ha="right")
+
+    # Condition de calcul
+    if n1 > n2:
+        sin_lim = n2 / n1
+        angle_critique_deg = math.degrees(math.asin(sin_lim))
+    else:
+        sin_lim = 2.0  # Impossible d'avoir de réflexion totale si n1 <= n2
+        angle_critique_deg = 0.0
+
+    sin_theta2 = (n1 * math.sin(theta1_rad)) / n2
+
+    if sin_theta2 > 1.0:
+        # Cas de la Réflexion totale interne pure
+        x_refl = x0 + longueur_rayon * math.sin(theta1_rad)
+        y_refl = y_dioptre + longueur_rayon * math.cos(theta1_rad)
+        ax.annotate("", xy=(x_refl, y_refl), xytext=(x0, y_dioptre), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
+        
+        # Arc pour l'angle réfléchi (en bas à droite)
+        arc_r_refl = patches.Arc((x0, y_dioptre), 40, 40, angle=0, theta1=90 - theta1_deg, theta2=90, edgecolor=couleur_laser, lw=1.2, zorder=5)
+        ax.add_patch(arc_r_refl)
+        ax.text(x0 + 15 * math.sin(theta1_rad/2) + 8, y_dioptre + 25 * math.cos(theta1_rad/2), "r", color=couleur_laser, fontsize=8, fontweight="bold", ha="left")
+
+        msg, color = "RÉFLEXION TOTALE INTERNE : Le rayon reste piégé.", "#ef4444"
+        txt_math = f"Indices : n1={n1:.2f} > n2={n2:.2f}\nAngle critique = {angle_critique_deg:.1f}°\ni = {theta1_deg:.1f}° > Angle critique\n-> 100% Réfléchi !"
+    else:
+        # Cas de la réfraction classique vers le haut
+        theta2_rad = math.asin(sin_theta2)
+        theta2_deg = math.degrees(theta2_rad)
+        
+        x_ref = x0 + longueur_rayon * math.sin(theta2_rad)
+        y_ref = y_dioptre - longueur_rayon * math.cos(theta2_rad)
+        ax.annotate("", xy=(x_ref, y_ref), xytext=(x0, y_dioptre), arrowprops=dict(arrowstyle="->", color=couleur_laser, lw=2.5), zorder=4)
+        
+        # Arc pour l'angle réfracté r (en haut à droite, ajusté pour l'axe Y inversé)
+        arc_r = patches.Arc((x0, y_dioptre), 40, 40, angle=0, theta1=270, theta2=270 + theta2_deg, edgecolor="#cbd5e1", lw=1.2, zorder=5)
+        ax.add_patch(arc_r)
+        ax.text(x0 + 15 * math.sin(theta2_rad/2) + 8, y_dioptre - 25 * math.cos(theta2_rad/2), "r", color="#cbd5e1", fontsize=8, fontweight="bold", ha="left")
+
+        msg, color = "RÉFRACTION CLASSIQUE : Le rayon traverse l'interface.", "#10b981"
+        txt_math = f"Indices : n1={n1:.2f}, n2={n2:.2f}\nAngle critique = {angle_critique_deg:.1f}° (si applicable)\ni = {theta1_deg:.1f}°\nr = {theta2_deg:.1f}°"
+
+    # Habillage textuel
+    ax.text(25, 20, "ATELIER DE SPÉCIALITÉ - RÉFLEXION TOTALE INTERNE", color="#38bdf8", fontsize=9, fontweight="bold", ha="left")
+    ax.text(25, 35, msg, color=color, fontsize=7, fontweight="bold", ha="left")
+    ax.text(25, y_dioptre - 15, f"Milieu supérieur : {m2_nom}", color="#64748b", fontsize=7, ha="left")
+    ax.text(25, y_dioptre + 20, f"Milieu inférieur : {m1_nom}", color="#94a3b8", fontsize=7, ha="left")
+
+    st.session_state.opt4_txt_box_refl_totale = txt_math
+    return fig
+
 def dessiner_double_refraction_lame_matplotlib():
     import math
     import matplotlib.pyplot as plt
@@ -906,8 +1196,32 @@ with tab3:
     st.info(st.session_state.get("opt4_txt_box_double", "Ajustez les curseurs pour initialiser la lame."))
 
 with tab4:
-    st.header("**Manipulation : Conduite & Topographie (Simulation Retroviseurs)**")
-            
+    st.header("**Réflexion totale : application à la fibre optique**")
+
+    st.markdown("<p style='color:#38bdf8; font-weight:bold; margin-bottom:2px;'>3. LA FIBRE OPTIQUE PRO</p>", unsafe_allow_html=True)
+    
+    # 1. Sélection des composants et de la lampe
+    choix_lampe_fibre = st.selectbox("Source lumineuse (Fibre) :", liste_lampes, key="var_choix_lampe_fibre", index=0)
+    
+    col_fibre1, col_fibre2 = st.columns(2)
+    with col_fibre1:
+        # Configuration des indices du cœur et de la gaine
+        n_coeur = st.slider("Indice de réfraction du Cœur (n1) :", min_value=1.40, max_value=1.80, value=1.52, step=0.01, key="var_n_coeur")
+    with col_fibre2:
+        n_gaine = st.slider("Indice de réfraction de la Gaine (n2) :", min_value=1.30, max_value=1.45, value=1.40, step=0.01, key="var_n_gaine")
+
+    # 2. Réglages des propriétés du rayon lumineux
+    angle_injection = st.slider("Angle d'incidence externe (i1) (°) :", min_value=0.0, max_value=85.0, value=25.0, step=0.5, key="var_angle_injection_externe")
+    nb_rebonds = st.slider("Nombre maximum de rebonds :", min_value=1, max_value=8, value=4, step=1, key="var_nb_rebonds")
+
+    st.write("<div style='margin-top:10px;'></div>", unsafe_allow_html=True)
+
+    # 3. Rendu du schéma Matplotlib de la fibre optique avancée
+    fig_fibre = dessiner_fibre_optique_avancee_matplotlib()
+    st.pyplot(fig_fibre, use_container_width=True)
+
+    # 4. Boîte d'information mémorisée dans la session
+    st.info(st.session_state.get("opt4_txt_box_fibre", "Ajustez les curseurs pour initialiser la simulation de la fibre optique."))     
 
 
 
