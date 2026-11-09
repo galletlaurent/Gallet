@@ -558,10 +558,16 @@ def dessiner_fibre_optique_avancee_matplotlib():
 
     # Arc pour l'angle d'incidence i1 à l'entrée (mesuré entre l'horizontale et le rayon incident)
     # Compte tenu du repère inversé, l'arc s'oriente de 180° à 180° + i1_deg
-    arc_i1 = patches.Arc((x_entree, y_centre), 35, 35, angle=0, theta1=180, theta2=180 + i1_deg, edgecolor="#cbd5e1", lw=1.2, zorder=5)
+    arc_i1 = patches.Arc((x_entree, y_centre), 35, 35, angle=0, 
+                        theta1=180 - i1_deg, theta2=180, 
+                        edgecolor="#cbd5e1", lw=1.2, zorder=5)
     ax.add_patch(arc_i1)
-    ax.text(x_entree - 25, y_centre - 8, "i1", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center")
-
+    
+    # Positionnement du texte i1 au-dessus de l'axe pointillé
+    x_text_i1 = x_entree - 25 * math.cos(math.radians(i1_deg / 2))
+    y_text_i1 = y_centre - 25 * math.sin(math.radians(i1_deg / 2))
+    ax.text(x_text_i1, y_text_i1, "i1", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center", va="bottom")
+    
     # Initialisation du parcours
     x_actuel = x_entree
     y_actuel = y_centre
@@ -595,13 +601,19 @@ def dessiner_fibre_optique_avancee_matplotlib():
 
             # --- CORRECTION DE L'ARC INTERNE (i > ic) ---
             if rebond == 0:
-                # Normale verticale locale à la paroi supérieure
-                ax.plot([x_suivant, x_suivant], [y_suivant - 15, y_suivant + 35], color="#64748b", linestyle=":", lw=1.2)
-                # L'arc se dessine désormais correctement du côté gauche de cette normale
-                arc_r = patches.Arc((x_suivant, y_suivant), 30, 30, angle=0, theta1=270, theta2=270 + theta_interne_deg, edgecolor="#cbd5e1", lw=1, zorder=5)
+                # Normale verticale descendante locale à la paroi supérieure
+                ax.plot([x_suivant, x_suivant], [y_suivant, y_suivant + 40], color="#64748b", linestyle=":", lw=1.2)
+                
+                # Arc corrigé pour être à l'intérieur du cœur (entre 90° et 90° + theta_interne)
+                arc_r = patches.Arc((x_suivant, y_suivant), 35, 35, angle=0, 
+                                    theta1=90, theta2=90 + theta_interne_deg, 
+                                    edgecolor="#cbd5e1", lw=1, zorder=5)
                 ax.add_patch(arc_r)
-                ax.text(x_suivant - 8, y_suivant + 15, "i > ic", color="#cbd5e1", fontsize=7, fontweight="bold", ha="right")
-
+                
+                # Positionnement du texte sous la paroi, bien à l'intérieur du cœur
+                x_text_refl = x_suivant - 22 * math.sin(theta_interne_rad / 2)
+                y_text_refl = y_suivant + 22 * math.cos(theta_interne_rad / 2)
+                ax.text(x_text_refl, y_text_refl, "i > ic", color="#cbd5e1", fontsize=7, fontweight="bold", ha="right", va="top")
             x_actuel = x_suivant
             y_actuel = y_suivant
             signe_y *= -1
