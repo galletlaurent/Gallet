@@ -559,7 +559,7 @@ def dessiner_fibre_optique_avancee_matplotlib():
     # Arc pour l'angle d'incidence i1 à l'entrée (mesuré entre l'horizontale et le rayon incident)
     # Compte tenu du repère inversé, l'arc s'oriente de 180° à 180° + i1_deg
     arc_i1 = patches.Arc((x_entree, y_centre), 35, 35, angle=0, 
-                        theta1=180 - i1_deg, theta2=180, 
+                        theta1=180, theta2=180 + i1_deg, 
                         edgecolor="#cbd5e1", lw=1.2, zorder=5)
     ax.add_patch(arc_i1)
     
@@ -567,7 +567,6 @@ def dessiner_fibre_optique_avancee_matplotlib():
     x_text_i1 = x_entree - 25 * math.cos(math.radians(i1_deg / 2))
     y_text_i1 = y_centre - 25 * math.sin(math.radians(i1_deg / 2))
     ax.text(x_text_i1, y_text_i1, "i1", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center", va="bottom")
-    
     # Initialisation du parcours
     x_actuel = x_entree
     y_actuel = y_centre
@@ -601,16 +600,16 @@ def dessiner_fibre_optique_avancee_matplotlib():
 
             # --- CORRECTION DE L'ARC INTERNE (i > ic) ---
             if rebond == 0:
-                # Normale verticale descendante locale à la paroi supérieure
+                # Normale verticale descendante locale à la paroi supérieure (axe à 90°)
                 ax.plot([x_suivant, x_suivant], [y_suivant, y_suivant + 40], color="#64748b", linestyle=":", lw=1.2)
                 
-                # Arc corrigé pour être à l'intérieur du cœur (entre 90° et 90° + theta_interne)
+                # Arc ajusté pour aller de la normale (90°) vers le rayon incident à gauche (90 + theta)
                 arc_r = patches.Arc((x_suivant, y_suivant), 35, 35, angle=0, 
                                     theta1=90, theta2=90 + theta_interne_deg, 
                                     edgecolor="#cbd5e1", lw=1, zorder=5)
                 ax.add_patch(arc_r)
                 
-                # Positionnement du texte sous la paroi, bien à l'intérieur du cœur
+                # Positionnement parfait du texte sous la paroi, centré dans l'angle
                 x_text_refl = x_suivant - 22 * math.sin(theta_interne_rad / 2)
                 y_text_refl = y_suivant + 22 * math.cos(theta_interne_rad / 2)
                 ax.text(x_text_refl, y_text_refl, "i > ic", color="#cbd5e1", fontsize=7, fontweight="bold", ha="right", va="top")
