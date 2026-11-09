@@ -1425,9 +1425,23 @@ with tab7:
         st.markdown(app_active["description"])
         st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
         
-        # Récupération de la couleur globale de l'application si disponible pour le tracé de rayons
+        # Récupération dynamique de la couleur globale de la source lumineuse
         couleur_faisceau_bouton = "#ef4444"
         if "var_choix_lampe_simple" in st.session_state and "lampes_data" in st.session_state:
+            lampe_sel = st.session_state.var_choix_lampe_simple
+            if lampe_sel in st.session_state.lampes_data:
+                couleur_faisceau_bouton = st.session_state.lampes_data[lampe_sel]["couleur_source"]
+
+        # Affichage du schéma vectoriel Matplotlib
+        st.markdown("**Schéma optique de principe :**")
+        fig_routier = dessiner_schema_explicatif_routier(st.session_state.app_routiere_choisie, couleur_faisceau=couleur_faisceau_bouton)
+        st.pyplot(fig_routier, use_container_width=True)
+
+    with col_visualisation:
+        try:
+            st.image(app_active["image_filename"], caption="Illustration en situation réelle", use_container_width=True)
+        except Exception:
+            st.warning(f"Fichier image {app_active['image_filename']} introuvable dans le dossier.")  
 
 with tab8:
     st.header("**Manipulation  : Application Navale (Le Periscope du sous-marin)**")
