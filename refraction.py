@@ -1888,7 +1888,7 @@ with tab7:
         
         # Définition des variables nécessaires pour les boucles d'exportation
         dict_q_actif = reponses_attendues_quiz[cas_actif]
-        dict_enonces_actif = dict_textes_questions_quiz[cas_actif].
+        dict_enonces_actif = dict_textes_questions_quiz[cas_actif]
         
         reponses_attendues_trous = {
             "catadioptre": {"t1_opt7": "Prismes", "t2_opt7": "Réflexion totale", "t3_opt7": "Conducteur"},
