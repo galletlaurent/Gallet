@@ -1282,8 +1282,92 @@ with tab7:
     st.header("Applications de la réflexion totale dans le domaine routier")
     
     import random
+    import math
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as patches
 
-    # Dictionnaire contenant les 4 applications routières sans émoji
+    # --- FONCTION DE GÉNÉRATION DES SCHÉMAS GÉOMÉTRIQUES EXPLICATIFS ---
+    def dessiner_schema_explicatif_routier(type_application, couleur_faisceau="#ef4444"):
+        fig, ax = plt.subplots(figsize=(5, 3.5), facecolor="#0f172a")
+        ax.set_facecolor("#0f172a")
+        ax.set_xlim(0, 100)
+        ax.set_ylim(0, 100)
+        ax.invert_yaxis()  # Inversion de l'axe Y pour la cohérence
+        ax.axis("off")
+        
+        if type_application == "catadioptre":
+            # Représentation d'un prisme à angle droit (90°) pour le catadioptre
+            ax.fill([40, 80, 40], [10, 50, 90], facecolor="#38bdf8", alpha=0.15, edgecolor="#475569", lw=1.5)
+            # Face d'entrée verticale
+            ax.plot([40, 40], [10, 90], color="#94a3b8", lw=2)
+            
+            # Trajectoire du rayon laser incident et réfléchi deux fois
+            # Rayon incident allant vers la première facette oblique
+            ax.annotate("", xy=(60, 30), xytext=(5, 30), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
+            # Réflexion totale interne verticale vers la deuxième facette oblique
+            ax.annotate("", xy=(60, 70), xytext=(60, 30), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
+            # Deuxième réflexion totale interne et retour parallèle à l'émetteur
+            ax.annotate("", xy=(5, 70), xytext=(60, 70), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
+            
+            ax.text(45, 23, "Entrée", color="#94a3b8", fontsize=8)
+            ax.text(65, 50, "Réflexions\ntotales (2x)", color="#cbd5e1", fontsize=8, ha="left", va="center")
+            
+        elif type_application == "mirage":
+            # Sol bitumé surchauffé
+            ax.add_patch(patches.Rectangle((0, 85), 100, 15, facecolor="#f59e0b", alpha=0.25, edgecolor="none"))
+            ax.plot([0, 100], [85, 85], color="#f59e0b", lw=1.5)
+            ax.text(50, 95, "Bitume chaud (n plus faible)", color="#f59e0b", fontsize=8, ha="center")
+            
+            # Tracé de la trajectoire curviligne de la lumière du ciel
+            x_vals = [float(x) for x in range(5, 95)]
+            y_vals = [25 + 0.0075 * (x - 50)**2 for x in x_vals]
+            ax.plot(x_vals, y_vals, color=couleur_faisceau, lw=2.5)
+            
+            # Flèches indicatrices directionnelles le long de la courbe
+            ax.annotate("", xy=(30, 28), xytext=(10, 37), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=0, mutation_scale=12))
+            ax.annotate("", xy=(90, 37), xytext=(70, 28), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=0, mutation_scale=12))
+            
+            # Normale locale virtuelle au point le plus bas
+            ax.plot([50, 50], [65, 85], color="#64748b", linestyle=":", lw=1)
+            ax.text(50, 55, "Réflexion totale\nprogressive", color="#cbd5e1", fontsize=8, ha="center")
+            
+        elif type_application == "capteur_pluie":
+            # Section transversale du pare-brise en verre
+            ax.add_patch(patches.Rectangle((5, 35), 90, 25, facecolor="#e0f2fe", alpha=0.15, edgecolor="#475569", lw=1.5))
+            ax.text(10, 48, "Verre du pare-brise", color="#94a3b8", fontsize=8)
+            
+            # Goutte d'eau externe perturbatrice posée au centre supérieur
+            goutte = patches.Wedge((50, 35), 14, 180, 360, facecolor="#38bdf8", alpha=0.5, edgecolor="#0284c7")
+            ax.add_patch(goutte)
+            ax.text(50, 25, "Goutte de pluie", color="#38bdf8", fontsize=8, ha="center")
+            
+            # Émetteur infrarouge entrant par le bas
+            ax.annotate("", xy=(50, 35), xytext=(20, 75), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
+            
+            # Perte de réflexion totale : transmission partielle à travers l'eau
+            ax.annotate("", xy=(60, 10), xytext=(50, 35), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=1.5, linestyle="--"))
+            # Réflexion vers le récepteur affaiblie
+            ax.annotate("", xy=(80, 75), xytext=(50, 35), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=1.5, alpha=0.4))
+            
+            ax.text(32, 60, "Faisceau LED", color=couleur_faisceau, fontsize=7, rotation=35)
+            ax.text(54, 52, "Réflexion brisée", color="#cbd5e1", fontsize=8)
+            
+        elif type_application == "panneau_signalisation":
+            # Structure schématique de microprismes réfléchissants juxtaposés
+            for offset in:
+                ax.fill([offset, offset + 10, offset + 20], [50, 25, 50], facecolor="#10b981", alpha=0.1, edgecolor="#10b981", lw=1)
+            
+            # Rayon incident arrivant d'une voiture
+            ax.annotate("", xy=(40, 37), xytext=(15, 85), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
+            # Rayon retournant parallèlement après double réflexion interne
+            ax.annotate("", xy=(25, 85), xytext=(45, 37), arrowprops=dict(arrowstyle="->", color=couleur_faisceau, lw=2.5))
+            
+            ax.text(50, 70, "Retour du faisceau\nvers le conducteur", color="#cbd5e1", fontsize=8, ha="center")
+            ax.text(50, 15, "Revêtement microprismatique", color="#10b981", fontsize=8, ha="center")
+            
+        return fig
+
+    # --- BASE DE DONNÉES DES APPLICATIONS ROUTIÈRES ---
     APPLICATIONS_ROUTIERES = {
         "catadioptre": {
             "titre": "Le Catadioptre (Rétroréflecteur)",
@@ -1313,44 +1397,37 @@ with tab7:
         "panneau_signalisation": {
             "titre": "Les Panneaux de Signalisation Rétroréflecteurs",
             "description": """
-            **Principe :** Le revêtement "brillant" des panneaux de signalisation routière modernes n'est pas un simple miroir, mais un film plastique composé de millions de **microprismes transparents**.
+            **Principe :** Le revêtement des panneaux de signalisation routière modernes n'est pas un simple miroir, mais un film plastique composé de millions de **microprismes transparents**.
             La lumière des phares pénètre dans chaque microprisme et subit une série de **réflexions totales internes** sur les facettes arrières. Grâce à la géométrie rigoureuse des prismes, les rayons lumineux sont renvoyés de manière concentrée vers leur source (la voiture) plutôt que d'être dispersés dans la nature. Le panneau semble alors s'illuminer sous l'effet des phares.
             """,
             "image_filename": "panneau_signalisation_routier.jpg"
         }
     }
 
-    # Initialisation de l'application choisie dans le session_state si elle n'existe pas
     if "app_routiere_choisie" not in st.session_state:
         st.session_state.app_routiere_choisie = "catadioptre"
 
     # Bouton pour générer une application au hasard
     if st.button("Générer une application routière au hasard"):
         choix_possibles = list(APPLICATIONS_ROUTIERES.keys())
-        # Évite de retomber sur la même application deux fois de suite
         choix_filtrés = [c for c in choix_possibles if c != st.session_state.app_routiere_choisie]
         st.session_state.app_routiere_choisie = random.choice(choix_filtrés)
         st.rerun()
 
-    # Récupération des données de l'application active
     app_active = APPLICATIONS_ROUTIERES[st.session_state.app_routiere_choisie]
 
-    # Affichage du contenu
     st.subheader(app_active["titre"])
     
-    col_texte, col_image = st.columns(2)
+    # Utilisation stricte de st.columns(2) pour éviter le bug safe_columns
+    col_texte, col_visualisation = st.columns(2)
     
     with col_texte:
         st.markdown(app_active["description"])
+        st.write("<div style='margin-top:15px;'></div>", unsafe_allow_html=True)
         
-    with col_image:
-        # Bloc de chargement de l'image JPG
-        try:
-            st.image(app_active["image_filename"], caption="Schéma réaliste de l'application", use_container_width=True)
-        except Exception:
-            st.warning(f"Image `{app_active['image_filename']}` introuvable. Veuillez placer ce fichier image dans le dossier de votre script Streamlit.")
-
-
+        # Récupération de la couleur globale de l'application si disponible pour le tracé de rayons
+        couleur_faisceau_bouton = "#ef4444"
+        if "var_choix_lampe_simple" in st.session_state and "lampes_data" in st.session_state:
 
 with tab8:
     st.header("**Manipulation  : Application Navale (Le Periscope du sous-marin)**")
