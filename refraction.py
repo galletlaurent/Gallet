@@ -2067,26 +2067,27 @@ with tab7:
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 10%;">Emplacement</th>
-                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 25%; text-align: center;">Attendu</th>
-                        <th style="width: 25%; text-align: center;">Verdict</th>
+                        <th style="width: 55%; text-align: left;">Phrase explicative à trous</th>
+                        <th style="width: 15%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 15%; text-align: center;">Attendu</th>
+                        <th style="width: 15%; text-align: center;">Verdict</th>
                     </tr>
                 </thead>
                 <tbody>
         """
 
-        # Remplissage du tableau de la Partie 2 pour les 10 trous
         reponses_trous_officiel = reponses_attendues_trous[cas_actif]
         for idx_t in range(1, 11):
             t_key = f"t{idx_t}_opt7"
             saisie = st.session_state.get(f"opt7_{t_key}", "Choisir...")
             attendu = reponses_trous_officiel.get(t_key, "Inconnu")
+            phrase_q = dict_phrases_actif.get(t_key, f"Phrase {idx_t}")
             
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             
-            html_export_opt7 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            # Injection de la variable phrase_q contenant l'énoncé de la question dans la première cellule
+            html_export_opt7 += f"<tr><td style='text-align: left;'>{phrase_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
         html_export_opt7 += """
                 </tbody>
