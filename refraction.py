@@ -1896,9 +1896,6 @@ with tab7:
         }
 
 
-        # Définition des variables nécessaires pour les boucles d'exportation
-        dict_q_actif = reponses_attendues_quiz[cas_actif]
-        dict_enonces_actif = dict_textes_questions_quiz[cas_actif]
         
         dict_textes_questions_quiz = {
             "catadioptre": {
@@ -1951,6 +1948,7 @@ with tab7:
             }
         }
 
+        dict_q_actif = reponses_attendues_quiz[cas_actif]
         dict_enonces_actif = dict_textes_questions_quiz[cas_actif]
 
         html_export_opt7 = f"""<!DOCTYPE html>
