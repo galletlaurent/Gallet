@@ -1007,6 +1007,56 @@ def afficher_atelier_pepper_complet(verrouille=False):
                 st.write(enonce)
             with c_sel:
                 st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+                
+def afficher_atelier_retroviseurs_complet(verrouille=False):
+    """Affiche le Quiz (10 questions) et le Texte à trous (10 cases) de l'Atelier 4 (Rétroviseurs)."""
+    questions_retro_sources = [
+        {"id": "qret1", "q": "Quelle loi physique permet de déterminer le champ de vision dans un rétroviseur ?", "options": ["La loi de la réflexion (i = i')", "La loi de la gravité", "La loi d'Ohm"], "rep": "La loi de la réflexion (i = i')"},
+        {"id": "qret2", "q": "Comment appelle-t-on les zones situées autour du véhicule que le conducteur ne voit ni directement ni dans ses rétroviseurs ?", "options": ["Les angles morts", "Les points focaux", "Les zones de réfraction"], "rep": "Les angles morts"},
+        {"id": "qret3", "q": "Que se passe-t-il pour le champ de vision si le conducteur avance ou recule son siège sans toucher aux miroirs ?", "options": ["Le champ de vision se déplace car l'angle d'incidence change", "Le champ de vision reste strictement identique", "Les miroirs deviennent opaques"], "rep": "Le champ de vision se déplace car l'angle d'incidence change"},
+        {"id": "qret4", "q": "Pourquoi un passager avant ne voit-il pas la même zone que le conducteur dans le rétroviseur intérieur ?", "options": ["Parce que son œil n'est pas au même endroit : les rayons incidents ont un angle différent", "Parce que la vitre arrière bloque la lumière pour le passager", "Parce que le miroir central est uniquement orienté vers le plafond"], "rep": "Parce que son œil n'est pas au même endroit : les rayons incidents ont un angle différent"},
+        {"id": "qret5", "q": "Comment doit-on régler les rétroviseurs extérieurs (gauche et droit) pour limiter les angles morts ?", "options": ["En apercevant à peine le flanc de sa propre carrosserie au bord intérieur du miroir", "En voyant la moitié de sa propre voiture dans chaque miroir", "En les orientant vers le ciel"], "rep": "En apercevant à peine le flanc de sa propre carrosserie au bord intérieur du miroir"},
+        {"id": "qret6", "q": "Quel élément de la carrosserie peut bloquer le champ de vision du rétroviseur intérieur central ?", "options": ["Les montants latéraux et la largeur de la lunette arrière", "Le pare-brise avant", "Le capot moteur"], "rep": "Les montants latéraux et la largeur de la lunette arrière"},
+        {"id": "qret7", "q": "Pourquoi certains rétroviseurs extérieurs sont-ils légèrement bombés (convexes) ?", "options": ["Pour élargir l'angle du champ de vision et réduire l'angle mort", "Pour grossir les voitures qui suivent", "Pour empêcher la pluie de mouiller le verre"], "rep": "Pour élargir l'angle du champ de vision et réduire l'angle mort"},
+        {"id": "qret8", "q": "Que faut-il toujours faire en plus de regarder dans ses rétroviseurs avant de changer de file ?", "options": ["Tourner la tête pour contrôler directement l'angle mort", "Klaxonner systématiquement", "Allumer les feux de brouillard"], "rep": "Tourner la tête pour contrôler directement l'angle mort"},
+        {"id": "qret9", "q": "Dans la simulation, de quelle couleur est représenté le cône de vision réfléchi par chaque rétroviseur ?", "options": ["En bleu translucide bordé de rouge", "En vert fluo", "En noir opaque"], "rep": "En bleu translucide bordé de rouge"},
+        {"id": "qret10", "q": "Si l'on tourne un miroir de rétroviseur d'un angle de 10°, de combien tourne le rayon réfléchi ?", "options": ["20° (le double de la rotation du miroir)", "10°", "5°"], "rep": "20° (le double de la rotation du miroir)"},
+    ]
+
+    if "ordre_quiz_retro_aleatoire" not in st.session_state:
+        random.shuffle(questions_retro_sources)
+        st.session_state.ordre_quiz_retro_aleatoire = questions_retro_sources
+
+    champs_retro = [
+        ("1. Les rétroviseurs utilisent des miroirs pour renvoyer la ......... vers l'œil.", ["Choisir...", "lumière", "chaleur"], "lumière", "retro_t1_final"),
+        ("2. Les zones invisibles autour d'un véhicule s'appellent les angles .........", ["Choisir...", "morts", "droits"], "morts", "retro_t2_final"),
+        ("3. Chaque rayon lumineux rebondit sur le miroir selon la loi i = .........", ["Choisir...", "i'", "90°"], "i'", "retro_t3_final"),
+        ("4. Un véhicule possède généralement ......... rétroviseurs (gauche, droit et central).", ["Choisir...", "trois", "deux"], "trois", "retro_t4_final"),
+        ("5. Si le conducteur règle son ........., il doit aussi réajuster ses miroirs.", ["Choisir...", "siège", "volant"], "siège", "retro_t5_final"),
+        ("6. Le rétroviseur central vise à travers la lunette ......... du véhicule.", ["Choisir...", "arrière", "avant"], "arrière", "retro_t6_final"),
+        ("7. Un miroir légèrement convexe permet d'......... le champ de vision.", ["Choisir...", "élargir", "réduire"], "élargir", "retro_t7_final"),
+        ("8. Avant de dépasser, un contrôle ......... en tournant la tête est obligatoire.", ["Choisir...", "direct", "indirect"], "direct", "retro_t8_final"),
+        ("9. Si un miroir pivote d'un angle alpha, le rayon réfléchi pivote de ......... alpha.", ["Choisir...", "2", "0.5"], "2", "retro_t9_final"),
+        ("10. Les poids lourds portent des autocollants signalant le danger des angles .........", ["Choisir...", "morts", "vifs"], "morts", "retro_t10_final"),
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    with col_quiz:
+        st.markdown("##### Quiz Rétroviseurs & Sécurité (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_retro_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"retro_at4_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse Rétroviseurs (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in champs_retro:
+            c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c_txt:
+                st.write(enonce)
+            with c_sel:
+                st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
 
 
 with tab0:
@@ -1710,6 +1760,160 @@ with tab4:
     st.slider("Position Avancement Siege Conducteur (cm)", min_value=-15.0, max_value=15.0, value=0.0, step=1.0, key="slide_siege_cond_eval")
     st.slider("Position Avancement Siege Passager (cm)", min_value=-15.0, max_value=15.0, value=0.0, step=1.0, key="slide_siege_pass_eval")
     st.caption(f"Position active calculee pour le profil : {observateur}")
+    st.write("---")
+    st.subheader("2. Évaluation des connaissances (20 points)")
+
+    if "retro_verrouille_tab4" not in st.session_state:
+        st.session_state.retro_verrouille_tab4 = False
+    verrou_at4 = st.session_state.retro_verrouille_tab4
+
+    afficher_atelier_retroviseurs_complet(verrouille=verrou_at4)
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 4 (Rétroviseurs)")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_retro4 = st.checkbox(
+        "Je certifie avoir réglé les rétroviseurs sur le simulateur et complété les questions de l'Atelier 4.",
+        key="check_certif_retro_final_net",
+        disabled=verrou_at4,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_retro4_official_net", use_container_width=True, disabled=verrou_at4):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_retro4:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q4 = 0.0
+            if "ordre_quiz_retro_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_retro_aleatoire:
+                    reponse_eleve = st.session_state.get(f"retro_at4_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q4 += 1.0
+
+            score_t4 = sum([
+                st.session_state.get("retro_t1_final") == "lumière",
+                st.session_state.get("retro_t2_final") == "morts",
+                st.session_state.get("retro_t3_final") == "i'",
+                st.session_state.get("retro_t4_final") == "trois",
+                st.session_state.get("retro_t5_final") == "siège",
+                st.session_state.get("retro_t6_final") == "arrière",
+                st.session_state.get("retro_t7_final") == "élargir",
+                st.session_state.get("retro_t8_final") == "direct",
+                st.session_state.get("retro_t9_final") == "2",
+                st.session_state.get("retro_t10_final") == "morts",
+            ])
+
+            st.session_state.score_retro4_p1 = round(float(score_q4), 1)
+            st.session_state.score_retro4_p2 = round(float(score_t4), 1)
+            st.session_state.score_final_retro4 = round(float(score_q4 + score_t4), 1)
+            st.session_state.retro_verrouille_tab4 = True
+            st.rerun()
+
+    if st.session_state.get("retro_verrouille_tab4", False):
+        scr1 = st.session_state.get("score_retro4_p1", 0.0)
+        scr2 = st.session_state.get("score_retro4_p2", 0.0)
+        tot_s = st.session_state.get("score_final_retro4", 0.0)
+
+        timestamp_retro4 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER RÉTROVISEURS SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        html_export_retro = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Rétroviseurs - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation d'Optique Géométrique</h1>
+                <p>Atelier 4 : Simulation des Rétroviseurs & Angles Morts</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_retro4}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Rétroviseurs : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse du cours (Texte à trous) : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 4 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">1. CORRECTION DÉTAILLÉE DU QUIZ (10 QUESTIONS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_retro_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_retro_aleatoire, 1):
+                saisie = st.session_state.get(f"retro_at4_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_retro += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_retro += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">2. CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS - 10 CASES)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase à compléter</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        liste_verif_trous_retro = [
+            ("1. Les rétroviseurs utilisent des miroirs pour renvoyer la ......... vers l'œil.", "lumière", "retro_t1_final"),
+            ("2. Les zones invisibles autour d'un véhicule s'appellent les angles .........", "morts", "retro_t2_final"),
+            ("3. Chaque rayon lumineux rebondit sur le miroir selon la loi i = .........", "i'", "retro_t3_final"),
+            ("4. Un véhicule possède généralement ......... rétroviseurs (gauche, droit et central).", "trois", "retro_t4_final"),
+            ("5. Si le conducteur règle son ........., il doit aussi réajuster ses miroirs.", "siège", "retro_t5_final"),
+            ("6. Le rétroviseur central vise à travers la lunette ......... du véhicule.", "arrière", "retro_t6_final"),
+            ("7. Un miroir légèrement convexe permet d'......... le champ de vision.", "élargir", "retro_t7_final"),
+            ("8. Avant de dépasser, un contrôle ......... en tournant la tête est obligatoire.", "direct", "retro_t8_final"),
+            ("9. Si un miroir pivote d'un angle alpha, le rayon réfléchi pivote de ......... alpha.", "2", "retro_t9_final"),
+            ("10. Les poids lourds portent des autocollants signalant le danger des angles .........", "morts", "retro_t10_final"),
+        ]
+
+        for idx_t, (enonce_t, attendu_t, cle_t) in enumerate(liste_verif_trous_retro, 1):
+            saisie_t = st.session_state.get(cle_t, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_retro += f"<tr><td>{idx_t}</td><td>{enonce_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_retro += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html_retro = preparer_nom_fichier("Rapport_Atelier_4_Retroviseurs").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 4 (.html)",
+            data=html_export_retro,
+            file_name=nom_fichier_html_retro,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 with tab5:
