@@ -1057,100 +1057,57 @@ def afficher_atelier_retroviseurs_complet(verrouille=False):
                 st.write(enonce)
             with c_sel:
                 st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
-def mettre_a_jour_periscope_matplotlib():
-    """Moteur physique de réflexion : calcule et dessine le périscope du sous-marin avec miroirs pivotants."""
-    w = 600
-    h = 280
-    x0 = 300.0
+                
+def afficher_atelier_periscope_complet(verrouille=False):
+    """Affiche le Quiz (10 questions) et le Texte à trous (10 cases) de l'Atelier 5 (Périscope)."""
+    questions_peri_sources = [
+        {"id": "qper1", "q": "Combien de miroirs plans (ou prismes) compose un périscope simple ?", "options": ["Deux miroirs parallèles", "Un seul miroir sphérique", "Quatre lentilles divergentes"], "rep": "Deux miroirs parallèles"},
+        {"id": "qper2", "q": "À quel angle précis les deux miroirs d'un périscope doivent-ils être inclinés par rapport à l'horizontale ?", "options": ["45°", "90°", "30°"], "rep": "45°"},
+        {"id": "qper3", "q": "De quel angle le premier miroir dévie-t-il le rayon lumineux horizontal pour l'envoyer verticalement vers le bas ?", "options": ["90°", "45°", "180°"], "rep": "90°"},
+        {"id": "qper4", "q": "Quelle est la direction du rayon qui sort du second miroir par rapport au rayon qui entre en haut du périscope ?", "options": ["Il est parallèle et de même sens", "Il est perpendiculaire", "Il repart en sens opposé"], "rep": "Il est parallèle et de même sens"},
+        {"id": "qper5", "q": "Pourquoi l'image observée dans un périscope à deux miroirs n'est-elle pas inversée (à l'endroit) ?", "options": ["La seconde réflexion annule l'inversion de la première réflexion", "Le tube métallique redresse l'image", "L'eau de mer corrige le sens de la lumière"], "rep": "La seconde réflexion annule l'inversion de la première réflexion"},
+        {"id": "qper6", "q": "Que se passe-t-il dans la simulation si les miroirs sont inclinés à 35° au lieu de 45° ?", "options": ["Le rayon est mal dévié et frappe la paroi du tube", "Le périscope grossit deux fois plus l'image", "Le rayon sort parfaitement horizontalement"], "rep": "Le rayon est mal dévié et frappe la paroi du tube"},
+        {"id": "qper7", "q": "Quelle loi optique est appliquée successivement sur le Miroir 1 puis sur le Miroir 2 ?", "options": ["La loi de la réflexion (i = i')", "La loi de la diffraction", "L'absorption totale"], "rep": "La loi de la réflexion (i = i')"},
+        {"id": "qper8", "q": "Quel est l'intérêt principal d'un périscope pour un sous-marin ?", "options": ["Observer la surface tout en restant immergé et caché sous l'eau", "Éclairer les fonds marins à 1000 mètres", "Mesurer la température de l'eau"], "rep": "Observer la surface tout en restant immergé et caché sous l'eau"},
+        {"id": "qper9", "q": "Par quoi remplace-t-on souvent les miroirs plans dans les périscopes de haute précision ?", "options": ["Des prismes à réflexion totale", "Des plaques de carton blanc", "Des filtres polarisants"], "rep": "Des prismes à réflexion totale"},
+        {"id": "qper10", "q": "Si la distance verticale entre les deux miroirs augmente (tube plus long), comment doit-on modifier l'angle des miroirs ?", "options": ["On ne change rien : ils restent inclinés à 45°", "Il faut les incliner à 60°", "Il faut les placer à 90°"], "rep": "On ne change rien : ils restent inclinés à 45°"},
+    ]
 
-    fig, ax = plt.subplots(figsize=(12, 8), facecolor="#0f172a")
-    ax.set_facecolor("#0f172a")
-    ax.set_xlim(0, w)
-    ax.set_ylim(0, h)
-    ax.invert_yaxis()
-    ax.axis("off")
+    if "ordre_quiz_peri_aleatoire" not in st.session_state:
+        random.shuffle(questions_peri_sources)
+        st.session_state.ordre_quiz_peri_aleatoire = questions_peri_sources
 
-    angle_miroir_deg = st.session_state.get("slider_angle_periscope", 45.0)
-    angle_miroir_rad = math.radians(angle_miroir_deg)
+    champs_peri = [
+        ("1. Un périscope simple utilise ......... miroirs plans parallèles.", ["Choisir...", "deux", "trois"], "deux", "peri_t1_final"),
+        ("2. Les deux miroirs sont inclinés à ......... degrés par rapport à l'horizontale.", ["Choisir...", "45", "90"], "45", "peri_t2_final"),
+        ("3. Le premier miroir dévie la lumière horizontalement vers le .........", ["Choisir...", "bas", "haut"], "bas", "peri_t3_final"),
+        ("4. Chaque miroir provoque une déviation du faisceau de ......... degrés.", ["Choisir...", "90", "45"], "90", "peri_t4_final"),
+        ("5. Le rayon sortant est ......... au rayon entrant dans le périscope.", ["Choisir...", "parallèle", "perpendiculaire"], "parallèle", "peri_t5_final"),
+        ("6. Le dispositif repose sur une ......... réflexion successive.", ["Choisir...", "double", "triple"], "double", "peri_t6_final"),
+        ("7. Sur chaque miroir, l'angle d'incidence i est égal à l'angle ......... i'.", ["Choisir...", "réfléchi", "incident"], "réfléchi", "peri_t7_final"),
+        ("8. Grâce aux deux réflexions, l'image finale est vue à l'.........", ["Choisir...", "endroit", "envers"], "endroit", "peri_t8_final"),
+        ("9. Si l'angle des miroirs est déréglé, le rayon heurte la ......... du tube.", ["Choisir...", "paroi", "lentille"], "paroi", "peri_t9_final"),
+        ("10. Le périscope permet d'observer au-dessus d'un ......... sans être vu.", ["Choisir...", "obstacle", "nuage"], "obstacle", "peri_t10_final"),
+    ]
 
-    y_miroir1 = 90.0
-    y_miroir2 = 180.0
-    epaisseur_tube_px = y_miroir2 - y_miroir1
+    col_quiz, col_trous = st.columns(2)
+    with col_quiz:
+        st.markdown("##### Quiz Périscope & Double Réflexion (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_peri_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"peri_at5_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
-    # 1. Décor : la mer et le tube du périscope
-    mer_rect = patches.Rectangle((15, y_miroir2), w - 30, h - 10 - y_miroir2, facecolor="#0284c7", edgecolor="none", zorder=1)
-    ax.add_patch(mer_rect)
+    with col_trous:
+        st.markdown("##### Synthèse Périscope (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in champs_peri:
+            c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c_txt:
+                st.write(enonce)
+            with c_sel:
+                st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
 
-    tube_vert = patches.Rectangle((x0 - 25, 10), 50, y_miroir2 + 13, facecolor="#cbd5e1", edgecolor="#475569", lw=1.5, zorder=2)
-    coude_amont = patches.Rectangle((x0 - 120, y_miroir1 - 25), 95, 50, facecolor="#cbd5e1", edgecolor="#475569", lw=1.5, zorder=2)
-    coude_aval = patches.Rectangle((x0 + 25, y_miroir2 - 25), 95, 50, facecolor="#cbd5e1", edgecolor="#475569", lw=1.5, zorder=2)
-
-    ax.add_patch(tube_vert)
-    ax.add_patch(coude_amont)
-    ax.add_patch(coude_aval)
-
-    # Masquage des jointures internes
-    ax.add_patch(patches.Rectangle((x0 - 23, 12), 46, y_miroir2 - 12, facecolor="#cbd5e1", edgecolor="none", zorder=2))
-    ax.add_patch(patches.Rectangle((x0 - 118, y_miroir1 - 23), 95, 46, facecolor="#cbd5e1", edgecolor="none", zorder=2))
-    ax.add_patch(patches.Rectangle((x0 + 23, y_miroir2 - 23), 95, 46, facecolor="#cbd5e1", edgecolor="none", zorder=2))
-
-    # 2. Positionnement dynamique des deux miroirs plans (pivotent avec le curseur)
-    demi_long = 32.0
-    dx_m = demi_long * math.cos(angle_miroir_rad)
-    dy_m = demi_long * math.sin(angle_miroir_rad)
-
-    ax.plot([x0 - dx_m, x0 + dx_m], [y_miroir1 - dy_m, y_miroir1 + dy_m], color="#0f172a", lw=4, zorder=3)
-    ax.text(x0 + 35, y_miroir1 - 15, "Miroir 1", color="#cbd5e1", fontsize=7.5, fontweight="bold", ha="left", va="center", zorder=4)
-
-    ax.plot([x0 - dx_m, x0 + dx_m], [y_miroir2 - dy_m, y_miroir2 + dy_m], color="#0f172a", lw=4, zorder=3)
-    ax.text(x0 - 35, y_miroir2 + 15, "Miroir 2", color="#1e293b", fontsize=7.5, fontweight="bold", ha="right", va="center", zorder=4)
-
-    # 3. Tracé géométrique unique des rayons laser
-    angle_deviation_deg = angle_miroir_deg * 2.0
-
-    # Rayon 1 : Faisceau incident horizontal
-    ax.annotate("", xy=(x0, y_miroir1), xytext=(15, y_miroir1), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5), zorder=5)
-    ax.text(25, y_miroir1 - 10, "Rayon incident", color="#ef4444", fontsize=8, fontweight="bold", style="italic", ha="left", va="bottom")
-
-    # Rayon 2 : Faisceau réfléchi intermédiaire dans le tube vertical
-    dx_faisceau = epaisseur_tube_px * math.tan(math.radians(90.0 - angle_deviation_deg)) if angle_deviation_deg != 90.0 else 0.0
-    x_impact2 = x0 + dx_faisceau
-    y_impact2 = y_miroir2
-    ax.annotate("", xy=(x_impact2, y_impact2), xytext=(x0, y_miroir1), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5), zorder=5)
-
-    # Rayon 3 : Faisceau émergent vers l'œil
-    if 44.0 <= angle_miroir_deg <= 46.0:
-        ax.annotate("", xy=(w - 15, y_impact2), xytext=(x_impact2, y_impact2), arrowprops=dict(arrowstyle="->", color="#22c55e", lw=2.5), zorder=5)
-        ax.text(w - 25, y_impact2 - 10, "Œil du Marin (Vision OK)", color="#22c55e", fontsize=8, fontweight="bold", ha="right", va="bottom")
-        msg_status = "PÉRISCOPE ALIGNÉ : Le faisceau de sortie est parallèle au rayon entrant."
-        couleur_status = "#22c55e"
-    else:
-        angle_sortie_rad = math.radians(90.0 - (angle_miroir_deg - 45.0) * 2.0)
-        x_perdu = x_impact2 + 120.0 * math.sin(angle_sortie_rad)
-        y_perdu = y_impact2 + 120.0 * math.cos(angle_sortie_rad)
-        if y_perdu > h - 15:
-            y_perdu = h - 15
-
-        ax.annotate("", xy=(x_perdu, y_perdu), xytext=(x_impact2, y_impact2), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5), zorder=5)
-        ax.text(w - 25, y_miroir2 - 10, "Faisceau obstrué", color="#ef4444", fontsize=8, fontweight="bold", ha="right", va="bottom")
-        msg_status = "ERREUR D'ALIGNEMENT : Le rayon percute la paroi du tube."
-        couleur_status = "#ef4444"
-
-    ax.text(25, 20, "LE PÉRISCOPE DU SOUS-MARIN (DOUBLE RÉFLEXION)", color="#38bdf8", fontsize=9, fontweight="bold", ha="left", va="top")
-    ax.text(25, 35, msg_status, color=couleur_status, fontsize=7.5, fontweight="bold", ha="left", va="top")
-
-    ax.text(w - 25, 20, "Milieu 1 : Air (n = 1,00)", color="#94a3b8", fontsize=7, fontweight="bold", ha="right")
-    ax.text(w - 25, y_miroir1 + 15, "Tube : Métal opaque", color="#94a3b8", fontsize=7, fontweight="bold", ha="right")
-    ax.text(w - 25, h - 20, "Milieu 2 : Eau de mer (n = 1,33)", color="#e0f2fe", fontsize=7, fontweight="bold", ha="right")
-
-    st.session_state.opt3_txt_box_periscope = (
-        f"Paramètres du Périscope :\n"
-        f"• Inclinaison Miroir 1 & Miroir 2 : {angle_miroir_deg:.1f}°\n"
-        f"• Angle de réflexion sur chaque miroir : i = i' = {angle_miroir_deg:.1f}°\n"
-        f"• Déviation par miroir : {angle_deviation_deg:.1f}°"
-    )
-
-    return fig
 
 
 with tab0:
