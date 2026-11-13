@@ -2392,17 +2392,23 @@ with tab6:
         st.session_state.sujet_maint_tire = None
 
     st.subheader("1. Attribution de votre ordre d'intervention")
+    
+    # Le bouton reste toujours affiché (désactivé une fois le tirage effectué pour éviter la triche)
+    deja_tire_maint = st.session_state.sujet_maint_tire is not None
+    if st.button("TIRER AU SORT MON SUJET DE MAINTENANCE", key="btn_tirage_maint", use_container_width=True, disabled=deja_tire_maint):
+        st.session_state.sujet_maint_tire = random.randint(0, 2)
+        st.rerun()
+
     if st.session_state.sujet_maint_tire is None:
-        st.info("Cliquez sur le bouton ci-dessous pour tirer au sort votre cas pratique de maintenance parmi les 3 équipements industriels.")
-        if st.button("TIRER AU SORT MON SUJET DE MAINTENANCE", key="btn_tirage_maint", use_container_width=True):
-            st.session_state.sujet_maint_tire = random.choice([0, 1, 2])
-            st.rerun()
+        st.info("Cliquez sur le bouton ci-dessus pour tirer au sort votre cas pratique de maintenance parmi les 3 équipements industriels.")
     else:
         idx_sujet = st.session_state.sujet_maint_tire
         data_sujet = sujets_maintenance[idx_sujet]
 
         st.success(f"Ordre d'intervention attribué : **{data_sujet['titre']}**")
         st.markdown(data_sujet["explication"], unsafe_allow_html=True)
+        # ... (le reste du bloc avec les images .jpg et le banc d'essai reste inchangé)
+
 
         col_img_m, col_bd_m = st.columns(2)
         with col_img_m:
