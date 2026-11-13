@@ -1776,7 +1776,7 @@ def mettre_a_jour_transport_matplotlib(sujet_idx):
         ax.text(105, 145, "CABINE\nPOIDS LOURD", color="white", fontsize=8.5, fontweight="bold", ha="center", va="center")
 
         # Bras de fixation de l'antéviseur
-        ax.plot(, , color="#cbd5e1", lw=2.5)
+        ax.plot(list((180, 195)), list((75, 68)), color="#cbd5e1", lw=2.5)
         xm, ym = 195.0, 68.0
         rad_a = math.radians(ang_ante)
         dx_m = 22.0 * math.cos(rad_a)
@@ -1871,10 +1871,10 @@ def mettre_a_jour_transport_matplotlib(sujet_idx):
 
         if not est_nuit:
             poly_prisme = patches.Polygon([(470, 95), (485, 95), (478, 155), (470, 155)], facecolor="#38bdf8", alpha=0.45, edgecolor="white", lw=1.5)
-            ax.plot([485, 478], [95, 155], color="#eab308", lw=4)
+            ax.plot(list((485, 478)), list((95, 155)), color="#eab308", lw=4)
         else:
             poly_prisme = patches.Polygon([(466, 97), (481, 93), (482, 153), (474, 157)], facecolor="#38bdf8", alpha=0.45, edgecolor="white", lw=1.5)
-            ax.plot([481, 482], [93, 153], color="#eab308", lw=4)
+            ax.plot(list((481, 482)), list((93, 153)), color="#eab308", lw=4)
         ax.add_patch(poly_prisme)
         ax.text(480, 62, "Prisme Verre\n+ Face Argentée", color="#fde047", fontsize=7.5, fontweight="bold", ha="center")
 
