@@ -1662,6 +1662,287 @@ def afficher_atelier_tp_complet(sujet_idx, verrouille=False):
             with c_sel:
                 st.selectbox("", choix, key=f"{cle}_s{sujet_idx}", disabled=verrouille, label_visibility="collapsed")
 
+BANQUES_TRANSPORT = {
+    # =========================================================================
+    # BANQUE SUJET 0 : ANTÉVISEUR POIDS LOURD & ANGLES MORTS (MIROIR CONVEXE)
+    # =========================================================================
+    0: {
+        "questions": [
+            {"id": "qtr0_1", "q": "Où est installé le rétroviseur antéviseur (Classe VI) sur un camion poids lourd ?", "options": ["Au-dessus du pare-brise avant, orienté vers le pare-chocs", "Sur le pare-chocs arrière", "À l'intérieur de la remorque"], "rep": "Au-dessus du pare-brise avant, orienté vers le pare-chocs"},
+            {"id": "qtr0_2", "q": "Quelle forme géométrique possède la glace d'un antéviseur ou d'un rétroviseur grand angle poids lourd ?", "options": ["Une surface convexe (bombée vers l'extérieur)", "Une surface concave (creuse)", "Une surface plane opaque"], "rep": "Une surface convexe (bombée vers l'extérieur)"},
+            {"id": "qtr0_3", "q": "Quel est l'effet optique principal d'un miroir convexe sur le champ de vision du conducteur ?", "options": ["Il élargit considérablement l'angle de vue en réduisant la taille apparente des objets", "Il grossit les objets comme une loupe", "Il inverse le haut et le bas de la route"], "rep": "Il élargit considérablement l'angle de vue en réduisant la taille apparente des objets"},
+            {"id": "qtr0_4", "q": "Pourquoi un cycliste ou un piéton arrêté juste devant la calandre d'un camion est-il invisible sans antéviseur ?", "options": ["La hauteur de la cabine et du capot crée un angle mort direct de plus de 2 mètres devant le véhicule", "Le pare-brise bloque la lumière du jour", "Les pneus avant masquent toute la route"], "rep": "La hauteur de la cabine et du capot crée un angle mort direct de plus de 2 mètres devant le véhicule"},
+            {"id": "qtr0_5", "q": "Comment la loi de la réflexion (i = i') s'applique-t-elle sur un miroir convexe ?", "options": ["Elle s'applique en chaque point par rapport à la normale locale à la surface courbe", "Elle ne s'applique pas aux miroirs bombés", "L'angle réfléchi vaut toujours 0°"], "rep": "Elle s'applique en chaque point par rapport à la normale locale à la surface courbe"},
+            {"id": "qtr0_6", "q": "Dans la simulation de manœuvre urbaine, que risque le conducteur si l'antéviseur est mal orienté (ex : 15° au lieu de 42°) ?", "options": ["Le piéton situé à 1,20 m devant le pare-chocs reste dans l'angle mort", "Le camion accélère tout seul", "Le rétroviseur reflète uniquement le ciel"], "rep": "Le piéton situé à 1,20 m devant le pare-chocs reste dans l'angle mort"},
+            {"id": "qtr0_7", "q": "Quelle précaution le conducteur doit-il garder à l'esprit lorsqu'il observe un véhicule dans un miroir convexe ?", "options": ["Les objets paraissent plus petits et plus éloignés qu'ils ne le sont en réalité", "Les objets paraissent deux fois plus proches", "Les couleurs sont inversées"], "rep": "Les objets paraissent plus petits et plus éloignés qu'ils ne le sont en réalité"},
+            {"id": "qtr0_8", "q": "Combien de rétroviseurs obligatoires équipent un tracteur routier moderne pour couvrir tous les angles morts ?", "options": ["6 rétroviseurs (2 principaux, 2 grand angle, 1 accostage droit, 1 antéviseur)", "1 seul rétroviseur central intérieur", "2 rétroviseurs identiques à une citadine"], "rep": "6 rétroviseurs (2 principaux, 2 grand angle, 1 accostage droit, 1 antéviseur)"},
+            {"id": "qtr0_9", "q": "Quel dispositif complémentaire assiste désormais les miroirs optiques pour détecter les usagers vulnérables en ville ?", "options": ["Les radars latéraux et caméras d'angle mort (norme GSR2)", "Les phares longue portée au xénon", "Le régulateur de vitesse adaptatif"], "rep": "Les radars latéraux et caméras d'angle mort (norme GSR2)"},
+            {"id": "qtr0_10", "q": "De quelle nature est l'image d'un piéton formée par le miroir convexe de l'antéviseur ?", "options": ["Une image virtuelle, droite et rétrécie", "Une image réelle et renversée", "Une ombre portée sur le tableau de bord"], "rep": "Une image virtuelle, droite et rétrécie"},
+        ],
+        "trous": [
+            ("1. Le rétroviseur situé au-dessus du pare-brise d'un camion est l'.........", ["Choisir...", "antéviseur", "accosteur"], "antéviseur", "tr_t1_final"),
+            ("2. Pour élargir le champ de vision, le miroir possède une forme .........", ["Choisir...", "convexe", "concave"], "convexe", "tr_t2_final"),
+            ("3. L'antéviseur supprime l'angle ......... situé juste devant le pare-chocs.", ["Choisir...", "mort", "droit"], "mort", "tr_t3_final"),
+            ("4. Dans un miroir convexe, les objets observés paraissent plus .........", ["Choisir...", "petits", "grands"], "petits", "tr_t4_final"),
+            ("5. En chaque point du miroir courbe, la réflexion respecte i = .........", ["Choisir...", "i'", "90°"], "i'", "tr_t5_final"),
+            ("6. Le rétroviseur d'......... surveille le côté droit de la cabine en ville.", ["Choisir...", "accostage", "intérieur"], "accostage", "tr_t6_final"),
+            ("7. Les ......... et les piétons sont les usagers les plus exposés aux angles morts.", ["Choisir...", "cyclistes", "trains"], "cyclistes", "tr_t7_final"),
+            ("8. La hauteur de la ......... d'un poids lourd masque la zone proche du sol.", ["Choisir...", "cabine", "remorque"], "cabine", "tr_t8_final"),
+            ("9. L'image formée par un miroir convexe est toujours droite et .........", ["Choisir...", "virtuelle", "réelle"], "virtuelle", "tr_t9_final"),
+            ("10. Le conducteur doit régler ses miroirs avant tout ......... du véhicule.", ["Choisir...", "départ", "lavage"], "départ", "tr_t10_final"),
+        ]
+    },
+    # =========================================================================
+    # BANQUE SUJET 1 : PHARE À RÉFLECTEUR PARABOLIQUE (FEUX DE ROUTE)
+    # =========================================================================
+    1: {
+        "questions": [
+            {"id": "qtr1_1", "q": "Quelle est la forme géométrique du miroir métallisé situé derrière l'ampoule d'un phare automobile longue portée ?", "options": ["Un réflecteur parabolique (concave)", "Un miroir convexe bombé", "Un prisme triangulaire"], "rep": "Un réflecteur parabolique (concave)"},
+            {"id": "qtr1_2", "q": "Où doit être placé le filament de l'ampoule (ou la source LED) pour que le phare projette un faisceau parallèle ?", "options": ["Au foyer F du miroir parabolique", "Contre la vitre avant du phare", "À l'infini derrière le moteur"], "rep": "Au foyer F du miroir parabolique"},
+            {"id": "qtr1_3", "q": "Pourquoi un réflecteur parabolique permet-il d'éclairer la route à plus de 150 mètres sans disperser la lumière ?", "options": ["Tous les rayons issus du foyer F sont réfléchis parallèlement à l'axe optique", "Il multiplie la tension de la batterie par dix", "Il colore la lumière en ultraviolet"], "rep": "Tous les rayons issus du foyer F sont réfléchis parallèlement à l'axe optique"},
+            {"id": "qtr1_4", "q": "Que se passe-t-il si une ampoule est mal clipsée et s'éloigne du foyer F du réflecteur ?", "options": ["Le faisceau devient convergent ou divergent : la portée d'éclairage chute et éblouit", "Le phare éclaire deux fois plus loin", "La couleur devient rouge"], "rep": "Le faisceau devient convergent ou divergent : la portée d'éclairage chute et éblouit"},
+            {"id": "qtr1_5", "q": "Comment réalise-t-on le faisceau « feux de croisement » (code) pour ne pas éblouir les conducteurs arrivant en face ?", "options": ["Un cache métallique (coupelle) bloque les rayons vers le bas du réflecteur pour rabattre le faisceau vers la chaussée", "On éteint totalement le phare gauche", "On retourne le miroir parabolique"], "rep": "Un cache métallique (coupelle) bloque les rayons vers le bas du réflecteur pour rabattre le faisceau vers la chaussée"},
+            {"id": "qtr1_6", "q": "Quel appareil utilise-t-on en atelier de contrôle technique ou de maintenance transport pour vérifier l'inclinaison du faisceau ?", "options": ["Un régloscope (contrôleur de phares)", "Un oscilloscope numérique", "Un manomètre de pression"], "rep": "Un régloscope (contrôleur de phares)"},
+            {"id": "qtr1_7", "q": "Quelle est la pente réglementaire typique d'abaissement du faisceau des feux de croisement sur un véhicule ?", "options": ["Environ -1,0 % à -1,5 % (soit 10 à 15 cm de baisse tous les 10 mètres)", "+10 % vers le ciel", "0 % (strictement horizontal comme les feux de route)"], "rep": "Environ -1,0 % à -1,5 % (soit 10 à 15 cm de baisse tous les 10 mètres)"},
+            {"id": "qtr1_8", "q": "Pourquoi l'intérieur d'un optique de phare est-il recouvert d'une fine couche d'aluminium sous vide ?", "options": ["Pour obtenir une réflexion spéculaire maximale (supérieure à 90 %)", "Pour isoler thermiquement le pare-chocs", "Pour alourdir l'avant du véhicule"], "rep": "Pour obtenir une réflexion spéculaire maximale (supérieure à 90 %)"},
+            {"id": "qtr1_9", "q": "Quel défaut optique apparaît lorsque l'optique en polycarbonate d'un phare devient opaque et jauni par les UV ?", "options": ["Une diffusion parasite qui réduit la portée et éblouit les autres usagers", "Une augmentation de la focale du miroir", "Une réflexion totale interne"], "rep": "Une diffusion parasite qui réduit la portée et éblouit les autres usagers"},
+            {"id": "qtr1_10", "q": "Quelle loi physique est vérifiée en chaque point de la parabole métallisée du phare ?", "options": ["L'angle d'incidence i est égal à l'angle de réflexion i' par rapport à la normale", "La lumière se propage en cercle autour de l'ampoule", "La vitesse de la lumière double après réflexion"], "rep": "L'angle d'incidence i est égal à l'angle de réflexion i' par rapport à la normale"},
+        ],
+        "trous": [
+        "trous": [
+            ("1. Le miroir d'un phare longue portée a la forme d'une .........", ["Choisir...", "parabole", "sphère"], "parabole", "tr_t1_final"),
+            ("2. L'ampoule doit être placée exactement au ......... F du réflecteur.", ["Choisir...", "foyer", "sommet"], "foyer", "tr_t2_final"),
+            ("3. Les rayons issus du foyer repartent ......... à l'axe optique.", ["Choisir...", "parallèles", "perpendiculaires"], "parallèles", "tr_t3_final"),
+            ("4. Le revêtement brillant assure une réflexion ......... de la lumière.", ["Choisir...", "spéculaire", "diffuse"], "spéculaire", "tr_t4_final"),
+            ("5. Le contrôle de l'orientation des phares s'effectue avec un .........", ["Choisir...", "régloscope", "périscope"], "régloscope", "tr_t5_final"),
+            ("6. Les feux de ......... possèdent une coupure nette pour ne pas éblouir.", ["Choisir...", "croisement", "route"], "croisement", "tr_t6_final"),
+            ("7. Si l'ampoule est décalée du foyer, le faisceau ......... ou converge.", ["Choisir...", "diverge", "s'éteint"], "diverge", "tr_t7_final"),
+            ("8. Une vitre de phare rayée ou jaunie provoque une ......... de la lumière.", ["Choisir...", "diffusion", "absorption"], "diffusion", "tr_t8_final"),
+            ("9. En chaque point du réflecteur, on a l'égalité i = .........", ["Choisir...", "i'", "0°"], "i'", "tr_t9_final"),
+            ("10. Le réglage de hauteur des phares compense la ......... du véhicule.", ["Choisir...", "charge", "vitesse"], "charge", "tr_t10_final"),
+        ]
+    },
+    # =========================================================================
+    # BANQUE SUJET 2 : RÉTROVISEUR INTÉRIEUR JOUR / NUIT À PRISME
+    # =========================================================================
+    2: {
+        "questions": [
+            {"id": "qtr2_1", "q": "Quel composant optique constitue un rétroviseur intérieur manuel « jour/nuit » ?", "options": ["Un prisme en verre dont les deux faces (avant et arrière) ne sont pas parallèles", "Deux miroirs collés dos à dos", "Un écran LCD alimenté en 24 V"], "rep": "Un prisme en verre dont les deux faces (avant et arrière) ne sont pas parallèles"},
+            {"id": "qtr2_2", "q": "En position « JOUR », quelle surface du rétroviseur renvoie la majeure partie de la lumière vers les yeux du conducteur ?", "options": ["La face arrière argentée très réfléchissante (environ 90 % de réflexion)", "La face avant en verre nu (4 %)", "Le boîtier en plastique noir"], "rep": "La face arrière argentée très réfléchissante (environ 90 % de réflexion)"},
+            {"id": "qtr2_3", "q": "Que fait-on mécaniquement en basculant la languette sous le rétroviseur en position « NUIT » ?", "options": ["On fait pivoter le prisme d'environ 4° à 5° pour dévier le faisceau principal vers le plafond", "On éteint les phares de la voiture qui suit", "On baisse la luminosité du tableau de bord"], "rep": "On fait pivoter le prisme d'environ 4° à 5° pour dévier le faisceau principal vers le plafond"},
+            {"id": "qtr2_4", "q": "En position « NUIT », quel pourcentage de lumière des phares suiveurs est renvoyé vers l'œil du conducteur par la face avant en verre ?", "options": ["Environ 4 % seulement (image atténuée anti-éblouissement)", "100 %", "50 %"], "rep": "Environ 4 % seulement (image atténuée anti-éblouissement)"},
+            {"id": "qtr2_5", "q": "Pourquoi conserve-t-on un faible reflet de 4 % en position nuit au lieu de bloquer 100 % de la lumière ?", "options": ["Pour continuer à distinguer les phares du véhicule suiveur sans être ébloui", "Pour pouvoir se coiffer dans le noir", "Parce que le verre ne peut pas être rendu opaque"], "rep": "Pour continuer à distinguer les phares du véhicule suiveur sans être ébloui"},
+            {"id": "qtr2_6", "q": "Comment fonctionne un rétroviseur intérieur moderne « électrochrome » (jour/nuit automatique) ?", "options": ["Deux capteurs optiques mesurent l'éblouissement et un gel électrique s'assombrit progressivement", "Un petit moteur fait tourner le miroir à 1000 tr/min", "Un rideau mécanique descend devant le miroir"], "rep": "Deux capteurs optiques mesurent l'éblouissement et un gel électrique s'assombrit progressivement"},
+            {"id": "qtr2_7", "q": "Quel angle forme typiquement la face avant vitrée avec la face arrière argentée dans un prisme jour/nuit ?", "options": ["Environ 4° à 5° (prisme en coin)", "90°", "45°"], "rep": "Environ 4° à 5° (prisme en coin)"},
+            {"id": "qtr2_8", "q": "Dans la simulation jour/nuit, où part le faisceau intense (90 %) réfléchi par la face arrière lorsque la languette nuit est activée ?", "options": ["Vers le plafond (pavillon) de l'habitacle, au-dessus de la tête du conducteur", "Directement dans les yeux du passager", "Vers le levier de vitesse"], "rep": "Vers le plafond (pavillon) de l'habitacle, au-dessus de la tête du conducteur"},
+            {"id": "qtr2_9", "q": "Pourquoi le verre nu de la face avant réfléchit-il environ 4 % de la lumière incidente ?", "options": ["C'est la réflexion vitreuse partielle due au changement d'indice entre l'air (n=1) et le verre (n=1,5)", "C'est dû à la poussière sur la vitre", "Parce que la vitre est peinte en gris"], "rep": "C'est la réflexion vitreuse partielle due au changement d'indice entre l'air (n=1) et le verre (n=1,5)"},
+            {"id": "qtr2_10", "q": "Quel danger entraîne l'éblouissement nocturne dans le rétroviseur intérieur pour un conducteur ?", "options": ["Une perte temporaire d'acuité visuelle et un allongement du temps de réaction", "Une crevaison immédiate", "Une hausse de la consommation de carburant"], "rep": "Une perte temporaire d'acuité visuelle et un allongement du temps de réaction"},
+        ],
+        "trous": [
+            ("1. Le rétroviseur jour/nuit utilise un ......... en verre à faces non parallèles.", ["Choisir...", "prisme", "cylindre"], "prisme", "tr_t1_final"),
+            ("2. En mode JOUR, la face arrière ......... renvoie 90 % de la lumière.", ["Choisir...", "argentée", "transparente"], "argentée", "tr_t2_final"),
+            ("3. En mode NUIT, on bascule la ......... située sous le rétroviseur.", ["Choisir...", "languette", "pédale"], "languette", "tr_t3_final"),
+            ("4. Le basculement fait pivoter le miroir d'environ ......... degrés.", ["Choisir...", "4", "45"], "4", "tr_t4_final"),
+            ("5. Le faisceau intense de 90 % est alors dévié vers le ......... de la voiture.", ["Choisir...", "plafond", "volant"], "plafond", "tr_t5_final"),
+            ("6. La face avant en verre ne renvoie que ......... % de lumière vers l'œil.", ["Choisir...", "4", "85"], "4", "tr_t6_final"),
+            ("7. Ce système évite l'......... du conducteur par les phares suiveurs.", ["Choisir...", "éblouissement", "endormissement"], "éblouissement", "tr_t7_final"),
+            ("8. Chaque réflexion sur les deux faces obéit à la loi i = .........", ["Choisir...", "i'", "90°"], "i'", "tr_t8_final"),
+            ("9. Les versions automatiques modernes sont dites .........", ["Choisir...", "électrochromes", "paraboliques"], "électrochromes", "tr_t9_final"),
+            ("10. L'indice de réfraction du verre du prisme vaut environ .........", ["Choisir...", "1.5", "0.5"], "1.5", "tr_t10_final"),
+        ]
+    }
+}
+
+
+def mettre_a_jour_transport_matplotlib(sujet_idx):
+    """Banc d'essai expérimental réaliste adapté au transport routier."""
+    fig, ax = plt.subplots(figsize=(12, 6.5), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 260)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    # =========================================================================
+    # SUJET 0 : ANTÉVISEUR POIDS LOURD & ANGLE MORT AVANT
+    # =========================================================================
+    if sujet_idx == 0:
+        ang_ante = st.session_state.get("slider_tr_s0", 25.0)
+        dist_pieton = st.session_state.get("slider_tr_pieton_s0", 1.20)
+
+        ax.add_patch(patches.Rectangle((20, 210), 560, 35, facecolor="#334155", edgecolor="#64748b"))
+
+        ax.add_patch(patches.Rectangle((40, 75), 145, 135, facecolor="#1e3a8a", edgecolor="#93c5fd", lw=1.5))
+        ax.add_patch(patches.Rectangle((145, 85), 35, 55, facecolor="#38bdf8", alpha=0.4, edgecolor="white"))
+        ax.text(105, 145, "CABINE\nPOIDS LOURD", color="white", fontsize=8.5, fontweight="bold", ha="center", va="center")
+
+        # Bras de fixation de l'antéviseur
+        ax.plot(, , color="#cbd5e1", lw=2.5)
+        xm, ym = 195.0, 68.0
+        rad_a = math.radians(ang_ante)
+        dx_m = 22.0 * math.cos(rad_a)
+        dy_m = 22.0 * math.sin(rad_a)
+        ax.plot([xm - dx_m, xm + dx_m], [ym - dy_m, ym + dy_m], color="#eab308", lw=4.5)
+        ax.text(xm + 12, ym - 12, f"Antéviseur ({ang_ante:.0f}°)", color="#fde047", fontsize=7.5, fontweight="bold")
+
+        xp = 190.0 + dist_pieton * 130.0
+        ax.add_patch(patches.Rectangle((xp - 7, 165), 14, 45, facecolor="#f97316", edgecolor="white"))
+        ax.add_patch(patches.Circle((xp, 156), 7, facecolor="#fed7aa", edgecolor="white"))
+        ax.text(xp, 142, f"Piéton ({dist_pieton:.2f} m)", color="#fdba74", fontsize=7.5, fontweight="bold", ha="center")
+
+        x_champ_min = 185.0 + max(0.0, (48.0 - ang_ante) * 9.0)
+        x_champ_max = x_champ_min + 170.0
+        ax.fill([xm, x_champ_min, x_champ_max], [ym, 210, 210], color="#38bdf8", alpha=0.25)
+        ax.annotate("", xy=(162, 110), xytext=(xm, ym), arrowprops=dict(arrowstyle="->", color="#22c55e", lw=2))
+
+        pieton_vu = (x_champ_min <= xp <= x_champ_max)
+        if pieton_vu:
+            statut = "USAGER DÉTECTÉ : Le piéton est visible dans l'antéviseur convexe !"
+            c_stat = "#22c55e"
+            diag = "VISIBLE (OK)"
+        else:
+            c_stat = "#22c55e"
+            diag = "VISIBLE (OK)"
+        else:
+            statut = "DANGER ANGLE MORT : Piéton invisible ! Réglez l'antéviseur autour de 42°."
+            c_stat = "#ef4444"
+            diag = "ANGLE MORT"
+
+        ax.text(25, 20, "SÉCURITÉ TRANSPORT : RÉGLAGE DE L'ANTÉVISEUR POIDS LOURD (CLASSE VI)", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 36, statut, color=c_stat, fontsize=8, fontweight="bold")
+        ax.text(300, 248, f"Inclinaison antéviseur : {ang_ante:.0f}° | Distance piéton : {dist_pieton:.2f} m | Statut : {diag}",
+                color="#f8fafc", fontsize=8, fontweight="bold", ha="center", bbox=dict(boxstyle="round", facecolor="#1e293b", edgecolor=c_stat))
+
+        st.session_state.tr_mesure_courante = (f"Miroir = {ang_ante:.0f}°", f"Piéton = {dist_pieton:.2f} m", "Miroir convexe", diag)
+
+    # =========================================================================
+    # SUJET 1 : PHARE À RÉFLECTEUR PARABOLIQUE (POSITION DE L'AMPOULE AU FOYER)
+    # =========================================================================
+    elif sujet_idx == 1:
+        decalage_foyer_mm = st.session_state.get("slider_tr_s1", 0.0)
+
+        ys_para = [130 + dy for dy in range(-65, 66, 5)]
+        xs_para = [60 + (dy ** 2) / 220.0 for dy in range(-65, 66, 5)]
+        ax.plot(xs_para, ys_para, color="#cbd5e1", lw=4)
+        ax.text(55, 55, "Réflecteur\nParabolique", color="#cbd5e1", fontsize=7.5, fontweight="bold", ha="center")
+
+        xf = 115.0
+        x_amp = xf + decalage_foyer_mm * 3.0
+        ax.scatter(xf, 130, color="#38bdf8", s=40, zorder=4)
+        ax.text(xf, 115, "Foyer F", color="#38bdf8", fontsize=7, fontweight="bold", ha="center")
+
+        ax.add_patch(patches.Circle((x_amp, 130), 7, facecolor="#fde047", edgecolor="#f59e0b", lw=1.5, zorder=5))
+        ax.text(x_amp, 148, f"Ampoule ({decalage_foyer_mm:+.1f} mm)", color="#fde047", fontsize=7, fontweight="bold", ha="center")
+
+        pente = -decalage_foyer_mm * 0.035
+        for dy_r in [-48, -24, 24, 48]:
+            xr_hit = 60 + (dy_r ** 2) / 220.0
+            yr_hit = 130 + dy_r
+            ax.plot([x_amp, xr_hit], [130, yr_hit], color="#fde047", lw=1.2, ls=":")
+            y_fin = yr_hit + (550 - xr_hit) * (pente * (dy_r / 48.0))
+            c_ray = "#22c55e" if abs(decalage_foyer_mm) <= 1.0 else "#f59e0b"
+            ax.annotate("", xy=(550, y_fin), xytext=(xr_hit, yr_hit), arrowprops=dict(arrowstyle="->", color=c_ray, lw=2))
+
+        if abs(decalage_foyer_mm) <= 1.0:
+            statut = "FAISCEAU PARALLÈLE OPTIMAL : Portée maximale (> 150 m) sans éblouissement."
+            c_stat = "#22c55e"
+            diag = "PARALLÈLE (OK)"
+        elif decalage_foyer_mm > 1.0:
+            statut = "AMPOULE TROP AVANCÉE : Faisceau divergent, perte de portée sur la route."
+            c_stat = "#f59e0b"
+            diag = "DIVERGENT"
+        else:
+            statut = "AMPOULE TROP RECULÉE : Faisceau convergent qui croise et éblouit en face."
+            c_stat = "#ef4444"
+            diag = "CONVERGENT"
+
+        ax.text(25, 20, "ÉCLAIRAGE VÉHICULE : RÉFLECTEUR PARABOLIQUE & POSITION FOYER F", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 36, statut, color=c_stat, fontsize=8, fontweight="bold")
+        ax.text(300, 235, f"Écart au foyer F : {decalage_foyer_mm:+.1f} mm | Divergence faisceau : {abs(decalage_foyer_mm)*2.0:.1f}°",
+                color="#f8fafc", fontsize=8, fontweight="bold", ha="center", bbox=dict(boxstyle="round", facecolor="#1e293b", edgecolor=c_stat))
+
+        st.session_state.tr_mesure_courante = (f"Écart F = {decalage_foyer_mm:+.1f} mm", f"Angle = {abs(decalage_foyer_mm)*2.0:.1f}°", "Tolérance ±1 mm", diag)
+
+    # =========================================================================
+    # SUJET 2 : RÉTROVISEUR INTÉRIEUR JOUR / NUIT À PRISME
+    # =========================================================================
+    else:
+        mode_retro = st.session_state.get("radio_tr_mode_s2", "Position JOUR (Réflexion 90%)")
+        est_nuit = "NUIT" in mode_retro
+
+        if not est_nuit:
+            poly_prisme = patches.Polygon([(470, 95), (485, 95), (478, 155), (470, 155)], facecolor="#38bdf8", alpha=0.45, edgecolor="white", lw=1.5)
+            ax.plot([485, 478], [95, 155], color="#eab308", lw=4)
+        else:
+            poly_prisme = patches.Polygon([(466, 97), (481, 93), (482, 153), (474, 157)], facecolor="#38bdf8", alpha=0.45, edgecolor="white", lw=1.5)
+            ax.plot([481, 482], [93, 153], color="#eab308", lw=4)
+        ax.add_patch(poly_prisme)
+        ax.text(480, 62, "Prisme Verre\n+ Face Argentée", color="#fde047", fontsize=7.5, fontweight="bold", ha="center")
+
+        ax.add_patch(patches.Circle((110, 125), 14, facecolor="#1e293b", edgecolor="#38bdf8", lw=2))
+        ax.text(110, 152, "Œil du Conducteur", color="#38bdf8", fontsize=8, fontweight="bold", ha="center")
+
+        ax.annotate("", xy=(468, 125), xytext=(120, 215), arrowprops=dict(arrowstyle="->", color="#fde047", lw=2.5))
+        ax.text(280, 195, "Phares du véhicule suiveur (100%)", color="#fde047", fontsize=7.5, fontweight="bold", rotation=-14)
+
+        if not est_nuit:
+            ax.annotate("", xy=(126, 125), xytext=(476, 125), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=3))
+            ax.text(300, 116, "Faisceau principal réfléchi : 90 % (Vision claire de jour)", color="#f87171", fontsize=7.5, fontweight="bold", ha="center")
+            statut = "MODE JOUR : Réflexion maximale (90 %) par la face arrière argentée."
+            c_stat = "#f59e0b"
+            diag = "90% (JOUR)"
+        else:
+            ax.annotate("", xy=(250, 25), xytext=(482, 115), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5, ls="--"))
+            ax.text(340, 48, "Faisceau éblouissant (90 %) dévié vers le plafond", color="#f87171", fontsize=7, fontweight="bold", ha="center")
+
+            ax.annotate("", xy=(126, 125), xytext=(468, 125), arrowprops=dict(arrowstyle="->", color="#22c55e", lw=1.8))
+            ax.text(300, 138, "Reflet vitreux atténué : 4 % (Anti-éblouissement nuit)", color="#22c55e", fontsize=7.5, fontweight="bold", ha="center")
+            statut = "MODE NUIT ACTIF : Éblouissement supprimé (4 % vers l'œil, 90 % au plafond)."
+            c_stat = "#22c55e"
+            diag = "4% (NUIT OK)"
+
+        ax.text(25, 20, "CONFORT & SÉCURITÉ : RÉTROVISEUR INTÉRIEUR PRISMATIQUE JOUR / NUIT", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 36, statut, color=c_stat, fontsize=8, fontweight="bold")
+        retour_txt = "4 %" if est_nuit else "90 %"
+        ax.text(300, 242, f"Configuration : {mode_retro} | Angle prisme : 4,5° | Intensité reçue : {retour_txt}",
+                color="#f8fafc", fontsize=8, fontweight="bold", ha="center", bbox=dict(boxstyle="round", facecolor="#1e293b", edgecolor=c_stat))
+
+        st.session_state.tr_mesure_courante = (mode_retro[:13], "Prisme = 4,5°", f"Retour = {retour_txt}", diag)
+
+    return fig
+
+
+def afficher_atelier_transport_complet(sujet_idx, verrouille=False):
+    """Affiche les 10 QCM et les 10 trous spécifiques au sujet Transport Routier tiré au sort."""
+    if sujet_idx is None:
+        st.warning("Tirez d'abord au sort un sujet Transport Routier ci-dessus pour débloquer les 10 questions et les 10 phrases à trous correspondantes.")
+        return
+
+    banque = BANQUES_TRANSPORT[sujet_idx]
+    cle_session_ordre = f"ordre_quiz_tr_sujet_{sujet_idx}"
+
+    if cle_session_ordre not in st.session_state:
+        liste_q = list(banque["questions"])
+        random.shuffle(liste_q)
+        st.session_state[cle_session_ordre] = liste_q
+
+    col_quiz, col_trous = st.columns(2)
+    with col_quiz:
+        st.markdown("##### Quiz Technique Transport Routier (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state[cle_session_ordre], 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"tr_at8_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse Transport Routier (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in banque["trous"]:
+            c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c_txt:
+                st.write(enonce)
+            with c_sel:
+                st.selectbox("", choix, key=f"{cle}_s{sujet_idx}", disabled=verrouille, label_visibility="collapsed")
 
 
                 
@@ -3215,12 +3496,259 @@ with tab7:
 
 
 
-
-
-
-
 with tab8:
-    st.header("**Manipulation  : Application Navale (Le Periscope du sous-marin)**")
+    st.header("Atelier 8 : Applications dans le domaine du Transport Routier")
+
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 16px;">L'optique réfléchissante au service de la sécurité des conducteurs :</p>
+        <p style="margin-bottom: 0; line-height: 1.6;">Dans le transport de marchandises et de voyageurs, les miroirs convexes, les réflecteurs paraboliques de phares et les prismes jour/nuit exploitent la loi <b><i>i</i> = <i>i'</i></b> pour supprimer les angles morts et optimiser la vision de nuit.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    sujets_transport = [
+        {
+            "titre": "Cas Transport N°1 : Antéviseur poids lourd & Suppression de l'angle mort avant",
+            "img_metier": "trans_anteviseur_pl.jpg",
+            "legende_metier": "Miroir antéviseur convexe (Classe VI) monté au-dessus du pare-brise d'un poids lourd",
+            "explication": (
+                "**Principe technique :** En raison de la hauteur d'une cabine de camion, un piéton ou un cycliste situé à moins de **2 mètres** devant le pare-chocs est totalement invisible en vision directe. "
+                "L'**antéviseur** utilise un **miroir convexe** (bombé) incliné à **42°** qui élargit le cône de réflexion et permet au conducteur de voir jusqu'au pied de sa calandre."
+            )
+        },
+        {
+            "titre": "Cas Transport N°2 : Projecteur avant à réflecteur parabolique",
+            "img_metier": "trans_phare_parabolique.jpg",
+            "legende_metier": "Optique de phare automobile avec miroir parabolique métallisé",
+            "explication": (
+                "**Principe technique :** Pour éclairer la chaussée à plus de **150 mètres** la nuit, la source lumineuse est placée exactement au **foyer F** d'un miroir concave en forme de **parabole**. "
+                "Par propriété géométrique de la réflexion (<b><i>i</i> = <i>i'</i></b>), tous les rayons réfléchis repartent **parallèlement** à l'axe de la route."
+            )
+        },
+        {
+            "titre": "Cas Transport N°3 : Rétroviseur intérieur prismatique Jour / Nuit",
+            "img_metier": "trans_retro_jour_nuit.jpg",
+            "legende_metier": "Prisme en coin du rétroviseur intérieur anti-éblouissement",
+            "explication": (
+                "**Principe technique :** Le miroir est constitué d'un **prisme en verre** dont la face avant vitrée et la face arrière argentée forment un angle de **4,5°**. "
+                "De jour, la face arrière renvoie **90 %** de la lumière vers l'œil. De nuit, basculer la languette dévie le faisceau de 90 % vers le plafond et ne laisse vers l'œil qu'un reflet doux de **4 %**."
+            )
+        }
+    ]
+
+    if "sujet_tr_tire" not in st.session_state:
+        st.session_state.sujet_tr_tire = None
+
+    st.subheader("1. Attribution de votre étude technique Transport Routier")
+    if st.button("TIRER AU SORT UN SUJET TRANSPORT", key="btn_tirage_tr", use_container_width=True):
+        choix_possibles_tr = [i for i in range(3) if i != st.session_state.sujet_tr_tire]
+        st.session_state.sujet_tr_tire = random.choice(choix_possibles_tr)
+        st.session_state.mesures_tr_log = []
+        st.rerun()
+
+    if st.session_state.sujet_tr_tire is None:
+        st.info("Cliquez sur le bouton ci-dessus pour tirer au sort un cas pratique du Transport Routier parmi les 3 dispositifs.")
+    else:
+        idx_sujet_tr = st.session_state.sujet_tr_tire
+        data_sujet_tr = sujets_transport[idx_sujet_tr]
+
+        st.success(f"Étude attribuée : **{data_sujet_tr['titre']}**")
+        st.markdown(data_sujet_tr["explication"], unsafe_allow_html=True)
+
+        col_img_tr, col_bd_tr = st.columns(2)
+        with col_img_tr:
+            img_tr = charger_image(data_sujet_tr["img_metier"])
+            if img_tr is not None:
+                st.image(img_tr, caption=data_sujet_tr["legende_metier"], use_container_width=True)
+            else:
+                st.warning(f"Image métier attendue dans le dossier image/ : **{data_sujet_tr['img_metier']}**")
+
+        with col_bd_tr:
+            img_bd_tr = charger_image("bd_humour_transport.jpg")
+            if img_bd_tr is not None:
+                st.image(img_bd_tr, caption="La pause BD : Attention aux angles morts et aux plein phares !", use_container_width=True)
+            else:
+                st.warning("BD humoristique attendue dans le dossier image/ : **bd_humour_transport.jpg**")
+
+        st.markdown("---")
+        st.subheader("2. Banc d'essai optique sur véhicule")
+
+        if "mesures_tr_log" not in st.session_state:
+            st.session_state.mesures_tr_log = []
+
+        if idx_sujet_tr == 0:
+            col_tr0_a, col_tr0_b = st.columns(2)
+            with col_tr0_a:
+                st.slider("Angle d'inclinaison de l'antéviseur (degrés) :", min_value=15.0, max_value=55.0, value=25.0, step=1.0, key="slider_tr_s0")
+            with col_tr0_b:
+                st.slider("Distance du piéton devant le pare-chocs (mètres) :", min_value=0.30, max_value=2.50, value=1.20, step=0.10, key="slider_tr_pieton_s0")
+        elif idx_sujet_tr == 1:
+            st.slider("Décalage de l'ampoule par rapport au foyer F de la parabole (mm) :", min_value=-10.0, max_value=10.0, value=0.0, step=0.5, key="slider_tr_s1")
+        else:
+            st.radio("Position de la languette du rétroviseur intérieur :", ["Position JOUR (Réflexion 90%)", "Position NUIT (Anti-éblouissement 4%)"], key="radio_tr_mode_s2")
+
+        if st.button("ENREGISTRER CE CONTRÔLE DANS LA FICHE VÉHICULE", key="btn_releve_tr", use_container_width=True):
+            if "tr_mesure_courante" in st.session_state:
+                st.session_state.mesures_tr_log.append(st.session_state.tr_mesure_courante)
+                st.rerun()
+
+        fig_tr = mettre_a_jour_transport_matplotlib(idx_sujet_tr)
+        st.pyplot(fig_tr, use_container_width=True)
+
+        if st.session_state.mesures_tr_log:
+            df_tr = pd.DataFrame(
+                st.session_state.mesures_tr_log,
+                columns=["Paramètre réglé", "Grandeur optique", "Spécification", "Diagnostic"]
+            )
+            df_tr.insert(0, "Contrôle N°", [f"Essai {i}" for i in range(1, len(df_tr) + 1)])
+            st.dataframe(df_tr, use_container_width=True, hide_index=True)
+
+    st.write("---")
+    st.subheader("3. Évaluation des connaissances sur votre étude (20 points)")
+
+    if "tr_verrouille_tab8" not in st.session_state:
+        st.session_state.tr_verrouille_tab8 = False
+    verrou_at8 = st.session_state.tr_verrouille_tab8
+    sujet_actif_tr = st.session_state.get("sujet_tr_tire", None)
+
+    afficher_atelier_transport_complet(sujet_actif_tr, verrouille=verrou_at8)
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 8 (Transport Routier)")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_tr8 = st.checkbox(
+        "Je certifie avoir réalisé mes contrôles sur véhicule et complété les questions de l'Atelier 8.",
+        key="check_certif_tr_final_net",
+        disabled=verrou_at8,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 8", key="btn_export_tr8_official_net", use_container_width=True, disabled=verrou_at8):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif sujet_actif_tr is None:
+            st.error("Action refusée : Tirez d'abord au sort votre sujet Transport en haut de l'onglet.")
+        elif not case_certif_tr8:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            banque_active_tr = BANQUES_TRANSPORT[sujet_actif_tr]
+            cle_ordre_tr = f"ordre_quiz_tr_sujet_{sujet_actif_tr}"
+
+            score_q8 = 0.0
+            for q_item in st.session_state.get(cle_ordre_tr, []):
+                reponse_eleve = st.session_state.get(f"tr_at8_final_g_{q_item['id']}", "Choisir...")
+                if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                    score_q8 += 1.0
+
+            score_t8 = 0.0
+            for _, _, bonne_rep_t, cle_t in banque_active_tr["trous"]:
+                if str(st.session_state.get(f"{cle_t}_s{sujet_actif_tr}", "Choisir...")).strip() == str(bonne_rep_t).strip():
+                    score_t8 += 1.0
+
+            st.session_state.score_tr8_p1 = round(float(score_q8), 1)
+            st.session_state.score_tr8_p2 = round(float(score_t8), 1)
+            st.session_state.score_final_tr8 = round(float(score_q8 + score_t8), 1)
+            st.session_state.tr_verrouille_tab8 = True
+            st.rerun()
+
+    if st.session_state.get("tr_verrouille_tab8", False) and sujet_actif_tr is not None:
+        scr1 = st.session_state.get("score_tr8_p1", 0.0)
+        scr2 = st.session_state.get("score_tr8_p2", 0.0)
+        tot_s = st.session_state.get("score_final_tr8", 0.0)
+        titre_sujet_export_tr = sujets_transport[sujet_actif_tr]["titre"]
+        banque_active_tr = BANQUES_TRANSPORT[sujet_actif_tr]
+        cle_ordre_tr = f"ordre_quiz_tr_sujet_{sujet_actif_tr}"
+
+        timestamp_tr8 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER TRANSPORT ROUTIER SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        html_export_tr = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Transport Routier Optique - {n_eleve}</title>
+            <style>
+            <meta charset="utf-8">
+            <title>Rapport Transport Routier Optique - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation d'Optique Géométrique</h1>
+                <p>Atelier 8 : Applications dans le domaine du Transport Routier</p>
+                <p>Étude attribuée par tirage au sort : <strong>{titre_sujet_export_tr}</strong></p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_tr8}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Technique Transport : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse du cours (Texte à trous) : <strong>{scr2:.1f} / 10</strong><br>
+                Contrôles expérimentaux enregistrés : <strong>{len(st.session_state.get("mesures_tr_log", []))}</strong><br>
+                Note Totale de l'Atelier 8 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">1. CORRECTION DÉTAILLÉE DU QUIZ (10 QUESTIONS SPÉCIFIQUES AU SUJET)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        for num, q_item in enumerate(st.session_state.get(cle_ordre_tr, []), 1):
+            saisie = st.session_state.get(f"tr_at8_final_g_{q_item['id']}", "Choisir...")
+            attendu = q_item["rep"]
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_tr += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tr += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">2. CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS - 10 CASES)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase à compléter</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        for idx_t, (enonce_t, _, attendu_t, cle_t) in enumerate(banque_active_tr["trous"], 1):
+            saisie_t = st.session_state.get(f"{cle_t}_s{sujet_actif_tr}", "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_tr += f"<tr><td>{idx_t}</td><td>{enonce_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_tr += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html_tr = preparer_nom_fichier("Rapport_Atelier_8_Transport_Routier").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 8 (.html)",
+            data=html_export_tr,
+            file_name=nom_fichier_html_tr,
+            mime="text/html",
+            use_container_width=True
+        )
+
 
 
 
