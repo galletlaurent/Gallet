@@ -1765,42 +1765,58 @@ def mettre_a_jour_transport_matplotlib(sujet_idx):
     # =========================================================================
     # SUJET 0 : ANTÉVISEUR POIDS LOURD & ANGLE MORT AVANT
     # =========================================================================
+    # =========================================================================
+    # SUJET 0 : ANTÉVISEUR POIDS LOURD & ANGLE MORT AVANT (SYNCHRONISÉ)
+    # =========================================================================
     if sujet_idx == 0:
         ang_ante = st.session_state.get("slider_tr_s0", 25.0)
         dist_pieton = st.session_state.get("slider_tr_pieton_s0", 1.20)
 
+        # Chaussée
         ax.add_patch(patches.Rectangle((20, 210), 560, 35, facecolor="#334155", edgecolor="#64748b"))
 
+        # Cabine Poids Lourd (pare-chocs avant à x = 185)
         ax.add_patch(patches.Rectangle((40, 75), 145, 135, facecolor="#1e3a8a", edgecolor="#93c5fd", lw=1.5))
         ax.add_patch(patches.Rectangle((145, 85), 35, 55, facecolor="#38bdf8", alpha=0.4, edgecolor="white"))
         ax.text(105, 145, "CABINE\nPOIDS LOURD", color="white", fontsize=8.5, fontweight="bold", ha="center", va="center")
 
-        # Bras de fixation de l'antéviseur
+        # Bras et miroir antéviseur convexe au-dessus du pare-brise (x=195, y=68)
         ax.plot(list((180, 195)), list((75, 68)), color="#cbd5e1", lw=2.5)
         xm, ym = 195.0, 68.0
         rad_a = math.radians(ang_ante)
         dx_m = 22.0 * math.cos(rad_a)
         dy_m = 22.0 * math.sin(rad_a)
-        ax.plot([xm - dx_m, xm + dx_m], [ym - dy_m, ym + dy_m], color="#eab308", lw=4.5)
+        ax.plot(list((xm - dx_m, xm + dx_m)), list((ym - dy_m, ym + dy_m)), color="#eab308", lw=4.5)
         ax.text(xm + 12, ym - 12, f"Antéviseur ({ang_ante:.0f}°)", color="#fde047", fontsize=7.5, fontweight="bold")
 
-        xp = 190.0 + dist_pieton * 130.0
-        ax.add_patch(patches.Rectangle((xp - 7, 165), 14, 45, facecolor="#f97316", edgecolor="white"))
-        ax.add_patch(patches.Circle((xp, 156), 7, facecolor="#fed7aa", edgecolor="white"))
-        ax.text(xp, 142, f"Piéton ({dist_pieton:.2f} m)", color="#fdba74", fontsize=7.5, fontweight="bold", ha="center")
+        # Piéton devant le pare-chocs (x = 185 + dist_pieton * 130)
+        xp = 185.0 + dist_pieton * 130.0
+        ax.add_patch(patches.Rectangle((xp - 7, 165), 14, 45, facecolor="#f97316", edgecolor="white", zorder=4))
+        ax.add_patch(patches.Circle((xp, 156), 7, facecolor="#fed7aa", edgecolor="white", zorder=4))
+        ax.text(xp, 142, f"Piéton ({dist_pieton:.2f} m)", color="#fdba74", fontsize=7.5, fontweight="bold", ha="center", zorder=5)
 
-        x_champ_min = 185.0 + max(0.0, (48.0 - ang_ante) * 9.0)
-        x_champ_max = x_champ_min + 170.0
-        ax.fill([xm, x_champ_min, x_champ_max], [ym, 210, 210], color="#38bdf8", alpha=0.25)
-        ax.annotate("", xy=(162, 110), xytext=(xm, ym), arrowprops=dict(arrowstyle="->", color="#22c55e", lw=2))
+        # Cône de vision réfléchi au sol (plus ang_ante augmente, plus le cône se rapproche du pare-chocs x=185)
+        # À 42° et plus, le cône couvre dès x = 185 (pied du pare-chocs) jusqu'à x = 395 (soit 0 m à 1,60 m)
+        x_champ_min = max(185.0, 185.0 + (42.0 - ang_ante) * 11.0)
+        x_champ_max = x_champ_min + 210.0
 
-        pieton_vu = (x_champ_min <= xp <= x_champ_max)
+        # Détection exacte sur la largeur du piéton
+        pieton_vu = (x_champ_min <= xp + 7) and (xp - 7 <= x_champ_max)
+
+        couleur_cone = "#22c55e" if pieton_vu else "#ef4444"
+        ax.fill(list((xm, x_champ_min, x_champ_max)), list((ym, 210, 210)), color=couleur_cone, alpha=0.22, zorder=2)
+        ax.plot(list((xm, x_champ_min)), list((ym, 210)), color=couleur_cone, lw=1.2, ls="--")
+        ax.plot(list((xm, x_champ_max)), list((ym, 210)), color=couleur_cone, lw=1.2, ls="--")
+
+        # Rayon réfléchi de l'antéviseur vers les yeux du conducteur dans la cabine (x=155, y=108)
+        ax.annotate("", xy=(155, 108), xytext=(xm, ym), arrowprops=dict(arrowstyle="->", color=couleur_cone, lw=2.2), zorder=5)
+
         if pieton_vu:
-            statut = "USAGER DÉTECTÉ : Le piéton est visible dans l'antéviseur convexe !"
+            statut = f"USAGER DÉTECTÉ : Le piéton à {dist_pieton:.2f} m est visible dans l'antéviseur !"
             c_stat = "#22c55e"
             diag = "VISIBLE (OK)"
         else:
-            statut = "DANGER ANGLE MORT : Piéton invisible ! Réglez l'antéviseur autour de 42°."
+            statut = f"DANGER ANGLE MORT : Piéton à {dist_pieton:.2f} m hors du champ ! Inclinez l'antéviseur à 42°."
             c_stat = "#ef4444"
             diag = "ANGLE MORT"
 
@@ -1960,6 +1976,56 @@ def afficher_atelier_transport_complet(sujet_idx, verrouille=False):
                 st.write(enonce)
             with c_sel:
                 st.selectbox("", choix, key=f"{cle}_s{sujet_idx}", disabled=verrouille, label_visibility="collapsed")
+
+BANQUES_GEOMETRE = {
+    # =========================================================================
+    # BANQUE SUJET 0 : STATION TOTALE & PRISME RÉFLECTEUR (COIN DE CUBE)
+    # =========================================================================
+    0: {
+        "questions": [
+            {"id": "qgeo0_1", "q": "Quel type de réflecteur est monté sur la canne tenue par l'opérateur face à une station totale ?", "options": ["Un prisme en coin de cube (rétroréflecteur trièdre)", "Un miroir plan de salle de bain", "Une lentille convergente en plastique"], "rep": "Un prisme en coin de cube (rétroréflecteur trièdre)"},
+            {"id": "qgeo0_2", "q": "Pourquoi le prisme de topographie renvoie-t-il le faisceau infrarouge exactement vers la station totale même s'il n'est pas parfaitement perpendiculaire ?", "options": ["Ses trois faces internes à 90° réfléchissent le rayon parallèlement à sa direction d'entrée", "Le prisme contient un moteur GPS qui suit la station", "La lumière se courbe sous l'effet de la gravité"], "rep": "Ses trois faces internes à 90° réfléchissent le rayon parallèlement à sa direction d'entrée"},
+            {"id": "qgeo0_3", "q": "Quelle est la précision millimétrique courante d'une station totale mesurant sur un prisme à 200 mètres ?", "options": ["± 1 mm + 1,5 ppm (environ ± 1,3 mm)", "± 25 cm", "± 1,5 mètre"], "rep": "± 1 mm + 1,5 ppm (environ ± 1,3 mm)"},
+            {"id": "qgeo0_4", "q": "Qu'appelle-t-on la « constante de prisme » (souvent -34,4 mm ou 0 mm) à paramétrer dans la station totale ?", "options": ["Le décalage optique dû au trajet et à l'indice du verre à l'intérieur du prisme", "Le poids de la canne télescopique en grammes", "La hauteur du trépied au-dessus du sol"], "rep": "Le décalage optique dû au trajet et à l'indice du verre à l'intérieur du prisme"},
+            {"id": "qgeo0_5", "q": "Dans la simulation de levé topographique, jusqu'à quel angle de désorientation de la canne le prisme renvoie-t-il un signal exploitable ?", "options": ["Jusqu'à ± 25°", "Uniquement à 0,0° exact", "Jusqu'à 85°"], "rep": "Jusqu'à ± 25°"},
+            {"id": "qgeo0_6", "q": "Quelle grandeur physique mesure le distancemètre (IMEL) intégré à la station totale ?", "options": ["Le déphasage ou le temps d'aller-retour de l'onde lumineuse réfléchie", "La pression atmosphérique sur le prisme", "La résistance électrique du sol"], "rep": "Le déphasage ou le temps d'aller-retour de l'onde lumineuse réfléchie"},
+            {"id": "qgeo0_7", "q": "Quelle erreur de mesure commet le géomètre si la bulle sphérique de la canne à prisme n'est pas centrée (canne penchée) ?", "options": ["Les coordonnées (X, Y) du point levé au sol sont faussées", "La couleur du laser change", "La batterie de la station se vide"], "rep": "Les coordonnées (X, Y) du point levé au sol sont faussées"},
+            {"id": "qgeo0_8", "q": "Combien de réflexions totales internes subit le faisceau lumineux dans un prisme topographique avant de ressortir ?", "options": ["Trois réflexions successives", "Une seule réflexion", "Six réflexions"], "rep": "Trois réflexions successives"},
+            {"id": "qgeo0_9", "q": "Pourquoi préfère-t-on le mode « avec prisme » au mode « sans prisme » pour borner une limite de propriété officielle ?", "options": ["Le prisme offre une portée de plusieurs kilomètres et une précision millimétrique garantie", "Le mode sans prisme est interdit par la loi", "Le prisme fonctionne sans trépied"], "rep": "Le prisme offre une portée de plusieurs kilomètres et une précision millimétrique garantie"},
+            {"id": "qgeo0_10", "q": "Quelle loi optique fondamentale s'applique sur chacune des trois faces internes du prisme ?", "options": ["La loi de la réflexion (i = i')", "La loi de Coulomb", "L'effet Venturi"], "rep": "La loi de la réflexion (i = i')"},
+        ],
+        "trous": [
+            ("1. La station totale vise un ......... monté sur une canne verticale.", ["Choisir...", "prisme", "aimant"], "prisme", "geo_t1_final"),
+            ("2. Le réflecteur topographique a la géométrie d'un coin de .........", ["Choisir...", "cube", "cylindre"], "cube", "geo_t2_final"),
+            ("3. Le faisceau réfléchi repart ......... au faisceau émis par la station.", ["Choisir...", "parallèlement", "perpendiculairement"], "parallèlement", "geo_t3_final"),
+            ("4. Le faisceau subit ......... réflexions successives dans le verre.", ["Choisir...", "trois", "deux"], "trois", "geo_t4_final"),
+            ("5. Le paramètre de correction propre à chaque modèle est la ......... de prisme.", ["Choisir...", "constante", "vitesse"], "constante", "geo_t5_final"),
+            ("6. L'opérateur maintient la canne verticale grâce à une nivelle .........", ["Choisir...", "sphérique", "thermique"], "sphérique", "geo_t6_final"),
+            ("7. La précision d'un levé au prisme est de l'ordre du .........", ["Choisir...", "millimètre", "décimètre"], "millimètre", "geo_t7_final"),
+            ("8. Le prisme tolère un désaxage angulaire jusqu'à ± ......... degrés.", ["Choisir...", "25", "2"], "25", "geo_t8_final"),
+            ("9. Chaque face réfléchissante respecte l'égalité i = .........", ["Choisir...", "i'", "90°"], "i'", "geo_t9_final"),
+            ("10. Le distancemètre calcule la distance à partir du trajet .........-retour.", ["Choisir...", "aller", "simple"], "aller", "geo_t10_final"),
+        ]
+    },
+    # =========================================================================
+    # BANQUE SUJET 1 : ÉQUERRE OPTIQUE À DOUBLE PRISME PENTAGONAL (90°)
+    # =========================================================================
+    1: {
+        "questions": [
+            {"id": "qgeo1_1", "q": "À quoi sert une équerre optique sur le terrain pour un géomètre topographe ?", "options": ["À implanter rapidement des angles droits (90°) et à s'aligner entre deux jalons", "À mesurer la température de l'asphalte", "À niveler une dalle en béton à 500 mètres"], "rep": "À implanter rapidement des angles droits (90°) et à s'aligner entre deux jalons"},
+            {"id": "qgeo1_2", "q": "De quel angle précis un prisme pentagonal (pentaprisme) dévie-t-il les rayons lumineux ?", "options": ["90° (un angle droit exact)", "45°", "180°"], "rep": "90° (un angle droit exact)"},
+            {"id": "qgeo1_3", "q": "Combien de prismes pentagonaux superposés contient une équerre optique double ?", "options": ["Deux prismes (un déviant à 90° vers la gauche, l'autre à 90° vers la droite)", "Un seul prisme triangulaire", "Quatre lentilles divergentes"], "rep": "Deux prismes (un déviant à 90° vers la gauche, l'autre à 90° vers la droite)"},
+            {"id": "qgeo1_4", "q": "Comment le géomètre sait-il qu'il se trouve exactement au pied de la perpendiculaire (angle à 90°) dans l'équerre optique ?", "options": ["Les images des deux jalons observés dans les prismes et le jalon vu directement sont parfaitement alignés verticalement", "Un bip sonore retentit dans le manche", "Les jalons deviennent verts"], "rep": "Les images des deux jalons observés dans les prismes et le jalon vu directement sont parfaitement alignés verticalement"},
+            {"id": "qgeo1_5", "q": "Pourquoi l'équerre optique reste-t-elle précise même si le géomètre la tient à la main avec de légers mouvements de rotation ?", "options": ["Le pentaprisme dévie toujours le faisceau de 90° quelle que soit sa légère rotation autour de l'axe vertical", "L'équerre est aimantée au champ terrestre", "Le verre corrige automatiquement les tremblements"], "rep": "Le pentaprisme dévie toujours le faisceau de 90° quelle que soit sa légère rotation autour de l'axe vertical"},
+            {"id": "qgeo1_6", "q": "Combien de réflexions internes subit un rayon lumineux à l'intérieur d'un pentaprisme pour sortir dévié de 90° ?", "options": ["Deux réflexions sur deux faces inclinées à 45° l'une par rapport à l'autre", "Une seule réflexion", "Quatre réflexions"], "rep": "Deux réflexions sur deux faces inclinées à 45° l'une par rapport à l'autre"},
+            {"id": "qgeo1_7", "q": "Quel accessoire suspendu sous le manche de l'équerre optique permet de reporter précisément le point trouvé au sol ?", "options": ["Un fil à plomb (ou une canne à plomber)", "Un thermomètre à mercure", "Une boussole magnétique"], "rep": "Un fil à plomb (ou une canne à plomber)"},
+            {"id": "qgeo1_8", "q": "Dans la simulation de l'équerre optique, si le géomètre est décalé de +1,50 m par rapport à l'alignement, que voit-il dans l'oculaire ?", "options": ["Les traits verticaux des trois jalons sont décalés les uns par rapport aux autres", "Il ne voit plus rien du tout", "L'angle passe à 180°"], "rep": "Les traits verticaux des trois jalons sont décalés les uns par rapport aux autres"},
+            {"id": "qgeo1_9", "q": "Quel angle forment entre elles les deux faces réfléchissantes argentées d'un pentaprisme ?", "options": ["45° (ce qui produit une déviation totale de 2 × 45° = 90°)", "90°", "120°"], "rep": "45° (ce qui produit une déviation totale de 2 × 45° = 90°)"},
+            {"id": "qgeo1_10", "q": "Pourquoi l'équerre optique est-elle toujours utilisée en topographie malgré l'arrivée des stations totales ?", "options": ["Elle ne nécessite aucune pile, est instantanée pour lever des détails proches et tient dans la poche", "Elle a une portée de 50 kilomètres", "Elle imprime directement les plans cadastraux"], "rep": "Elle ne nécessite aucune pile, est instantanée pour lever des détails proches et tient dans la poche"},
+        ],
+        "trous": [
+            ("1. L'équerre optique permet d'implanter des angles droits de ......... degrés.", ["Choisir...", "90", "45"], "90", "geo_t1_final"),
+            ("2. Elle utilise deux ......... pentagonaux superposés.", ["Choisir...", "prismes", "miroirs"], "prismes", "geo_t2_final"),
 
 
                 
