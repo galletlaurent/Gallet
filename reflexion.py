@@ -1800,9 +1800,6 @@ def mettre_a_jour_transport_matplotlib(sujet_idx):
             c_stat = "#22c55e"
             diag = "VISIBLE (OK)"
         else:
-            c_stat = "#22c55e"
-            diag = "VISIBLE (OK)"
-        else:
             statut = "DANGER ANGLE MORT : Piéton invisible ! Réglez l'antéviseur autour de 42°."
             c_stat = "#ef4444"
             diag = "ANGLE MORT"
