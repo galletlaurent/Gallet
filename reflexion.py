@@ -1260,57 +1260,129 @@ def mettre_a_jour_maintenance_matplotlib(sujet_idx):
 
     return fig
 
-def afficher_atelier_maintenance_complet(verrouille=False):
-    """Affiche le Quiz (10 questions) et le Texte à trous (10 cases) de l'Atelier 6 (Maintenance)."""
-    questions_maint_sources = [
-        {"id": "qm1", "q": "Lors d'un lignage laser d'arbre moteur-pompe, si le réflecteur tourne d'un angle α, de quel angle dévie le faisceau laser réfléchi ?", "options": ["2 × α (le double de l'angle)", "α (le même angle)", "α / 2 (la moitié de l'angle)"], "rep": "2 × α (le double de l'angle)"},
-        {"id": "qm2", "q": "Quelle est la tolérance angulaire maximale typique lors d'un alignement laser sur une machine tournant à 3000 tr/min ?", "options": ["0,05° (environ 0,8 mrad)", "5,0°", "15,0°"], "rep": "0,05° (environ 0,8 mrad)"},
-        {"id": "qm3", "q": "Quel risque mécanique entraîne un mauvais alignement optique entre un moteur et une pompe ?", "options": ["Une usure prématurée des roulements et des joints d'étanchéité", "Une baisse de la tension électrique du réseau", "Un refroidissement excessif du carter"], "rep": "Une usure prématurée des roulements et des joints d'étanchéité"},
-        {"id": "qm4", "q": "À quel angle un technicien doit-il incliner son miroir d'inspection articulé pour observer une soudure cachée à 90° derrière un carter ?", "options": ["45°", "90°", "20°"], "rep": "45°"},
-        {"id": "qm5", "q": "Pourquoi un miroir d'inspection permet-il de contrôler l'arrière d'un bloc hydraulique sans démontage ?", "options": ["Il dévie les rayons lumineux selon la loi i = i' vers l'œil du technicien", "Il traverse le métal grâce aux rayons X", "Il agrandit les fissures par réfraction"], "rep": "Il dévie les rayons lumineux selon la loi i = i' vers l'œil du technicien"},
-        {"id": "qm6", "q": "Quelle est la particularité optique d'un catadioptre (réflecteur en coin de cube) utilisé sur un convoyeur ?", "options": ["Il renvoie le faisceau lumineux parallèlement à sa direction d'arrivée", "Il disperse la lumière dans toutes les directions", "Il absorbe 100 % du faisceau infrarouge"], "rep": "Il renvoie le faisceau lumineux parallèlement à sa direction d'arrivée"},
-        {"id": "qm7", "q": "Combien de réflexions successives subit un rayon lumineux à l'intérieur d'un coin de cube (catadioptre) ?", "options": ["Trois réflexions sur trois faces perpendiculaires", "Une seule réflexion plane", "Aucune réflexion"], "rep": "Trois réflexions sur trois faces perpendiculaires"},
-        {"id": "qm8", "q": "Quelle est la tolérance angulaire d'un catadioptre industriel avant perte du signal sur la barrière photoélectrique ?", "options": ["Environ ± 15°", "Strictement 0,01°", "± 85°"], "rep": "Environ ± 15°"},
-        {"id": "qm9", "q": "En maintenance préventive, pourquoi faut-il nettoyer régulièrement la surface d'un réflecteur photoélectrique ?", "options": ["La poussière ou l'huile diffuse la lumière et fait chuter le signal sous 80 %", "La poussière change la couleur du laser", "Pour éviter que le plastique ne fonde"], "rep": "La poussière ou l'huile diffuse la lumière et fait chuter le signal sous 80 %"},
-        {"id": "qm10", "q": "Dans un endoscope industriel rigide, comment la lumière est-elle guidée dans les coudes pour inspecter l'intérieur d'une turbine ?", "options": ["Par réflexion sur des miroirs ou prismes à réflexion totale", "Par aimantation magnétique", "Par convection thermique"], "rep": "Par réflexion sur des miroirs ou prismes à réflexion totale"},
-    ]
 
-    if "ordre_quiz_maint_aleatoire" not in st.session_state:
-        random.shuffle(questions_maint_sources)
-        st.session_state.ordre_quiz_maint_aleatoire = questions_maint_sources
+BANQUES_MAINTENANCE = {
+    # =========================================================================
+    # BANQUE SUJET 0 : ALIGNEMENT LASER D'ARBRES TOURNANTS (MOTEUR - POMPE)
+    # =========================================================================
+    0: {
+        "questions": [
+            {"id": "qm0_1", "q": "Lors d'un lignage laser moteur-pompe, si l'arbre récepteur tourne d'un angle α, de quel angle dévie le faisceau laser réfléchi ?", "options": ["2 × α (le double de l'angle)", "α (le même angle)", "α / 2 (la moitié de l'angle)"], "rep": "2 × α (le double de l'angle)"},
+            {"id": "qm0_2", "q": "Quelle est la tolérance angulaire maximale admise pour un alignement laser sur une machine tournant à 3000 tr/min ?", "options": ["0,05°", "2,50°", "10,0°"], "rep": "0,05°"},
+            {"id": "qm0_3", "q": "Si le défaut angulaire α = 0,25° à une distance de 250 mm, pourquoi le décalage sur le capteur est-il amplifié ?", "options": ["Parce que la déviation optique vaut 2α et augmente avec la distance L", "Parce que le laser ralentit dans l'air", "Parce que la pompe dilate le faisceau"], "rep": "Parce que la déviation optique vaut 2α et augmente avec la distance L"},
+            {"id": "qm0_4", "q": "Quel composant mécanique casse prématurément en cas de défaut d'alignement angulaire entre le moteur et la pompe ?", "options": ["Les roulements et les garnitures d'étanchéité", "Le bobinage électrique du stator", "Le ventilateur de refroidissement"], "rep": "Les roulements et les garnitures d'étanchéité"},
+            {"id": "qm0_5", "q": "Sur quel arbre fixe-t-on généralement le prisme ou miroir réflecteur lors d'un contrôle d'alignement ?", "options": ["Sur l'arbre de la machine mobile à régler (la pompe)", "Sur le sol de l'atelier", "Sur le capot de protection en plastique"], "rep": "Sur l'arbre de la machine mobile à régler (la pompe)"},
+            {"id": "qm0_6", "q": "Comment corrige-t-on un défaut d'alignement angulaire détecté par le faisceau laser réfléchi ?", "options": ["En ajoutant des cales calibrées sous les pattes de fixation de la machine", "En tordant l'arbre moteur à la presse", "En changeant la couleur du laser"], "rep": "En ajoutant des cales calibrées sous les pattes de fixation de la machine"},
+            {"id": "qm0_7", "q": "Lorsque l'alignement entre les deux arbres est parfait (α = 0°), comment revient le rayon réfléchi sur la tête laser ?", "options": ["Il revient exactement sur son trajet aller (i = i' = 0°)", "Il est dévié à 90° vers le plafond", "Il disparaît totalement"], "rep": "Il revient exactement sur son trajet aller (i = i' = 0°)"},
+            {"id": "qm0_8", "q": "Quelle est l'unité de précision courante d'un capteur optique PSD utilisé en lignage laser ?", "options": ["Le micromètre (0,001 mm)", "Le centimètre (10 mm)", "Le décimètre (100 mm)"], "rep": "Le micromètre (0,001 mm)"},
+            {"id": "qm0_9", "q": "Quel symptôme physique sur la machine alerte le technicien avant même le contrôle laser ?", "options": ["Des vibrations anormales et un échauffement des paliers", "Une baisse de pression atmosphérique", "Un changement de couleur de la peinture"], "rep": "Des vibrations anormales et un échauffement des paliers"},
+            {"id": "qm0_10", "q": "Pourquoi préfère-t-on le lignage laser à la règle métallique ou au comparateur mécanique ?", "options": ["Il supprime la flexion mécanique et multiplie par 2 la sensibilité grâce à la réflexion", "Il coûte moins cher qu'un réglet", "Il fonctionne sans électricité ni batterie"], "rep": "Il supprime la flexion mécanique et multiplie par 2 la sensibilité grâce à la réflexion"},
+        ],
+        "trous": [
+            ("1. Le lignage laser évite l'usure prématurée des ......... et des joints.", ["Choisir...", "roulements", "câbles"], "roulements", "maint_t1_final"),
+            ("2. Un défaut angulaire alpha de l'arbre dévie le laser réfléchi de ......... alpha.", ["Choisir...", "2", "0.5"], "2", "maint_t2_final"),
+            ("3. À 3000 tr/min, le défaut angulaire ne doit pas dépasser ......... degrés.", ["Choisir...", "0.05", "5.0"], "0.05", "maint_t3_final"),
+            ("4. Lorsque les deux arbres sont parfaitement alignés, i = i' = .........°.", ["Choisir...", "0", "45"], "0", "maint_t4_final"),
+            ("5. Le faisceau laser rebondit sur un prisme ou un miroir .........", ["Choisir...", "réflecteur", "absorbant"], "réflecteur", "maint_t5_final"),
+            ("6. Plus la distance L entre les machines est grande, plus le décalage est .........", ["Choisir...", "important", "faible"], "important", "maint_t6_final"),
+            ("7. Un mauvais alignement génère de fortes ......... sur le bâti.", ["Choisir...", "vibrations", "économies"], "vibrations", "maint_t7_final"),
+            ("8. On corrige la hauteur des pattes moteur à l'aide de ......... calibrées.", ["Choisir...", "cales", "vis"], "cales", "maint_t8_final"),
+            ("9. La réflexion optique permet une précision de mesure au ......... de millimètre.", ["Choisir...", "centième", "mètre"], "centième", "maint_t9_final"),
+            ("10. Le faisceau réfléchi respecte la loi fondamentale i = .........", ["Choisir...", "i'", "90°"], "i'", "maint_t10_final"),
+        ]
+    },
+    # =========================================================================
+    # BANQUE SUJET 1 : MIROIR D'INSPECTION ARTICULÉ (SOUDURES & FUITES)
+    # =========================================================================
+    1: {
+        "questions": [
+            {"id": "qm1_1", "q": "À quel angle précis faut-il incliner un miroir d'inspection pour observer une fuite située à 90° derrière un carter ?", "options": ["45°", "90°", "15°"], "rep": "45°"},
+            {"id": "qm1_2", "q": "Quelle loi optique permet de prévoir la direction dans laquelle l'image de la soudure sera renvoyée ?", "options": ["La loi de la réflexion (i = i')", "La loi de gravitation universelle", "La loi de Joule"], "rep": "La loi de la réflexion (i = i')"},
+            {"id": "qm1_3", "q": "Pourquoi le contrôle au miroir d'inspection est-il classé parmi les contrôles non destructifs (CND) ?", "options": ["Il permet d'inspecter la pièce sans démonter ni détériorer la machine", "Il détruit uniquement les soudures défectueuses", "Il soude automatiquement les fissures"], "rep": "Il permet d'inspecter la pièce sans démonter ni détériorer la machine"},
+            {"id": "qm1_4", "q": "Si le technicien incline son miroir à 35° au lieu de 45°, pourquoi ne voit-il plus la soudure ?", "options": ["Le rayon réfléchi est dévié de 70° au lieu de 90° et rate son œil", "Le miroir devient opaque en dessous de 40°", "La lumière s'arrête sur le carter"], "rep": "Le rayon réfléchi est dévié de 70° au lieu de 90° et rate son œil"},
+            {"id": "qm1_5", "q": "De quelle nature est l'image de la fuite observée par le technicien dans le miroir plan articulé ?", "options": ["Une image virtuelle symétrique par rapport au plan du miroir", "Une image réelle projetée sur le carter", "Une ombre inversée"], "rep": "Une image virtuelle symétrique par rapport au plan du miroir"},
+            {"id": "qm1_6", "q": "Quel accessoire est souvent intégré autour du miroir d'inspection industriel pour travailler dans les carters sombres ?", "options": ["Un éclairage LED orienté vers la zone inspectée", "Un aimant permanent haute puissance", "Un capteur de pression hydraulique"], "rep": "Un éclairage LED orienté vers la zone inspectée"},
+            {"id": "qm1_7", "q": "Pourquoi utilise-t-on une tige télescopique et une rotule sur un miroir de maintenance ?", "options": ["Pour atteindre des zones profondes et ajuster finement l'angle d'incidence i", "Pour mesurer la température de l'huile", "Pour serrer des écrous inaccessibles"], "rep": "Pour atteindre des zones profondes et ajuster finement l'angle d'incidence i"},
+            {"id": "qm1_8", "q": "Dans un environnement avec projections d'étincelles de soudage, quel matériau privilégie-t-on pour le miroir ?", "options": ["L'acier inoxydable poli incassable", "Le verre fin non trempé", "Le carton aluminium"], "rep": "L'acier inoxydable poli incassable"},
+            {"id": "qm1_9", "q": "Lorsque le miroir pivote de 5° sur sa rotule, de combien pivote le champ de vision observé ?", "options": ["10° (le double de la rotation du miroir)", "5°", "2,5°"], "rep": "10° (le double de la rotation du miroir)"},
+            {"id": "qm1_10", "q": "Quelle précaution de maintenance faut-il prendre avant d'utiliser le miroir près d'un circuit hydraulique ?", "options": ["Essuyer toute trace d'huile sur le miroir pour éviter une réflexion diffuse floue", "Tremper le miroir dans l'huile", "Chauffer le miroir au chalumeau"], "rep": "Essuyer toute trace d'huile sur le miroir pour éviter une réflexion diffuse floue"},
+        ],
+        "trous": [
+            ("1. Pour voir derrière un carter à 90°, on incline le miroir à .........°.", ["Choisir...", "45", "90"], "45", "maint_t1_final"),
+            ("2. Le miroir d'inspection applique la loi de réflexion i = .........", ["Choisir...", "i'", "0°"], "i'", "maint_t2_final"),
+            ("3. Inspecter sans démonter la machine est un contrôle non .........", ["Choisir...", "destructif", "visuel"], "destructif", "maint_t3_final"),
+            ("4. L'image observée dans le miroir plan est une image .........", ["Choisir...", "virtuelle", "réelle"], "virtuelle", "maint_t4_final"),
+            ("5. Une ......... orientable permet de régler l'angle du miroir.", ["Choisir...", "rotule", "poulie"], "rotule", "maint_t5_final"),
+            ("6. La tige ......... permet d'atteindre les zones profondes du moteur.", ["Choisir...", "télescopique", "rigide"], "télescopique", "maint_t6_final"),
+            ("7. Si le miroir tourne de 10°, le rayon réfléchi tourne de .........°.", ["Choisir...", "20", "10"], "20", "maint_t7_final"),
+            ("8. Une trace d'huile sur le verre provoque une réflexion ......... floue.", ["Choisir...", "diffuse", "totale"], "diffuse", "maint_t8_final"),
+            ("9. Les angles i et i' sont mesurés par rapport à la ......... au miroir.", ["Choisir...", "normale", "tige"], "normale", "maint_t9_final"),
+            ("10. Des LED éclairent la zone cachée pour fournir des rayons .........", ["Choisir...", "incidents", "réfléchis"], "incidents", "maint_t10_final"),
+        ]
+    },
+    # =========================================================================
+    # BANQUE SUJET 2 : BARRIÈRE PHOTOÉLECTRIQUE À CATADIOPTRE SUR CONVOYEUR
+    # =========================================================================
+    2: {
+        "questions": [
+            {"id": "qm2_1", "q": "Quelle est la propriété optique principale d'un catadioptre monté face à une cellule photoélectrique ?", "options": ["Il renvoie le faisceau lumineux parallèlement à sa direction d'arrivée", "Il disperse la lumière à 180° dans tout l'atelier", "Il transforme la lumière rouge en lumière bleue"], "rep": "Il renvoie le faisceau lumineux parallèlement à sa direction d'arrivée"},
+            {"id": "qm2_2", "q": "Comment sont disposées les facettes réfléchissantes à l'intérieur d'un catadioptre (coin de cube) ?", "options": ["Trois miroirs plans perpendiculaires entre eux à 90°", "Un seul miroir sphérique concave", "Deux lentilles divergentes"], "rep": "Trois miroirs plans perpendiculaires entre eux à 90°"},
+            {"id": "qm2_3", "q": "Pourquoi utilise-t-on un catadioptre sur un convoyeur soumis aux vibrations plutôt qu'un simple miroir plan ?", "options": ["Le catadioptre tolère un désalignement jusqu'à ± 15° sans perdre le signal", "Un miroir plan ne réfléchit pas les rayons infrarouges", "Le catadioptre fonctionne sans émetteur"], "rep": "Le catadioptre tolère un désalignement jusqu'à ± 15° sans perdre le signal"},
+            {"id": "qm2_4", "q": "Que détecte la cellule photoélectrique lorsqu'un colis passe sur le convoyeur entre le capteur et le réflecteur ?", "options": ["La coupure brutale du faisceau réfléchi", "L'augmentation du poids du colis", "La température du carton"], "rep": "La coupure brutale du faisceau réfléchi"},
+            {"id": "qm2_5", "q": "Dans la simulation, en dessous de quel pourcentage de signal réfléchi l'alarme de maintenance préventive se déclenche-t-elle ?", "options": ["80 %", "10 %", "100 %"], "rep": "80 %"},
+            {"id": "qm2_6", "q": "Quelle est la cause la plus fréquente d'une baisse progressive du signal optique (ex : 65 %) sans passage de colis ?", "options": ["L'encrassement du réflecteur par la poussière ou un choc qui l'a désaxé de plus de 15°", "L'usure du faisceau lumineux", "La couleur des murs de l'usine"], "rep": "L'encrassement du réflecteur par la poussière ou un choc qui l'a désaxé de plus de 15°"},
+            {"id": "qm2_7", "q": "Combien de réflexions successives subit le faisceau à l'intérieur d'un coin de cube avant de repartir vers le capteur ?", "options": ["Trois réflexions", "Une seule réflexion", "Cinq réflexions"], "rep": "Trois réflexions"},
+            {"id": "qm2_8", "q": "Quel avantage économique présente un capteur reflex (émetteur + récepteur réunis + catadioptre) sur une ligne de production ?", "options": ["Il n'y a besoin de câbler électriquement qu'un seul côté du convoyeur", "Il ne nécessite aucun réglage mécanique", "Il remplace le moteur du convoyeur"], "rep": "Il n'y a besoin de câbler électriquement qu'un seul côté du convoyeur"},
+            {"id": "qm2_9", "q": "Que doit faire le technicien de maintenance si un chariot élévateur a heurté et tordu le support du catadioptre de 22° ?", "options": ["Redresser le support pour revenir dans la plage de tolérance (± 15°) et vérifier le voyant de gain", "Remplacer toute l'armoire électrique", "Peindre le catadioptre en noir mat"], "rep": "Redresser le support pour revenir dans la plage de tolérance (± 15°) et vérifier le voyant de gain"},
+            {"id": "qm2_10", "q": "Quelle technologie de filtre utilise-t-on sur ces capteurs pour éviter qu'un objet brillant (film plastique, métal) ne trompe la cellule ?", "options": ["Un filtre polarisant (seule la lumière dépolarisée par le catadioptre est acceptée)", "Un filtre à huile", "Un verre fumé opaque"], "rep": "Un filtre polarisant (seule la lumière dépolarisée par le catadioptre est acceptée)"},
+        ],
+        "trous": [
+            ("1. Un réflecteur en coin de cube s'appelle un .........", ["Choisir...", "catadioptre", "prisme"], "catadioptre", "maint_t1_final"),
+            ("2. Le catadioptre renvoie la lumière parallèlement à son rayon .........", ["Choisir...", "incident", "perpendiculaire"], "incident", "maint_t2_final"),
+            ("3. Il est composé de trois micro-miroirs inclinés à ......... degrés.", ["Choisir...", "90", "45"], "90", "maint_t3_final"),
+            ("4. Le catadioptre tolère les vibrations jusqu'à ± ......... degrés.", ["Choisir...", "15", "60"], "15", "maint_t4_final"),
+            ("5. Le passage d'un colis sur le convoyeur ......... le faisceau réfléchi.", ["Choisir...", "coupe", "amplifie"], "coupe", "maint_t5_final"),
+            ("6. L'émetteur et le récepteur sont regroupés dans le même .........", ["Choisir...", "boîtier", "convoyeur"], "boîtier", "maint_t6_final"),
+            ("7. Si le signal passe sous ......... %, une alarme maintenance s'active.", ["Choisir...", "80", "20"], "80", "maint_t7_final"),
+            ("8. La poussière sur le réflecteur diminue l'intensité .........", ["Choisir...", "réfléchie", "électrique"], "réfléchie", "maint_t8_final"),
+            ("9. Chaque face interne du coin de cube applique la loi i = .........", ["Choisir...", "i'", "0°"], "i'", "maint_t9_final"),
+            ("10. Le système reflex évite de tirer des ......... des deux côtés du tapis.", ["Choisir...", "câbles", "rails"], "câbles", "maint_t10_final"),
+        ]
+    }
+}
 
-    champs_maint = [
-        ("1. Le lignage laser évite l'usure prématurée des ......... et accouplements.", ["Choisir...", "roulements", "câbles"], "roulements", "maint_t1_final"),
-        ("2. Si un arbre pivote d'un angle alpha, le laser réfléchi dévie de ......... alpha.", ["Choisir...", "2", "0.5"], "2", "maint_t2_final"),
-        ("3. Pour voir une fuite cachée à 90°, on incline le miroir d'inspection à .........°.", ["Choisir...", "45", "90"], "45", "maint_t3_final"),
-        ("4. Le miroir d'inspection applique strictement la loi de réflexion i = .........", ["Choisir...", "i'", "0°"], "i'", "maint_t4_final"),
-        ("5. Un réflecteur en coin de cube s'appelle aussi un .........", ["Choisir...", "catadioptre", "prisme"], "catadioptre", "maint_t5_final"),
-        ("6. Le catadioptre renvoie la lumière vers sa ......... d'émission.", ["Choisir...", "source", "cible"], "source", "maint_t6_final"),
-        ("7. Une barrière photoélectrique utilise un émetteur et un ......... optique.", ["Choisir...", "réflecteur", "aimant"], "réflecteur", "maint_t7_final"),
-        ("8. L'encrassement d'un miroir réduit l'intensité du faisceau .........", ["Choisir...", "réfléchi", "incident"], "réfléchi", "maint_t8_final"),
-        ("9. Le contrôle avec un miroir sans démonter la machine est un contrôle non .........", ["Choisir...", "destructif", "visuel"], "destructif", "maint_t9_final"),
-        ("10. Le laser permet une précision de mesure de l'ordre du ......... de millimètre.", ["Choisir...", "centième", "mètre"], "centième", "maint_t10_final"),
-    ]
+
+def afficher_atelier_maintenance_complet(sujet_idx, verrouille=False):
+    """Affiche les 10 QCM et les 10 trous spécifiques au sujet de maintenance tiré au sort."""
+    if sujet_idx is None:
+        st.warning("Tirez d'abord au sort un sujet de maintenance ci-dessus pour débloquer les 10 questions et les 10 phrases à trous correspondantes.")
+        return
+
+    banque = BANQUES_MAINTENANCE[sujet_idx]
+    cle_session_ordre = f"ordre_quiz_maint_sujet_{sujet_idx}"
+
+    if cle_session_ordre not in st.session_state:
+        liste_q = list(banque["questions"])
+        random.shuffle(liste_q)
+        st.session_state[cle_session_ordre] = liste_q
 
     col_quiz, col_trous = st.columns(2)
     with col_quiz:
-        st.markdown("##### Quiz Maintenance Industrielle (10 questions - 10 pts)")
-        for idx, q_data in enumerate(st.session_state.ordre_quiz_maint_aleatoire, 1):
+        st.markdown("##### Quiz Technique sur votre sujet (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state[cle_session_ordre], 1):
             st.write(f"**{idx}.** {q_data['q']}")
             cle_select = f"maint_at6_final_g_{q_data['id']}"
             opts_affichees = ["Choisir..."] + q_data["options"]
             st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
     with col_trous:
-        st.markdown("##### Synthèse Maintenance (Texte à trous - 10 cases - 10 pts)")
-        for enonce, choix, _, cle in champs_maint:
+        st.markdown("##### Synthèse sur votre sujet (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in banque["trous"]:
             c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
             with c_txt:
                 st.write(enonce)
             with c_sel:
                 st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
-
-
 with tab0:
     st.subheader("Identification de l'élève")
     st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
@@ -2457,13 +2529,14 @@ with tab6:
             st.dataframe(df_maint, use_container_width=True, hide_index=True)
 
     st.write("---")
-    st.subheader("3. Évaluation des connaissances (20 points)")
+    st.subheader("3. Évaluation des connaissances sur votre sujet (20 points)")
 
     if "maint_verrouille_tab6" not in st.session_state:
         st.session_state.maint_verrouille_tab6 = False
     verrou_at6 = st.session_state.maint_verrouille_tab6
+    sujet_actif_m = st.session_state.get("sujet_maint_tire", None)
 
-    afficher_atelier_maintenance_complet(verrouille=verrou_at6)
+    afficher_atelier_maintenance_complet(sujet_actif_m, verrouille=verrou_at6)
 
     st.write("---")
     st.subheader("Synthèse et validation de l'Atelier 6 (Maintenance)")
@@ -2480,30 +2553,24 @@ with tab6:
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 6", key="btn_export_maint6_official_net", use_container_width=True, disabled=verrou_at6):
         if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
-        elif st.session_state.sujet_maint_tire is None:
+        elif sujet_actif_m is None:
             st.error("Action refusée : Tirez d'abord au sort votre sujet de maintenance en haut de l'onglet.")
         elif not case_certif_maint6:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            score_q6 = 0.0
-            if "ordre_quiz_maint_aleatoire" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_maint_aleatoire:
-                    reponse_eleve = st.session_state.get(f"maint_at6_final_g_{q_item['id']}", "Choisir...")
-                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
-                        score_q6 += 1.0
+            banque_active = BANQUES_MAINTENANCE[sujet_actif_m]
+            cle_ordre = f"ordre_quiz_maint_sujet_{sujet_actif_m}"
 
-            score_t6 = sum([
-                st.session_state.get("maint_t1_final") == "roulements",
-                st.session_state.get("maint_t2_final") == "2",
-                st.session_state.get("maint_t3_final") == "45",
-                st.session_state.get("maint_t4_final") == "i'",
-                st.session_state.get("maint_t5_final") == "catadioptre",
-                st.session_state.get("maint_t6_final") == "source",
-                st.session_state.get("maint_t7_final") == "réflecteur",
-                st.session_state.get("maint_t8_final") == "réfléchi",
-                st.session_state.get("maint_t9_final") == "destructif",
-                st.session_state.get("maint_t10_final") == "centième",
-            ])
+            score_q6 = 0.0
+            for q_item in st.session_state.get(cle_ordre, []):
+                reponse_eleve = st.session_state.get(f"maint_at6_final_g_{q_item['id']}", "Choisir...")
+                if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                    score_q6 += 1.0
+
+            score_t6 = 0.0
+            for _, _, bonne_rep_t, cle_t in banque_active["trous"]:
+                if str(st.session_state.get(cle_t, "Choisir...")).strip() == str(bonne_rep_t).strip():
+                    score_t6 += 1.0
 
             st.session_state.score_maint6_p1 = round(float(score_q6), 1)
             st.session_state.score_maint6_p2 = round(float(score_t6), 1)
@@ -2511,11 +2578,13 @@ with tab6:
             st.session_state.maint_verrouille_tab6 = True
             st.rerun()
 
-    if st.session_state.get("maint_verrouille_tab6", False):
+    if st.session_state.get("maint_verrouille_tab6", False) and sujet_actif_m is not None:
         scr1 = st.session_state.get("score_maint6_p1", 0.0)
         scr2 = st.session_state.get("score_maint6_p2", 0.0)
         tot_s = st.session_state.get("score_final_maint6", 0.0)
-        titre_sujet_export = sujets_maintenance[st.session_state.sujet_maint_tire]["titre"]
+        titre_sujet_export = sujets_maintenance[sujet_actif_m]["titre"]
+        banque_active = BANQUES_MAINTENANCE[sujet_actif_m]
+        cle_ordre = f"ordre_quiz_maint_sujet_{sujet_actif_m}"
 
         timestamp_maint6 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
         st.success(f"ATELIER MAINTENANCE SCELLÉ | Note de session : {tot_s:.1f} / 20")
@@ -2548,13 +2617,13 @@ with tab6:
             </div>
             <div class="sub-title">Récapitulatif des Notes Générées</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                Note obtenue au Quiz Maintenance : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue au Quiz Technique : <strong>{scr1:.1f} / 10</strong><br>
                 Note obtenue à la Synthèse du cours (Texte à trous) : <strong>{scr2:.1f} / 10</strong><br>
                 Relevés expérimentaux enregistrés : <strong>{len(st.session_state.get("mesures_maint_log", []))}</strong><br>
                 Note Totale de l'Atelier 6 : <strong>{tot_s:.1f} / 20</strong>
             </p>
 
-            <div class="sub-title">1. CORRECTION DÉTAILLÉE DU QUIZ (10 QUESTIONS)</div>
+            <div class="sub-title">1. CORRECTION DÉTAILLÉE DU QUIZ (10 QUESTIONS SPÉCIFIQUES AU SUJET)</div>
             <table>
                 <thead>
                     <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
@@ -2562,13 +2631,12 @@ with tab6:
                 <tbody>
         """
 
-        if "ordre_quiz_maint_aleatoire" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz_maint_aleatoire, 1):
-                saisie = st.session_state.get(f"maint_at6_final_g_{q_item['id']}", "Choisir...")
-                attendu = q_item["rep"]
-                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_maint += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+        for num, q_item in enumerate(st.session_state.get(cle_ordre, []), 1):
+            saisie = st.session_state.get(f"maint_at6_final_g_{q_item['id']}", "Choisir...")
+            attendu = q_item["rep"]
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_maint += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
         html_export_maint += """
                 </tbody>
@@ -2582,20 +2650,7 @@ with tab6:
                 <tbody>
         """
 
-        liste_verif_trous_maint = [
-            ("1. Le lignage laser évite l'usure prématurée des ......... et accouplements.", "roulements", "maint_t1_final"),
-            ("2. Si un arbre pivote d'un angle alpha, le laser réfléchi dévie de ......... alpha.", "2", "maint_t2_final"),
-            ("3. Pour voir une fuite cachée à 90°, on incline le miroir d'inspection à .........°.", "45", "maint_t3_final"),
-            ("4. Le miroir d'inspection applique strictement la loi de réflexion i = .........", "i'", "maint_t4_final"),
-            ("5. Un réflecteur en coin de cube s'appelle aussi un .........", "catadioptre", "maint_t5_final"),
-            ("6. Le catadioptre renvoie la lumière vers sa ......... d'émission.", "source", "maint_t6_final"),
-            ("7. Une barrière photoélectrique utilise un émetteur et un ......... optique.", "réflecteur", "maint_t7_final"),
-            ("8. L'encrassement d'un miroir réduit l'intensité du faisceau .........", "réfléchi", "maint_t8_final"),
-            ("9. Le contrôle avec un miroir sans démonter la machine est un contrôle non .........", "destructif", "maint_t9_final"),
-            ("10. Le laser permet une précision de mesure de l'ordre du ......... de millimètre.", "centième", "maint_t10_final"),
-        ]
-
-        for idx_t, (enonce_t, attendu_t, cle_t) in enumerate(liste_verif_trous_maint, 1):
+        for idx_t, (enonce_t, _, attendu_t, cle_t) in enumerate(banque_active["trous"], 1):
             saisie_t = st.session_state.get(cle_t, "Choisir...")
             v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
             v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
@@ -2615,7 +2670,6 @@ with tab6:
             mime="text/html",
             use_container_width=True
         )
-
 
 
 with tab7:
