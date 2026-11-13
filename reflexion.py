@@ -2026,6 +2026,216 @@ BANQUES_GEOMETRE = {
         "trous": [
             ("1. L'équerre optique permet d'implanter des angles droits de ......... degrés.", ["Choisir...", "90", "45"], "90", "geo_t1_final"),
             ("2. Elle utilise deux ......... pentagonaux superposés.", ["Choisir...", "prismes", "miroirs"], "prismes", "geo_t2_final"),
+            ("3. Dans un pentaprisme, le rayon lumineux subit ......... réflexions internes.", ["Choisir...", "deux", "trois"], "deux", "geo_t3_final"),
+            ("4. Les deux faces réfléchissantes du prisme forment un angle de .........°.", ["Choisir...", "45", "90"], "45", "geo_t4_final"),
+            ("5. Le géomètre vise des ......... plantés verticalement sur le terrain.", ["Choisir...", "jalons", "piquets"], "jalons", "geo_t5_final"),
+            ("6. Lorsque l'angle droit est atteint, les images des jalons sont .........", ["Choisir...", "alignées", "inversées"], "alignées", "geo_t6_final"),
+            ("7. Un fil à ......... permet de marquer le point exact sur le sol.", ["Choisir...", "plomb", "fer"], "plomb", "geo_t7_final"),
+            ("8. Une légère rotation de l'équerre en main ne modifie pas la ......... de 90°.", ["Choisir...", "déviation", "couleur"], "déviation", "geo_t8_final"),
+            ("9. Chaque réflexion interne obéit à la loi i = .........", ["Choisir...", "i'", "0°"], "i'", "geo_t9_final"),
+            ("10. Cet instrument optique fonctionne sans aucune ......... électrique.", ["Choisir...", "batterie", "lentille"], "batterie", "geo_t10_final"),
+        ]
+    },
+    # =========================================================================
+    # BANQUE SUJET 2 : SCANNER LASER TERRESTRE 3D (LIDAR À MIROIR TOURNANT)
+    # =========================================================================
+    2: {
+        "questions": [
+            {"id": "qgeo2_1", "q": "Quel composant optique tourne à très haute vitesse au centre d'un scanner laser terrestre 3D (LiDAR) ?", "options": ["Un miroir plan incliné (ou polygonal) qui dévie le faisceau laser verticalement", "Une loupe en verre dépoli", "Un disque vinyle noir"], "rep": "Un miroir plan incliné (ou polygonal) qui dévie le faisceau laser verticalement"},
+            {"id": "qgeo2_2", "q": "Comment le scanner laser 3D parvient-il à numériser toute une pièce ou une façade entière à 360° ?", "options": ["En combinant la rotation rapide du miroir vertical et la rotation horizontale de la tête du scanner", "En déplaçant le trépied tous les centimètres", "En utilisant mille lasers fixes différents"], "rep": "En combinant la rotation rapide du miroir vertical et la rotation horizontale de la tête du scanner"},
+            {"id": "qgeo2_3", "q": "Combien de points 3D par seconde un scanner laser topographique moderne peut-il mesurer par réflexion ?", "options": ["Jusqu'à 1 000 000 à 2 000 000 de points par seconde", "10 points par minute", "50 points par heure"], "rep": "Jusqu'à 1 000 000 à 2 000 000 de points par seconde"},
+            {"id": "qgeo2_4", "q": "Si le miroir interne du scanner tourne d'un angle α, de combien tourne le faisceau laser projeté sur la façade ?", "options": ["2 × α (le double de l'angle de rotation du miroir)", "α (le même angle)", "α / 2"], "rep": "2 × α (le double de l'angle de rotation du miroir)"},
+            {"id": "qgeo2_5", "q": "Comment s'appelle le fichier numérique 3D obtenu après le balayage laser complet d'un bâtiment ?", "options": ["Un nuage de points (Point Cloud)", "Un tableau Excel", "Une photographie argentique"], "rep": "Un nuage de points (Point Cloud)"},
+            {"id": "qgeo2_6", "q": "Pourquoi les façades vitrées (miroirs, baies vitrées) posent-elles un problème lors d'un relevé au scanner laser 3D ?", "options": ["Le laser se réfléchit spéculairement sur la vitre et crée des points « fantômes » derrière le mur", "La vitre fait exploser le miroir du scanner", "Le laser devient invisible pour l'ordinateur"], "rep": "Le laser se réfléchit spéculairement sur la vitre et crée des points « fantômes » derrière le mur"},
+            {"id": "qgeo2_7", "q": "Que placent les géomètres sur le chantier pour assembler précisément plusieurs stations de scan 3D entre elles ?", "options": ["Des sphères blanches mates ou des cibles damiers à haute réflectivité", "Des drapeaux rouges en tissu", "Des cônes de chantier orange"], "rep": "Des sphères blanches mates ou des cibles damiers à haute réflectivité"},
+            {"id": "qgeo2_8", "q": "Quel type de réflexion sur un mur en pierre permet au scanner 3D de recevoir une partie du faisceau retour ?", "options": ["La réflexion diffuse sur la rugosité de la pierre", "La réflexion totale dans le verre", "La réfraction atmosphérique"], "rep": "La réflexion diffuse sur la rugosité de la pierre"},
+            {"id": "qgeo2_9", "q": "Dans la simulation du scanner 3D, comment évolue la densité des points sur la façade lorsque la distance d'éloignement augmente ?", "options": ["L'espacement entre les points augmente (la densité diminue avec la distance)", "Les points deviennent plus serrés", "La densité reste strictement identique à 1 m et à 200 m"], "rep": "L'espacement entre les points augmente (la densité diminue avec la distance)"},
+            {"id": "qgeo2_10", "q": "Quelle loi physique gouverne à la fois la déviation sur le miroir tournant interne et le rebond sur les sphères de calage ?", "options": ["La loi de la réflexion (i = i')", "La loi d'Archimède", "La loi de Boyle-Mariotte"], "rep": "La loi de la réflexion (i = i')"},
+        ],
+        "trous": [
+            ("1. Au cœur du scanner 3D, un ......... tournant dévie le faisceau laser.", ["Choisir...", "miroir", "prisme"], "miroir", "geo_t1_final"),
+            ("2. Lorsque le miroir tourne d'un angle alpha, le laser balaie un angle de ......... alpha.", ["Choisir...", "2", "0.5"], "2", "geo_t2_final"),
+            ("3. L'ensemble des mesures forme un ......... de points en trois dimensions.", ["Choisir...", "nuage", "cercle"], "nuage", "geo_t3_final"),
+            ("4. Le scanner mesure la distance grâce au temps d'.........-retour du laser.", ["Choisir...", "aller", "arrêt"], "aller", "geo_t4_final"),
+            ("5. Sur un mur rugueux, la lumière revient par réflexion .........", ["Choisir...", "diffuse", "totale"], "diffuse", "geo_t5_final"),
+            ("6. Les baies vitrées créent des points ......... par réflexion spéculaire.", ["Choisir...", "fantômes", "fixes"], "fantômes", "geo_t6_final"),
+            ("7. On utilise des ......... blanches pour assembler plusieurs scans 3D.", ["Choisir...", "sphères", "briques"], "sphères", "geo_t7_final"),
+            ("8. La tête du scanner pivote à ......... degrés autour de l'axe vertical.", ["Choisir...", "360", "90"], "360", "geo_t8_final"),
+            ("9. Plus la façade est éloignée, plus l'......... entre deux points augmente.", ["Choisir...", "espacement", "intensité"], "espacement", "geo_t9_final"),
+            ("10. Le miroir interne applique la loi fondamentale i = .........", ["Choisir...", "i'", "45°"], "i'", "geo_t10_final"),
+        ]
+    }
+}
+
+
+def mettre_a_jour_geometre_matplotlib(sujet_idx):
+    """Banc d'essai topographique réaliste adapté à la mission tirée au sort."""
+    fig, ax = plt.subplots(figsize=(12, 6.5), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 260)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    # =========================================================================
+    # SUJET 0 : STATION TOTALE & PRISME RÉFLECTEUR EN COIN DE CUBE
+    # =========================================================================
+    if sujet_idx == 0:
+        dist_m = st.session_state.get("slider_geo_dist_s0", 120.0)
+        ang_prisme = st.session_state.get("slider_geo_ang_s0", 10.0)
+
+        ax.add_patch(patches.Rectangle((20, 205), 560, 40, facecolor="#365314", edgecolor="#4d7c0f"))
+
+        ax.plot(list((65, 80)), list((205, 145)), color="#cbd5e1", lw=2.5)
+        ax.plot(list((95, 80)), list((205, 145)), color="#cbd5e1", lw=2.5)
+        ax.add_patch(patches.Rectangle((66, 112), 28, 33, facecolor="#eab308", edgecolor="white", lw=1.5))
+        ax.text(80, 102, "Station Totale\n(IMEL Infrarouge)", color="#fde047", fontsize=7.5, fontweight="bold", ha="center")
+
+        xp = 180.0 + (dist_m / 300.0) * 360.0
+        ax.plot(list((xp, xp)), list((205, 125)), color="#ef4444", lw=3)
+        rad_p = math.radians(ang_prisme)
+        dx_p = 14.0 * math.sin(rad_p)
+        dy_p = 18.0 * math.cos(rad_p)
+        ax.plot(list((xp - dx_p, xp + dx_p)), list((125 - dy_p, 125 + dy_p)), color="#38bdf8", lw=5)
+        ax.text(xp, 96, f"Prisme ({ang_prisme:+.0f}°)\nà {dist_m:.0f} m", color="#38bdf8", fontsize=7.5, fontweight="bold", ha="center")
+
+        precision_mm = 1.0 + (dist_m * 0.0015)
+        ax.annotate("", xy=(xp, 122), xytext=(94, 122), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2))
+
+        if abs(ang_prisme) <= 25.0:
+            ax.annotate("", xy=(94, 132), xytext=(xp, 132), arrowprops=dict(arrowstyle="->", color="#22c55e", lw=2))
+            statut = f"VISÉE VALIDÉE : D = {dist_m:.2f} m | Précision : ± {precision_mm:.2f} mm (Rétroréflexion OK)"
+            c_stat = "#22c55e"
+            diag = "LEVÉ OK"
+        else:
+            ax.annotate("", xy=(xp - 90, 190), xytext=(xp, 132), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=1.5, ls="--"))
+            statut = f"PERTE DE SIGNAL : Prisme trop tourné ({ang_prisme:+.0f}° > ±25°), le rayon sort du coin de cube !"
+            c_stat = "#ef4444"
+            diag = "HORS CHAMP"
+
+        ax.text(25, 20, "TOPOGRAPHIE : STATION TOTALE & PRISME RÉFLECTEUR (COIN DE CUBE)", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 36, statut, color=c_stat, fontsize=8, fontweight="bold")
+        ax.text(300, 242, f"Distance : {dist_m:.1f} m | Orientation prisme : {ang_prisme:+.0f}° | Précision : ± {precision_mm:.2f} mm",
+                color="#f8fafc", fontsize=8, fontweight="bold", ha="center", bbox=dict(boxstyle="round", facecolor="#1e293b", edgecolor=c_stat))
+
+        st.session_state.geo_mesure_courante = (f"D = {dist_m:.1f} m", f"Prisme = {ang_prisme:+.0f}°", f"± {precision_mm:.2f} mm", diag)
+
+    # =========================================================================
+    # SUJET 1 : ÉQUERRE OPTIQUE À DOUBLE PRISME PENTAGONAL (90°)
+    # =========================================================================
+    elif sujet_idx == 1:
+        ecart_align_m = st.session_state.get("slider_geo_s1", 0.40)
+
+        ax.scatter(70, 175, color="#ef4444", s=80, zorder=4)
+        ax.text(70, 194, "Jalon A (Gauche)", color="#fca5a5", fontsize=7.5, fontweight="bold", ha="center")
+
+        ax.scatter(530, 175, color="#ef4444", s=80, zorder=4)
+        ax.text(530, 194, "Jalon B (Droite)", color="#fca5a5", fontsize=7.5, fontweight="bold", ha="center")
+
+        ax.scatter(300, 55, color="#38bdf8", s=80, zorder=4)
+        ax.text(300, 44, "Jalon C (Perpendiculaire 90°)", color="#38bdf8", fontsize=7.5, fontweight="bold", ha="center")
+
+        ax.plot(list((70, 530)), list((175, 175)), color="#64748b", lw=1.5, ls="--")
+
+        x_geo = 300.0 + ecart_align_m * 70.0
+        y_geo = 175.0
+        ax.add_patch(patches.Rectangle((x_geo - 12, y_geo - 12), 24, 24, facecolor="#eab308", edgecolor="white", lw=1.5, zorder=5))
+        ax.text(x_geo, y_geo + 24, f"Géomètre (Écart : {ecart_align_m:+.2f} m)", color="#fde047", fontsize=7.5, fontweight="bold", ha="center")
+
+        ax.annotate("", xy=(x_geo - 4, y_geo), xytext=(70, 175), arrowprops=dict(arrowstyle="->", color="#f59e0b", lw=2))
+        ax.annotate("", xy=(x_geo + 4, y_geo), xytext=(530, 175), arrowprops=dict(arrowstyle="->", color="#f59e0b", lw=2))
+        ax.plot(list((300, x_geo)), list((55, y_geo)), color="#38bdf8", lw=1.5, ls=":")
+
+        if abs(ecart_align_m) <= 0.05:
+            statut = "ANGLE DROIT (90,0°) IMPLANTÉ : Les 3 jalons A, B et C sont superposés dans l'oculaire !"
+            c_stat = "#22c55e"
+            diag = "90° EXACT (OK)"
+        else:
+            statut = f"DÉCALAGE DE {ecart_align_m:+.2f} m : Les images des jalons sont décalées, déplacez-vous sur la base AB."
+            c_stat = "#ef4444"
+            diag = "NON ALIGNÉ"
+
+        ax.text(25, 20, "IMPLANTATION TERRAIN : ÉQUERRE OPTIQUE À DOUBLE PENTAPRISME (90°)", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 36, statut, color=c_stat, fontsize=8, fontweight="bold")
+        ax.text(300, 242, f"Écart latéral sur base AB : {ecart_align_m:+.2f} m | Déviation interne pentaprisme : 90,0°",
+                color="#f8fafc", fontsize=8, fontweight="bold", ha="center", bbox=dict(boxstyle="round", facecolor="#1e293b", edgecolor=c_stat))
+
+        st.session_state.geo_mesure_courante = (f"Écart = {ecart_align_m:+.2f} m", "Déviation = 90°", "Pentaprisme", diag)
+
+    # =========================================================================
+    # SUJET 2 : SCANNER LASER TERRESTRE 3D (LIDAR À MIROIR TOURNANT)
+    # =========================================================================
+    else:
+        dist_facade = st.session_state.get("slider_geo_s2", 25.0)
+        freq_miroir = st.session_state.get("slider_geo_freq_s2", 50.0)
+
+        ax.plot(list((65, 80)), list((205, 145)), color="#cbd5e1", lw=2.5)
+        ax.plot(list((95, 80)), list((205, 145)), color="#cbd5e1", lw=2.5)
+        ax.add_patch(patches.Rectangle((65, 110), 30, 35, facecolor="#0284c7", edgecolor="white", lw=1.5))
+        ax.text(80, 98, f"Scanner 3D\n({freq_miroir:.0f} Hz)", color="#38bdf8", fontsize=7.5, fontweight="bold", ha="center")
+
+        xf = 180.0 + (dist_facade / 80.0) * 350.0
+        ax.add_patch(patches.Rectangle((xf, 55), 24, 150, facecolor="#475569", edgecolor="#94a3b8", lw=2))
+        ax.text(xf + 12, 46, f"Façade ({dist_facade:.0f} m)", color="#cbd5e1", fontsize=7.5, fontweight="bold", ha="center")
+
+        nb_rayons = int(min(18, max(5, freq_miroir / 5)))
+        espacement_mm = (dist_facade * 1000.0) / (freq_miroir * 20.0)
+        for k in range(nb_rayons):
+            y_cible = 62.0 + k * (136.0 / max(1, nb_rayons - 1))
+            ax.plot(list((95, xf)), list((127, y_cible)), color="#22c55e", lw=0.9, alpha=0.6)
+            ax.scatter(xf, y_cible, color="#ef4444", s=18, zorder=5)
+
+        if espacement_mm <= 15.0:
+            statut = f"NUAGE DE POINTS HAUTE DENSITÉ : Espacement = {espacement_mm:.1f} mm (Relevé architectural conforme)."
+            c_stat = "#22c55e"
+            diag = "HAUTE DENSITÉ"
+        else:
+            statut = f"DENSITÉ FAIBLE ({espacement_mm:.1f} mm) : Rapprochez le scanner ou augmentez la vitesse du miroir."
+            c_stat = "#f59e0b"
+            diag = "DENSITÉ FAIBLE"
+
+        ax.text(25, 20, "NUMÉRISATION 3D : SCANNER LASER TERRESTRE (MIROIR TOURNANT)", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 36, statut, color=c_stat, fontsize=8, fontweight="bold")
+        ax.text(300, 242, f"Distance façade : {dist_facade:.0f} m | Vitesse miroir : {freq_miroir:.0f} tr/s | Pas des points : {espacement_mm:.1f} mm",
+                color="#f8fafc", fontsize=8, fontweight="bold", ha="center", bbox=dict(boxstyle="round", facecolor="#1e293b", edgecolor=c_stat))
+
+        st.session_state.geo_mesure_courante = (f"D = {dist_facade:.0f} m", f"Miroir = {freq_miroir:.0f} Hz", f"Pas = {espacement_mm:.1f} mm", diag)
+
+    return fig
+
+
+def afficher_atelier_geometre_complet(sujet_idx, verrouille=False):
+    """Affiche les 10 QCM et les 10 trous spécifiques à la mission Géomètre tirée au sort."""
+    if sujet_idx is None:
+        st.warning("Tirez d'abord au sort une mission de Géomètre Topographe ci-dessus pour débloquer les 10 questions et les 10 phrases à trous correspondantes.")
+        return
+
+    banque = BANQUES_GEOMETRE[sujet_idx]
+    cle_session_ordre = f"ordre_quiz_geo_sujet_{sujet_idx}"
+
+    if cle_session_ordre not in st.session_state:
+        liste_q = list(banque["questions"])
+        random.shuffle(liste_q)
+        st.session_state[cle_session_ordre] = liste_q
+
+    col_quiz, col_trous = st.columns(2)
+    with col_quiz:
+        st.markdown("##### Quiz Technique Géomètre Topographe (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state[cle_session_ordre], 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"geo_at9_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse Géomètre Topographe (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in banque["trous"]:
+            c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c_txt:
+                st.write(enonce)
+            with c_sel:
+                st.selectbox("", choix, key=f"{cle}_s{sujet_idx}", disabled=verrouille, label_visibility="collapsed")
+
 
 
                 
@@ -3834,7 +4044,261 @@ with tab8:
 
 
 
-
 with tab9:
-    st.header("**Manipulation  : Application Navale (Le Periscope du sous-marin)**")
+    st.header("Atelier 9 : Applications dans le domaine du Géomètre Topographe")
 
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 16px;">L'optique de précision au cœur des levés topographiques et du cadastre :</p>
+        <p style="margin-bottom: 0; line-height: 1.6;">Pour dresser des plans au millimètre près, borner des terrains ou numériser des monuments en 3D, le géomètre topographe s'appuie sur des prismes en coin de cube, des pentaprismes à 90° et des miroirs tournants haute vitesse régis par la loi <b><i>i</i> = <i>i'</i></b>.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    sujets_geometre = [
+        {
+            "titre": "Mission N°1 : Levé planimétrique à la station totale & Prisme coin de cube",
+            "img_metier": "geo_station_totale.jpg",
+            "legende_metier": "Station totale robotisée visant un prisme réflecteur monté sur canne",
+            "explication": (
+                "**Principe technique :** La station totale émet un faisceau infrarouge vers un **prisme en coin de cube** tenu par l'opérateur. "
+                "Grâce à **trois réflexions totales** sur ses faces internes à **90°**, le prisme renvoie la lumière parallèlement à son rayon d'entrée jusqu'à **± 25°** de désaxage, garantissant une précision millimétrique."
+            )
+        },
+        {
+            "titre": "Mission N°2 : Implantation d'angles droits à l'équerre optique (Pentaprisme)",
+            "img_metier": "geo_equerre_optique.jpg",
+            "legende_metier": "Équerre optique à double prisme pentagonal utilisée pour lever des perpendiculaires",
+            "explication": (
+                "**Principe technique :** L'équerre optique superpose deux **pentaprismes** dont les faces réfléchissantes forment un angle de **45°**. "
+                "Chaque rayon subit une **double réflexion** et ressort dévié d'un angle droit exact de **90°** (<b>2 × 45°</b>). Lorsque les images des jalons gauche, droit et avant sont alignées, le point est implanté."
+            )
+        },
+        {
+            "titre": "Mission N°3 : Numérisation de façade au scanner laser 3D (LiDAR)",
+            "img_metier": "geo_scanner_lidar.jpg",
+            "legende_metier": "Scanner laser terrestre 3D relevant un nuage de points haute densité",
+            "explication": (
+                "**Principe technique :** Au centre du scanner, un **miroir plan tournant** dévie le faisceau laser dans un plan vertical (rotation du faisceau **2α** pour une rotation miroir **α**), tandis que la tête pivote à **360°**. "
+                "La réflexion diffuse sur la façade permet de calculer la position 3D (X, Y, Z) de plus d'un million de points par seconde."
+            )
+        }
+    ]
+
+    if "sujet_geo_tire" not in st.session_state:
+        st.session_state.sujet_geo_tire = None
+
+    st.subheader("1. Attribution de votre mission topographique")
+    if st.button("TIRER AU SORT UNE MISSION GÉOMÈTRE", key="btn_tirage_geo", use_container_width=True):
+        choix_possibles_geo = [i for i in range(3) if i != st.session_state.sujet_geo_tire]
+        st.session_state.sujet_geo_tire = random.choice(choix_possibles_geo)
+        st.session_state.mesures_geo_log = []
+        st.rerun()
+
+    if st.session_state.sujet_geo_tire is None:
+        st.info("Cliquez sur le bouton ci-dessus pour tirer au sort une mission de Géomètre Topographe parmi les 3 instruments.")
+    else:
+        idx_sujet_geo = st.session_state.sujet_geo_tire
+        data_sujet_geo = sujets_geometre[idx_sujet_geo]
+
+        st.success(f"Mission attribuée : **{data_sujet_geo['titre']}**")
+        st.markdown(data_sujet_geo["explication"], unsafe_allow_html=True)
+
+        col_img_geo, col_bd_geo = st.columns(2)
+        with col_img_geo:
+            img_geo = charger_image(data_sujet_geo["img_metier"])
+            if img_geo is not None:
+                st.image(img_geo, caption=data_sujet_geo["legende_metier"], use_container_width=True)
+            else:
+                st.warning(f"Image métier attendue dans le dossier image/ : **{data_sujet_geo['img_metier']}**")
+
+        with col_bd_geo:
+            img_bd_geo = charger_image("bd_humour_geometre.jpg")
+            if img_bd_geo is not None:
+                st.image(img_bd_geo, caption="La pause BD : Quand un camion passe devant le prisme en plein levé !", use_container_width=True)
+            else:
+                st.warning("BD humoristique attendue dans le dossier image/ : **bd_humour_geometre.jpg**")
+
+        st.markdown("---")
+        st.subheader("2. Banc de mesure topographique sur le terrain")
+
+        if "mesures_geo_log" not in st.session_state:
+            st.session_state.mesures_geo_log = []
+
+        if idx_sujet_geo == 0:
+            col_geo0_a, col_geo0_b = st.columns(2)
+            with col_geo0_a:
+                st.slider("Distance Station Totale - Prisme (mètres) :", min_value=10.0, max_value=300.0, value=120.0, step=5.0, key="slider_geo_dist_s0")
+            with col_geo0_b:
+                st.slider("Désorientation angulaire du prisme (degrés) :", min_value=-35.0, max_value=35.0, value=10.0, step=1.0, key="slider_geo_ang_s0")
+        elif idx_sujet_geo == 1:
+            st.slider("Décalage latéral du géomètre sur l'alignement AB (mètres) :", min_value=-2.00, max_value=2.00, value=0.40, step=0.05, key="slider_geo_s1")
+        else:
+            col_geo2_a, col_geo2_b = st.columns(2)
+            with col_geo2_a:
+                st.slider("Distance Scanner 3D - Façade (mètres) :", min_value=5.0, max_value=80.0, value=25.0, step=1.0, key="slider_geo_s2")
+            with col_geo2_b:
+                st.slider("Vitesse de rotation du miroir interne (tr/s) :", min_value=10.0, max_value=100.0, value=50.0, step=5.0, key="slider_geo_freq_s2")
+
+        if st.button("ENREGISTRER CE POINT DANS LE CARNET DE LEVÉ", key="btn_releve_geo", use_container_width=True):
+            if "geo_mesure_courante" in st.session_state:
+                st.session_state.mesures_geo_log.append(st.session_state.geo_mesure_courante)
+                st.rerun()
+
+        fig_geo = mettre_a_jour_geometre_matplotlib(idx_sujet_geo)
+        st.pyplot(fig_geo, use_container_width=True)
+
+        if st.session_state.mesures_geo_log:
+            df_geo = pd.DataFrame(
+                st.session_state.mesures_geo_log,
+                columns=["Paramètre terrain", "Grandeur optique", "Précision / Pas", "Validation"]
+            )
+            df_geo.insert(0, "Station N°", [f"Point {i}" for i in range(1, len(df_geo) + 1)])
+            st.dataframe(df_geo, use_container_width=True, hide_index=True)
+
+    # =========================================================================
+    # 3. ÉVALUATION (10 QUESTIONS + 10 TROUS) ET EXPORT HTML COMPLET
+    # =========================================================================
+    st.write("---")
+    st.subheader("3. Évaluation des connaissances sur votre mission (20 points)")
+
+    if "geo_verrouille_tab9" not in st.session_state:
+        st.session_state.geo_verrouille_tab9 = False
+    verrou_at9 = st.session_state.geo_verrouille_tab9
+    sujet_actif_geo = st.session_state.get("sujet_geo_tire", None)
+
+    afficher_atelier_geometre_complet(sujet_actif_geo, verrouille=verrou_at9)
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 9 (Géomètre Topographe)")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_geo9 = st.checkbox(
+        "Je certifie avoir réalisé mon levé topographique et complété les questions de l'Atelier 9.",
+        key="check_certif_geo_final_net",
+        disabled=verrou_at9,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 9", key="btn_export_geo9_official_net", use_container_width=True, disabled=verrou_at9):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif sujet_actif_geo is None:
+            st.error("Action refusée : Tirez d'abord au sort votre mission Géomètre en haut de l'onglet.")
+        elif not case_certif_geo9:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            banque_active_geo = BANQUES_GEOMETRE[sujet_actif_geo]
+            cle_ordre_geo = f"ordre_quiz_geo_sujet_{sujet_actif_geo}"
+
+            score_q9 = 0.0
+            for q_item in st.session_state.get(cle_ordre_geo, []):
+                reponse_eleve = st.session_state.get(f"geo_at9_final_g_{q_item['id']}", "Choisir...")
+                if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                    score_q9 += 1.0
+
+            score_t9 = 0.0
+            for _, _, bonne_rep_t, cle_t in banque_active_geo["trous"]:
+                if str(st.session_state.get(f"{cle_t}_s{sujet_actif_geo}", "Choisir...")).strip() == str(bonne_rep_t).strip():
+                    score_t9 += 1.0
+
+            st.session_state.score_geo9_p1 = round(float(score_q9), 1)
+            st.session_state.score_geo9_p2 = round(float(score_t9), 1)
+            st.session_state.score_final_geo9 = round(float(score_q9 + score_t9), 1)
+            st.session_state.geo_verrouille_tab9 = True
+            st.rerun()
+
+    if st.session_state.get("geo_verrouille_tab9", False) and sujet_actif_geo is not None:
+        scr1 = st.session_state.get("score_geo9_p1", 0.0)
+        scr2 = st.session_state.get("score_geo9_p2", 0.0)
+        tot_s = st.session_state.get("score_final_geo9", 0.0)
+        titre_sujet_export_geo = sujets_geometre[sujet_actif_geo]["titre"]
+        banque_active_geo = BANQUES_GEOMETRE[sujet_actif_geo]
+        cle_ordre_geo = f"ordre_quiz_geo_sujet_{sujet_actif_geo}"
+
+        timestamp_geo9 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER GÉOMÈTRE TOPOGRAPHE SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        html_export_geo = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Géomètre Topographe Optique - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation d'Optique Géométrique</h1>
+                <p>Atelier 9 : Applications dans le domaine du Géomètre Topographe</p>
+                <p>Mission attribuée par tirage au sort : <strong>{titre_sujet_export_geo}</strong></p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_geo9}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Technique Topographie : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse du cours (Texte à trous) : <strong>{scr2:.1f} / 10</strong><br>
+                Points de levé enregistrés au carnet : <strong>{len(st.session_state.get("mesures_geo_log", []))}</strong><br>
+                Note Totale de l'Atelier 9 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">1. CORRECTION DÉTAILLÉE DU QUIZ (10 QUESTIONS SPÉCIFIQUES À LA MISSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        for num, q_item in enumerate(st.session_state.get(cle_ordre_geo, []), 1):
+            saisie = st.session_state.get(f"geo_at9_final_g_{q_item['id']}", "Choisir...")
+            attendu = q_item["rep"]
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_geo += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_geo += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">2. CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS - 10 CASES)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase à compléter</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        for idx_t, (enonce_t, _, attendu_t, cle_t) in enumerate(banque_active_geo["trous"], 1):
+            saisie_t = st.session_state.get(f"{cle_t}_s{sujet_actif_geo}", "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_geo += f"<tr><td>{idx_t}</td><td>{enonce_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_geo += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html_geo = preparer_nom_fichier("Rapport_Atelier_9_Geometre_Topographe").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 9 (.html)",
+            data=html_export_geo,
+            file_name=nom_fichier_html_geo,
+            mime="text/html",
+            use_container_width=True
+        )
