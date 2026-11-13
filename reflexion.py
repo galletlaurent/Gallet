@@ -1037,23 +1037,17 @@ with tab1:
     # =========================================================================
     st.markdown("---")
     st.subheader("2. La loi de la réflexion illustrée : Bande dessinée & Humour")
+    st.write("Retrouvez ci-dessous la bande dessinée pédagogique ainsi que la vignette humoristique sur la réflexion :")
 
-    tab_bd, tab_humour = st.tabs(["Bande dessinée pédagogique", "La pause humoristique"])
+    col_bd1, col_bd2, col_hum = st.columns(3)
+    with col_bd1:
+        afficher_vignette_jpg("bd_reflexion_1.jpg", "BD Planche 1 : Le trajet du rayon lumineux")
+    with col_bd2:
+        afficher_vignette_jpg("bd_reflexion_2.jpg", "BD Planche 2 : L'égalité des angles i = i'")
+    with col_hum:
+        afficher_vignette_jpg("humour_reflexion.jpg", "La pause humoristique : Réflexion physique vs philosophique")
 
-    with tab_bd:
-        st.write("Suivez l'histoire de la réflexion lumineuse en images :")
-        col_bd1, col_bd2 = st.columns(2)
-        with col_bd1:
-            afficher_vignette_jpg("bd_reflexion_1.jpg", "Planche 1 : Le trajet du rayon lumineux")
-        with col_bd2:
-            afficher_vignette_jpg("bd_reflexion_2.jpg", "Planche 2 : L'égalité des angles i = i'")
 
-    with tab_humour:
-        st.write("Quand la physique des miroirs prête à sourire :")
-        col_hum_centre1, col_hum_centre2, col_hum_centre3 = st.columns([1, 2, 1])
-        with col_hum_centre2:
-            afficher_vignette_jpg("humour_reflexion.jpg", "Humour optique : Ne pas confondre réflexion physique et réflexion philosophique !")
-    st.write("---")        
     if "hist_verrouille_tab1" not in st.session_state:
         st.session_state.hist_verrouille_tab1 = False
     verrou_at1 = st.session_state.hist_verrouille_tab1
