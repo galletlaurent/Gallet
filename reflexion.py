@@ -908,6 +908,55 @@ def afficher_atelier_historique_complet(verrouille=False):
                 st.write(enonce)
             with c_sel:
                 st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+def afficher_atelier_reflexion_complet(verrouille=False):
+    """Affiche le Quiz (10 questions) et le Texte à trous (10 cases) de l'Atelier 2 (Réflexion) sur deux colonnes."""
+    questions_ref_sources = [
+        {"id": "qr1", "q": "Quelle est la relation mathématique de la loi de la réflexion ?", "options": ["i = i'", "i + i' = 90°", "i = 90° - i'"], "rep": "i = i'"},
+        {"id": "qr2", "q": "Par rapport à quelle droite mesure-t-on toujours les angles i et i' ?", "options": ["La normale au miroir", "La surface du miroir", "L'horizontale du sol"], "rep": "La normale au miroir"},
+        {"id": "qr3", "q": "Quel angle forme la normale avec la surface plane du miroir ?", "options": ["90° (perpendiculaire)", "45°", "180° (parallèle)"], "rep": "90° (perpendiculaire)"},
+        {"id": "qr4", "q": "Si un rayon lumineux arrive avec un angle d'incidence i = 32°, quel est l'angle de réflexion i' ?", "options": ["32°", "58°", "64°"], "rep": "32°"},
+        {"id": "qr5", "q": "Si un rayon laser frappe le miroir perpendiculairement (confondu avec la normale), que vaut i ?", "options": ["0°", "90°", "45°"], "rep": "0°"},
+        {"id": "qr6", "q": "Dans quel plan se situent le rayon incident, la normale et le rayon réfléchi ?", "options": ["Dans le même plan (plan d'incidence)", "Dans deux plans perpendiculaires", "Dans un plan parallèle au miroir"], "rep": "Dans le même plan (plan d'incidence)"},
+        {"id": "qr7", "q": "Si le rayon incident fait un angle de 20° avec la surface du miroir, combien vaut l'angle d'incidence i ?", "options": ["70° (car 90° - 20°)", "20°", "40°"], "rep": "70° (car 90° - 20°)"},
+        {"id": "qr8", "q": "Quelle est la déviation totale du rayon lumineux lorsque i = 45° ?", "options": ["90° (i + i')", "45°", "0°"], "rep": "90° (i + i')"},
+        {"id": "qr9", "q": "Comment appelle-t-on le rayon lumineux qui arrive sur le miroir ?", "options": ["Le rayon incident", "Le rayon réfléchi", "Le rayon normal"], "rep": "Le rayon incident"},
+        {"id": "qr10", "q": "Comment appelle-t-on le point précis où le laser touche le miroir ?", "options": ["Le point d'incidence", "Le foyer image", "Le centre optique"], "rep": "Le point d'incidence"},
+    ]
+
+    if "ordre_quiz_ref_aleatoire" not in st.session_state:
+        random.shuffle(questions_ref_sources)
+        st.session_state.ordre_quiz_ref_aleatoire = questions_ref_sources
+
+    champs_ref = [
+        ("1. Le rayon qui arrive de la source laser s'appelle le rayon .........", ["Choisir...", "incident", "réfléchi"], "incident", "ref_t1_final"),
+        ("2. Le rayon qui repart après avoir touché le miroir est le rayon .........", ["Choisir...", "réfléchi", "incident"], "réfléchi", "ref_t2_final"),
+        ("3. La droite perpendiculaire au miroir au point d'impact est la .........", ["Choisir...", "normale", "tangente"], "normale", "ref_t3_final"),
+        ("4. L'angle d'incidence i se mesure entre le rayon incident et la .........", ["Choisir...", "normale", "surface"], "normale", "ref_t4_final"),
+        ("5. L'angle de réflexion i' est toujours ......... à l'angle d'incidence i.", ["Choisir...", "égal", "supérieur"], "égal", "ref_t5_final"),
+        ("6. Le rayon incident et le rayon réfléchi sont situés dans un même .........", ["Choisir...", "plan", "cercle"], "plan", "ref_t6_final"),
+        ("7. Si i = 0°, le rayon réfléchi repart sur lui-même en sens .........", ["Choisir...", "inverse", "perpendiculaire"], "inverse", "ref_t7_final"),
+        ("8. Pour un angle i = 45°, l'angle entre les deux rayons vaut ......... degrés.", ["Choisir...", "90", "45"], "90", "ref_t8_final"),
+        ("9. Un miroir plan donne d'un objet réel une image ......... symétrique.", ["Choisir...", "virtuelle", "inversée"], "virtuelle", "ref_t9_final"),
+        ("10. Les lois de la réflexion portent le nom de Snell et .........", ["Choisir...", "Descartes", "Newton"], "Descartes", "ref_t10_final"),
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    with col_quiz:
+        st.markdown("##### Quiz Réflexion (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_ref_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"ref_at2_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse Réflexion (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in champs_ref:
+            c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c_txt:
+                st.write(enonce)
+            with c_sel:
+                st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
 
 
 with tab0:
@@ -1023,8 +1072,10 @@ with tab1:
 
     # --- SAVANT 4 : JOHN HENRY PEPPER ---
     col_pep_img, col_pep_txt = st.columns([1, 2])
+    
     with col_pep_img:
         afficher_vignette_jpg("pepper.jpg", "John Henry Pepper (1821 - 1900)")
+        
     with col_pep_txt:
         st.info("""
         **John Henry Pepper et l'illusion du Spectre (1862)**
@@ -1261,6 +1312,164 @@ with tab2:
         st.dataframe(df_mesures, use_container_width=True, hide_index=True)
     else:
         st.caption("Tableau vide. Cliquez sur le bouton bleu ci-dessus pour memoriser l'angle courant.")
+    # =========================================================================
+    # 2. ÉVALUATION (10 QUESTIONS + 10 TROUS) ET EXPORT HTML COMPLET
+    # =========================================================================
+    st.write("---")
+    st.subheader("2. Évaluation des connaissances (20 points)")
+
+    if "ref_verrouille_tab2" not in st.session_state:
+        st.session_state.ref_verrouille_tab2 = False
+    verrou_at2 = st.session_state.ref_verrouille_tab2
+
+    afficher_atelier_reflexion_complet(verrouille=verrou_at2)
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 2 (Réflexion)")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_ref2 = st.checkbox(
+        "Je certifie avoir réalisé les mesures et complété les questions de l'Atelier Réflexion.",
+        key="check_certif_reflexion_final_net",
+        disabled=verrou_at2,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_ref2_official_net", use_container_width=True, disabled=verrou_at2):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_ref2:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q2 = 0.0
+            if "ordre_quiz_ref_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_ref_aleatoire:
+                    reponse_eleve = st.session_state.get(f"ref_at2_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q2 += 1.0
+
+            score_t2 = sum([
+                st.session_state.get("ref_t1_final") == "incident",
+                st.session_state.get("ref_t2_final") == "réfléchi",
+                st.session_state.get("ref_t3_final") == "normale",
+                st.session_state.get("ref_t4_final") == "normale",
+                st.session_state.get("ref_t5_final") == "égal",
+                st.session_state.get("ref_t6_final") == "plan",
+                st.session_state.get("ref_t7_final") == "inverse",
+                st.session_state.get("ref_t8_final") == "90",
+                st.session_state.get("ref_t9_final") == "virtuelle",
+                st.session_state.get("ref_t10_final") == "Descartes",
+            ])
+
+            st.session_state.score_ref2_p1 = round(float(score_q2), 1)
+            st.session_state.score_ref2_p2 = round(float(score_t2), 1)
+            st.session_state.score_final_ref2 = round(float(score_q2 + score_t2), 1)
+            st.session_state.ref_verrouille_tab2 = True
+            st.rerun()
+
+    if st.session_state.get("ref_verrouille_tab2", False):
+        scr1 = st.session_state.get("score_ref2_p1", 0.0)
+        scr2 = st.session_state.get("score_ref2_p2", 0.0)
+        tot_s = st.session_state.get("score_final_ref2", 0.0)
+
+        timestamp_ref2 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER RÉFLEXION SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        html_export_ref = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Loi de la Réflexion - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation d'Optique Géométrique</h1>
+                <p>Atelier 2 : Lois de la Réflexion (i = i')</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_ref2}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Réflexion : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse du cours (Texte à trous) : <strong>{scr2:.1f} / 10</strong><br>
+                Nombre de mesures expérimentales relevées : <strong>{len(st.session_state.get("mesures_reflexion_i", []))}</strong><br>
+                Note Totale de l'Atelier 2 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">1. CORRECTION DÉTAILLÉE DU QUIZ (10 QUESTIONS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_ref_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_ref_aleatoire, 1):
+                saisie = st.session_state.get(f"ref_at2_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_ref += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_ref += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">2. CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS - 10 CASES)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase à compléter</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        liste_verif_trous_ref = [
+            ("1. Le rayon qui arrive de la source laser s'appelle le rayon .........", "incident", "ref_t1_final"),
+            ("2. Le rayon qui repart après avoir touché le miroir est le rayon .........", "réfléchi", "ref_t2_final"),
+            ("3. La droite perpendiculaire au miroir au point d'impact est la .........", "normale", "ref_t3_final"),
+            ("4. L'angle d'incidence i se mesure entre le rayon incident et la .........", "normale", "ref_t4_final"),
+            ("5. L'angle de réflexion i' est toujours ......... à l'angle d'incidence i.", "égal", "ref_t5_final"),
+            ("6. Le rayon incident et le rayon réfléchi sont situés dans un même .........", "plan", "ref_t6_final"),
+            ("7. Si i = 0°, le rayon réfléchi repart sur lui-même en sens .........", "inverse", "ref_t7_final"),
+            ("8. Pour un angle i = 45°, l'angle entre les deux rayons vaut ......... degrés.", "90", "ref_t8_final"),
+            ("9. Un miroir plan donne d'un objet réel une image ......... symétrique.", "virtuelle", "ref_t9_final"),
+            ("10. Les lois de la réflexion portent le nom de Snell et .........", "Descartes", "ref_t10_final"),
+        ]
+
+        for idx_t, (enonce_t, attendu_t, cle_t) in enumerate(liste_verif_trous_ref, 1):
+            saisie_t = st.session_state.get(cle_t, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_ref += f"<tr><td>{idx_t}</td><td>{enonce_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_ref += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html_ref = preparer_nom_fichier("Rapport_Atelier_2_Reflexion").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 2 (.html)",
+            data=html_export_ref,
+            file_name=nom_fichier_html_ref,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 with tab3:
