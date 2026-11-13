@@ -1709,7 +1709,6 @@ BANQUES_TRANSPORT = {
             {"id": "qtr1_10", "q": "Quelle loi physique est vérifiée en chaque point de la parabole métallisée du phare ?", "options": ["L'angle d'incidence i est égal à l'angle de réflexion i' par rapport à la normale", "La lumière se propage en cercle autour de l'ampoule", "La vitesse de la lumière double après réflexion"], "rep": "L'angle d'incidence i est égal à l'angle de réflexion i' par rapport à la normale"},
         ],
         "trous": [
-        "trous": [
             ("1. Le miroir d'un phare longue portée a la forme d'une .........", ["Choisir...", "parabole", "sphère"], "parabole", "tr_t1_final"),
             ("2. L'ampoule doit être placée exactement au ......... F du réflecteur.", ["Choisir...", "foyer", "sommet"], "foyer", "tr_t2_final"),
             ("3. Les rayons issus du foyer repartent ......... à l'axe optique.", ["Choisir...", "parallèles", "perpendiculaires"], "parallèles", "tr_t3_final"),
