@@ -1812,9 +1812,12 @@ def mettre_a_jour_transport_matplotlib(sujet_idx):
 
         if pieton_vu:
             ax.annotate("", xy=(xm, ym), xytext=(xp, 165), arrowprops=dict(arrowstyle="->", color="#fde047", lw=1.8, ls=":"), zorder=4)
-        ax.annotate("", xy=(155, 108), xytext=(xm, ym), arrowprops=dict(arrowstyle="->", color=couleur_cone, lw=2.2), zorder=5)
-
+            ax.annotate("", xy=(155, 108), xytext=(xm, ym), arrowprops=dict(arrowstyle="->", color=couleur_cone, lw=2.2), zorder=5)
+            statut = f"USAGER DÉTECTÉ : Le piéton à {dist_pieton:.2f} m est visible dans l'antéviseur !"
+            c_stat = "#22c55e"
+            diag = "VISIBLE (OK)"
         else:
+            ax.annotate("", xy=(155, 108), xytext=(xm, ym), arrowprops=dict(arrowstyle="->", color=couleur_cone, lw=2.2, ls="--"), zorder=5)
             statut = f"DANGER ANGLE MORT : Piéton à {dist_pieton:.2f} m hors du champ ! Inclinez l'antéviseur à 42°."
             c_stat = "#ef4444"
             diag = "ANGLE MORT"
