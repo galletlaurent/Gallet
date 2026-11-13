@@ -2311,62 +2311,47 @@ with tab1:
             st.warning(f"Image attendue dans le dossier image/ : **{nom_jpg}**")
 
     # =========================================================================
-    # 1. LES SAVANTS ET LEURS DÉCOUVERTES (PORTRAITS + EXPÉRIENCES EN .JPG)
+    # 1. LES SAVANTS ET LEURS DÉCOUVERTES (4 COLONNES : IMAGE + DESCRIPTIF)
     # =========================================================================
     st.subheader("1. Les grands savants et leurs découvertes sur la réflexion")
 
+    col1, col2, col3, col4 = st.columns(4)
+
     # --- SAVANT 1 : EUCLIDE ---
-    col_euc_img, col_euc_txt = st.columns([1, 2])
-    with col_euc_img:
+    with col1:
         afficher_vignette_jpg("euclide.jpg", "Euclide (IIIe siècle av. J.-C.)")
-    with col_euc_txt:
         st.info("""
         **Euclide et *La Catoptrique* (vers 300 av. J.-C.)**
         * **Le savant :** Mathématicien de la Grèce antique vivant à Alexandrie.
         * **Sa découverte :** Il publie *La Catoptrique*, le premier traité consacré aux miroirs. Il y démontre géométriquement que la lumière se propage en ligne droite et que **l'angle de réflexion est toujours égal à l'angle d'incidence**.
         """)
 
-    st.markdown("---")
-
     # --- SAVANT 2 : IBN AL-HAYTHAM (ALHAZEN) ---
-    col_alh_img, col_alh_txt = st.columns([1, 2])
-    with col_alh_img:
+    with col2:
         afficher_vignette_jpg("alhazen.jpg", "Ibn al-Haytham / Alhazen (965 - 1040)")
-    with col_alh_txt:
         st.info("""
         **Ibn al-Haytham, dit Alhazen (*Traité d'optique*, 1021)**
         * **Le savant :** Physicien, mathématicien et astronome majeur de l'âge d'or islamique.
         * **Sa découverte :** Il prouve par l'expérience que la lumière provient des sources lumineuses, rebondit sur les objets et entre dans l'œil (et non l'inverse). Il établit aussi que le rayon incident, la normale et le rayon réfléchi sont dans **un même plan**.
         """)
 
-    st.markdown("---")
-
     # --- SAVANT 3 : RENÉ DESCARTES ---
-    col_des_img, col_des_txt = st.columns([1, 2])
-    with col_des_img:
+    with col3:
         afficher_vignette_jpg("descartes.jpg", "René Descartes (1596 - 1650)")
-    with col_des_txt:
         st.info("""
         **René Descartes (*La Dioptrique*, 1637)**
         * **Le savant :** Mathématicien, physicien et philosophe français.
         * **Sa découverte :** Il formalise les lois universelles de la réflexion et de la réfraction (lois de Snell-Descartes). Il fixe le vocabulaire technique moderne (**normale, rayon incident, rayon réfléchi**) et la formule **$i = i'$**.
         """)
 
-    st.markdown("---")
-
     # --- SAVANT 4 : JOHN HENRY PEPPER ---
-    col_pep_img, col_pep_txt = st.columns([1, 2])
-    
-    with col_pep_img:
+    with col4:
         afficher_vignette_jpg("pepper.jpg", "John Henry Pepper (1821 - 1900)")
-        
-    with col_pep_txt:
         st.info("""
         **John Henry Pepper et l'illusion du Spectre (1862)**
         * **Le savant :** Chimiste et inventeur britannique au Royal Polytechnic Institution de Londres.
         * **Sa découverte :** Il utilise une grande vitre sans tain inclinée à **45°** pour réfléchir l'image d'un acteur caché sous la scène. Cette découverte est l'ancêtre direct des **affichages tête haute (HUD)** des avions et des voitures.
         """)
-
     # =========================================================================
     # 2. LA RÉFLEXION EN BANDE DESSINÉE ET EN HUMOUR (.JPG)
     # =========================================================================
