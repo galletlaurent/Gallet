@@ -1859,40 +1859,62 @@ def mettre_a_jour_transport_matplotlib(sujet_idx):
 
         st.session_state.tr_mesure_courante = (f"Écart F = {decalage_foyer_mm:+.1f} mm", f"Angle = {abs(decalage_foyer_mm)*2.0:.1f}°", "Tolérance ±1 mm", diag)
 
+
     # =========================================================================
-    # SUJET 2 : RÉTROVISEUR INTÉRIEUR JOUR / NUIT À PRISME
+    # SUJET 2 : RÉTROVISEUR INTÉRIEUR JOUR / NUIT À PRISME (PHYSIQUE EXACTE)
     # =========================================================================
     else:
         mode_retro = st.session_state.get("radio_tr_mode_s2", "Position JOUR (Réflexion 90%)")
         est_nuit = "NUIT" in mode_retro
 
+        # 1. Œil du conducteur à gauche (x=110, y=110)
+        ax.add_patch(patches.Circle((110, 110), 14, facecolor="#1e293b", edgecolor="#38bdf8", lw=2))
+        ax.text(110, 138, "Œil du Conducteur", color="#38bdf8", fontsize=8, fontweight="bold", ha="center")
+
+        # 2. Prisme en coin à droite (x=475, y=125)
+        # L'angle du prisme est élargi visuellement pour bien distinguer les deux faces
         if not est_nuit:
-            poly_prisme = patches.Polygon([(470, 95), (485, 95), (478, 155), (470, 155)], facecolor="#38bdf8", alpha=0.45, edgecolor="white", lw=1.5)
-            ax.plot(list((485, 478)), list((95, 155)), color="#eab308", lw=4)
+            # MODE JOUR : Face arrière argentée verticale (renvoie 90% horizontalement vers l'œil)
+            # Face avant vitrée inclinée vers le bas (renvoie 4% vers le tableau de bord)
+            poly_prisme = patches.Polygon([(470, 90), (486, 90), (486, 160), (464, 160)], facecolor="#38bdf8", alpha=0.45, edgecolor="white", lw=1.5)
+            ax.plot(list((486, 486)), list((90, 160)), color="#eab308", lw=4.5)
         else:
-            poly_prisme = patches.Polygon([(466, 97), (481, 93), (482, 153), (474, 157)], facecolor="#38bdf8", alpha=0.45, edgecolor="white", lw=1.5)
-            ax.plot(list((481, 482)), list((93, 153)), color="#eab308", lw=4)
+            # MODE NUIT (basculement vers le haut) :
+            # Face avant vitrée devient verticale (renvoie 4% horizontalement vers l'œil)
+            # Face arrière argentée bascule vers le haut (renvoie 90% vers le plafond)
+            poly_prisme = patches.Polygon([(468, 90), (484, 88), (490, 158), (468, 160)], facecolor="#38bdf8", alpha=0.45, edgecolor="white", lw=1.5)
+            ax.plot(list((484, 490)), list((88, 158)), color="#eab308", lw=4.5)
+
         ax.add_patch(poly_prisme)
-        ax.text(480, 62, "Prisme Verre\n+ Face Argentée", color="#fde047", fontsize=7.5, fontweight="bold", ha="center")
+        ax.text(478, 62, "Prisme Verre\n+ Face Argentée (jaune)", color="#fde047", fontsize=7.5, fontweight="bold", ha="center")
 
-        ax.add_patch(patches.Circle((110, 125), 14, facecolor="#1e293b", edgecolor="#38bdf8", lw=2))
-        ax.text(110, 152, "Œil du Conducteur", color="#38bdf8", fontsize=8, fontweight="bold", ha="center")
-
-        ax.annotate("", xy=(468, 125), xytext=(120, 215), arrowprops=dict(arrowstyle="->", color="#fde047", lw=2.5))
-        ax.text(280, 195, "Phares du véhicule suiveur (100%)", color="#fde047", fontsize=7.5, fontweight="bold", rotation=-14)
+        # 3. Rayon incident venant des phares arrière (légèrement plongeant vers y=125)
+        ax.annotate("", xy=(468, 125), xytext=(110, 175), arrowprops=dict(arrowstyle="->", color="#fde047", lw=2.5))
+        ax.text(275, 172, "Rayon incident : Phares du véhicule suiveur (100 %)", color="#fde047", fontsize=7.5, fontweight="bold", ha="center", rotation=-8)
 
         if not est_nuit:
-            ax.annotate("", xy=(126, 125), xytext=(476, 125), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=3))
-            ax.text(300, 116, "Faisceau principal réfléchi : 90 % (Vision claire de jour)", color="#f87171", fontsize=7.5, fontweight="bold", ha="center")
+            # MODE JOUR :
+            # - 90% réfléchi par la face arrière verticale -> part vers le haut gauche (vers l'œil à y=110)
+            ax.annotate("", xy=(126, 110), xytext=(484, 125), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=3))
+            ax.text(295, 102, "Faisceau principal réfléchi (face arrière) : 90 % -> Vision claire", color="#f87171", fontsize=7.5, fontweight="bold", ha="center")
+
+            # - 4% réfléchi par la face avant inclinée -> part vers le bas (vers le levier de vitesse)
+            ax.annotate("", xy=(310, 215), xytext=(467, 130), arrowprops=dict(arrowstyle="->", color="#94a3b8", lw=1.5, ls=":"))
+            ax.text(395, 212, "Reflet vitreux (4 %) vers le bas", color="#94a3b8", fontsize=7, style="italic", ha="center")
+
             statut = "MODE JOUR : Réflexion maximale (90 %) par la face arrière argentée."
             c_stat = "#f59e0b"
             diag = "90% (JOUR)"
         else:
-            ax.annotate("", xy=(250, 25), xytext=(482, 115), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5, ls="--"))
-            ax.text(340, 48, "Faisceau éblouissant (90 %) dévié vers le plafond", color="#f87171", fontsize=7, fontweight="bold", ha="center")
+            # MODE NUIT :
+            # - 90% réfléchi par la face arrière basculée -> part très haut vers le plafond
+            ax.annotate("", xy=(260, 28), xytext=(486, 122), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5, ls="--"))
+            ax.text(320, 46, "Faisceau éblouissant (90 %) dévié vers le plafond", color="#f87171", fontsize=7.5, fontweight="bold", ha="center")
 
-            ax.annotate("", xy=(126, 125), xytext=(468, 125), arrowprops=dict(arrowstyle="->", color="#22c55e", lw=1.8))
-            ax.text(300, 138, "Reflet vitreux atténué : 4 % (Anti-éblouissement nuit)", color="#22c55e", fontsize=7.5, fontweight="bold", ha="center")
+            # - 4% réfléchi par la face avant verticale -> part vers l'œil à y=110
+            ax.annotate("", xy=(126, 110), xytext=(468, 125), arrowprops=dict(arrowstyle="->", color="#22c55e", lw=2))
+            ax.text(295, 102, "Reflet vitreux atténué (face avant) : 4 % -> Anti-éblouissement", color="#22c55e", fontsize=7.5, fontweight="bold", ha="center")
+
             statut = "MODE NUIT ACTIF : Éblouissement supprimé (4 % vers l'œil, 90 % au plafond)."
             c_stat = "#22c55e"
             diag = "4% (NUIT OK)"
@@ -1904,7 +1926,6 @@ def mettre_a_jour_transport_matplotlib(sujet_idx):
                 color="#f8fafc", fontsize=8, fontweight="bold", ha="center", bbox=dict(boxstyle="round", facecolor="#1e293b", edgecolor=c_stat))
 
         st.session_state.tr_mesure_courante = (mode_retro[:13], "Prisme = 4,5°", f"Retour = {retour_txt}", diag)
-
     return fig
 
 
