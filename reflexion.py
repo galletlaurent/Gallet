@@ -1107,13 +1107,13 @@ with tab1:
             st.session_state.hist_verrouille_tab1 = True
             st.rerun()
 
-    # --- COMPILATION DU DOCUMENT EXPORTABLE HTML TAB 1 ---
+    # --- COMPILATION DU DOCUMENT EXPORTABLE HTML TAB 1 (COMPLET : QUIZ + TEXTE À TROUS) ---
     if st.session_state.get("hist_verrouille_tab1", False):
         scr1 = st.session_state.get("score_hist1_p1", 0.0)
         scr2 = st.session_state.get("score_hist1_p2", 0.0)
         tot_s = st.session_state.get("score_final_hist1", 0.0)
 
-        timestamp_hist1 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        timestamp_hist1 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
         st.success(f"ATELIER HISTORIQUE SCELLÉ | Note de session : {tot_s:.1f} / 20")
 
         html_export_hist = f"""<!DOCTYPE html>
@@ -1144,10 +1144,11 @@ with tab1:
             <div class="sub-title">Récapitulatif des Notes Générées</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
                 Note obtenue au Quiz Historique : <strong>{scr1:.1f} / 10</strong><br>
-                Note obtenue à la Synthèse du cours : <strong>{scr2:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse du cours (Texte à trous) : <strong>{scr2:.1f} / 10</strong><br>
                 Note Totale de l'Atelier 1 : <strong>{tot_s:.1f} / 20</strong>
             </p>
-            <div class="sub-title">CORRECTION DÉTAILLÉE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+
+            <div class="sub-title">1. CORRECTION DÉTAILLÉE DU QUIZ (10 QUESTIONS)</div>
             <table>
                 <thead>
                     <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
@@ -1166,6 +1167,37 @@ with tab1:
         html_export_hist += """
                 </tbody>
             </table>
+
+            <div class="sub-title">2. CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS - 10 CASES)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase à compléter</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        liste_verification_trous = [
+            ("1. Dans l'Antiquité, les miroirs étaient fabriqués en ......... poli.", "bronze", "hist_t1_final"),
+            ("2. Le premier traité grec sur les miroirs s'intitule La .........", "Catoptrique", "hist_t2_final"),
+            ("3. Selon Euclide, la lumière se propage en ligne .........", "droite", "hist_t3_final"),
+            ("4. Alhazen prouve que les rayons lumineux entrent dans l'.........", "oeil", "hist_t4_final"),
+            ("5. Le rayon incident et le rayon réfléchi sont dans un même .........", "plan", "hist_t5_final"),
+            ("6. René Descartes publie La ......... en 1637.", "Dioptrique", "hist_t6_final"),
+            ("7. Les angles se mesurent toujours par rapport à la .........", "normale", "hist_t7_final"),
+            ("8. La loi de la réflexion impose l'égalité stricte : i = .........", "i'", "hist_t8_final"),
+            ("9. Le Spectre de Pepper utilise une vitre inclinée à ......... degrés.", "45", "hist_t9_final"),
+            ("10. Le HUD automobile projette une image ......... devant le conducteur.", "virtuelle", "hist_t10_final"),
+        ]
+
+        for idx_t, (enonce_t, attendu_t, cle_t) in enumerate(liste_verification_trous, 1):
+            saisie_t = st.session_state.get(cle_t, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_hist += f"<tr><td>{idx_t}</td><td>{enonce_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_hist += """
+                </tbody>
+            </table>
         </body>
         </html>
         """
@@ -1177,6 +1209,7 @@ with tab1:
             mime="text/html",
             use_container_width=True
         )
+
 
 
 with tab2:
