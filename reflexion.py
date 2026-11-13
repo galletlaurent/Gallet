@@ -1539,7 +1539,7 @@ with tab3:
     st.info(st.session_state.get("opt3_txt_box_ill", "Ajustez le curseur pour initialiser la matrice."))
     
     angle_illusion = st.slider("Angle du miroir plan i (°) :", min_value=0.0, max_value=90.0, value=45.0, step=1.0, key="slider_angle_ill_quiz")
-      st.write("---")
+    st.write("---")
     st.subheader("2. Évaluation des connaissances (20 points)")
 
     if "pep_verrouille_tab3" not in st.session_state:
