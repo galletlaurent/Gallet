@@ -2359,11 +2359,6 @@ with tab1:
     st.subheader("2. La loi de la réflexion illustrée : Bande dessinée & Humour")
     st.write("Retrouvez ci-dessous la bande dessinée pédagogique ainsi que la vignette humoristique sur la réflexion :")
 
-    col_bd1, col_bd2, col_hum = st.columns(3)
-    with col_bd1:
-        afficher_vignette_jpg("bd_reflexion_1.jpg", "BD Planche 1 : Le trajet du rayon lumineux")
-    with col_bd2:
-        afficher_vignette_jpg("bd_reflexion_2.jpg", "BD Planche 2 : L'égalité des angles i = i'")
     with col_hum:
         afficher_vignette_jpg("humour_reflexion.jpg", "La pause humoristique : Réflexion physique vs philosophique")
 
