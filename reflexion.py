@@ -1383,6 +1383,288 @@ def afficher_atelier_maintenance_complet(sujet_idx, verrouille=False):
                 st.write(enonce)
             with c_sel:
                 st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+BANQUES_TP = {
+    # =========================================================================
+    # BANQUE SUJET 0 : LASER ROTATIF DE NIVELLEMENT (TERRASSEMENT & PELLE)
+    # =========================================================================
+    0: {
+        "questions": [
+            {"id": "qtp0_1", "q": "Quel composant optique situé dans la tête tournante du laser rotatif dévie le faisceau vertical de 90° pour créer un plan horizontal ?", "options": ["Un pentaprisme (prisme à double réflexion)", "Une lentille divergente en plastique", "Un filtre polarisant circulaire"], "rep": "Un pentaprisme (prisme à double réflexion)"},
+            {"id": "qtp0_2", "q": "De quel angle précis le pentaprisme dévie-t-il le faisceau laser entre son entrée verticale et sa sortie horizontale ?", "options": ["90°", "45°", "180°"], "rep": "90°"},
+            {"id": "qtp0_3", "q": "À quelle hauteur (cote de référence) le faisceau laser horizontal est-il réglé dans la simulation de terrassement ?", "options": ["1,50 m au-dessus du fond de fouille cible", "0,10 m sous la terre", "12,0 m au-dessus de la grue"], "rep": "1,50 m au-dessus du fond de fouille cible"},
+            {"id": "qtp0_4", "q": "Que signifie l'indication « TROP HAUT (Creuser) » affichée sur la cellule de réception fixée sur le bras de la pelle ?", "options": ["Le godet est au-dessus de la cote projet : le faisceau frappe le bas de la cellule", "La batterie du trépied est déchargée", "Le trépied est penché de 45°"], "rep": "Le godet est au-dessus de la cote projet : le faisceau frappe le bas de la cellule"},
+            {"id": "qtp0_5", "q": "Pourquoi le laser rotatif tourne-t-il à haute vitesse (jusqu'à 600 tr/min) sur un chantier ?", "options": ["Pour balayer 360° et matérialiser un plan de référence horizontal sur tout le chantier", "Pour refroidir la diode laser par ventilation", "Pour creuser le sol par friction"], "rep": "Pour balayer 360° et matérialiser un plan de référence horizontal sur tout le chantier"},
+            {"id": "qtp0_6", "q": "Quel est l'avantage majeur d'un pentaprisme par rapport à un simple miroir plan dans un laser de chantier ?", "options": ["Il maintient une déviation exacte de 90° même en cas de légères vibrations du rotor", "Il multiplie par dix la puissance du laser", "Il fonctionne sans batterie"], "rep": "Il maintient une déviation exacte de 90° même en cas de légères vibrations du rotor"},
+            {"id": "qtp0_7", "q": "Sur quel équipement fixe-t-on la cellule de détection optique pour guider un engin de terrassement en temps réel ?", "options": ["Sur le balancier (bras) de la pelle hydraulique ou sur une mire graduée", "Sur le pneu arrière du camion benne", "Sur le casque du chef de chantier"], "rep": "Sur le balancier (bras) de la pelle hydraulique ou sur une mire graduée"},
+            {"id": "qtp0_8", "q": "Quelle est la précision altimétrique typique d'un laser rotatif de chantier à 100 mètres de distance ?", "options": ["Environ ± 1,5 mm à ± 3 mm", "Environ ± 50 cm", "Environ ± 2 mètres"], "rep": "Environ ± 1,5 mm à ± 3 mm"},
+            {"id": "qtp0_9", "q": "Que fait le système d'auto-nivellement du laser rotatif si un engin fait vibrer le trépied au-delà de ± 5° ?", "options": ["Il coupe le faisceau et clignote pour éviter toute erreur de cote sur le chantier", "Il continue de tourner en biais sans prévenir", "Il augmente la vitesse de rotation"], "rep": "Il coupe le faisceau et clignote pour éviter toute erreur de cote sur le chantier"},
+            {"id": "qtp0_10", "q": "Quelle loi optique régit chaque réflexion interne du faisceau laser dans le pentaprisme ?", "options": ["La loi de la réflexion (i = i')", "La loi de la pesanteur", "L'effet Doppler"], "rep": "La loi de la réflexion (i = i')"},
+        ],
+        "trous": [
+            ("1. La tête du laser rotatif contient un ......... qui dévie la lumière à 90°.", ["Choisir...", "pentaprisme", "entonnoir"], "pentaprisme", "tp_t1_final"),
+            ("2. En tournant à 360°, le faisceau crée un ......... de référence horizontal.", ["Choisir...", "plan", "cercle"], "plan", "tp_t2_final"),
+            ("3. Le faisceau vertical est dévié d'un angle droit de ......... degrés.", ["Choisir...", "90", "45"], "90", "tp_t3_final"),
+            ("4. Sur la pelle, une ......... optique détecte le passage du rayon laser.", ["Choisir...", "cellule", "boussole"], "cellule", "tp_t4_final"),
+            ("5. Le nivellement laser permet d'éviter de ......... trop profondément.", ["Choisir...", "creuser", "éclairer"], "creuser", "tp_t5_final"),
+            ("6. Les réflexions internes dans le prisme suivent la loi i = .........", ["Choisir...", "i'", "0°"], "i'", "tp_t6_final"),
+            ("7. Si le trépied est heurté, une sécurité ......... le faisceau laser.", ["Choisir...", "coupe", "amplifie"], "coupe", "tp_t7_final"),
+            ("8. La précision d'un laser de chantier est de l'ordre du .........", ["Choisir...", "millimètre", "kilomètre"], "millimètre", "tp_t8_final"),
+            ("9. On utilise une ......... graduée pour contrôler manuellement les hauteurs.", ["Choisir...", "mire", "pelle"], "mire", "tp_t9_final"),
+            ("10. Le laser rotatif est indispensable pour régler la pente d'une .........", ["Choisir...", "tranchée", "grue"], "tranchée", "tp_t10_final"),
+        ]
+    },
+    # =========================================================================
+    # BANQUE SUJET 1 : TÉLÉMÈTRE LASER DE CHANTIER & PLAQUE CIBLE
+    # =========================================================================
+    1: {
+        "questions": [
+            {"id": "qtp1_1", "q": "Sur quel principe physique repose la mesure de distance d'un télémètre laser de chantier ?", "options": ["Le temps de vol (aller-retour) ou le déphasage d'un faisceau laser réfléchi sur une cible", "La mesure de la température de l'air entre deux murs", "Le calcul du poids de l'appareil"], "rep": "Le temps de vol (aller-retour) ou le déphasage d'un faisceau laser réfléchi sur une cible"},
+            {"id": "qtp1_2", "q": "Pourquoi utilise-t-on une plaque cible réfléchissante en plein soleil à plus de 50 mètres ?", "options": ["Pour concentrer la réflexion vers le capteur et compenser la forte luminosité ambiante", "Pour refroidir le faisceau laser", "Pour dévier le laser vers le sol"], "rep": "Pour concentrer la réflexion vers le capteur et compenser la forte luminosité ambiante"},
+            {"id": "qtp1_3", "q": "Que se passe-t-il si le faisceau d'un télémètre frappe une surface noire mate ou vitrée très inclinée ?", "options": ["Trop peu de lumière est réfléchie vers le capteur : une erreur de mesure s'affiche", "La distance mesurée est divisée par dix", "Le faisceau traverse le béton"], "rep": "Trop peu de lumière est réfléchie vers le capteur : une erreur de mesure s'affiche"},
+            {"id": "qtp1_4", "q": "Si l'impulsion laser met 200 nanosecondes (200 × 10⁻⁹ s) pour faire l'aller-retour (c = 3 × 10⁸ m/s), quelle est la distance D ?", "options": ["30 mètres (car D = c × t / 2)", "60 mètres", "3 mètres"], "rep": "30 mètres (car D = c × t / 2)"},
+            {"id": "qtp1_5", "q": "Pourquoi divise-t-on par 2 le temps de trajet mesuré par le télémètre ?", "options": ["Parce que la lumière effectue un aller vers la cible puis un retour par réflexion", "Parce que le laser va deux fois moins vite au retour", "Parce que l'écran affiche en demi-mètres"], "rep": "Parce que la lumière effectue un aller vers la cible puis un retour par réflexion"},
+            {"id": "qtp1_6", "q": "Quel type de réflexion se produit sur un mur en béton brut (non lisse) visé par un télémètre ?", "options": ["Une réflexion diffuse (une partie des rayons repart vers le télémètre)", "Une réflexion spéculaire totale à 90° uniquement", "Une réfraction magnétique"], "rep": "Une réflexion diffuse (une partie des rayons repart vers le télémètre)"},
+            {"id": "qtp1_7", "q": "Quelle fonction mathématique intégrée au télémètre permet de mesurer la hauteur d'une façade inaccessible en deux visées ?", "options": ["Le théorème de Pythagore indirect", "La règle de trois", "Le calcul intégral"], "rep": "Le théorème de Pythagore indirect"},
+            {"id": "qtp1_8", "q": "Quelle est la précision courante d'un télémètre laser professionnel sur un chantier de BTP ?", "options": ["± 1,0 mm à ± 1,5 mm", "± 15 cm", "± 1 mètre"], "rep": "± 1,0 mm à ± 1,5 mm"},
+            {"id": "qtp1_9", "q": "Dans la simulation, sous quel pourcentage de retour optique le télémètre affiche-t-il « SIGNAL TROP FAIBLE (Utiliser plaque cible) » ?", "options": ["Sous 35 %", "Sous 99 %", "Sous 5 %"], "rep": "Sous 35 %"},
+            {"id": "qtp1_10", "q": "Quelle règle de sécurité s'applique lors de l'utilisation d'un télémètre laser de classe 2 sur un chantier ?", "options": ["Ne jamais diriger le faisceau vers les yeux des ouvriers ou des conducteurs d'engins", "Porter des gants isolants haute tension", "Utiliser l'appareil uniquement sous la pluie"], "rep": "Ne jamais diriger le faisceau vers les yeux des ouvriers ou des conducteurs d'engins"},
+        ],
+        "trous": [
+            ("1. Le télémètre mesure le temps d'.........-retour de la lumière.", ["Choisir...", "aller", "demi"], "aller", "tp_t1_final"),
+            ("2. La formule de distance est D = (c × t) divisé par .........", ["Choisir...", "2", "4"], "2", "tp_t2_final"),
+            ("3. Sur du béton rugueux, la lumière subit une réflexion .........", ["Choisir...", "diffuse", "spéculaire"], "diffuse", "tp_t3_final"),
+            ("4. En plein soleil, on place une ......... cible pour renforcer le retour.", ["Choisir...", "plaque", "brique"], "plaque", "tp_t4_final"),
+            ("5. Une surface noire ......... une grande partie du faisceau laser.", ["Choisir...", "absorbe", "réfléchit"], "absorbe", "tp_t5_final"),
+            ("4. En plein soleil, on place une ......... cible pour renforcer le retour.", ["Choisir...", "plaque", "brique"], "plaque", "tp_t4_final"),
+            ("5. Une surface noire ......... une grande partie du faisceau laser.", ["Choisir...", "absorbe", "réfléchit"], "absorbe", "tp_t5_final"),
+            ("6. Le télémètre remplace avantageusement le ......... à ruban sur longues distances.", ["Choisir...", "mètre", "niveau"], "mètre", "tp_t6_final"),
+            ("7. La vitesse de la lumière c vaut environ 300 000 ......... par seconde.", ["Choisir...", "kilomètres", "mètres"], "kilomètres", "tp_t7_final"),
+            ("8. Une vitre propre laisse ......... le laser au lieu de le renvoyer.", ["Choisir...", "traverser", "bloquer"], "traverser", "tp_t8_final"),
+            ("9. La fonction ......... permet de calculer une hauteur à distance.", ["Choisir...", "Pythagore", "Thalès"], "Pythagore", "tp_t9_final"),
+            ("10. Le point laser rouge permet de ......... précisément la zone à mesurer.", ["Choisir...", "viser", "chauffer"], "viser", "tp_t10_final"),
+        ]
+    },
+    # =========================================================================
+    # BANQUE SUJET 2 : BALISAGE RÉTRORÉFLÉCHISSANT DE CHANTIER (MICROBILLES)
+    # =========================================================================
+    2: {
+        "questions": [
+            {"id": "qtp2_1", "q": "Quel phénomène optique permet à un panneau de chantier temporaire de briller intensément la nuit dans les phares d'une voiture ?", "options": ["La rétroréflexion (renvoi de la lumière vers sa source)", "La phosphorescence nucléaire", "L'éclairage électrique intégré dans chaque panneau"], "rep": "La rétroréflexion (renvoi de la lumière vers sa source)"},
+            {"id": "qtp2_2", "q": "De quels éléments microscopiques sont recouverts les films rétroréfléchissants des panneaux TP et des gilets haute visibilité ?", "options": ["Des microbilles de verre ou des microprismes", "Des paillettes de bois verni", "De la poudre de craie blanche"], "rep": "Des microbilles de verre ou des microprismes"},
+            {"id": "qtp2_3", "q": "Pourquoi un panneau peint simplement en blanc mat est-il beaucoup moins visible la nuit qu'un panneau rétroréfléchissant ?", "options": ["La peinture blanche diffuse la lumière dans toutes les directions au lieu de la renvoyer vers le conducteur", "La peinture blanche absorbe 100 % des phares", "Le blanc devient noir la nuit"], "rep": "La peinture blanche diffuse la lumière dans toutes les directions au lieu de la renvoyer vers le conducteur"},
+            {"id": "qtp2_4", "q": "Dans un film de Classe 2 ou Classe 3 (microprismes), quel principe optique renvoie la lumière des phares vers l'automobiliste ?", "options": ["La réflexion totale sur les faces inclinées de micro-coins de cube", "La diffraction par fentes fines", "L'absorption infrarouge"], "rep": "La réflexion totale sur les faces inclinées de micro-coins de cube"},
+            {"id": "qtp2_5", "q": "Quelle classe de film rétroréfléchissant est obligatoire sur les autoroutes et routes à grande circulation pour les chantiers temporaires ?", "options": ["La Classe 2 (haute intensité, visible à plus de 250 m)", "La Classe 0 (non réfléchissante)", "Du papier peint standard"], "rep": "La Classe 2 (haute intensité, visible à plus de 250 m)"},
+            {"id": "qtp2_6", "q": "Que se passe-t-il si un panneau de chantier est posé trop incliné (ex : 40° par rapport à la route) au bord de la chaussée ?", "options": ["L'angle d'incidence dépasse la plage de rétroréflexion et le panneau paraît sombre", "Le panneau devient deux fois plus lumineux", "Les phares sont déviés vers le ciel"], "rep": "L'angle d'incidence dépasse la plage de rétroréflexion et le panneau paraît sombre"},
+            {"id": "qtp2_7", "q": "Pourquoi les agents de chantier portent-ils des bandes grises argentées sur leurs vestes et pantalons ?", "options": ["Ces bandes contiennent des microbilles de verre qui rétroréfléchissent les phares des engins et voitures", "Pour renforcer les coutures contre les déchirures", "Pour isoler du froid en hiver"], "rep": "Ces bandes contiennent des microbilles de verre qui rétroréfléchissent les phares des engins et voitures"},
+            {"id": "qtp2_8", "q": "Quel geste d'entretien simple sur un chantier boueux permet de maintenir l'efficacité du balisage nocturne ?", "options": ["Laver régulièrement les panneaux et cônes K5a pour que la boue ne bloque pas les microbilles", "Repeindre les panneaux au pinceau tous les soirs", "Coucher les panneaux au sol la nuit"], "rep": "Laver régulièrement les panneaux et cônes K5a pour que la boue ne bloque pas les microbilles"},
+            {"id": "qtp2_9", "q": "Quelle est la distance de visibilité nocturne minimale assurée par un balisage rétroréfléchissant de Classe 2 en feux de croisement ?", "options": ["Environ 250 mètres", "10 mètres", "2 kilomètres"], "rep": "Environ 250 mètres"},
+            {"id": "qtp2_10", "q": "Dans la simulation de balisage nocturne, jusqu'à quel angle d'observation (angle d'entrée) le panneau reste-t-il parfaitement visible ?", "options": ["Jusqu'à ± 30°", "Uniquement à 0,0° pile", "Jusqu'à 90°"], "rep": "Jusqu'à ± 30°"},
+        ],
+        "trous": [
+            ("1. Les panneaux de chantier renvoient la lumière des phares par .........", ["Choisir...", "rétroréflexion", "diffusion"], "rétroréflexion", "tp_t1_final"),
+            ("2. Les films réfléchissants contiennent des ......... de verre.", ["Choisir...", "microbilles", "plaques"], "microbilles", "tp_t2_final"),
+            ("3. La lumière est renvoyée directement vers sa ......... d'émission.", ["Choisir...", "source", "cible"], "source", "tp_t3_final"),
+            ("4. Sur autoroute, les panneaux temporaires doivent être de Classe .........", ["Choisir...", "2", "1"], "2", "tp_t4_final"),
+            ("5. Une peinture blanche classique produit une réflexion ......... peu visible.", ["Choisir...", "diffuse", "totale"], "diffuse", "tp_t5_final"),
+            ("6. Les bandes des gilets de sécurité assurent la visibilité .........", ["Choisir...", "nocturne", "thermique"], "nocturne", "tp_t6_final"),
+            ("7. Un panneau de Classe 2 est visible à plus de ......... mètres la nuit.", ["Choisir...", "250", "20"], "250", "tp_t7_final"),
+            ("8. La boue sur un cône de chantier ......... les rayons lumineux incidents.", ["Choisir...", "bloque", "amplifie"], "bloque", "tp_t8_final"),
+            ("9. Les microprismes utilisent la réflexion interne sur des coins de .........", ["Choisir...", "cube", "sphère"], "cube", "tp_t9_final"),
+            ("10. Le panneau doit être orienté ......... à l'axe de la chaussée.", ["Choisir...", "perpendiculairement", "parallèlement"], "perpendiculairement", "tp_t10_final"),
+        ]
+    }
+}
+
+
+def mettre_a_jour_tp_matplotlib(sujet_idx):
+    """Banc d'essai expérimental réaliste adapté au chantier TP tiré au sort."""
+    fig, ax = plt.subplots(figsize=(12, 6.5), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 260)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    # =========================================================================
+    # SUJET 0 : LASER ROTATIF DE NIVELLEMENT & PELLE HYDRAULIQUE
+    # =========================================================================
+    if sujet_idx == 0:
+        hauteur_godet = st.session_state.get("slider_tp_s0", 1.65)
+        cote_projet = 1.50
+        ecart_cm = (hauteur_godet - cote_projet) * 100.0
+
+        # Sol naturel et fond de fouille projet
+        ax.add_patch(patches.Rectangle((20, 190), 560, 55, facecolor="#78350f", edgecolor="#92400e"))
+        ax.plot([20, 580], [190, 190], color="#f59e0b", lw=2, ls="--")
+        ax.text(570, 184, "Fond de fouille projet (Cote 0,00 m)", color="#fbbf24", fontsize=7.5, fontweight="bold", ha="right")
+
+        # Trépied et laser rotatif à gauche (plan laser horizontal à y=110)
+        ax.plot([75, 50], [130, 190], color="#cbd5e1", lw=2.5)
+        ax.plot([75, 100], [130, 190], color="#cbd5e1", lw=2.5)
+        ax.add_patch(patches.Rectangle((63, 100), 24, 30, facecolor="#eab308", edgecolor="white"))
+        ax.text(75, 92, "Laser Rotatif\n(Pentaprisme 90°)", color="#fde047", fontsize=7.5, fontweight="bold", ha="center")
+
+        # Plan laser horizontal à y = 110
+        ax.plot([87, 560], [110, 110], color="#ef4444", lw=2)
+        ax.text(240, 103, "Plan laser horizontal de référence (+1,50 m)", color="#f87171", fontsize=7.5, fontweight="bold", ha="center")
+
+        # Bras de pelle et cellule de réception mobile selon hauteur_godet
+        y_godet = 190.0 - (hauteur_godet - cote_projet) * 120.0
+        y_godet = max(145.0, min(225.0, y_godet))
+        y_cellule = y_godet - 80.0
+
+        ax.add_patch(patches.Rectangle((410, y_godet - 18), 45, 18, facecolor="#475569", edgecolor="#94a3b8", lw=1.5))
+        ax.text(465, y_godet - 9, f"Godet ({hauteur_godet:.2f} m)", color="#cbd5e1", fontsize=7.5, fontweight="bold", va="center")
+
+        # Mât et cellule de détection
+        ax.plot([432, 432], [y_cellule - 15, y_godet - 18], color="#94a3b8", lw=3)
+        ax.add_patch(patches.Rectangle((422, y_cellule - 15), 20, 30, facecolor="#0284c7", edgecolor="white", lw=1.5))
+        ax.text(450, y_cellule, "Cellule TP", color="#38bdf8", fontsize=7.5, fontweight="bold", va="center")
+
+        if abs(ecart_cm) <= 2.0:
+            statut = "COTE ATTEINTE (± 2 cm) : Arrêter de creuser, fond de fouille conforme !"
+            c_stat = "#22c55e"
+            diag = "CONFORME"
+        elif ecart_cm > 2.0:
+            statut = f"TROP HAUT (+{ecart_cm:.0f} cm) : Continuer à creuser la tranchée."
+            c_stat = "#f59e0b"
+            diag = "À CREUSER"
+        else:
+            statut = f"TROP BAS ({ecart_cm:.0f} cm) : Remblayer et compacter le fond !"
+            c_stat = "#ef4444"
+            diag = "TROP PROFOND"
+
+        ax.text(25, 20, "TERRASSEMENT TP : GUIDAGE PAR LASER ROTATIF (DÉVIATION 90°)", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 36, statut, color=c_stat, fontsize=8, fontweight="bold")
+        ax.text(300, 248, f"Cote projet : 1,50 m | Hauteur godet : {hauteur_godet:.2f} m | Écart : {ecart_cm:+.1f} cm",
+                color="#f8fafc", fontsize=8, fontweight="bold", ha="center", bbox=dict(boxstyle="round", facecolor="#1e293b", edgecolor=c_stat))
+
+        st.session_state.tp_mesure_courante = (f"Hauteur = {hauteur_godet:.2f} m", f"Écart = {ecart_cm:+.1f} cm", "Déviation = 90°", diag)
+
+    # =========================================================================
+    # SUJET 1 : TÉLÉMÈTRE LASER DE CHANTIER & PLAQUE CIBLE
+    # =========================================================================
+    elif sujet_idx == 1:
+        dist_m = st.session_state.get("slider_tp_s1", 45.0)
+        avec_cible = st.session_state.get("check_tp_cible_s1", True)
+
+        c_ms = 299792458.0
+        temps_ns = (2.0 * dist_m / c_ms) * 1e9
+        base_signal = 95.0 if avec_cible else 58.0
+        signal_retour = max(5.0, base_signal - (dist_m * 0.45))
+
+        ax.add_patch(patches.Rectangle((40, 105), 55, 36, facecolor="#eab308", edgecolor="white", lw=1.5))
+        ax.text(67, 123, "Télémètre\nLaser", color="#0f172a", fontsize=7.5, fontweight="bold", ha="center", va="center")
+
+        x_mur = 160.0 + (dist_m / 100.0) * 380.0
+        ax.add_patch(patches.Rectangle((x_mur, 65), 22, 120, facecolor="#64748b", edgecolor="#cbd5e1", lw=1.5))
+        ax.text(x_mur + 11, 55, f"Ouvrage ({dist_m:.0f} m)", color="#cbd5e1", fontsize=7.5, fontweight="bold", ha="center")
+
+        if avec_cible:
+            ax.add_patch(patches.Rectangle((x_mur - 5, 108), 5, 30, facecolor="#ef4444", edgecolor="white"))
+            ax.text(x_mur - 8, 98, "Plaque cible", color="#fca5a5", fontsize=7, fontweight="bold", ha="right")
+
+        ax.annotate("", xy=(x_mur - 5, 118), xytext=(95, 118), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2))
+        if signal_retour >= 35.0:
+            ax.annotate("", xy=(95, 130), xytext=(x_mur - 5, 130), arrowprops=dict(arrowstyle="->", color="#22c55e", lw=2))
+            statut = f"MESURE VALIDÉE : D = {dist_m:.2f} m | Signal réfléchi : {signal_retour:.0f}%"
+            c_stat = "#22c55e"
+            diag = "MESURE OK"
+        else:
+            ax.annotate("", xy=((95 + x_mur) / 2, 145), xytext=(x_mur - 5, 130), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=1.5, ls="--"))
+            statut = f"ERREUR SIGNAL ({signal_retour:.0f}% < 35%) : Activez la plaque cible réfléchissante !"
+            c_stat = "#ef4444"
+            diag = "SIGNAL FAIBLE"
+
+        ax.text(25, 20, "MÉTRÉ DE CHANTIER : TÉLÉMÈTRE LASER (TEMPS DE VOL ALLER-RETOUR)", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 36, statut, color=c_stat, fontsize=8, fontweight="bold")
+        ax.text(300, 235, f"Distance : {dist_m:.1f} m | Temps aller-retour : {temps_ns:.1f} ns | Retour optique : {signal_retour:.0f}%",
+                color="#f8fafc", fontsize=8, fontweight="bold", ha="center", bbox=dict(boxstyle="round", facecolor="#1e293b", edgecolor=c_stat))
+
+        st.session_state.tp_mesure_courante = (f"D = {dist_m:.1f} m", f"t = {temps_ns:.1f} ns", f"Signal = {signal_retour:.0f}%", diag)
+
+    # =========================================================================
+    # SUJET 2 : BALISAGE RÉTRORÉFLÉCHISSANT DE CHANTIER (MICROBILLES)
+    # =========================================================================
+    else:
+        angle_panneau = st.session_state.get("slider_tp_s2", 10.0)
+        classe_film = st.session_state.get("radio_tp_classe_s2", "Classe 2 (Microprismes TP)")
+
+        facteur_classe = 1.0 if "Classe 2" in classe_film else 0.55
+        if abs(angle_panneau) <= 30.0:
+            visibilite_pct = max(0.0, (100.0 - abs(angle_panneau) * 1.4) * facteur_classe)
+        else:
+            visibilite_pct = max(0.0, (58.0 - (abs(angle_panneau) - 30.0) * 3.5) * facteur_classe)
+
+        ax.add_patch(patches.Rectangle((35, 115), 85, 42, facecolor="#1e293b", edgecolor="#38bdf8", lw=1.5))
+        ax.text(77, 136, "VÉHICULE\n(Phares nuit)", color="white", fontsize=7.5, fontweight="bold", ha="center", va="center")
+
+        xp, yp = 500.0, 136.0
+        rad_p = math.radians(angle_panneau)
+        dx_p = 30.0 * math.sin(rad_p)
+        dy_p = 30.0 * math.cos(rad_p)
+        ax.plot([xp - dx_p, xp + dx_p], [yp - dy_p, yp + dy_p], color="#f59e0b", lw=6)
+        nom_classe_court = classe_film[:8]
+        ax.text(xp, 88, f"Panneau AK5\n({nom_classe_court})", color="#fbbf24", fontsize=7.5, fontweight="bold", ha="center")
+
+        ax.annotate("", xy=(xp, yp - 6), xytext=(120, 128), arrowprops=dict(arrowstyle="->", color="#fde047", lw=2.5))
+
+        if visibilite_pct >= 50.0:
+            ax.annotate("", xy=(120, 144), xytext=(xp, yp + 6), arrowprops=dict(arrowstyle="->", color="#22c55e", lw=2.5))
+            statut = f"BALISAGE CONFORME ({visibilite_pct:.0f}%) : Rétroréflexion nette à 250 m."
+            c_stat = "#22c55e"
+            diag = "VISIBLE (OK)"
+        else:
+            ax.annotate("", xy=(250, 210), xytext=(xp, yp + 6), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2, ls="--"))
+            statut = f"DANGER CHANTIER ({visibilite_pct:.0f}%) : Panneau mal orienté ou classe insuffisante !"
+            c_stat = "#ef4444"
+            diag = "DANGER NUIT"
+
+        ax.text(25, 20, "SÉCURITÉ CHANTIER : RÉTRORÉFLEXION SUR FILM À MICROBILLES", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 36, statut, color=c_stat, fontsize=8, fontweight="bold")
+        ax.text(300, 235, f"Orientation panneau : {angle_panneau:+.0f}° | Film : {classe_film} | Intensité renvoyée : {visibilite_pct:.0f}%",
+                color="#f8fafc", fontsize=8, fontweight="bold", ha="center", bbox=dict(boxstyle="round", facecolor="#1e293b", edgecolor=c_stat))
+
+        st.session_state.tp_mesure_courante = (f"Angle = {angle_panneau:+.0f}°", nom_classe_court, f"Retour = {visibilite_pct:.0f}%", diag)
+
+    return fig
+
+
+def afficher_atelier_tp_complet(sujet_idx, verrouille=False):
+    """Affiche les 10 QCM et les 10 trous spécifiques au chantier TP tiré au sort."""
+    if sujet_idx is None:
+        st.warning("Tirez d'abord au sort un chantier TP ci-dessus pour débloquer les 10 questions et les 10 phrases à trous correspondantes.")
+        return
+
+    banque = BANQUES_TP[sujet_idx]
+    cle_session_ordre = f"ordre_quiz_tp_sujet_{sujet_idx}"
+
+    if cle_session_ordre not in st.session_state:
+        liste_q = list(banque["questions"])
+        random.shuffle(liste_q)
+        st.session_state[cle_session_ordre] = liste_q
+
+    col_quiz, col_trous = st.columns(2)
+    with col_quiz:
+        st.markdown("##### Quiz Technique Travaux Publics (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state[cle_session_ordre], 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"tp_at7_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse Travaux Publics (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in banque["trous"]:
+            c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c_txt:
+                st.write(enonce)
+            with c_sel:
+                st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+
+
+
+                
 with tab0:
     st.subheader("Identification de l'élève")
     st.write("Veuillez renseigner vos informations pour déverrouiller l'accès aux ateliers pratiques.")
@@ -2673,7 +2955,265 @@ with tab6:
 
 
 with tab7:
-    st.header("**Manipulation  : Application Navale (Le Periscope du sous-marin)**")
+    st.header("Atelier 7 : Applications dans le domaine des Travaux Publics")
+
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 16px;">Maîtrise de la lumière réfléchie sur les chantiers de Travaux Publics :</p>
+        <p style="margin-bottom: 0; line-height: 1.6;">Sur un chantier de terrassement, de voirie ou de génie civil, la loi de la réflexion <b><i>i</i> = <i>i'</i></b> permet de niveler les sols au millimètre près, de mesurer des ouvrages d'art à distance et d'assurer la visibilité nocturne des zones de travaux.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    sujets_tp = [
+        {
+            "titre": "Chantier N°1 : Nivellement laser rotatif & Guidage de pelle hydraulique",
+            "img_metier": "tp_laser_rotatif.jpg",
+            "legende_metier": "Laser rotatif sur trépied et cellule de réception montée sur pelle de terrassement",
+            "explication": (
+                "**Principe technique :** À l'intérieur de la tête tournante du laser, un **pentaprisme** dévie le faisceau vertical d'un angle exact de **90°** par double réflexion interne. "
+                "En tournant à 600 tr/min, il génère un **plan horizontal de référence** sur tout le chantier. La cellule fixée sur le bras de la pelle indique au conducteur s'il est au-dessus ou au-dessous de la cote projet (**1,50 m**)."
+            )
+        },
+        {
+            "titre": "Chantier N°2 : Métré à distance au télémètre laser & Plaque cible",
+            "img_metier": "tp_telemetre_chantier.jpg",
+            "legende_metier": "Télémètre laser de chantier visant une plaque cible réfléchissante",
+            "explication": (
+                "**Principe technique :** Le télémètre émet une impulsion laser vers un ouvrage (mur de soutènement, tablier de pont) et capte la lumière réfléchie. "
+                "Il calcule la distance via la formule **D = (c × t) / 2** (aller-retour de la lumière). Sur longue distance ou en plein soleil, une **plaque cible réfléchissante** est indispensable pour maintenir un signal de retour supérieur à **35 %**."
+            )
+        },
+        {
+            "titre": "Chantier N°3 : Balisage nocturne rétroréfléchissant (Microbilles & Classe 2)",
+            "img_metier": "tp_balisage_microbilles.jpg",
+            "legende_metier": "Panneaux temporaires de chantier et équipements haute visibilité éclairés la nuit",
+            "explication": (
+                "**Principe technique :** Contrairement à une peinture blanche qui diffuse la lumière dans tous les sens, les films de chantier de **Classe 2** contiennent des milliers de **microbilles de verre** ou de **microprismes**. "
+                "Grâce à la réflexion interne, ils renvoient le faisceau des phares directement vers les yeux du conducteur jusqu'à **250 mètres** de distance."
+            )
+        }
+    ]
+
+    if "sujet_tp_tire" not in st.session_state:
+        st.session_state.sujet_tp_tire = None
+
+    st.subheader("1. Attribution de votre chantier de Travaux Publics")
+    if st.button("TIRER AU SORT UN CHANTIER TP", key="btn_tirage_tp", use_container_width=True):
+        choix_possibles_tp = [i for i in range(3) if i != st.session_state.sujet_tp_tire]
+        st.session_state.sujet_tp_tire = random.choice(choix_possibles_tp)
+        st.session_state.mesures_tp_log = []
+        for k in list(st.session_state.keys()):
+            if k.startswith("tp_t") or k.startswith("tp_at7_final_g_"):
+                del st.session_state[k]
+        st.rerun()
+
+    if st.session_state.sujet_tp_tire is None:
+        st.info("Cliquez sur le bouton ci-dessus pour tirer au sort un chantier de Travaux Publics parmi les 3 applications.")
+    else:
+        idx_sujet_tp = st.session_state.sujet_tp_tire
+        data_sujet_tp = sujets_tp[idx_sujet_tp]
+
+        st.success(f"Chantier attribué : **{data_sujet_tp['titre']}**")
+        st.markdown(data_sujet_tp["explication"], unsafe_allow_html=True)
+
+        col_img_tp, col_bd_tp = st.columns(2)
+        with col_img_tp:
+            img_tp = charger_image(data_sujet_tp["img_metier"])
+            if img_tp is not None:
+                st.image(img_tp, caption=data_sujet_tp["legende_metier"], use_container_width=True)
+            else:
+                st.warning(f"Image métier attendue dans le dossier image/ : **{data_sujet_tp['img_metier']}**")
+
+        with col_bd_tp:
+            img_bd_tp = charger_image("bd_humour_tp.jpg")
+            if img_bd_tp is not None:
+                st.image(img_bd_tp, caption="La pause BD : Quand le niveau laser se dérègle sur le chantier !", use_container_width=True)
+            else:
+                st.warning("BD humoristique attendue dans le dossier image/ : **bd_humour_tp.jpg**")
+
+        st.markdown("---")
+        st.subheader("2. Banc de mesure expérimental sur chantier")
+
+        if "mesures_tp_log" not in st.session_state:
+            st.session_state.mesures_tp_log = []
+
+        if idx_sujet_tp == 0:
+            st.slider("Hauteur actuelle du godet sous le plan laser (mètres) :", min_value=1.20, max_value=1.80, value=1.65, step=0.01, key="slider_tp_s0")
+        elif idx_sujet_tp == 1:
+            col_s1_a, col_s1_b = st.columns([0.70, 0.30])
+            with col_s1_a:
+                st.slider("Distance de l'ouvrage à mesurer (mètres) :", min_value=5.0, max_value=100.0, value=45.0, step=1.0, key="slider_tp_s1")
+            with col_s1_b:
+                st.checkbox("Plaque cible installée sur le mur", value=True, key="check_tp_cible_s1")
+        else:
+            col_s2_a, col_s2_b = st.columns([0.65, 0.35])
+            with col_s2_a:
+                st.slider("Angle d'orientation du panneau par rapport à la route (°) :", min_value=-45.0, max_value=45.0, value=10.0, step=1.0, key="slider_tp_s2")
+            with col_s2_b:
+                st.radio("Classe du film rétroréfléchissant :", ["Classe 2 (Microprismes TP)", "Classe 1 (Standard)"], key="radio_tp_classe_s2")
+
+        if st.button("ENREGISTRER CE RELEVÉ DANS LE CARNET DE CHANTIER", key="btn_releve_tp", use_container_width=True):
+            if "tp_mesure_courante" in st.session_state:
+                st.session_state.mesures_tp_log.append(st.session_state.tp_mesure_courante)
+                st.rerun()
+
+        fig_tp = mettre_a_jour_tp_matplotlib(idx_sujet_tp)
+        st.pyplot(fig_tp, use_container_width=True)
+
+        if st.session_state.mesures_tp_log:
+            df_tp = pd.DataFrame(
+                st.session_state.mesures_tp_log,
+                columns=["Paramètre mesuré", "Grandeur optique", "Référence", "Diagnostic"]
+            )
+            df_tp.insert(0, "Relevé N°", [f"Mesure {i}" for i in range(1, len(df_tp) + 1)])
+            st.dataframe(df_tp, use_container_width=True, hide_index=True)
+
+    st.write("---")
+    st.subheader("3. Évaluation des connaissances sur votre chantier (20 points)")
+
+    if "tp_verrouille_tab7" not in st.session_state:
+        st.session_state.tp_verrouille_tab7 = False
+    verrou_at7 = st.session_state.tp_verrouille_tab7
+    sujet_actif_tp = st.session_state.get("sujet_tp_tire", None)
+
+    afficher_atelier_tp_complet(sujet_actif_tp, verrouille=verrou_at7)
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 7 (Travaux Publics)")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_tp7 = st.checkbox(
+        "Je certifie avoir réalisé mes relevés sur le chantier TP et complété les questions de l'Atelier 7.",
+        key="check_certif_tp_final_net",
+        disabled=verrou_at7,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 7", key="btn_export_tp7_official_net", use_container_width=True, disabled=verrou_at7):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif sujet_actif_tp is None:
+            st.error("Action refusée : Tirez d'abord au sort votre chantier TP en haut de l'onglet.")
+        elif not case_certif_tp7:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            banque_active_tp = BANQUES_TP[sujet_actif_tp]
+            cle_ordre_tp = f"ordre_quiz_tp_sujet_{sujet_actif_tp}"
+
+            score_q7 = 0.0
+            for q_item in st.session_state.get(cle_ordre_tp, []):
+                reponse_eleve = st.session_state.get(f"tp_at7_final_g_{q_item['id']}", "Choisir...")
+                if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                    score_q7 += 1.0
+
+            score_t7 = 0.0
+            for _, _, bonne_rep_t, cle_t in banque_active_tp["trous"]:
+                if str(st.session_state.get(cle_t, "Choisir...")).strip() == str(bonne_rep_t).strip():
+                    score_t7 += 1.0
+
+            st.session_state.score_tp7_p1 = round(float(score_q7), 1)
+            st.session_state.score_tp7_p2 = round(float(score_t7), 1)
+            st.session_state.score_final_tp7 = round(float(score_q7 + score_t7), 1)
+            st.session_state.tp_verrouille_tab7 = True
+            st.rerun()
+
+    if st.session_state.get("tp_verrouille_tab7", False) and sujet_actif_tp is not None:
+        scr1 = st.session_state.get("score_tp7_p1", 0.0)
+        scr2 = st.session_state.get("score_tp7_p2", 0.0)
+        tot_s = st.session_state.get("score_final_tp7", 0.0)
+        titre_sujet_export_tp = sujets_tp[sujet_actif_tp]["titre"]
+        banque_active_tp = BANQUES_TP[sujet_actif_tp]
+        cle_ordre_tp = f"ordre_quiz_tp_sujet_{sujet_actif_tp}"
+        banque_active_tp = BANQUES_TP[sujet_actif_tp]
+        cle_ordre_tp = f"ordre_quiz_tp_sujet_{sujet_actif_tp}"
+
+        timestamp_tp7 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER TRAVAUX PUBLICS SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        html_export_tp = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Travaux Publics Optique - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation d'Optique Géométrique</h1>
+                <p>Atelier 7 : Applications dans le domaine des Travaux Publics</p>
+                <p>Chantier attribué par tirage au sort : <strong>{titre_sujet_export_tp}</strong></p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_tp7}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Technique TP : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse du cours (Texte à trous) : <strong>{scr2:.1f} / 10</strong><br>
+                Relevés de chantier enregistrés : <strong>{len(st.session_state.get("mesures_tp_log", []))}</strong><br>
+                Note Totale de l'Atelier 7 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">1. CORRECTION DÉTAILLÉE DU QUIZ (10 QUESTIONS SPÉCIFIQUES AU CHANTIER)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        for num, q_item in enumerate(st.session_state.get(cle_ordre_tp, []), 1):
+            saisie = st.session_state.get(f"tp_at7_final_g_{q_item['id']}", "Choisir...")
+            attendu = q_item["rep"]
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_tp += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_tp += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">2. CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS - 10 CASES)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase à compléter</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        for idx_t, (enonce_t, _, attendu_t, cle_t) in enumerate(banque_active_tp["trous"], 1):
+            saisie_t = st.session_state.get(cle_t, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_tp += f"<tr><td>{idx_t}</td><td>{enonce_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_tp += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html_tp = preparer_nom_fichier("Rapport_Atelier_7_Travaux_Publics").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 7 (.html)",
+            data=html_export_tp,
+            file_name=nom_fichier_html_tp,
+            mime="text/html",
+            use_container_width=True
+        )
+
+
 
 
 
