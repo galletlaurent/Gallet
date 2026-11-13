@@ -3101,11 +3101,11 @@ with tab7:
             banque_active_tp = BANQUES_TP[sujet_actif_tp]
             cle_ordre_tp = f"ordre_quiz_tp_sujet_{sujet_actif_tp}"
 
-            score_q7 = 0.0
-            for q_item in st.session_state.get(cle_ordre_tp, []):
-                reponse_eleve = st.session_state.get(f"tp_at7_final_g_{q_item['id']}", "Choisir...")
-                if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
-                    score_q7 += 1.0
+            score_t7 = 0.0
+            for _, _, bonne_rep_t, cle_t in banque_active_tp["trous"]:
+                if str(st.session_state.get(f"{cle_t}_s{sujet_actif_tp}", "Choisir...")).strip() == str(bonne_rep_t).strip():
+                    score_t7 += 1.0
+
 
             score_t7 = 0.0
             for _, _, bonne_rep_t, cle_t in banque_active_tp["trous"]:
@@ -3193,7 +3193,7 @@ with tab7:
         """
 
         for idx_t, (enonce_t, _, attendu_t, cle_t) in enumerate(banque_active_tp["trous"], 1):
-            saisie_t = st.session_state.get(cle_t, "Choisir...")
+            saisie_t = st.session_state.get(f"{cle_t}_s{sujet_actif_tp}", "Choisir...")
             v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
             v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
             html_export_tp += f"<tr><td>{idx_t}</td><td>{enonce_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
