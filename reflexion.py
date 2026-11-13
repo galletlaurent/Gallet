@@ -957,6 +957,56 @@ def afficher_atelier_reflexion_complet(verrouille=False):
                 st.write(enonce)
             with c_sel:
                 st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+                
+def afficher_atelier_pepper_complet(verrouille=False):
+    """Affiche le Quiz (10 questions) et le Texte à trous (10 cases) de l'Atelier 3 (Spectre de Pepper / HUD)."""
+    questions_pep_sources = [
+        {"id": "qp1", "q": "Quel angle précis doit avoir le pare-brise (ou la vitre sans tain) pour projeter l'image HUD horizontalement vers le conducteur ?", "options": ["45°", "90°", "15°"], "rep": "45°"},
+        {"id": "qp2", "q": "De quelle nature est l'image (le chiffre 50) observée par le conducteur sur la route ?", "options": ["Une image virtuelle", "Une image réelle projetée sur le bitume", "Une ombre portée"], "rep": "Une image virtuelle"},
+        {"id": "qp3", "q": "Quelle propriété optique doit posséder le pare-brise pour permettre l'effet Spectre de Pepper ?", "options": ["Être semi-réfléchissant (laisser passer la lumière et en réfléchir une partie)", "Être totalement opaque comme un miroir de salle de bain", "Être dépoli et rugueux"], "rep": "Être semi-réfléchissant (laisser passer la lumière et en réfléchir une partie)"},
+        {"id": "qp4", "q": "Quel est le principal avantage sécuritaire d'un affichage tête haute (HUD) en conduite ?", "options": ["Le conducteur lit sa vitesse sans quitter la route des yeux", "Il remplace complètement les phares la nuit", "Il permet de rouler sans pare-brise"], "rep": "Le conducteur lit sa vitesse sans quitter la route des yeux"},
+        {"id": "qp5", "q": "Où semble se situer l'hologramme HUD pour l'œil du conducteur lorsque le système est réglé à 45° ?", "options": ["Au loin devant le capot, superposé à la route", "Collé directement sur le tableau de bord", "Derrière la tête du conducteur"], "rep": "Au loin devant le capot, superposé à la route"},
+        {"id": "qp6", "q": "Si le pare-brise est incliné à 45° et que le projecteur émet un rayon vertical vers le haut, quel est l'angle d'incidence i ?", "options": ["45°", "0°", "90°"], "rep": "45°"},
+        {"id": "qp7", "q": "Dans le théâtre du XIXe siècle (Spectre de Pepper), où était caché l'acteur jouant le fantôme ?", "options": ["Dans une fosse éclairée sous la scène, hors de vue du public", "Suspendu au plafond au-dessus du public", "Derrière un rideau noir au fond de la scène"], "rep": "Dans une fosse éclairée sous la scène, hors de vue du public"},
+        {"id": "qp8", "q": "Pourquoi l'image affichée par le projecteur HUD dans la planche de bord doit-elle être inversée à la source ?", "options": ["Parce que la réflexion sur le pare-brise inverse le sens de lecture", "Pour économiser la batterie du véhicule", "Parce que le verre grossit les chiffres"], "rep": "Parce que la réflexion sur le pare-brise inverse le sens de lecture"},
+        {"id": "qp9", "q": "Dans la simulation HUD, que se passe-t-il si l'angle du pare-brise est déréglé à 30° au lieu de 45° ?", "options": ["Le rayon réfléchi part trop haut et rate l'œil du conducteur", "L'image devient deux fois plus nette", "La vitesse affichée change de valeur"], "rep": "Le rayon réfléchi part trop haut et rate l'œil du conducteur"},
+        {"id": "qp10", "q": "Dans quel autre domaine professionnel l'affichage tête haute (HUD) est-il massivement utilisé ?", "options": ["L'aéronautique (pilotes d'avions de ligne et de chasse)", "La plomberie sanitaire", "La boulangerie industrielle"], "rep": "L'aéronautique (pilotes d'avions de ligne et de chasse)"},
+    ]
+
+    if "ordre_quiz_pep_aleatoire" not in st.session_state:
+        random.shuffle(questions_pep_sources)
+        st.session_state.ordre_quiz_pep_aleatoire = questions_pep_sources
+
+    champs_pep = [
+        ("1. L'illusion du Spectre de Pepper repose sur une vitre inclinée à ......... degrés.", ["Choisir...", "45", "90"], "45", "pep_t1_final"),
+        ("2. L'image observée au travers de la vitre est une image .........", ["Choisir...", "virtuelle", "réelle"], "virtuelle", "pep_t2_final"),
+        ("3. Le sigle HUD signifie Affichage Tête ......... en français.", ["Choisir...", "Haute", "Basse"], "Haute", "pep_t3_final"),
+        ("4. Le pare-brise agit à la fois comme une vitre transparente et un .........", ["Choisir...", "miroir", "prisme"], "miroir", "pep_t4_final"),
+        ("5. Le rayon issu du projecteur se réfléchit en respectant la loi i = .........", ["Choisir...", "i'", "0°"], "i'", "pep_t5_final"),
+        ("6. Le cerveau prolonge les rayons reçus en ligne ......... derrière le pare-brise.", ["Choisir...", "droite", "courbe"], "droite", "pep_t6_final"),
+        ("7. Au théâtre, l'acteur fantôme était éclairé dans une ......... sous la scène.", ["Choisir...", "fosse", "loge"], "fosse", "pep_t7_final"),
+        ("8. Le HUD évite au conducteur de baisser les ......... vers le compteur.", ["Choisir...", "yeux", "mains"], "yeux", "pep_t8_final"),
+        ("9. Un rayon incident vertical dévié à 90° nécessite un angle d'incidence de .........°.", ["Choisir...", "45", "60"], "45", "pep_t9_final"),
+        ("10. L'image projetée sur le pare-brise se superpose directement à la .........", ["Choisir...", "route", "toiture"], "route", "pep_t10_final"),
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    with col_quiz:
+        st.markdown("##### Quiz Spectre de Pepper & HUD (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_pep_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"pep_at3_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse Spectre de Pepper (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in champs_pep:
+            c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c_txt:
+                st.write(enonce)
+            with c_sel:
+                st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
 
 
 with tab0:
@@ -1489,8 +1539,159 @@ with tab3:
     st.info(st.session_state.get("opt3_txt_box_ill", "Ajustez le curseur pour initialiser la matrice."))
     
     angle_illusion = st.slider("Angle du miroir plan i (°) :", min_value=0.0, max_value=90.0, value=45.0, step=1.0, key="slider_angle_ill_quiz")
-    
+      st.write("---")
+    st.subheader("2. Évaluation des connaissances (20 points)")
 
+    if "pep_verrouille_tab3" not in st.session_state:
+        st.session_state.pep_verrouille_tab3 = False
+    verrou_at3 = st.session_state.pep_verrouille_tab3
+
+    afficher_atelier_pepper_complet(verrouille=verrou_at3)
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 3 (Spectre de Pepper)")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_pep3 = st.checkbox(
+        "Je certifie avoir testé le simulateur HUD et complété les questions de l'Atelier 3.",
+        key="check_certif_pepper_final_net",
+        disabled=verrou_at3,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_pep3_official_net", use_container_width=True, disabled=verrou_at3):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_pep3:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q3 = 0.0
+            if "ordre_quiz_pep_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_pep_aleatoire:
+                    reponse_eleve = st.session_state.get(f"pep_at3_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q3 += 1.0
+
+            score_t3 = sum([
+                st.session_state.get("pep_t1_final") == "45",
+                st.session_state.get("pep_t2_final") == "virtuelle",
+                st.session_state.get("pep_t3_final") == "Haute",
+                st.session_state.get("pep_t4_final") == "miroir",
+                st.session_state.get("pep_t5_final") == "i'",
+                st.session_state.get("pep_t6_final") == "droite",
+                st.session_state.get("pep_t7_final") == "fosse",
+                st.session_state.get("pep_t8_final") == "yeux",
+                st.session_state.get("pep_t9_final") == "45",
+                st.session_state.get("pep_t10_final") == "route",
+            ])
+
+            st.session_state.score_pep3_p1 = round(float(score_q3), 1)
+            st.session_state.score_pep3_p2 = round(float(score_t3), 1)
+            st.session_state.score_final_pep3 = round(float(score_q3 + score_t3), 1)
+            st.session_state.pep_verrouille_tab3 = True
+            st.rerun()
+
+    if st.session_state.get("pep_verrouille_tab3", False):
+        scr1 = st.session_state.get("score_pep3_p1", 0.0)
+        scr2 = st.session_state.get("score_pep3_p2", 0.0)
+        tot_s = st.session_state.get("score_final_pep3", 0.0)
+
+        timestamp_pep3 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER SPECTRE DE PEPPER SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        html_export_pep = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Spectre de Pepper - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation d'Optique Géométrique</h1>
+                <p>Atelier 3 : Spectre de Pepper & Affichage Tête Haute (HUD)</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_pep3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Spectre de Pepper : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse du cours (Texte à trous) : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 3 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">1. CORRECTION DÉTAILLÉE DU QUIZ (10 QUESTIONS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_pep_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_pep_aleatoire, 1):
+                saisie = st.session_state.get(f"pep_at3_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_pep += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_pep += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">2. CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS - 10 CASES)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase à compléter</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+        liste_verif_trous_pep = [
+            ("1. L'illusion du Spectre de Pepper repose sur une vitre inclinée à ......... degrés.", "45", "pep_t1_final"),
+            ("2. L'image observée au travers de la vitre est une image .........", "virtuelle", "pep_t2_final"),
+            ("3. Le sigle HUD signifie Affichage Tête ......... en français.", "Haute", "pep_t3_final"),
+            ("4. Le pare-brise agit à la fois comme une vitre transparente et un .........", "miroir", "pep_t4_final"),
+            ("5. Le rayon issu du projecteur se réfléchit en respectant la loi i = .........", "i'", "pep_t5_final"),
+            ("6. Le cerveau prolonge les rayons reçus en ligne ......... derrière le pare-brise.", "droite", "pep_t6_final"),
+            ("7. Au théâtre, l'acteur fantôme était éclairé dans une ......... sous la scène.", "fosse", "pep_t7_final"),
+            ("8. Le HUD évite au conducteur de baisser les ......... vers le compteur.", "yeux", "pep_t8_final"),
+            ("9. Un rayon incident vertical dévié à 90° nécessite un angle d'incidence de .........°.", "45", "pep_t9_final"),
+            ("10. L'image projetée sur le pare-brise se superpose directement à la .........", "route", "pep_t10_final"),
+        ]
+
+        for idx_t, (enonce_t, attendu_t, cle_t) in enumerate(liste_verif_trous_pep, 1):
+            saisie_t = st.session_state.get(cle_t, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_pep += f"<tr><td>{idx_t}</td><td>{enonce_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_pep += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html_pep = preparer_nom_fichier("Rapport_Atelier_3_Spectre_Pepper").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 3 (.html)",
+            data=html_export_pep,
+            file_name=nom_fichier_html_pep,
+            mime="text/html",
+            use_container_width=True
+        )
 
 with tab4:
     st.header("**Manipulation : Conduite & Topographie (Simulation Retroviseurs)**")
