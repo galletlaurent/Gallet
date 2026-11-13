@@ -2302,14 +2302,6 @@ with tab1:
     </div>
     """, unsafe_allow_html=True)
 
-    # Petite fonction d'affichage sécurisé utilisant votre système charger_image()
-    def afficher_vignette_jpg(nom_jpg, legende):
-        img = charger_image(nom_jpg)
-        if img is not None:
-            st.image(img, caption=legende, use_container_width=True)
-        else:
-            st.warning(f"Image attendue dans le dossier image/ : **{nom_jpg}**")
-
     # =========================================================================
     # 1. LES SAVANTS ET LEURS DÉCOUVERTES (4 COLONNES : IMAGE + DESCRIPTIF)
     # =========================================================================
@@ -2319,7 +2311,10 @@ with tab1:
 
     # --- SAVANT 1 : EUCLIDE ---
     with col1:
-        afficher_vignette_jpg("euclide.jpg", "Euclide (IIIe siècle av. J.-C.)")
+        try:
+            st.image("euclide.jpg", caption="Euclide (IIIe siècle av. J.-C.)", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'euclide.jpg' est introuvable.")
         st.info("""
         **Euclide et *La Catoptrique* (vers 300 av. J.-C.)**
         * **Le savant :** Mathématicien de la Grèce antique vivant à Alexandrie.
@@ -2328,7 +2323,10 @@ with tab1:
 
     # --- SAVANT 2 : IBN AL-HAYTHAM (ALHAZEN) ---
     with col2:
-        afficher_vignette_jpg("alhazen.jpg", "Ibn al-Haytham / Alhazen (965 - 1040)")
+        try:
+            st.image("alhazen.jpg", caption="Ibn al-Haytham / Alhazen (965 - 1040)", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'alhazen.jpg' est introuvable.")
         st.info("""
         **Ibn al-Haytham, dit Alhazen (*Traité d'optique*, 1021)**
         * **Le savant :** Physicien, mathématicien et astronome majeur de l'âge d'or islamique.
@@ -2337,7 +2335,10 @@ with tab1:
 
     # --- SAVANT 3 : RENÉ DESCARTES ---
     with col3:
-        afficher_vignette_jpg("descartes.jpg", "René Descartes (1596 - 1650)")
+        try:
+            st.image("descartes.jpg", caption="René Descartes (1596 - 1650)", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'descartes.jpg' est introuvable.")
         st.info("""
         **René Descartes (*La Dioptrique*, 1637)**
         * **Le savant :** Mathématicien, physicien et philosophe français.
@@ -2346,7 +2347,10 @@ with tab1:
 
     # --- SAVANT 4 : JOHN HENRY PEPPER ---
     with col4:
-        afficher_vignette_jpg("pepper.jpg", "John Henry Pepper (1821 - 1900)")
+        try:
+            st.image("pepper.jpg", caption="John Henry Pepper (1821 - 1900)", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'pepper.jpg' est introuvable.")
         st.info("""
         **John Henry Pepper et l'illusion du Spectre (1862)**
         * **Le savant :** Chimiste et inventeur britannique au Royal Polytechnic Institution de Londres.
@@ -2358,12 +2362,12 @@ with tab1:
     # =========================================================================
     st.markdown("---")
     st.subheader("2. La loi de la réflexion illustrée : Bande dessinée & Humour")
-    st.write("Retrouvez ci-dessous la vignette humoristique sur la réflexion :")
+    st.write("Retrouvez ci-dessous la bande dessinée pédagogique ainsi que la vignette humoristique sur la réflexion :")
 
-    _, col_hum, _ = st.columns([1, 2, 1])
-    with col_hum:
-        afficher_vignette_jpg("humour_reflexion.jpg", "La pause humoristique : Réflexion physique vs philosophique")
-
+    try:
+        st.image("humour_reflexion.jpg", caption="La pause humoristique : Réflexion physique vs philosophique", use_container_width=True)
+    except Exception:
+        st.warning("L'image 'humour_reflexion.jpg' est introuvable.")
 
 
     if "hist_verrouille_tab1" not in st.session_state:
