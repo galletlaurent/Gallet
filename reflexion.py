@@ -3307,42 +3307,12 @@ with tab6:
         }
     ]
 
-    if "sujet_maint_tire" not in st.session_state:
-        st.session_state.sujet_maint_tire = None
-
-    st.subheader("1. Attribution de votre ordre d'intervention")
-    if st.button("TIRER AU SORT UN SUJET DE MAINTENANCE", key="btn_tirage_maint", use_container_width=True):
-        choix_possibles = [i for i in range(3) if i != st.session_state.sujet_maint_tire]
-        st.session_state.sujet_maint_tire = random.choice(choix_possibles)
-        st.session_state.mesures_maint_log = []
-        st.rerun()
-
-    if st.session_state.sujet_maint_tire is None:
-        st.info("Cliquez sur le bouton ci-dessus pour tirer au sort votre cas pratique de maintenance.")
-    else:
-        idx_sujet = st.session_state.sujet_maint_tire
-        data_sujet = sujets_maintenance[idx_sujet]
-
-        st.success(f"Ordre d'intervention attribué : **{data_sujet['titre']}**")
-        st.markdown(data_sujet["explication"], unsafe_allow_html=True)
-
-        col_img_m, col_bd_m = st.columns(2)
-        with col_img_m:
-            try:
-                st.image(data_sujet["img_metier"], caption=data_sujet["legende_metier"], use_container_width=True)
-            except Exception:
-                st.warning(f"L'image '{data_sujet['img_metier']}' est introuvable.")
-
-        with col_bd_m:
-            try:
-                st.image("bd_humour_maintenance.jpg", caption="La pause BD : Quand le laser de maintenance fait des siennes !", use_container_width=True)
-            except Exception:
-                st.warning("L'image 'bd_humour_maintenance.jpg' est introuvable.")
 
     if "sujet_maint_tire" not in st.session_state:
         st.session_state.sujet_maint_tire = None
 
     st.subheader("1. Attribution de votre ordre d'intervention")
+    
     if st.button("TIRER AU SORT UN SUJET DE MAINTENANCE", key="btn_tirage_maint", use_container_width=True):
         choix_possibles = [i for i in range(3) if i != st.session_state.sujet_maint_tire]
         st.session_state.sujet_maint_tire = random.choice(choix_possibles)
