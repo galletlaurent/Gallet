@@ -1219,12 +1219,12 @@ with tab2:
     # RAPPEL DE COURS PRÉCIS (FORMAT LATEX)
     # =========================================================================
     st.markdown("""
-    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
-        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel de la Premiere Loi de Snell-Descartes pour la Reflexion :</p>
-        <ul>
-            <li><strong>Loi fondamentale :</strong> $i = i'$ (L'angle de reflexion $i'$ est rigoureusement egal a l'angle d'incidence $i$).</li>
-            <li><strong>Mesure des angles :</strong> Les deux angles sont mesures par rapport a la <strong>normale</strong> (la droite perpendiculaire a la surface du miroir au point d'impact).</li>
-            <li><strong>Application du Spectre de Pepper :</strong> Permet de creer une image virtuelle superposee a un objet reel par une inclinaison precise a $45.0^\circ$.</li>
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 16px;">Rappel de la Première Loi de Snell-Descartes pour la Réflexion :</p>
+        <ul style="margin-bottom: 0; line-height: 1.6;">
+            <li><strong>Loi fondamentale :</strong> <b><i>i</i> = <i>i'</i></b> (L'angle de réflexion <i>i'</i> est rigoureusement égal à l'angle d'incidence <i>i</i>).</li>
+            <li><strong>Mesure des angles :</strong> Les deux angles sont mesurés par rapport à la <strong>normale</strong> (la droite perpendiculaire à la surface du miroir au point d'impact).</li>
+            <li><strong>Application du Spectre de Pepper :</strong> Permet de créer une image virtuelle superposée à un objet réel par une inclinaison précise à <strong>45,0°</strong>.</li>
         </ul>
     </div>
     """, unsafe_allow_html=True)
