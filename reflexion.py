@@ -1660,7 +1660,7 @@ def afficher_atelier_tp_complet(sujet_idx, verrouille=False):
             with c_txt:
                 st.write(enonce)
             with c_sel:
-                st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+                st.selectbox("", choix, key=f"{cle}_s{sujet_idx}", disabled=verrouille, label_visibility="collapsed")
 
 
 
