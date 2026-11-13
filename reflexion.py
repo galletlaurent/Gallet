@@ -908,6 +908,7 @@ def afficher_atelier_historique_complet(verrouille=False):
                 st.write(enonce)
             with c_sel:
                 st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+                
 def afficher_atelier_reflexion_complet(verrouille=False):
     """Affiche le Quiz (10 questions) et le Texte à trous (10 cases) de l'Atelier 2 (Réflexion) sur deux colonnes."""
     questions_ref_sources = [
@@ -1192,11 +1193,12 @@ def mettre_a_jour_maintenance_matplotlib(sujet_idx):
         ax.text(xm + 70, ym + 25, "Tige télescopique", color="#94a3b8", fontsize=7)
 
         # Rayon issu de la soudure (250, 154) vertical vers le miroir (250, 220)
+        # Rayon issu de la soudure (250, 154) vertical vers le miroir (250, 220)
         ax.annotate("", xy=(xm, ym), xytext=(250, 154), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2))
-        # Rayon réfléchi partant du miroir selon angle 2*ang_mir par rapport à la verticale
+        # Rayon réfléchi partant du miroir selon angle 2*ang_mir par rapport à la verticale (vers l'œil à x=65)
         ang_refl_rad = math.radians(2.0 * ang_mir)
-        x_fin = xm - 170.0 * math.sin(ang_refl_rad)
-        y_fin = ym - 170.0 * math.cos(ang_refl_rad)
+        x_fin = xm - 185.0 * math.sin(ang_refl_rad)
+        y_fin = ym - 185.0 * math.cos(ang_refl_rad)
         ax.annotate("", xy=(x_fin, y_fin), xytext=(xm, ym), arrowprops=dict(arrowstyle="->", color="#22c55e" if 43 <= ang_mir <= 47 else "#f59e0b", lw=2))
 
         visu_ok = 43.0 <= ang_mir <= 47.0
@@ -1763,9 +1765,6 @@ def mettre_a_jour_transport_matplotlib(sujet_idx):
     ax.axis("off")
 
     # =========================================================================
-    # SUJET 0 : ANTÉVISEUR POIDS LOURD & ANGLE MORT AVANT
-    # =========================================================================
-    # =========================================================================
     # SUJET 0 : ANTÉVISEUR POIDS LOURD & ANGLE MORT AVANT (SYNCHRONISÉ)
     # =========================================================================
     if sujet_idx == 0:
@@ -1812,9 +1811,9 @@ def mettre_a_jour_transport_matplotlib(sujet_idx):
         ax.annotate("", xy=(155, 108), xytext=(xm, ym), arrowprops=dict(arrowstyle="->", color=couleur_cone, lw=2.2), zorder=5)
 
         if pieton_vu:
-            statut = f"USAGER DÉTECTÉ : Le piéton à {dist_pieton:.2f} m est visible dans l'antéviseur !"
-            c_stat = "#22c55e"
-            diag = "VISIBLE (OK)"
+            ax.annotate("", xy=(xm, ym), xytext=(xp, 165), arrowprops=dict(arrowstyle="->", color="#fde047", lw=1.8, ls=":"), zorder=4)
+        ax.annotate("", xy=(155, 108), xytext=(xm, ym), arrowprops=dict(arrowstyle="->", color=couleur_cone, lw=2.2), zorder=5)
+
         else:
             statut = f"DANGER ANGLE MORT : Piéton à {dist_pieton:.2f} m hors du champ ! Inclinez l'antéviseur à 42°."
             c_stat = "#ef4444"
@@ -1846,6 +1845,7 @@ def mettre_a_jour_transport_matplotlib(sujet_idx):
         ax.add_patch(patches.Circle((x_amp, 130), 7, facecolor="#fde047", edgecolor="#f59e0b", lw=1.5, zorder=5))
         ax.text(x_amp, 148, f"Ampoule ({decalage_foyer_mm:+.1f} mm)", color="#fde047", fontsize=7, fontweight="bold", ha="center")
 
+        # Physique réelle : decalage > 0 (ampoule plus loin du miroir que F) => faisceau CONVERGENT (pente négative pour dy > 0)
         pente = -decalage_foyer_mm * 0.035
         for dy_r in [-48, -24, 24, 48]:
             xr_hit = 60 + (dy_r ** 2) / 220.0
@@ -1860,13 +1860,14 @@ def mettre_a_jour_transport_matplotlib(sujet_idx):
             c_stat = "#22c55e"
             diag = "PARALLÈLE (OK)"
         elif decalage_foyer_mm > 1.0:
-            statut = "AMPOULE TROP AVANCÉE : Faisceau divergent, perte de portée sur la route."
-            c_stat = "#f59e0b"
-            diag = "DIVERGENT"
-        else:
-            statut = "AMPOULE TROP RECULÉE : Faisceau convergent qui croise et éblouit en face."
+            statut = "AMPOULE TROP AVANCÉE (au-delà de F) : Faisceau convergent qui croise et éblouit en face."
             c_stat = "#ef4444"
             diag = "CONVERGENT"
+        else:
+            statut = "AMPOULE TROP RECULÉE (entre miroir et F) : Faisceau divergent, perte de portée sur la route."
+            c_stat = "#f59e0b"
+            diag = "DIVERGENT"
+
 
         ax.text(25, 20, "ÉCLAIRAGE VÉHICULE : RÉFLECTEUR PARABOLIQUE & POSITION FOYER F", color="#38bdf8", fontsize=9, fontweight="bold")
         ax.text(25, 36, statut, color=c_stat, fontsize=8, fontweight="bold")
@@ -3675,15 +3676,15 @@ with tab7:
             banque_active_tp = BANQUES_TP[sujet_actif_tp]
             cle_ordre_tp = f"ordre_quiz_tp_sujet_{sujet_actif_tp}"
 
+            score_q7 = 0.0
+            for q_item in st.session_state.get(cle_ordre_tp, []):
+                reponse_eleve = st.session_state.get(f"tp_at7_final_g_{q_item['id']}", "Choisir...")
+                if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                    score_q7 += 1.0
+
             score_t7 = 0.0
             for _, _, bonne_rep_t, cle_t in banque_active_tp["trous"]:
                 if str(st.session_state.get(f"{cle_t}_s{sujet_actif_tp}", "Choisir...")).strip() == str(bonne_rep_t).strip():
-                    score_t7 += 1.0
-
-
-            score_t7 = 0.0
-            for _, _, bonne_rep_t, cle_t in banque_active_tp["trous"]:
-                if str(st.session_state.get(cle_t, "Choisir...")).strip() == str(bonne_rep_t).strip():
                     score_t7 += 1.0
 
             st.session_state.score_tp7_p1 = round(float(score_q7), 1)
@@ -3691,6 +3692,7 @@ with tab7:
             st.session_state.score_final_tp7 = round(float(score_q7 + score_t7), 1)
             st.session_state.tp_verrouille_tab7 = True
             st.rerun()
+
 
     if st.session_state.get("tp_verrouille_tab7", False) and sujet_actif_tp is not None:
         scr1 = st.session_state.get("score_tp7_p1", 0.0)
