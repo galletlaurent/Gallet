@@ -1057,6 +1057,100 @@ def afficher_atelier_retroviseurs_complet(verrouille=False):
                 st.write(enonce)
             with c_sel:
                 st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+def mettre_a_jour_periscope_matplotlib():
+    """Moteur physique de réflexion : calcule et dessine le périscope du sous-marin avec miroirs pivotants."""
+    w = 600
+    h = 280
+    x0 = 300.0
+
+    fig, ax = plt.subplots(figsize=(12, 8), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, w)
+    ax.set_ylim(0, h)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    angle_miroir_deg = st.session_state.get("slider_angle_periscope", 45.0)
+    angle_miroir_rad = math.radians(angle_miroir_deg)
+
+    y_miroir1 = 90.0
+    y_miroir2 = 180.0
+    epaisseur_tube_px = y_miroir2 - y_miroir1
+
+    # 1. Décor : la mer et le tube du périscope
+    mer_rect = patches.Rectangle((15, y_miroir2), w - 30, h - 10 - y_miroir2, facecolor="#0284c7", edgecolor="none", zorder=1)
+    ax.add_patch(mer_rect)
+
+    tube_vert = patches.Rectangle((x0 - 25, 10), 50, y_miroir2 + 13, facecolor="#cbd5e1", edgecolor="#475569", lw=1.5, zorder=2)
+    coude_amont = patches.Rectangle((x0 - 120, y_miroir1 - 25), 95, 50, facecolor="#cbd5e1", edgecolor="#475569", lw=1.5, zorder=2)
+    coude_aval = patches.Rectangle((x0 + 25, y_miroir2 - 25), 95, 50, facecolor="#cbd5e1", edgecolor="#475569", lw=1.5, zorder=2)
+
+    ax.add_patch(tube_vert)
+    ax.add_patch(coude_amont)
+    ax.add_patch(coude_aval)
+
+    # Masquage des jointures internes
+    ax.add_patch(patches.Rectangle((x0 - 23, 12), 46, y_miroir2 - 12, facecolor="#cbd5e1", edgecolor="none", zorder=2))
+    ax.add_patch(patches.Rectangle((x0 - 118, y_miroir1 - 23), 95, 46, facecolor="#cbd5e1", edgecolor="none", zorder=2))
+    ax.add_patch(patches.Rectangle((x0 + 23, y_miroir2 - 23), 95, 46, facecolor="#cbd5e1", edgecolor="none", zorder=2))
+
+    # 2. Positionnement dynamique des deux miroirs plans (pivotent avec le curseur)
+    demi_long = 32.0
+    dx_m = demi_long * math.cos(angle_miroir_rad)
+    dy_m = demi_long * math.sin(angle_miroir_rad)
+
+    ax.plot([x0 - dx_m, x0 + dx_m], [y_miroir1 - dy_m, y_miroir1 + dy_m], color="#0f172a", lw=4, zorder=3)
+    ax.text(x0 + 35, y_miroir1 - 15, "Miroir 1", color="#cbd5e1", fontsize=7.5, fontweight="bold", ha="left", va="center", zorder=4)
+
+    ax.plot([x0 - dx_m, x0 + dx_m], [y_miroir2 - dy_m, y_miroir2 + dy_m], color="#0f172a", lw=4, zorder=3)
+    ax.text(x0 - 35, y_miroir2 + 15, "Miroir 2", color="#1e293b", fontsize=7.5, fontweight="bold", ha="right", va="center", zorder=4)
+
+    # 3. Tracé géométrique unique des rayons laser
+    angle_deviation_deg = angle_miroir_deg * 2.0
+
+    # Rayon 1 : Faisceau incident horizontal
+    ax.annotate("", xy=(x0, y_miroir1), xytext=(15, y_miroir1), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5), zorder=5)
+    ax.text(25, y_miroir1 - 10, "Rayon incident", color="#ef4444", fontsize=8, fontweight="bold", style="italic", ha="left", va="bottom")
+
+    # Rayon 2 : Faisceau réfléchi intermédiaire dans le tube vertical
+    dx_faisceau = epaisseur_tube_px * math.tan(math.radians(90.0 - angle_deviation_deg)) if angle_deviation_deg != 90.0 else 0.0
+    x_impact2 = x0 + dx_faisceau
+    y_impact2 = y_miroir2
+    ax.annotate("", xy=(x_impact2, y_impact2), xytext=(x0, y_miroir1), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5), zorder=5)
+
+    # Rayon 3 : Faisceau émergent vers l'œil
+    if 44.0 <= angle_miroir_deg <= 46.0:
+        ax.annotate("", xy=(w - 15, y_impact2), xytext=(x_impact2, y_impact2), arrowprops=dict(arrowstyle="->", color="#22c55e", lw=2.5), zorder=5)
+        ax.text(w - 25, y_impact2 - 10, "Œil du Marin (Vision OK)", color="#22c55e", fontsize=8, fontweight="bold", ha="right", va="bottom")
+        msg_status = "PÉRISCOPE ALIGNÉ : Le faisceau de sortie est parallèle au rayon entrant."
+        couleur_status = "#22c55e"
+    else:
+        angle_sortie_rad = math.radians(90.0 - (angle_miroir_deg - 45.0) * 2.0)
+        x_perdu = x_impact2 + 120.0 * math.sin(angle_sortie_rad)
+        y_perdu = y_impact2 + 120.0 * math.cos(angle_sortie_rad)
+        if y_perdu > h - 15:
+            y_perdu = h - 15
+
+        ax.annotate("", xy=(x_perdu, y_perdu), xytext=(x_impact2, y_impact2), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5), zorder=5)
+        ax.text(w - 25, y_miroir2 - 10, "Faisceau obstrué", color="#ef4444", fontsize=8, fontweight="bold", ha="right", va="bottom")
+        msg_status = "ERREUR D'ALIGNEMENT : Le rayon percute la paroi du tube."
+        couleur_status = "#ef4444"
+
+    ax.text(25, 20, "LE PÉRISCOPE DU SOUS-MARIN (DOUBLE RÉFLEXION)", color="#38bdf8", fontsize=9, fontweight="bold", ha="left", va="top")
+    ax.text(25, 35, msg_status, color=couleur_status, fontsize=7.5, fontweight="bold", ha="left", va="top")
+
+    ax.text(w - 25, 20, "Milieu 1 : Air (n = 1,00)", color="#94a3b8", fontsize=7, fontweight="bold", ha="right")
+    ax.text(w - 25, y_miroir1 + 15, "Tube : Métal opaque", color="#94a3b8", fontsize=7, fontweight="bold", ha="right")
+    ax.text(w - 25, h - 20, "Milieu 2 : Eau de mer (n = 1,33)", color="#e0f2fe", fontsize=7, fontweight="bold", ha="right")
+
+    st.session_state.opt3_txt_box_periscope = (
+        f"Paramètres du Périscope :\n"
+        f"• Inclinaison Miroir 1 & Miroir 2 : {angle_miroir_deg:.1f}°\n"
+        f"• Angle de réflexion sur chaque miroir : i = i' = {angle_miroir_deg:.1f}°\n"
+        f"• Déviation par miroir : {angle_deviation_deg:.1f}°"
+    )
+
+    return fig
 
 
 with tab0:
@@ -1938,9 +2032,160 @@ with tab5:
     # Boîte de résultats technique locale
     st.info(st.session_state.get("opt3_txt_box_periscope", "Ajustez la reglette pour deplacer le laser."))
 
+    st.write("---")
+    st.subheader("2. Évaluation des connaissances (20 points)")
 
+    if "peri_verrouille_tab5" not in st.session_state:
+        st.session_state.peri_verrouille_tab5 = False
+    verrou_at5 = st.session_state.peri_verrouille_tab5
 
+    afficher_atelier_periscope_complet(verrouille=verrou_at5)
 
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 5 (Périscope)")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_peri5 = st.checkbox(
+        "Je certifie avoir testé le périscope sur le simulateur et complété les questions de l'Atelier 5.",
+        key="check_certif_periscope_final_net",
+        disabled=verrou_at5,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_peri5_official_net", use_container_width=True, disabled=verrou_at5):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_peri5:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q5 = 0.0
+            if "ordre_quiz_peri_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_peri_aleatoire:
+                    reponse_eleve = st.session_state.get(f"peri_at5_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q5 += 1.0
+
+            score_t5 = sum([
+                st.session_state.get("peri_t1_final") == "deux",
+                st.session_state.get("peri_t2_final") == "45",
+                st.session_state.get("peri_t3_final") == "bas",
+                st.session_state.get("peri_t4_final") == "90",
+                st.session_state.get("peri_t5_final") == "parallèle",
+                st.session_state.get("peri_t6_final") == "double",
+                st.session_state.get("peri_t7_final") == "réfléchi",
+                st.session_state.get("peri_t8_final") == "endroit",
+                st.session_state.get("peri_t9_final") == "paroi",
+                st.session_state.get("peri_t10_final") == "obstacle",
+            ])
+
+            st.session_state.score_peri5_p1 = round(float(score_q5), 1)
+            st.session_state.score_peri5_p2 = round(float(score_t5), 1)
+            st.session_state.score_final_peri5 = round(float(score_q5 + score_t5), 1)
+            st.session_state.peri_verrouille_tab5 = True
+            st.rerun()
+
+    if st.session_state.get("peri_verrouille_tab5", False):
+        scr1 = st.session_state.get("score_peri5_p1", 0.0)
+        scr2 = st.session_state.get("score_peri5_p2", 0.0)
+        tot_s = st.session_state.get("score_final_peri5", 0.0)
+
+        timestamp_peri5 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER PÉRISCOPE SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        html_export_peri = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Périscope - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation d'Optique Géométrique</h1>
+                <p>Atelier 5 : Le Périscope du sous-marin (Double réflexion)</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_peri5}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Périscope : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse du cours (Texte à trous) : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 5 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">1. CORRECTION DÉTAILLÉE DU QUIZ (10 QUESTIONS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_peri_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_peri_aleatoire, 1):
+                saisie = st.session_state.get(f"peri_at5_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_peri += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_peri += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">2. CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS - 10 CASES)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase à compléter</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        liste_verif_trous_peri = [
+            ("1. Un périscope simple utilise ......... miroirs plans parallèles.", "deux", "peri_t1_final"),
+            ("2. Les deux miroirs sont inclinés à ......... degrés par rapport à l'horizontale.", "45", "peri_t2_final"),
+            ("3. Le premier miroir dévie la lumière horizontalement vers le .........", "bas", "peri_t3_final"),
+            ("4. Chaque miroir provoque une déviation du faisceau de ......... degrés.", "90", "peri_t4_final"),
+            ("5. Le rayon sortant est ......... au rayon entrant dans le périscope.", "parallèle", "peri_t5_final"),
+            ("6. Le dispositif repose sur une ......... réflexion successive.", "double", "peri_t6_final"),
+            ("7. Sur chaque miroir, l'angle d'incidence i est égal à l'angle ......... i'.", "réfléchi", "peri_t7_final"),
+            ("8. Grâce aux deux réflexions, l'image finale est vue à l'.........", "endroit", "peri_t8_final"),
+            ("9. Si l'angle des miroirs est déréglé, le rayon heurte la ......... du tube.", "paroi", "peri_t9_final"),
+            ("10. Le périscope permet d'observer au-dessus d'un ......... sans être vu.", "obstacle", "peri_t10_final"),
+        ]
+
+        for idx_t, (enonce_t, attendu_t, cle_t) in enumerate(liste_verif_trous_peri, 1):
+            saisie_t = st.session_state.get(cle_t, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_peri += f"<tr><td>{idx_t}</td><td>{enonce_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_peri += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html_peri = preparer_nom_fichier("Rapport_Atelier_5_Periscope").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 5 (.html)",
+            data=html_export_peri,
+            file_name=nom_fichier_html_peri,
+            mime="text/html",
+            use_container_width=True
+        )
 
 with tab6:
     st.header("**Manipulation  : Application Navale (Le Periscope du sous-marin)**")
