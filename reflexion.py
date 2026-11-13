@@ -2352,15 +2352,18 @@ with tab1:
         * **Le savant :** Chimiste et inventeur britannique au Royal Polytechnic Institution de Londres.
         * **Sa découverte :** Il utilise une grande vitre sans tain inclinée à **45°** pour réfléchir l'image d'un acteur caché sous la scène. Cette découverte est l'ancêtre direct des **affichages tête haute (HUD)** des avions et des voitures.
         """)
+
     # =========================================================================
     # 2. LA RÉFLEXION EN BANDE DESSINÉE ET EN HUMOUR (.JPG)
     # =========================================================================
     st.markdown("---")
     st.subheader("2. La loi de la réflexion illustrée : Bande dessinée & Humour")
-    st.write("Retrouvez ci-dessous la bande dessinée pédagogique ainsi que la vignette humoristique sur la réflexion :")
+    st.write("Retrouvez ci-dessous la vignette humoristique sur la réflexion :")
 
+    _, col_hum, _ = st.columns([1, 2, 1])
     with col_hum:
         afficher_vignette_jpg("humour_reflexion.jpg", "La pause humoristique : Réflexion physique vs philosophique")
+
 
 
     if "hist_verrouille_tab1" not in st.session_state:
