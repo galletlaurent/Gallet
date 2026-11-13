@@ -1108,6 +1108,207 @@ def afficher_atelier_periscope_complet(verrouille=False):
             with c_sel:
                 st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
 
+def mettre_a_jour_maintenance_matplotlib(sujet_idx):
+    """Banc d'essai optique ultra-réaliste adapté au sujet de maintenance tiré au sort."""
+    fig, ax = plt.subplots(figsize=(12, 6.5), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 260)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    # =========================================================================
+    # SUJET 0 : ALIGNEMENT LASER D'ARBRES TOURNANTS (MOTEUR / POMPE)
+    # =========================================================================
+    if sujet_idx == 0:
+        defaut_deg = st.session_state.get("slider_maint_s0", 0.25)
+        dist_mm = 250.0
+        # Loi de la réflexion : une rotation miroir de alpha dévie le rayon de 2*alpha
+        deviation_rad = math.radians(2.0 * defaut_deg)
+        decalage_mm = dist_mm * math.tan(deviation_rad)
+        echelle_px = 35.0
+        y_impact = 130.0 + decalage_mm * echelle_px
+        y_impact = max(35.0, min(225.0, y_impact))
+
+        # Moteur (gauche) et Pompe (droite)
+        ax.add_patch(patches.Rectangle((30, 85), 110, 90, facecolor="#334155", edgecolor="#94a3b8", lw=1.5))
+        ax.text(85, 130, "MOTEUR\n(3000 tr/min)", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+        ax.add_patch(patches.Rectangle((140, 118), 45, 24, facecolor="#64748b", edgecolor="#cbd5e1"))
+        # Tête laser S (émetteur + cible PSD)
+        ax.add_patch(patches.Rectangle((165, 70), 22, 48, facecolor="#0284c7", edgecolor="white", lw=1))
+        ax.text(176, 62, "Tête Laser S", color="#38bdf8", fontsize=7.5, fontweight="bold", ha="center")
+
+        # Pompe (droite) + Prisme/Miroir réflecteur M incliné du défaut angulaire
+        ax.add_patch(patches.Rectangle((460, 85), 110, 90, facecolor="#334155", edgecolor="#94a3b8", lw=1.5))
+        ax.text(515, 130, "POMPE\nHYDRAULIQUE", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+        ax.add_patch(patches.Rectangle((415, 118), 45, 24, facecolor="#64748b", edgecolor="#cbd5e1"))
+
+        xm, ym = 425.0, 90.0
+        ang_visuel = math.radians(defaut_deg * 25.0)
+        dx_m = 22.0 * math.sin(ang_visuel)
+        dy_m = 22.0 * math.cos(ang_visuel)
+        ax.plot([xm - dx_m, xm + dx_m], [ym - dy_m, ym + dy_m], color="#38bdf8", lw=4)
+        ax.text(xm, 58, "Réflecteur M", color="#38bdf8", fontsize=7.5, fontweight="bold", ha="center")
+
+        # Faisceau aller (y=90) et faisceau retour dévié de 2*alpha
+        ax.annotate("", xy=(xm, ym), xytext=(187, 90), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2))
+        y_retour = 90.0 + decalage_mm * 12.0
+        y_retour = max(40.0, min(145.0, y_retour))
+        ax.annotate("", xy=(187, y_retour), xytext=(xm, ym), arrowprops=dict(arrowstyle="->", color="#f59e0b", lw=2, ls="--"))
+
+        tol_ok = abs(defaut_deg) <= 0.05
+        statut = "ALIGNEMENT CONFORME (Tolérance <= 0,05°)" if tol_ok else "DÉFAUT ANGULAIRE CRITIQUE (Risque casse roulement)"
+        c_stat = "#22c55e" if tol_ok else "#ef4444"
+
+        ax.text(25, 20, "BANC LASER : ALIGNEMENT D'ARBRES TOURNANTS (L = 250 mm)", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 36, statut, color=c_stat, fontsize=8, fontweight="bold")
+        ax.text(300, 235, f"Défaut angulaire arbre : {defaut_deg:+.2f}° | Déviation faisceau (2α) : {2*defaut_deg:+.2f}° | Décalage cible : {decalage_mm:+.2f} mm",
+                color="#f8fafc", fontsize=8, fontweight="bold", ha="center", bbox=dict(boxstyle="round", facecolor="#1e293b", edgecolor=c_stat))
+
+        st.session_state.maint_mesure_courante = (f"Défaut = {defaut_deg:+.2f}°", f"Déviation = {2*defaut_deg:+.2f}°", f"Décalage = {decalage_mm:+.2f} mm", "CONFORME" if tol_ok else "HORS TOLÉRANCE")
+
+    # =========================================================================
+    # SUJET 1 : MIROIR D'INSPECTION ARTICULÉ (CONTRÔLE SOUDURE / FUITE)
+    # =========================================================================
+    elif sujet_idx == 1:
+        ang_mir = st.session_state.get("slider_maint_s1", 35.0)
+        rad_mir = math.radians(ang_mir)
+
+        # Carter machine bloquant la vue directe
+        ax.add_patch(patches.Rectangle((180, 30), 140, 110, facecolor="#475569", edgecolor="#94a3b8", lw=2))
+        ax.text(250, 85, "CARTER MOTEUR\n(Obstacle opaque)", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        # Zone cachée (joint / soudure à inspecter derrière le carter)
+        ax.add_patch(patches.Rectangle((215, 140), 70, 14, facecolor="#ef4444", edgecolor="white"))
+        ax.text(250, 166, "Zone de fuite / Soudure", color="#fca5a5", fontsize=7.5, fontweight="bold", ha="center")
+
+        # Technicien (œil à gauche) et miroir articulé en bas (x=250, y=220)
+        ax.text(65, 215, "Œil du\nTechnicien", color="#38bdf8", fontsize=8.5, fontweight="bold", ha="center")
+        xm, ym = 250.0, 220.0
+        dx_m = 32.0 * math.cos(rad_mir)
+        dy_m = 32.0 * math.sin(rad_mir)
+        ax.plot([xm - dx_m, xm + dx_m], [ym + dy_m, ym - dy_m], color="#38bdf8", lw=4)
+        ax.plot([xm, xm + 65], [ym, ym + 25], color="#94a3b8", lw=2.5)
+        ax.text(xm + 70, ym + 25, "Tige télescopique", color="#94a3b8", fontsize=7)
+
+        # Rayon issu de la soudure (250, 154) vertical vers le miroir (250, 220)
+        ax.annotate("", xy=(xm, ym), xytext=(250, 154), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2))
+        # Rayon réfléchi partant du miroir selon angle 2*ang_mir par rapport à la verticale
+        ang_refl_rad = math.radians(2.0 * ang_mir)
+        x_fin = xm - 170.0 * math.sin(ang_refl_rad)
+        y_fin = ym - 170.0 * math.cos(ang_refl_rad)
+        ax.annotate("", xy=(x_fin, y_fin), xytext=(xm, ym), arrowprops=dict(arrowstyle="->", color="#22c55e" if 43 <= ang_mir <= 47 else "#f59e0b", lw=2))
+
+        visu_ok = 43.0 <= ang_mir <= 47.0
+        statut = "INSPECTION VISUELLE OK : La soudure est centrée dans le miroir !" if visu_ok else "ANGLE INCORRECT : La soudure est hors du champ de vision."
+        c_stat = "#22c55e" if visu_ok else "#ef4444"
+
+        ax.text(25, 20, "CONTRÔLE NON DESTRUCTIF : MIROIR D'INSPECTION ARTICULÉ", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 36, statut, color=c_stat, fontsize=8, fontweight="bold")
+        ax.text(300, 245, f"Inclinaison miroir : {ang_mir:.1f}° | Incidence i = {ang_mir:.1f}° | Réflexion i' = {ang_mir:.1f}°",
+                color="#f8fafc", fontsize=8, fontweight="bold", ha="center", bbox=dict(boxstyle="round", facecolor="#1e293b", edgecolor=c_stat))
+
+        st.session_state.maint_mesure_courante = (f"Miroir = {ang_mir:.1f}°", f"i = i' = {ang_mir:.1f}°", f"Déviation = {2*ang_mir:.1f}°", "VISIBLE" if visu_ok else "MASQUÉ")
+
+    # =========================================================================
+    # SUJET 2 : BARRIÈRE PHOTOÉLECTRIQUE À RÉFLECTEUR (CATADIOPTRE SUR CONVOYEUR)
+    # =========================================================================
+    else:
+        desaxage_deg = st.session_state.get("slider_maint_s2", 5.0)
+        # Un catadioptre (coin de cube) tolère jusqu'à +/- 15° avant perte brutale du signal
+        if abs(desaxage_deg) <= 15.0:
+            signal_pct = max(80.0, 100.0 - (abs(desaxage_deg) * 1.2))
+        else:
+            signal_pct = max(0.0, 80.0 - (abs(desaxage_deg) - 15.0) * 7.5)
+
+        # Émetteur/Récepteur photoélectrique (gauche)
+        ax.add_patch(patches.Rectangle((40, 100), 75, 60, facecolor="#1e293b", edgecolor="#38bdf8", lw=2))
+        ax.text(77, 130, "CAPTEUR\nOPTIQUE\n(Émetteur/Réc.)", color="white", fontsize=7.5, fontweight="bold", ha="center", va="center")
+
+        # Convoyeur au centre
+        ax.add_patch(patches.Rectangle((220, 165), 160, 22, facecolor="#475569", edgecolor="#94a3b8"))
+        ax.text(300, 176, "CONVOYEUR INDUSTRIEL", color="#e2e8f0", fontsize=7, fontweight="bold", ha="center", va="center")
+
+        # Catadioptre (coin de cube) à droite
+        xc, yc = 510.0, 130.0
+        rad_c = math.radians(desaxage_deg)
+        dx_c = 28.0 * math.sin(rad_c)
+        dy_c = 28.0 * math.cos(rad_c)
+        ax.plot([xc - dx_c, xc + dx_c], [yc - dy_c, yc + dy_c], color="#eab308", lw=5)
+        ax.text(xc, 85, "Catadioptre\n(Coin de cube)", color="#eab308", fontsize=7.5, fontweight="bold", ha="center")
+
+        # Faisceau aller
+        ax.annotate("", xy=(xc, yc - 5), xytext=(115, 125), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2))
+
+        # Faisceau retour : parallèle si |desaxage| <= 15°, perdu sinon
+        if signal_pct >= 80.0:
+            ax.annotate("", xy=(115, 138), xytext=(xc, yc + 8), arrowprops=dict(arrowstyle="->", color="#22c55e", lw=2))
+            statut = f"SIGNAL OPTIQUE OPTIMAL ({signal_pct:.0f}%) : Rétroréflexion active."
+            c_stat = "#22c55e"
+        else:
+            y_rate = 138.0 + (abs(desaxage_deg) - 15.0) * 8.0
+            ax.annotate("", xy=(140, min(230.0, y_rate)), xytext=(xc, yc + 8), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2, ls="--"))
+            statut = f"ALARME MAINTENANCE ({signal_pct:.0f}%) : Réflecteur trop désaxé (> 15°)."
+            c_stat = "#ef4444"
+
+        ax.text(25, 20, "DÉTECTION SUR LIGNE : BARRIÈRE PHOTOÉLECTRIQUE À CATADIOPTRE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 36, statut, color=c_stat, fontsize=8, fontweight="bold")
+        ax.text(300, 235, f"Désalignement catadioptre : {desaxage_deg:+.1f}° | Signal reçu : {signal_pct:.0f}% (Seuil mini : 80%)",
+                color="#f8fafc", fontsize=8, fontweight="bold", ha="center", bbox=dict(boxstyle="round", facecolor="#1e293b", edgecolor=c_stat))
+
+        st.session_state.maint_mesure_courante = (f"Désaxage = {desaxage_deg:+.1f}°", f"Signal = {signal_pct:.0f}%", "Seuil >= 80%", "OPÉRATIONNEL" if signal_pct >= 80 else "DÉFAUT LIGNE")
+
+    return fig
+
+def afficher_atelier_maintenance_complet(verrouille=False):
+    """Affiche le Quiz (10 questions) et le Texte à trous (10 cases) de l'Atelier 6 (Maintenance)."""
+    questions_maint_sources = [
+        {"id": "qm1", "q": "Lors d'un lignage laser d'arbre moteur-pompe, si le réflecteur tourne d'un angle α, de quel angle dévie le faisceau laser réfléchi ?", "options": ["2 × α (le double de l'angle)", "α (le même angle)", "α / 2 (la moitié de l'angle)"], "rep": "2 × α (le double de l'angle)"},
+        {"id": "qm2", "q": "Quelle est la tolérance angulaire maximale typique lors d'un alignement laser sur une machine tournant à 3000 tr/min ?", "options": ["0,05° (environ 0,8 mrad)", "5,0°", "15,0°"], "rep": "0,05° (environ 0,8 mrad)"},
+        {"id": "qm3", "q": "Quel risque mécanique entraîne un mauvais alignement optique entre un moteur et une pompe ?", "options": ["Une usure prématurée des roulements et des joints d'étanchéité", "Une baisse de la tension électrique du réseau", "Un refroidissement excessif du carter"], "rep": "Une usure prématurée des roulements et des joints d'étanchéité"},
+        {"id": "qm4", "q": "À quel angle un technicien doit-il incliner son miroir d'inspection articulé pour observer une soudure cachée à 90° derrière un carter ?", "options": ["45°", "90°", "20°"], "rep": "45°"},
+        {"id": "qm5", "q": "Pourquoi un miroir d'inspection permet-il de contrôler l'arrière d'un bloc hydraulique sans démontage ?", "options": ["Il dévie les rayons lumineux selon la loi i = i' vers l'œil du technicien", "Il traverse le métal grâce aux rayons X", "Il agrandit les fissures par réfraction"], "rep": "Il dévie les rayons lumineux selon la loi i = i' vers l'œil du technicien"},
+        {"id": "qm6", "q": "Quelle est la particularité optique d'un catadioptre (réflecteur en coin de cube) utilisé sur un convoyeur ?", "options": ["Il renvoie le faisceau lumineux parallèlement à sa direction d'arrivée", "Il disperse la lumière dans toutes les directions", "Il absorbe 100 % du faisceau infrarouge"], "rep": "Il renvoie le faisceau lumineux parallèlement à sa direction d'arrivée"},
+        {"id": "qm7", "q": "Combien de réflexions successives subit un rayon lumineux à l'intérieur d'un coin de cube (catadioptre) ?", "options": ["Trois réflexions sur trois faces perpendiculaires", "Une seule réflexion plane", "Aucune réflexion"], "rep": "Trois réflexions sur trois faces perpendiculaires"},
+        {"id": "qm8", "q": "Quelle est la tolérance angulaire d'un catadioptre industriel avant perte du signal sur la barrière photoélectrique ?", "options": ["Environ ± 15°", "Strictement 0,01°", "± 85°"], "rep": "Environ ± 15°"},
+        {"id": "qm9", "q": "En maintenance préventive, pourquoi faut-il nettoyer régulièrement la surface d'un réflecteur photoélectrique ?", "options": ["La poussière ou l'huile diffuse la lumière et fait chuter le signal sous 80 %", "La poussière change la couleur du laser", "Pour éviter que le plastique ne fonde"], "rep": "La poussière ou l'huile diffuse la lumière et fait chuter le signal sous 80 %"},
+        {"id": "qm10", "q": "Dans un endoscope industriel rigide, comment la lumière est-elle guidée dans les coudes pour inspecter l'intérieur d'une turbine ?", "options": ["Par réflexion sur des miroirs ou prismes à réflexion totale", "Par aimantation magnétique", "Par convection thermique"], "rep": "Par réflexion sur des miroirs ou prismes à réflexion totale"},
+    ]
+
+    if "ordre_quiz_maint_aleatoire" not in st.session_state:
+        random.shuffle(questions_maint_sources)
+        st.session_state.ordre_quiz_maint_aleatoire = questions_maint_sources
+
+    champs_maint = [
+        ("1. Le lignage laser évite l'usure prématurée des ......... et accouplements.", ["Choisir...", "roulements", "câbles"], "roulements", "maint_t1_final"),
+        ("2. Si un arbre pivote d'un angle alpha, le laser réfléchi dévie de ......... alpha.", ["Choisir...", "2", "0.5"], "2", "maint_t2_final"),
+        ("3. Pour voir une fuite cachée à 90°, on incline le miroir d'inspection à .........°.", ["Choisir...", "45", "90"], "45", "maint_t3_final"),
+        ("4. Le miroir d'inspection applique strictement la loi de réflexion i = .........", ["Choisir...", "i'", "0°"], "i'", "maint_t4_final"),
+        ("5. Un réflecteur en coin de cube s'appelle aussi un .........", ["Choisir...", "catadioptre", "prisme"], "catadioptre", "maint_t5_final"),
+        ("6. Le catadioptre renvoie la lumière vers sa ......... d'émission.", ["Choisir...", "source", "cible"], "source", "maint_t6_final"),
+        ("7. Une barrière photoélectrique utilise un émetteur et un ......... optique.", ["Choisir...", "réflecteur", "aimant"], "réflecteur", "maint_t7_final"),
+        ("8. L'encrassement d'un miroir réduit l'intensité du faisceau .........", ["Choisir...", "réfléchi", "incident"], "réfléchi", "maint_t8_final"),
+        ("9. Le contrôle avec un miroir sans démonter la machine est un contrôle non .........", ["Choisir...", "destructif", "visuel"], "destructif", "maint_t9_final"),
+        ("10. Le laser permet une précision de mesure de l'ordre du ......... de millimètre.", ["Choisir...", "centième", "mètre"], "centième", "maint_t10_final"),
+    ]
+
+    col_quiz, col_trous = st.columns(2)
+    with col_quiz:
+        st.markdown("##### Quiz Maintenance Industrielle (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_maint_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"maint_at6_final_g_{q_data['id']}"
+            opts_affichees = ["Choisir..."] + q_data["options"]
+            st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse Maintenance (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in champs_maint:
+            c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c_txt:
+                st.write(enonce)
+            with c_sel:
+                st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
 
 
 with tab0:
@@ -2145,8 +2346,267 @@ with tab5:
         )
 
 with tab6:
-    st.header("**Manipulation  : Application Navale (Le Periscope du sous-marin)**")
+    st.header("Atelier 6 : Applications dans le domaine de la Maintenance Industrielle")
 
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 16px;">Rôle de la réflexion optique en maintenance préventive et corrective :</p>
+        <p style="margin-bottom: 0; line-height: 1.6;">En milieu industriel, les techniciens de maintenance utilisent quotidiennement la loi <b><i>i</i> = <i>i'</i></b> pour aligner des machines tournantes au centième de millimètre, inspecter des zones inaccessibles sans démontage ou sécuriser des lignes automatisées.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    sujets_maintenance = [
+        {
+            "titre": "Cas N°1 : Alignement laser d'arbres tournants (Moteur - Pompe)",
+            "img_metier": "maint_laser_arbre.jpg",
+            "legende_metier": "Système d'alignement laser monté sur accouplement moteur-pompe",
+            "explication": (
+                "**Principe technique :** Un émetteur laser fixé sur l'arbre moteur projette un faisceau sur un prisme/miroir réflecteur monté sur l'arbre de la pompe. "
+                "D'après les lois de la réflexion, un défaut d'alignement angulaire **α** de l'arbre dévie le faisceau réfléchi d'un angle **2α**. "
+                "À 3 000 tr/min, la tolérance maximale admise est de **0,05°** (soit un décalage inférieur à **0,44 mm** à 250 mm de distance)."
+            )
+        },
+        {
+            "titre": "Cas N°2 : Miroir d'inspection articulé (Contrôle de soudures et fuites)",
+            "img_metier": "maint_miroir_inspection.jpg",
+            "legende_metier": "Miroir télescopique orientable pour contrôle visuel derrière un carter",
+            "explication": (
+                "**Principe technique :** Lorsqu'une fuite hydraulique ou une fissure de soudure se situe derrière un carter opaque impossible à démonter rapidement, "
+                "le technicien glisse un miroir plan articulé. En l'inclinant à **45,0°** (<b><i>i</i> = <i>i'</i> = 45°</b>), les rayons lumineux issus de la zone cachée "
+                "sont déviés de **90°** directement vers l'œil de l'opérateur."
+            )
+        },
+        {
+            "titre": "Cas N°3 : Barrière photoélectrique à catadioptre sur convoyeur",
+            "img_metier": "maint_capteur_catadioptre.jpg",
+            "legende_metier": "Cellule photoélectrique et son réflecteur en coin de cube sur ligne de production",
+            "explication": (
+                "**Principe technique :** Pour détecter le passage de pièces sur un tapis roulant, un capteur envoie un faisceau infrarouge vers un réflecteur (catadioptre). "
+                "Constitué de micro-miroirs à **90°** (coins de cube), il renvoie la lumière parallèlement à son axe d'arrivée même si le support vibre ou se désaxe jusqu'à **± 15°**. "
+                "Si l'intensité réfléchie passe sous **80 %**, une alarme de maintenance préventive se déclenche."
+            )
+        }
+    ]
+
+    if "sujet_maint_tire" not in st.session_state:
+        st.session_state.sujet_maint_tire = None
+
+    st.subheader("1. Attribution de votre ordre d'intervention")
+    if st.session_state.sujet_maint_tire is None:
+        st.info("Cliquez sur le bouton ci-dessous pour tirer au sort votre cas pratique de maintenance parmi les 3 équipements industriels.")
+        if st.button("TIRER AU SORT MON SUJET DE MAINTENANCE", key="btn_tirage_maint", use_container_width=True):
+            st.session_state.sujet_maint_tire = random.choice([0, 1, 2])
+            st.rerun()
+    else:
+        idx_sujet = st.session_state.sujet_maint_tire
+        data_sujet = sujets_maintenance[idx_sujet]
+
+        st.success(f"Ordre d'intervention attribué : **{data_sujet['titre']}**")
+        st.markdown(data_sujet["explication"], unsafe_allow_html=True)
+
+        col_img_m, col_bd_m = st.columns(2)
+        with col_img_m:
+            img_m = charger_image(data_sujet["img_metier"])
+            if img_m is not None:
+                st.image(img_m, caption=data_sujet["legende_metier"], use_container_width=True)
+            else:
+                st.warning(f"Image métier attendue dans le dossier image/ : **{data_sujet['img_metier']}**")
+
+        with col_bd_m:
+            img_bd = charger_image("bd_humour_maintenance.jpg")
+            if img_bd is not None:
+                st.image(img_bd, caption="La pause BD : Quand le laser de maintenance fait des siennes !", use_container_width=True)
+            else:
+                st.warning("BD humoristique attendue dans le dossier image/ : **bd_humour_maintenance.jpg**")
+
+        st.markdown("---")
+        st.subheader("2. Banc de mesure expérimental sur site")
+
+        if "mesures_maint_log" not in st.session_state:
+            st.session_state.mesures_maint_log = []
+
+        if idx_sujet == 0:
+            st.slider("Défaut angulaire de l'arbre pompe α (degrés) :", min_value=-0.50, max_value=0.50, value=0.25, step=0.01, key="slider_maint_s0")
+        elif idx_sujet == 1:
+            st.slider("Angle d'inclinaison de la tête du miroir articulé (degrés) :", min_value=15.0, max_value=75.0, value=35.0, step=1.0, key="slider_maint_s1")
+        else:
+            st.slider("Désalignement angulaire du catadioptre dû aux vibrations (degrés) :", min_value=-25.0, max_value=25.0, value=5.0, step=1.0, key="slider_maint_s2")
+
+        if st.button("ENREGISTRER CE RELEVÉ DANS LE RAPPORT D'INTERVENTION", key="btn_releve_maint", use_container_width=True):
+            if "maint_mesure_courante" in st.session_state:
+                st.session_state.mesures_maint_log.append(st.session_state.maint_mesure_courante)
+                st.rerun()
+
+        fig_maint = mettre_a_jour_maintenance_matplotlib(idx_sujet)
+        st.pyplot(fig_maint, use_container_width=True)
+
+        if st.session_state.mesures_maint_log:
+            df_maint = pd.DataFrame(
+                st.session_state.mesures_maint_log,
+                columns=["Paramètre mesuré", "Grandeur optique", "Seuil / Valeur", "Diagnostic"]
+            )
+            df_maint.insert(0, "Relevé N°", [f"Mesure {i}" for i in range(1, len(df_maint) + 1)])
+            st.dataframe(df_maint, use_container_width=True, hide_index=True)
+
+    st.write("---")
+    st.subheader("3. Évaluation des connaissances (20 points)")
+
+    if "maint_verrouille_tab6" not in st.session_state:
+        st.session_state.maint_verrouille_tab6 = False
+    verrou_at6 = st.session_state.maint_verrouille_tab6
+
+    afficher_atelier_maintenance_complet(verrouille=verrou_at6)
+
+    st.write("---")
+    st.subheader("Synthèse et validation de l'Atelier 6 (Maintenance)")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_maint6 = st.checkbox(
+        "Je certifie avoir réalisé mon intervention de maintenance et complété les questions de l'Atelier 6.",
+        key="check_certif_maint_final_net",
+        disabled=verrou_at6,
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 6", key="btn_export_maint6_official_net", use_container_width=True, disabled=verrou_at6):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif st.session_state.sujet_maint_tire is None:
+            st.error("Action refusée : Tirez d'abord au sort votre sujet de maintenance en haut de l'onglet.")
+        elif not case_certif_maint6:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            score_q6 = 0.0
+            if "ordre_quiz_maint_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_maint_aleatoire:
+                    reponse_eleve = st.session_state.get(f"maint_at6_final_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q6 += 1.0
+
+            score_t6 = sum([
+                st.session_state.get("maint_t1_final") == "roulements",
+                st.session_state.get("maint_t2_final") == "2",
+                st.session_state.get("maint_t3_final") == "45",
+                st.session_state.get("maint_t4_final") == "i'",
+                st.session_state.get("maint_t5_final") == "catadioptre",
+                st.session_state.get("maint_t6_final") == "source",
+                st.session_state.get("maint_t7_final") == "réflecteur",
+                st.session_state.get("maint_t8_final") == "réfléchi",
+                st.session_state.get("maint_t9_final") == "destructif",
+                st.session_state.get("maint_t10_final") == "centième",
+            ])
+
+            st.session_state.score_maint6_p1 = round(float(score_q6), 1)
+            st.session_state.score_maint6_p2 = round(float(score_t6), 1)
+            st.session_state.score_final_maint6 = round(float(score_q6 + score_t6), 1)
+            st.session_state.maint_verrouille_tab6 = True
+            st.rerun()
+
+    if st.session_state.get("maint_verrouille_tab6", False):
+        scr1 = st.session_state.get("score_maint6_p1", 0.0)
+        scr2 = st.session_state.get("score_maint6_p2", 0.0)
+        tot_s = st.session_state.get("score_final_maint6", 0.0)
+        titre_sujet_export = sujets_maintenance[st.session_state.sujet_maint_tire]["titre"]
+
+        timestamp_maint6 = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER MAINTENANCE SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        html_export_maint = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Maintenance Optique - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Évaluation d'Optique Géométrique</h1>
+                <p>Atelier 6 : Applications dans le domaine de la Maintenance Industrielle</p>
+                <p>Sujet attribué par tirage au sort : <strong>{titre_sujet_export}</strong></p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_maint6}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Récapitulatif des Notes Générées</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Maintenance : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue à la Synthèse du cours (Texte à trous) : <strong>{scr2:.1f} / 10</strong><br>
+                Relevés expérimentaux enregistrés : <strong>{len(st.session_state.get("mesures_maint_log", []))}</strong><br>
+                Note Totale de l'Atelier 6 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">1. CORRECTION DÉTAILLÉE DU QUIZ (10 QUESTIONS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_maint_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_maint_aleatoire, 1):
+                saisie = st.session_state.get(f"maint_at6_final_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_maint += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_maint += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">2. CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (TEXTE À TROUS - 10 CASES)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase à compléter</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        liste_verif_trous_maint = [
+            ("1. Le lignage laser évite l'usure prématurée des ......... et accouplements.", "roulements", "maint_t1_final"),
+            ("2. Si un arbre pivote d'un angle alpha, le laser réfléchi dévie de ......... alpha.", "2", "maint_t2_final"),
+            ("3. Pour voir une fuite cachée à 90°, on incline le miroir d'inspection à .........°.", "45", "maint_t3_final"),
+            ("4. Le miroir d'inspection applique strictement la loi de réflexion i = .........", "i'", "maint_t4_final"),
+            ("5. Un réflecteur en coin de cube s'appelle aussi un .........", "catadioptre", "maint_t5_final"),
+            ("6. Le catadioptre renvoie la lumière vers sa ......... d'émission.", "source", "maint_t6_final"),
+            ("7. Une barrière photoélectrique utilise un émetteur et un ......... optique.", "réflecteur", "maint_t7_final"),
+            ("8. L'encrassement d'un miroir réduit l'intensité du faisceau .........", "réfléchi", "maint_t8_final"),
+            ("9. Le contrôle avec un miroir sans démonter la machine est un contrôle non .........", "destructif", "maint_t9_final"),
+            ("10. Le laser permet une précision de mesure de l'ordre du ......... de millimètre.", "centième", "maint_t10_final"),
+        ]
+
+        for idx_t, (enonce_t, attendu_t, cle_t) in enumerate(liste_verif_trous_maint, 1):
+            saisie_t = st.session_state.get(cle_t, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu_t).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_maint += f"<tr><td>{idx_t}</td><td>{enonce_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_maint += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html_maint = preparer_nom_fichier("Rapport_Atelier_6_Maintenance").replace(".txt", ".html")
+        st.download_button(
+            label="Télécharger le rapport d'évaluation officiel de l'Atelier 6 (.html)",
+            data=html_export_maint,
+            file_name=nom_fichier_html_maint,
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
