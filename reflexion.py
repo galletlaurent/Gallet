@@ -3343,10 +3343,8 @@ with tab6:
         st.session_state.sujet_maint_tire = None
 
     st.subheader("1. Attribution de votre ordre d'intervention")
-    
-    # Le bouton reste toujours visible et toujours actif (jamais bloqué)
     if st.button("TIRER AU SORT UN SUJET DE MAINTENANCE", key="btn_tirage_maint", use_container_width=True):
-        choix_possibles = [i for i in [0, 1, 2] if i != st.session_state.sujet_maint_tire]
+        choix_possibles = [i for i in range(3) if i != st.session_state.sujet_maint_tire]
         st.session_state.sujet_maint_tire = random.choice(choix_possibles)
         st.session_state.mesures_maint_log = []
         st.rerun()
@@ -3359,24 +3357,20 @@ with tab6:
 
         st.success(f"Ordre d'intervention attribué : **{data_sujet['titre']}**")
         st.markdown(data_sujet["explication"], unsafe_allow_html=True)
-        # ... (le reste du bloc avec les images .jpg et le banc d'essai reste inchangé)
-        # ... (le reste du bloc avec les images .jpg et le banc d'essai reste inchangé)
-
 
         col_img_m, col_bd_m = st.columns(2)
         with col_img_m:
-            img_m = charger_image(data_sujet["img_metier"])
-            if img_m is not None:
-                st.image(img_m, caption=data_sujet["legende_metier"], use_container_width=True)
-            else:
-                st.warning(f"Image métier attendue dans le dossier image/ : **{data_sujet['img_metier']}**")
+            try:
+                st.image(data_sujet["img_metier"], caption=data_sujet["legende_metier"], use_container_width=True)
+            except Exception:
+                st.warning(f"L'image '{data_sujet['img_metier']}' est introuvable.")
 
         with col_bd_m:
-            img_bd = charger_image("bd_humour_maintenance.jpg")
-            if img_bd is not None:
-                st.image(img_bd, caption="La pause BD : Quand le laser de maintenance fait des siennes !", use_container_width=True)
-            else:
-                st.warning("BD humoristique attendue dans le dossier image/ : **bd_humour_maintenance.jpg**")
+            try:
+                st.image("bd_humour_maintenance.jpg", caption="La pause BD : Quand le laser de maintenance fait des siennes !", use_container_width=True)
+            except Exception:
+                st.warning("L'image 'bd_humour_maintenance.jpg' est introuvable.")
+
 
         st.markdown("---")
         st.subheader("2. Banc de mesure expérimental sur site")
