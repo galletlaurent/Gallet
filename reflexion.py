@@ -3448,7 +3448,7 @@ with tab6:
 
             score_t6 = 0.0
             for _, _, bonne_rep_t, cle_t in banque_active["trous"]:
-                if str(st.session_state.get(cle_t, "Choisir...")).strip() == str(bonne_rep_t).strip():
+                if str(st.session_state.get(f"{cle_t}_s{sujet_actif_m}", "Choisir...")).strip() == str(bonne_rep_t).strip():
                     score_t6 += 1.0
 
             st.session_state.score_maint6_p1 = round(float(score_q6), 1)
