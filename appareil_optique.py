@@ -800,6 +800,292 @@ def afficher_questions_optique7(verrouille=False):
 
     return dict_quiz_opt7, dict_trous_opt7
 
+def dessiner_loupe_matplotlib():
+    echelle_x = 4.0
+    w, h = 680, 260
+    y0 = h / 2.0
+
+    fig, ax = plt.subplots(figsize=(10, 3.8), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, w)
+    ax.set_ylim(0, h)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    f_cm = st.session_state.get("slide_loupe_f", 10.0)
+    d_obj_cm = st.session_state.get("slide_loupe_d", 7.0)
+    h_obj_cm = st.session_state.get("slide_loupe_ab", 3.0)
+
+    if d_obj_cm >= f_cm:
+        d_obj_cm = f_cm - 0.5
+
+    x_lentille = 400.0
+    f_px = f_cm * echelle_x
+    xf = x_lentille - f_px
+    xf_prime = x_lentille + f_px
+
+    xa = x_lentille - d_obj_cm * echelle_x
+    h_obj = h_obj_cm * echelle_x * 2.5
+
+    # Formule de conjugaison 1/OA' - 1/OA = 1/f' avec OA = -d_obj_cm
+    oa_prime_cm = (f_cm * (-d_obj_cm)) / (f_cm + (-d_obj_cm))
+    gamma = oa_prime_cm / (-d_obj_cm)
+    xa_prime = x_lentille + oa_prime_cm * echelle_x
+    h_img = h_obj * gamma
+
+    # Axe optique et foyers
+    ax.plot([15, w - 15], [y0, y0], color="#cbd5e1", lw=1.5, zorder=1)
+    ax.plot([xf, xf], [y0 - 5, y0 + 5], color="#cbd5e1", lw=1.5)
+    ax.text(xf, y0 + 16, "F", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center")
+    ax.plot([xf_prime, xf_prime], [y0 - 5, y0 + 5], color="#cbd5e1", lw=1.5)
+    ax.text(xf_prime, y0 + 16, "F'", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center")
+
+    # Lentille convergente
+    ax.plot([x_lentille, x_lentille], [15, h - 15], color="#3b82f6", lw=2.5, zorder=3)
+    ax.plot([x_lentille - 6, x_lentille, x_lentille + 6], [23, 15, 23], color="#3b82f6", lw=2)
+    ax.plot([x_lentille - 6, x_lentille, x_lentille + 6], [h - 23, h - 15, h - 23], color="#3b82f6", lw=2)
+    ax.text(x_lentille + 10, y0 + 14, "O", color="#cbd5e1", fontsize=8, fontweight="bold")
+
+    # Objet réel AB
+    ax.annotate("", xy=(xa, y0 - h_obj), xytext=(xa, y0), arrowprops=dict(arrowstyle="->", color="#a855f7", lw=2.5), zorder=4)
+    ax.text(xa, y0 + 14, "A", color="#a855f7", fontsize=8, fontweight="bold", ha="center")
+    ax.text(xa, y0 - h_obj - 6, "B", color="#a855f7", fontsize=8, fontweight="bold", ha="center")
+
+    # Image virtuelle A'B' (limitée à l'écran si très éloignée)
+    xa_vis = max(35.0, xa_prime)
+    h_vis = min(105.0, h_img)
+    ax.annotate("", xy=(xa_vis, y0 - h_vis), xytext=(xa_vis, y0), arrowprops=dict(arrowstyle="->", color="#10b981", lw=2.2, ls="--"), zorder=4)
+    ax.text(xa_vis, y0 + 14, "A'", color="#10b981", fontsize=8, fontweight="bold", ha="center")
+    ax.text(xa_vis, y0 - h_vis - 6, "B'", color="#10b981", fontsize=8, fontweight="bold", ha="center")
+
+    # Rayons lumineux
+    x_fin = x_lentille + 140.0
+    pente_bleu = h_obj / (x_lentille - xa)
+    ax.plot([xa, x_fin], [y0 - h_obj, y0 + (x_fin - x_lentille) * pente_bleu], color="#2563eb", lw=1.5)
+    ax.plot([xa_vis, xa], [y0 - h_vis, y0 - h_obj], color="#2563eb", lw=1.2, ls=":")
+
+    ax.plot([xa, x_lentille], [y0 - h_obj, y0 - h_obj], color="#eab308", lw=1.5)
+    pente_jaune = h_obj / f_px
+    ax.plot([x_lentille, x_fin], [y0 - h_obj, y0 - h_obj + (x_fin - x_lentille) * pente_jaune], color="#eab308", lw=1.5)
+    ax.plot([xa_vis, x_lentille], [y0 - h_vis, y0 - h_obj], color="#eab308", lw=1.2, ls=":")
+
+    # Œil observateur
+    x_oeil = x_fin + 15.0
+    ax.add_patch(patches.Arc((x_oeil, y0 + 15), 20, 28, angle=90, theta1=0, theta2=180, edgecolor="#cbd5e1", lw=2))
+    ax.add_patch(patches.Ellipse((x_oeil - 1.5, y0 + 15), 7, 10, facecolor="#3b82f6"))
+
+    gc = 25.0 / f_cm
+    st.session_state.loupe_txt_panneau_bas = (
+        f"• Distance focale f' = {f_cm:.1f} cm  |  Position objet OA = -{d_obj_cm:.1f} cm\n"
+        f"• Grandissement γ = +{gamma:.2f} (Image Virtuelle et Droite)\n"
+        f"• Grossissement commercial Gc = 25 / f' = {gc:.2f}x"
+    )
+    ax.text(20, 20, "INSTRUMENTATION : LOUPE SIMPLE (OBJET AVANT LE FOYER F)", color="#38bdf8", fontsize=9, fontweight="bold")
+    return fig
+
+
+def afficher_questions_loupe(verrouille=False):
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz sur la loupe (10 questions - 10 pts)")
+        if "ordre_questions_loupe" not in st.session_state:
+            q_base = [
+                ("q1", "Quelle est la nature de la lentille constituant une loupe simple :"),
+                ("q2", "Pour qu'une lentille fonctionne en loupe, l'objet AB doit être placé :"),
+                ("q3", "Quelle est la nature de l'image A'B' observée à travers une loupe :"),
+                ("q4", "Par rapport à l'objet réel, l'image formée par une loupe est toujours :"),
+                ("q5", "Où doit-on placer l'objet pour observer l'image à l'infini sans aucune fatigue oculaire :"),
+                ("q6", "Quelle est la formule du grossissement commercial Gc d'une loupe de focale f' (en mètres) :"),
+                ("q7", "Quelle est la distance minimale de vision distincte standard dm retenue pour l'œil humain :"),
+                ("q8", "Si une loupe possède une distance focale f' = 5 cm (0,05 m), son grossissement commercial vaut :"),
+                ("q9", "Comment s'exprime la vergence C d'une loupe de distance focale f' = 10 cm (0,10 m) :"),
+                ("q10", "Si l'on éloigne l'objet au-delà du foyer objet F de la loupe, l'image devient :"),
+            ]
+            random.shuffle(q_base)
+            st.session_state.ordre_questions_loupe = q_base
+
+        for idx, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_loupe, 1):
+            cle_q = f"col_g_quiz_loupe_{q_id}"
+            cle_opts = f"opts_loupe_shuf_{q_id}"
+            if cle_opts not in st.session_state:
+                opts_map = {
+                    "q1": ["Une lentille convergente de courte distance focale", "Une lentille divergente", "Un miroir plan"],
+                    "q2": ["Entre le foyer objet F et le centre optique O", "Au-delà de 2 fois la distance focale", "À l'infini"],
+                    "q3": ["Virtuelle (non projetable sur un écran)", "Réelle (projetable sur un écran)", "Inversée et réduite"],
+                    "q4": ["Droite et agrandie", "Renversée et agrandie", "Droite et plus petite"],
+                    "q5": ["Pile dans le plan focal objet (sur le foyer F)", "Contre le verre de la loupe", "À 2 mètres de la loupe"],
+                    "q6": ["Gc = 0,25 / f'", "Gc = f' / 0,25", "Gc = 25 * f'"],
+                    "q7": ["25 cm (0,25 m)", "100 cm (1 m)", "2,5 cm"],
+                    "q8": ["5 (soit x5)", "20", "0,2"],
+                    "q9": ["+10 dioptries (δ)", "-10 dioptries", "+0,1 dioptrie"],
+                    "q10": ["Réelle et renversée (la lentille agit alors comme un projecteur)", "Toujours virtuelle", "Invisible"],
+                }
+                copie = list(opts_map[q_id])
+                random.shuffle(copie)
+                st.session_state[cle_opts] = ["Choisir..."] + copie
+            cq1, cq2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with cq1: st.write(f"**{idx}.** {q_txt}")
+            with cq2: st.selectbox("", st.session_state[cle_opts], key=cle_q, disabled=verrouille, label_visibility="collapsed")
+
+    with col_t:
+        st.markdown("##### Synthèse de cours : La loupe (Texte à trous - 10 items - 10 pts)")
+        items_loupe = [
+            ("1. Une loupe est constituée d'une lentille mince ......... de courte distance focale.", ["Choisir...", "convergente", "divergente"], "loupe_t1"),
+            ("2. L'objet observé doit être placé entre le centre optique O et le foyer objet .........", ["Choisir...", "F", "F'"], "loupe_t2"),
+            ("3. L'image obtenue à travers la loupe est droite, agrandie et .........", ["Choisir...", "virtuelle", "réelle"], "loupe_t3"),
+            ("4. Une image virtuelle ne peut pas être recueillie sur un .........", ["Choisir...", "écran", "capteur"], "loupe_t4"),
+            ("5. Le grandissement transversal γ d'une loupe est toujours positif et supérieur à .........", ["Choisir...", "1", "0"], "loupe_t5"),
+            ("6. Pour observer sans accommoder, l'objet est placé exactement au foyer .........", ["Choisir...", "objet F", "image F'"], "loupe_t6"),
+            ("7. L'image finale se forme alors à l'.........", ["Choisir...", "infini", "centre O"], "loupe_t7"),
+            ("8. La distance minimale de vision distincte standard vaut ......... cm.", ["Choisir...", "25", "50"], "loupe_t8"),
+            ("9. Plus la distance focale f' est courte, plus le grossissement commercial est .........", ["Choisir...", "grand", "faible"], "loupe_t9"),
+            ("10. L'unité de la vergence C = 1 / f' d'une loupe est la ......... (δ).", ["Choisir...", "dioptrie", "candela"], "loupe_t10"),
+        ]
+        for enonce, opts, cle in items_loupe:
+            c1, c2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", opts, key=cle, disabled=verrouille, label_visibility="collapsed")
+
+
+def dessiner_appareil_photo_matplotlib():
+    w, h = 680, 260
+    y0 = h / 2.0
+
+    fig, ax = plt.subplots(figsize=(10, 3.8), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, w)
+    ax.set_ylim(0, h)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    f_mm = st.session_state.get("slide_apn_f", 50.0)
+    dist_obj_m = st.session_state.get("slide_apn_d", 2.0)
+    h_obj_m = st.session_state.get("slide_apn_ab", 1.6)
+
+    x_lentille = 430.0
+    f_px = f_mm * 1.4
+    xf = x_lentille - f_px
+    xf_prime = x_lentille + f_px
+
+    xa = max(40.0, x_lentille - dist_obj_m * 110.0)
+    h_obj = h_obj_m * 45.0
+
+    # Conjugaison exacte en millimètres : 1/OA' = 1/f' + 1/OA
+    oa_mm = -dist_obj_m * 1000.0
+    oa_prime_mm = (f_mm * oa_mm) / (f_mm + oa_mm)
+    gamma = oa_prime_mm / oa_mm
+    x_capteur = x_lentille + f_px + (oa_prime_mm - f_mm) * 2.5
+    h_img = abs(h_obj * gamma)
+
+    # Boîtier noir de l'appareil photo
+    ax.add_patch(patches.Rectangle((x_lentille, 25), (x_capteur - x_lentille) + 12, h - 50, facecolor="#1e293b", edgecolor="#64748b", lw=1.5))
+
+    # Axe optique et foyers
+    ax.plot([15, w - 15], [y0, y0], color="#cbd5e1", lw=1.5, zorder=1)
+    ax.plot([xf, xf], [y0 - 5, y0 + 5], color="#cbd5e1", lw=1.5)
+    ax.text(xf, y0 + 16, "F", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center")
+    ax.plot([xf_prime, xf_prime], [y0 - 5, y0 + 5], color="#38bdf8", lw=1.5)
+    ax.text(xf_prime, y0 - 10, "F'", color="#38bdf8", fontsize=8, fontweight="bold", ha="center")
+
+    # Objectif convergent
+    ax.plot([x_lentille, x_lentille], [25, h - 25], color="#3b82f6", lw=3, zorder=3)
+    ax.plot([x_lentille - 6, x_lentille, x_lentille + 6], [33, 25, 33], color="#3b82f6", lw=2)
+    ax.plot([x_lentille - 6, x_lentille, x_lentille + 6], [h - 33, h - 25, h - 33], color="#3b82f6", lw=2)
+    ax.text(x_lentille - 12, y0 + 14, "O", color="#cbd5e1", fontsize=8, fontweight="bold")
+
+    # Capteur CMOS
+    ax.plot([x_capteur, x_capteur], [35, h - 35], color="#f59e0b", lw=4, zorder=4)
+    ax.text(x_capteur + 8, 45, "Capteur\nCMOS", color="#fde047", fontsize=8, fontweight="bold")
+
+    # Objet réel AB
+    ax.annotate("", xy=(xa, y0 - h_obj), xytext=(xa, y0), arrowprops=dict(arrowstyle="->", color="#a855f7", lw=2.5), zorder=4)
+    ax.text(xa, y0 + 14, "A", color="#a855f7", fontsize=8, fontweight="bold", ha="center")
+    ax.text(xa, y0 - h_obj - 6, "B", color="#a855f7", fontsize=8, fontweight="bold", ha="center")
+
+    # Image réelle renversée A'B' sur le capteur
+    ax.annotate("", xy=(x_capteur, y0 + h_img), xytext=(x_capteur, y0), arrowprops=dict(arrowstyle="->", color="#10b981", lw=2.5), zorder=5)
+    ax.text(x_capteur + 8, y0 - 6, "A'", color="#10b981", fontsize=8, fontweight="bold")
+    ax.text(x_capteur + 8, y0 + h_img + 10, "B'", color="#10b981", fontsize=8, fontweight="bold")
+
+    # Rayons lumineux
+    ax.plot([xa, x_lentille, x_capteur], [y0 - h_obj, y0, y0 + h_img], color="#2563eb", lw=1.5)
+    ax.plot([xa, x_lentille, x_capteur], [y0 - h_obj, y0 - h_obj, y0 + h_img], color="#eab308", lw=1.5)
+
+    taille_img_mm = h_obj_m * 1000.0 * abs(gamma)
+    st.session_state.apn_txt_panneau_bas = (
+        f"• Focale Objectif f' = {f_mm:.0f} mm  |  Tirage optique OA' = {oa_prime_mm:.2f} mm\n"
+        f"• Grandissement γ = {gamma:.4f} (Image Réelle et Renversée)\n"
+        f"• Taille image sur capteur CMOS = {taille_img_mm:.1f} mm"
+    )
+    ax.text(20, 20, "INSTRUMENTATION : APPAREIL PHOTOGRAPHIQUE ET CAPTEUR CMOS", color="#38bdf8", fontsize=9, fontweight="bold")
+    return fig
+
+
+def afficher_questions_apn(verrouille=False):
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz sur l'appareil photographique (10 questions - 10 pts)")
+        if "ordre_questions_apn" not in st.session_state:
+            q_base = [
+                ("q1", "Quel élément optique d'un appareil photo joue le rôle de lentille convergente pour former l'image :"),
+                ("q2", "Sur quel composant électronique sensible à la lumière se forme l'image nette dans un appareil numérique :"),
+                ("q3", "Quelle est la nature de l'image A'B' formée sur le capteur d'un appareil photographique :"),
+                ("q4", "Comment s'appelle le mécanisme à lamelles qui règle la quantité de lumière entrant dans l'objectif :"),
+                ("q5", "Quelle opération consiste à déplacer légèrement l'objectif par rapport au capteur pour obtenir une image nette selon la distance du sujet :"),
+                ("q6", "Lorsque l'objet photographié est situé très loin (à l'infini), où se forme son image nette :"),
+                ("q7", "Comment appelle-t-on un objectif de courte focale (ex : 18 mm ou 24 mm) offrant un très large champ de vision :"),
+                ("q8", "Comment appelle-t-on un objectif de longue focale (ex : 200 mm ou 300 mm) permettant de rapprocher les sujets lointains :"),
+                ("q9", "Quelle grandeur règle la durée pendant laquelle la lumière frappe le capteur CMOS :"),
+                ("q10", "Quelle partie de l'œil humain joue le même rôle que le capteur CMOS d'un appareil photo :"),
+            ]
+            random.shuffle(q_base)
+            st.session_state.ordre_questions_apn = q_base
+
+        for idx, (q_id, q_txt) in enumerate(st.session_state.ordre_questions_apn, 1):
+            cle_q = f"col_g_quiz_apn_{q_id}"
+            cle_opts = f"opts_apn_shuf_{q_id}"
+            if cle_opts not in st.session_state:
+                opts_map = {
+                    "q1": ["L'objectif photographique", "Le viseur optique", "Le flash"],
+                    "q2": ["Le capteur CMOS (ou CCD)", "La batterie lithium", "Le diaphragme"],
+                    "q3": ["Réelle, renversée et généralement plus petite que l'objet", "Virtuelle et droite", "Réelle et droite"],
+                    "q4": ["Le diaphragme", "L'obturateur", "Le prisme"],
+                    "q5": ["La mise au point (autofocus)", "Le zoom numérique", "La balance des blancs"],
+                    "q6": ["Dans le plan focal image (sur le foyer F')", "Sur le centre optique O", "Devant l'objectif"],
+                    "q7": ["Un objectif grand-angle", "Un téléobjectif", "Un microscope"],
+                    "q8": ["Un téléobjectif", "Un objectif macro", "Un oculaire"],
+                    "q9": ["Le temps de pose (vitesse d'obturation)", "La sensibilité ISO", "La distance focale"],
+                    "q10": ["La rétine", "La cornée", "L'iris"],
+                }
+                copie = list(opts_map[q_id])
+                random.shuffle(copie)
+                st.session_state[cle_opts] = ["Choisir..."] + copie
+            cq1, cq2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with cq1: st.write(f"**{idx}.** {q_txt}")
+            with cq2: st.selectbox("", st.session_state[cle_opts], key=cle_q, disabled=verrouille, label_visibility="collapsed")
+
+    with col_t:
+        st.markdown("##### Synthèse de cours : Appareil photo (Texte à trous - 10 items - 10 pts)")
+        items_apn = [
+            ("1. L'objectif d'un appareil photographique est équivalent à une lentille .........", ["Choisir...", "convergente", "divergente"], "apn_t1"),
+            ("2. L'image formée sur le capteur numérique est réelle et .........", ["Choisir...", "renversée", "droite"], "apn_t2"),
+            ("3. Le composant qui convertit la lumière en signal électrique est le capteur .........", ["Choisir...", "CMOS", "thermique"], "apn_t3"),
+            ("4. Le réglage de la netteté selon la distance du sujet s'appelle la ......... au point.", ["Choisir...", "mise", "prise"], "apn_t4"),
+            ("5. Pour un paysage à l'infini, le capteur se situe dans le plan ......... image F'.", ["Choisir...", "focal", "central"], "apn_t5"),
+            ("6. Le ......... régule le flux lumineux entrant grâce à une ouverture variable.", ["Choisir...", "diaphragme", "flash"], "apn_t6"),
+            ("7. Dans l'œil humain, le diaphragme correspond à l'.........", ["Choisir...", "iris", "cristallin"], "apn_t7"),
+            ("8. Dans l'œil humain, le capteur correspond à la .........", ["Choisir...", "rétine", "cornée"], "apn_t8"),
+            ("9. Un objectif de longue focale permettant de grossir les objets lointains est un .........", ["Choisir...", "téléobjectif", "grand-angle"], "apn_t9"),
+            ("10. Le grandissement γ d'un appareil photo est de signe .........", ["Choisir...", "négatif", "positif"], "apn_t10"),
+        ]
+        for enonce, opts, cle in items_apn:
+            c1, c2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", opts, key=cle, disabled=verrouille, label_visibility="collapsed")
+
+
+
+
 
 def dessiner_microscope_matplotlib():
     import math
@@ -1339,6 +1625,115 @@ with tab1:
 
 with tab2:
     st.subheader("La loupe")
+
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 15px;">Rappel du Modèle Optique de la Loupe :</p>
+        <ul style="margin-bottom: 0; line-height: 1.9;">
+            <li><strong>Principe :</strong> Une loupe est une <strong>lentille convergente</strong> de courte distance focale (<i>f'</i> &gt; 0).</li>
+            <li><strong>Condition d'observation :</strong> L'objet AB doit être placé entre le foyer objet <strong>F</strong> et le centre optique <strong>O</strong> (|OA| &lt; <i>f'</i>). L'image A'B' obtenue est <strong>virtuelle, droite et agrandie</strong>.</li>
+            <li><strong>Grossissement commercial :</strong> Avec une distance minimale de vision distincte <i>d</i><sub>m</sub> = 25 cm = 0,25 m, il vaut <strong><i>G</i><sub>c</sub> = <span style="display: inline-block; vertical-align: middle; text-align: center; line-height: 1.1; margin: 0 3px;"><span style="display: block; border-bottom: 1px solid #1e293b; padding: 0 3px;">0,25</span><span style="display: block; padding: 0 3px;"><i>f'</i></span></span></strong> (avec <i>f'</i> en mètres).</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if "loupe_verrouille" not in st.session_state:
+        st.session_state.loupe_verrouille = False
+
+    col_g_loupe, col_d_loupe = st.columns([1.2, 2.2])
+    with col_g_loupe:
+        with st.container(border=True):
+            st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>PARAMÈTRES DE LA LOUPE</p>", unsafe_allow_html=True)
+            f_loupe = st.slider("Distance focale f' (cm) :", 4.0, 20.0, 10.0, 0.5, key="slide_loupe_f", disabled=st.session_state.loupe_verrouille)
+            d_loupe = st.slider("Distance objet |OA| (cm) :", 1.0, 19.0, 7.0, 0.5, key="slide_loupe_d", disabled=st.session_state.loupe_verrouille)
+            ab_loupe = st.slider("Hauteur objet AB (cm) :", 1.0, 5.0, 3.0, 0.5, key="slide_loupe_ab", disabled=st.session_state.loupe_verrouille)
+
+        with st.container(border=True):
+            st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>RAPPORT D'ANALYSE OPTIQUE</p>", unsafe_allow_html=True)
+            d_eff = min(d_loupe, f_loupe - 0.5)
+            oa_p = (f_loupe * (-d_eff)) / (f_loupe - d_eff)
+            gam_l = oa_p / (-d_eff)
+            gc_l = 25.0 / f_loupe
+            st.text(f"Loupe Simple :\n• Focale f' = {f_loupe:.1f} cm\n• Vergence C = {100.0/f_loupe:.1f} δ\n• Grandissement γ = +{gam_l:.2f}\n• Grossissement Gc = {gc_l:.2f}x\n• Image : Virtuelle & Droite")
+
+    with col_d_loupe:
+        st.subheader("Banc d'optique virtuel : Formation de l'image virtuelle")
+        st.pyplot(dessiner_loupe_matplotlib(), use_container_width=True)
+        st.info(st.session_state.get("loupe_txt_panneau_bas", "Ajustez les curseurs pour observer l'image virtuelle."))
+
+    st.write("---")
+    afficher_questions_loupe(verrouille=st.session_state.get("loupe_verrouille", False))
+
+    st.write("---")
+    st.subheader("Validation et Génération du Bilan Officiel - La Loupe")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_loupe = st.checkbox("Je certifie avoir complété l'intégralité de l'atelier La Loupe.", key="certif_loupe_tab2", disabled=st.session_state.loupe_verrouille)
+    if st.button("VALIDER ET EXPORTER LE BILAN DE LA LOUPE", key="btn_exp_loupe_tab2", use_container_width=True, disabled=st.session_state.loupe_verrouille):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_loupe:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            att_ql = {
+                "q1": "Une lentille convergente de courte distance focale", "q2": "Entre le foyer objet F et le centre optique O",
+                "q3": "Virtuelle (non projetable sur un écran)", "q4": "Droite et agrandie",
+                "q5": "Pile dans le plan focal objet (sur le foyer F)", "q6": "Gc = 0,25 / f'",
+                "q7": "25 cm (0,25 m)", "q8": "5 (soit x5)",
+                "q9": "+10 dioptries (δ)", "q10": "Réelle et renversée (la lentille agit alors comme un projecteur)"
+            }
+            att_tl = {"loupe_t1": "convergente", "loupe_t2": "F", "loupe_t3": "virtuelle", "loupe_t4": "écran", "loupe_t5": "1", "loupe_t6": "objet F", "loupe_t7": "infini", "loupe_t8": "25", "loupe_t9": "grand", "loupe_t10": "dioptrie"}
+            sc_q = sum(1.0 for k, v in att_ql.items() if st.session_state.get(f"col_g_quiz_loupe_{k}") == v)
+            sc_t = sum(1.0 for k, v in att_tl.items() if st.session_state.get(k) == v)
+            st.session_state.score_loupe_p1, st.session_state.score_loupe_p2, st.session_state.score_final_loupe = sc_q, sc_t, sc_q + sc_t
+            st.session_state.loupe_verrouille = True
+            st.rerun()
+
+    if st.session_state.get("loupe_verrouille", False):
+        scr1, scr2, tot_s = st.session_state.score_loupe_p1, st.session_state.score_loupe_p2, st.session_state.score_final_loupe
+        ts_l = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER LA LOUPE SCELLÉ | Note : {tot_s:.1f} / 20")
+        att_ql = {
+            "q1": "Une lentille convergente de courte distance focale", "q2": "Entre le foyer objet F et le centre optique O",
+            "q3": "Virtuelle (non projetable sur un écran)", "q4": "Droite et agrandie",
+            "q5": "Pile dans le plan focal objet (sur le foyer F)", "q6": "Gc = 0,25 / f'",
+            "q7": "25 cm (0,25 m)", "q8": "5 (soit x5)",
+            "q9": "+10 dioptries (δ)", "q10": "Réelle et renversée (la lentille agit alors comme un projecteur)"
+        }
+        html_loupe = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport La Loupe - {n_eleve}</title>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}.status-correct{{color:#10b981;font-weight:bold}}.status-incorrect{{color:#ef4444;font-weight:bold}}</style></head>
+        <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Atelier : La Loupe Simple</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_l}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
+        <p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
+        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"""
+        for num, (qid, qtxt) in enumerate(st.session_state.get("ordre_questions_loupe", []), 1):
+            saisie = st.session_state.get(f"col_g_quiz_loupe_{qid}", "Choisir...")
+            att = att_ql[qid]
+            v_lbl = "CORRECT" if str(saisie) == str(att) else "INCORRECT"
+            v_cls = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_loupe += f"<tr><td>{num}</td><td>{qtxt}</td><td>{saisie}</td><td>{att}</td><td class='{v_cls}'>{v_lbl}</td></tr>"
+        html_loupe += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"
+        verif_tl = [
+            ("1. Une loupe est constituée d'une lentille mince ......... de courte distance focale.", "convergente", "loupe_t1"),
+            ("2. L'objet observé doit être placé entre le centre optique O et le foyer objet .........", "F", "loupe_t2"),
+            ("3. L'image obtenue à travers la loupe est droite, agrandie et .........", "virtuelle", "loupe_t3"),
+            ("4. Une image virtuelle ne peut pas être recueillie sur un .........", "écran", "loupe_t4"),
+            ("5. Le grandissement transversal γ d'une loupe est toujours positif et supérieur à .........", "1", "loupe_t5"),
+            ("6. Pour observer sans accommoder, l'objet est placé exactement au foyer .........", "objet F", "loupe_t6"),
+            ("7. L'image finale se forme alors à l'.........", "infini", "loupe_t7"),
+            ("8. La distance minimale de vision distincte standard vaut ......... cm.", "25", "loupe_t8"),
+            ("9. Plus la distance focale f' est courte, plus le grossissement commercial est .........", "grand", "loupe_t9"),
+            ("10. L'unité de la vergence C = 1 / f' d'une loupe est la ......... (δ).", "dioptrie", "loupe_t10"),
+        ]
+        for idx_t, (en, rep, cle) in enumerate(verif_tl, 1):
+            saisie_t = st.session_state.get(cle, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t) == str(rep) else "INCORRECT"
+            v_cls_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_loupe += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t}</td><td>{rep}</td><td class='{v_cls_t}'>{v_lbl_t}</td></tr>"
+        html_loupe += "</tbody></table></body></html>"
+        st.download_button("Télécharger le rapport officiel de La Loupe (.html)", data=html_loupe, file_name=preparer_nom_fichier("Rapport_La_Loupe").replace(".txt", ".html"), mime="text/html", use_container_width=True)
+
 
 with tab3:
     st.subheader("La lunette astronomique")
@@ -2120,6 +2515,113 @@ with tab5:
 
 with tab6:
     st.subheader("L'appareil photographique")
+
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 15px;">Rappel du Modèle Optique de l'Appareil Photographique :</p>
+        <ul style="margin-bottom: 0; line-height: 1.9;">
+            <li><strong>Objectif :</strong> Équivalent à une <strong>lentille mince convergente</strong> (<i>f'</i> &gt; 0).</li>
+            <li><strong>Formation de l'image :</strong> L'objectif projette sur le <strong>capteur CMOS</strong> (ou la pellicule) une image <strong>réelle, renversée et réduite</strong> (grandissement <i>&gamma;</i> &lt; 0).</li>
+            <li><strong>Mise au point :</strong> Lorsque l'objet se rapproche, on éloigne légèrement l'objectif du capteur (tirage <strong>OA' &gt; <i>f'</i></strong>) selon la relation de conjugaison.</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if "apn_verrouille" not in st.session_state:
+        st.session_state.apn_verrouille = False
+
+    col_g_apn, col_d_apn = st.columns([1.2, 2.2])
+    with col_g_apn:
+        with st.container(border=True):
+            st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>PARAMÈTRES DE PRISE DE VUE</p>", unsafe_allow_html=True)
+            f_apn = st.slider("Focale Objectif f' (mm) :", 24.0, 100.0, 50.0, 2.0, key="slide_apn_f", disabled=st.session_state.apn_verrouille)
+            d_apn = st.slider("Distance du sujet |OA| (m) :", 0.5, 5.0, 2.0, 0.1, key="slide_apn_d", disabled=st.session_state.apn_verrouille)
+            ab_apn = st.slider("Taille du sujet AB (m) :", 0.5, 2.5, 1.6, 0.1, key="slide_apn_ab", disabled=st.session_state.apn_verrouille)
+
+        with st.container(border=True):
+            st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>RAPPORT D'ANALYSE OPTIQUE</p>", unsafe_allow_html=True)
+            oa_m = -d_apn * 1000.0
+            oa_p_m = (f_apn * oa_m) / (f_apn + oa_m)
+            gam_a = oa_p_m / oa_m
+            st.text(f"Appareil Photo Numérique :\n• Focale f' = {f_apn:.0f} mm\n• Tirage OA' = {oa_p_m:.2f} mm\n• Grandissement γ = {gam_a:.4f}\n• Image : Réelle & Renversée")
+
+    with col_d_apn:
+        st.subheader("Banc d'optique virtuel : Formation de l'image sur capteur CMOS")
+        st.pyplot(dessiner_appareil_photo_matplotlib(), use_container_width=True)
+        st.info(st.session_state.get("apn_txt_panneau_bas", "Ajustez la focale et la distance pour observer la mise au point."))
+
+    st.write("---")
+    afficher_questions_apn(verrouille=st.session_state.get("apn_verrouille", False))
+
+    st.write("---")
+    st.subheader("Validation et Génération du Bilan Officiel - Appareil Photographique")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_apn = st.checkbox("Je certifie avoir complété l'intégralité de l'atelier Appareil Photographique.", key="certif_apn_tab6", disabled=st.session_state.apn_verrouille)
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'APPAREIL PHOTO", key="btn_exp_apn_tab6", use_container_width=True, disabled=st.session_state.apn_verrouille):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_apn:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            att_qa = {
+                "q1": "L'objectif photographique", "q2": "Le capteur CMOS (ou CCD)",
+                "q3": "Réelle, renversée et généralement plus petite que l'objet", "q4": "Le diaphragme",
+                "q5": "La mise au point (autofocus)", "q6": "Dans le plan focal image (sur le foyer F')",
+                "q7": "Un objectif grand-angle", "q8": "Un téléobjectif",
+                "q9": "Le temps de pose (vitesse d'obturation)", "q10": "La rétine"
+            }
+            att_ta = {"apn_t1": "convergente", "apn_t2": "renversée", "apn_t3": "CMOS", "apn_t4": "mise", "apn_t5": "focal", "apn_t6": "diaphragme", "apn_t7": "iris", "apn_t8": "rétine", "apn_t9": "téléobjectif", "apn_t10": "négatif"}
+            sc_q = sum(1.0 for k, v in att_qa.items() if st.session_state.get(f"col_g_quiz_apn_{k}") == v)
+            sc_t = sum(1.0 for k, v in att_ta.items() if st.session_state.get(k) == v)
+            st.session_state.score_apn_p1, st.session_state.score_apn_p2, st.session_state.score_final_apn = sc_q, sc_t, sc_q + sc_t
+            st.session_state.apn_verrouille = True
+            st.rerun()
+
+    if st.session_state.get("apn_verrouille", False):
+        scr1, scr2, tot_s = st.session_state.score_apn_p1, st.session_state.score_apn_p2, st.session_state.score_final_apn
+        ts_a = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER APPAREIL PHOTO SCELLÉ | Note : {tot_s:.1f} / 20")
+        att_qa = {
+            "q1": "L'objectif photographique", "q2": "Le capteur CMOS (ou CCD)",
+            "q3": "Réelle, renversée et généralement plus petite que l'objet", "q4": "Le diaphragme",
+            "q5": "La mise au point (autofocus)", "q6": "Dans le plan focal image (sur le foyer F')",
+            "q7": "Un objectif grand-angle", "q8": "Un téléobjectif",
+            "q9": "Le temps de pose (vitesse d'obturation)", "q10": "La rétine"
+        }
+        html_apn = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport Appareil Photo - {n_eleve}</title>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}.status-correct{{color:#10b981;font-weight:bold}}.status-incorrect{{color:#ef4444;font-weight:bold}}</style></head>
+        <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Atelier : L'Appareil Photographique</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_a}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
+        <p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
+        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"""
+        for num, (qid, qtxt) in enumerate(st.session_state.get("ordre_questions_apn", []), 1):
+            saisie = st.session_state.get(f"col_g_quiz_apn_{qid}", "Choisir...")
+            att = att_qa[qid]
+            v_lbl = "CORRECT" if str(saisie) == str(att) else "INCORRECT"
+            v_cls = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_apn += f"<tr><td>{num}</td><td>{qtxt}</td><td>{saisie}</td><td>{att}</td><td class='{v_cls}'>{v_lbl}</td></tr>"
+        html_apn += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"
+        verif_ta = [
+            ("1. L'objectif d'un appareil photographique est équivalent à une lentille .........", "convergente", "apn_t1"),
+            ("2. L'image formée sur le capteur numérique est réelle et .........", "renversée", "apn_t2"),
+            ("3. Le composant qui convertit la lumière en signal électrique est le capteur .........", "CMOS", "apn_t3"),
+            ("4. Le réglage de la netteté selon la distance du sujet s'appelle la ......... au point.", "mise", "apn_t4"),
+            ("5. Pour un paysage à l'infini, le capteur se situe dans le plan ......... image F'.", "focal", "apn_t5"),
+            ("6. Le ......... régule le flux lumineux entrant grâce à une ouverture variable.", "diaphragme", "apn_t6"),
+            ("7. Dans l'œil humain, le diaphragme correspond à l'.........", "iris", "apn_t7"),
+            ("8. Dans l'œil humain, le capteur correspond à la .........", "rétine", "apn_t8"),
+            ("9. Un objectif de longue focale permettant de grossir les objets lointains est un .........", "téléobjectif", "apn_t9"),
+            ("10. Le grandissement γ d'un appareil photo est de signe .........", "négatif", "apn_t10"),
+        ]
+        for idx_t, (en, rep, cle) in enumerate(verif_ta, 1):
+            saisie_t = st.session_state.get(cle, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t) == str(rep) else "INCORRECT"
+            v_cls_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_apn += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t}</td><td>{rep}</td><td class='{v_cls_t}'>{v_lbl_t}</td></tr>"
+        html_apn += "</tbody></table></body></html>"
+        st.download_button("Télécharger le rapport officiel de l'Appareil Photo (.html)", data=html_apn, file_name=preparer_nom_fichier("Rapport_Appareil_Photo").replace(".txt", ".html"), mime="text/html", use_container_width=True)
     
 with tab7:
     st.subheader("Application le domaine de la maintenance")
