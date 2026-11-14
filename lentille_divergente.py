@@ -517,6 +517,386 @@ tab5 = onglets[5]
 tab6 = onglets[6]
 tab7 = onglets[7]
 
+BANQUES_DIV_TRANS = {
+    0: {
+        "questions": [
+            {"id": "qdtr0_1", "q": "Quel type de lentille divergente équipe les rétroviseurs grand-angle ou les optiques d'extension de champ sur les poids lourds ?", "options": ["Une lentille divergente à grand champ (ou un ensemble divergent-convexe rétrofocus)", "Un prisme dispersif en plastique", "Une loupe convergente à fort grossissement"], "rep": "Une lentille divergente à grand champ (ou un ensemble divergent-convexe rétrofocus)"},
+            {"id": "qdtr0_2", "q": "Quel effet optique produit une lentille divergente sur la taille apparente des véhicules observés derrière un camion ?", "options": ["Elle forme une image virtuelle, droite et rétrécie permettant d'élargir le champ de vision", "Elle grossit les véhicules 20 fois", "Elle retourne l'image la tête en bas"], "rep": "Elle forme une image virtuelle, droite et rétrécie permettant d'élargir le champ de vision"},
+            {"id": "qdtr0_3", "q": "Quelle précaution de conduite impose l'utilisation d'une optique divergente grand-angle pour surveiller l'angle mort ?", "options": ["Les véhicules paraissent plus éloignés sur l'image qu'ils ne le sont réellement", "Les véhicules paraissent collés au pare-chocs", "La vitesse affichée est divisée par deux"], "rep": "Les véhicules paraissent plus éloignés sur l'image qu'ils ne le sont réellement"},
+            {"id": "qdtr0_4", "q": "Comment ressortent les rayons lumineux issus d'un obstacle latéral après traversée de la lentille divergente frontale d'une caméra d'angle mort ?", "options": ["Ils s'écartent moins de l'axe vers le capteur, permettant de capter un angle jusqu'à 170°", "Ils sont arrêtés par la lentille", "Ils ressortent strictement parallèles"], "rep": "Ils s'écartent moins de l'axe vers le capteur, permettant de capter un angle jusqu'à 170°"},
+            {"id": "qdtr0_5", "q": "Quel est le signe de la distance focale f' et de la vergence C de cette lentille frontale divergente ?", "options": ["Négatif (f' < 0 et C < 0)", "Positif (f' > 0 et C > 0)", "Nul"], "rep": "Négatif (f' < 0 et C < 0)"},
+            {"id": "qdtr0_6", "q": "Quelle réglementation impose désormais des systèmes de vision indirecte grand-angle (caméras/rétroviseurs) sur les poids lourds en ville ?", "options": ["La détection des usagers vulnérables (cyclistes et piétons) dans les angles morts", "La mesure de la pression des pneus", "Le contrôle de la température d'échappement"], "rep": "La détection des usagers vulnérables (cyclistes et piétons) dans les angles morts"},
+            {"id": "qdtr0_7", "q": "Que vaut le grandissement γ de l'image virtuelle formée par la lentille divergente ?", "options": ["Positif et compris entre 0 et 1 (0 < γ < 1)", "Négatif (-3)", "Supérieur à +5"], "rep": "Positif et compris entre 0 et 1 (0 < γ < 1)"},
+            {"id": "qdtr0_8", "q": "Quel défaut géométrique apparaît sur les bords de l'écran lorsque la vergence C est très négative (ex : -22 δ) ?", "options": ["Une distorsion en barillet (courbure des lignes verticales)", "Une image en noir et blanc", "Un dédoublement de l'image"], "rep": "Une distorsion en barillet (courbure des lignes verticales)"},
+            {"id": "qdtr0_9", "q": "Comment le calculateur vidéo du camion corrige-t-il la courbure due à la lentille divergente ?", "options": ["Par un traitement numérique de redressement d'image (déwarping) avant affichage", "En chauffant la lentille", "En coupant la moitié de l'écran"], "rep": "Par un traitement numérique de redressement d'image (déwarping) avant affichage"},
+            {"id": "qdtr0_10", "q": "Si la lentille divergente frontale a une distance focale f' = -5,0 cm (-0,050 m), quelle est sa vergence C ?", "options": ["- 20 dioptries (δ)", "+ 20 dioptries (δ)", "- 0,5 dioptrie (δ)"], "rep": "- 20 dioptries (δ)"},
+        ],
+        "trous": [
+            ("1. Les caméras d'angle mort utilisent une lentille ......... à l'avant.", ["Choisir...", "divergente", "plane"], "divergente", "dtr_t1"),
+            ("2. Cette lentille permet d'élargir le ......... de vision jusqu'à 170°.", ["Choisir...", "champ", "rayon"], "champ", "dtr_t2"),
+            ("3. Elle protège les usagers vulnérables (cyclistes) dans les angles .........", ["Choisir...", "morts", "droits"], "morts", "dtr_t3"),
+            ("4. L'image virtuelle formée par la lentille divergente est droite et .........", ["Choisir...", "rétrécie", "agrandie"], "rétrécie", "dtr_t4"),
+            ("5. Sur l'écran, les véhicules paraissent plus ......... qu'en réalité.", ["Choisir...", "éloignés", "proches"], "éloignés", "dtr_t5"),
+            ("6. La déformation courbe des bords s'appelle la distorsion en .........", ["Choisir...", "barillet", "coussinet"], "barillet", "dtr_t6"),
+            ("7. Une focale f' = -5,0 cm correspond à une vergence de ......... dioptries.", ["Choisir...", "-20", "+20"], "-20", "dtr_t7"),
+            ("8. La distance focale f' d'une lentille divergente est toujours .........", ["Choisir...", "négative", "positive"], "négative", "dtr_t8"),
+            ("9. Le grandissement vérifie toujours 0 < γ < .........", ["Choisir...", "1", "10"], "1", "dtr_t9"),
+            ("10. Le calcul optique applique la loi de .........", ["Choisir...", "Descartes", "Newton"], "Descartes", "dtr_t10"),
+        ]
+    },
+    1: {
+        "questions": [
+            {"id": "qdtr1_1", "q": "Quel équipement optique de sécurité routière utilise des lentilles divergentes pour étaler le faisceau d'une LED rouge sur toute la largeur du véhicule ?", "options": ["Les feux de position arrière et feux antibrouillard à diffuseur divergent", "Les phares longue portée laser", "Le rétroviseur intérieur électrochrome"], "rep": "Les feux de position arrière et feux antibrouillard à diffuseur divergent"},
+            {"id": "qdtr1_2", "q": "Pourquoi cherche-t-on à faire diverger le faisceau d'un feu de position arrière plutôt que de le concentrer en un point ?", "options": ["Pour être vu par les véhicules arrivant aussi bien de face que sur les côtés", "Pour chauffer le pare-chocs arrière", "Pour économiser le câblage"], "rep": "Pour être vu par les véhicules arrivant aussi bien de face que sur les côtés"},
+            {"id": "qdtr1_3", "q": "Quel est le comportement d'un faisceau lumineux parallèle traversant une lentille plan-concave divergente ?", "options": ["Il s'écarte de l'axe optique en semblant provenir du foyer image virtuel F'", "Il converge au foyer image F'", "Il est réfléchi vers la batterie"], "rep": "Il s'écarte de l'axe optique en semblant provenir du foyer image virtuel F'"},
+            {"id": "qdtr1_4", "q": "Quel type de lentille divergente est moulé directement sur la face interne des optiques de feux arrière de semi-remorques ?", "options": ["Des micro-lentilles divergentes (optiques cylindriques ou biconcaves)", "Des miroirs sphériques", "Des filtres polarisants"], "rep": "Des micro-lentilles divergentes (optiques cylindriques ou biconcaves)"},
+            {"id": "qdtr1_5", "q": "Comment évolue l'angle de diffusion lumineuse si l'on remplace une lentille de vergence -5 δ par une lentille de vergence -18 δ ?", "options": ["L'angle de diffusion s'élargit considérablement", "L'angle se rétrécit", "La lumière devient bleue"], "rep": "L'angle de diffusion s'élargit considérablement"},
+            {"id": "qdtr1_6", "q": "Quel défaut de sécurité apparaît si un choc casse la lentille divergente d'un feu arrière et laisse la LED nue ?", "options": ["Le faisceau devient trop directif et n'est plus visible sous les angles latéraux réglementaires", "La LED grille instantanément", "Les clignotants s'inversent"], "rep": "Le faisceau devient trop directif et n'est plus visible sous les angles latéraux réglementaires"},
+            {"id": "qdtr1_7", "q": "Quel matériau plastique résistant aux intempéries et aux chocs est utilisé pour les optiques divergentes de feux arrière ?", "options": ["Le PMMA (Plexiglas) ou le polycarbonate teinté dans la masse", "Le verre ordinaire non trempé", "La céramique"], "rep": "Le PMMA (Plexiglas) ou le polycarbonate teinté dans la masse"},
+            {"id": "qdtr1_8", "q": "Dans les feux antibrouillard arrière, pourquoi combine-t-on une lentille convergente et des stries divergentes horizontales ?", "options": ["Pour étaler la lumière horizontalement sur toute la largeur de la chaussée sans éclairer le ciel", "Pour éclairer uniquement les panneaux d'autoroute", "Pour réduire la consommation électrique"], "rep": "Pour étaler la lumière horizontalement sur toute la largeur de la chaussée sans éclairer le ciel"},
+            {"id": "qdtr1_9", "q": "Quelle est la caractéristique géométrique d'une lentille divergente ?", "options": ["Ses bords sont plus épais que son centre", "Ses bords sont plus minces que son centre", "Elle est parfaitement plate"], "rep": "Ses bords sont plus épais que son centre"},
+            {"id": "qdtr1_10", "q": "Quelle loi de l'optique explique l'écartement des rayons vers l'extérieur lors du passage verre-air ?", "options": ["La loi de réfraction de Snell-Descartes", "La loi d'Ohm", "Le principe d'inertie"], "rep": "La loi de réfraction de Snell-Descartes"},
+        ],
+        "trous": [
+            ("1. Les feux arrière de poids lourds intègrent des lentilles .........", ["Choisir...", "divergentes", "planes"], "divergentes", "dtr_t1"),
+            ("2. Elles permettent d'......... le faisceau lumineux sur les côtés.", ["Choisir...", "étaler", "concentrer"], "étaler", "dtr_t2"),
+            ("3. Le véhicule reste ainsi ......... sous des angles latéraux importants.", ["Choisir...", "visible", "invisible"], "visible", "dtr_t3"),
+            ("4. Une lentille divergente possède des bords plus ......... que son centre.", ["Choisir...", "épais", "minces"], "épais", "dtr_t4"),
+            ("5. Les rayons émergents semblent provenir du foyer image virtuel .........", ["Choisir...", "F'", "F"], "F'", "dtr_t5"),
+            ("6. Plus la vergence C est négative, plus l'angle de diffusion est .........", ["Choisir...", "large", "étroit"], "large", "dtr_t6"),
+            ("7. Les optiques de feux sont moulées en ......... résistant aux chocs.", ["Choisir...", "PMMA", "carton"], "PMMA", "dtr_t7"),
+            ("8. La vergence C d'une lentille divergente est toujours .........", ["Choisir...", "négative", "positive"], "négative", "dtr_t8"),
+            ("9. Les feux antibrouillard étalent la lumière sur le plan .........", ["Choisir...", "horizontal", "vertical"], "horizontal", "dtr_t9"),
+            ("10. La déviation des rayons obéit à la loi de .........", ["Choisir...", "Descartes", "Joule"], "Descartes", "dtr_t10"),
+        ]
+    },
+    2: {
+        "questions": [
+            {"id": "qdtr2_1", "q": "Quel dispositif d'affichage moderne projeté sur le pare-brise utilise un ensemble de lentilles divergentes et convergentes pour afficher la vitesse au loin ?", "options": ["L'affichage tête haute (HUD - Head-Up Display)", "Le chronotachygraphe mécanique", "L'autoradio Bluetooth"], "rep": "L'affichage tête haute (HUD - Head-Up Display)"},
+            {"id": "qdtr2_2", "q": "Quel est le rôle du groupe optique comportant une lentille divergente dans un afficheur tête haute (HUD) de camion ou voiture ?", "options": ["Former une image virtuelle droite de la vitesse semblant flotter à 2 ou 3 mètres devant le pare-brise", "Projeter l'image sur le volant", "Éblouir le conducteur la nuit"], "rep": "Former une image virtuelle droite de la vitesse semblant flotter à 2 ou 3 mètres devant le pare-brise"},
+            {"id": "qdtr2_3", "q": "Pourquoi projette-t-on une image virtuelle éloignée (à 2,5 m) plutôt que de regarder le tableau de bord à 60 cm ?", "options": ["Pour éviter à l'œil du conducteur d'avoir à refaire la mise au point (accommodation) entre la route et le compteur", "Pour économiser du carburant", "Pour agrandir le pare-brise"], "rep": "Pour éviter à l'œil du conducteur d'avoir à refaire la mise au point (accommodation) entre la route et le compteur"},
+            {"id": "qdtr2_4", "q": "De quelle nature est l'image des chiffres de vitesse observée par le conducteur dans un système HUD ?", "options": ["Virtuelle et droite (à l'endroit)", "Réelle et renversée", "Floue sur les bords"], "rep": "Virtuelle et droite (à l'endroit)"},
+            {"id": "qdtr2_5", "q": "Quel défaut visuel d'un conducteur nécessite le port de verres correcteurs divergents pour lire nettement les panneaux routiers au loin ?", "options": ["La myopie", "L'hypermétropie", "La presbytie"], "rep": "La myopie"},
+            {"id": "qdtr2_6", "q": "Que risque un conducteur myope qui conduit de nuit sans ses lunettes à verres divergents ?", "options": ["Une perception tardive et floue des panneaux, des piétons et des distances de freinage", "Une vision trop perçante", "Un éblouissement par les feux rouges uniquement"], "rep": "Une perception tardive et floue des panneaux, des piétons et des distances de freinage"},
+            {"id": "qdtr2_7", "q": "Comment agit le verre divergent devant l'œil myope du conducteur ?", "options": ["Il fait diverger légèrement les rayons entrants pour repousser l'image nette sur la rétine", "Il rapproche l'image devant le cristallin", "Il filtre les rayons infrarouges"], "rep": "Il fait diverger légèrement les rayons entrants pour repousser l'image nette sur la rétine"},
+            {"id": "qdtr2_8", "q": "Si l'ordonnance optique d'un chauffeur indique une correction de -2,50 δ, quelle est la distance focale f' de ses verres divergents ?", "options": ["- 40 cm (-0,40 m)", "+ 40 cm (+0,40 m)", "- 2,50 m"], "rep": "- 40 cm (-0,40 m)"},
+            {"id": "qdtr2_9", "q": "Pourquoi les lentilles divergentes modernes pour la conduite de nuit reçoivent-elles un traitement antireflet ?", "options": ["Pour supprimer les halos lumineux autour des phares arrivant en face et améliorer le contraste", "Pour teinter les verres en noir", "Pour augmenter le poids des lunettes"], "rep": "Pour supprimer les halos lumineux autour des phares arrivant en face et améliorer le contraste"},
+            {"id": "qdtr2_10", "q": "Quelle relation relie la vergence C (en δ) et la distance focale f' (en m) du verre correcteur ?", "options": ["C = 1 / f'", "C = f' × 100", "C = 1 + f'"], "rep": "C = 1 / f'"},
+        ],
+        "trous": [
+            ("1. L'affichage tête haute (HUD) projette une image ......... devant le véhicule.", ["Choisir...", "virtuelle", "réelle"], "virtuelle", "dtr_t1"),
+            ("2. L'œil du conducteur n'a pas besoin de modifier son ......... entre route et vitesse.", ["Choisir...", "accommodation", "diamètre"], "accommodation", "dtr_t2"),
+            ("3. La ......... est le défaut visuel empêchant de voir nettement les panneaux au loin.", ["Choisir...", "myopie", "presbytie"], "myopie", "dtr_t3"),
+            ("4. On corrige la myopie avec des verres de lentilles .........", ["Choisir...", "divergentes", "convergentes"], "divergentes", "dtr_t4"),
+            ("5. Le verre divergent repousse l'image exactement sur la .........", ["Choisir...", "rétine", "cornée"], "rétine", "dtr_t5"),
+            ("6. Une correction de -2,50 δ correspond à une focale f' = ......... cm.", ["Choisir...", "-40", "+40"], "-40", "dtr_t6"),
+            ("7. Un traitement ......... élimine les halos des phares la nuit.", ["Choisir...", "antireflet", "polarisant"], "antireflet", "dtr_t7"),
+            ("8. La vergence d'un verre correcteur de myope est toujours .........", ["Choisir...", "négative", "positive"], "négative", "dtr_t8"),
+            ("9. La formule liant vergence et focale est C = 1 / .........", ["Choisir...", "f'", "2"], "f'", "dtr_t9"),
+            ("10. Le calcul des positions images repose sur la loi de .........", ["Choisir...", "Descartes", "Ohm"], "Descartes", "dtr_t10"),
+        ]
+    }
+}
+
+
+def mettre_a_jour_div_trans_matplotlib(sujet_idx):
+    """Banc d'essai optique lentilles divergentes adapté au Transport Routier."""
+    fig, ax = plt.subplots(figsize=(12, 6.2), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 250)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    if sujet_idx == 0:
+        vergence_am = st.session_state.get("slider_dtr_s0", -18.0)
+        angle_am = int(min(175, 65 + abs(vergence_am) * 4.5))
+        x0, y0 = 210.0, 130.0
+
+        ax.add_patch(patches.Rectangle((55, 85), 140, 90, facecolor="#1e3a8a", edgecolor="#38bdf8", lw=1.5))
+        ax.text(125, 130, "POIDS LOURD\n(Angle mort latéral)", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        ax.plot(list((x0, x0)), list((95, 165)), color="#38bdf8", lw=4)
+        ax.text(x0, 82, f"Optique Divergente (C = {vergence_am:.0f} δ)", color="#38bdf8", fontsize=7.5, fontweight="bold", ha="center")
+
+        dy_c = min(105.0, abs(vergence_am) * 4.4)
+        ax.fill(list((x0, 560, 560)), list((y0, y0 - dy_c, y0 + dy_c)), color="#22c55e", alpha=0.22)
+        ax.plot(list((x0, 560)), list((y0, y0 - dy_c)), color="#22c55e", lw=1.5, ls="--")
+        ax.plot(list((x0, 560)), list((y0, y0 + dy_c)), color="#22c55e", lw=1.5, ls="--")
+        ax.text(470, 130, "Zone cycliste\nsurveillée", color="#86efac", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        ax.text(25, 18, "SÉCURITÉ POIDS LOURDS : DÉTECTION D'ANGLE MORT PAR OPTIQUE DIVERGENTE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, f"Vergence frontale : C = {vergence_am:.0f} δ  |  Champ latéral surveillé : {angle_am}° (Cyclistes visibles)", color="#22c55e", fontsize=8, fontweight="bold")
+        st.session_state.dtr_mesure_courante = (f"C = {vergence_am:.0f} δ", f"Champ = {angle_am}°", "Image rétrécie", "ANGLE MORT OK")
+
+    elif sujet_idx == 1:
+        vergence_feu = st.session_state.get("slider_dtr_s1", -14.0)
+        angle_diff = int(min(170, 55 + abs(vergence_feu) * 4.8))
+        x0, y0 = 180.0, 130.0
+
+        ax.add_patch(patches.Rectangle((65, 112), 45, 36, facecolor="#ef4444", edgecolor="white"))
+        ax.text(87, 130, "LED AR", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        ax.plot(list((x0, x0)), list((55, 205)), color="#38bdf8", lw=4)
+        ax.text(x0, 44, f"Diffuseur Divergent (C = {vergence_feu:.0f} δ)", color="#38bdf8", fontsize=8, fontweight="bold", ha="center")
+
+        dy_end = min(105.0, abs(vergence_feu) * 4.5)
+        ax.fill(list((x0, 560, 560)), list((y0 - 25, y0 - dy_end, y0 + dy_end)), color="#ef4444", alpha=0.25)
+        for dy in [-25, -12, 12, 25]:
+            ax.plot(list((110, x0)), list((y0 + dy, y0 + dy)), color="#fca5a5", lw=1.8)
+            pente = (dy / 25.0) * (dy_end / 380.0)
+            ax.annotate("", xy=(560, y0 + dy + pente * 380.0), xytext=(x0, y0 + dy), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2))
+
+        ax.text(25, 18, "SIGNALISATION ARRIÈRE : DIFFUSION GRAND-ANGLE PAR LENTILLE DIVERGENTE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, f"Vergence diffuseur : C = {vergence_feu:.0f} δ  |  Angle de visibilité latérale : {angle_diff}°", color="#22c55e", fontsize=8, fontweight="bold")
+        st.session_state.dtr_mesure_courante = (f"C = {vergence_feu:.0f} δ", f"Angle = {angle_diff}°", "Diffusion large", "HOMOLOGUÉ")
+
+    else:
+        vergence_oeil = st.session_state.get("slider_dtr_s2", -2.5)
+        focale_cm = 100.0 / vergence_oeil
+        x0, y0 = 260.0, 130.0
+
+        ax.plot(list((20, 580)), list((y0, y0)), color="#64748b", lw=1.2, ls="-.")
+        ax.plot(list((x0, x0)), list((65, 195)), color="#38bdf8", lw=3.5)
+        ax.text(x0, 52, f"Verre Correcteur Myope (C = {vergence_oeil:.2f} δ)", color="#38bdf8", fontsize=8, fontweight="bold", ha="center")
+
+        ax.add_patch(patches.Circle((410, y0), 55, facecolor="#1e293b", edgecolor="#eab308", lw=2))
+        ax.text(410, 62, "Œil du conducteur (Rétine à droite)", color="#fde047", fontsize=8, fontweight="bold", ha="center")
+
+        for dy in [-32, 32]:
+            ax.plot(list((40, x0)), list((y0 + dy, y0 + dy)), color="#22c55e", lw=1.8)
+            dy_corn = dy * (1.0 + abs(vergence_oeil) * 0.08)
+            ax.plot(list((x0, 360)), list((y0 + dy, y0 + dy_corn)), color="#22c55e", lw=1.8)
+            ax.plot(list((360, 465)), list((y0 + dy_corn, y0)), color="#22c55e", lw=1.8)
+
+        ax.text(25, 18, "VISION DU CONDUCTEUR : CORRECTION DE LA MYOPIE PAR VERRE DIVERGENT", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, f"Correction : C = {vergence_oeil:.2f} δ  |  Focale f' = {focale_cm:.1f} cm  =>  Image des panneaux nette sur la rétine", color="#22c55e", fontsize=8, fontweight="bold")
+        st.session_state.dtr_mesure_courante = (f"C = {vergence_oeil:.2f} δ", f"f' = {focale_cm:.1f} cm", "Foyer sur rétine", "VISION NETTE")
+
+    return fig
+
+
+def afficher_atelier_div_trans(sujet_idx, verrouille=False):
+    if sujet_idx is None:
+        st.warning("Tirez d'abord au sort un sujet Transport Routier ci-dessus.")
+        return
+    banque = BANQUES_DIV_TRANS[sujet_idx]
+    cle_ordre = f"ordre_quiz_dtr_{sujet_idx}"
+    if cle_ordre not in st.session_state:
+        lq = list(banque["questions"])
+        random.shuffle(lq)
+        st.session_state[cle_ordre] = lq
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Technique Transport Routier (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state[cle_ordre], 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", ["Choisir..."] + q_data["options"], key=f"dtr_at6_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+    with col_t:
+        st.markdown("##### Synthèse Transport Routier (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in banque["trous"]:
+            c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", choix, key=f"{cle}_s{sujet_idx}", disabled=verrouille, label_visibility="collapsed")
+
+
+BANQUES_DIV_GEO = {
+    0: {
+        "questions": [
+            {"id": "qdg0_1", "q": "Quel rôle joue la lentille divergente interne placée dans le tube optique d'une station totale ou d'un théodolite ?", "options": ["Assurer la mise au point interne (focalisation sur le réticule) et augmenter le grossissement", "Bloquer le faisceau infrarouge", "Inverser la gauche et la droite"], "rep": "Assurer la mise au point interne (focalisation sur le réticule) et augmenter le grossissement"},
+            {"id": "qdg0_2", "q": "Comment appelle-t-on l'association optique composée d'un objectif convergent à l'avant et d'une lentille divergente à l'arrière (téléobjectif) ?", "options": ["Un système optique compact à longue distance focale équivalente", "Un microscope simple", "Un prisme de Porro"], "rep": "Un système optique compact à longue distance focale équivalente"},
+            {"id": "qdg0_3", "q": "Quel avantage essentiel procure la mise au point interne par lentille divergente mobile pour un géomètre sur le terrain ?", "options": ["Le tube de la lunette reste court, parfaitement équilibré et étanche à l'eau et aux poussières", "La station fonctionne sans batterie", "Le trépied devient inutile"], "rep": "Le tube de la lunette reste court, parfaitement équilibré et étanche à l'eau et aux poussières"},
+            {"id": "qdg0_4", "q": "Comment la lentille divergente interne modifie-t-elle le trajet des rayons convergents issus de l'objectif ?", "options": ["Elle réduit leur convergence et repousse le point focal exactement sur le plan du réticule", "Elle les fait diverger hors du tube", "Elle les colore en vert"], "rep": "Elle réduit leur convergence et repousse le point focal exactement sur le plan du réticule"},
+            {"id": "qdg0_5", "q": "Lorsque le géomètre passe d'un prisme proche (15 m) à un prisme lointain (400 m), que fait la lentille divergente interne ?", "options": ["Elle se translate le long de l'axe optique grâce à la molette de mise au point", "Elle tourne de 90°", "Elle sort du tube optique"], "rep": "Elle se translate le long de l'axe optique grâce à la molette de mise au point"},
+            {"id": "qdg0_6", "q": "Quel défaut optique des lentilles convergentes est corrigé par les lentilles divergentes en verre flint dans les doublets d'objectifs topographiques ?", "options": ["L'aberration chromatique (liserés colorés autour des mires et prismes)", "La pesanteur terrestre", "La réfraction atmosphérique"], "rep": "L'aberration chromatique (liserés colorés autour des mires et prismes)"},
+            {"id": "qdg0_7", "q": "Quel est le signe de la vergence C et de la distance focale f' de la lentille divergente interne ?", "options": ["Négatif (C < 0 et f' < 0)", "Positif (C > 0 et f' > 0)", "Nul"], "rep": "Négatif (C < 0 et f' < 0)"},
+            {"id": "qdg0_8", "q": "Quel instrument historique de topographie ou de reconnaissance utilise un objectif convergent et un oculaire divergent ?", "options": ["La lunette de Galilée (donnant directement une image droite)", "Le niveau à eau", "Le sextant à miroir"], "rep": "La lunette de Galilée (donnant directement une image droite)"},
+            {"id": "qdg0_9", "q": "Pourquoi un choc violent faisant dévier l'axe de la lentille divergente mobile fausse-t-il les mesures angulaires de la station totale ?", "options": ["Il introduit une erreur de collimation horizontale (décalage entre l'axe optique et l'axe mécanique)", "Il vide la mémoire interne", "Il change la fréquence du GPS"], "rep": "Il introduit une erreur de collimation horizontale (décalage entre l'axe optique et l'axe mécanique)"},
+            {"id": "qdg0_10", "q": "Comment corrige-t-on l'erreur de collimation d'une station totale sur le terrain ?", "options": ["Par une double visée (cercle gauche et cercle droit) ou une procédure de calibrage", "En nettoyant le trépied", "En changeant les piles"], "rep": "Par une double visée (cercle gauche et cercle droit) ou une procédure de calibrage"},
+        ],
+        "trous": [
+            ("1. Les stations totales modernes utilisent une lentille ......... interne mobile.", ["Choisir...", "divergente", "plane"], "divergente", "dgeo_t1"),
+            ("2. Ce dispositif assure la mise au point ......... en gardant un tube étanche.", ["Choisir...", "interne", "externe"], "interne", "dgeo_t2"),
+            ("3. L'association convergent + divergent permet d'allonger la focale dans un tube .........", ["Choisir...", "court", "souple"], "court", "dgeo_t3"),
+            ("4. La lentille divergente amène l'image nette exactement sur le .........", ["Choisir...", "réticule", "trépied"], "réticule", "dgeo_t4"),
+            ("5. Les verres divergents en flint corrigent les aberrations .........", ["Choisir...", "chromatiques", "thermiques"], "chromatiques", "dgeo_t5"),
+            ("6. La distance focale f' de la lentille divergente est toujours .........", ["Choisir...", "négative", "positive"], "négative", "dgeo_t6"),
+            ("7. La lunette de ......... utilise un oculaire divergent pour donner une image droite.", ["Choisir...", "Galilée", "Kepler"], "Galilée", "dgeo_t7"),
+            ("8. Un décentrement optique crée une erreur de ......... horizontale.", ["Choisir...", "collimation", "pesanteur"], "collimation", "dgeo_t8"),
+            ("9. On élimine cette erreur par une ......... visée (cercle gauche / cercle droit).", ["Choisir...", "double", "simple"], "double", "dgeo_t9"),
+            ("10. Le calcul optique repose sur la loi de .........", ["Choisir...", "Descartes", "Newton"], "Descartes", "dgeo_t10"),
+        ]
+    },
+    1: {
+        "questions": [
+            {"id": "qdg1_1", "q": "Quel composant optique équipe l'émetteur d'un niveau laser rotatif de chantier ou d'un scanner 3D terrestre ?", "options": ["Une lentille divergente cylindrique (lentille de Powell) ou conique étalant le point laser en ligne ou en plan", "Un prisme opaque", "Une loupe convergente simple"], "rep": "Une lentille divergente cylindrique (lentille de Powell) ou conique étalant le point laser en ligne ou en plan"},
+            {"id": "qdg1_2", "q": "Comment une lentille divergente cylindrique (ou lentille de Powell) transforme-t-elle un faisceau laser ponctuel ?", "options": ["Elle fait diverger le faisceau dans un seul plan pour projeter un trait laser rectiligne sur les murs et le sol", "Elle concentre le laser en un point microscopique", "Elle bloque le faisceau rouge"], "rep": "Elle fait diverger le faisceau dans un seul plan pour projeter un trait laser rectiligne sur les murs et le sol"},
+            {"id": "qdg1_3", "q": "Quel avantage apporte une lentille de Powell divergente par rapport à une simple baguette cylindrique en verre ?", "options": ["Elle répartit l'intensité lumineuse de manière uniforme sur toute la longueur de la ligne laser", "Elle consomme deux fois moins de piles", "Elle transforme le laser rouge en vert"], "rep": "Elle répartit l'intensité lumineuse de manière uniforme sur toute la longueur de la ligne laser"},
+            {"id": "qdg1_4", "q": "Dans un scanner laser 3D (LiDAR terrestre), pourquoi place-t-on un élargisseur de faisceau de Galilée (divergente + convergente) en sortie ?", "options": ["Pour réduire la divergence angulaire à longue distance et conserver un spot laser très fin à 100 mètres", "Pour colorer les façades des bâtiments", "Pour alourdir le scanner"], "rep": "Pour réduire la divergence angulaire à longue distance et conserver un spot laser très fin à 100 mètres"},
+            {"id": "qdg1_5", "q": "Comment évolue la largeur du trait laser projeté sur un mur à 10 m si l'on utilise une lentille divergente de vergence plus négative ?", "options": ["La longueur de la ligne laser projetée s'agrandit (angle d'ouverture plus large)", "La ligne se rétrécit en un point", "Le laser s'éteint"], "rep": "La longueur de la ligne laser projetée s'agrandit (angle d'ouverture plus large)"},
+            {"id": "qdg1_6", "q": "Quelle précaution de sécurité laser doit respecter le géomètre lors de l'utilisation d'un laser de nivellement à ligne divergente ?", "options": ["Ne jamais diriger le faisceau vers les yeux (classe 2 ou 3R) et placer le plan laser hors hauteur des yeux", "Regarder directement dans la lentille pour vérifier la diode", "Retirer la lentille divergente pour augmenter la puissance"], "rep": "Ne jamais diriger le faisceau vers les yeux (classe 2 ou 3R) et placer le plan laser hors hauteur des yeux"},
+            {"id": "qdg1_7", "q": "Pourquoi un faisceau laser étalé en ligne par une lentille divergente est-il moins dangereux pour l'œil qu'un faisceau ponctuel de même puissance ?", "options": ["Parce que la puissance totale est répartie sur toute la longueur du trait (densité d'énergie plus faible)", "Parce que la lentille absorbe tout le laser", "Parce que le laser devient infrarouge"], "rep": "Parce que la puissance totale est répartie sur toute la longueur du trait (densité d'énergie plus faible)"},
+            {"id": "qdg1_8", "q": "Si un faisceau laser traverse une lentille divergente de focale f' = -20 mm (-0,020 m), quelle est sa vergence C ?", "options": ["- 50 dioptries (δ)", "+ 50 dioptries (δ)", "- 20 dioptries (δ)"], "rep": "- 50 dioptries (δ)"},
+            {"id": "qdg1_9", "q": "Quelle surface de référence matérialise un laser lignes muni d'une lentille divergente horizontale et d'une verticale ?", "options": ["Deux plans orthogonaux (un plan horizontal de nivellement et un plan vertical d'alignement)", "Une sphère en 3D", "Un cercle au plafond"], "rep": "Deux plans orthogonaux (un plan horizontal de nivellement et un plan vertical d'alignement)"},
+            {"id": "qdg1_10", "q": "Quelle loi de l'optique gouverne l'étalement angulaire du faisceau à travers la lentille divergente ?", "options": ["La loi de réfraction de Snell-Descartes", "La loi d'Ohm", "Le principe d'Archimède"], "rep": "La loi de réfraction de Snell-Descartes"},
+        ],
+        "trous": [
+            ("1. Un laser de chantier utilise une lentille ......... cylindrique pour tracer une ligne.", ["Choisir...", "divergente", "plane"], "divergente", "dgeo_t1"),
+            ("2. La lentille de ......... assure une luminosité uniforme sur tout le trait laser.", ["Choisir...", "Powell", "Newton"], "Powell", "dgeo_t2"),
+            ("3. Le faisceau ponctuel s'......... dans un plan pour former une ligne droite.", ["Choisir...", "étale", "concentre"], "étale", "dgeo_t3"),
+            ("4. Plus la vergence C est négative, plus l'angle d'ouverture est .........", ["Choisir...", "large", "étroit"], "large", "dgeo_t4"),
+            ("5. Une focale f' = -20 mm correspond à une vergence de ......... dioptries.", ["Choisir...", "-50", "+50"], "-50", "dgeo_t5"),
+            ("6. L'étalement réduit la ......... de puissance par rapport à un point fixe.", ["Choisir...", "densité", "couleur"], "densité", "dgeo_t6"),
+            ("7. Un scanner 3D utilise un élargisseur de ......... (divergente + convergente).", ["Choisir...", "Galilée", "Kepler"], "Galilée", "dgeo_t7"),
+            ("8. Il ne faut jamais diriger le faisceau vers les .........", ["Choisir...", "yeux", "murs"], "yeux", "dgeo_t8"),
+            ("9. La distance focale f' d'une lentille divergente est toujours .........", ["Choisir...", "négative", "positive"], "négative", "dgeo_t9"),
+            ("10. La déviation des rayons obéit à la loi de .........", ["Choisir...", "Descartes", "Joule"], "Descartes", "dgeo_t10"),
+        ]
+    },
+    2: {
+        "questions": [
+            {"id": "qdg2_1", "q": "Dans les objectifs grand-angle utilisés en photogrammétrie terrestre ou par drone pour relever des façades dans des rues étroites, quel est le rôle de la lentille divergente frontale ?", "options": ["Augmenter l'angle de champ (architecture rétrofocus) pour photographier toute la façade avec peu de recul", "Zoomer sur le toit uniquement", "Transformer la photo en noir et blanc"], "rep": "Augmenter l'angle de champ (architecture rétrofocus) pour photographier toute la façade avec peu de recul"},
+            {"id": "qdg2_2", "q": "Comment appelle-t-on un objectif photogrammétrique doté d'une lentille divergente à l'avant permettant de conserver un espace suffisant devant le capteur ?", "options": ["Un objectif rétrofocus (grand-angle)", "Un télescope de Newton", "Un microscope optique"], "rep": "Un objectif rétrofocus (grand-angle)"},
+            {"id": "qdg2_3", "q": "Quel défaut géométrique induit par la lentille divergente frontale le géomètre doit-il impérativement calibrer avant un levé 3D ?", "options": ["La distorsion radiale en barillet sur les bords du capteur", "La température du capteur", "La vitesse du vent"], "rep": "La distorsion radiale en barillet sur les bords du capteur"},
+            {"id": "qdg2_4", "q": "Quelle image virtuelle la lentille divergente frontale forme-t-elle avant les lentilles convergentes de focalisation ?", "options": ["Une image virtuelle, droite et rétrécie de la scène", "Une image réelle et agrandie", "Une image inversée"], "rep": "Une image virtuelle, droite et rétrécie de la scène"},
+            {"id": "qdg2_5", "q": "Pourquoi le calibrage de la distorsion d'une lentille divergente grand-angle est-il crucial en topographie ?", "options": ["Pour que les arêtes droites d'un bâtiment n'apparaissent pas courbées sur le plan côté", "Pour augmenter le nombre de pixels", "Pour économiser la batterie du drone"], "rep": "Pour que les arêtes droites d'un bâtiment n'apparaissent pas courbées sur le plan côté"},
+            {"id": "qdg2_6", "q": "Quelle est la caractéristique géométrique d'une lentille ménisque divergente utilisée en photogrammétrie ?", "options": ["Ses bords sont plus épais que son centre (vergence C < 0)", "Son centre est plus épais que ses bords", "Ses deux faces sont planes"], "rep": "Ses bords sont plus épais que son centre (vergence C < 0)"},
+            {"id": "qdg2_7", "q": "Dans un objectif grand-angle, comment évolue le champ angulaire couvert lorsque la distance focale équivalente diminue (ex : 14 mm au lieu de 35 mm) ?", "options": ["Le champ angulaire couvert augmente fortement", "Le champ angulaire diminue", "Le champ reste identique"], "rep": "Le champ angulaire couvert augmente fortement"},
+            {"id": "qdg2_8", "q": "Quel paramètre interne le logiciel de photogrammétrie détermine-t-il lors du calibrage de l'objectif ?", "options": ["La distance principale (focale calibrée), le point principal d'autocollimation et les coefficients de distorsion", "La marque du trépied", "L'altitude du soleil"], "rep": "La distance principale (focale calibrée), le point principal d'autocollimation et les coefficients de distorsion"},
+            {"id": "qdg2_9", "q": "Quel est le signe du grandissement γ de l'image virtuelle donnée par la lentille divergente frontale ?", "options": ["Positif et compris entre 0 et 1 (0 < γ < 1)", "Négatif (-2)", "Supérieur à +10"], "rep": "Positif et compris entre 0 et 1 (0 < γ < 1)"},
+            {"id": "qdg2_10", "q": "Quelle loi optique régit le tracé des rayons à travers l'ensemble des lentilles divergentes et convergentes de l'objectif ?", "options": ["La loi de réfraction de Snell-Descartes", "La loi d'Ohm", "Le théorème de Bernoulli"], "rep": "La loi de réfraction de Snell-Descartes"},
+        ],
+        "trous": [
+            ("1. Un objectif grand-angle photogrammétrique place une lentille ......... à l'avant.", ["Choisir...", "divergente", "plane"], "divergente", "dgeo_t1"),
+            ("2. Cette architecture optique s'appelle un montage .........", ["Choisir...", "rétrofocus", "afocal"], "rétrofocus", "dgeo_t2"),
+            ("3. Elle permet de photographier une façade entière avec peu de .........", ["Choisir...", "recul", "lumière"], "recul", "dgeo_t3"),
+            ("4. Le logiciel doit corriger la ......... radiale en barillet.", ["Choisir...", "distorsion", "réflexion"], "distorsion", "dgeo_t4"),
+            ("5. L'image virtuelle formée par la lentille divergente est droite et .........", ["Choisir...", "rétrécie", "agrandie"], "rétrécie", "dgeo_t5"),
+            ("6. Les bords d'une lentille divergente sont plus ......... que son centre.", ["Choisir...", "épais", "minces"], "épais", "dgeo_t6"),
+            ("7. La vergence C d'une lentille divergente est toujours .........", ["Choisir...", "négative", "positive"], "négative", "dgeo_t7"),
+            ("8. Le grandissement vérifie toujours 0 < γ < .........", ["Choisir...", "1", "10"], "1", "dgeo_t8"),
+            ("9. Le calibrage garantit que les murs droits restent ......... sur le plan.", ["Choisir...", "droits", "courbes"], "droits", "dgeo_t9"),
+            ("10. Le calcul des rayons repose sur la loi de .........", ["Choisir...", "Descartes", "Joule"], "Descartes", "dgeo_t10"),
+        ]
+    }
+}
+
+
+def mettre_a_jour_div_geo_matplotlib(sujet_idx):
+    """Banc d'essai optique lentilles divergentes adapté au Géomètre Topographe."""
+    fig, ax = plt.subplots(figsize=(12, 6.2), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 250)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    if sujet_idx == 0:
+        pos_int_mm = st.session_state.get("slider_dgeo_s0", 60.0)
+        cible_mm = 60.0
+        x0, y0 = 150.0, 125.0
+        x_div = x0 + pos_int_mm * 2.8
+        x_ret = 480.0
+
+        ax.plot(list((20, 580)), list((y0, y0)), color="#64748b", lw=1.2, ls="-.")
+        ax.plot(list((x0, x0)), list((45, 205)), color="#22c55e", lw=4)
+        ax.text(x0, 34, "Objectif Station Totale", color="#86efac", fontsize=8, fontweight="bold", ha="center")
+
+        ax.plot(list((x_div, x_div)), list((70, 180)), color="#38bdf8", lw=3)
+        ax.text(x_div, 58, f"Lentille Divergente\n({pos_int_mm:.0f} mm)", color="#38bdf8", fontsize=7.5, fontweight="bold", ha="center")
+
+        ax.plot(list((x_ret, x_ret)), list((80, 170)), color="#eab308", lw=3)
+        ax.text(x_ret, 68, "Réticule", color="#fde047", fontsize=7.5, fontweight="bold", ha="center")
+
+        ecart = abs(pos_int_mm - cible_mm)
+        for dy in [-45, 45]:
+            ax.plot(list((35, x0)), list((y0 + dy, y0 + dy)), color="#ef4444", lw=1.8)
+            dy_mid = dy * 0.52
+            ax.plot(list((x0, x_div)), list((y0 + dy, y0 + dy_mid)), color="#ef4444", lw=1.8)
+            y_end = y0 if ecart <= 1.0 else (y0 + (dy / 45.0) * (pos_int_mm - cible_mm) * 1.4)
+            ax.plot(list((x_div, x_ret)), list((y0 + dy_mid, y_end)), color="#ef4444", lw=1.8)
+
+        statut = "FOCALISATION STATION TOTALE OK : Image nette sur la croix du réticule !" if ecart <= 1.0 else f"DÉFOCALISÉ (Écart {ecart:.0f} mm) : Réglez la lentille interne à 60 mm."
+        c_stat = "#22c55e" if ecart <= 1.0 else "#ef4444"
+        ax.text(25, 18, "STATION TOTALE : MISE AU POINT INTERNE PAR LENTILLE DIVERGENTE MOBILE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, statut, color=c_stat, fontsize=8, fontweight="bold")
+        st.session_state.dgeo_mesure_courante = (f"Pos = {pos_int_mm:.0f} mm", "Cible = 60 mm", f"Écart = {ecart:.0f} mm", "VISÉE OK" if ecart <= 1.0 else "PARALLAXE")
+
+    elif sujet_idx == 1:
+        vergence_pow = st.session_state.get("slider_dgeo_s1", -35.0)
+        dist_mur_m = st.session_state.get("slider_dgeo_d_s1", 10.0)
+        angle_rad = math.radians(min(120, 30 + abs(vergence_pow) * 1.6))
+        longueur_ligne_m = 2.0 * dist_mur_m * math.tan(angle_rad / 2.0)
+
+        x0, y0 = 150.0, 130.0
+        ax.add_patch(patches.Rectangle((55, 115), 40, 30, facecolor="#ef4444", edgecolor="white"))
+        ax.text(75, 130, "Laser", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        ax.plot(list((x0, x0)), list((65, 195)), color="#38bdf8", lw=3.5)
+        ax.text(x0, 52, f"Lentille Powell (C = {vergence_pow:.0f} δ)", color="#38bdf8", fontsize=8, fontweight="bold", ha="center")
+
+        xm = 250.0 + (dist_mur_m / 25.0) * 280.0
+        dy_m = min(95.0, (longueur_ligne_m / 40.0) * 95.0)
+        ax.plot(list((95, x0)), list((y0, y0)), color="#ef4444", lw=2.5)
+        ax.fill(list((x0, xm, xm)), list((y0, y0 - dy_m, y0 + dy_m)), color="#ef4444", alpha=0.25)
+        ax.plot(list((xm, xm)), list((y0 - dy_m, y0 + dy_m)), color="#22c55e", lw=4)
+        ax.text(xm + 8, y0, f"Mur ({dist_mur_m:.0f} m)\nLigne = {longueur_ligne_m:.1f} m", color="#86efac", fontsize=7.5, fontweight="bold", va="center")
+
+        ax.text(25, 18, "NIVELLEMENT LASER : ÉTALEMENT EN LIGNE PAR LENTILLE DIVERGENTE DE POWELL", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, f"Vergence : C = {vergence_pow:.0f} δ | Distance mur : D = {dist_mur_m:.0f} m  =>  Longueur du trait laser : L = {longueur_ligne_m:.1f} m", color="#22c55e", fontsize=8, fontweight="bold")
+        st.session_state.dgeo_mesure_courante = (f"C = {vergence_pow:.0f} δ", f"Mur = {dist_mur_m:.0f} m", f"Ligne = {longueur_ligne_m:.1f} m", "TRAIT UNIFORME")
+
+    else:
+        vergence_rf = st.session_state.get("slider_dgeo_s2", -20.0)
+        champ_rf = int(min(140, 60 + abs(vergence_rf) * 2.8))
+        x0, y0 = 180.0, 130.0
+
+        ax.add_patch(patches.Rectangle((75, 100), 90, 60, facecolor="#1e3a8a", edgecolor="#38bdf8", lw=1.5))
+        ax.text(120, 130, "Chambre\nRétrofocus", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        ax.plot(list((x0, x0)), list((85, 175)), color="#38bdf8", lw=4)
+        ax.text(x0, 74, f"Divergente Avant (C = {vergence_rf:.0f} δ)", color="#38bdf8", fontsize=7.5, fontweight="bold", ha="center")
+
+        dy_f = min(100.0, abs(vergence_rf) * 3.5)
+        ax.fill(list((x0, 520, 520)), list((y0, y0 - dy_f, y0 + dy_f)), color="#22c55e", alpha=0.22)
+        ax.plot(list((520, 520)), list((30, 230)), color="#eab308", lw=4)
+        ax.text(532, 130, "Façade\nrelevée", color="#fde047", fontsize=8, fontweight="bold", va="center")
+
+        ax.text(25, 18, "PHOTOGRAMMÉTRIE ARCHITECTURALE : OBJECTIF GRAND-ANGLE RÉTROFOCUS", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, f"Vergence frontale : C = {vergence_rf:.0f} δ  |  Angle de champ couvert : {champ_rf}° (Relevé sans recul)", color="#22c55e", fontsize=8, fontweight="bold")
+        st.session_state.dgeo_mesure_courante = (f"C = {vergence_rf:.0f} δ", f"Champ = {champ_rf}°", "Rétrofocus", "FAÇADE COMPLÈTE")
+
+    return fig
+
+
+def afficher_atelier_div_geo(sujet_idx, verrouille=False):
+    if sujet_idx is None:
+        st.warning("Tirez d'abord au sort une mission Géomètre ci-dessus.")
+        return
+    banque = BANQUES_DIV_GEO[sujet_idx]
+    cle_ordre = f"ordre_quiz_dgeo_{sujet_idx}"
+    if cle_ordre not in st.session_state:
+        lq = list(banque["questions"])
+        random.shuffle(lq)
+        st.session_state[cle_ordre] = lq
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Technique Géomètre Topographe (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state[cle_ordre], 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", ["Choisir..."] + q_data["options"], key=f"dgeo_at7_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+    with col_t:
+        st.markdown("##### Synthèse Géomètre Topographe (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in banque["trous"]:
+            c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", choix, key=f"{cle}_s{sujet_idx}", disabled=verrouille, label_visibility="collapsed")
+
+
+
+
 
 
 BANQUES_DIV_TP = {
@@ -1633,11 +2013,6 @@ with tab1:
         except Exception: st.warning("L'image 'dollond_doublet.jpg' est introuvable.")
         st.info("**John Dollond (1758)**\n* Invente le doublet achromatique en accolant une lentille convergente (crown) et une divergente (flint) pour supprimer les défauts de couleur.")
 
-    st.markdown("---")
-    if "hd_verrouille_tab1" not in st.session_state: st.session_state.hd_verrouille_tab1 = False
-    verrou_hd = st.session_state.hd_verrouille_tab1
-    afficher_atelier_hist_div(verrouille=verrou_hd)
-
     st.write("---")
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
@@ -1662,17 +2037,34 @@ with tab1:
         ts_hd = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
         st.success(f"ATELIER 1 SCELLÉ | Note : {tot_s:.1f} / 20")
         html_hd = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport Atelier 1 - {n_eleve}</title>
-        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}</style></head>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}.status-correct{{color:#10b981;font-weight:bold}}.status-incorrect{{color:#ef4444;font-weight:bold}}</style></head>
         <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Atelier 1 : Histoire des Lentilles Divergentes</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_hd}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
         <p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
-        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th></tr></thead><tbody>"""
+        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"""
         for num, q in enumerate(st.session_state.get("ordre_quiz_hd_aleatoire", []), 1):
             qid_c = q["id"]
-            html_hd += f"<tr><td>{num}</td><td>{q['q']}</td><td>{st.session_state.get(f'hd_at1_g_{qid_c}', 'Choisir...')}</td><td>{q['rep']}</td></tr>"
-        html_hd += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th></tr></thead><tbody>"
-        verif_hd = [("1. Bords plus ......... que le centre.", "épais", "hd_t1"), ("2. Empereur romain .........", "Néron", "hd_t2"), ("3. Défaut visuel : .........", "myopie", "hd_t3"), ("4. Savant de 1604 : .........", "Kepler", "hd_t4"), ("5. Savant de 1609 : .........", "Galilée", "hd_t5"), ("6. Image .........", "droite", "hd_t6"), ("7. En ......... de la rétine.", "avant", "hd_t7"), ("8. Sur la .........", "rétine", "hd_t8"), ("9. Doublet de .........", "Dollond", "hd_t9"), ("10. Aberrations .........", "chromatiques", "hd_t10")]
+            saisie_q = st.session_state.get(f"hd_at1_g_{qid_c}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie_q) == str(q["rep"]) else "INCORRECT"
+            v_cls = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_hd += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_q}</td><td>{q['rep']}</td><td class='{v_cls}'>{v_lbl}</td></tr>"
+        html_hd += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"
+        verif_hd = [
+            ("1. Une lentille divergente possède des bords plus ......... que son centre.", "épais", "hd_t1"),
+            ("2. L'empereur romain ......... utilisait une émeraude concave pour voir de loin.", "Néron", "hd_t2"),
+            ("3. Les verres divergents corrigent le défaut visuel appelé la .........", "myopie", "hd_t3"),
+            ("4. En 1604, Johannes ......... explique le fonctionnement des verres concaves.", "Kepler", "hd_t4"),
+            ("5. En 1609, ......... utilise une lentille divergente comme oculaire de sa lunette.", "Galilée", "hd_t5"),
+            ("6. La lunette de Galilée donne directement une image ......... (à l'endroit).", "droite", "hd_t6"),
+            ("7. Dans un œil myope, l'image se forme en ......... de la rétine.", "avant", "hd_t7"),
+            ("8. Le verre divergent repousse l'image sur la ......... pour la rendre nette.", "rétine", "hd_t8"),
+            ("9. En 1758, John ......... associe lentille convergente et divergente.", "Dollond", "hd_t9"),
+            ("10. Ce doublet supprime les aberrations ......... dans les objectifs photo.", "chromatiques", "hd_t10"),
+        ]
         for idx_t, (en, rep, cle) in enumerate(verif_hd, 1):
-            html_hd += f"<tr><td>{idx_t}</td><td>{en}</td><td>{st.session_state.get(cle, 'Choisir...')}</td><td>{rep}</td></tr>"
+            saisie_t = st.session_state.get(cle, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t) == str(rep) else "INCORRECT"
+            v_cls_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_hd += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t}</td><td>{rep}</td><td class='{v_cls_t}'>{v_lbl_t}</td></tr>"
         html_hd += "</tbody></table></body></html>"
         st.download_button("Télécharger le rapport officiel de l'Atelier 1 (.html)", data=html_hd, file_name=preparer_nom_fichier("Rapport_Atelier_1_Histoire_Divergentes").replace(".txt", ".html"), mime="text/html", use_container_width=True)
 
@@ -1713,11 +2105,7 @@ with tab2:
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    case_certif_rd = st.checkbox(
-        "Je certifie avoir complété l'Atelier 2 (Règles de tracé - Divergente).",
-        key="certif_rd2",
-        disabled=verrou_rd
-    )
+    case_certif_rd = st.checkbox("Je certifie avoir complété l'Atelier 2 (Règles de tracé - Divergente).", key="certif_rd2", disabled=verrou_rd)
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_exp_rd2", use_container_width=True, disabled=verrou_rd):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
@@ -1735,57 +2123,18 @@ with tab2:
         scr1, scr2, tot_s = st.session_state.score_rd2_p1, st.session_state.score_rd2_p2, st.session_state.score_final_rd2
         ts_rd = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
         st.success(f"ATELIER 2 SCELLÉ | Note : {tot_s:.1f} / 20")
-
-        html_rd = f"""<!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>Rapport Atelier 2 - {n_eleve}</title>
-            <style>
-                body {{ font-family: Arial, sans-serif; margin: 30px; background: #f8fafc; color: #1e293b; }}
-                .header-box {{ background: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                .score-badge {{ position: absolute; top: 20px; right: 20px; background: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; border: 2px solid white; }}
-                table {{ width: 100%; border-collapse: collapse; margin-bottom: 25px; background: white; }}
-                th {{ background: #0f172a; color: white; padding: 10px; text-align: left; }}
-                td {{ padding: 10px; border-bottom: 1px solid #e2e8f0; }}
-                .status-correct {{ color: #10b981; font-weight: bold; }}
-                .status-incorrect {{ color: #ef4444; font-weight: bold; }}
-            </style>
-        </head>
-        <body>
-            <div class="header-box">
-                <h1>Professeur Laurent GALLET</h1>
-                <p>Atelier 2 : Règles de Tracé des Lentilles Divergentes</p>
-                <p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_rd}</p>
-                <div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div>
-            </div>
-            <p style="background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong>
-            </p>
-            <table>
-                <thead>
-                    <tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr>
-                </thead>
-                <tbody>
-        """
-
+        html_rd = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport Atelier 2 - {n_eleve}</title>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}.status-correct{{color:#10b981;font-weight:bold}}.status-incorrect{{color:#ef4444;font-weight:bold}}</style></head>
+        <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Atelier 2 : Règles de Tracé des Lentilles Divergentes</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_rd}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
+        <p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
+        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"""
         for num, q in enumerate(st.session_state.get("ordre_quiz_rd_aleatoire", []), 1):
             qid_c = q["id"]
             saisie_q = st.session_state.get(f"rd_at2_g_{qid_c}", "Choisir...")
             v_lbl = "CORRECT" if str(saisie_q) == str(q["rep"]) else "INCORRECT"
             v_cls = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_rd += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_q}</td><td>{q['rep']}</td><td class='{v_cls}'>{v_lbl}</td></tr>"
-
-        html_rd += """
-                </tbody>
-            </table>
-            <table>
-                <thead>
-                    <tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr>
-                </thead>
-                <tbody>
-        """
-
+        html_rd += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"
         verif_rd = [
             ("1. Le symbole d'une lentille divergente porte des flèches pointant vers l'.........", "intérieur", "rd_t1"),
             ("2. Les foyers F et F' sont ......... par rapport à une lentille convergente.", "inversés", "rd_t2"),
@@ -1798,27 +2147,14 @@ with tab2:
             ("9. La vergence C d'une lentille divergente est toujours .........", "négative", "rd_t9"),
             ("10. Le grandissement γ vérifie toujours 0 < γ < .........", "1", "rd_t10"),
         ]
-
         for idx_t, (en, rep, cle) in enumerate(verif_rd, 1):
             saisie_t = st.session_state.get(cle, "Choisir...")
             v_lbl_t = "CORRECT" if str(saisie_t) == str(rep) else "INCORRECT"
             v_cls_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
             html_rd += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t}</td><td>{rep}</td><td class='{v_cls_t}'>{v_lbl_t}</td></tr>"
+        html_rd += "</tbody></table></body></html>"
+        st.download_button("Télécharger le rapport officiel de l'Atelier 2 (.html)", data=html_rd, file_name=preparer_nom_fichier("Rapport_Atelier_2_Regles_Divergente").replace(".txt", ".html"), mime="text/html", use_container_width=True)
 
-        html_rd += """
-                </tbody>
-            </table>
-        </body>
-        </html>
-        """
-
-        st.download_button(
-            "Télécharger le rapport officiel de l'Atelier 2 (.html)",
-            data=html_rd,
-            file_name=preparer_nom_fichier("Rapport_Atelier_2_Regles_Divergente").replace(".txt", ".html"),
-            mime="text/html",
-            use_container_width=True
-        )
 
 
 with tab3:
@@ -2162,12 +2498,6 @@ with tab4:
             st.dataframe(df_dm, use_container_width=True, hide_index=True)
 
     st.write("---")
-    if "dm_verrouille_tab4" not in st.session_state: st.session_state.dm_verrouille_tab4 = False
-    verrou_dm = st.session_state.dm_verrouille_tab4
-    sujet_actif_dm = st.session_state.get("sujet_dm_tire", None)
-    afficher_atelier_div_maint(sujet_actif_dm, verrouille=verrou_dm)
-
-    st.write("---")
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
@@ -2192,18 +2522,22 @@ with tab4:
         st.success(f"ATELIER 4 SCELLÉ | Note : {tot_s:.1f} / 20")
         bq = BANQUES_DIV_MAINT[sujet_actif_dm]
         html_dm = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport Atelier 4 - {n_eleve}</title>
-        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}</style></head>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}.status-correct{{color:#10b981;font-weight:bold}}.status-incorrect{{color:#ef4444;font-weight:bold}}</style></head>
         <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Atelier 4 : Maintenance (Lentilles Divergentes) - {sujets_div_maint[sujet_actif_dm]['titre']}</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_dm}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
         <p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
-        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th></tr></thead><tbody>"""
+        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"""
         for num, q in enumerate(st.session_state.get(f"ordre_quiz_dm_{sujet_actif_dm}", []), 1):
             qid_curr = q["id"]
             saisie_curr = st.session_state.get(f"dm_at4_g_{qid_curr}", "Choisir...")
-            html_dm += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_curr}</td><td>{q['rep']}</td></tr>"
-        html_dm += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th></tr></thead><tbody>"
+            v_lbl = "CORRECT" if str(saisie_curr) == str(q["rep"]) else "INCORRECT"
+            v_cls = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_dm += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_curr}</td><td>{q['rep']}</td><td class='{v_cls}'>{v_lbl}</td></tr>"
+        html_dm += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"
         for idx_t, (en, _, rep, cle) in enumerate(bq["trous"], 1):
             saisie_t_curr = st.session_state.get(f"{cle}_s{sujet_actif_dm}", "Choisir...")
-            html_dm += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t_curr}</td><td>{rep}</td></tr>"
+            v_lbl_t = "CORRECT" if str(saisie_t_curr) == str(rep) else "INCORRECT"
+            v_cls_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_dm += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t_curr}</td><td>{rep}</td><td class='{v_cls_t}'>{v_lbl_t}</td></tr>"
         html_dm += "</tbody></table></body></html>"
         st.download_button("Télécharger le rapport officiel de l'Atelier 4 (.html)", data=html_dm, file_name=preparer_nom_fichier("Rapport_Atelier_4_Maintenance_Divergentes").replace(".txt", ".html"), mime="text/html", use_container_width=True)
 
@@ -2269,12 +2603,6 @@ with tab5:
             st.dataframe(df_dtp, use_container_width=True, hide_index=True)
 
     st.write("---")
-    if "dtp_verrouille_tab5" not in st.session_state: st.session_state.dtp_verrouille_tab5 = False
-    verrou_dtp = st.session_state.dtp_verrouille_tab5
-    sujet_actif_dtp = st.session_state.get("sujet_dtp_tire", None)
-    afficher_atelier_div_tp(sujet_actif_dtp, verrouille=verrou_dtp)
-
-    st.write("---")
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
@@ -2299,25 +2627,248 @@ with tab5:
         st.success(f"ATELIER 5 SCELLÉ | Note : {tot_s:.1f} / 20")
         bq = BANQUES_DIV_TP[sujet_actif_dtp]
         html_dtp = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport Atelier 5 - {n_eleve}</title>
-        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}</style></head>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}.status-correct{{color:#10b981;font-weight:bold}}.status-incorrect{{color:#ef4444;font-weight:bold}}</style></head>
         <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Atelier 5 : Travaux Publics (Lentilles Divergentes) - {sujets_div_tp[sujet_actif_dtp]['titre']}</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_dtp}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
         <p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
-        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th></tr></thead><tbody>"""
+        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"""
         for num, q in enumerate(st.session_state.get(f"ordre_quiz_dtp_{sujet_actif_dtp}", []), 1):
             qid_curr = q["id"]
             saisie_curr = st.session_state.get(f"dtp_at5_g_{qid_curr}", "Choisir...")
-            html_dtp += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_curr}</td><td>{q['rep']}</td></tr>"
-        html_dtp += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th></tr></thead><tbody>"
+            v_lbl = "CORRECT" if str(saisie_curr) == str(q["rep"]) else "INCORRECT"
+            v_cls = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_dtp += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_curr}</td><td>{q['rep']}</td><td class='{v_cls}'>{v_lbl}</td></tr>"
+        html_dtp += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"
         for idx_t, (en, _, rep, cle) in enumerate(bq["trous"], 1):
             saisie_t_curr = st.session_state.get(f"{cle}_s{sujet_actif_dtp}", "Choisir...")
-            html_dtp += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t_curr}</td><td>{rep}</td></tr>"
+            v_lbl_t = "CORRECT" if str(saisie_t_curr) == str(rep) else "INCORRECT"
+            v_cls_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_dtp += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t_curr}</td><td>{rep}</td><td class='{v_cls_t}'>{v_lbl_t}</td></tr>"
         html_dtp += "</tbody></table></body></html>"
         st.download_button("Télécharger le rapport officiel de l'Atelier 5 (.html)", data=html_dtp, file_name=preparer_nom_fichier("Rapport_Atelier_5_TP_Divergentes").replace(".txt", ".html"), mime="text/html", use_container_width=True)
 
 
+with tab6:
+    st.header("Atelier 6 : Applications dans le domaine du Transport Routier")
+
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 16px;">Les lentilles divergentes au service de la visibilité et de la sécurité routière :</p>
+        <p style="margin-bottom: 0; line-height: 1.6;">Dans le transport routier, les lentilles divergentes (<b><i>f'</i> &lt; 0</b>) équipent les <strong>caméras d'angle mort à 170°</strong>, les <strong>diffuseurs de feux arrière</strong> et les <strong>verres correcteurs de myopie</strong>.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    sujets_div_trans = [
+        {"titre": "Cas Transport N°1 : Caméra d'angle mort grand-angle sur poids lourd", "img": "div_trans_anglemort.jpg", "leg": "Caméra latérale grand-angle détectant les cyclistes et piétons", "exp": "**Principe :** La lentille divergente frontale forme une image **virtuelle, droite et rétrécie** élargissant le champ de vision jusqu'à **175°** autour du véhicule."},
+        {"titre": "Cas Transport N°2 : Diffuseur divergent de feux de position arrière", "img": "div_trans_feu.jpg", "leg": "Optique arrière à lentilles divergentes étalant le faisceau LED", "exp": "**Principe :** La lentille divergente écarte les rayons lumineux de l'axe optique pour garantir une visibilité latérale homologuée."},
+        {"titre": "Cas Transport N°3 : Correction de la myopie du conducteur (Verre divergent)", "img": "div_trans_myopie.jpg", "leg": "Action d'un verre divergent devant un œil myope", "exp": "**Principe :** Le verre divergent (<i>C</i> = 1 / <i>f'</i> &lt; 0) fait diverger légèrement les rayons incidents pour repousser l'image nette des panneaux sur la **rétine**."}
+    ]
+
+    if "sujet_dtr_tire" not in st.session_state:
+        st.session_state.sujet_dtr_tire = None
+
+    if st.button("TIRER AU SORT UN SUJET TRANSPORT (DIVERGENTES)", key="btn_tirage_dtr", use_container_width=True):
+        choix = [i for i in range(3) if i != st.session_state.sujet_dtr_tire]
+        st.session_state.sujet_dtr_tire = random.choice(choix)
+        st.session_state.mesures_dtr_log = []
+        st.rerun()
+
+    if st.session_state.sujet_dtr_tire is None:
+        st.info("Cliquez sur le bouton ci-dessus pour tirer au sort un cas pratique du Transport Routier.")
+    else:
+        idx_dtr = st.session_state.sujet_dtr_tire
+        data_dtr = sujets_div_trans[idx_dtr]
+        st.success(f"Étude attribuée : **{data_dtr['titre']}**")
+        st.markdown(data_dtr["exp"], unsafe_allow_html=True)
+
+        c_img, c_bd = st.columns(2)
+        with c_img:
+            try: st.image(data_dtr["img"], caption=data_dtr["leg"], use_container_width=True)
+            except Exception: st.warning(f"L'image '{data_dtr['img']}' est introuvable.")
+        with c_bd:
+            try: st.image("bd_div_trans.jpg", caption="La pause BD : Avec les optiques grand-angle, rien n'échappe au conducteur !", use_container_width=True)
+            except Exception: st.warning("L'image 'bd_div_trans.jpg' est introuvable.")
+
+        st.markdown("---")
+        if "mesures_dtr_log" not in st.session_state: st.session_state.mesures_dtr_log = []
+        if idx_dtr == 0:
+            st.slider("Vergence C de la caméra d'angle mort (δ) :", -24.0, -6.0, -18.0, 1.0, key="slider_dtr_s0")
+        elif idx_dtr == 1:
+            st.slider("Vergence C du diffuseur de feu arrière (δ) :", -20.0, -4.0, -14.0, 1.0, key="slider_dtr_s1")
+        else:
+            st.slider("Correction optique du conducteur myope C (δ) :", -6.0, -0.5, -2.5, 0.25, key="slider_dtr_s2")
+
+        if st.button("ENREGISTRER CE CONTRÔLE TRANSPORT", key="btn_rel_dtr", use_container_width=True):
+            if "dtr_mesure_courante" in st.session_state:
+                st.session_state.mesures_dtr_log.append(st.session_state.dtr_mesure_courante)
+                st.rerun()
+
+        st.pyplot(mettre_a_jour_div_trans_matplotlib(idx_dtr), use_container_width=True)
+        if st.session_state.mesures_dtr_log:
+            df_dtr = pd.DataFrame(st.session_state.mesures_dtr_log, columns=["Paramètre", "Configuration", "Mesure optique", "Diagnostic"])
+            st.dataframe(df_dtr, use_container_width=True, hide_index=True)
+
+    st.write("---")
+    if "dtr_verrouille_tab6" not in st.session_state: st.session_state.dtr_verrouille_tab6 = False
+    verrou_dtr = st.session_state.dtr_verrouille_tab6
+    sujet_actif_dtr = st.session_state.get("sujet_dtr_tire", None)
+    afficher_atelier_div_trans(sujet_actif_dtr, verrouille=verrou_dtr)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_dtr = st.checkbox("Je certifie avoir complété l'Atelier 6 (Transport Routier - Divergentes).", key="certif_dtr6", disabled=verrou_dtr)
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 6", key="btn_exp_dtr6", use_container_width=True, disabled=verrou_dtr):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif sujet_actif_dtr is None or not case_certif_dtr:
+            st.error("Action refusée : Tirez au sort un sujet et cochez la case de certification.")
+        else:
+            bq = BANQUES_DIV_TRANS[sujet_actif_dtr]
+            sc_q = sum(1.0 for q in st.session_state.get(f"ordre_quiz_dtr_{sujet_actif_dtr}", []) if st.session_state.get(f"dtr_at6_g_{q['id']}") == q["rep"])
+            sc_t = sum(1.0 for _, _, rep, cle in bq["trous"] if st.session_state.get(f"{cle}_s{sujet_actif_dtr}") == rep)
+            st.session_state.score_dtr6_p1, st.session_state.score_dtr6_p2, st.session_state.score_final_dtr6 = sc_q, sc_t, sc_q + sc_t
+            st.session_state.dtr_verrouille_tab6 = True
+            st.rerun()
+
+    if st.session_state.get("dtr_verrouille_tab6", False) and sujet_actif_dtr is not None:
+        scr1, scr2, tot_s = st.session_state.score_dtr6_p1, st.session_state.score_dtr6_p2, st.session_state.score_final_dtr6
+        ts_dtr = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER 6 SCELLÉ | Note : {tot_s:.1f} / 20")
+        bq = BANQUES_DIV_TRANS[sujet_actif_dtr]
+        html_dtr = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport Atelier 6 - {n_eleve}</title>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}.status-correct{{color:#10b981;font-weight:bold}}.status-incorrect{{color:#ef4444;font-weight:bold}}</style></head>
+        <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Atelier 6 : Transport Routier (Lentilles Divergentes) - {sujets_div_trans[sujet_actif_dtr]['titre']}</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_dtr}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
+        <p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
+        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"""
+        for num, q in enumerate(st.session_state.get(f"ordre_quiz_dtr_{sujet_actif_dtr}", []), 1):
+            qid_curr = q["id"]
+            saisie_curr = st.session_state.get(f"dtr_at6_g_{qid_curr}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie_curr) == str(q["rep"]) else "INCORRECT"
+            v_cls = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_dtr += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_curr}</td><td>{q['rep']}</td><td class='{v_cls}'>{v_lbl}</td></tr>"
+        html_dtr += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"
+        for idx_t, (en, _, rep, cle) in enumerate(bq["trous"], 1):
+            saisie_t_curr = st.session_state.get(f"{cle}_s{sujet_actif_dtr}", "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t_curr) == str(rep) else "INCORRECT"
+            v_cls_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_dtr += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t_curr}</td><td>{rep}</td><td class='{v_cls_t}'>{v_lbl_t}</td></tr>"
+        html_dtr += "</tbody></table></body></html>"
+        st.download_button("Télécharger le rapport officiel de l'Atelier 6 (.html)", data=html_dtr, file_name=preparer_nom_fichier("Rapport_Atelier_6_Transport_Divergentes").replace(".txt", ".html"), mime="text/html", use_container_width=True)
 
 
+with tab7:
+    st.header("Atelier 7 : Applications dans le domaine du Géomètre Topographe")
 
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 16px;">Les lentilles divergentes dans les instruments de topographie et de relevé 3D :</p>
+        <p style="margin-bottom: 0; line-height: 1.6;">Chez le géomètre topographe, les lentilles divergentes assurent la <strong>mise au point interne étanche</strong> des stations totales, l'<strong>étalement en ligne</strong> des lasers de chantier (lentille de Powell) et le <strong>grand champ</strong> des chambres photogrammétriques rétrofocus.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    sujets_div_geo = [
+        {"titre": "Mission N°1 : Station Totale à lentille divergente interne mobile", "img": "div_geo_station.jpg", "leg": "Schéma optique interne d'une lunette de station totale", "exp": "**Principe :** La translation interne d'une lentille divergente (<i>f'</i> &lt; 0) ajuste la netteté sur le réticule tout en maintenant un tube court et hermétique."},
+        {"titre": "Mission N°2 : Laser lignes à lentille divergente de Powell", "img": "div_geo_laser.jpg", "leg": "Lentille divergente cylindrique étalant un point laser en ligne", "exp": "**Principe :** La lentille divergente de Powell étale le faisceau laser dans un seul plan pour projeter un trait lumineux rectiligne uniforme sur le bâtiment."},
+        {"titre": "Mission N°3 : Chambre photogrammétrique grand-angle rétrofocus", "img": "div_geo_retrofocus.jpg", "leg": "Objectif grand-angle rétrofocus pour relevé de façades", "exp": "**Principe :** Une lentille divergente frontale élargit l'angle de vue jusqu'à **130°** pour relever des façades dans des rues étroites."}
+    ]
+
+    if "sujet_dgeo_tire" not in st.session_state:
+        st.session_state.sujet_dgeo_tire = None
+
+    if st.button("TIRER AU SORT UNE MISSION GÉOMÈTRE (DIVERGENTES)", key="btn_tirage_dgeo", use_container_width=True):
+        choix = [i for i in range(3) if i != st.session_state.sujet_dgeo_tire]
+        st.session_state.sujet_dgeo_tire = random.choice(choix)
+        st.session_state.mesures_dgeo_log = []
+        st.rerun()
+
+    if st.session_state.sujet_dgeo_tire is None:
+        st.info("Cliquez sur le bouton ci-dessus pour tirer au sort une mission de Géomètre Topographe.")
+    else:
+        idx_dgeo = st.session_state.sujet_dgeo_tire
+        data_dgeo = sujets_div_geo[idx_dgeo]
+        st.success(f"Mission attribuée : **{data_dgeo['titre']}**")
+        st.markdown(data_dgeo["exp"], unsafe_allow_html=True)
+
+        c_img, c_bd = st.columns(2)
+        with c_img:
+            try: st.image(data_dgeo["img"], caption=data_dgeo["leg"], use_container_width=True)
+            except Exception: st.warning(f"L'image '{data_dgeo['img']}' est introuvable.")
+        with c_bd:
+            try: st.image("bd_div_geo.jpg", caption="La pause BD : Quand la ligne laser traverse tout le bureau d'études !", use_container_width=True)
+            except Exception: st.warning("L'image 'bd_div_geo.jpg' est introuvable.")
+
+        st.markdown("---")
+        if "mesures_dgeo_log" not in st.session_state: st.session_state.mesures_dgeo_log = []
+        if idx_dgeo == 0:
+            st.slider("Position de la lentille divergente interne (mm) [Cible = 60 mm] :", 40.0, 80.0, 60.0, 1.0, key="slider_dgeo_s0")
+        elif idx_dgeo == 1:
+            c1_p, c2_p = st.columns(2)
+            with c1_p: st.slider("Vergence lentille de Powell C (δ) :", -50.0, -15.0, -35.0, 1.0, key="slider_dgeo_s1")
+            with c2_p: st.slider("Distance au mur D (mètres) :", 2.0, 25.0, 10.0, 1.0, key="slider_dgeo_d_s1")
+        else:
+            st.slider("Vergence de la lentille divergente frontale C (δ) :", -28.0, -8.0, -20.0, 1.0, key="slider_dgeo_s2")
+
+        if st.button("ENREGISTRER CE POINT TOPOGRAPHIQUE", key="btn_rel_dgeo", use_container_width=True):
+            if "dgeo_mesure_courante" in st.session_state:
+                st.session_state.mesures_dgeo_log.append(st.session_state.dgeo_mesure_courante)
+                st.rerun()
+
+        st.pyplot(mettre_a_jour_div_geo_matplotlib(idx_dgeo), use_container_width=True)
+        if st.session_state.mesures_dgeo_log:
+            df_dgeo = pd.DataFrame(st.session_state.mesures_dgeo_log, columns=["Paramètre 1", "Paramètre 2", "Calcul optique", "Validation"])
+            st.dataframe(df_dgeo, use_container_width=True, hide_index=True)
+
+    st.write("---")
+    if "dgeo_verrouille_tab7" not in st.session_state: st.session_state.dgeo_verrouille_tab7 = False
+    verrou_dgeo = st.session_state.dgeo_verrouille_tab7
+    sujet_actif_dgeo = st.session_state.get("sujet_dgeo_tire", None)
+    afficher_atelier_div_geo(sujet_actif_dgeo, verrouille=verrou_dgeo)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_dgeo = st.checkbox("Je certifie avoir complété l'Atelier 7 (Géomètre Topographe - Divergentes).", key="certif_dgeo7", disabled=verrou_dgeo)
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 7", key="btn_exp_dgeo7", use_container_width=True, disabled=verrou_dgeo):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif sujet_actif_dgeo is None or not case_certif_dgeo:
+            st.error("Action refusée : Tirez au sort une mission et cochez la case de certification.")
+        else:
+            bq = BANQUES_DIV_GEO[sujet_actif_dgeo]
+            sc_q = sum(1.0 for q in st.session_state.get(f"ordre_quiz_dgeo_{sujet_actif_dgeo}", []) if st.session_state.get(f"dgeo_at7_g_{q['id']}") == q["rep"])
+            sc_t = sum(1.0 for _, _, rep, cle in bq["trous"] if st.session_state.get(f"{cle}_s{sujet_actif_dgeo}") == rep)
+            st.session_state.score_dgeo7_p1, st.session_state.score_dgeo7_p2, st.session_state.score_final_dgeo7 = sc_q, sc_t, sc_q + sc_t
+            st.session_state.dgeo_verrouille_tab7 = True
+            st.rerun()
+
+    if st.session_state.get("dgeo_verrouille_tab7", False) and sujet_actif_dgeo is not None:
+        scr1, scr2, tot_s = st.session_state.score_dgeo7_p1, st.session_state.score_dgeo7_p2, st.session_state.score_final_dgeo7
+        ts_dgeo = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER 7 SCELLÉ | Note : {tot_s:.1f} / 20")
+        bq = BANQUES_DIV_GEO[sujet_actif_dgeo]
+        html_dgeo = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport Atelier 7 - {n_eleve}</title>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}.status-correct{{color:#10b981;font-weight:bold}}.status-incorrect{{color:#ef4444;font-weight:bold}}</style></head>
+        <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Atelier 7 : Géomètre Topographe (Lentilles Divergentes) - {sujets_div_geo[sujet_actif_dgeo]['titre']}</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_dgeo}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
+        <p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
+        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"""
+        for num, q in enumerate(st.session_state.get(f"ordre_quiz_dgeo_{sujet_actif_dgeo}", []), 1):
+            qid_curr = q["id"]
+            saisie_curr = st.session_state.get(f"dgeo_at7_g_{qid_curr}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie_curr) == str(q["rep"]) else "INCORRECT"
+            v_cls = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_dgeo += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_curr}</td><td>{q['rep']}</td><td class='{v_cls}'>{v_lbl}</td></tr>"
+        html_dgeo += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"
+        for idx_t, (en, _, rep, cle) in enumerate(bq["trous"], 1):
+            saisie_t_curr = st.session_state.get(f"{cle}_s{sujet_actif_dgeo}", "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t_curr) == str(rep) else "INCORRECT"
+            v_cls_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_dgeo += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t_curr}</td><td>{rep}</td><td class='{v_cls_t}'>{v_lbl_t}</td></tr>"
+        html_dgeo += "</tbody></table></body></html>"
+        st.download_button("Télécharger le rapport officiel de l'Atelier 7 (.html)", data=html_dgeo, file_name=preparer_nom_fichier("Rapport_Atelier_7_Geometre_Divergentes").replace(".txt", ".html"), mime="text/html", use_container_width=True)
 
 
 
