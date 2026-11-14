@@ -2017,6 +2017,9 @@ with tab1:
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    if "hd_verrouille_tab1" not in st.session_state:
+        st.session_state.hd_verrouille_tab1 = False
+    verrou_hd = st.session_state.hd_verrouille_tab1
 
     case_certif_hd = st.checkbox("Je certifie avoir complété l'Atelier 1 (Histoire des lentilles divergentes).", key="certif_hd1", disabled=verrou_hd)
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_exp_hd1", use_container_width=True, disabled=verrou_hd):
