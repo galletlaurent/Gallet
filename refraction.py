@@ -3140,9 +3140,8 @@ with tab6:
 
     st.markdown("---")
 
-     dict_quiz_opt6, dict_trous_opt6, enonces_q_opt6, enonces_t_opt6 = afficher_questions_optique6(
-         verrouille=st.session_state.get("opt6_verrouille", False)
-     )
+    dict_quiz_opt6, dict_trous_opt6, enonces_q_opt6, enonces_t_opt6 = afficher_questions_optique6(
+         verrouille=st.session_state.get("opt6_verrouille", False))
 
 
     st.write("---")
@@ -3883,9 +3882,8 @@ with tab8:
 
     st.markdown("---")
 
-     dict_quiz_opt8, dict_trous_opt8, enonces_q_opt8, enonces_t_opt8 = afficher_questions_optique8(
-         verrouille=st.session_state.get("opt8_verrouille", False)
-     )
+    dict_quiz_opt8, dict_trous_opt8, enonces_q_opt8, enonces_t_opt8 = afficher_questions_optique8(
+         verrouille=st.session_state.get("opt8_verrouille", False))
 
 
     st.write("---")
