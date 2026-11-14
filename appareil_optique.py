@@ -619,10 +619,12 @@ def mettre_a_jour_app_geo_matplotlib(sujet_idx):
         ax.add_patch(patches.Rectangle((55, 95), 110, 60, facecolor="#eab308", edgecolor="white", lw=1.5))
         ax.text(110, 125, "Lunette 30×\nStation Totale", color="#0f172a", fontsize=8.5, fontweight="bold", ha="center", va="center")
 
+
         # Cercle de visée agrandi à droite
         ax.add_patch(patches.Circle((410, 125), 72, facecolor="#1e293b", edgecolor="#38bdf8", lw=2.5))
-        ax.plot([338, 482], [125, 125], color="#ef4444", lw=1.5)
-        ax.plot([410, 410], [53, 197], color="#ef4444", lw=1.5)
+        ax.plot([345, 475], [125, 125], color="#ef4444", lw=1.5)
+        ax.plot([410, 410], [60, 190], color="#ef4444", lw=1.5)
+
 
         decal = 18 if parallaxe else 0
         ax.add_patch(patches.Polygon([[410 + decal, 125], [398 + decal, 102], [422 + decal, 102]], facecolor="#22c55e", edgecolor="white"))
@@ -649,8 +651,9 @@ def mettre_a_jour_app_geo_matplotlib(sujet_idx):
         ax.text(300, 60, f"Drone H = {h_vol:.0f} m\nf' = {foc_mm:.0f} mm", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
 
         demi_larg = min(230.0, (h_vol / foc_mm) * 35.0)
-        ax.fill([300, 300 - demi_larg, 300 + demi_larg], [78, 195, 195], color="#38bdf8", alpha=0.22)
-        ax.plot([300 - demi_larg, 300 + demi_larg], [195, 195], color="#22c55e", lw=4)
+        ax.fill([300, 300 - demi_larg, 300 + demi_larg], [78, 192, 192], color="#38bdf8", alpha=0.22)
+        ax.plot([300 - demi_larg, 300 + demi_larg], [192, 192], color="#22c55e", lw=4)
+
         ax.text(300, 215, f"Emprise au sol  |  Résolution GSD = {gsd_cm:.2f} cm/pixel", color="#fde047", fontsize=8.5, fontweight="bold", ha="center")
 
         ax.text(25, 18, "PHOTOGRAMMÉTRIE DRONE : CALCUL DE LA RÉSOLUTION AU SOL GSD = (H × p) / f'", color="#38bdf8", fontsize=9, fontweight="bold")
@@ -665,7 +668,8 @@ def mettre_a_jour_app_geo_matplotlib(sujet_idx):
 
         x_mur = 190.0 + (dist_scan / 150.0) * 310.0
         ax.fill([150, x_mur, x_mur], [125, 125 - spot_mm * 0.6, 125 + spot_mm * 0.6], color="#22c55e", alpha=0.35)
-        ax.plot([x_mur, x_mur], [60, 190], color="#cbd5e1", lw=5)
+        ax.plot([x_mur, x_mur], [65, 185], color="#cbd5e1", lw=5)
+
         ax.text(x_mur, 202, f"Façade à {dist_scan:.0f} m\nSpot = {spot_mm:.1f} mm", color="#fde047", fontsize=8, fontweight="bold", ha="center")
 
         ax.text(25, 18, "SCANNER LASER 3D TERRESTRE : DIVERGENCE DU FAISCEAU ET TAILLE DU SPOT", color="#38bdf8", fontsize=9, fontweight="bold")
@@ -802,9 +806,10 @@ def mettre_a_jour_app_trans_matplotlib(sujet_idx):
         ax.add_patch(patches.Rectangle((60, 95), 95, 60, facecolor="#1e3a8a", edgecolor="white", lw=1.5))
         ax.text(107, 125, "Cabine PL\nRétroviseur", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
 
-        ax.fill(, [125, 125 - dy, 125 + dy], color=c_r, alpha=0.25)
-        ax.plot(, [125, 125 - dy], color=c_r, lw=2)
-        ax.plot(, [125, 125 + dy], color=c_r, lw=2)
+
+        ax.fill([155, 520, 520], [125, 125 - dy, 125 + dy], color=c_r, alpha=0.25)
+        ax.plot([155, 520], [125, 125 - dy], color=c_r, lw=2)
+        ax.plot([155, 520], [125, 125 + dy], color=c_r, lw=2)
 
         ax.text(25, 18, "RÉTROVISION POIDS LOURDS : MIROIR PLAN VS MIROIR CONVEXE GRAND-ANGLE", color="#38bdf8", fontsize=9, fontweight="bold")
         ax.text(25, 34, msg_r, color=c_r, fontsize=8, fontweight="bold")
@@ -818,10 +823,11 @@ def mettre_a_jour_app_trans_matplotlib(sujet_idx):
         ax.add_patch(patches.Rectangle((55, 100), 90, 50, facecolor="#1e3a8a", edgecolor="#38bdf8", lw=1.5))
         ax.text(100, 125, "Caméra ADAS\nPare-brise", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
 
-        ax.plot(,, color="#94a3b8", lw=1.5, ls="--")
+        ax.plot([145, 505], [125, 125], color="#94a3b8", lw=1.5, ls="--")
         y_dev = 125 - ecart_deg * 18.0
         c_adas = "#22c55e" if abs(ecart_deg) <= 0.3 else "#ef4444"
-        ax.plot(, [125, y_dev], color=c_adas, lw=3)
+        ax.plot([145, 505], [125, y_dev], color=c_adas, lw=3)
+
 
         ax.add_patch(patches.Rectangle((505, 85), 25, 80, facecolor="#f8fafc", edgecolor="#eab308", lw=1.5))
         ax.text(517, 180, "Cible\n80 m", color="#fde047", fontsize=8, fontweight="bold", ha="center")
@@ -842,11 +848,12 @@ def mettre_a_jour_app_trans_matplotlib(sujet_idx):
         if "croisement" in mode_phare:
             ax.add_patch(patches.Rectangle((145, 65), 10, 60, facecolor="#ef4444", edgecolor="white"))
             ax.text(150, 55, "Volet", color="#ef4444", fontsize=7.5, fontweight="bold", ha="center")
-            ax.fill([85, 210, 540, 540, 210], [125, 125, 195, 130, 65], color="#fde047", alpha=0.35)
+            ax.fill([210, 530, 530], [125, 125, 195], color="#fde047", alpha=0.35)
             msg_p = "FEUX DE CROISEMENT : Le volet bloque le haut ; la lentille projette le faisceau sous l'horizon."
         else:
-            ax.fill([85, 210, 540, 540, 210], [125, 185, 210, 65, 65], color="#fde047", alpha=0.45)
+            ax.fill([210, 530, 530], [125, 65, 185], color="#fde047", alpha=0.45)
             msg_p = "FEUX DE ROUTE (BI-LED) : Volet escamoté ; plein faisceau longue portée activé."
+
 
         ax.text(25, 18, "PROJECTEUR LENTICULAIRE : LENTILLE CONVERGENTE ET VOLET DE COUPURE", color="#38bdf8", fontsize=9, fontweight="bold")
         ax.text(25, 34, msg_p, color="#22c55e", fontsize=8, fontweight="bold")
@@ -986,9 +993,10 @@ def mettre_a_jour_app_tp_matplotlib(sujet_idx):
         ax.text(100, 122, "Niveau Optique\n(K = 100)", color="#0f172a", fontsize=8, fontweight="bold", ha="center", va="center")
 
         x_mire = 180.0 + (dist_m / 80.0) * 330.0
-        ax.plot([145, x_mire],, color="#22c55e", lw=2)
+        ax.plot([145, x_mire], [122, 122], color="#22c55e", lw=2)
         ax.plot([145, x_mire], [122, 122 - dist_m * 0.45], color="#38bdf8", lw=1.2, ls="--")
         ax.plot([145, x_mire], [122, 122 + dist_m * 0.45], color="#38bdf8", lw=1.2, ls="--")
+
 
         ax.add_patch(patches.Rectangle((x_mire, 65), 24, 130, facecolor="#f8fafc", edgecolor="#ef4444", lw=1.5))
         ax.text(x_mire + 12, 208, f"Mire parlante\nD = {dist_m:.0f} m", color="#fde047", fontsize=8, fontweight="bold", ha="center")
@@ -1009,8 +1017,9 @@ def mettre_a_jour_app_tp_matplotlib(sujet_idx):
 
         dy = 85 if angle_v == 120 else 28
         ax.fill([150, 520, 520], [125, 125 - dy, 125 + dy], color=c_itv, alpha=0.25)
-        ax.plot([60, 540], [40, 40], color="#94a3b8", lw=4)
-        ax.plot([60, 540], [210, 210], color="#94a3b8", lw=4)
+        ax.plot([150, 520], [40, 40], color="#94a3b8", lw=4)
+        ax.plot([150, 520], [210, 210], color="#94a3b8", lw=4)
+
         ax.text(300, 224, "Canalisation d'assainissement enterrée", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center")
 
         ax.text(25, 18, "ASSAINISSEMENT TP : CAMÉRA D'INSPECTION TÉLÉVISÉE (ITV) GRAND-ANGLE", color="#38bdf8", fontsize=9, fontweight="bold")
@@ -1161,16 +1170,17 @@ def mettre_a_jour_app_maint_matplotlib(sujet_idx):
         ax.text(300, 64, "Gaine optique (n2 = 1,45)  /  Cœur de la fibre (n1 = 1,48)", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center")
 
         if angle_inc <= angle_limite:
-            ax.plot([75, 165, 255, 345, 435, 525], [125, 95, 155, 95, 155, 125], color="#22c55e", lw=3)
+            ax.plot([60, 180, 300, 420, 540], [125, 95, 155, 95, 125], color="#22c55e", lw=3)
             msg = f"RÉFLEXION TOTALE INTERNE (Angle = {angle_inc:.0f}° ≤ 24°) : Image transmise sans perte !"
             c_m = "#22c55e"
             diag = "TRANSMISSION OK"
         else:
-            ax.plot([75, 165], [125, 95], color="#ef4444", lw=3)
-            ax.plot([165, 225], [95, 65], color="#ef4444", lw=2, ls="--")
+            ax.plot([60, 220], [125, 95], color="#ef4444", lw=3)
+            ax.plot([220, 310], [95, 62], color="#ef4444", lw=2, ls="--")
             msg = f"PERTE DE SIGNAL (Rayon de courbure trop serré : {angle_inc:.0f}° > 24°) : La lumière sort de la fibre !"
             c_m = "#ef4444"
             diag = "COURBURE EXCESSIVE"
+
 
         ax.text(25, 18, "ENDOSCOPIE INDUSTRIELLE : GUIDAGE DE LA LUMIÈRE PAR FIBRE OPTIQUE", color="#38bdf8", fontsize=9, fontweight="bold")
         ax.text(25, 34, msg, color=c_m, fontsize=8, fontweight="bold")
@@ -1186,9 +1196,10 @@ def mettre_a_jour_app_maint_matplotlib(sujet_idx):
         ax.text(300, 65, f"Loupe Binoculaire\n(Oculaires 10x + Obj {g_obj}x)", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
 
         y_carte = 85 + dist_trav
-        ax.plot([265, 300], [85, y_carte], color="#eab308", lw=2)
-        ax.plot([335, 300], [85, y_carte], color="#eab308", lw=2)
+        ax.plot([255, 295], [85, y_carte], color="#eab308", lw=2)
+        ax.plot([345, 305], [85, y_carte], color="#eab308", lw=2)
         ax.add_patch(patches.Rectangle((180, y_carte), 240, 18, facecolor="#15803d", edgecolor="white"))
+
         ax.text(300, y_carte + 9, "Carte électronique CMS", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
 
         ax.text(25, 18, "CONTRÔLE ÉLECTRONIQUE : LOUPE BINOCULAIRE STÉRÉOSCOPIQUE", color="#38bdf8", fontsize=9, fontweight="bold")
@@ -1728,6 +1739,7 @@ def dessiner_appareil_photo_matplotlib():
     ax.plot([xf_prime, xf_prime], [y0 - 5, y0 + 5], color="#38bdf8", lw=1.5)
     ax.text(xf_prime, y0 - 10, "F'", color="#38bdf8", fontsize=8, fontweight="bold", ha="center")
 
+    # Objectif convergent
     # Objectif convergent
     ax.plot([x_lentille, x_lentille], [25, h - 25], color="#3b82f6", lw=3, zorder=3)
     ax.plot([x_lentille - 6, x_lentille, x_lentille + 6], [33, 25, 33], color="#3b82f6", lw=2)
