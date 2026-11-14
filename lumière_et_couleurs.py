@@ -687,6 +687,54 @@ def afficher_questions_optique1(verrouille=False):
 
     return dict_quiz_opt1, dict_trous_opt1
 
+def afficher_atelier_hist_lumiere(verrouille=False):
+    """Affiche le Quiz (10 questions) et le Texte à trous (10 cases) de l'Atelier 1 (Histoire de la lumière)."""
+    questions_hl = [
+        {"id": "qhl1", "q": "Quel savant grec antique a énoncé les premières lois de la réflexion sur les miroirs dans son traité Catoptrique ?", "options": ["Euclide", "Galilée", "Isaac Newton"], "rep": "Euclide"},
+        {"id": "qhl2", "q": "Quel savant arabe du XIe siècle (Livre de l'Optique) a prouvé que la lumière entre dans l'œil depuis les objets éclairés ?", "options": ["Ibn al-Haytham (Alhazen)", "Aristote", "Pythagore"], "rep": "Ibn al-Haytham (Alhazen)"},
+        {"id": "qhl3", "q": "En quelle année Isaac Newton a-t-il démontré avec un prisme que la lumière blanche est composée de 7 couleurs ?", "options": ["1666", "1492", "1889"], "rep": "1666"},
+        {"id": "qhl4", "q": "Quel astronome danois a mesuré pour la première fois que la vitesse de la lumière est finie en observant les satellites de Jupiter en 1676 ?", "options": ["Ole Rømer", "Nicolas Copernic", "Johannes Kepler"], "rep": "Ole Rømer"},
+        {"id": "qhl5", "q": "Quelle est la valeur exacte de la vitesse de propagation de la lumière dans le vide ?", "options": ["299 792 458 m/s (environ 300 000 km/s)", "340 m/s", "1 500 m/s"], "rep": "299 792 458 m/s (environ 300 000 km/s)"},
+        {"id": "qhl6", "q": "Quel physicien britannique a prouvé en 1801 la nature ondulatoire de la lumière grâce à son expérience des fentes d'interférence ?", "options": ["Thomas Young", "Blaise Pascal", "André-Marie Ampère"], "rep": "Thomas Young"},
+        {"id": "qhl7", "q": "Quel physicien écossais a unifié l'électricité, le magnétisme et la lumière en démontrant que la lumière est une onde électromagnétique ?", "options": ["James Clerk Maxwell", "Michael Faraday", "James Watt"], "rep": "James Clerk Maxwell"},
+        {"id": "qhl8", "q": "Quel physicien allemand a découvert en 1814 les fines raies noires d'absorption dans le spectre du Soleil ?", "options": ["Joseph von Fraunhofer", "Wilhelm Röntgen", "Heinrich Hertz"], "rep": "Joseph von Fraunhofer"},
+        {"id": "qhl9", "q": "Comment appelle-t-on les grains d'énergie lumineuse introduits par Max Planck et Albert Einstein en 1905 ?", "options": ["Les photons", "Les électrons", "Les neutrons"], "rep": "Les photons"},
+        {"id": "qhl10", "q": "Quelle expérience inventée par Isaac Newton permet de recomposer la lumière blanche en faisant tourner rapidement un disque coloré ?", "options": ["Le disque de Newton", "Le pendule de Foucault", "La pile de Volta"], "rep": "Le disque de Newton"},
+    ]
+
+    if "ordre_quiz_hl_aleatoire" not in st.session_state:
+        random.shuffle(questions_hl)
+        st.session_state.ordre_quiz_hl_aleatoire = questions_hl
+
+    champs_hl = [
+        ("1. Au XIe siècle, ......... démontre que l'œil reçoit la lumière des objets.", ["Choisir...", "Alhazen", "Aristote"], "Alhazen", "hl_t1"),
+        ("2. En 1666, Isaac ......... décompose la lumière blanche avec un prisme.", ["Choisir...", "Newton", "Galilée"], "Newton", "hl_t2"),
+        ("3. La lumière blanche est composée d'une infinité de radiations .........", ["Choisir...", "colorées", "sonores"], "colorées", "hl_t3"),
+        ("4. En 1676, Ole ......... prouve que la lumière a une vitesse finie.", ["Choisir...", "Rømer", "Descartes"], "Rømer", "hl_t4"),
+        ("5. Dans le vide, la lumière se propage à environ 300 000 ......... par seconde.", ["Choisir...", "kilomètres", "mètres"], "kilomètres", "hl_t5"),
+        ("6. En 1801, Thomas ......... met en évidence les interférences lumineuses.", ["Choisir...", "Young", "Euler"], "Young", "hl_t6"),
+        ("7. En 1814, Joseph von ......... observe les raies sombres du spectre solaire.", ["Choisir...", "Fraunhofer", "Kepler"], "Fraunhofer", "hl_t7"),
+        ("8. James Clerk ......... démontre que la lumière est une onde électromagnétique.", ["Choisir...", "Maxwell", "Joule"], "Maxwell", "hl_t8"),
+        ("9. En 1905, Albert ......... explique que la lumière est transportée par des photons.", ["Choisir...", "Einstein", "Curie"], "Einstein", "hl_t9"),
+        ("10. La rotation rapide du disque de Newton montre la synthèse .........", ["Choisir...", "additive", "soustractive"], "additive", "hl_t10"),
+    ]
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Historique : La lumière et les couleurs (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_hl_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", ["Choisir..."] + q_data["options"], key=f"hl_at1_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_t:
+        st.markdown("##### Synthèse Historique (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in champs_hl:
+            c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+
+
+
 def gerer_changement_metal():
     """Moteur exclusif Atelier 2 : Interroge le catalogue de flammes."""
     nom_selectionne = st.session_state.var_sel_metal
@@ -1477,7 +1525,146 @@ def valider_session():
         )
 
 with tab1:
-    st.subheader("L'histoire de la lumière")
+    st.header("Atelier 1 : L'histoire de la lumière et des couleurs")
+
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Objectif de l'atelier :</p>
+        <p style="margin-bottom: 0;">Retracer les grandes étapes scientifiques qui ont permis de comprendre la nature de la lumière, sa vitesse de propagation et l'origine des couleurs.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col_h1, col_h2, col_h3, col_h4 = st.columns(4)
+    with col_h1:
+        try: st.image("alhazen_optique.jpg", caption="Ibn al-Haytham (965 - 1040)", use_container_width=True)
+        except Exception: st.warning("L'image 'alhazen_optique.jpg' est introuvable.")
+        st.info("**Ibn al-Haytham (XIe siècle)**\n* Père de l'optique moderne (*Kitab al-Manazir*).\n* Démontre par la chambre noire (*camera obscura*) que la lumière voyage en ligne droite jusqu'à l'œil.")
+
+    with col_h2:
+        try: st.image("newton_prisme.jpg", caption="Isaac Newton et son prisme (1666)", use_container_width=True)
+        except Exception: st.warning("L'image 'newton_prisme.jpg' est introuvable.")
+        st.info("**Isaac Newton (1666)**\n* Décompose la lumière blanche du Soleil grâce à un prisme en verre.\n* Prouve que le blanc est un mélange de radiations colorées.")
+
+    with col_h3:
+        try: st.image("fraunhofer_spectre.jpg", caption="Joseph von Fraunhofer (1814)", use_container_width=True)
+        except Exception: st.warning("L'image 'fraunhofer_spectre.jpg' est introuvable.")
+        st.info("**Joseph von Fraunhofer (1814)**\n* Découvre plus de 570 raies noires d'absorption dans le spectre solaire.\n* Fonde ainsi la spectroscopie moderne.")
+
+    with col_h4:
+        try: st.image("maxwell_einstein.jpg", caption="Maxwell (1865) & Einstein (1905)", use_container_width=True)
+        except Exception: st.warning("L'image 'maxwell_einstein.jpg' est introuvable.")
+        st.info("**Onde et Photon (1865 - 1905)**\n* Maxwell montre que la lumière est une onde électromagnétique.\n* Einstein introduit les **photons**, grains d'énergie lumineuse.")
+
+    st.markdown("---")
+    if "hl_verrouille_tab1" not in st.session_state:
+        st.session_state.hl_verrouille_tab1 = False
+    verrou_hl = st.session_state.hl_verrouille_tab1
+    afficher_atelier_hist_lumiere(verrouille=verrou_hl)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_hl = st.checkbox("Je certifie avoir complété l'Atelier 1 (Histoire de la lumière et des couleurs).", key="certif_hl1", disabled=verrou_hl)
+    if st.button("VALIDER ET EXPORTER LE BILAN HISTORIQUE", key="btn_exp_hl1", use_container_width=True, disabled=verrou_hl):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_hl:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            sc_q = sum(1.0 for q in st.session_state.get("ordre_quiz_hl_aleatoire", []) if st.session_state.get(f"hl_at1_g_{q['id']}") == q["rep"])
+            rep_t = {"hl_t1": "Alhazen", "hl_t2": "Newton", "hl_t3": "colorées", "hl_t4": "Rømer", "hl_t5": "kilomètres", "hl_t6": "Young", "hl_t7": "Fraunhofer", "hl_t8": "Maxwell", "hl_t9": "Einstein", "hl_t10": "additive"}
+            sc_t = sum(1.0 for k, v in rep_t.items() if st.session_state.get(k) == v)
+            st.session_state.score_hl1_p1 = sc_q
+            st.session_state.score_hl1_p2 = sc_t
+            st.session_state.score_final_hl1 = sc_q + sc_t
+            st.session_state.hl_verrouille_tab1 = True
+            st.rerun()
+
+    if st.session_state.get("hl_verrouille_tab1", False):
+        scr1 = st.session_state.score_hl1_p1
+        scr2 = st.session_state.score_hl1_p2
+        tot_s = st.session_state.score_final_hl1
+        ts_hl = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER HISTORIQUE SCELLÉ | Note : {tot_s:.1f} / 20")
+
+        html_hl = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Histoire de la Lumière - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background: #f8fafc; color: #1e293b; }}
+                .header-box {{ background: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; border: 2px solid white; }}
+                table {{ width: 100%; border-collapse: collapse; margin-bottom: 25px; background: white; }}
+                th {{ background: #0f172a; color: white; padding: 10px; text-align: left; }}
+                td {{ padding: 10px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 1 : L'Histoire de la Lumière et des Couleurs</p>
+                <p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_hl}</p>
+                <div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div>
+            </div>
+            <p style="background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong>
+            </p>
+            <table>
+                <thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead>
+                <tbody>
+        """
+        for num, q in enumerate(st.session_state.get("ordre_quiz_hl_aleatoire", []), 1):
+            qid_c = q["id"]
+            saisie_q = st.session_state.get(f"hl_at1_g_{qid_c}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie_q) == str(q["rep"]) else "INCORRECT"
+            v_cls = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_hl += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_q}</td><td>{q['rep']}</td><td class='{v_cls}'>{v_lbl}</td></tr>"
+
+        html_hl += """
+                </tbody>
+            </table>
+            <table>
+                <thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead>
+                <tbody>
+        """
+        verif_hl = [
+            ("1. Au XIe siècle, ......... démontre que l'œil reçoit la lumière des objets.", "Alhazen", "hl_t1"),
+            ("2. En 1666, Isaac ......... décompose la lumière blanche avec un prisme.", "Newton", "hl_t2"),
+            ("3. La lumière blanche est composée d'une infinité de radiations .........", "colorées", "hl_t3"),
+            ("4. En 1676, Ole ......... prouve que la lumière a une vitesse finie.", "Rømer", "hl_t4"),
+            ("5. Dans le vide, la lumière se propage à environ 300 000 ......... par seconde.", "kilomètres", "hl_t5"),
+            ("6. En 1801, Thomas ......... met en évidence les interférences lumineuses.", "Young", "hl_t6"),
+            ("7. En 1814, Joseph von ......... observe les raies sombres du spectre solaire.", "Fraunhofer", "hl_t7"),
+            ("8. James Clerk ......... démontre que la lumière est une onde électromagnétique.", "Maxwell", "hl_t8"),
+            ("9. En 1905, Albert ......... explique que la lumière est transportée par des photons.", "Einstein", "hl_t9"),
+            ("10. La rotation rapide du disque de Newton montre la synthèse .........", "additive", "hl_t10"),
+        ]
+        for idx_t, (en, rep, cle) in enumerate(verif_hl, 1):
+            saisie_t = st.session_state.get(cle, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t) == str(rep) else "INCORRECT"
+            v_cls_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_hl += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t}</td><td>{rep}</td><td class='{v_cls_t}'>{v_lbl_t}</td></tr>"
+
+        html_hl += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        st.download_button(
+            "Télécharger le rapport officiel de l'Atelier Historique (.html)",
+            data=html_hl,
+            file_name=preparer_nom_fichier("Rapport_Atelier_1_Histoire_Lumiere").replace(".txt", ".html"),
+            mime="text/html",
+            use_container_width=True
+        )
+
 
 
 
