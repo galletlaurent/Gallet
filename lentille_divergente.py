@@ -517,6 +517,202 @@ tab5 = onglets[5]
 tab6 = onglets[6]
 tab7 = onglets[7]
 
+
+
+BANQUES_DIV_TP = {
+    0: {
+        "questions": [
+            {"id": "qdtp0_1", "q": "Quel rôle joue la lentille divergente intégrée au dôme d'une balise lumineuse de chantier (gyrophare LED) ?", "options": ["Élargir et répartir le faisceau de la LED sur 360° autour de la zone de travaux", "Concentrer toute la lumière en un seul point au sol", "Bloquer la lumière infrarouge"], "rep": "Élargir et répartir le faisceau de la LED sur 360° autour de la zone de travaux"},
+            {"id": "qdtp0_2", "q": "Comment ressortent les rayons lumineux d'une LED après avoir traversé une lentille mince divergente ?", "options": ["Ils s'écartent de l'axe optique (faisceau divergent large)", "Ils deviennent strictement parallèles sur 10 km", "Ils convergent en un point brûlant"], "rep": "Ils s'écartent de l'axe optique (faisceau divergent large)"},
+            {"id": "qdtp0_3", "q": "Quel est le signe de la distance focale f' et de la vergence C d'une lentille divergente de balise TP ?", "options": ["Négatif (f' < 0 et C < 0)", "Positif (f' > 0 et C > 0)", "Nul"], "rep": "Négatif (f' < 0 et C < 0)"},
+            {"id": "qdtp0_4", "q": "Pourquoi cherche-t-on à faire diverger la lumière sur un cône ou une barrière de chantier plutôt que de créer un rayon laser étroit ?", "options": ["Pour que le signal lumineux soit visible sous tous les angles par les automobilistes et les engins", "Pour économiser le plastique du cône", "Pour chauffer l'enrobé bitumineux"], "rep": "Pour que le signal lumineux soit visible sous tous les angles par les automobilistes et les engins"},
+            {"id": "qdtp0_5", "q": "Comment évolue l'angle d'ouverture du faisceau lumineux lorsque la vergence C devient plus négative (ex : -20 δ au lieu de -5 δ) ?", "options": ["L'angle de divergence augmente : le faisceau éclaire une zone encore plus large", "Le faisceau devient plus étroit", "La lumière change de couleur"], "rep": "L'angle de divergence augmente : le faisceau éclaire une zone encore plus large"},
+            {"id": "qdtp0_6", "q": "Où semble provenir le faisceau émergent d'une lentille divergente éclairée par des rayons parallèles ?", "options": ["De son foyer image virtuel F' situé en amont", "De son foyer objet F", "Du sol de la tranchée"], "rep": "De son foyer image virtuel F' situé en amont"},
+            {"id": "qdtp0_7", "q": "Quel matériau polymère transparent et résistant aux chocs utilise-t-on pour mouler les lentilles divergentes de balisage TP ?", "options": ["Le polycarbonate (PC) ou le PMMA", "Le verre cristal fragile", "La fonte grise"], "rep": "Le polycarbonate (PC) ou le PMMA"},
+            {"id": "qdtp0_8", "q": "Quel inconvénient optique accompagne un très fort élargissement du faisceau par une lentille divergente ?", "options": ["L'intensité lumineuse par unité de surface diminue avec la distance (il faut une LED puissante)", "La batterie se recharge toute seule", "La lentille devient opaque"], "rep": "L'intensité lumineuse par unité de surface diminue avec la distance (il faut une LED puissante)"},
+            {"id": "qdtp0_9", "q": "Si la lentille divergente d'un feu de chantier a une distance focale f' = -10 cm (-0,10 m), quelle est sa vergence C ?", "options": ["- 10 dioptries (δ)", "+ 10 dioptries (δ)", "- 0,10 dioptrie (δ)"], "rep": "- 10 dioptries (δ)"},
+            {"id": "qdtp0_10", "q": "Quelle loi fondamentale de l'optique régit la déviation des rayons vers l'extérieur à la traversée de la lentille divergente ?", "options": ["La loi de réfraction de Snell-Descartes", "La loi d'Ohm", "Le théorème de Pythagore"], "rep": "La loi de réfraction de Snell-Descartes"},
+        ],
+        "trous": [
+            ("1. Les balises de chantier utilisent une lentille ......... pour diffuser la lumière.", ["Choisir...", "divergente", "convergente"], "divergente", "dtp_t1"),
+            ("2. Les rayons lumineux ......... en s'écartant de l'axe optique.", ["Choisir...", "divergent", "convergent"], "divergent", "dtp_t2"),
+            ("3. Le faisceau large assure une visibilité sous tous les .........", ["Choisir...", "angles", "mètres"], "angles", "dtp_t3"),
+            ("4. La distance focale f' d'une lentille divergente est toujours .........", ["Choisir...", "négative", "positive"], "négative", "dtp_t4"),
+            ("5. Plus la vergence C est négative, plus l'angle d'ouverture est .........", ["Choisir...", "large", "étroit"], "large", "dtp_t5"),
+            ("6. Les rayons émergents semblent provenir du foyer image virtuel .........", ["Choisir...", "F'", "F"], "F'", "dtp_t6"),
+            ("7. Les dômes de chantier sont moulés en ......... résistant aux chocs.", ["Choisir...", "polycarbonate", "céramique"], "polycarbonate", "dtp_t7"),
+            ("8. Une focale f' = -10 cm correspond à une vergence de ......... dioptries.", ["Choisir...", "-10", "+10"], "-10", "dtp_t8"),
+            ("9. Les bords d'une lentille divergente sont plus ......... que son centre.", ["Choisir...", "épais", "minces"], "épais", "dtp_t9"),
+            ("10. La déviation des rayons obéit à la loi de réfraction de .........", ["Choisir...", "Descartes", "Newton"], "Descartes", "dtp_t10"),
+        ]
+    },
+    1: {
+        "questions": [
+            {"id": "qdtp1_1", "q": "Quel type d'objectif optique équipe les caméras de recul et de sécurité d'angle mort sur les pelles hydrauliques et tombereaux TP ?", "options": ["Un objectif grand-angle rétrofocus comportant une lentille divergente frontale", "Un téléobjectif astronomique", "Une vitre plane opaque"], "rep": "Un objectif grand-angle rétrofocus comportant une lentille divergente frontale"},
+            {"id": "qdtp1_2", "q": "Quel est le rôle de la lentille divergente placée à l'avant d'un objectif grand-angle d'engin de chantier ?", "options": ["Capturer un champ de vision très large (130° à 170°) autour de l'engin pour supprimer les angles morts", "Zoomer sur un écrou à 500 mètres", "Filtrer les rayons ultraviolets"], "rep": "Capturer un champ de vision très large (130° à 170°) autour de l'engin pour supprimer les angles morts"},
+            {"id": "qdtp1_3", "q": "Quelle image intermédiaire la lentille divergente frontale forme-t-elle avant le groupe convergent de l'objectif ?", "options": ["Une image virtuelle, droite et rétrécie", "Une image réelle et agrandie", "Une ombre portée"], "rep": "Une image virtuelle, droite et rétrécie"},
+            {"id": "qdtp1_4", "q": "Quel effet visuel caractéristique (distorsion) produit un objectif grand-angle très divergent sur les lignes droites proches des bords de l'écran ?", "options": ["Une courbure des lignes droites (distorsion en barillet / effet fisheye)", "Une inversion des couleurs rouge et bleu", "Un flou total au centre"], "rep": "Une courbure des lignes droites (distorsion en barillet / effet fisheye)"},
+            {"id": "qdtp1_5", "q": "Pourquoi le conducteur d'un tombereau TP doit-il être vigilant lorsqu'il évalue une distance sur l'écran de sa caméra grand-angle ?", "options": ["La lentille divergente rétrécit les objets : les obstacles paraissent plus éloignés qu'ils ne le sont en réalité", "Les obstacles paraissent 10 fois plus proches", "L'image est décalée de 5 secondes"], "rep": "La lentille divergente rétrécit les objets : les obstacles paraissent plus éloignés qu'ils ne le sont en réalité"},
+            {"id": "qdtp1_6", "q": "Comment appelle-t-on l'architecture optique associant une lentille divergente à l'avant et un groupe convergent à l'arrière ?", "options": ["Un objectif rétrofocus (grand-angle)", "Un télescope de Newton", "Un microscope simple"], "rep": "Un objectif rétrofocus (grand-angle)"},
+            {"id": "qdtp1_7", "q": "Dans la simulation de caméra d'engin TP, comment évolue la largeur de la zone surveillée derrière la pelle si la vergence frontale passe de -8 δ à -22 δ ?", "options": ["La zone surveillée s'élargit fortement et élimine l'angle mort arrière", "La zone surveillée se réduit à un point", "La caméra s'éteint"], "rep": "La zone surveillée s'élargit fortement et élimine l'angle mort arrière"},
+            {"id": "qdtp1_8", "q": "Quel dispositif d'entretien équipe les caméras grand-angle des engins de terrassement travaillant dans la boue ?", "options": ["Une buse de lavage haute pression ou un volet motorisé protégeant la lentille frontale", "Un essuie-glace en métal", "Un chauffage à 500 °C"], "rep": "Une buse de lavage haute pression ou un volet motorisé protégeant la lentille frontale"},
+            {"id": "qdtp1_9", "q": "Quel est le signe du grandissement produit par la lentille divergente frontale sur l'image virtuelle intermédiaire ?", "options": ["Positif et inférieur à 1 (0 < γ < 1)", "Négatif (-2)", "Supérieur à +5"], "rep": "Positif et inférieur à 1 (0 < γ < 1)"},
+            {"id": "qdtp1_10", "q": "Quel système moderne assemble les images de 4 caméras grand-angle divergentes autour d'un engin TP ?", "options": ["La vision panoramique 360° (Bird View / vue aérienne reconstituée)", "Le radar Doppler météo", "Le niveau laser rotatif"], "rep": "La vision panoramique 360° (Bird View / vue aérienne reconstituée)"},
+        ],
+        "trous": [
+            ("1. Les caméras grand-angle d'engins TP intègrent une lentille ......... à l'avant.", ["Choisir...", "divergente", "plane"], "divergente", "dtp_t1"),
+            ("2. Cette lentille permet d'élargir le ......... de vision jusqu'à 170°.", ["Choisir...", "champ", "rayon"], "champ", "dtp_t2"),
+            ("3. Elle supprime les angles ......... autour des pelles et tombereaux.", ["Choisir...", "morts", "droits"], "morts", "dtp_t3"),
+            ("4. L'image virtuelle formée par la lentille divergente est droite et .........", ["Choisir...", "rétrécie", "agrandie"], "rétrécie", "dtp_t4"),
+            ("5. Le conducteur doit savoir que les objets paraissent plus ......... sur l'écran.", ["Choisir...", "éloignés", "proches"], "éloignés", "dtp_t5"),
+            ("6. La déformation courbe des bords de l'image s'appelle la distorsion en .........", ["Choisir...", "barillet", "coussinet"], "barillet", "dtp_t6"),
+            ("7. Un objectif combinant divergent avant et convergent arrière est dit .........", ["Choisir...", "rétrofocus", "afocal"], "rétrofocus", "dtp_t7"),
+            ("8. Quatre caméras grand-angle permettent une vision panoramique à .........°.", ["Choisir...", "360", "90"], "360", "dtp_t8"),
+            ("9. La lentille divergente possède une vergence C toujours .........", ["Choisir...", "négative", "positive"], "négative", "dtp_t9"),
+            ("10. Le grandissement de la lentille divergente vérifie 0 < γ < .........", ["Choisir...", "1", "10"], "1", "dtp_t10"),
+        ]
+    },
+    2: {
+        "questions": [
+            {"id": "qdtp2_1", "q": "Dans un niveau optique ou un théodolite de chantier, quel est le rôle de la lentille divergente interne placée entre l'objectif et le réticule ?", "options": ["Assurer la mise au point interne (focalisation) et allonger la distance focale sans rallonger le tube", "Bloquer la lumière du soleil", "Inverser les graduations de la mire"], "rep": "Assurer la mise au point interne (focalisation) et allonger la distance focale sans rallonger le tube"},
+            {"id": "qdtp2_2", "q": "Comment appelle-t-on une lunette de chantier dont la longueur du tube reste fixe lors de la mise au point grâce au déplacement d'une lentille divergente interne ?", "options": ["Une lunette à mise au point interne (étanche aux poussières et à la pluie)", "Un télescope à miroir liquide", "Une loupe binoculaire"], "rep": "Une lunette à mise au point interne (étanche aux poussières et à la pluie)"},
+            {"id": "qdtp2_3", "q": "Quel avantage majeur procure la mise au point interne par lentille divergente mobile sur un chantier TP poussiéreux ou pluvieux ?", "options": ["Le tube optique reste totalement hermétique : aucune poussière ni humidité ne pénètre dans l'instrument", "L'instrument pèse 20 kg de plus", "Il fonctionne sans trépied"], "rep": "Le tube optique reste totalement hermétique : aucune poussière ni humidité ne pénètre dans l'instrument"},
+            {"id": "qdtp2_4", "q": "Quel est l'effet optique de la lentille divergente interne sur le faisceau convergent issu de l'objectif ?", "options": ["Elle diminue la convergence du faisceau pour l'amener exactement sur le plan du réticule", "Elle dévie le faisceau à 90° vers le sol", "Elle bloque les rayons rouges"], "rep": "Elle diminue la convergence du faisceau pour l'amener exactement sur le plan du réticule"},
+            {"id": "qdtp2_5", "q": "Que se passe-t-il lorsque le chef de chantier tourne la molette de mise au point pour viser une mire plus proche ?", "options": ["La lentille divergente interne se déplace le long de l'axe optique pour maintenir l'image nette sur le réticule", "L'objectif avant tombe", "La distance focale de l'objectif devient négative"], "rep": "La lentille divergente interne se déplace le long de l'axe optique pour maintenir l'image nette sur le réticule"},
+            {"id": "qdtp2_6", "q": "Quel type de combinaison optique (téléobjectif) associe une lentille convergente à l'avant et une lentille divergente à l'arrière ?", "options": ["Un système optique compact à longue distance focale équivalente", "Un prisme de Porro", "Un miroir plan"], "rep": "Un système optique compact à longue distance focale équivalente"},
+            {"id": "qdtp2_7", "q": "Si la molette de mise au point est grippée et bloque la lentille divergente interne, quel défaut apparaît dans la lunette ?", "options": ["L'image de la mire est floue et présente une erreur de parallaxe", "L'image devient 100 fois plus lumineuse", "Le niveau à bulle se vide"], "rep": "L'image de la mire est floue et présente une erreur de parallaxe"},
+            {"id": "qdtp2_8", "q": "Quel traitement de surface applique-t-on sur les faces de la lentille divergente interne pour éviter les pertes de lumière ?", "options": ["Un traitement antireflet multicouche", "Une couche de peinture noire", "Un vernis opaque"], "rep": "Un traitement antireflet multicouche"},
+            {"id": "qdtp2_9", "q": "Quel est le signe de la distance focale f' de cette lentille interne de mise au point ?", "options": ["Négatif (f' < 0)", "Positif (f' > 0)", "Nul"], "rep": "Négatif (f' < 0)"},
+            {"id": "qdtp2_10", "q": "Quelle loi optique régit le trajet des rayons à travers l'objectif convergent puis la lentille divergente mobile ?", "options": ["La relation de conjugaison de Descartes appliquée successivement aux deux lentilles", "La loi d'Ohm", "Le principe de Pascal"], "rep": "La relation de conjugaison de Descartes appliquée successivement aux deux lentilles"},
+        ],
+        "trous": [
+            ("1. Les niveaux optiques modernes utilisent une lentille ......... interne mobile.", ["Choisir...", "divergente", "plane"], "divergente", "dtp_t1"),
+            ("2. Ce système permet une mise au point ......... sans allonger le tube.", ["Choisir...", "interne", "externe"], "interne", "dtp_t2"),
+            ("3. Le tube fermé protège l'optique contre la ......... et la pluie du chantier.", ["Choisir...", "poussière", "lumière"], "poussière", "dtp_t3"),
+            ("4. La lentille divergente repousse le foyer pour amener l'image sur le .........", ["Choisir...", "réticule", "trépied"], "réticule", "dtp_t4"),
+            ("5. En tournant la ......... latérale, on déplace la lentille divergente.", ["Choisir...", "molette", "nivelle"], "molette", "dtp_t5"),
+            ("6. L'association convergent + divergent permet un tube court et .........", ["Choisir...", "compact", "souple"], "compact", "dtp_t6"),
+            ("7. Si la lentille interne est mal réglée, il apparaît une erreur de .........", ["Choisir...", "parallaxe", "pesanteur"], "parallaxe", "dtp_t7"),
+            ("8. Un traitement ......... évite les reflets parasites à l'intérieur du tube.", ["Choisir...", "antireflet", "opaque"], "antireflet", "dtp_t8"),
+            ("9. La lentille divergente interne possède une vergence C .........", ["Choisir...", "négative", "positive"], "négative", "dtp_t9"),
+            ("10. Le calcul des positions images repose sur la loi de .........", ["Choisir...", "Descartes", "Joule"], "Descartes", "dtp_t10"),
+        ]
+    }
+}
+
+
+def mettre_a_jour_div_tp_matplotlib(sujet_idx):
+    """Banc d'essai optique lentilles divergentes adapté aux Travaux Publics."""
+    fig, ax = plt.subplots(figsize=(12, 6.2), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 250)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    if sujet_idx == 0:
+        vergence_bal = st.session_state.get("slider_dtp_s0", -12.0)
+        angle_ouv = int(min(170, 50 + abs(vergence_bal) * 5.0))
+        x0, y0 = 180.0, 130.0
+
+        ax.add_patch(patches.Rectangle((60, 112), 45, 36, facecolor="#eab308", edgecolor="white"))
+        ax.text(82, 130, "LED TP", color="#0f172a", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        ax.plot(list((x0, x0)), list((55, 205)), color="#38bdf8", lw=4)
+        ax.text(x0, 44, f"Lentille Divergente (C = {vergence_bal:.0f} δ)", color="#38bdf8", fontsize=8, fontweight="bold", ha="center")
+
+        dy_end = min(105.0, abs(vergence_bal) * 4.5)
+        ax.fill(list((x0, 560, 560)), list((y0 - 25, y0 - dy_end, y0 + dy_end)), color="#f59e0b", alpha=0.25)
+        for dy in [-25, -12, 12, 25]:
+            ax.plot(list((105, x0)), list((y0 + dy, y0 + dy)), color="#fde047", lw=1.8)
+            pente = (dy / 25.0) * (dy_end / 380.0)
+            ax.annotate("", xy=(560, y0 + dy + pente * 380.0), xytext=(x0, y0 + dy), arrowprops=dict(arrowstyle="->", color="#f59e0b", lw=2))
+
+        ax.text(25, 18, "SIGNALISATION DE CHANTIER : ÉLARGISSEMENT DU FAISCEAU PAR LENTILLE DIVERGENTE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, f"Vergence C = {vergence_bal:.0f} δ  |  Ouverture du faisceau de signalisation : {angle_ouv}°", color="#22c55e", fontsize=8, fontweight="bold")
+        st.session_state.dtp_mesure_courante = (f"C = {vergence_bal:.0f} δ", f"Ouverture = {angle_ouv}°", "Faisceau large", "VISIBILITÉ 360°")
+
+    elif sujet_idx == 1:
+        vergence_cam = st.session_state.get("slider_dtp_s1", -16.0)
+        champ_ar = int(min(175, 65 + abs(vergence_cam) * 4.5))
+        x0, y0 = 220.0, 130.0
+
+        ax.add_patch(patches.Rectangle((60, 85), 145, 90, facecolor="#eab308", edgecolor="white", lw=1.5))
+        ax.text(132, 130, "TOMBEREAU TP\n(Marche arrière)", color="#0f172a", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        ax.plot(list((x0, x0)), list((95, 165)), color="#38bdf8", lw=4)
+        ax.text(x0, 82, f"Caméra Grand-Angle (C = {vergence_cam:.0f} δ)", color="#38bdf8", fontsize=7.5, fontweight="bold", ha="center")
+
+        dy_c = min(105.0, abs(vergence_cam) * 4.5)
+        ax.fill(list((x0, 560, 560)), list((y0, y0 - dy_c, y0 + dy_c)), color="#22c55e", alpha=0.22)
+        ax.plot(list((x0, 560)), list((y0, y0 - dy_c)), color="#22c55e", lw=1.5, ls="--")
+        ax.plot(list((x0, 560)), list((y0, y0 + dy_c)), color="#22c55e", lw=1.5, ls="--")
+
+        ax.text(25, 18, "SÉCURITÉ ENGINS TP : CAMÉRA DE RECUL GRAND-ANGLE DIVERGENTE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, f"Vergence frontale : C = {vergence_cam:.0f} δ  |  Champ arrière couvert : {champ_ar}° (Angles morts éliminés)", color="#22c55e", fontsize=8, fontweight="bold")
+        st.session_state.dtp_mesure_courante = (f"C = {vergence_cam:.0f} δ", f"Champ = {champ_ar}°", "Rétrofocus", "SÉCURITÉ OK")
+
+    else:
+        pos_interne_mm = st.session_state.get("slider_dtp_s2", 45.0)
+        cible_mm = 45.0
+        x0, y0 = 160.0, 130.0
+        x_div = x0 + pos_interne_mm * 3.0
+        x_ret = 470.0
+
+        ax.plot(list((20, 580)), list((y0, y0)), color="#64748b", lw=1.2, ls="-.")
+        ax.plot(list((x0, x0)), list((50, 210)), color="#22c55e", lw=3.5)
+        ax.text(x0, 40, "Objectif Convergent", color="#86efac", fontsize=7.5, fontweight="bold", ha="center")
+
+        ax.plot(list((x_div, x_div)), list((75, 185)), color="#38bdf8", lw=3)
+        ax.text(x_div, 64, f"Lentille Divergente\n({pos_interne_mm:.0f} mm)", color="#38bdf8", fontsize=7.5, fontweight="bold", ha="center")
+
+        ax.plot(list((x_ret, x_ret)), list((85, 175)), color="#eab308", lw=3)
+        ax.text(x_ret, 75, "Réticule", color="#fde047", fontsize=7.5, fontweight="bold", ha="center")
+
+        ecart_r = abs(pos_interne_mm - cible_mm)
+        for dy in [-40, 40]:
+            ax.plot(list((40, x0)), list((y0 + dy, y0 + dy)), color="#ef4444", lw=1.8)
+            dy_mid = dy * 0.55
+            ax.plot(list((x0, x_div)), list((y0 + dy, y0 + dy_mid)), color="#ef4444", lw=1.8)
+            y_end = y0 if ecart_r <= 1.0 else (y0 + (dy / 40.0) * (pos_interne_mm - cible_mm) * 1.5)
+            ax.plot(list((x_div, x_ret)), list((y0 + dy_mid, y_end)), color="#ef4444", lw=1.8)
+
+        statut = "MISE AU POINT INTERNE PARFAITE : Image nette sur le réticule, zéro parallaxe !" if ecart_r <= 1.0 else f"PARALLAXE DÉTECTÉE (Écart {ecart_r:.0f} mm) : Réglez la lentille interne à 45 mm."
+        c_stat = "#22c55e" if ecart_r <= 1.0 else "#ef4444"
+        ax.text(25, 18, "NIVELLEMENT TP : MISE AU POINT INTERNE PAR LENTILLE DIVERGENTE MOBILE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, statut, color=c_stat, fontsize=8, fontweight="bold")
+        st.session_state.dtp_mesure_courante = (f"Pos = {pos_interne_mm:.0f} mm", "Cible = 45 mm", f"Écart = {ecart_r:.0f} mm", "NETTE (OK)" if ecart_r <= 1.0 else "PARALLAXE")
+
+    return fig
+
+
+def afficher_atelier_div_tp(sujet_idx, verrouille=False):
+    if sujet_idx is None:
+        st.warning("Tirez d'abord au sort un chantier TP ci-dessus.")
+        return
+    banque = BANQUES_DIV_TP[sujet_idx]
+    cle_ordre = f"ordre_quiz_dtp_{sujet_idx}"
+    if cle_ordre not in st.session_state:
+        lq = list(banque["questions"])
+        random.shuffle(lq)
+        st.session_state[cle_ordre] = lq
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Technique Travaux Publics (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state[cle_ordre], 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", ["Choisir..."] + q_data["options"], key=f"dtp_at5_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+    with col_t:
+        st.markdown("##### Synthèse Travaux Publics (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in banque["trous"]:
+            c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", choix, key=f"{cle}_s{sujet_idx}", disabled=verrouille, label_visibility="collapsed")
+
+
+
+
 BANQUES_DIV_MAINT = {
     0: {
         "questions": [
@@ -789,6 +985,51 @@ def dessiner_regles_trace_divergente_matplotlib():
 
     ax.text(20, 18, "RÈGLES DE CONSTRUCTION GÉOMÉTRIQUE D'UNE LENTILLE DIVERGENTE", color="#38bdf8", fontsize=9, fontweight="bold")
     return fig
+def afficher_atelier_regles_div(verrouille=False):
+    """Affiche le Quiz (10 questions) et le Texte à trous (10 cases) de l'Atelier 2 (Règles de tracé divergentes)."""
+    questions_rd = [
+        {"id": "qrd1", "q": "Quelle est la caractéristique géométrique d'une lentille mince divergente ?", "options": ["Ses bords sont plus épais que son centre", "Ses bords sont plus minces que son centre", "Elle est parfaitement cylindrique"], "rep": "Ses bords sont plus épais que son centre"},
+        {"id": "qrd2", "q": "Où est situé le foyer image F' d'une lentille divergente ?", "options": ["En amont (du côté de la lumière incidente, donc f' < 0)", "En aval (après la lentille, f' > 0)", "Sur le centre optique O"], "rep": "En amont (du côté de la lumière incidente, donc f' < 0)"},
+        {"id": "qrd3", "q": "Comment ressort un rayon incident parallèle à l'axe optique après avoir traversé une lentille divergente ?", "options": ["Il s'écarte de l'axe optique en semblant provenir du foyer image F'", "Il converge vers le foyer image F'", "Il traverse tout droit sans déviation"], "rep": "Il s'écarte de l'axe optique en semblant provenir du foyer image F'"},
+        {"id": "qrd4", "q": "Que fait un rayon incident passant par le centre optique O d'une lentille divergente ?", "options": ["Il traverse la lentille en ligne droite sans être dévié", "Il est réfléchi à 180°", "Il ressort parallèlement à l'axe optique"], "rep": "Il traverse la lentille en ligne droite sans être dévié"},
+        {"id": "qrd5", "q": "Comment ressort un rayon incident dont le prolongement vise le foyer objet F (situé après la lentille) ?", "options": ["Il ressort parallèlement à l'axe optique", "Il passe par le centre optique O", "Il diverge vers le bas"], "rep": "Il ressort parallèlement à l'axe optique"},
+        {"id": "qrd6", "q": "Quelles sont toujours les 3 propriétés de l'image A'B' d'un objet réel donnée par une lentille divergente ?", "options": ["Virtuelle, droite et plus petite que l'objet", "Réelle, renversée et plus grande", "Virtuelle, renversée et plus petite"], "rep": "Virtuelle, droite et plus petite que l'objet"},
+        {"id": "qrd7", "q": "Quel est le signe de la distance focale f' et de la vergence C d'une lentille divergente ?", "options": ["Négatif (f' < 0 et C < 0)", "Positif (f' > 0 et C > 0)", "Nul"], "rep": "Négatif (f' < 0 et C < 0)"},
+        {"id": "qrd8", "q": "Une lentille divergente de distance focale f' = -25 cm (-0,25 m) possède une vergence C égale à :", "options": ["- 4,0 dioptries (δ)", "+ 4,0 dioptries (δ)", "- 0,25 dioptrie (δ)"], "rep": "- 4,0 dioptries (δ)"},
+        {"id": "qrd9", "q": "Peut-on projeter directement sur un écran l'image d'un objet réel formée par une lentille divergente seule ?", "options": ["Non, car l'image est toujours virtuelle (située avant la lentille)", "Oui, à n'importe quelle distance", "Oui, si l'objet est très grand"], "rep": "Non, car l'image est toujours virtuelle (située avant la lentille)"},
+        {"id": "qrd10", "q": "Pourquoi représente-t-on certains rayons en pointillés avant une lentille divergente ?", "options": ["Ce sont les prolongements virtuels des rayons qui permettent de localiser l'image virtuelle A'B'", "Ce sont des rayons infrarouges invisibles", "Ce sont des rayons arrêtés par la lentille"], "rep": "Ce sont les prolongements virtuels des rayons qui permettent de localiser l'image virtuelle A'B'"},
+    ]
+
+    if "ordre_quiz_rd_aleatoire" not in st.session_state:
+        random.shuffle(questions_rd)
+        st.session_state.ordre_quiz_rd_aleatoire = questions_rd
+
+    champs_rd = [
+        ("1. Le symbole d'une lentille divergente porte des flèches pointant vers l'.........", ["Choisir...", "intérieur", "extérieur"], "intérieur", "rd_t1"),
+        ("2. Les foyers F et F' sont ......... par rapport à une lentille convergente.", ["Choisir...", "inversés", "identiques"], "inversés", "rd_t2"),
+        ("3. Le foyer image F' est situé en ......... de la lentille (f' < 0).", ["Choisir...", "amont", "aval"], "amont", "rd_t3"),
+        ("4. Tout rayon passant par le centre optique O n'est pas .........", ["Choisir...", "dévié", "transmis"], "dévié", "rd_t4"),
+        ("5. Tout rayon parallèle à l'axe diverge en semblant venir de .........", ["Choisir...", "F'", "F"], "F'", "rd_t5"),
+        ("6. Tout rayon visant le foyer objet F ressort ......... à l'axe.", ["Choisir...", "parallèle", "perpendiculaire"], "parallèle", "rd_t6"),
+        ("7. L'image d'un objet réel est toujours située ......... la lentille.", ["Choisir...", "avant", "après"], "avant", "rd_t7"),
+        ("8. L'image formée est toujours droite, plus petite et .........", ["Choisir...", "virtuelle", "réelle"], "virtuelle", "rd_t8"),
+        ("9. La vergence C d'une lentille divergente est toujours .........", ["Choisir...", "négative", "positive"], "négative", "rd_t9"),
+        ("10. Le grandissement γ vérifie toujours 0 < γ < .........", ["Choisir...", "1", "10"], "1", "rd_t10"),
+    ]
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Règles de Tracé Divergente (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_rd_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", ["Choisir..."] + q_data["options"], key=f"rd_at2_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_t:
+        st.markdown("##### Synthèse Règles de Tracé (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in champs_rd:
+            c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
 
 
 
@@ -1967,6 +2208,111 @@ with tab4:
         st.download_button("Télécharger le rapport officiel de l'Atelier 4 (.html)", data=html_dm, file_name=preparer_nom_fichier("Rapport_Atelier_4_Maintenance_Divergentes").replace(".txt", ".html"), mime="text/html", use_container_width=True)
 
 
+with tab5:
+    st.header("Atelier 5 : Applications dans le domaine des Travaux Publics")
+
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 16px;">Les lentilles divergentes sur les chantiers de génie civil et de voirie :</p>
+        <p style="margin-bottom: 0; line-height: 1.6;">Sur les chantiers TP, les lentilles divergentes équipent les <strong>balises lumineuses grand-angle</strong>, les <strong>caméras de sécurité d'engins à 170°</strong> et les <strong>lunettes de nivellement à mise au point interne étanche</strong>.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    sujets_div_tp = [
+        {"titre": "Chantier N°1 : Balise lumineuse de signalisation à lentille divergente", "img": "div_tp_balise.jpg", "leg": "Feu de balisage de chantier diffusant la lumière sur 360°", "exp": "**Principe :** La lentille divergente (<i>C</i> &lt; 0) écarte les rayons lumineux de l'axe optique pour assurer une signalisation visible sous tous les angles."},
+        {"titre": "Chantier N°2 : Caméra de recul grand-angle rétrofocus sur tombereau TP", "img": "div_tp_camera.jpg", "leg": "Caméra grand-angle arrière éliminant les angles morts sur chantier", "exp": "**Principe :** La lentille divergente frontale forme une image **virtuelle, droite et rétrécie** couvrant jusqu'à **175°** derrière l'engin."},
+        {"titre": "Chantier N°3 : Niveau optique étanche à mise au point interne divergente", "img": "div_tp_niveau.jpg", "leg": "Lunette de chantier à lentille divergente interne mobile", "exp": "**Principe :** Le déplacement interne d'une lentille divergente ajuste la focalisation sur le réticule tout en gardant le tube hermétique à la poussière et à la pluie."}
+    ]
+
+    if "sujet_dtp_tire" not in st.session_state:
+        st.session_state.sujet_dtp_tire = None
+
+    if st.button("TIRER AU SORT UN CHANTIER TP (DIVERGENTES)", key="btn_tirage_dtp", use_container_width=True):
+        choix = [i for i in range(3) if i != st.session_state.sujet_dtp_tire]
+        st.session_state.sujet_dtp_tire = random.choice(choix)
+        st.session_state.mesures_dtp_log = []
+        st.rerun()
+
+    if st.session_state.sujet_dtp_tire is None:
+        st.info("Cliquez sur le bouton ci-dessus pour tirer au sort un chantier de Travaux Publics.")
+    else:
+        idx_dtp = st.session_state.sujet_dtp_tire
+        data_dtp = sujets_div_tp[idx_dtp]
+        st.success(f"Chantier attribué : **{data_dtp['titre']}**")
+        st.markdown(data_dtp["exp"], unsafe_allow_html=True)
+
+        c_img, c_bd = st.columns(2)
+        with c_img:
+            try: st.image(data_dtp["img"], caption=data_dtp["leg"], use_container_width=True)
+            except Exception: st.warning(f"L'image '{data_dtp['img']}' est introuvable.")
+        with c_bd:
+            try: st.image("bd_div_tp.jpg", caption="La pause BD : Avec la caméra grand-angle, le camion paraît encore loin !", use_container_width=True)
+            except Exception: st.warning("L'image 'bd_div_tp.jpg' est introuvable.")
+
+        st.markdown("---")
+        if "mesures_dtp_log" not in st.session_state: st.session_state.mesures_dtp_log = []
+        if idx_dtp == 0:
+            st.slider("Vergence C de la lentille divergente de balise (δ) :", -20.0, -4.0, -12.0, 1.0, key="slider_dtp_s0")
+        elif idx_dtp == 1:
+            st.slider("Vergence C de la caméra grand-angle (δ) :", -24.0, -6.0, -16.0, 1.0, key="slider_dtp_s1")
+        else:
+            st.slider("Position de la lentille divergente interne (mm) [Cible = 45 mm] :", 30.0, 60.0, 45.0, 1.0, key="slider_dtp_s2")
+
+        if st.button("ENREGISTRER CE RELEVÉ TP", key="btn_rel_dtp", use_container_width=True):
+            if "dtp_mesure_courante" in st.session_state:
+                st.session_state.mesures_dtp_log.append(st.session_state.dtp_mesure_courante)
+                st.rerun()
+
+        st.pyplot(mettre_a_jour_div_tp_matplotlib(idx_dtp), use_container_width=True)
+        if st.session_state.mesures_dtp_log:
+            df_dtp = pd.DataFrame(st.session_state.mesures_dtp_log, columns=["Paramètre 1", "Paramètre 2", "Calcul", "Diagnostic"])
+            st.dataframe(df_dtp, use_container_width=True, hide_index=True)
+
+    st.write("---")
+    if "dtp_verrouille_tab5" not in st.session_state: st.session_state.dtp_verrouille_tab5 = False
+    verrou_dtp = st.session_state.dtp_verrouille_tab5
+    sujet_actif_dtp = st.session_state.get("sujet_dtp_tire", None)
+    afficher_atelier_div_tp(sujet_actif_dtp, verrouille=verrou_dtp)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_dtp = st.checkbox("Je certifie avoir complété l'Atelier 5 (Travaux Publics - Divergentes).", key="certif_dtp5", disabled=verrou_dtp)
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_exp_dtp5", use_container_width=True, disabled=verrou_dtp):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif sujet_actif_dtp is None or not case_certif_dtp:
+            st.error("Action refusée : Tirez au sort un chantier et cochez la case de certification.")
+        else:
+            bq = BANQUES_DIV_TP[sujet_actif_dtp]
+            sc_q = sum(1.0 for q in st.session_state.get(f"ordre_quiz_dtp_{sujet_actif_dtp}", []) if st.session_state.get(f"dtp_at5_g_{q['id']}") == q["rep"])
+            sc_t = sum(1.0 for _, _, rep, cle in bq["trous"] if st.session_state.get(f"{cle}_s{sujet_actif_dtp}") == rep)
+            st.session_state.score_dtp5_p1, st.session_state.score_dtp5_p2, st.session_state.score_final_dtp5 = sc_q, sc_t, sc_q + sc_t
+            st.session_state.dtp_verrouille_tab5 = True
+            st.rerun()
+
+    if st.session_state.get("dtp_verrouille_tab5", False) and sujet_actif_dtp is not None:
+        scr1, scr2, tot_s = st.session_state.score_dtp5_p1, st.session_state.score_dtp5_p2, st.session_state.score_final_dtp5
+        ts_dtp = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER 5 SCELLÉ | Note : {tot_s:.1f} / 20")
+        bq = BANQUES_DIV_TP[sujet_actif_dtp]
+        html_dtp = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport Atelier 5 - {n_eleve}</title>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}</style></head>
+        <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Atelier 5 : Travaux Publics (Lentilles Divergentes) - {sujets_div_tp[sujet_actif_dtp]['titre']}</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_dtp}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
+        <p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
+        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th></tr></thead><tbody>"""
+        for num, q in enumerate(st.session_state.get(f"ordre_quiz_dtp_{sujet_actif_dtp}", []), 1):
+            qid_curr = q["id"]
+            saisie_curr = st.session_state.get(f"dtp_at5_g_{qid_curr}", "Choisir...")
+            html_dtp += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_curr}</td><td>{q['rep']}</td></tr>"
+        html_dtp += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th></tr></thead><tbody>"
+        for idx_t, (en, _, rep, cle) in enumerate(bq["trous"], 1):
+            saisie_t_curr = st.session_state.get(f"{cle}_s{sujet_actif_dtp}", "Choisir...")
+            html_dtp += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t_curr}</td><td>{rep}</td></tr>"
+        html_dtp += "</tbody></table></body></html>"
+        st.download_button("Télécharger le rapport officiel de l'Atelier 5 (.html)", data=html_dtp, file_name=preparer_nom_fichier("Rapport_Atelier_5_TP_Divergentes").replace(".txt", ".html"), mime="text/html", use_container_width=True)
 
 
 
