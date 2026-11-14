@@ -1400,7 +1400,11 @@ with tab2:
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
-    case_certif_rd = st.checkbox("Je certifie avoir complété l'Atelier 2 (Règles de tracé - Divergente).", key="certif_rd2", disabled=verrou_rd)
+    case_certif_rd = st.checkbox(
+        "Je certifie avoir complété l'Atelier 2 (Règles de tracé - Divergente).",
+        key="certif_rd2",
+        disabled=verrou_rd
+    )
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_exp_rd2", use_container_width=True, disabled=verrou_rd):
         if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
