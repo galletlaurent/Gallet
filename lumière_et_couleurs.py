@@ -1276,40 +1276,104 @@ def recuperer_couleurs_newton():
 
 
 def dessiner_disque_newton():
-    """Dessine le disque de Newton avec rotation réelle calculée à chaque image."""
+    """Animation Canvas HTML5 fluide à 60 FPS sans aucun st.rerun()."""
     vitesse = float(st.session_state.get("var_vitesse_disque", 10.0))
     anim_en_cours = bool(st.session_state.get("anim_en_cours", False))
-    angle_rot = float(st.session_state.get("angle_rotation_disque", 0.0))
+    vitesse_eff = vitesse if anim_en_cours else 0.0
 
-    fig, ax = plt.subplots(figsize=(4.2, 4.2), facecolor="#0f172a")
-    ax.set_facecolor("#0f172a")
-    ax.set_xlim(-115, 115)
-    ax.set_ylim(-115, 115)
-    ax.axis("off")
+    html_canvas = f"""
+    <div style="background-color:#0f172a; border-radius:8px; padding:12px; border:1px solid #1e293b; text-align:center; font-family:Arial,sans-serif;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+            <span style="color:#38bdf8; font-weight:bold; font-size:13px;">DISQUE DE NEWTON</span>
+            <span style="color:#eab308; font-weight:bold; font-size:13px;">Vitesse : {vitesse_eff:.1f} tr/s</span>
+        </div>
+        <canvas id="disqueCanvas" width="290" height="290"></canvas>
+    </div>
 
-    fusion = min(1.0, vitesse / 25.0) if anim_en_cours else 0.0
+    <script>
+        (function() {{
+            const canvas = document.getElementById("disqueCanvas");
+            if (!canvas) return;
+            const ctx = canvas.getContext("2d");
+            const cx = 145;
+            const cy = 145;
+            const rayon = 125;
 
-    r_list = list((239, 249, 234, 34, 37, 79, 124))
-    g_list = list((68, 115, 179, 197, 99, 70, 58))
-    b_list = list((68, 22, 8, 94, 235, 229, 237))
+            const vitesse = {vitesse_eff};
+            const rTab =;
+            const gTab =;
+            const bTab =;
 
-    ouverture = 360.0 / 7.0
-    for i in range(7):
-        a_dep = (angle_rot + i * ouverture) % 360.0
-        nr = int(r_list[i] + (255 - r_list[i]) * fusion) / 255.0
-        ng = int(g_list[i] + (255 - g_list[i]) * fusion) / 255.0
-        nb = int(b_list[i] + (255 - b_list[i]) * fusion) / 255.0
-        wedge = patches.Wedge((0, 0), 98.0, a_dep, a_dep + ouverture, facecolor=(nr, ng, nb), edgecolor=(nr, ng, nb))
-        ax.add_patch(wedge)
+            const fusion = Math.min(1.0, vitesse / 25.0);
+            let angle = 0;
+            let tPrev = performance.now();
 
-    if fusion < 0.85:
-        rad = math.radians(angle_rot + 25.0)
-        ax.add_patch(plt.Circle((82.0 * math.cos(rad), 82.0 * math.sin(rad)), 4.5, facecolor="#0f172a"))
+            function dessiner(tNow) {{
+                const dt = (tNow - tPrev) / 1000.0;
+                tPrev = tNow;
 
-    ax.add_patch(plt.Circle((0, 0), 7, facecolor="#1e293b", edgecolor="white", lw=1.5))
-    txt_v = f"{vitesse:.1f} tr/s" if anim_en_cours else "Arrêté"
-    ax.text(-110, 102, f"Vitesse : {txt_v}", color="#38bdf8", fontsize=9, fontweight="bold")
-    return fig
+                const omega = Math.min(vitesse, 14.0) * 2.0 * Math.PI;
+                angle = (angle + omega * dt) % (2.0 * Math.PI);
+
+                ctx.clearRect(0, 0, 290, 290);
+
+                ctx.beginPath();
+                ctx.arc(cx, cy, rayon + 4, 0, 2 * Math.PI);
+                ctx.fillStyle = "#1e293b";
+                ctx.fill();
+
+                const pas = (2.0 * Math.PI) / 7.0;
+                const traines = vitesse > 0 ? 5 : 1;
+
+                for (let k = 0; k < traines; k++) {{
+                    const aOffset = angle - k * 0.09 * Math.min(vitesse / 4.0, 2.5);
+                    ctx.globalAlpha = 1.0 / (k + 1);
+
+                    for (let i = 0; i < 7; i++) {{
+                        const a1 = aOffset + i * pas;
+                        const a2 = a1 + pas + 0.02;
+                        const r = Math.round(rTab[i] + (255 - rTab[i]) * fusion);
+                        const g = Math.round(gTab[i] + (255 - gTab[i]) * fusion);
+                        const b = Math.round(bTab[i] + (255 - bTab[i]) * fusion);
+
+                        ctx.beginPath();
+                        ctx.moveTo(cx, cy);
+                        ctx.arc(cx, cy, rayon, a1, a2);
+                        ctx.closePath();
+                        ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+                        ctx.fill();
+                    }}
+                }}
+
+                ctx.globalAlpha = 1.0;
+
+                if (fusion < 0.85) {{
+                    const mx = cx + (rayon - 14) * Math.cos(angle);
+                    const my = cy + (rayon - 14) * Math.sin(angle);
+                    ctx.beginPath();
+                    ctx.arc(mx, my, 5, 0, 2 * Math.PI);
+                    ctx.fillStyle = "#0f172a";
+                    ctx.fill();
+                }}
+
+                ctx.beginPath();
+                ctx.arc(cx, cy, 9, 0, 2 * Math.PI);
+                ctx.fillStyle = "#334155";
+                ctx.fill();
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "#ffffff";
+                ctx.stroke();
+
+                if (vitesse > 0) {{
+                    requestAnimationFrame(dessiner);
+                }}
+            }}
+
+            requestAnimationFrame(dessiner);
+        }})();
+    </script>
+    """
+    return html_canvas
 
 
 def gerer_action_disque():
@@ -1509,8 +1573,8 @@ with tab2:
     with col_droite:
         st.pyplot(fig_decomposition)
         st.markdown("---")
-        fig_disque = dessiner_disque_newton()
-        st.pyplot(fig_disque)
+        html_disque = dessiner_disque_newton()
+        components.html(html_disque, height=345)
     # =========================================================================
     # LABO DE SIMULATION : SYNTHÈSE ADDITIVE ET SOUSTRACTIVE
     # =========================================================================
@@ -1742,11 +1806,7 @@ with tab2:
             use_container_width=True
         )
 
-    if st.session_state.get("anim_en_cours", False):
-        vit = float(st.session_state.get("var_vitesse_disque", 10.0))
-        st.session_state.angle_rotation_disque = (st.session_state.get("angle_rotation_disque", 0.0) + vit * 19.0) % 360.0
-        time.sleep(0.015)
-        st.rerun()
+
 
 
 with tab3:
