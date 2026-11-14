@@ -1390,8 +1390,10 @@ st.set_page_config(
 
 
 
-
-
+for i in range(1, 10):
+    key = f"mode_examen_tab{i}"
+    if key not in st.session_state:
+        st.session_state[key] = False
 
 if "var_angle_incidence" not in st.session_state:
     st.session_state.var_angle_incidence = 30.0
@@ -1502,8 +1504,8 @@ with tab2:
                 min_value=10.0, max_value=80.0,
                 value=st.session_state.var_angle_incidence,
                 step=0.5, key="slider_angle",
-                disabled=st.session_state.mode_examen_tab1
-            )
+                disabled=st.session_state.get("mode_examen_tab1", False)
+            
 
             st.session_state.var_indice_n = st.slider(
                 "Indice de base n :",
