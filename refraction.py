@@ -3,7 +3,7 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="Application Réflexion ",
+    page_title="Application Réfraction ",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -23,7 +23,7 @@ import streamlit.components.v1 as components
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
-st.title("Application Réflexion")
+st.title("Application Réfraction")
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 
@@ -1420,7 +1420,9 @@ with tab0:
             # Rechargement propre pour appliquer instantanément le verrouillage visuel des champs
             if st.session_state.get("vérrouillé", False):
                 st.rerun()
-
+with tab1:
+    
+    st.header("Atelier  : Historique sur la réfraction ")
 
 with tab2:
     
@@ -1507,7 +1509,7 @@ with tab2:
 
 
 with tab3:
-    st.header("**Manipulation  : Illusion d'optique (Affichage Tete Haute - HUD)**")
+    st.header("**La double réfraction**")
             
 
     st.markdown("<p style='color:#991b1b; font-weight:bold; margin-bottom:2px;'> DOUBLE REFRACTION</p>", unsafe_allow_html=True)
@@ -1528,6 +1530,7 @@ with tab3:
     
     # Boîte blanche flottante mémorisée dans la session
     st.info(st.session_state.get("opt4_txt_box_double", "Ajustez les curseurs pour initialiser la lame."))
+
 
 with tab4:
     st.header("**Réflexion totale : application à la fibre optique**")
@@ -1585,20 +1588,20 @@ with tab4:
 
 
 with tab5:
-    st.header("**Manipulation  : Application Navale (Le Periscope du sous-marin)**")
+    st.header("**Applications de la réfraction dans le domaine de la maintenance*")
             
 
 
 
 
 with tab6:
-    st.header("**Manipulation  : Application Navale (Le Periscope du sous-marin)**")
+    st.header("**Applications de la réfraction dans le domaine des TP**")
 
 
 
 
 with tab7:
-    st.header("Applications de la réflexion totale dans le domaine routier")
+    st.header("**Applications de la réfraction dans le domaine routier")
     
     import random
     import math
@@ -2122,6 +2125,6 @@ with tab7:
 
 
 with tab8:
-    st.header("**Manipulation  : Application Navale (Le Periscope du sous-marin)**")
+    st.header("**Applications de la réfraction dans le domaine géomètre topographe*")
 
 
