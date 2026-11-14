@@ -1030,7 +1030,7 @@ with tab3:
     # MODULE DE NOTATION ET D'EXPORTATION AUTOMATIQUE SUR 20 POINTS
     # =========================================================================
     st.write("---")
-    st.subheader("Validation et Generation du Bilan Officiel - Optique 5")
+    st.subheader("Validation et Generation du Bilan Officiel - ")
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
@@ -1042,7 +1042,7 @@ with tab3:
         disabled=st.session_state.get("opt5_verrouille", False)
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_opt5_official_20pts", use_container_width=True, disabled=st.session_state.get("opt5_verrouille", False)):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER ", key="btn_export_opt5_official_20pts", use_container_width=True, disabled=st.session_state.get("opt5_verrouille", False)):
         if not st.session_state.get("verrouille", False): 
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_opt5: 
@@ -1079,7 +1079,7 @@ with tab3:
         from datetime import datetime, timedelta
         timestamp_opt5 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER OPTIQUE 5 SCELLE | Note de session : {tot_s} / 20")
+        st.success(f"ATELIER OPTIQUE  SCELLE | Note de session : {tot_s} / 20")
 
         attendus_qo5_v = {
             "q1": "1/x' - 1/x = 1/f'", "q2": "Continue en ligne droite sans subir de deviation", 
@@ -1122,7 +1122,7 @@ with tab3:
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Optique 5 - {n_eleve}</title>
+            <title>Rapport Optique  - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
@@ -1208,7 +1208,7 @@ with tab3:
         st.download_button(
             label="Télécharger le relevé de notes au format HTML",
             data=html_export_opt5,
-            file_name=f"Bilan_Optique5_{n_eleve}.html",
+            file_name=f"Bilan_Optique_{n_eleve}.html",
             mime="text/html",
             use_container_width=True
         )
