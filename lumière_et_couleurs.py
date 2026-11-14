@@ -1382,14 +1382,6 @@ st.set_page_config(
 )
 
 
-
-
-
-
-
-
-
-
 for i in range(1, 10):
     key = f"mode_examen_tab{i}"
     if key not in st.session_state:
@@ -1537,12 +1529,20 @@ with tab2:
                 st.info("Résultats de la décomposition")
 
         # --- CADRAN 2 : Recomposition ---
+        # --- CADRAN 2 : Recomposition ---
         with st.container(border=True):
             st.markdown("**Recomposition de la lumière du soleil**")
             
-            label_bouton = "Arrêter le Disque" if st.session_state.anim_en_cours else "Lancer le Disque"
-            if st.button(label_bouton, key="btn_disque_action", disabled=st.session_state.mode_examen_tab1):
-                st.session_state.anim_en_cours = not st.session_state.anim_en_cours
+            # Initialisation sécurisée des variables du disque de Newton
+            if "anim_en_cours" not in st.session_state:
+                st.session_state.anim_en_cours = False
+            if "var_vitesse_disque" not in st.session_state:
+                st.session_state.var_vitesse_disque = 10.0
+            verrou_tab1 = st.session_state.get("mode_examen_tab1", False)
+
+            label_bouton = "Arrêter le Disque" if st.session_state.get("anim_en_cours", False) else "Lancer le Disque"
+            if st.button(label_bouton, key="btn_disque_action", disabled=verrou_tab1):
+                st.session_state.anim_en_cours = not st.session_state.get("anim_en_cours", False)
                 gerer_action_disque()
                 st.rerun()
 
@@ -1550,9 +1550,10 @@ with tab2:
                 "Vitesse du disque (tr/s) :",
                 min_value=1.0,
                 max_value=40.0,
-                value=st.session_state.var_vitesse_disque,
+                value=float(st.session_state.get("var_vitesse_disque", 10.0)),
                 step=1.0,
-                key="slider_vitesse_disque"
+                key="slider_vitesse_disque",
+                disabled=verrou_tab1
             )
 
 
