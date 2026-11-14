@@ -1828,7 +1828,7 @@ with tab2:
     # =========================================================================
     # VALIDATION DÉFINITIVE ET NOTATION DE L'ATELIER OPTIQUE 1 (Déjà présent au bas)
     # =========================================================================
-     st.write("---")
+    st.write("---")
     st.subheader("Validation et Generation du Bilan Officiel - Optique 1")
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
