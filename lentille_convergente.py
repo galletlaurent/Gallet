@@ -834,7 +834,172 @@ def reinitialiser_mesures_lentille_streamlit():
     st.session_state.mesures_inv_x = []
     st.session_state.mesures_inv_xprime = []
 
+def afficher_atelier_hist_lentilles(verrouille=False):
+    """Affiche le Quiz (10 questions) et le Texte à trous (10 cases) de l'Atelier 1 (Histoire des lentilles)."""
+    questions_hl = [
+        {"id": "qhl1", "q": "Quelle est la plus ancienne lentille convergente connue, découverte en Assyrie (vers 750 av. J.-C.) ?", "options": ["La lentille de Nimrud en cristal de roche", "La lentille de Fresnel en verre moulé", "L'objectif photographique de Zeiss"], "rep": "La lentille de Nimrud en cristal de roche"},
+        {"id": "qhl2", "q": "Quel savant arabe du XIe siècle a décrit le pouvoir grossissant des lentilles convexes dans son Traité d'optique ?", "options": ["Ibn al-Haytham (Alhazen)", "Archimède", "Pythagore"], "rep": "Ibn al-Haytham (Alhazen)"},
+        {"id": "qhl3", "q": "Vers quelle année les premières lunettes de vue à lentilles convergentes (pour presbytes) sont-elles inventées en Italie ?", "options": ["Vers 1285 (fin du XIIIe siècle)", "En 1789", "En 1905"], "rep": "Vers 1285 (fin du XIIIe siècle)"},
+        {"id": "qhl4", "q": "Quel savant a perfectionné la lunette astronomique en 1609 pour observer les satellites de Jupiter ?", "options": ["Galilée", "Isaac Newton", "Blaise Pascal"], "rep": "Galilée"},
+        {"id": "qhl5", "q": "Quel astronome allemand a établi dès 1611 la théorie géométrique des lentilles minces convergentes dans son ouvrage Dioptrice ?", "options": ["Johannes Kepler", "Nicolas Copernic", "Tycho Brahe"], "rep": "Johannes Kepler"},
+        {"id": "qhl6", "q": "Quel physicien français a inventé en 1822 les lentilles à échelons pour équiper les phares maritimes ?", "options": ["Augustin Fresnel", "René Descartes", "Louis Pasteur"], "rep": "Augustin Fresnel"},
+        {"id": "qhl7", "q": "Pourquoi les lentilles convergentes étaient-elles appelées « verres ardents » dans l'Antiquité ?", "options": ["Parce qu'elles concentraient les rayons du Soleil en un point (le foyer) pour allumer un feu", "Parce qu'elles brillaient dans le noir", "Parce qu'elles étaient fabriquées dans la lave"], "rep": "Parce qu'elles concentraient les rayons du Soleil en un point (le foyer) pour allumer un feu"},
+        {"id": "qhl8", "q": "De quel mot latin provient le nom « lentille » en optique ?", "options": ["Lens (qui désigne la graine de lentille, de forme biconvexe)", "Lux (la lumière)", "Lumen (le flux)"], "rep": "Lens (qui désigne la graine de lentille, de forme biconvexe)"},
+        {"id": "qhl9", "q": "Quel défaut visuel lié à l'âge a été le premier corrigé par des lentilles convergentes au Moyen Âge ?", "options": ["La presbytie (difficulté à voir de près)", "La myopie", "Le daltonisme"], "rep": "La presbytie (difficulté à voir de près)"},
+        {"id": "qhl10", "q": "Quelle formule algébrique moderne relie la position de l'objet x, celle de l'image x' et la distance focale f' ?", "options": ["La relation de conjugaison de Descartes (1/x' - 1/x = 1/f')", "La loi d'Ohm (U = R·I)", "La relation d'Einstein (E = mc²)"], "rep": "La relation de conjugaison de Descartes (1/x' - 1/x = 1/f')"},
+    ]
 
+    if "ordre_quiz_hl_aleatoire" not in st.session_state:
+        random.shuffle(questions_hl)
+        st.session_state.ordre_quiz_hl_aleatoire = questions_hl
+
+    champs_hl = [
+        ("1. Le mot lentille vient du latin ......... en raison de sa forme bombée.", ["Choisir...", "lens", "lux"], "lens", "hl_t1"),
+        ("2. La lentille de ......... (750 av. J.-C.) est taillée dans du cristal de roche.", ["Choisir...", "Nimrud", "Alexandrie"], "Nimrud", "hl_t2"),
+        ("3. Au XIe siècle, ......... étudie le grossissement des surfaces convexes.", ["Choisir...", "Alhazen", "Euclide"], "Alhazen", "hl_t3"),
+        ("4. Les premières ......... de vue convergentes apparaissent en Italie vers 1285.", ["Choisir...", "lunettes", "caméras"], "lunettes", "hl_t4"),
+        ("5. En 1609, ......... utilise une lunette pour observer les astres.", ["Choisir...", "Galilée", "Newton"], "Galilée", "hl_t5"),
+        ("6. En 1611, Johannes ......... publie le traité Dioptrice.", ["Choisir...", "Kepler", "Descartes"], "Kepler", "hl_t6"),
+        ("7. En 1822, Augustin ......... invente la lentille à échelons pour les phares.", ["Choisir...", "Fresnel", "Foucault"], "Fresnel", "hl_t7"),
+        ("8. Une lentille convergente concentre les rayons solaires en son .........", ["Choisir...", "foyer", "bord"], "foyer", "hl_t8"),
+        ("9. Au Moyen Âge, les verres convergents corrigeaient la .........", ["Choisir...", "presbytie", "surdité"], "presbytie", "hl_t9"),
+        ("10. La formule de conjugaison porte le nom de René .........", ["Choisir...", "Descartes", "Pascal"], "Descartes", "hl_t10"),
+    ]
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Historique des Lentilles (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_hl_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", ["Choisir..."] + q_data["options"], key=f"hl_at1_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_t:
+        st.markdown("##### Synthèse Historique (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in champs_hl:
+            c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+
+
+def dessiner_regles_trace_lentille_matplotlib():
+    """Schéma pédagogique interactif des 3 rayons particuliers d'une lentille convergente."""
+    fig, ax = plt.subplots(figsize=(11, 4.5), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 240)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    x0, y0 = 300.0, 120.0
+    f_px = st.session_state.get("slider_regles_f", 100.0)
+    choix_rayon = st.session_state.get("radio_regles_rayon", "Tous les 3 rayons particuliers")
+
+    # Axe optique
+    ax.plot(list((20, 580)), list((y0, y0)), color="#cbd5e1", lw=1.3, ls="-.")
+    ax.text(575, y0 + 14, "Axe optique", color="#94a3b8", fontsize=8, ha="right")
+
+    # Lentille convergente (double flèche)
+    ax.plot(list((x0, x0)), list((25, 215)), color="#38bdf8", lw=3)
+    ax.plot(list((x0 - 8, x0, x0 + 8)), list((35, 25, 35)), color="#38bdf8", lw=3)
+    ax.plot(list((x0 - 8, x0, x0 + 8)), list((205, 215, 205)), color="#38bdf8", lw=3)
+    ax.text(x0 + 8, 30, "Lentille (L)", color="#38bdf8", fontsize=8.5, fontweight="bold")
+    ax.text(x0 - 10, y0 + 14, "O", color="#cbd5e1", fontsize=8.5, fontweight="bold", ha="right")
+
+    # Foyers F et F'
+    xf = x0 - f_px
+    xfp = x0 + f_px
+    ax.scatter(list((xf, xfp)), list((y0, y0)), color="#fde047", s=45, zorder=5)
+    ax.text(xf, y0 + 16, "F (Foyer objet)", color="#fde047", fontsize=8, fontweight="bold", ha="center")
+    ax.text(xfp, y0 + 16, "F' (Foyer image)", color="#fde047", fontsize=8, fontweight="bold", ha="center")
+
+    # Point objet B à gauche (x = 110, y = 65)
+    xb, yb = 110.0, 65.0
+    ax.annotate("", xy=(xb, yb), xytext=(xb, y0), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5))
+    ax.text(xb - 6, y0 + 14, "A", color="#ef4444", fontsize=8.5, fontweight="bold", ha="right")
+    ax.text(xb - 6, yb, "B", color="#ef4444", fontsize=8.5, fontweight="bold", ha="right")
+
+    # Calcul point image B'
+    x_obj = xb - x0
+    x_img = (f_px * x_obj) / (x_obj + f_px)
+    h_obj = y0 - yb
+    h_img = h_obj * (x_img / x_obj)
+    xbp = x0 + x_img
+    ybp = y0 - h_img
+
+    # Règle 1 : Rayon parallèle à l'axe -> passe par F'
+    if "1" in choix_rayon or "Tous" in choix_rayon:
+        ax.annotate("", xy=(x0, yb), xytext=(xb, yb), arrowprops=dict(arrowstyle="->", color="#eab308", lw=2))
+        pente1 = (y0 - yb) / f_px
+        ax.annotate("", xy=(560, yb + pente1 * (560 - x0)), xytext=(x0, yb), arrowprops=dict(arrowstyle="->", color="#eab308", lw=2))
+
+    # Règle 2 : Rayon passant par O -> non dévié
+    if "2" in choix_rayon or "Tous" in choix_rayon:
+        pente2 = (y0 - yb) / (x0 - xb)
+        ax.annotate("", xy=(560, yb + pente2 * (560 - xb)), xytext=(xb, yb), arrowprops=dict(arrowstyle="->", color="#3b82f6", lw=2))
+
+    # Règle 3 : Rayon passant par F -> ressort parallèle à l'axe
+    if "3" in choix_rayon or "Tous" in choix_rayon:
+        pente3 = (y0 - yb) / (xf - xb)
+        y_hit3 = yb + pente3 * (x0 - xb)
+        if 20 <= y_hit3 <= 220:
+            ax.annotate("", xy=(x0, y_hit3), xytext=(xb, yb), arrowprops=dict(arrowstyle="->", color="#ec4899", lw=2))
+            ax.annotate("", xy=(560, y_hit3), xytext=(x0, y_hit3), arrowprops=dict(arrowstyle="->", color="#ec4899", lw=2))
+
+    # Image A'B'
+    if 310 <= xbp <= 570:
+        ax.annotate("", xy=(xbp, ybp), xytext=(xbp, y0), arrowprops=dict(arrowstyle="->", color="#22c55e", lw=2.5))
+        ax.text(xbp + 6, y0 - 6, "A'", color="#22c55e", fontsize=8.5, fontweight="bold")
+        ax.text(xbp + 6, ybp + 6, "B'", color="#22c55e", fontsize=8.5, fontweight="bold")
+
+    ax.text(20, 18, "RÈGLES DE CONSTRUCTION GÉOMÉTRIQUE DES 3 RAYONS PARTICULIERS", color="#38bdf8", fontsize=9, fontweight="bold")
+    return fig
+
+
+def afficher_atelier_regles_lentilles(verrouille=False):
+    """Affiche le Quiz (10 questions) et le Texte à trous (10 cases) de l'Atelier 2 (Règles de tracé)."""
+    questions_rl = [
+        {"id": "qrl1", "q": "Comment reconnaît-on au toucher une lentille mince convergente ?", "options": ["Ses bords sont plus minces que son centre", "Ses bords sont plus épais que son centre", "Elle est totalement plate comme une vitre"], "rep": "Ses bords sont plus minces que son centre"},
+        {"id": "qrl2", "q": "Quel est le symbole schématique normalisé d'une lentille mince convergente ?", "options": ["Un segment vertical terminé par deux flèches pointant vers l'extérieur", "Un segment terminé par des flèches inversées vers l'intérieur", "Un rectangle noir opaque"], "rep": "Un segment vertical terminé par deux flèches pointant vers l'extérieur"},
+        {"id": "qrl3", "q": "Que fait un rayon lumineux incident passant par le centre optique O de la lentille ?", "options": ["Il traverse la lentille en ligne droite sans être dévié", "Il est réfléchi vers l'arrière", "Il ressort parallèlement à l'axe optique"], "rep": "Il traverse la lentille en ligne droite sans être dévié"},
+        {"id": "qrl4", "q": "Par quel point remarquable ressort tout rayon incident parallèle à l'axe optique ?", "options": ["Par le foyer image F'", "Par le foyer objet F", "Par le bord supérieur de la lentille"], "rep": "Par le foyer image F'"},
+        {"id": "qrl5", "q": "Comment ressort un rayon incident qui passe par le foyer objet F avant de toucher la lentille ?", "options": ["Il ressort parallèlement à l'axe optique", "Il passe par le centre optique O", "Il converge vers F'"], "rep": "Il ressort parallèlement à l'axe optique"},
+        {"id": "qrl6", "q": "Comment sont placés le foyer objet F et le foyer image F' par rapport au centre optique O ?", "options": ["Ils sont symétriques par rapport au centre optique O (OF = OF')", "Ils sont tous les deux à droite de la lentille", "Ils sont confondus avec le point O"], "rep": "Ils sont symétriques par rapport au centre optique O (OF = OF')"},
+        {"id": "qrl7", "q": "Combien de rayons particuliers suffit-il de tracer depuis un point objet B pour trouver la position exacte de son image B' ?", "options": ["2 rayons suffisent (le 3e sert de vérification)", "Il faut obligatoirement 10 rayons", "1 seul rayon suffit"], "rep": "2 rayons suffisent (le 3e sert de vérification)"},
+        {"id": "qrl8", "q": "Si l'objet AB est perpendiculaire à l'axe optique avec A sur l'axe, où se situe le point image A' ?", "options": ["Également sur l'axe optique (projection orthogonale de B')", "Au-dessus de B'", "Sur le foyer F"], "rep": "Également sur l'axe optique (projection orthogonale de B')"},
+        {"id": "qrl9", "q": "Quelle est l'unité légale de la distance focale f' dans les calculs de vergence C = 1 / f' ?", "options": ["Le mètre (m)", "Le centimètre (cm)", "Le degré (°)"], "rep": "Le mètre (m)"},
+        {"id": "qrl10", "q": "Une lentille convergente de distance focale f' = 20 cm (0,20 m) possède une vergence C égale à :", "options": ["+ 5,0 dioptries (δ)", "+ 20 dioptries (δ)", "+ 0,20 dioptrie (δ)"], "rep": "+ 5,0 dioptries (δ)"},
+    ]
+
+    if "ordre_quiz_rl_aleatoire" not in st.session_state:
+        random.shuffle(questions_rl)
+        st.session_state.ordre_quiz_rl_aleatoire = questions_rl
+
+    champs_rl = [
+        ("1. Une lentille convergente a des bords plus ......... que son centre.", ["Choisir...", "minces", "épais"], "minces", "rl_t1"),
+        ("2. L'axe de symétrie perpendiculaire à la lentille est l'axe .........", ["Choisir...", "optique", "vertical"], "optique", "rl_t2"),
+        ("3. Le point central de la lentille noté O est le centre .........", ["Choisir...", "optique", "focal"], "optique", "rl_t3"),
+        ("4. Tout rayon passant par le centre O n'est pas .........", ["Choisir...", "dévié", "transmis"], "dévié", "rl_t4"),
+        ("5. Tout rayon parallèle à l'axe émerge en passant par le foyer ......... F'.", ["Choisir...", "image", "objet"], "image", "rl_t5"),
+        ("6. Tout rayon passant par le foyer objet F ressort ......... à l'axe.", ["Choisir...", "parallèle", "perpendiculaire"], "parallèle", "rl_t6"),
+        ("7. Les foyers F et F' sont ......... par rapport au centre O.", ["Choisir...", "symétriques", "confondus"], "symétriques", "rl_t7"),
+        ("8. La distance OF' s'appelle la distance ......... f'.", ["Choisir...", "focale", "frontale"], "focale", "rl_t8"),
+        ("9. L'inverse de la distance focale en mètres est la ......... C.", ["Choisir...", "vergence", "puissance"], "vergence", "rl_t9"),
+        ("10. L'unité de la vergence d'une lentille est la ......... (δ).", ["Choisir...", "dioptrie", "candela"], "dioptrie", "rl_t10"),
+    ]
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Définition & Règles de Tracé (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_rl_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", ["Choisir..."] + q_data["options"], key=f"rl_at2_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_t:
+        st.markdown("##### Synthèse Règles de Tracé (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in champs_rl:
+            c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
 
 
 with tab0:
@@ -903,14 +1068,448 @@ def valider_session():
             f"Session Ouverte : Bienvenue {prenom} {nom}.\nVotre session de TP pour le groupe {groupe} est désormais active."
         )
 
+BANQUES_LEN_MAINT = {
+    0: {
+        "questions": [
+            {"id": "qlm0_1", "q": "Où doit être placée une pièce mécanique par rapport au foyer objet F d'une loupe d'atelier pour obtenir une image agrandie et droite ?", "options": ["Entre le centre optique O et le foyer objet F (x < f')", "Au-delà de deux fois la distance focale (x > 2f')", "Sur le foyer image F'"], "rep": "Entre le centre optique O et le foyer objet F (x < f')"},
+            {"id": "qlm0_2", "q": "De quelle nature est l'image d'une micro-fissure observée à travers une loupe de maintenance ?", "options": ["Virtuelle, droite et agrandie", "Réelle, renversée et projetée sur l'établi", "Réelle et plus petite que l'objet"], "rep": "Virtuelle, droite et agrandie"},
+            {"id": "qlm0_3", "q": "Quel est le signe du grandissement γ lorsque la loupe donne une image droite ?", "options": ["Positif (γ > +1)", "Négatif (γ < 0)", "Nul (γ = 0)"], "rep": "Positif (γ > +1)"},
+            {"id": "qlm0_4", "q": "Si une loupe d'horloger-mécanicien a une distance focale f' = 5 cm (0,05 m), quelle est sa vergence C ?", "options": ["+ 20 dioptries (δ)", "+ 5 dioptries (δ)", "+ 0,05 dioptrie (δ)"], "rep": "+ 20 dioptries (δ)"},
+            {"id": "qlm0_5", "q": "Que se passe-t-il si le technicien éloigne la loupe au-delà de sa distance focale (x > f') ?", "options": ["L'image devient réelle et renversée (à l'envers)", "L'image grossit 100 fois", "La loupe devient divergente"], "rep": "L'image devient réelle et renversée (à l'envers)"},
+            {"id": "qlm0_6", "q": "Quel défaut optique sur les bords d'une loupe bon marché déforme les lignes droites d'un circuit imprimé ?", "options": ["L'aberration sphérique et chromatique", "La réflexion totale", "La diffraction acoustique"], "rep": "L'aberration sphérique et chromatique"},
+            {"id": "qlm0_7", "q": "Pourquoi intègre-t-on un anneau de LED blanches autour d'une loupe d'inspection industrielle ?", "options": ["Pour éclairer uniformément la pièce sans ombre portée lors du contrôle visuel", "Pour chauffer la lentille", "Pour alimenter le capteur"], "rep": "Pour éclairer uniformément la pièce sans ombre portée lors du contrôle visuel"},
+            {"id": "qlm0_8", "q": "Comment s'appelle le grossissement commercial G d'une loupe de focale f' (en mètres) pour un œil normal (d_m = 0,25 m) ?", "options": ["G = 0,25 / f' = C / 4", "G = f' × 100", "G = 1 / C"], "rep": "G = 0,25 / f' = C / 4"},
+            {"id": "qlm0_9", "q": "Quel type de contrôle industriel réalise-t-on avec une loupe éclairante sur des soudures ou des engrenages ?", "options": ["Un Contrôle Non Destructif (CND) visuel direct", "Un essai de dureté Brinell", "Une analyse chimique"], "rep": "Un Contrôle Non Destructif (CND) visuel direct"},
+            {"id": "qlm0_10", "q": "Où l'œil du technicien doit-il se placer pour obtenir le champ de vision maximal à travers une loupe ?", "options": ["Proche du foyer image F' de la loupe", "À 2 mètres de la loupe", "Sur le côté à 90°"], "rep": "Proche du foyer image F' de la loupe"},
+        ],
+        "trous": [
+            ("1. Une loupe d'atelier est une lentille mince ......... de courte focale.", ["Choisir...", "convergente", "divergente"], "convergente", "lm_t1"),
+            ("2. Pour voir une image droite, l'objet est placé entre O et le foyer ......... F.", ["Choisir...", "objet", "image"], "objet", "lm_t2"),
+            ("3. L'image observée à travers une loupe est ......... et agrandie.", ["Choisir...", "virtuelle", "réelle"], "virtuelle", "lm_t3"),
+            ("4. Comme l'image est dans le même sens que l'objet, le grandissement γ est .........", ["Choisir...", "positif", "négatif"], "positif", "lm_t4"),
+            ("5. Une loupe de focale f' = 5 cm possède une vergence de ......... dioptries.", ["Choisir...", "20", "5"], "20", "lm_t5"),
+            ("6. Si l'objet s'éloigne au-delà de F, l'image devient .........", ["Choisir...", "renversée", "droite"], "renversée", "lm_t6"),
+            ("7. L'inspection visuelle des soudures est un contrôle non .........", ["Choisir...", "destructif", "optique"], "destructif", "lm_t7"),
+            ("8. Une couronne de ......... éclaire la pièce sans créer d'ombre.", ["Choisir...", "LED", "prismes"], "LED", "lm_t8"),
+            ("9. Plus la distance focale f' est courte, plus le grossissement est .........", ["Choisir...", "fort", "faible"], "fort", "lm_t9"),
+            ("10. Les bords d'une loupe convergente sont plus ......... que son centre.", ["Choisir...", "minces", "épais"], "minces", "lm_t10"),
+        ]
+    },
+    1: {
+        "questions": [
+            {"id": "qlm1_1", "q": "Dans un capteur de vision industrielle (caméra de contrôle qualité), quel rôle joue l'objectif à lentilles convergentes ?", "options": ["Former une image réelle et nette de la pièce sur le capteur CMOS", "Éclairer l'atelier en infrarouge", "Mesurer la masse de la pièce"], "rep": "Former une image réelle et nette de la pièce sur le capteur CMOS"},
+            {"id": "qlm1_2", "q": "De quelle nature est l'image formée sur la matrice électronique d'une caméra industrielle ?", "options": ["Réelle et renversée", "Virtuelle et droite", "À l'infini"], "rep": "Réelle et renversée"},
+            {"id": "qlm1_3", "q": "Comment réalise-t-on la « mise au point » (netteté) lorsque la distance entre la caméra et le tapis roulant change ?", "options": ["En ajustant la distance lentille-capteur x' pour vérifier 1/x' - 1/x = 1/f'", "En peignant la lentille en bleu", "En augmentant la tension du moteur"], "rep": "En ajustant la distance lentille-capteur x' pour vérifier 1/x' - 1/x = 1/f'"},
+            {"id": "qlm1_4", "q": "Que se passe-t-il sur le capteur de la caméra si la bague de mise au point est mal réglée ?", "options": ["Un point objet forme une tache floue (cercle de confusion) au lieu d'un point net", "La caméra s'éteint", "L'image devient en noir et blanc"], "rep": "Un point objet forme une tache floue (cercle de confusion) au lieu d'un point net"},
+            {"id": "qlm1_5", "q": "Pour observer un objet situé très loin de la caméra (x → -∞), à quelle distance de l'objectif se forme l'image nette ?", "options": ["Dans le plan focal image (x' = f')", "Sur le centre optique O", "À l'infini"], "rep": "Dans le plan focal image (x' = f')"},
+            {"id": "qlm1_6", "q": "Quel composant mécanique intégré à l'objectif permet de régler la quantité de lumière et la profondeur de champ ?", "options": ["Le diaphragme (iris)", "Le fusible thermique", "Le prisme en coin de cube"], "rep": "Le diaphragme (iris)"},
+            {"id": "qlm1_7", "q": "Pourquoi fermer légèrement le diaphragme d'une caméra de contrôle augmente-t-il la « profondeur de champ » ?", "options": ["Le faisceau lumineux est plus étroit, réduisant la taille de la tache floue si la pièce bouge en hauteur", "La distance focale f' devient infinie", "Le capteur chauffe moins"], "rep": "Le faisceau lumineux est plus étroit, réduisant la taille de la tache floue si la pièce bouge en hauteur"},
+            {"id": "qlm1_8", "q": "Si une pièce de 20 mm donne une image de 4 mm sur le capteur CMOS, que vaut la valeur absolue du grandissement |γ| ?", "options": ["0,20 (image 5 fois plus petite)", "5,0", "20,0"], "rep": "0,20 (image 5 fois plus petite)"},
+            {"id": "qlm1_9", "q": "Quelle précaution de maintenance préventive garantit la fiabilité d'un système de vision industrielle ?", "options": ["Nettoyer régulièrement la lentille frontale avec un chiffon microfibre optique sans solvant agressif", "Graisser la lentille avec de l'huile mécanique", "Frotter l'objectif avec du papier de verre fin"], "rep": "Nettoyer régulièrement la lentille frontale avec un chiffon microfibre optique sans solvant agressif"},
+            {"id": "qlm1_10", "q": "Quelle relation mathématique permet au logiciel de convertir la taille en pixels sur le capteur en millimètres réels ?", "options": ["La relation de grandissement γ = A'B' / AB = x' / x", "La loi d'Ohm", "Le théorème de Bernoulli"], "rep": "La relation de grandissement γ = A'B' / AB = x' / x"},
+        ],
+        "trous": [
+            ("1. L'objectif de la caméra forme une image ......... sur le capteur CMOS.", ["Choisir...", "réelle", "virtuelle"], "réelle", "lm_t1"),
+            ("2. L'image projetée sur le capteur électronique est .........", ["Choisir...", "renversée", "droite"], "renversée", "lm_t2"),
+            ("3. Régler la netteté de l'image s'appelle faire la mise au .........", ["Choisir...", "point", "foyer"], "point", "lm_t3"),
+            ("4. Si l'objet est très loin, l'image se forme à la distance focale .........", ["Choisir...", "f'", "2f'"], "f'", "lm_t4"),
+            ("5. Le ......... règle l'ouverture lumineuse et la profondeur de champ.", ["Choisir...", "diaphragme", "prisme"], "diaphragme", "lm_t5"),
+            ("6. Le rapport taille image / taille objet s'appelle le ......... γ.", ["Choisir...", "grandissement", "grossissement"], "grandissement", "lm_t6"),
+            ("7. Sur un capteur plus petit que la pièce, |γ| est ......... à 1.", ["Choisir...", "inférieur", "supérieur"], "inférieur", "lm_t7"),
+            ("8. Une lentille sale provoque une image ......... et fausse le contrôle.", ["Choisir...", "floue", "nette"], "floue", "lm_t8"),
+            ("9. La position du capteur x' obéit à la relation de .........", ["Choisir...", "Descartes", "Newton"], "Descartes", "lm_t9"),
+            ("10. Le contrôle par caméra trie automatiquement les pièces non .........", ["Choisir...", "conformes", "lourdes"], "conformes", "lm_t10"),
+        ]
+    },
+    2: {
+        "questions": [
+            {"id": "qlm2_1", "q": "Quel composant optique focalise l'énergie d'un faisceau laser industriel (découpe, soudage, marquage) sur une surface minuscule ?", "options": ["Une lentille convergente de focalisation (en ZnSe ou silice fondue)", "Un miroir convexe divergent", "Une vitre dépolie"], "rep": "Une lentille convergente de focalisation (en ZnSe ou silice fondue)"},
+            {"id": "qlm2_2", "q": "Où se situe le point de puissance maximale (le « point focal ») où le métal fond instantanément ?", "options": ["Au foyer image F' de la lentille convergente", "Sur le centre optique O", "À 10 mètres derrière la tôle"], "rep": "Au foyer image F' de la lentille convergente"},
+            {"id": "qlm2_3", "q": "Pourquoi un faisceau laser parallèle doit-il être concentré par une lentille convergente pour découper de l'acier ?", "options": ["La concentration de toute l'énergie sur un diamètre de 0,1 mm multiplie la densité de puissance par 10 000", "La lentille change la couleur du laser en ultraviolet", "La lentille refroidit le métal"], "rep": "La concentration de toute l'énergie sur un diamètre de 0,1 mm multiplie la densité de puissance par 10 000"},
+            {"id": "qlm2_4", "q": "Que se passe-t-il si la buse de découpe laser est déréglée en hauteur (tôle hors du foyer image F') ?", "options": ["Le faisceau s'élargit, la densité d'énergie chute et la découpe devient incomplète avec des bavures", "Le laser coupe deux fois plus vite", "La lentille se transforme en miroir"], "rep": "Le faisceau s'élargit, la densité d'énergie chute et la découpe devient incomplète avec des bavures"},
+            {"id": "qlm2_5", "q": "Quel risque majeur encourent les lentilles de focalisation laser si des projections de métal fondu (grattons) les atteignent ?", "options": ["Les taches absorbent l'énergie laser, chauffent localement et font fissurer ou éclater la lentille", "La lentille devient plus convergente", "La distance focale double"], "rep": "Les taches absorbent l'énergie laser, chauffent localement et font fissurer ou éclater la lentille"},
+            {"id": "qlm2_6", "q": "Quel élément consommable place-t-on juste sous la lentille convergente dans une tête laser pour la protéger ?", "options": ["Une lame de protection transparente (hublot consommable) et un jet de gaz sous pression", "Un carton noir", "Un filtre polarisant en plastique"], "rep": "Une lame de protection transparente (hublot consommable) et un jet de gaz sous pression"},
+            {"id": "qlm2_7", "q": "Pourquoi utilise-t-on des lentilles en Séléniure de Zinc (ZnSe) plutôt qu'en verre ordinaire sur les lasers CO2 ?", "options": ["Le verre ordinaire est opaque à l'infrarouge lointain alors que le ZnSe est transparent", "Le verre ordinaire est trop lourd", "Le ZnSe coûte moins cher que le plastique"], "rep": "Le verre ordinaire est opaque à l'infrarouge lointain alors que le ZnSe est transparent"},
+            {"id": "qlm2_8", "q": "Si la lentille a une focale f' = 127 mm, à quelle distance de la lentille doit se trouver la surface de la tôle ?", "options": ["À 127 mm (pile au foyer image F')", "À 254 mm", "À 10 mm"], "rep": "À 127 mm (pile au foyer image F')"},
+            {"id": "qlm2_9", "q": "Quel contrôle de maintenance réalise-t-on après le remplacement d'une lentille de focalisation laser ?", "options": ["Un tir d'impact sur papier thermique pour vérifier le centrage et la finesse du point focal", "Un test de résistance au marteau", "Une mesure au voltmètre"], "rep": "Un tir d'impact sur papier thermique pour vérifier le centrage et la finesse du point focal"},
+            {"id": "qlm2_10", "q": "Quelle règle de sécurité est impérative lors de la maintenance d'une tête optique laser ?", "options": ["Consigner la source laser et porter des lunettes filtrantes adaptées à la longueur d'onde", "Regarder directement dans la buse pour vérifier le point rouge", "Nettoyer la lentille à mains nues avec les doigts"], "rep": "Consigner la source laser et porter des lunettes filtrantes adaptées à la longueur d'onde"},
+        ],
+        "trous": [
+            ("1. Une lentille convergente concentre un faisceau laser parallèle en son foyer ......... F'.", ["Choisir...", "image", "objet"], "image", "lm_t1"),
+            ("2. La concentration de l'énergie augmente fortement la ......... de puissance.", ["Choisir...", "densité", "vitesse"], "densité", "lm_t2"),
+            ("3. Si la tôle n'est pas au foyer F', la découpe présente des .........", ["Choisir...", "bavures", "reflets bleus"], "bavures", "lm_t3"),
+            ("4. Une tache sur la lentille absorbe le laser et provoque sa ......... thermique.", ["Choisir...", "rupture", "dilatation douce"], "rupture", "lm_t4"),
+            ("5. Un ......... de protection transparent protège la lentille des projections.", ["Choisir...", "hublot", "miroir"], "hublot", "lm_t5"),
+            ("6. Un gaz sous ......... chasse les fumées loin de l'optique.", ["Choisir...", "pression", "vide"], "pression", "lm_t6"),
+            ("7. Les lasers CO2 utilisent des lentilles spéciales en .........", ["Choisir...", "ZnSe", "carton"], "ZnSe", "lm_t7"),
+            ("8. Il ne faut jamais toucher une lentille optique avec les .........", ["Choisir...", "doigts", "gants propres"], "doigts", "lm_t8"),
+            ("9. On vérifie le centrage du faisceau par un tir sur papier .........", ["Choisir...", "thermique", "glacé"], "thermique", "lm_t9"),
+            ("10. Le port de ......... de protection laser est obligatoire lors des essais.", ["Choisir...", "lunettes", "bouchons"], "lunettes", "lm_t10"),
+        ]
+    }
+}
+
+
+def mettre_a_jour_len_maint_matplotlib(sujet_idx):
+    """Banc d'essai optique lentilles convergentes adapté à la maintenance industrielle."""
+    fig, ax = plt.subplots(figsize=(12, 6.2), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 250)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    if sujet_idx == 0:
+        dist_obj = st.session_state.get("slider_lm_s0", 3.5)
+        f_loupe = 5.0
+        x0, y0 = 330.0, 135.0
+        echelle = 25.0
+
+        ax.plot(list((20, 580)), list((y0, y0)), color="#64748b", lw=1.2, ls="-.")
+        ax.plot(list((x0, x0)), list((35, 225)), color="#38bdf8", lw=3)
+        ax.text(x0, 28, "Loupe (f' = 5,0 cm)", color="#38bdf8", fontsize=8, fontweight="bold", ha="center")
+
+        xf = x0 - f_loupe * echelle
+        ax.scatter(xf, y0, color="#fde047", s=40)
+        ax.text(xf, y0 + 14, "F", color="#fde047", fontsize=8, fontweight="bold", ha="center")
+
+        xa = x0 - dist_obj * echelle
+        h_obj = 24.0
+        ax.annotate("", xy=(xa, y0 - h_obj), xytext=(xa, y0), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5))
+        ax.text(xa, y0 + 14, f"Fissure ({dist_obj:.1f} cm)", color="#fca5a5", fontsize=7.5, fontweight="bold", ha="center")
+
+        if dist_obj < f_loupe:
+            x_img = (f_loupe * (-dist_obj)) / (-dist_obj + f_loupe)
+            gamma = x_img / (-dist_obj)
+            xap = x0 + x_img * echelle
+            h_img = h_obj * gamma
+            if xap >= 25:
+                ax.annotate("", xy=(xap, y0 - h_img), xytext=(xap, y0), arrowprops=dict(arrowstyle="->", color="#22c55e", lw=2.5, ls="--"))
+                ax.text(xap, y0 + 14, f"Image virtuelle (×{gamma:.1f})", color="#86efac", fontsize=7.5, fontweight="bold", ha="center")
+            ax.plot(list((xa, x0)), list((y0 - h_obj, y0 - h_obj)), color="#eab308", lw=1.5)
+            ax.plot(list((x0, 520)), list((y0 - h_obj, y0 - h_obj + (520 - x0) * (h_obj / (f_loupe * echelle)))), color="#eab308", lw=1.5)
+            ax.plot(list((xa, 520)), list((y0 - h_obj, y0 + (520 - x0) * (h_obj / (dist_obj * echelle)))), color="#3b82f6", lw=1.5)
+            statut = f"EFFET LOUPE OK : Image droite agrandie γ = +{gamma:.2f} (Inspection nette)"
+            c_stat = "#22c55e"
+            diag = f"γ = +{gamma:.2f}"
+        else:
+            statut = "HORS CHAMP LOUPE : Rapprochez la loupe à moins de 5,0 cm de la pièce !"
+            c_stat = "#ef4444"
+            diag = "INVERSÉE"
+
+        ax.text(25, 18, "MAINTENANCE VISUELLE : CONTRÔLE DE MICRO-FISSURES À LA LOUPE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, statut, color=c_stat, fontsize=8, fontweight="bold")
+        st.session_state.lm_mesure_courante = (f"x = -{dist_obj:.1f} cm", "f' = 5,0 cm", diag, "CONFORME" if dist_obj < f_loupe else "TROP LOIN")
+
+    elif sujet_idx == 1:
+        pos_capteur_mm = st.session_state.get("slider_lm_s1", 55.0)
+        f_obj_mm = 50.0
+        dist_piece_mm = 500.0
+        x_net_mm = (f_obj_mm * (-dist_piece_mm)) / (-dist_piece_mm + f_obj_mm)
+
+        x0, y0 = 260.0, 130.0
+        ax.plot(list((20, 580)), list((y0, y0)), color="#64748b", lw=1.2, ls="-.")
+        ax.add_patch(patches.Rectangle((40, 95), 16, 70, facecolor="#f97316", edgecolor="white"))
+        ax.text(48, 85, "Pièce (500 mm)", color="#fdba74", fontsize=7.5, fontweight="bold", ha="center")
+
+        ax.plot(list((x0, x0)), list((45, 215)), color="#38bdf8", lw=3.5)
+        ax.text(x0, 36, "Objectif (f' = 50 mm)", color="#38bdf8", fontsize=8, fontweight="bold", ha="center")
+
+        x_net_px = x0 + (x_net_mm - 40.0) * 10.0
+        x_cap_px = x0 + (pos_capteur_mm - 40.0) * 10.0
+
+        ax.plot(list((48, x0)), list((95, 70)), color="#eab308", lw=1.5)
+        ax.plot(list((48, x0)), list((95, 190)), color="#eab308", lw=1.5)
+        ax.plot(list((x0, x_net_px)), list((70, 155)), color="#22c55e", lw=1.8)
+        ax.plot(list((x0, x_net_px)), list((190, 155)), color="#22c55e", lw=1.8)
+
+        ax.plot(list((x_cap_px, x_cap_px)), list((65, 195)), color="#ef4444", lw=4)
+        ax.text(x_cap_px, 56, f"Capteur CMOS ({pos_capteur_mm:.1f} mm)", color="#fca5a5", fontsize=7.5, fontweight="bold", ha="center")
+
+        ecart_mm = abs(pos_capteur_mm - x_net_mm)
+        if ecart_mm <= 0.8:
+            statut = f"IMAGE NETTE SUR CAPTEUR (x' = {pos_capteur_mm:.1f} mm) : Contrôle dimensionnel validé !"
+            c_stat = "#22c55e"
+            diag = "NETTE (OK)"
+        else:
+            statut = f"IMAGE FLOUE (Écart {ecart_mm:.1f} mm) : Réglez le capteur vers {x_net_mm:.1f} mm."
+            c_stat = "#ef4444"
+            diag = "FLOUE"
+
+        ax.text(25, 18, "VISION INDUSTRIELLE : MISE AU POINT D'UNE CAMÉRA DE CONTRÔLE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, statut, color=c_stat, fontsize=8, fontweight="bold")
+        st.session_state.lm_mesure_courante = (f"x' = {pos_capteur_mm:.1f} mm", f"Cible = {x_net_mm:.1f} mm", f"Écart = {ecart_mm:.1f} mm", diag)
+
+    else:
+        dist_tole_mm = st.session_state.get("slider_lm_s2", 120.0)
+        f_laser_mm = 127.0
+        x0, y0 = 200.0, 130.0
+
+        ax.plot(list((x0, x0)), list((45, 215)), color="#38bdf8", lw=4)
+        ax.text(x0, 36, "Lentille ZnSe (f' = 127 mm)", color="#38bdf8", fontsize=8, fontweight="bold", ha="center")
+
+        xfp = x0 + f_laser_mm * 2.2
+        x_tole = x0 + dist_tole_mm * 2.2
+
+        for dy in [-55, -28, 0, 28, 55]:
+            ax.plot(list((40, x0)), list((y0 + dy, y0 + dy)), color="#ef4444", lw=2)
+            pente = -dy / (xfp - x0)
+            ax.plot(list((x0, x_tole)), list((y0 + dy, y0 + dy + pente * (x_tole - x0))), color="#ef4444", lw=2)
+
+        ax.plot(list((x_tole, x_tole)), list((50, 210)), color="#94a3b8", lw=5)
+        ax.text(x_tole + 8, 130, f"Tôle acier\n({dist_tole_mm:.0f} mm)", color="#cbd5e1", fontsize=7.5, fontweight="bold", va="center")
+
+        ecart_f = abs(dist_tole_mm - f_laser_mm)
+        if ecart_f <= 2.0:
+            statut = "POINT FOCAL EXACT (127 mm) : Densité d'énergie maximale, découpe nette !"
+            c_stat = "#22c55e"
+            diag = "DÉCOUPE NETTE"
+        else:
+            statut = f"DÉFOCALISÉ (Écart {ecart_f:.0f} mm) : Le spot est trop large, réglez la buse à 127 mm."
+            c_stat = "#ef4444"
+            diag = "BAVURES"
+
+        ax.text(25, 18, "USINAGE LASER : FOCALISATION DU FAISCEAU AU FOYER IMAGE F'", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, statut, color=c_stat, fontsize=8, fontweight="bold")
+        st.session_state.lm_mesure_courante = (f"Buse = {dist_tole_mm:.0f} mm", "Focale = 127 mm", f"Écart = {ecart_f:.0f} mm", diag)
+
+    return fig
+
+
+def afficher_atelier_len_maint(sujet_idx, verrouille=False):
+    if sujet_idx is None:
+        st.warning("Tirez d'abord au sort un sujet de maintenance ci-dessus.")
+        return
+    banque = BANQUES_LEN_MAINT[sujet_idx]
+    cle_ordre = f"ordre_quiz_lm_{sujet_idx}"
+    if cle_ordre not in st.session_state:
+        lq = list(banque["questions"])
+        random.shuffle(lq)
+        st.session_state[cle_ordre] = lq
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Technique Maintenance (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state[cle_ordre], 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", ["Choisir..."] + q_data["options"], key=f"lm_at4_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+    with col_t:
+        st.markdown("##### Synthèse Maintenance (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in banque["trous"]:
+            c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", choix, key=f"{cle}_s{sujet_idx}", disabled=verrouille, label_visibility="collapsed")
+
+
 
 with tab1:
-    st.header(" L'histoirre des lentilles convergentes")
+    st.header("Atelier 1 : L'histoire des lentilles convergentes")
+
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Objectif de l'atelier :</p>
+        <p style="margin-bottom: 0;">Découvrir l'invention des lentilles convergentes, depuis les cristaux de l'Antiquité jusqu'aux lunettes astronomiques et aux lentilles à échelons de Fresnel.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col_l1, col_l2, col_l3, col_l4 = st.columns(4)
+    with col_l1:
+        try:
+            st.image("nimrud.jpg", caption="Lentille de Nimrud (750 av. J.-C.)", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'nimrud.jpg' est introuvable.")
+        st.info("**L'Antiquité : Les verres ardents**\n* Taillée dans du cristal de roche poli.\n* Utilisée pour concentrer les rayons solaires en un foyer et allumer un feu ou grossir de fins détails.")
+
+    with col_l2:
+        try:
+            st.image("alhazen.jpg", caption="Ibn al-Haytham / Alhazen (965 - 1040)", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'alhazen.jpg' est introuvable.")
+        st.info("**Alhazen (*Traité d'optique*, 1021)**\n* Étudie géométriquement le grossissement produit par des segments de sphère en verre.\n* Inspire l'invention des premières lunettes de vue en Italie vers 1285.")
+
+    with col_l3:
+        try:
+            st.image("kepler.jpg", caption="Johannes Kepler (1571 - 1630)", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'kepler.jpg' est introuvable.")
+        st.info("**Johannes Kepler (*Dioptrice*, 1611)**\n* Perfectionne la lunette astronomique à deux lentilles convergentes.\n* Formalise la marche des rayons lumineux et la notion de foyer image.")
+
+    with col_l4:
+        try:
+            st.image("fresnel.jpg", caption="Augustin Fresnel (1788 - 1827)", use_container_width=True)
+        except Exception:
+            st.warning("L'image 'fresnel.jpg' est introuvable.")
+        st.info("**Augustin Fresnel (1822)**\n* Invente la lentille convergente à échelons pour réduire le poids et l'épaisseur du verre.\n* Équipe tous les phares maritimes et aujourd'hui les projecteurs et capteurs.")
+
+    st.markdown("---")
+    if "hl_verrouille_tab1" not in st.session_state:
+        st.session_state.hl_verrouille_tab1 = False
+    verrou_hl = st.session_state.hl_verrouille_tab1
+
+    afficher_atelier_hist_lentilles(verrouille=verrou_hl)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_hl = st.checkbox("Je certifie avoir complété les questions de l'Atelier 1 (Histoire des lentilles).", key="check_certif_hl", disabled=verrou_hl)
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_hl1", use_container_width=True, disabled=verrou_hl):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_hl:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            sc_q1 = sum(1.0 for q in st.session_state.get("ordre_quiz_hl_aleatoire", []) if st.session_state.get(f"hl_at1_g_{q['id']}") == q["rep"])
+            rep_t1 = {"hl_t1": "lens", "hl_t2": "Nimrud", "hl_t3": "Alhazen", "hl_t4": "lunettes", "hl_t5": "Galilée", "hl_t6": "Kepler", "hl_t7": "Fresnel", "hl_t8": "foyer", "hl_t9": "presbytie", "hl_t10": "Descartes"}
+            sc_t1 = sum(1.0 for k, v in rep_t1.items() if st.session_state.get(k) == v)
+            st.session_state.score_hl1_p1 = sc_q1
+            st.session_state.score_hl1_p2 = sc_t1
+            st.session_state.score_final_hl1 = sc_q1 + sc_t1
+            st.session_state.hl_verrouille_tab1 = True
+            st.rerun()
+
+    if st.session_state.get("hl_verrouille_tab1", False):
+        scr1 = st.session_state.get("score_hl1_p1", 0.0)
+        scr2 = st.session_state.get("score_hl1_p2", 0.0)
+        tot_s = st.session_state.get("score_final_hl1", 0.0)
+        ts_hl = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER 1 SCELLÉ | Note : {tot_s:.1f} / 20")
+
+        html_hl = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport Atelier 1 - {n_eleve}</title>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;text-align:center;border:2px solid white}}.sub-title{{font-weight:bold;color:#475569;margin-top:25px;text-transform:uppercase;font-size:13px;border-bottom:2px solid #cbd5e1;padding-bottom:5px;margin-bottom:10px}}table{{width:100%;border-collapse:collapse;margin-top:10px;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:12px;font-size:14px;text-align:left}}td{{padding:12px;font-size:13px;border-bottom:1px solid #e2e8f0}}.status-correct{{color:#10b981;font-weight:bold}}.status-incorrect{{color:#ef4444;font-weight:bold}}</style></head>
+        <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Atelier 1 : Histoire des Lentilles Convergentes</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve}</p><p style="font-size:12px;">Scellé le : {ts_hl}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
+        <div class="sub-title">Récapitulatif des Notes</div><p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
+        <div class="sub-title">1. CORRECTION DÉTAILLÉE DU QUIZ (10 QUESTIONS)</div><table><thead><tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"""
+
+        for num, q_item in enumerate(st.session_state.get("ordre_quiz_hl_aleatoire", []), 1):
+            saisie = st.session_state.get(f"hl_at1_g_{q_item['id']}", "Choisir...")
+            attendu = q_item["rep"]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_cls = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_hl += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_cls}'>{v_lbl}</td></tr>"
+
+        html_hl += """</tbody></table><div class="sub-title">2. CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (10 TROUS)</div><table><thead><tr><th>N°</th><th>Phrase à compléter</th><th>Saisie Élève</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"""
+
+        verif_t1 = [
+            ("1. Le mot lentille vient du latin ......... en raison de sa forme bombée.", "lens", "hl_t1"),
+            ("2. La lentille de ......... (750 av. J.-C.) est taillée dans du cristal de roche.", "Nimrud", "hl_t2"),
+            ("3. Au XIe siècle, ......... étudie le grossissement des surfaces convexes.", "Alhazen", "hl_t3"),
+            ("4. Les premières ......... de vue convergentes apparaissent en Italie vers 1285.", "lunettes", "hl_t4"),
+            ("5. En 1609, ......... utilise une lunette pour observer les astres.", "Galilée", "hl_t5"),
+            ("6. En 1611, Johannes ......... publie le traité Dioptrice.", "Kepler", "hl_t6"),
+            ("7. En 1822, Augustin ......... invente la lentille à échelons pour les phares.", "Fresnel", "hl_t7"),
+            ("8. Une lentille convergente concentre les rayons solaires en son .........", "foyer", "hl_t8"),
+            ("9. Au Moyen Âge, les verres convergents corrigeaient la .........", "presbytie", "hl_t9"),
+            ("10. La formule de conjugaison porte le nom de René .........", "Descartes", "hl_t10"),
+        ]
+        for idx_t, (enonce_t, attendu_t, cle_t) in enumerate(verif_t1, 1):
+            saisie_t = st.session_state.get(cle_t, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t) == str(attendu_t) else "INCORRECT"
+            v_cls_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_hl += f"<tr><td>{idx_t}</td><td>{enonce_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_cls_t}'>{v_lbl_t}</td></tr>"
+
+        html_hl += "</tbody></table></body></html>"
+        st.download_button("Télécharger le rapport officiel de l'Atelier 1 (.html)", data=html_hl, file_name=preparer_nom_fichier("Rapport_Atelier_1_Histoire_Lentilles").replace(".txt", ".html"), mime="text/html", use_container_width=True)
 
 
 with tab2:
-    st.header("Les lentilles convergentes : définition et régles de tracé des rayons")
+    st.header("Atelier 2 : Définition et règles de tracé des rayons")
 
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 16px;">Les 3 rayons particuliers d'une lentille mince convergente :</p>
+        <ul style="margin-bottom: 0; line-height: 1.7;">
+            <li><strong>Rayon 1 (Jaune - Parallèle à l'axe) :</strong> Tout rayon incident parallèle à l'axe optique ressort en passant par le <strong>foyer image F'</strong>.</li>
+            <li><strong>Rayon 2 (Bleu - Centre optique O) :</strong> Tout rayon incident passant par le centre optique <strong>O</strong> n'est <strong>pas dévié</strong>.</li>
+            <li><strong>Rayon 3 (Rose - Foyer objet F) :</strong> Tout rayon incident passant par le foyer objet <strong>F</strong> ressort <strong>parallèlement à l'axe optique</strong>.</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col_r1, col_r2 = st.columns([0.55, 0.45])
+    with col_r1:
+        st.radio(
+            "Sélectionnez le rayon à observer :",
+            ["Tous les 3 rayons particuliers", "Rayon 1 : Parallèle à l'axe → F'", "Rayon 2 : Passe par O → Non dévié", "Rayon 3 : Passe par F → Parallèle"],
+            key="radio_regles_rayon"
+        )
+    with col_r2:
+        st.slider("Distance focale f' de démonstration (px) :", min_value=60.0, max_value=140.0, value=100.0, step=5.0, key="slider_regles_f")
+
+    fig_regles = dessiner_regles_trace_lentille_matplotlib()
+    st.pyplot(fig_regles, use_container_width=True)
+
+    st.markdown("---")
+    if "rl_verrouille_tab2" not in st.session_state:
+        st.session_state.rl_verrouille_tab2 = False
+    verrou_rl = st.session_state.rl_verrouille_tab2
+
+    afficher_atelier_regles_lentilles(verrouille=verrou_rl)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_rl = st.checkbox("Je certifie avoir complété les questions de l'Atelier 2 (Règles de tracé).", key="check_certif_rl", disabled=verrou_rl)
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_rl2", use_container_width=True, disabled=verrou_rl):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_rl:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            sc_q2 = sum(1.0 for q in st.session_state.get("ordre_quiz_rl_aleatoire", []) if st.session_state.get(f"rl_at2_g_{q['id']}") == q["rep"])
+            rep_t2 = {"rl_t1": "minces", "rl_t2": "optique", "rl_t3": "optique", "rl_t4": "dévié", "rl_t5": "image", "rl_t6": "parallèle", "rl_t7": "symétriques", "rl_t8": "focale", "rl_t9": "vergence", "rl_t10": "dioptrie"}
+            sc_t2 = sum(1.0 for k, v in rep_t2.items() if st.session_state.get(k) == v)
+            st.session_state.score_rl2_p1 = sc_q2
+            st.session_state.score_rl2_p2 = sc_t2
+            st.session_state.score_final_rl2 = sc_q2 + sc_t2
+            st.session_state.rl_verrouille_tab2 = True
+            st.rerun()
+
+    if st.session_state.get("rl_verrouille_tab2", False):
+        scr1 = st.session_state.get("score_rl2_p1", 0.0)
+        scr2 = st.session_state.get("score_rl2_p2", 0.0)
+        tot_s = st.session_state.get("score_final_rl2", 0.0)
+        ts_rl = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER 2 SCELLÉ | Note : {tot_s:.1f} / 20")
+
+        html_rl = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport Atelier 2 - {n_eleve}</title>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;text-align:center;border:2px solid white}}.sub-title{{font-weight:bold;color:#475569;margin-top:25px;text-transform:uppercase;font-size:13px;border-bottom:2px solid #cbd5e1;padding-bottom:5px;margin-bottom:10px}}table{{width:100%;border-collapse:collapse;margin-top:10px;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:12px;font-size:14px;text-align:left}}td{{padding:12px;font-size:13px;border-bottom:1px solid #e2e8f0}}.status-correct{{color:#10b981;font-weight:bold}}.status-incorrect{{color:#ef4444;font-weight:bold}}</style></head>
+        <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Atelier 2 : Définition et Règles de Tracé des Lentilles Convergentes</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve}</p><p style="font-size:12px;">Scellé le : {ts_rl}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
+        <div class="sub-title">Récapitulatif des Notes</div><p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
+        <div class="sub-title">1. CORRECTION DÉTAILLÉE DU QUIZ (10 QUESTIONS)</div><table><thead><tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"""
+
+        for num, q_item in enumerate(st.session_state.get("ordre_quiz_rl_aleatoire", []), 1):
+            saisie = st.session_state.get(f"rl_at2_g_{q_item['id']}", "Choisir...")
+            attendu = q_item["rep"]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_cls = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_rl += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_cls}'>{v_lbl}</td></tr>"
+
+        html_rl += """</tbody></table><div class="sub-title">2. CORRECTION DÉTAILLÉE DE LA SYNTHÈSE (10 TROUS)</div><table><thead><tr><th>N°</th><th>Phrase à compléter</th><th>Saisie Élève</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"""
+
+        verif_t2 = [
+            ("1. Une lentille convergente a des bords plus ......... que son centre.", "minces", "rl_t1"),
+            ("2. L'axe de symétrie perpendiculaire à la lentille est l'axe .........", "optique", "rl_t2"),
+            ("3. Le point central de la lentille noté O est le centre .........", "optique", "rl_t3"),
+            ("4. Tout rayon passant par le centre O n'est pas .........", "dévié", "rl_t4"),
+            ("5. Tout rayon parallèle à l'axe émerge en passant par le foyer ......... F'.", "image", "rl_t5"),
+            ("6. Tout rayon passant par le foyer objet F ressort ......... à l'axe.", "parallèle", "rl_t6"),
+            ("7. Les foyers F et F' sont ......... par rapport au centre O.", "symétriques", "rl_t7"),
+            ("8. La distance OF' s'appelle la distance ......... f'.", "focale", "rl_t8"),
+            ("9. L'inverse de la distance focale en mètres est la ......... C.", "vergence", "rl_t9"),
+            ("10. L'unité de la vergence d'une lentille est la ......... (δ).", "dioptrie", "rl_t10"),
+        ]
+        for idx_t, (enonce_t, attendu_t, cle_t) in enumerate(verif_t2, 1):
+            saisie_t = st.session_state.get(cle_t, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t) == str(attendu_t) else "INCORRECT"
+            v_cls_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_rl += f"<tr><td>{idx_t}</td><td>{enonce_t}</td><td>{saisie_t}</td><td>{attendu_t}</td><td class='{v_cls_t}'>{v_lbl_t}</td></tr>"
+
+        html_rl += "</tbody></table></body></html>"
+        st.download_button("Télécharger le rapport officiel de l'Atelier 2 (.html)", data=html_rl, file_name=preparer_nom_fichier("Rapport_Atelier_2_Regles_Trace").replace(".txt", ".html"), mime="text/html", use_container_width=True)
 
 
 
@@ -1214,6 +1813,111 @@ with tab3:
         )
 
 
+with tab4:
+    st.header("Atelier 4 : Applications dans le domaine de la Maintenance Industrielle")
+
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 16px;">Les lentilles convergentes au service du diagnostic et de l'usinage :</p>
+        <p style="margin-bottom: 0; line-height: 1.6;">En maintenance industrielle, les lentilles minces convergentes permettent de grossir les défauts de surface (loupe), de former des images nettes sur des caméras de contrôle qualité ou de concentrer l'énergie d'un laser de découpe au foyer image <b><i>F'</i></b>.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    sujets_len_maint = [
+        {"titre": "Cas N°1 : Loupe d'inspection éclairante (Contrôle de micro-fissures)", "img": "len_maint_loupe.jpg", "leg": "Contrôle visuel de soudures à la loupe convergente", "exp": "**Principe :** En plaçant l'objet entre le centre optique **O** et le foyer objet **F** (<i>x</i> &lt; <i>f'</i>), la loupe forme une image **virtuelle, droite et agrandie** (grandissement &gamma; &gt; +1)."},
+        {"titre": "Cas N°2 : Caméra de vision industrielle (Mise au point sur capteur CMOS)", "img": "len_maint_camera.jpg", "leg": "Caméra de contrôle qualité sur ligne automatisée", "exp": "**Principe :** L'objectif convergent projette une image **réelle et renversée** sur la matrice électronique. La distance capteur <i>x'</i> doit vérifier <b>1/<i>x'</i> &minus; 1/<i>x</i> = 1/<i>f'</i></b>."},
+        {"titre": "Cas N°3 : Tête de découpe laser (Focalisation au foyer image F')", "img": "len_maint_laser.jpg", "leg": "Lentille ZnSe concentrant un faisceau laser sur tôle acier", "exp": "**Principe :** Un faisceau laser parallèle converge exactement au **foyer image F'** (<i>f'</i> = 127 mm), multipliant la densité de puissance pour découper le métal net."}
+    ]
+
+    if "sujet_lm_tire" not in st.session_state:
+        st.session_state.sujet_lm_tire = None
+
+    if st.button("TIRER AU SORT UN SUJET MAINTENANCE (LENTILLES)", key="btn_tirage_lm", use_container_width=True):
+        choix = [i for i in range(3) if i != st.session_state.sujet_lm_tire]
+        st.session_state.sujet_lm_tire = random.choice(choix)
+        st.session_state.mesures_lm_log = []
+        st.rerun()
+
+    if st.session_state.sujet_lm_tire is None:
+        st.info("Cliquez sur le bouton ci-dessus pour tirer au sort un cas pratique de maintenance.")
+    else:
+        idx_lm = st.session_state.sujet_lm_tire
+        data_lm = sujets_len_maint[idx_lm]
+        st.success(f"Sujet attribué : **{data_lm['titre']}**")
+        st.markdown(data_lm["exp"], unsafe_allow_html=True)
+
+        c_img, c_bd = st.columns(2)
+        with c_img:
+            try: st.image(data_lm["img"], caption=data_lm["leg"], use_container_width=True)
+            except Exception: st.warning(f"L'image '{data_lm['img']}' est introuvable.")
+        with c_bd:
+            try: st.image("bd_len_maint.jpg", caption="La pause BD : Attention à ne pas oublier le capuchon de l'objectif !", use_container_width=True)
+            except Exception: st.warning("L'image 'bd_len_maint.jpg' est introuvable.")
+
+        st.markdown("---")
+        if "mesures_lm_log" not in st.session_state: st.session_state.mesures_lm_log = []
+        if idx_lm == 0:
+            st.slider("Distance pièce - loupe (cm) [f' = 5,0 cm] :", 1.0, 7.0, 3.5, 0.1, key="slider_lm_s0")
+        elif idx_lm == 1:
+            st.slider("Position du capteur CMOS x' (mm) [Cible nette = 55,6 mm] :", 48.0, 64.0, 55.0, 0.2, key="slider_lm_s1")
+        else:
+            st.slider("Distance lentille - tôle (mm) [Focale f' = 127 mm] :", 110.0, 145.0, 120.0, 1.0, key="slider_lm_s2")
+
+        if st.button("ENREGISTRER CE RELEVÉ MAINTENANCE", key="btn_rel_lm", use_container_width=True):
+            if "lm_mesure_courante" in st.session_state:
+                st.session_state.mesures_lm_log.append(st.session_state.lm_mesure_courante)
+                st.rerun()
+
+        st.pyplot(mettre_a_jour_len_maint_matplotlib(idx_lm), use_container_width=True)
+        if st.session_state.mesures_lm_log:
+            df_lm = pd.DataFrame(st.session_state.mesures_lm_log, columns=["Réglage", "Référence", "Résultat", "Diagnostic"])
+            st.dataframe(df_lm, use_container_width=True, hide_index=True)
+
+    st.write("---")
+    if "lm_verrouille_tab4" not in st.session_state: st.session_state.lm_verrouille_tab4 = False
+    verrou_lm = st.session_state.lm_verrouille_tab4
+    sujet_actif_lm = st.session_state.get("sujet_lm_tire", None)
+    afficher_atelier_len_maint(sujet_actif_lm, verrouille=verrou_lm)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_lm = st.checkbox("Je certifie avoir complété l'Atelier 4 (Maintenance - Lentilles).", key="certif_lm4", disabled=verrou_lm)
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_exp_lm4", use_container_width=True, disabled=verrou_lm):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif sujet_actif_lm is None or not case_certif_lm:
+            st.error("Action refusée : Tirez au sort un sujet et cochez la case de certification.")
+        else:
+            bq = BANQUES_LEN_MAINT[sujet_actif_lm]
+            sc_q = sum(1.0 for q in st.session_state.get(f"ordre_quiz_lm_{sujet_actif_lm}", []) if st.session_state.get(f"lm_at4_g_{q['id']}") == q["rep"])
+            sc_t = sum(1.0 for _, _, rep, cle in bq["trous"] if st.session_state.get(f"{cle}_s{sujet_actif_lm}") == rep)
+            st.session_state.score_lm4_p1, st.session_state.score_lm4_p2, st.session_state.score_final_lm4 = sc_q, sc_t, sc_q + sc_t
+            st.session_state.lm_verrouille_tab4 = True
+            st.rerun()
+
+    if st.session_state.get("lm_verrouille_tab4", False) and sujet_actif_lm is not None:
+        scr1, scr2, tot_s = st.session_state.score_lm4_p1, st.session_state.score_lm4_p2, st.session_state.score_final_lm4
+        ts_lm = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER 4 SCELLÉ | Note : {tot_s:.1f} / 20")
+        bq = BANQUES_LEN_MAINT[sujet_actif_lm]
+        html_lm = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport Atelier 4 - {n_eleve}</title>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}</style></head>
+        <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Atelier 4 : Maintenance (Lentilles Convergentes) - {sujets_len_maint[sujet_actif_lm]['titre']}</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_lm}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
+        <p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
+        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th></tr></thead><tbody>"""
+        for num, q in enumerate(st.session_state.get(f"ordre_quiz_lm_{sujet_actif_lm}", []), 1):
+            qid_curr = q["id"]
+            saisie_curr = st.session_state.get(f"lm_at4_g_{qid_curr}", "Choisir...")
+            html_lm += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_curr}</td><td>{q['rep']}</td></tr>"
+        html_lm += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th></tr></thead><tbody>"
+        for idx_t, (en, _, rep, cle) in enumerate(bq["trous"], 1):
+            saisie_t_curr = st.session_state.get(f"{cle}_s{sujet_actif_lm}", "Choisir...")
+            html_lm += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t_curr}</td><td>{rep}</td></tr>"
+        html_lm += "</tbody></table></body></html>"
+        st.download_button("Télécharger le rapport officiel de l'Atelier 4 (.html)", data=html_lm, file_name=preparer_nom_fichier("Rapport_Atelier_4_Maintenance_Lentilles").replace(".txt", ".html"), mime="text/html", use_container_width=True)
 
 
 
