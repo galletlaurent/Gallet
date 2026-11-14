@@ -1001,6 +1001,208 @@ def afficher_atelier_regles_lentilles(verrouille=False):
             with c1: st.write(enonce)
             with c2: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
 
+BANQUES_LEN_TP = {
+    0: {
+        "questions": [
+            {"id": "qltp0_1", "q": "Quel système optique composé de lentilles convergentes équipe la lunette d'un niveau optique de chantier ?", "options": ["Un objectif convergent et un oculaire convergent", "Un simple miroir plan opaque", "Un prisme dispersif en plastique"], "rep": "Un objectif convergent et un oculaire convergent"},
+            {"id": "qltp0_2", "q": "Où l'objectif convergent du niveau optique forme-t-il l'image réelle de la mire graduée ?", "options": ["Sur le plan du réticule (fils stadimétriques) à l'intérieur de la lunette", "Sur le trépied", "Derrière l'œil de l'opérateur"], "rep": "Sur le plan du réticule (fils stadimétriques) à l'intérieur de la lunette"},
+            {"id": "qltp0_3", "q": "Quel est le rôle de la molette de mise au point latérale sur un niveau optique de chantier ?", "options": ["Déplacer une lentille interne pour amener l'image de la mire exactement sur le réticule", "Changer la couleur du niveau", "Régler la hauteur du trépied"], "rep": "Déplacer une lentille interne pour amener l'image de la mire exactement sur le réticule"},
+            {"id": "qltp0_4", "q": "Quel rôle joue l'oculaire situé du côté de l'œil du chef de chantier ?", "options": ["Il agit comme une loupe pour grossir l'image de la mire et les traits du réticule", "Il éclaire la mire à 100 mètres", "Il mesure la température de l'air"], "rep": "Il agit comme une loupe pour grossir l'image de la mire et les traits du réticule"},
+            {"id": "qltp0_5", "q": "Comment calcule-t-on la distance horizontale D entre le niveau optique et la mire grâce aux fils stadimétriques ?", "options": ["D = 100 × (Lecture fil haut - Lecture fil bas)", "D = Lecture fil haut + Lecture fil bas", "D = Lecture centrale / 100"], "rep": "D = 100 × (Lecture fil haut - Lecture fil bas)"},
+            {"id": "qltp0_6", "q": "Que signifie un « défaut de parallaxe » lorsque l'opérateur bouge légèrement l'œil devant l'oculaire ?", "options": ["L'image de la mire bouge par rapport aux fils du réticule car la mise au point est mal réglée", "La batterie de la mire est vide", "Le trépied s'enfonce dans la terre"], "rep": "L'image de la mire bouge par rapport aux fils du réticule car la mise au point est mal réglée"},
+            {"id": "qltp0_7", "q": "Quel organe mécanique suspendu à l'intérieur du niveau optique maintient automatiquement l'axe de visée horizontal ?", "options": ["Le compensateur pendulaire optique", "Le niveau à mercure liquide", "Le frein à disque"], "rep": "Le compensateur pendulaire optique"},
+            {"id": "qltp0_8", "q": "Quel est le grossissement typique de la lunette d'un niveau optique de chantier TP ?", "options": ["24× à 32×", "2×", "500×"], "rep": "24× à 32×"},
+            {"id": "qltp0_9", "q": "Si le fil stadimétrique haut lit 1,650 m et le fil bas lit 1,250 m sur la mire, quelle est la distance D ?", "options": ["40,0 mètres (100 × 0,400 m)", "4,0 mètres", "125 mètres"], "rep": "40,0 mètres (100 × 0,400 m)"},
+            {"id": "qltp0_10", "q": "Pourquoi le pare-soleil coulissant à l'avant de l'objectif est-il utile sur un chantier ensoleillé ?", "options": ["Il évite les reflets parasites sur la lentille frontale et améliore le contraste de la mire", "Il augmente la distance focale de 10 mètres", "Il protège contre la foudre"], "rep": "Il évite les reflets parasites sur la lentille frontale et améliore le contraste de la mire"},
+        ],
+        "trous": [
+            ("1. La lunette de chantier associe un ......... convergent et un oculaire.", ["Choisir...", "objectif", "prisme"], "objectif", "ltp_t1"),
+            ("2. L'image de la mire se forme sur le plan du ......... gradué.", ["Choisir...", "réticule", "trépied"], "réticule", "ltp_t2"),
+            ("3. L'......... agit comme une loupe pour observer les graduations.", ["Choisir...", "oculaire", "interrupteur"], "oculaire", "ltp_t3"),
+            ("4. On calcule la distance D en multipliant l'écart stadimétrique par .........", ["Choisir...", "100", "10"], "100", "ltp_t4"),
+            ("5. Le ......... automatique garde l'axe optique parfaitement horizontal.", ["Choisir...", "compensateur", "variateur"], "compensateur", "ltp_t5"),
+            ("6. La molette latérale permet de régler la ......... au point.", ["Choisir...", "mise", "vitesse"], "mise", "ltp_t6"),
+            ("7. Si l'image bouge devant les fils quand on déplace l'œil, il y a .........", ["Choisir...", "parallaxe", "réflexion totale"], "parallaxe", "ltp_t7"),
+            ("8. Une lunette de chantier grossit généralement environ ......... fois.", ["Choisir...", "24", "2"], "24", "ltp_t8"),
+            ("9. On lit la cote altimétrique sur une ......... tenue verticalement.", ["Choisir...", "mire", "boussole"], "mire", "ltp_t9"),
+            ("10. Les lentilles de l'objectif obéissent à la relation de .........", ["Choisir...", "Descartes", "Joule"], "Descartes", "ltp_t10"),
+        ]
+    },
+    1: {
+        "questions": [
+            {"id": "qltp1_1", "q": "Quel type de lentille convergente équipe les feux de balisage de chantier, les gyrophares d'engins et les phares côtiers ?", "options": ["Une lentille de Fresnel (à échelons concentriques)", "Une lentille biconcave divergente", "Une plaque d'acier poli"], "rep": "Une lentille de Fresnel (à échelons concentriques)"},
+            {"id": "qltp1_2", "q": "Quel est l'avantage majeur d'une lentille de Fresnel par rapport à une lentille convergente classique de même diamètre ?", "options": ["Elle est beaucoup plus fine, légère et économique tout en gardant la même distance focale f'", "Elle fonctionne sans ampoule ni LED", "Elle absorbe 90 % de la lumière"], "rep": "Elle est beaucoup plus fine, légère et économique tout en gardant la même distance focale f'"},
+            {"id": "qltp1_3", "q": "Où place-t-on la source lumineuse (LED ou lampe) par rapport à la lentille de Fresnel pour projeter un faisceau horizontal lointain ?", "options": ["Au foyer objet F de la lentille de Fresnel", "Collée contre la surface externe", "À l'infini derrière le feu"], "rep": "Au foyer objet F de la lentille de Fresnel"},
+            {"id": "qltp1_4", "q": "Comment ressortent les rayons lumineux issus du foyer F après avoir traversé les anneaux concentriques d'une lentille de Fresnel ?", "options": ["Parallèles à l'axe optique (faisceau concentré à longue portée)", "Divergents dans toutes les directions", "Réfléchis vers l'arrière"], "rep": "Parallèles à l'axe optique (faisceau concentré à longue portée)"},
+            {"id": "qltp1_5", "q": "Pourquoi conserve-t-on uniquement la courbure des surfaces sous forme d'anneaux dans une lentille de Fresnel ?", "options": ["Parce que c'est l'inclinaison des faces d'entrée et de sortie qui dévie les rayons, pas l'épaisseur centrale du verre", "Pour décorer le gyrophare", "Pour refroidir l'ampoule par convection"], "rep": "Parce que c'est l'inclinaison des faces d'entrée et de sortie qui dévie les rayons, pas l'épaisseur centrale du verre"},
+            {"id": "qltp1_6", "q": "Quel matériau polymère léger est utilisé pour mouler les lentilles de Fresnel des feux de chantier ?", "options": ["Le PMMA (Plexiglas) ou le polycarbonate résistant aux chocs", "La fonte d'aluminium", "Le béton fibré"], "rep": "Le PMMA (Plexiglas) ou le polycarbonate résistant aux chocs"},
+            {"id": "qltp1_7", "q": "Que se passe-t-il si l'ampoule d'un feu de balisage de chantier est décalée hors du foyer F de la lentille de Fresnel ?", "options": ["Le faisceau diverge vers le ciel ou le sol et perd sa portée de signalisation", "La lumière devient verte", "La fréquence de clignotement double"], "rep": "Le faisceau diverge vers le ciel ou le sol et perd sa portée de signalisation"},
+            {"id": "qltp1_8", "q": "Dans quel autre équipement de travaux publics ou d'énergie trouve-t-on de grandes lentilles de Fresnel convergentes ?", "options": ["Les concentrateurs solaires thermiques et photovoltaïques", "Les marteaux-piqueurs pneumatiques", "Les pelleteuses à chenilles"], "rep": "Les concentrateurs solaires thermiques et photovoltaïques"},
+            {"id": "qltp1_9", "q": "Quelle est la propriété optique principale d'une lentille de Fresnel utilisée en concentrateur solaire ?", "options": ["Elle fait converger les rayons parallèles du Soleil en son foyer image F' à très haute température", "Elle bloque les rayons infrarouges", "Elle disperse la lumière blanche"], "rep": "Elle fait converger les rayons parallèles du Soleil en son foyer image F' à très haute température"},
+            {"id": "qltp1_10", "q": "En quelle année le physicien français Augustin Fresnel a-t-il mis au point cette lentille convergente à échelons ?", "options": ["1822", "1492", "1969"], "rep": "1822"},
+        ],
+        "trous": [
+            ("1. Les feux de chantier utilisent une lentille convergente de .........", ["Choisir...", "Fresnel", "Newton"], "Fresnel", "ltp_t1"),
+            ("2. Cette lentille est découpée en ......... concentriques pour réduire son poids.", ["Choisir...", "anneaux", "cubes"], "anneaux", "ltp_t2"),
+            ("3. La LED est placée au foyer ......... F de la lentille.", ["Choisir...", "objet", "image"], "objet", "ltp_t3"),
+            ("4. Les rayons émergents repartent ......... à l'axe optique.", ["Choisir...", "parallèles", "perpendiculaires"], "parallèles", "ltp_t4"),
+            ("5. Le faisceau concentré augmente la ......... lumineuse de signalisation.", ["Choisir...", "portée", "masse"], "portée", "ltp_t5"),
+            ("6. Les lentilles de chantier sont moulées en ......... résistant aux chocs.", ["Choisir...", "polycarbonate", "céramique"], "polycarbonate", "ltp_t6"),
+            ("7. Utilisée à l'envers au Soleil, elle concentre la chaleur au foyer ......... F'.", ["Choisir...", "image", "objet"], "image", "ltp_t7"),
+            ("8. Elle remplace avantageusement une lentille épaisse et très .........", ["Choisir...", "lourde", "souple"], "lourde", "ltp_t8"),
+            ("9. Si la source quitte le foyer F, le faisceau ......... et éclaire moins loin.", ["Choisir...", "diverge", "s'éteint"], "diverge", "ltp_t9"),
+            ("10. Chaque échelon dévie la lumière par ......... aux dioptres.", ["Choisir...", "réfraction", "aimantation"], "réfraction", "ltp_t10"),
+        ]
+    },
+    2: {
+        "questions": [
+            {"id": "qltp2_1", "q": "Dans un appareil photo de suivi de chantier ou un drone photogrammétrique TP, quelle lentille forme l'image du terrain sur le capteur ?", "options": ["Un objectif photographique convergent", "Un miroir plan", "Un prisme en coin de cube"], "rep": "Un objectif photographique convergent"},
+            {"id": "qltp2_2", "q": "Si un drone vole à une altitude H = 100 m avec un objectif de focale f' = 20 mm (0,020 m), que vaut l'échelle (le grandissement |γ|) ?", "options": ["1 / 5 000 (soit |γ| = f' / H = 0,020 / 100 = 0,0002)", "1 / 20", "1 / 100"], "rep": "1 / 5 000 (soit |γ| = f' / H = 0,020 / 100 = 0,0002)"},
+            {"id": "qltp2_3", "q": "Comment appelle-t-on la technique TP qui consiste à reconstituer un modèle 3D d'un terrassement à partir de photos prises sous plusieurs angles ?", "options": ["La photogrammétrie", "La calorimétrie", "L'électrolyse"], "rep": "La photogrammétrie"},
+            {"id": "qltp2_4", "q": "Pour photographier un ouvrage d'art situé à grande distance (x → -∞), où se situe le capteur par rapport à l'objectif ?", "options": ["À la distance focale f' de l'objectif (x' ≈ f')", "À 2 × f'", "À 10 × f'"], "rep": "À la distance focale f' de l'objectif (x' ≈ f')"},
+            {"id": "qltp2_5", "q": "Quel objectif choisit-on pour photographier un grand chantier dans son ensemble avec un large champ de vision ?", "options": ["Un objectif grand-angle (courte distance focale f', ex : 16 mm ou 24 mm)", "Un téléobjectif à très longue focale (400 mm)", "Un microscope"], "rep": "Un objectif grand-angle (courte distance focale f', ex : 16 mm ou 24 mm)"},
+            {"id": "qltp2_6", "q": "Quel objectif utilise le conducteur de travaux pour inspecter un détail d'armature en haut d'un pylône de pont depuis le sol ?", "options": ["Un téléobjectif convergent à longue focale f' (fort grandissement)", "Un objectif grand-angle 12 mm", "Une vitre plane"], "rep": "Un téléobjectif convergent à longue focale f' (fort grandissement)"},
+            {"id": "qltp2_7", "q": "De quelle nature est l'image du chantier formée sur le capteur numérique de l'appareil photo ?", "options": ["Réelle, renversée et fortement rétrécie", "Virtuelle et droite", "Plus grande que le chantier réel"], "rep": "Réelle, renversée et fortement rétrécie"},
+            {"id": "qltp2_8", "q": "Pourquoi calibre-t-on précisément la distance focale f' d'une caméra de drone avant un levé de cubatures de terre ?", "options": ["Pour garantir l'exactitude géométrique du calcul des volumes de déblais et remblais", "Pour économiser la batterie du drone", "Pour rendre les nuages plus blancs"], "rep": "Pour garantir l'exactitude géométrique du calcul des volumes de déblais et remblais"},
+            {"id": "qltp2_9", "q": "Si la distance focale f' de l'objectif double à altitude constante, comment évolue la taille de l'image d'un engin sur le capteur ?", "options": ["Elle double également (proportionnelle à f')", "Elle est divisée par 4", "Elle ne change pas"], "rep": "Elle double également (proportionnelle à f')"},
+            {"id": "qltp2_10", "q": "Quelle formule relie la taille réelle de l'ouvrage AB, la taille sur le capteur A'B', la focale f' et la distance D ?", "options": ["A'B' / AB = f' / D", "A'B' = AB × D", "f' = AB + D"], "rep": "A'B' / AB = f' / D"},
+        ],
+        "trous": [
+            ("1. La reconstitution 3D d'un chantier par photos s'appelle la .........", ["Choisir...", "photogrammétrie", "thermographie"], "photogrammétrie", "ltp_t1"),
+            ("2. L'objectif du drone est une lentille mince .........", ["Choisir...", "convergente", "divergente"], "convergente", "ltp_t2"),
+            ("3. Pour un chantier éloigné, l'image se forme au foyer ......... F'.", ["Choisir...", "image", "objet"], "image", "ltp_t3"),
+            ("4. Un objectif à courte focale f' offre un champ de vision .........-angle.", ["Choisir...", "grand", "étroit"], "grand", "ltp_t4"),
+            ("5. Un ......... à longue focale permet de zoomer sur un détail éloigné.", ["Choisir...", "téléobjectif", "microscope"], "téléobjectif", "ltp_t5"),
+            ("6. L'image enregistrée sur le capteur est réelle et .........", ["Choisir...", "renversée", "droite"], "renversée", "ltp_t6"),
+            ("7. Plus l'altitude H du drone augmente, plus le grandissement |γ| .........", ["Choisir...", "diminue", "augmente"], "diminue", "ltp_t7"),
+            ("8. Le calibrage de la focale f' garantit le calcul exact des ......... de terre.", ["Choisir...", "volumes", "couleurs"], "volumes", "ltp_t8"),
+            ("9. On a la relation de proportionnalité A'B' / AB ≈ f' / .........", ["Choisir...", "D", "2"], "D", "ltp_t9"),
+            ("10. Le calcul des positions images repose sur la loi de .........", ["Choisir...", "Descartes", "Pascal"], "Descartes", "ltp_t10"),
+        ]
+    }
+}
+
+
+def mettre_a_jour_len_tp_matplotlib(sujet_idx):
+    """Banc d'essai optique lentilles convergentes adapté aux Travaux Publics."""
+    fig, ax = plt.subplots(figsize=(12, 6.2), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 250)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    if sujet_idx == 0:
+        dist_mire_m = st.session_state.get("slider_ltp_s0", 40.0)
+        lec_bas = 1.250
+        ecart_m = dist_mire_m / 100.0
+        lec_haut = lec_bas + ecart_m
+        lec_niv = (lec_haut + lec_bas) / 2.0
+
+        ax.add_patch(patches.Rectangle((45, 105), 65, 32, facecolor="#eab308", edgecolor="white", lw=1.5))
+        ax.text(77, 94, "Niveau Optique\n(Lunette 24×)", color="#fde047", fontsize=7.5, fontweight="bold", ha="center")
+
+        xm = 180.0 + (dist_mire_m / 80.0) * 350.0
+        ax.add_patch(patches.Rectangle((xm, 45), 18, 175, facecolor="white", edgecolor="#94a3b8", lw=1.5))
+        ax.text(xm + 9, 36, f"Mire ({dist_mire_m:.0f} m)", color="#cbd5e1", fontsize=7.5, fontweight="bold", ha="center")
+
+        y_mid = 121.0
+        dy_stad = (dist_mire_m / 80.0) * 55.0
+        ax.plot(list((110, xm)), list((y_mid, y_mid)), color="#22c55e", lw=2)
+        ax.plot(list((110, xm)), list((y_mid, y_mid - dy_stad)), color="#38bdf8", lw=1.3, ls="--")
+        ax.plot(list((110, xm)), list((y_mid, y_mid + dy_stad)), color="#38bdf8", lw=1.3, ls="--")
+
+        ax.text(25, 18, "TOPOGRAPHIE DE CHANTIER : LECTURE STADIMÉTRIQUE AU NIVEAU OPTIQUE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, f"Fil haut = {lec_haut:.3f} m | Fil niveleur = {lec_niv:.3f} m | Fil bas = {lec_bas:.3f} m  =>  Distance D = {dist_mire_m:.1f} m", color="#22c55e", fontsize=8, fontweight="bold")
+        st.session_state.ltp_mesure_courante = (f"Haut = {lec_haut:.3f} m", f"Bas = {lec_bas:.3f} m", f"Écart = {ecart_m:.3f} m", f"D = {dist_mire_m:.1f} m")
+
+    elif sujet_idx == 1:
+        pos_led_mm = st.session_state.get("slider_ltp_s1", 80.0)
+        f_fresnel_mm = 80.0
+        x0, y0 = 240.0, 125.0
+
+        ax.plot(list((x0, x0)), list((45, 205)), color="#38bdf8", lw=3)
+        for y_ech in range(50, 205, 15):
+            ax.plot(list((x0, x0 + 7)), list((y_ech, y_ech + 7)), color="#38bdf8", lw=1.5)
+        ax.text(x0, 36, "Lentille de Fresnel (f' = 80 mm)", color="#38bdf8", fontsize=8, fontweight="bold", ha="center")
+
+        x_led = x0 - pos_led_mm * 2.0
+        ax.add_patch(patches.Circle((x_led, y0), 7, facecolor="#f59e0b", edgecolor="white", zorder=5))
+        ax.text(x_led, y0 + 18, f"LED ({pos_led_mm:.0f} mm)", color="#fbbf24", fontsize=7.5, fontweight="bold", ha="center")
+
+        ecart_led = pos_led_mm - f_fresnel_mm
+        pente_sortie = -ecart_led * 0.008
+        for dy in [-60, -30, 0, 30, 60]:
+            ax.plot(list((x_led, x0)), list((y0, y0 + dy)), color="#fde047", lw=1.3, ls=":")
+            y_end = (y0 + dy) + pente_sortie * (dy / 60.0) * 300.0
+            c_f = "#22c55e" if abs(ecart_led) <= 2.0 else "#f59e0b"
+            ax.annotate("", xy=(550, y_end), xytext=(x0 + 6, y0 + dy), arrowprops=dict(arrowstyle="->", color=c_f, lw=2))
+
+        if abs(ecart_led) <= 2.0:
+            statut = "FAISCEAU PARALLÈLE LONGUE PORTÉE : LED placée au foyer objet F (80 mm) !"
+            c_stat = "#22c55e"
+            diag = "PARALLÈLE (OK)"
+        else:
+            statut = f"FAISCEAU DÉRÉGLÉ (Écart {ecart_led:+.0f} mm) : Placez la LED exactement à 80 mm."
+            c_stat = "#ef4444"
+            diag = "DÉFOCALISÉ"
+
+        ax.text(25, 18, "BALISAGE TP : COLLIMATION PAR LENTILLE CONVERGENTE DE FRESNEL", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, statut, color=c_stat, fontsize=8, fontweight="bold")
+        st.session_state.ltp_mesure_courante = (f"LED = {pos_led_mm:.0f} mm", "Foyer F = 80 mm", f"Écart = {ecart_led:+.0f} mm", diag)
+
+    else:
+        alt_drone_m = st.session_state.get("slider_ltp_s2", 80.0)
+        focale_mm = st.session_state.get("slider_ltp_f_s2", 24.0)
+        focale_m = focale_mm / 1000.0
+        echelle_inv = int(round(alt_drone_m / focale_m))
+        taille_engin_real_m = 10.0
+        taille_capteur_mm = (taille_engin_real_m * focale_m / alt_drone_m) * 1000.0
+
+        ax.add_patch(patches.Rectangle((40, 195), 520, 35, facecolor="#78350f", edgecolor="#92400e"))
+        ax.add_patch(patches.Rectangle((260, 180), 80, 15, facecolor="#eab308", edgecolor="white"))
+        ax.text(300, 212, "Engin de chantier (Longueur réelle AB = 10,0 m)", color="#fde047", fontsize=7.5, fontweight="bold", ha="center")
+
+        y_drone = 180.0 - (alt_drone_m / 150.0) * 115.0
+        ax.add_patch(patches.Rectangle((275, y_drone - 12), 50, 12, facecolor="#38bdf8", edgecolor="white"))
+        ax.text(300, y_drone - 18, f"Drone TP (H = {alt_drone_m:.0f} m | f' = {focale_mm:.0f} mm)", color="#38bdf8", fontsize=8, fontweight="bold", ha="center")
+
+        ax.plot(list((260, 300)), list((180, y_drone)), color="#22c55e", lw=1.4, ls="--")
+        ax.plot(list((340, 300)), list((180, y_drone)), color="#22c55e", lw=1.4, ls="--")
+
+        ax.text(25, 18, "PHOTOGRAMMÉTRIE DRONE TP : ÉCHELLE DE PRISE DE VUE (|γ| = f' / H)", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, f"Échelle image : 1 / {echelle_inv}  |  Taille de l'engin sur le capteur CMOS : A'B' = {taille_capteur_mm:.2f} mm", color="#22c55e", fontsize=8, fontweight="bold")
+        st.session_state.ltp_mesure_courante = (f"H = {alt_drone_m:.0f} m", f"f' = {focale_mm:.0f} mm", f"Échelle 1/{echelle_inv}", f"A'B' = {taille_capteur_mm:.2f} mm")
+
+    return fig
+
+
+def afficher_atelier_len_tp(sujet_idx, verrouille=False):
+    if sujet_idx is None:
+        st.warning("Tirez d'abord au sort un chantier TP ci-dessus.")
+        return
+    banque = BANQUES_LEN_TP[sujet_idx]
+    cle_ordre = f"ordre_quiz_ltp_{sujet_idx}"
+    if cle_ordre not in st.session_state:
+        lq = list(banque["questions"])
+        random.shuffle(lq)
+        st.session_state[cle_ordre] = lq
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Technique Travaux Publics (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state[cle_ordre], 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", ["Choisir..."] + q_data["options"], key=f"ltp_at5_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+    with col_t:
+        st.markdown("##### Synthèse Travaux Publics (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in banque["trous"]:
+            c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", choix, key=f"{cle}_s{sujet_idx}", disabled=verrouille, label_visibility="collapsed")
+
+
+
 
 with tab0:
     st.subheader("Identification de l'élève")
@@ -1923,6 +2125,113 @@ with tab4:
 
 
 
+with tab5:
+    st.header("Atelier 5 : Applications dans le domaine des Travaux Publics")
+
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 16px;">Les lentilles convergentes sur les chantiers de génie civil et de voirie :</p>
+        <p style="margin-bottom: 0; line-height: 1.6;">Sur les chantiers TP, les lentilles convergentes équipent les <strong>lunettes de nivellement</strong>, les <strong>lentilles à échelons de Fresnel</strong> des feux de signalisation et les <strong>objectifs de drones photogrammétriques</strong>.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    sujets_len_tp = [
+        {"titre": "Chantier N°1 : Niveau optique de chantier & Lecture stadimétrique", "img": "len_tp_niveau.jpg", "leg": "Niveau optique sur trépied visant une mire graduée", "exp": "**Principe :** L'objectif convergent forme une image réelle de la mire sur le réticule, grossie par l'oculaire. L'écart entre les fils stadimétriques haut et bas donne la distance : <b><i>D</i> = 100 &times; (<i>H</i> &minus; <i>B</i>)</b>."},
+        {"titre": "Chantier N°2 : Feu de balisage à lentille de Fresnel convergente", "img": "len_tp_fresnel.jpg", "leg": "Lentille convergente à échelons concentriques sur feu de chantier", "exp": "**Principe :** La lentille de Fresnel réduit le poids et l'épaisseur du verre grâce à ses anneaux concentriques. Placée au **foyer objet F**, la LED émet un faisceau parallèle visible à longue distance."},
+        {"titre": "Chantier N°3 : Photogrammétrie par drone TP (Calcul des cubatures)", "img": "len_tp_drone.jpg", "leg": "Drone de topographie TP équipé d'un objectif calibré", "exp": "**Principe :** L'objectif convergent forme une image réelle rétrécie du terrassement sur le capteur CMOS selon l'échelle <b>|&gamma;| = <i>f'</i> / <i>H</i></b>, permettant de calculer les volumes de terre en 3D."}
+    ]
+
+    if "sujet_ltp_tire" not in st.session_state:
+        st.session_state.sujet_ltp_tire = None
+
+    if st.button("TIRER AU SORT UN CHANTIER TP (LENTILLES)", key="btn_tirage_ltp", use_container_width=True):
+        choix = [i for i in range(3) if i != st.session_state.sujet_ltp_tire]
+        st.session_state.sujet_ltp_tire = random.choice(choix)
+        st.session_state.mesures_ltp_log = []
+        st.rerun()
+
+    if st.session_state.sujet_ltp_tire is None:
+        st.info("Cliquez sur le bouton ci-dessus pour tirer au sort un chantier de Travaux Publics.")
+    else:
+        idx_ltp = st.session_state.sujet_ltp_tire
+        data_ltp = sujets_len_tp[idx_ltp]
+        st.success(f"Chantier attribué : **{data_ltp['titre']}**")
+        st.markdown(data_ltp["exp"], unsafe_allow_html=True)
+
+        c_img, c_bd = st.columns(2)
+        with c_img:
+            try: st.image(data_ltp["img"], caption=data_ltp["leg"], use_container_width=True)
+            except Exception: st.warning(f"L'image '{data_ltp['img']}' est introuvable.")
+        with c_bd:
+            try: st.image("bd_len_tp.jpg", caption="La pause BD : Quand la mire est tenue à l'envers sur le chantier !", use_container_width=True)
+            except Exception: st.warning("L'image 'bd_len_tp.jpg' est introuvable.")
+
+        st.markdown("---")
+        if "mesures_ltp_log" not in st.session_state: st.session_state.mesures_ltp_log = []
+        if idx_ltp == 0:
+            st.slider("Distance niveau optique - mire (mètres) :", 10.0, 80.0, 40.0, 2.0, key="slider_ltp_s0")
+        elif idx_ltp == 1:
+            st.slider("Distance LED - Lentille de Fresnel (mm) [Foyer F = 80 mm] :", 60.0, 100.0, 80.0, 1.0, key="slider_ltp_s1")
+        else:
+            c1_d, c2_d = st.columns(2)
+            with c1_d: st.slider("Altitude de vol du drone H (mètres) :", 30.0, 150.0, 80.0, 5.0, key="slider_ltp_s2")
+            with c2_d: st.slider("Distance focale de l'objectif f' (mm) :", 16.0, 50.0, 24.0, 2.0, key="slider_ltp_f_s2")
+
+        if st.button("ENREGISTRER CE RELEVÉ TP", key="btn_rel_ltp", use_container_width=True):
+            if "ltp_mesure_courante" in st.session_state:
+                st.session_state.mesures_ltp_log.append(st.session_state.ltp_mesure_courante)
+                st.rerun()
+
+        st.pyplot(mettre_a_jour_len_tp_matplotlib(idx_ltp), use_container_width=True)
+        if st.session_state.mesures_ltp_log:
+            df_ltp = pd.DataFrame(st.session_state.mesures_ltp_log, columns=["Paramètre 1", "Paramètre 2", "Calcul", "Résultat"])
+            st.dataframe(df_ltp, use_container_width=True, hide_index=True)
+
+    st.write("---")
+    if "ltp_verrouille_tab5" not in st.session_state: st.session_state.ltp_verrouille_tab5 = False
+    verrou_ltp = st.session_state.ltp_verrouille_tab5
+    sujet_actif_ltp = st.session_state.get("sujet_ltp_tire", None)
+    afficher_atelier_len_tp(sujet_actif_ltp, verrouille=verrou_ltp)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_ltp = st.checkbox("Je certifie avoir complété l'Atelier 5 (Travaux Publics - Lentilles).", key="certif_ltp5", disabled=verrou_ltp)
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_exp_ltp5", use_container_width=True, disabled=verrou_ltp):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif sujet_actif_ltp is None or not case_certif_ltp:
+            st.error("Action refusée : Tirez au sort un chantier et cochez la case de certification.")
+        else:
+            bq = BANQUES_LEN_TP[sujet_actif_ltp]
+            sc_q = sum(1.0 for q in st.session_state.get(f"ordre_quiz_ltp_{sujet_actif_ltp}", []) if st.session_state.get(f"ltp_at5_g_{q['id']}") == q["rep"])
+            sc_t = sum(1.0 for _, _, rep, cle in bq["trous"] if st.session_state.get(f"{cle}_s{sujet_actif_ltp}") == rep)
+            st.session_state.score_ltp5_p1, st.session_state.score_lm5_p2, st.session_state.score_final_ltp5 = sc_q, sc_t, sc_q + sc_t
+            st.session_state.ltp_verrouille_tab5 = True
+            st.rerun()
+
+    if st.session_state.get("ltp_verrouille_tab5", False) and sujet_actif_ltp is not None:
+        scr1, scr2, tot_s = st.session_state.score_ltp5_p1, st.session_state.score_lm5_p2, st.session_state.score_final_ltp5
+        ts_ltp = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER 5 SCELLÉ | Note : {tot_s:.1f} / 20")
+        bq = BANQUES_LEN_TP[sujet_actif_ltp]
+        html_ltp = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport Atelier 5 - {n_eleve}</title>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}</style></head>
+        <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Atelier 5 : Travaux Publics (Lentilles Convergentes) - {sujets_len_tp[sujet_actif_ltp]['titre']}</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_ltp}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
+        <p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
+        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th></tr></thead><tbody>"""
+        for num, q in enumerate(st.session_state.get(f"ordre_quiz_ltp_{sujet_actif_ltp}", []), 1):
+            qid_curr = q["id"]
+            saisie_curr = st.session_state.get(f"ltp_at5_g_{qid_curr}", "Choisir...")
+            html_ltp += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_curr}</td><td>{q['rep']}</td></tr>"
+        html_ltp += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th></tr></thead><tbody>"
+        for idx_t, (en, _, rep, cle) in enumerate(bq["trous"], 1):
+            saisie_t_curr = st.session_state.get(f"{cle}_s{sujet_actif_ltp}", "Choisir...")
+            html_ltp += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t_curr}</td><td>{rep}</td></tr>"
+        html_ltp += "</tbody></table></body></html>"
+        st.download_button("Télécharger le rapport officiel de l'Atelier 5 (.html)", data=html_ltp, file_name=preparer_nom_fichier("Rapport_Atelier_5_TP_Lentilles").replace(".txt", ".html"), mime="text/html", use_container_width=True)
 
 
 
