@@ -4,7 +4,7 @@ import streamlit as st
 from PIL import Image
 
 st.set_page_config(
-    page_title="Application la lumière et les couleurs ",
+    page_title="Application appareils optique ",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -330,7 +330,7 @@ if "lampes_data" not in st.session_state:
         },
     }
 
-st.title("Application la lumière et les couleurs")
+st.title("Application appareils optique")
 st.markdown("---")
 st.markdown("<div style='text-align: right; color: red; font-style: italic;'>Créé et développé par Laurent GALLET</div>", unsafe_allow_html=True)
 BASE_DIR = os.path.abspath(".")
@@ -522,6 +522,732 @@ tab7 = onglets[7]
 tab8 = onglets[8]
 tab9 = onglets[9]
 tab10 = onglets[10]
+
+BANQUES_APP_GEO = {
+    0: {
+        "questions": [
+            {"id": "qag0_1", "q": "Quel appareil optique et électronique de référence utilise le géomètre topographe pour mesurer simultanément les angles horizontaux, les angles verticaux et les distances ?", "options": ["Une station totale (tachéomètre électronique)", "Une loupe binoculaire", "Un microscope métallographique"], "rep": "Une station totale (tachéomètre électronique)"},
+            {"id": "qag0_2", "q": "Quel est le grossissement nominal standard de la lunette astronomique intégrée à une station totale de précision ?", "options": ["30× (permettant de viser un prisme à plus de 1 km)", "2×", "500×"], "rep": "30× (permettant de viser un prisme à plus de 1 km)"},
+            {"id": "qag0_3", "q": "Comment s'appelle le dispositif optique placé à l'intérieur de la lunette permettant d'effectuer la mise au point sans modifier la longueur extérieure du tube ?", "options": ["Une lentille divergente interne mobile de focalisation", "Un miroir concave externe", "Un filtre polarisant"], "rep": "Une lentille divergente interne mobile de focalisation"},
+            {"id": "qag0_4", "q": "Pourquoi l'image observée dans la lunette d'une station totale moderne est-elle droite (à l'endroit) ?", "options": ["Grâce à un prisme redresseur de Porro ou en toit intégré dans le chemin optique", "Parce que l'oculaire est divergent", "Parce que le trépied est inversé"], "rep": "Grâce à un prisme redresseur de Porro ou en toit intégré dans le chemin optique"},
+            {"id": "qag0_5", "q": "Comment appelle-t-on le croisillon très fin gravé sur une lame de verre interne permettant au géomètre de centrer exactement la cible ?", "options": ["Le réticule (dont l'éclairage est réglable pour les visées de nuit ou en tunnel)", "Le diaphragme iris", "La pupille de sortie"], "rep": "Le réticule (dont l'éclairage est réglable pour les visées de nuit ou en tunnel)"},
+            {"id": "qag0_6", "q": "Quel petit système optique vertical situé sur l'embase de la station totale permet de centrer l'instrument exactement au-dessus du clou d'arpentage au sol ?", "options": ["Le plomb optique (ou plomb laser)", "Le régloscope", "L'endoscope"], "rep": "Le plomb optique (ou plomb laser)"},
+            {"id": "qag0_7", "q": "Quelle est la première opération de réglage optique que doit faire le géomètre avant de viser la cible ?", "options": ["Régler la netteté des fils du réticule grâce à la bague dioptrique de l'oculaire", "Changer l'objectif", "Démonter le trépied"], "rep": "Régler la netteté des fils du réticule grâce à la bague dioptrique de l'oculaire"},
+            {"id": "qag0_8", "q": "Comment appelle-t-on le défaut optique qui se produit lorsque l'image de la cible ne se forme pas exactement dans le plan du réticule (le croisillon bouge sur la cible si on déplace l'œil) ?", "options": ["L'erreur de parallaxe", "La dispersion chromatique", "La fluorescence"], "rep": "L'erreur de parallaxe"},
+            {"id": "qag0_9", "q": "Sur quel principe optique fonctionne la lunette d'un théodolite ou d'une station totale lors d'une visée à l'infini ?", "options": ["Un système afocal (objectif convergent + prisme redresseur + oculaire convergent)", "Un miroir plan incliné", "Une lentille divergente seule"], "rep": "Un système afocal (objectif convergent + prisme redresseur + oculaire convergent)"},
+            {"id": "qag0_10", "q": "Quel composant motorisé équipe les stations totales robotisées modernes pour suivre automatiquement le prisme porté par l'opérateur ?", "options": ["Une caméra de reconnaissance optique (ATR - Automatic Target Recognition) captant le reflet infrarouge du prisme", "Un microphone directionnel", "Une boussole magnétique"], "rep": "Une caméra de reconnaissance optique (ATR - Automatic Target Recognition) captant le reflet infrarouge du prisme"},
+        ],
+        "trous": [
+            ("1. La lunette d'une station totale possède un grossissement standard de .........×.", ["Choisir...", "30", "3"], "30", "ag_t1"),
+            ("2. Un ......... redresseur interne permet d'observer le terrain à l'endroit.", ["Choisir...", "prisme", "filtre"], "prisme", "ag_t2"),
+            ("3. La mise au point se fait par déplacement d'une lentille interne de .........", ["Choisir...", "focalisation", "dispersion"], "focalisation", "ag_t3"),
+            ("4. La croix de visée gravée dans l'oculaire s'appelle le .........", ["Choisir...", "réticule", "verre dépoli"], "réticule", "ag_t4"),
+            ("5. Le centrage vertical au-dessus du repère au sol utilise le ......... optique.", ["Choisir...", "plomb", "niveau"], "plomb", "ag_t5"),
+            ("6. La bague ......... de l'oculaire permet de voir les fils du réticule parfaitement nets.", ["Choisir...", "dioptrique", "magnétique"], "dioptrique", "ag_t6"),
+            ("7. Si le réticule semble bouger sur la cible quand l'œil se déplace, il y a une erreur de .........", ["Choisir...", "parallaxe", "réfraction"], "parallaxe", "ag_t7"),
+            ("8. Pour une visée lointaine sans fatigue, la lunette fonctionne en système .........", ["Choisir...", "afocal", "divergent"], "afocal", "ag_t8"),
+            ("9. Le suivi automatique du prisme (ATR) utilise un faisceau ......... réfléchi.", ["Choisir...", "infrarouge", "ultraviolet"], "infrarouge", "ag_t9"),
+            ("10. Le tachéomètre électronique mesure à la fois les ......... et les distances.", ["Choisir...", "angles", "masses"], "angles", "ag_t10"),
+        ]
+    },
+    1: {
+        "questions": [
+            {"id": "qag1_1", "q": "Quelle technique topographique permet de reconstituer un terrain ou un bâtiment en 3D à partir de photographies aériennes prises par drone ou avion ?", "options": ["La photogrammétrie numérique", "La thermographie infrarouge", "L'endoscopie industrielle"], "rep": "La photogrammétrie numérique"},
+            {"id": "qag1_2", "q": "Pourquoi les caméras embarquées sur les drones topographiques sont-elles équipées d'un obturateur mécanique global (« Global Shutter ») plutôt que déroulant ?", "options": ["Pour figer instantanément toute l'image sans déformation géométrique liée à la vitesse de vol du drone", "Pour prendre des photos en noir et blanc", "Pour consommer plus de batterie"], "rep": "Pour figer instantanément toute l'image sans déformation géométrique liée à la vitesse de vol du drone"},
+            {"id": "qag1_3", "q": "Comment appelle-t-on la taille réelle au sol (en cm/pixel) représentée par un pixel du capteur CMOS lors d'un levé photogrammétrique par drone ?", "options": ["La résolution spatiale au sol ou GSD (Ground Sampling Distance)", "L'indice NDVI", "La pupille de sortie"], "rep": "La résolution spatiale au sol ou GSD (Ground Sampling Distance)"},
+            {"id": "qag1_4", "q": "Quelle relation géométrique (théorème de Thalès) relie la hauteur de vol H, la distance focale f', la taille d'un pixel p et la résolution au sol GSD ?", "options": ["GSD = (H × p) / f'", "GSD = (f' × p) / H", "GSD = H + f'"], "rep": "GSD = (H × p) / f'"},
+            {"id": "qag1_5", "q": "Si un drone vole à H = 100 m d'altitude avec un objectif de focale f' = 20 mm et un capteur dont les pixels mesurent p = 4 µm, quel est le GSD au sol ?", "options": ["2,0 cm/pixel", "20 cm/pixel", "0,2 mm/pixel"], "rep": "2,0 cm/pixel"},
+            {"id": "qag1_6", "q": "Quel taux de recouvrement (superposition) entre deux photographies successives le géomètre programme-t-il lors d'un plan de vol photogrammétrique ?", "options": ["75 % à 80 % de recouvrement longitudinal pour voir chaque point sous plusieurs angles (stéréoscopie)", "5 % seulement", "0 % (aucun recouvrement)"], "rep": "75 % à 80 % de recouvrement longitudinal pour voir chaque point sous plusieurs angles (stéréoscopie)"},
+            {"id": "qag1_7", "q": "Pourquoi un objectif photogrammétrique métrique doit-il être calibré en laboratoire avant le levé ?", "options": ["Pour connaître exactement sa distance focale principale et corriger la distorsion radiale des lentilles", "Pour nettoyer la batterie", "Pour changer la couleur du boîtier"], "rep": "Pour connaître exactement sa distance focale principale et corriger la distorsion radiale des lentilles"},
+            {"id": "qag1_8", "q": "Quelle est la nature de l'image projetée par l'objectif du drone sur son capteur CMOS ?", "options": ["Réelle, renversée et fortement réduite", "Virtuelle et droite", "Agrandie 10 fois"], "rep": "Réelle, renversée et fortement réduite"},
+            {"id": "qag1_9", "q": "Comment appelle-t-on les cibles au sol (damiers noir et blanc) mesurées au GPS RTK par le géomètre pour caler précisément le modèle 3D photogrammétrique ?", "options": ["Des points de calage au sol (GCP - Ground Control Points)", "Des fils stadimétriques", "Des prismes de Porro"], "rep": "Des points de calage au sol (GCP - Ground Control Points)"},
+            {"id": "qag1_10", "q": "Si le géomètre double l'altitude de vol H du drone (de 50 m à 100 m) avec le même appareil photo, comment évolue la taille du pixel au sol (GSD) ?", "options": ["Le GSD est multiplié par 2 (la précision diminue d'un facteur 2)", "Le GSD est divisé par 4", "Le GSD reste identique"], "rep": "Le GSD est multiplié par 2 (la précision diminue d'un facteur 2)"},
+        ],
+        "trous": [
+            ("1. La reconstitution 3D à partir de photos aériennes s'appelle la .........", ["Choisir...", "photogrammétrie", "thermographie"], "photogrammétrie", "ag_t1"),
+            ("2. La taille réelle d'un pixel au sol se note ......... (Ground Sampling Distance).", ["Choisir...", "GSD", "NDVI"], "GSD", "ag_t2"),
+            ("3. Par proportionnalité optique, on a la relation GSD = (H × p) / .........", ["Choisir...", "f'", "c"], "f'", "ag_t3"),
+            ("4. Un drone topographique utilise un obturateur ......... pour éviter toute déformation.", ["Choisir...", "global", "manuel"], "global", "ag_t4"),
+            ("5. Le recouvrement entre deux clichés successifs est d'environ ......... %.", ["Choisir...", "80", "10"], "80", "ag_t5"),
+            ("6. L'objectif doit être ......... pour corriger la distorsion optique des lentilles.", ["Choisir...", "calibré", "teinté"], "calibré", "ag_t6"),
+            ("7. Les cibles au sol mesurées au GPS pour géoréférencer le modèle sont des .........", ["Choisir...", "GCP", "LED"], "GCP", "ag_t7"),
+            ("8. Si l'altitude de vol H augmente, la valeur du GSD .........", ["Choisir...", "augmente", "diminue"], "augmente", "ag_t8"),
+            ("9. Sur le capteur CMOS du drone, l'image du terrain est réelle et .........", ["Choisir...", "renversée", "droite"], "renversée", "ag_t9"),
+            ("10. Le calcul des altitudes (Z) par drone repose sur la vision ......... multi-angles.", ["Choisir...", "stéréoscopique", "monochromatique"], "stéréoscopique", "ag_t10"),
+        ]
+    },
+    2: {
+        "questions": [
+            {"id": "qag2_1", "q": "Quel appareil optique et laser de haute technologie permet au géomètre de numériser intégralement un bâtiment, un tunnel ou un monument en quelques minutes ?", "options": ["Un scanner laser 3D terrestre (LiDAR statique ou mobile)", "Une loupe simple", "Un niveau à bulle"], "rep": "Un scanner laser 3D terrestre (LiDAR statique ou mobile)"},
+            {"id": "qag2_2", "q": "Quel élément optique tournant à très haute vitesse (jusqu'à 100 tours/seconde) dévie verticalement le faisceau laser dans un scanner 3D ?", "options": ["Un miroir polygonal (ou miroir oscillant) à réflexion totale", "Une lentille divergente", "Un filtre rouge"], "rep": "Un miroir polygonal (ou miroir oscillant) à réflexion totale"},
+            {"id": "qag2_3", "q": "Combien de points par seconde un scanner laser 3D topographique moderne peut-il mesurer ?", "options": ["Jusqu'à 1 000 000 à 2 000 000 de points par seconde", "10 points par minute", "50 points par heure"], "rep": "Jusqu'à 1 000 000 à 2 000 000 de points par seconde"},
+            {"id": "qag2_4", "q": "Quel système optique reçoit le faible signal laser renvoyé par les façades jusqu'à 100 ou 300 mètres de distance ?", "options": ["Une lentille collectrice de grand diamètre focalisant le faisceau retour sur une photodiode avalanche (APD)", "Un oculaire de microscope", "Un prisme dispersif"], "rep": "Une lentille collectrice de grand diamètre focalisant le faisceau retour sur une photodiode avalanche (APD)"},
+            {"id": "qag2_5", "q": "Pourquoi l'axe optique d'émission du laser et l'axe optique de réception du scanner 3D sont-ils coaxiaux (alignés sur le même miroir) ?", "options": ["Pour garantir que le faisceau réfléchi revienne toujours exactement au centre du capteur quelle que soit la distance", "Pour économiser du verre", "Pour rendre le laser visible"], "rep": "Pour garantir que le faisceau réfléchi revienne toujours exactement au centre du capteur quelle que soit la distance"},
+            {"id": "qag2_6", "q": "Comment s'appelle l'angle d'ouverture d'un faisceau laser qui s'élargit légèrement avec la distance (environ 0,2 à 0,3 mrad) ?", "options": ["La divergence du faisceau laser", "La convergence oculaire", "La réfraction totale"], "rep": "La divergence du faisceau laser"},
+            {"id": "qag2_7", "q": "Quel impact a une forte divergence du faisceau laser à 100 mètres de distance sur la précision topographique ?", "options": ["La tache laser (spot) devient plus large sur la façade, réduisant la finesse de détection des arêtes", "Le laser change de couleur", "La distance devient nulle"], "rep": "La tache laser (spot) devient plus large sur la façade, réduisant la finesse de détection des arêtes"},
+            {"id": "qag2_8", "q": "Quel accessoire sphérique blanc mat placé sur trépieds dans la scène sert de repère optique pour assembler plusieurs stations de scan 3D ?", "options": ["Des sphères de calibrage / référence (dont le scanner calcule automatiquement le centre géométrique)", "Des miroirs plans", "Des prismes de Newton"], "rep": "Des sphères de calibrage / référence (dont le scanner calcule automatiquement le centre géométrique)"},
+            {"id": "qag2_9", "q": "Quelle difficulté optique rencontre un scanner laser 3D face à une grande baie vitrée transparente ou un miroir ?", "options": ["Le faisceau traverse la vitre ou rebondit vers un autre mur, créant des points fantômes erronés", "La vitre fait exploser le capteur", "Le scanner s'arrête automatiquement"], "rep": "Le faisceau traverse la vitre ou rebondit vers un autre mur, créant des points fantômes erronés"},
+            {"id": "qag2_10", "q": "Quel logiciel exploite le nuage de points 3D issu du scanner laser pour produire la maquette numérique du bâtiment ?", "options": ["Un logiciel de modélisation BIM / CAO 3D", "Un tableur simple uniquement", "Un traitement de texte"], "rep": "Un logiciel de modélisation BIM / CAO 3D"},
+        ],
+        "trous": [
+            ("1. Le scanner laser 3D dévie le faisceau grâce à un ......... tournant à haute vitesse.", ["Choisir...", "miroir", "prisme dispersif"], "miroir", "ag_t1"),
+            ("2. L'optique de réception focalise le signal retour sur une ......... très sensible.", ["Choisir...", "photodiode", "pellicule"], "photodiode", "ag_t2"),
+            ("3. Les faisceaux d'émission et de réception sont ......... (alignés sur le même axe).", ["Choisir...", "coaxiaux", "perpendiculaires"], "coaxiaux", "ag_t3"),
+            ("4. L'élargissement progressif du faisceau laser avec la distance s'appelle la .........", ["Choisir...", "divergence", "convergence"], "divergence", "ag_t4"),
+            ("5. Des ......... blanches mates servent de cibles de référence pour assembler les scans.", ["Choisir...", "sphères", "lentilles"], "sphères", "ag_t5"),
+            ("6. Les surfaces vitrées créent des points ......... par réflexion spéculaire.", ["Choisir...", "fantômes", "fixes"], "fantômes", "ag_t6"),
+            ("7. Un scanner moderne acquiert jusqu'à un ......... de points par seconde.", ["Choisir...", "million", "millier"], "million", "ag_t7"),
+            ("8. Le nuage de points sert de base à la maquette numérique ......... du bâtiment.", ["Choisir...", "BIM", "PDF"], "BIM", "ag_t8"),
+            ("9. Le miroir du scanner fonctionne par ......... optique sans déformation.", ["Choisir...", "réflexion", "réfraction"], "réflexion", "ag_t9"),
+            ("10. Le diamètre du faisceau laser sur la cible s'appelle la taille du .........", ["Choisir...", "spot", "réticule"], "spot", "ag_t10"),
+        ]
+    }
+}
+
+
+def mettre_a_jour_app_geo_matplotlib(sujet_idx):
+    """Banc d'essai Appareils Optiques adapté au Géomètre Topographe."""
+    fig, ax = plt.subplots(figsize=(12, 6.2), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 250)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    if sujet_idx == 0:
+        parallaxe = st.session_state.get("check_ag_s0", False)
+        ax.add_patch(patches.Rectangle((55, 95), 110, 60, facecolor="#eab308", edgecolor="white", lw=1.5))
+        ax.text(110, 125, "Lunette 30×\nStation Totale", color="#0f172a", fontsize=8.5, fontweight="bold", ha="center", va="center")
+
+        # Cercle de visée agrandi à droite
+        ax.add_patch(patches.Circle((410, 125), 72, facecolor="#1e293b", edgecolor="#38bdf8", lw=2.5))
+        ax.plot([338, 482], [125, 125], color="#ef4444", lw=1.5)
+        ax.plot([410, 410], [53, 197], color="#ef4444", lw=1.5)
+
+        decal = 18 if parallaxe else 0
+        ax.add_patch(patches.Polygon([[410 + decal, 125], [398 + decal, 102], [422 + decal, 102]], facecolor="#22c55e", edgecolor="white"))
+        ax.text(410 + decal, 92, "Cible", color="#22c55e", fontsize=8, fontweight="bold", ha="center")
+
+        if parallaxe:
+            msg_st = "ERREUR DE PARALLAXE : L'image de la cible n'est pas dans le plan du réticule (décalage visuel) !"
+            c_st = "#ef4444"
+        else:
+            msg_st = "VISÉE PARFAITE (Parallaxe nulle) : Image de la cible exactement superposée au réticule !"
+            c_st = "#22c55e"
+
+        ax.text(25, 18, "LUNETTE DE STATION TOTALE (30×) : RÉGLAGE DU RÉTICULE ET PARALLAXE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, msg_st, color=c_st, fontsize=8, fontweight="bold")
+        st.session_state.ag_mesure_courante = ("Grossissement 30×", "Prisme redresseur", "Parallaxe active" if parallaxe else "Parallaxe nulle", "ERREUR VISÉE" if parallaxe else "POINTÉ PRÉCIS")
+
+    elif sujet_idx == 1:
+        h_vol = st.session_state.get("slider_ag_s1", 80.0)
+        foc_mm = st.session_state.get("radio_ag_s1", 20.0)
+        pixel_um = 4.0
+        gsd_cm = round((h_vol * pixel_um * 100.0) / (foc_mm * 1000.0), 2)
+
+        ax.add_patch(patches.Rectangle((230, 42), 140, 36, facecolor="#1e3a8a", edgecolor="#38bdf8", lw=1.5))
+        ax.text(300, 60, f"Drone H = {h_vol:.0f} m\nf' = {foc_mm:.0f} mm", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        demi_larg = min(230.0, (h_vol / foc_mm) * 35.0)
+        ax.fill([300, 300 - demi_larg, 300 + demi_larg], [78, 195, 195], color="#38bdf8", alpha=0.22)
+        ax.plot([300 - demi_larg, 300 + demi_larg], [195, 195], color="#22c55e", lw=4)
+        ax.text(300, 215, f"Emprise au sol  |  Résolution GSD = {gsd_cm:.2f} cm/pixel", color="#fde047", fontsize=8.5, fontweight="bold", ha="center")
+
+        ax.text(25, 18, "PHOTOGRAMMÉTRIE DRONE : CALCUL DE LA RÉSOLUTION AU SOL GSD = (H × p) / f'", color="#38bdf8", fontsize=9, fontweight="bold")
+        st.session_state.ag_mesure_courante = (f"H = {h_vol:.0f} m", f"f' = {foc_mm:.0f} mm", f"GSD = {gsd_cm:.2f} cm/px", "HAUTE PRÉCISION" if gsd_cm <= 2.5 else "LEVÉ STANDARD")
+
+    else:
+        dist_scan = st.session_state.get("slider_ag_s2", 50.0)
+        spot_mm = round(3.0 + dist_scan * 0.25, 1)
+
+        ax.add_patch(patches.Rectangle((55, 95), 95, 60, facecolor="#1e3a8a", edgecolor="#38bdf8", lw=1.5))
+        ax.text(102, 125, "Scanner 3D\nMiroir rotatif", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        x_mur = 190.0 + (dist_scan / 150.0) * 310.0
+        ax.fill([150, x_mur, x_mur], [125, 125 - spot_mm * 0.6, 125 + spot_mm * 0.6], color="#22c55e", alpha=0.35)
+        ax.plot([x_mur, x_mur], [60, 190], color="#cbd5e1", lw=5)
+        ax.text(x_mur, 202, f"Façade à {dist_scan:.0f} m\nSpot = {spot_mm:.1f} mm", color="#fde047", fontsize=8, fontweight="bold", ha="center")
+
+        ax.text(25, 18, "SCANNER LASER 3D TERRESTRE : DIVERGENCE DU FAISCEAU ET TAILLE DU SPOT", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, f"Distance façade = {dist_scan:.0f} m  =>  Diamètre de la tache laser (spot) = {spot_mm:.1f} mm", color="#22c55e" if spot_mm <= 18.0 else "#f59e0b", fontsize=8, fontweight="bold")
+        st.session_state.ag_mesure_courante = (f"D = {dist_scan:.0f} m", "Div = 0,25 mrad", f"Spot = {spot_mm:.1f} mm", "DÉTAIL FIN" if spot_mm <= 18.0 else "SPOT LARGE")
+
+    return fig
+
+
+def afficher_atelier_app_geo(sujet_idx, verrouille=False):
+    if sujet_idx is None:
+        st.warning("Tirez d'abord au sort une mission Géomètre ci-dessus.")
+        return
+    banque = BANQUES_APP_GEO[sujet_idx]
+    cle_ordre = f"ordre_quiz_ag_{sujet_idx}"
+    if cle_ordre not in st.session_state:
+        lq = list(banque["questions"])
+        random.shuffle(lq)
+        st.session_state[cle_ordre] = lq
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Technique Géomètre Topographe (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state[cle_ordre], 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", ["Choisir..."] + q_data["options"], key=f"ag_at10_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+    with col_t:
+        st.markdown("##### Synthèse Géomètre Topographe (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in banque["trous"]:
+            c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", choix, key=f"{cle}_s{sujet_idx}", disabled=verrouille, label_visibility="collapsed")
+
+
+
+BANQUES_APP_TRANS = {
+    0: {
+        "questions": [
+            {"id": "qatr0_1", "q": "Quel type de miroir équipe les rétroviseurs grand-angle et antéviseur d'un poids lourd pour élargir le champ de vision et supprimer les angles morts ?", "options": ["Un miroir convexe (bombé vers l'extérieur)", "Un miroir concave", "Un prisme dispersif"], "rep": "Un miroir convexe (bombé vers l'extérieur)"},
+            {"id": "qatr0_2", "q": "Quelle est la nature de l'image observée dans un rétroviseur convexe de véhicule ?", "options": ["Virtuelle, droite et plus petite que l'objet réel", "Réelle et renversée", "Agrandie 10 fois"], "rep": "Virtuelle, droite et plus petite que l'objet réel"},
+            {"id": "qatr0_3", "q": "Pourquoi les objets observés dans un rétroviseur grand-angle convexe paraissent-ils plus éloignés qu'ils ne le sont en réalité ?", "options": ["Parce que le miroir convexe réduit la taille apparente des véhicules suiveurs", "Parce que la lumière ralentit", "Parce que le verre est teinté en bleu"], "rep": "Parce que le miroir convexe réduit la taille apparente des véhicules suiveurs"},
+            {"id": "qatr0_4", "q": "Par quel dispositif optique et électronique les caméras de rétrovision (CMS / MirrorCam) remplacent-elles les rétroviseurs extérieurs sur les poids lourds récents ?", "options": ["Des caméras à objectif grand-angle reliées à des écrans intérieurs montés sur les montants de pare-brise", "Des lunettes astronomiques", "Des périscopes à eau"], "rep": "Des caméras à objectif grand-angle reliées à des écrans intérieurs montés sur les montants de pare-brise"},
+            {"id": "qatr0_5", "q": "Quel avantage aérodynamique et énergétique apporte le remplacement des gros blocs rétroviseurs par des bras caméras profilés (CMS) ?", "options": ["Une réduction de la traînée aérodynamique permettant d'économiser 1 à 2 % de carburant", "Une augmentation du poids de 500 kg", "Une suppression des phares"], "rep": "Une réduction de la traînée aérodynamique permettant d'économiser 1 à 2 % de carburant"},
+            {"id": "qatr0_6", "q": "Comment s'appelle le rétroviseur orienté vers le sol juste devant la cabine d'un camion pour voir les piétons ou cyclistes à l'arrêt ?", "options": ["Le rétroviseur antéviseur (classe VI)", "Le télescope de Newton", "La loupe binoculaire"], "rep": "Le rétroviseur antéviseur (classe VI)"},
+            {"id": "qatr0_7", "q": "Quelle loi optique régit la réflexion d'un rayon lumineux sur le miroir d'un rétroviseur ?", "options": ["La loi de Snell-Descartes : l'angle de réflexion est égal à l'angle d'incidence (i' = i)", "La loi d'Ohm", "La loi de Boyle-Mariotte"], "rep": "La loi de Snell-Descartes : l'angle de réflexion est égal à l'angle d'incidence (i' = i)"},
+            {"id": "qatr0_8", "q": "Comment les rétroviseurs intérieurs électrochromes évitent-ils l'éblouissement nocturne par les phares d'un véhicule suiveur ?", "options": ["Un gel électrochrome s'assombrit automatiquement sous l'effet d'un capteur de lumière pour absorber l'excès de flux réfléchi", "Ils basculent vers le plafond", "Ils émettent un flash rouge"], "rep": "Un gel électrochrome s'assombrit automatiquement sous l'effet d'un capteur de lumière pour absorber l'excès de flux réfléchi"},
+            {"id": "qatr0_9", "q": "Quel capteur équipe les caméras de recul et caméras latérales d'angle mort pour voir de nuit lors des manœuvres à quai ?", "options": ["Un capteur CMOS haute sensibilité assisté de LED infrarouges invisibles", "Un microscope optique", "Une lampe au sodium"], "rep": "Un capteur CMOS haute sensibilité assisté de LED infrarouges invisibles"},
+            {"id": "qatr0_10", "q": "Quel avantage procure l'affichage par caméra CMS par rapport à un miroir classique par temps de pluie battante ou de nuit ?", "options": ["Le capteur numérique amplifie la luminosité de nuit et les lentilles chauffantes évitent les gouttes d'eau", "Il coupe la pluie", "Il augmente la vitesse du camion"], "rep": "Le capteur numérique amplifie la luminosité de nuit et les lentilles chauffantes évitent les gouttes d'eau"},
+        ],
+        "trous": [
+            ("1. Les rétroviseurs grand-angle utilisent un miroir ......... pour élargir le champ de vision.", ["Choisir...", "convexe", "concave"], "convexe", "atr_t1"),
+            ("2. L'image formée par un miroir convexe est virtuelle, ......... et plus petite que l'objet.", ["Choisir...", "droite", "renversée"], "droite", "atr_t2"),
+            ("3. Lors de la réflexion sur un miroir, l'angle de réflexion est ......... à l'angle d'incidence.", ["Choisir...", "égal", "supérieur"], "égal", "atr_t3"),
+            ("4. Le miroir orienté vers l'avant bas de la cabine s'appelle l'.........", ["Choisir...", "antéviseur", "oculaire"], "antéviseur", "atr_t4"),
+            ("5. Les systèmes CMS remplacent les miroirs par des caméras à objectif .........-angle.", ["Choisir...", "grand", "télé"], "grand", "atr_t5"),
+            ("6. L'image est projetée sur un capteur ......... puis affichée sur un écran en cabine.", ["Choisir...", "CMOS", "argentique"], "CMOS", "atr_t6"),
+            ("7. Les bras caméras réduisent la résistance ......... et la consommation de gazole.", ["Choisir...", "aérodynamique", "thermique"], "aérodynamique", "atr_t7"),
+            ("8. Un rétroviseur ......... s'assombrit automatiquement la nuit pour éviter l'éblouissement.", ["Choisir...", "électrochrome", "parabolique"], "électrochrome", "atr_t8"),
+            ("9. Les caméras de recul utilisent des LED ......... pour éclairer la zone sans éblouir.", ["Choisir...", "infrarouges", "ultraviolettes"], "infrarouges", "atr_t9"),
+            ("10. Les miroirs grand-angle permettent de réduire les ......... morts autour du véhicule.", ["Choisir...", "angles", "points"], "angles", "atr_t10"),
+        ]
+    },
+    1: {
+        "questions": [
+            {"id": "qatr1_1", "q": "Où est placée la caméra optique des systèmes d'aide à la conduite ADAS (maintien dans la voie, freinage d'urgence AEBS) sur un véhicule ?", "options": ["En haut du pare-brise, dans la zone balayée par les essuie-glaces", "Sous le châssis arrière", "Dans le réservoir de carburant"], "rep": "En haut du pare-brise, dans la zone balayée par les essuie-glaces"},
+            {"id": "qatr1_2", "q": "Quel composant optique de la caméra ADAS projette l'image de la route devant le camion sur le capteur CMOS ?", "options": ["Un objectif convergent multi-lentilles à focale fixe calibrée", "Un prisme de Newton", "Une lentille divergente seule"], "rep": "Un objectif convergent multi-lentilles à focale fixe calibrée"},
+            {"id": "qatr1_3", "q": "Comment une caméra stéréoscopique (double objectif espacé de 20 à 30 cm) mesure-t-elle la distance d'un piéton ou d'un véhicule devant le camion ?", "options": ["Par triangulation (parallaxe) en comparant le décalage entre l'image gauche et l'image droite", "En envoyant un faisceau laser", "En pesant la route"], "rep": "Par triangulation (parallaxe) en comparant le décalage entre l'image gauche et l'image droite"},
+            {"id": "qatr1_4", "q": "Pourquoi faut-il obligatoirement recalibrer la caméra ADAS après le remplacement d'un pare-brise fissuré en atelier ?", "options": ["Car un décalage d'un seul degré de l'axe optique entraîne une erreur de plusieurs mètres à 100 m de distance", "Pour recharger la batterie", "Pour nettoyer les lentilles"], "rep": "Car un décalage d'un seul degré de l'axe optique entraîne une erreur de plusieurs mètres à 100 m de distance"},
+            {"id": "qatr1_5", "q": "Quel panneau géométrique noir et blanc place le technicien devant le véhicule lors du calibrage statique de la caméra ADAS ?", "options": ["Une cible de calibrage étalonnée positionnée à une distance et hauteur précises", "Un miroir concave", "Une mire de nivellement"], "rep": "Une cible de calibrage étalonnée positionnée à une distance et hauteur précises"},
+            {"id": "qatr1_6", "q": "Quel rôle joue le capteur optique de pluie et de luminosité collé contre le pare-brise ?", "options": ["Il détecte la perte de réflexion totale interne causée par les gouttes d'eau pour déclencher les essuie-glaces", "Il mesure la pression des pneus", "Il refroidit le pare-brise"], "rep": "Il détecte la perte de réflexion totale interne causée par les gouttes d'eau pour déclencher les essuie-glaces"},
+            {"id": "qatr1_7", "q": "Quelle est la nature de l'image formée par l'objectif de la caméra ADAS sur son capteur électronique ?", "options": ["Réelle, renversée et réduite", "Virtuelle et droite", "Infinie"], "rep": "Réelle, renversée et réduite"},
+            {"id": "qatr1_8", "q": "Pourquoi l'objectif d'une caméra ADAS possède-t-il une focale fixe sans zoom mécanique ?", "options": ["Pour conserver un étalonnage géométrique invariable permettant le calcul précis des distances", "Par manque de place", "Pour économiser le plastique"], "rep": "Pour conserver un étalonnage géométrique invariable permettant le calcul précis des distances"},
+            {"id": "qatr1_9", "q": "Quel phénomène optique produit par un soleil rasant bas sur l'horizon peut temporairement aveugler la caméra frontale ADAS ?", "options": ["L'éblouissement direct (saturation du capteur CMOS et reflets internes « flare »)", "La diffraction nocturne", "L'absorption infrarouge"], "rep": "L'éblouissement direct (saturation du capteur CMOS et reflets internes « flare »)"},
+            {"id": "qatr1_10", "q": "Quelle fonction de sécurité déclenche le freinage automatique d'urgence lorsqu'la caméra et le radar détectent un obstacle immobile ?", "options": ["L'AEBS (Advanced Emergency Braking System)", "L'ABS seul", "Le régulateur de vitesse"], "rep": "L'AEBS (Advanced Emergency Braking System)"},
+        ],
+        "trous": [
+            ("1. La caméra frontale ADAS est fixée en haut du .........-brise.", ["Choisir...", "pare", "coupe"], "pare", "atr_t1"),
+            ("2. Son objectif convergent forme une image ......... et renversée sur le capteur CMOS.", ["Choisir...", "réelle", "virtuelle"], "réelle", "atr_t2"),
+            ("3. Une caméra stéréoscopique mesure les distances par ......... entre deux objectifs.", ["Choisir...", "triangulation", "diffraction"], "triangulation", "atr_t3"),
+            ("4. Après un changement de pare-brise, il faut effectuer le ......... de la caméra.", ["Choisir...", "calibrage", "polissage"], "calibrage", "atr_t4"),
+            ("5. Le calibrage statique utilise une ......... géométrique placée devant le véhicule.", ["Choisir...", "cible", "loupe"], "cible", "atr_t5"),
+            ("6. Le capteur de pluie utilise la perte de ......... totale interne sur le verre mouillé.", ["Choisir...", "réflexion", "absorption"], "réflexion", "atr_t6"),
+            ("7. L'objectif ADAS possède une focale ......... pour garantir la précision des mesures.", ["Choisir...", "fixe", "variable"], "fixe", "atr_t7"),
+            ("8. Un soleil rasant peut provoquer la ......... du capteur électronique.", ["Choisir...", "saturation", "congélation"], "saturation", "atr_t8"),
+            ("9. Le système de freinage d'urgence assisté par caméra s'appelle l'.........", ["Choisir...", "AEBS", "ESP"], "AEBS", "atr_t9"),
+            ("10. Le système LKA détecte le franchissement involontaire des ......... blanches.", ["Choisir...", "lignes", "glissières"], "lignes", "atr_t10"),
+        ]
+    },
+    2: {
+        "questions": [
+            {"id": "qatr2_1", "q": "Quel composant optique équipe les projecteurs lenticulaires (ellipsoïdaux) modernes des poids lourds et automobiles ?", "options": ["Une épaisse lentille convergente plan-convexe en verre projetant le faisceau sur la route", "Un prisme triangulaire", "Une lentille divergente"], "rep": "Une épaisse lentille convergente plan-convexe en verre projetant le faisceau sur la route"},
+            {"id": "qatr2_2", "q": "Quel élément mécanique placé au foyer de la lentille d'un projecteur lenticulaire crée la coupure horizontale nette des feux de croisement ?", "options": ["Un cache métallique (volet de coupure) qui bloque la moitié supérieure du faisceau", "Un filtre rouge", "Un miroir plan"], "rep": "Un cache métallique (volet de coupure) qui bloque la moitié supérieure du faisceau"},
+            {"id": "qatr2_3", "q": "Pourquoi le faisceau d'un projecteur lenticulaire est-il renversé par la lentille convergente ?", "options": ["Parce que la lentille convergente projette une image réelle et renversée du cache de coupure sur la route", "Parce que l'ampoule est montée à l'envers", "Parce que le verre est teinté"], "rep": "Parce que la lentille convergente projette une image réelle et renversée du cache de coupure sur la route"},
+            {"id": "qatr2_4", "q": "Comment un projecteur Bi-Xénon ou Bi-LED passe-t-il instantanément des feux de croisement aux feux de route avec une seule lentille ?", "options": ["Un électroaimant abaisse le volet métallique de coupure pour libérer tout le faisceau lumineux", "La lentille tourne à 180°", "On change d'ampoule en roulant"], "rep": "Un électroaimant abaisse le volet métallique de coupure pour libérer tout le faisceau lumineux"},
+            {"id": "qatr2_5", "q": "Quelle est la forme géométrique du réflecteur placé derrière la source lumineuse dans un phare classique pour renvoyer les rayons vers l'avant ?", "options": ["Un miroir concave parabolique (source placée au foyer F)", "Un miroir plan", "Un miroir convexe"], "rep": "Un miroir concave parabolique (source placée au foyer F)"},
+            {"id": "qatr2_6", "q": "Lorsque la source LED ou halogène est placée exactement au foyer F d'un miroir parabolique, comment ressortent les rayons réfléchis ?", "options": ["Parallèles à l'axe optique pour éclairer loin devant le véhicule", "Convergents à 10 cm du phare", "Vers l'arrière du véhicule"], "rep": "Parallèles à l'axe optique pour éclairer loin devant le véhicule"},
+            {"id": "qatr2_7", "q": "Quel défaut d'optique apparaît sur un phare en polycarbonate vieilli par les UV du soleil et les gravillons ?", "options": ["L'opacification (jaunissement) qui diffuse la lumière, réduit la portée et entraîne un refus au contrôle technique", "Une augmentation de la puissance", "Un changement de couleur en vert"], "rep": "L'opacification (jaunissement) qui diffuse la lumière, réduit la portée et entraîne un refus au contrôle technique"},
+            {"id": "qatr2_8", "q": "Quel appareil optique d'atelier utilise le mécanicien pour contrôler le faisceau et la ligne de coupure d'un phare ?", "options": ["Un régloscope (composé d'une lentille convergente et d'un écran gradué interne)", "Un microscope", "Une loupe binoculaire"], "rep": "Un régloscope (composé d'une lentille convergente et d'un écran gradué interne)"},
+            {"id": "qatr2_9", "q": "Comment fonctionne l'écran interne d'un régloscope placé à 30 cm devant le phare d'un camion ?", "options": ["Sa lentille convergente forme dans son plan focal image l'image réduite du faisceau projeté à 25 mètres", "Il mesure la température du pneu", "Il recharge le phare"], "rep": "Sa lentille convergente forme dans son plan focal image l'image réduite du faisceau projeté à 25 mètres"},
+            {"id": "qatr2_10", "q": "Pourquoi les projecteurs Matrix LED comportent-ils plusieurs dizaines de micro-lentilles indépendantes ?", "options": ["Pour éteindre uniquement le faisceau dirigé vers un véhicule croisé tout en gardant les pleins phares ailleurs", "Pour faire clignoter les phares", "Pour éclairer l'intérieur de la cabine"], "rep": "Pour éteindre uniquement le faisceau dirigé vers un véhicule croisé tout en gardant les pleins phares ailleurs"},
+        ],
+        "trous": [
+            ("1. Un projecteur lenticulaire utilise une lentille ......... pour projeter le faisceau.", ["Choisir...", "convergente", "divergente"], "convergente", "atr_t1"),
+            ("2. Un ......... métallique interne crée la coupure nette des feux de croisement.", ["Choisir...", "volet", "prisme"], "volet", "atr_t2"),
+            ("3. Dans un phare parabolique, l'ampoule est placée au ......... du miroir concave.", ["Choisir...", "foyer", "sommet"], "foyer", "atr_t3"),
+            ("4. Les rayons issus du foyer d'une parabole ressortent ......... à l'axe optique.", ["Choisir...", "parallèles", "perpendiculaires"], "parallèles", "atr_t4"),
+            ("5. Le vieillissement du polycarbonate entraîne une ......... qui diffuse la lumière.", ["Choisir...", "opacification", "focalisation"], "opacification", "atr_t5"),
+            ("6. Le contrôle de l'orientation des phares s'effectue avec un .........", ["Choisir...", "régloscope", "endoscope"], "régloscope", "atr_t6"),
+            ("7. L'écran du régloscope est placé dans le plan ......... image de sa lentille.", ["Choisir...", "focal", "central"], "focal", "atr_t7"),
+            ("8. La lentille convergente projette une image ......... et renversée du faisceau.", ["Choisir...", "réelle", "virtuelle"], "réelle", "atr_t8"),
+            ("9. Les phares ......... LED pilotent individuellement chaque faisceau lumineux.", ["Choisir...", "Matrix", "Halogène"], "Matrix", "atr_t9"),
+            ("10. Le faisceau de croisement est asymétrique pour éclairer le bas-côté .........", ["Choisir...", "droit", "gauche"], "droit", "atr_t10"),
+        ]
+    }
+}
+
+
+def mettre_a_jour_app_trans_matplotlib(sujet_idx):
+    """Banc d'essai Appareils Optiques adapté au Transport Routier."""
+    fig, ax = plt.subplots(figsize=(12, 6.2), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 250)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    if sujet_idx == 0:
+        type_retro = st.session_state.get("radio_atr_s0", "Miroir Convexe Grand-Angle (Champ 45°)")
+        if "Plan" in type_retro:
+            angle_c, dy, c_r, msg_r = 18, 35, "#f59e0b", "MIROIR PLAN (Champ 18°) : Taille réelle mais angle mort latéral important !"
+        else:
+            angle_c, dy, c_r, msg_r = 45, 95, "#22c55e", "MIROIR CONVEXE GRAND-ANGLE (Champ 45°) : Angle mort éliminé, image virtuelle réduite."
+
+        ax.add_patch(patches.Rectangle((60, 95), 95, 60, facecolor="#1e3a8a", edgecolor="white", lw=1.5))
+        ax.text(107, 125, "Cabine PL\nRétroviseur", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        ax.fill(, [125, 125 - dy, 125 + dy], color=c_r, alpha=0.25)
+        ax.plot(, [125, 125 - dy], color=c_r, lw=2)
+        ax.plot(, [125, 125 + dy], color=c_r, lw=2)
+
+        ax.text(25, 18, "RÉTROVISION POIDS LOURDS : MIROIR PLAN VS MIROIR CONVEXE GRAND-ANGLE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, msg_r, color=c_r, fontsize=8, fontweight="bold")
+        st.session_state.atr_mesure_courante = (type_retro.split("(").strip(), f"Champ = {angle_c}°", "Image virtuelle", "ANGLE MORT OK" if angle_c >= 40 else "ANGLE MORT")
+
+    elif sujet_idx == 1:
+        ecart_deg = st.session_state.get("slider_atr_s1", 0.0)
+        dist_cible = 80.0
+        err_lat = round(dist_cible * math.tan(math.radians(abs(ecart_deg))), 2)
+
+        ax.add_patch(patches.Rectangle((55, 100), 90, 50, facecolor="#1e3a8a", edgecolor="#38bdf8", lw=1.5))
+        ax.text(100, 125, "Caméra ADAS\nPare-brise", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        ax.plot(,, color="#94a3b8", lw=1.5, ls="--")
+        y_dev = 125 - ecart_deg * 18.0
+        c_adas = "#22c55e" if abs(ecart_deg) <= 0.3 else "#ef4444"
+        ax.plot(, [125, y_dev], color=c_adas, lw=3)
+
+        ax.add_patch(patches.Rectangle((505, 85), 25, 80, facecolor="#f8fafc", edgecolor="#eab308", lw=1.5))
+        ax.text(517, 180, "Cible\n80 m", color="#fde047", fontsize=8, fontweight="bold", ha="center")
+        ax.text(517, 180, "Cible\n80 m", color="#fde047", fontsize=8, fontweight="bold", ha="center")
+
+        ax.text(25, 18, "CALIBRAGE CAMÉRA ADAS : IMPACT D'UN DÉFAUT D'ALIGNEMENT ANGULAIRE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, f"Écart angulaire = {ecart_deg:+.1f}°  =>  Décalage latéral à 80 m = {err_lat:.2f} mètres", color=c_adas, fontsize=8, fontweight="bold")
+        st.session_state.atr_mesure_courante = (f"Angle = {ecart_deg:+.1f}°", "Distance = 80 m", f"Erreur = {err_lat:.2f} m", "CALIBRÉ" if abs(ecart_deg) <= 0.3 else "RECALIBRER")
+
+    else:
+        mode_phare = st.session_state.get("radio_atr_s2", "Feux de croisement (Volet de coupure abaissé)")
+        ax.add_patch(patches.Circle((85, 125), 14, facecolor="#fde047", edgecolor="white"))
+        ax.text(85, 155, "LED", color="#fde047", fontsize=8, fontweight="bold", ha="center")
+
+        ax.plot([210, 210], [65, 185], color="#3b82f6", lw=4)
+        ax.text(210, 52, "Lentille convergente", color="#38bdf8", fontsize=8, fontweight="bold", ha="center")
+
+        if "croisement" in mode_phare:
+            ax.add_patch(patches.Rectangle((145, 65), 10, 60, facecolor="#ef4444", edgecolor="white"))
+            ax.text(150, 55, "Volet", color="#ef4444", fontsize=7.5, fontweight="bold", ha="center")
+            ax.fill([85, 210, 540, 540, 210], [125, 125, 195, 130, 65], color="#fde047", alpha=0.35)
+            msg_p = "FEUX DE CROISEMENT : Le volet bloque le haut ; la lentille projette le faisceau sous l'horizon."
+        else:
+            ax.fill([85, 210, 540, 540, 210], [125, 185, 210, 65, 65], color="#fde047", alpha=0.45)
+            msg_p = "FEUX DE ROUTE (BI-LED) : Volet escamoté ; plein faisceau longue portée activé."
+
+        ax.text(25, 18, "PROJECTEUR LENTICULAIRE : LENTILLE CONVERGENTE ET VOLET DE COUPURE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, msg_p, color="#22c55e", fontsize=8, fontweight="bold")
+        st.session_state.atr_mesure_courante = (mode_phare.split("(")[0].strip(), "Lentille conv.", "Coupure nette", "CONFORME")
+
+    return fig
+
+
+def afficher_atelier_app_trans(sujet_idx, verrouille=False):
+    if sujet_idx is None:
+        st.warning("Tirez d'abord au sort un sujet Transport Routier ci-dessus.")
+        return
+    banque = BANQUES_APP_TRANS[sujet_idx]
+    cle_ordre = f"ordre_quiz_atr_{sujet_idx}"
+    if cle_ordre not in st.session_state:
+        lq = list(banque["questions"])
+        random.shuffle(lq)
+        st.session_state[cle_ordre] = lq
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Technique Transport Routier (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state[cle_ordre], 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", ["Choisir..."] + q_data["options"], key=f"atr_at9_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+    with col_t:
+        st.markdown("##### Synthèse Transport Routier (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in banque["trous"]:
+            c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", choix, key=f"{cle}_s{sujet_idx}", disabled=verrouille, label_visibility="collapsed")
+
+
+
+
+
+
+BANQUES_APP_TP = {
+    0: {
+        "questions": [
+            {"id": "qatp0_1", "q": "Quel appareil optique utilise le chef de chantier Travaux Publics pour mesurer des différences d'altitude (nivellement direct) sur un terrassement ?", "options": ["Un niveau optique de chantier (lunette de nivellement)", "Un microscope composé", "Une loupe binoculaire"], "rep": "Un niveau optique de chantier (lunette de nivellement)"},
+            {"id": "qatp0_2", "q": "Sur quel accessoire gradué en centimètres et millimètres le technicien effectue-t-il ses lectures à travers la lunette du niveau optique ?", "options": ["Une mire parlante verticale", "Un prisme de Newton", "Une règle en bois non graduée"], "rep": "Une mire parlante verticale"},
+            {"id": "qatp0_3", "q": "Quelle est la nature de l'image de la mire observée à travers un niveau optique de chantier moderne ?", "options": ["Droite (redressée grâce à un prisme redresseur interne)", "Renversée à l'envers", "Floue sur les bords"], "rep": "Droite (redressée grâce à un prisme redresseur interne)"},
+            {"id": "qatp0_4", "q": "Comment appelle-t-on la croix gravée sur une lentille interne de la lunette permettant de viser précisément une graduation de la mire ?", "options": ["Le réticule (avec fil niveleur horizontal et fils stadimétriques)", "Le diaphragme iris", "Le capteur CMOS"], "rep": "Le réticule (avec fil niveleur horizontal et fils stadimétriques)"},
+            {"id": "qatp0_5", "q": "Comment calcule-t-on rapidement la distance horizontale D (en mètres) entre le niveau optique et la mire à partir de l'écart ΔH (en mètres) lu entre les deux fils stadimétriques ?", "options": ["D = 100 × ΔH (constante stadimétrique K = 100)", "D = ΔH / 100", "D = 10 + ΔH"], "rep": "D = 100 × ΔH (constante stadimétrique K = 100)"},
+            {"id": "qatp0_6", "q": "Si le fil stadimétrique supérieur indique 1,650 m et le fil inférieur indique 1,250 m sur la mire, quelle est la distance D du niveau à la mire ?", "options": ["40 mètres (100 × 0,400 m)", "0,40 mètre", "290 mètres"], "rep": "40 mètres (100 × 0,400 m)"},
+            {"id": "qatp0_7", "q": "Quel mécanisme interne suspendu par des fils fins maintient automatiquement la ligne de visée parfaitement horizontale après calage de la nivelle sphérique ?", "options": ["Le compensateur automatique à prisme pendulaire", "Un moteur thermique", "Une batterie 24 V"], "rep": "Le compensateur automatique à prisme pendulaire"},
+            {"id": "qatp0_8", "q": "Quelle molette latérale du niveau optique permet de rendre l'image de la mire parfaitement nette quelle que soit sa distance (de 1 m à 100 m) ?", "options": ["La molette de mise au point interne (qui déplace une lentille divergente interne)", "La vis de blocage du trépied", "Le bouton d'allumage"], "rep": "La molette de mise au point interne (qui déplace une lentille divergente interne)"},
+            {"id": "qatp0_9", "q": "Que signifie un grossissement de 24× ou 32× inscrit sur le corps d'un niveau optique de chantier ?", "options": ["L'objet visé est vu sous un angle 24 ou 32 fois plus grand qu'à l'œil nu", "L'appareil pèse 24 kg", "La portée est limitée à 24 mètres"], "rep": "L'objet visé est vu sous un angle 24 ou 32 fois plus grand qu'à l'œil nu"},
+            {"id": "qatp0_10", "q": "Pourquoi faut-il toujours équilibrer les portées (distance arrière ≈ distance avant) lors d'un cheminement au niveau optique ?", "options": ["Pour éliminer toute erreur résiduelle de collimation (défaut d'horizontalité de l'axe optique)", "Pour économiser la batterie", "Pour aller plus vite"], "rep": "Pour éliminer toute erreur résiduelle de collimation (défaut d'horizontalité de l'axe optique)"},
+        ],
+        "trous": [
+            ("1. Le nivellement optique utilise une lunette de visée et une ......... parlante graduée.", ["Choisir...", "mire", "sonde"], "mire", "atp_t1"),
+            ("2. Un ......... redresseur interne permet d'observer la mire à l'endroit.", ["Choisir...", "prisme", "filtre"], "prisme", "atp_t2"),
+            ("3. Le repère de visée gravé dans la lunette s'appelle le .........", ["Choisir...", "réticule", "verre dépoli"], "réticule", "atp_t3"),
+            ("4. L'écart entre les deux fils stadimétriques permet de calculer la ......... D = 100 × ΔH.", ["Choisir...", "distance", "température"], "distance", "atp_t4"),
+            ("5. Le ......... automatique maintient l'axe optique horizontal.", ["Choisir...", "compensateur", "diaphragme"], "compensateur", "atp_t5"),
+            ("6. La molette latérale assure la ......... au point selon l'éloignement de la mire.", ["Choisir...", "mise", "remise"], "mise", "atp_t6"),
+            ("7. Un grossissement de 32× multiplie par ......... l'angle apparent de la mire.", ["Choisir...", "32", "3,2"], "32", "atp_t7"),
+            ("8. Avant la mesure, on cale la bulle de la ......... sphérique grâce aux trois vis calantes.", ["Choisir...", "nivelle", "lentille"], "nivelle", "atp_t8"),
+            ("9. Si ΔH = 0,250 m entre les fils stadimétriques, la distance vaut ......... mètres.", ["Choisir...", "25", "2,5"], "25", "atp_t9"),
+            ("10. L'égalité des portées arrière et avant annule l'erreur de ......... de l'axe optique.", ["Choisir...", "collimation", "réfraction"], "collimation", "atp_t10"),
+        ]
+    },
+    1: {
+        "questions": [
+            {"id": "qatp1_1", "q": "Quel appareil optique robotisé utilise-t-on en Travaux Publics pour inspecter l'état intérieur des réseaux d'assainissement enterrés ?", "options": ["Un chariot caméra d'inspection télévisée (ITV)", "Une lunette astronomique", "Un microscope métallographique"], "rep": "Un chariot caméra d'inspection télévisée (ITV)"},
+            {"id": "qatp1_2", "q": "Quel type d'objectif équipe la tête rotative d'une caméra d'inspection de canalisations (ITV) ?", "options": ["Un objectif grand-angle (focale très courte) permettant de voir toute la circonférence du tuyau", "Un téléobjectif à champ étroit", "Un oculaire divergent"], "rep": "Un objectif grand-angle (focale très courte) permettant de voir toute la circonférence du tuyau"},
+            {"id": "qatp1_3", "q": "Pourquoi l'objectif d'une caméra ITV est-il protégé par un hublot en verre saphir ou polycarbonate épais ?", "options": ["Pour assurer l'étanchéité sous pression d'eau et résister aux rayures des graviers", "Pour grossir l'image 100 fois", "Pour filtrer la lumière rouge"], "rep": "Pour assurer l'étanchéité sous pression d'eau et résister aux rayures des graviers"},
+            {"id": "qatp1_4", "q": "Comment mesure-t-on la largeur exacte d'une fissure dans une canalisation à l'aide d'une caméra ITV moderne ?", "options": ["Par projection de deux points laser parallèles d'écartement connu servant d'échelle optique sur l'image", "En envoyant un mètre ruban", "À l'œil nu sans repère"], "rep": "Par projection de deux points laser parallèles d'écartement connu servant d'échelle optique sur l'image"},
+            {"id": "qatp1_5", "q": "Quel problème optique survient lorsque le hublot de la caméra ITV est couvert de buée à cause de l'humidité de l'égout ?", "options": ["Les microgouttelettes diffusent la lumière des LED et rendent l'image floue et laiteuse", "L'image devient inversée", "Le capteur CMOS s'éteint"], "rep": "Les microgouttelettes diffusent la lumière des LED et rendent l'image floue et laiteuse"},
+            {"id": "qatp1_6", "q": "Quelle couronne entoure l'objectif de la caméra ITV pour éclairer l'intérieur du collecteur enterré ?", "options": ["Une couronne de LED blanches haute puissance à intensité réglable", "Un miroir concave", "Une lampe au sodium"], "rep": "Une couronne de LED blanches haute puissance à intensité réglable"},
+            {"id": "qatp1_7", "q": "Dans quel cas l'inspection vidéo des réseaux (ITV) est-elle obligatoire en Travaux Publics ?", "options": ["Avant la réception des travaux de pose de canalisations neuves et pour le diagnostic de réhabilitation", "Uniquement pour les lignes électriques aériennes", "Uniquement pour les autoroutes"], "rep": "Avant la réception des travaux de pose de canalisations neuves et pour le diagnostic de réhabilitation"},
+            {"id": "qatp1_8", "q": "Sur quel composant électronique se forme l'image réelle projetée par l'objectif de la caméra ITV ?", "options": ["Un capteur numérique CMOS haute sensibilité", "Un prisme de Newton", "Une lentille divergente"], "rep": "Un capteur numérique CMOS haute sensibilité"},
+            {"id": "qatp1_9", "q": "Pourquoi utilise-t-on une tête de caméra rotative (panoramique 360° / inclinaison 180°) dans les collecteurs ?", "options": ["Pour orienter l'axe optique perpendiculairement aux branchements latéraux et aux joints", "Pour refroidir le moteur du chariot", "Pour mesurer la pente"], "rep": "Pour orienter l'axe optique perpendiculairement aux branchements latéraux et aux joints"},
+            {"id": "qatp1_10", "q": "Quel défaut optique est typique des objectifs très grand-angle (« fisheye ») utilisés en inspection de tuyaux ?", "options": ["Une distorsion en barillet (courbure des lignes droites sur les bords de l'image)", "Une image en noir et blanc", "Une perte totale du centre"], "rep": "Une distorsion en barillet (courbure des lignes droites sur les bords de l'image)"},
+        ],
+        "trous": [
+            ("1. L'état des canalisations enterrées est contrôlé par caméra d'inspection ......... (ITV).", ["Choisir...", "télévisée", "thermique"], "télévisée", "atp_t1"),
+            ("2. La caméra utilise un objectif .........-angle pour visualiser toute la paroi du tuyau.", ["Choisir...", "grand", "télé"], "grand", "atp_t2"),
+            ("3. L'image réelle se forme sur un capteur électronique ......... haute sensibilité.", ["Choisir...", "CMOS", "argentique"], "CMOS", "atp_t3"),
+            ("4. Deux faisceaux ......... parallèles permettent de mesurer la largeur des fissures sur l'écran.", ["Choisir...", "laser", "ultrasons"], "laser", "atp_t4"),
+            ("5. Le hublot frontal en verre ......... protège l'optique de l'eau et des rayures.", ["Choisir...", "saphir", "ordinaire"], "saphir", "atp_t5"),
+            ("6. La buée sur le hublot provoque une ......... de la lumière rendant l'image floue.", ["Choisir...", "diffusion", "réfraction"], "diffusion", "atp_t6"),
+            ("7. L'éclairage du collecteur est assuré par une couronne de ......... blanches.", ["Choisir...", "LED", "halogènes"], "LED", "atp_t7"),
+            ("8. Un objectif très grand-angle introduit une ......... géométrique sur les bords.", ["Choisir...", "distorsion", "dispersion"], "distorsion", "atp_t8"),
+            ("9. La tête optique est ......... à 360° pour inspecter les branchements latéraux.", ["Choisir...", "rotative", "fixe"], "rotative", "atp_t9"),
+            ("10. Le contrôle ITV est obligatoire avant la ......... d'un réseau d'assainissement neuf.", ["Choisir...", "réception", "démolition"], "réception", "atp_t10"),
+        ]
+    },
+    2: {
+        "questions": [
+            {"id": "qatp2_1", "q": "Quel instrument optique portable utilise le conducteur de travaux pour inspecter à distance l'état des piles d'un pont ou d'une falaise rocheuse ?", "options": ["Des jumelles à prismes de Porro ou en toit", "Une loupe de bijoutier", "Un microscope"], "rep": "Des jumelles à prismes de Porro ou en toit"},
+            {"id": "qatp2_2", "q": "Pourquoi les jumelles modernes de chantier sont-elles beaucoup plus courtes qu'une lunette astronomique de même grossissement ?", "options": ["Elles utilisent des prismes à réflexion totale qui replient le trajet lumineux et redressent l'image", "Elles n'ont pas d'objectif", "Elles utilisent des miroirs paraboliques"], "rep": "Elles utilisent des prismes à réflexion totale qui replient le trajet lumineux et redressent l'image"},
+            {"id": "qatp2_3", "q": "Que signifient les deux nombres « 10 × 42 » gravés sur une paire de jumelles de chantier ?", "options": ["Grossissement de 10× et diamètre des objectifs de 42 mm", "Portée de 10 km et poids de 420 g", "10 lentilles et 42 prismes"], "rep": "Grossissement de 10× et diamètre des objectifs de 42 mm"},
+            {"id": "qatp2_4", "q": "Quel avantage apporte un grand diamètre d'objectif (ex : 50 mm au lieu de 25 mm) sur des jumelles ?", "options": ["Il collecte davantage de lumière, offrant une image plus lumineuse par temps couvert ou au crépuscule", "Il augmente le grossissement", "Il rend les jumelles plus légères"], "rep": "Il collecte davantage de lumière, offrant une image plus lumineuse par temps couvert ou au crépuscule"},
+            {"id": "qatp2_5", "q": "À quoi servent les traitements antireflets multicouches (teinte verte ou bleutée) déposés sur les lentilles des jumelles et niveaux optiques ?", "options": ["À augmenter la transmission de la lumière (jusqu'à 95 %) et supprimer les reflets parasites", "À teinter le paysage en vert", "À rendre le verre incassable"], "rep": "À augmenter la transmission de la lumière (jusqu'à 95 %) et supprimer les reflets parasites"},
+            {"id": "qatp2_6", "q": "Quelle est la nature de l'image finale observée à travers des jumelles à prismes ?", "options": ["Droite, virtuelle, rejetée à l'infini et agrandie", "Renversée et réelle", "Plus petite que l'objet"], "rep": "Droite, virtuelle, rejetée à l'infini et agrandie"},
+            {"id": "qatp2_7", "q": "Comment s'appelle le diamètre du faisceau lumineux sortant de l'oculaire des jumelles (calculé par D_objectif / Grossissement) ?", "options": ["La pupille de sortie (ou cercle oculaire)", "La distance focale", "Le réticule"], "rep": "La pupille de sortie (ou cercle oculaire)"},
+            {"id": "qatp2_8", "q": "Quelle est la taille de la pupille de sortie d'une paire de jumelles 8 × 40 ?", "options": ["5 mm (40 mm / 8)", "320 mm", "0,2 mm"], "rep": "5 mm (40 mm / 8)"},
+            {"id": "qatp2_9", "q": "Pourquoi remplit-on l'intérieur des jumelles et niveaux optiques de chantier avec de l'azote sec ?", "options": ["Pour empêcher la formation de buée interne sur les lentilles lors des variations de température", "Pour alléger l'appareil", "Pour refroidir les prismes"], "rep": "Pour empêcher la formation de buée interne sur les lentilles lors des variations de température"},
+            {"id": "qatp2_10", "q": "Quelle précaution de sécurité est impérative lors de l'utilisation de jumelles ou d'une lunette de chantier ?", "options": ["Ne jamais viser le Soleil sous peine de brûlure irréversible de la rétine", "Toujours garder les bouchons fermés", "Ne les utiliser que la nuit"], "rep": "Ne jamais viser le Soleil sous peine de brûlure irréversible de la rétine"},
+        ],
+        "trous": [
+            ("1. Les jumelles utilisent des ......... internes pour redresser l'image et raccourcir le tube.", ["Choisir...", "prismes", "miroirs plans"], "prismes", "atp_t1"),
+            ("2. Les prismes renvoient la lumière sans perte par ......... totale interne.", ["Choisir...", "réflexion", "absorption"], "réflexion", "atp_t2"),
+            ("3. Sur des jumelles 10 × 42, le grossissement vaut .........", ["Choisir...", "10×", "42×"], "10×", "atp_t3"),
+            ("4. Le nombre 42 désigne le ......... de l'objectif en millimètres.", ["Choisir...", "diamètre", "poids"], "diamètre", "atp_t4"),
+            ("5. Le traitement ......... sur les lentilles augmente la luminosité de l'image.", ["Choisir...", "antireflet", "opaque"], "antireflet", "atp_t5"),
+            ("6. Le diamètre du faisceau sortant de l'oculaire s'appelle la ......... de sortie.", ["Choisir...", "pupille", "rétine"], "pupille", "atp_t6"),
+            ("7. Pour des jumelles 8 × 40, la pupille de sortie mesure ......... mm.", ["Choisir...", "5", "32"], "5", "atp_t7"),
+            ("8. Le remplissage à l'......... sec évite la buée interne sur les optiques de chantier.", ["Choisir...", "azote", "oxygène"], "azote", "atp_t8"),
+            ("9. L'image finale vue dans des jumelles est agrandie et .........", ["Choisir...", "droite", "renversée"], "droite", "atp_t9"),
+            ("10. Il est strictement interdit de viser le ......... avec une lunette ou des jumelles.", ["Choisir...", "Soleil", "ciel nocturne"], "Soleil", "atp_t10"),
+        ]
+    }
+}
+
+
+def mettre_a_jour_app_tp_matplotlib(sujet_idx):
+    """Banc d'essai Appareils Optiques adapté aux Travaux Publics."""
+    fig, ax = plt.subplots(figsize=(12, 6.2), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 250)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    if sujet_idx == 0:
+        dist_m = st.session_state.get("slider_atp_s0", 35.0)
+        lec_niv = 1.450
+        delta_h = round(dist_m / 100.0, 3)
+        fil_sup = round(lec_niv + delta_h / 2.0, 3)
+        fil_inf = round(lec_niv - delta_h / 2.0, 3)
+
+        ax.add_patch(patches.Rectangle((55, 100), 90, 45, facecolor="#eab308", edgecolor="white", lw=1.5))
+        ax.text(100, 122, "Niveau Optique\n(K = 100)", color="#0f172a", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        x_mire = 180.0 + (dist_m / 80.0) * 330.0
+        ax.plot([145, x_mire],, color="#22c55e", lw=2)
+        ax.plot([145, x_mire], [122, 122 - dist_m * 0.45], color="#38bdf8", lw=1.2, ls="--")
+        ax.plot([145, x_mire], [122, 122 + dist_m * 0.45], color="#38bdf8", lw=1.2, ls="--")
+
+        ax.add_patch(patches.Rectangle((x_mire, 65), 24, 130, facecolor="#f8fafc", edgecolor="#ef4444", lw=1.5))
+        ax.text(x_mire + 12, 208, f"Mire parlante\nD = {dist_m:.0f} m", color="#fde047", fontsize=8, fontweight="bold", ha="center")
+
+        ax.text(25, 18, "NIVELLEMENT OPTIQUE DE CHANTIER : LECTURE STADIMÉTRIQUE SUR MIRE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, f"Fil sup = {fil_sup:.3f} m  |  Fil niv = {lec_niv:.3f} m  |  Fil inf = {fil_inf:.3f} m  =>  D = 100 × {delta_h:.3f} = {dist_m:.1f} m", color="#22c55e", fontsize=8, fontweight="bold")
+        st.session_state.atp_mesure_courante = (f"Sup={fil_sup:.3f}m", f"Inf={fil_inf:.3f}m", f"ΔH={delta_h:.3f}m", f"D = {dist_m:.1f} m")
+
+    elif sujet_idx == 1:
+        foc_itv = st.session_state.get("radio_atp_s1", "Grand-angle 3,6 mm (Vision 360° paroi)")
+        if "Grand-angle" in foc_itv:
+            angle_v, msg_itv, c_itv = 120, "CHAMP LARGE (120°) : Visualisation complète des parois et joints du collecteur.", "#22c55e"
+        else:
+            angle_v, msg_itv, c_itv = 35, "CHAMP ÉTROIT (35°) : Zoom sur le fond du tuyau mais parois latérales invisibles !", "#f59e0b"
+
+        ax.add_patch(patches.Rectangle((65, 100), 85, 50, facecolor="#1e3a8a", edgecolor="#38bdf8", lw=1.5))
+        ax.text(107, 125, "Chariot ITV\nCapteur CMOS", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        dy = 85 if angle_v == 120 else 28
+        ax.fill([150, 520, 520], [125, 125 - dy, 125 + dy], color=c_itv, alpha=0.25)
+        ax.plot([60, 540], [40, 40], color="#94a3b8", lw=4)
+        ax.plot([60, 540], [210, 210], color="#94a3b8", lw=4)
+        ax.text(300, 224, "Canalisation d'assainissement enterrée", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center")
+
+        ax.text(25, 18, "ASSAINISSEMENT TP : CAMÉRA D'INSPECTION TÉLÉVISÉE (ITV) GRAND-ANGLE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, msg_itv, color=c_itv, fontsize=8, fontweight="bold")
+        st.session_state.atp_mesure_courante = (foc_itv.split("(")[0].strip(), f"Champ = {angle_v}°", "Capteur CMOS", "OPTIMAL" if angle_v == 120 else "CHAMP RÉDUIT")
+
+    else:
+        jum = st.session_state.get("radio_atp_s2", "Jumelles 10 × 42 (Chantier jour)")
+        g_j = 8 if "8" in jum else (10 if "10" in jum else 12)
+        d_obj = 32 if "32" in jum else (42 if "42" in jum else 50)
+        pupille = round(d_obj / g_j, 1)
+
+        ax.add_patch(patches.Rectangle((70, 85), 160, 80, facecolor="#1e293b", edgecolor="#38bdf8", lw=2))
+        ax.text(150, 125, f"Jumelles à prismes\n{g_j} × {d_obj}", color="white", fontsize=9, fontweight="bold", ha="center", va="center")
+
+        ax.add_patch(patches.Circle((370, 125), pupille * 6.0, facecolor="#38bdf8", edgecolor="white", lw=2))
+        ax.text(370, 185, f"Pupille de sortie = {pupille:.1f} mm\n(D_obj / G)", color="#fde047", fontsize=8.5, fontweight="bold", ha="center")
+
+        ax.text(25, 18, "INSPECTION D'OUVRAGES D'ART : JUMELLES À PRISMES ET PUPILLE DE SORTIE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, f"Grossissement = {g_j}×  |  Diamètre objectif = {d_obj} mm  =>  Pupille de sortie = {pupille:.1f} mm", color="#22c55e", fontsize=8, fontweight="bold")
+        st.session_state.atp_mesure_courante = (f"{g_j} × {d_obj}", f"G = {g_j}×", f"Pupille = {pupille:.1f} mm", "LUMINEUX" if pupille >= 4.0 else "JOUR UNIQUEMENT")
+
+    return fig
+
+
+def afficher_atelier_app_tp(sujet_idx, verrouille=False):
+    if sujet_idx is None:
+        st.warning("Tirez d'abord au sort un chantier TP ci-dessus.")
+        return
+    banque = BANQUES_APP_TP[sujet_idx]
+    cle_ordre = f"ordre_quiz_atp_{sujet_idx}"
+    if cle_ordre not in st.session_state:
+        lq = list(banque["questions"])
+        random.shuffle(lq)
+        st.session_state[cle_ordre] = lq
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Technique Travaux Publics (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state[cle_ordre], 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", ["Choisir..."] + q_data["options"], key=f"atp_at8_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+    with col_t:
+        st.markdown("##### Synthèse Travaux Publics (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in banque["trous"]:
+            c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", choix, key=f"{cle}_s{sujet_idx}", disabled=verrouille, label_visibility="collapsed")
+
+
+
+BANQUES_APP_MAINT = {
+    0: {
+        "questions": [
+            {"id": "qam0_1", "q": "Quel instrument optique souple ou rigide permet d'inspecter l'intérieur d'un moteur, d'une turbine ou d'une canalisation sans démontage ?", "options": ["Un endoscope industriel (fibroscope ou vidéoscope)", "Un télescope de Newton", "Un théodolite"], "rep": "Un endoscope industriel (fibroscope ou vidéoscope)"},
+            {"id": "qam0_2", "q": "Quel phénomène optique permet de guider la lumière d'éclairage et l'image le long du tube souple d'un fibroscope ?", "options": ["La réflexion totale interne à l'intérieur des fibres optiques en verre", "La dispersion prismatique", "La diffraction"], "rep": "La réflexion totale interne à l'intérieur des fibres optiques en verre"},
+            {"id": "qam0_3", "q": "Dans un vidéoscope industriel moderne, où se situe le capteur miniature CMOS qui filme les défauts internes ?", "options": ["Directement à l'extrémité distale de la sonde, juste derrière un objectif grand-angle", "Dans la poignée uniquement", "Sur l'écran de contrôle"], "rep": "Directement à l'extrémité distale de la sonde, juste derrière un objectif grand-angle"},
+            {"id": "qam0_4", "q": "Quel type d'objectif équipe l'extrémité d'un endoscope pour observer une large zone à très courte distance (quelques millimètres) ?", "options": ["Un objectif grand-angle à très courte distance focale", "Un téléobjectif de 300 mm", "Une lentille divergente seule"], "rep": "Un objectif grand-angle à très courte distance focale"},
+            {"id": "qam0_5", "q": "Quelle est la nature de l'image formée par l'objectif miniature sur le micro-capteur d'un vidéoscope ?", "options": ["Réelle et renversée (redressée électroniquement sur l'écran)", "Virtuelle et droite", "Infinie"], "rep": "Réelle et renversée (redressée électroniquement sur l'écran)"},
+            {"id": "qam0_6", "q": "Pourquoi l'indice de réfraction du cœur d'une fibre optique doit-il être supérieur à celui de sa gaine optique ?", "options": ["Pour garantir la réflexion totale interne sans perte de lumière dans les courbes", "Pour accélérer la lumière au-delà de c", "Pour colorer l'image en bleu"], "rep": "Pour garantir la réflexion totale interne sans perte de lumière dans les courbes"},
+            {"id": "qam0_7", "q": "Quel avantage majeur procure l'endoscopie en maintenance préventive aéronautique ou automobile ?", "options": ["Éviter un démontage long et coûteux tout en détectant fissures, corrosion ou corps étrangers", "Augmenter la puissance du moteur", "Remplacer l'huile moteur"], "rep": "Éviter un démontage long et coûteux tout en détectant fissures, corrosion ou corps étrangers"},
+            {"id": "qam0_8", "q": "Comment éclaire-t-on l'intérieur sombre d'un cylindre ou d'une boîte de vitesses lors d'un contrôle endoscopique ?", "options": ["Par des LED miniatures intégrées en bout de sonde ou un faisceau de fibres d'éclairage", "Avec la lumière du soleil uniquement", "Avec un laser infrarouge"], "rep": "Par des LED miniatures intégrées en bout de sonde ou un faisceau de fibres d'éclairage"},
+            {"id": "qam0_9", "q": "Dans un endoscope rigide (boroscope), quel système optique transporte l'image jusqu'à l'oculaire ?", "options": ["Une série de lentilles relais convergentes", "Un seul miroir plan", "Un prisme de Newton"], "rep": "Une série de lentilles relais convergentes"},
+            {"id": "qam0_10", "q": "Que signifie une profondeur de champ étendue sur un endoscope industriel ?", "options": ["La capacité à voir net simultanément des pièces proches et plus éloignées sans refaire la mise au point", "La longueur maximale du câble", "Le poids de la mallette"], "rep": "La capacité à voir net simultanément des pièces proches et plus éloignées sans refaire la mise au point"},
+        ],
+        "trous": [
+            ("1. L'inspection visuelle interne sans démontage s'effectue à l'aide d'un .........", ["Choisir...", "endoscope", "télescope"], "endoscope", "am_t1"),
+            ("2. La lumière est guidée dans les fibres optiques par ......... totale interne.", ["Choisir...", "réflexion", "absorption"], "réflexion", "am_t2"),
+            ("3. Le cœur de la fibre possède un ......... de réfraction supérieur à celui de la gaine.", ["Choisir...", "indice", "diamètre"], "indice", "am_t3"),
+            ("4. L'extrémité de la sonde comporte un objectif ......... à très courte focale.", ["Choisir...", "grand-angle", "téléobjectif"], "grand-angle", "am_t4"),
+            ("5. Sur le micro-capteur CMOS, l'objectif forme une image ......... et renversée.", ["Choisir...", "réelle", "virtuelle"], "réelle", "am_t5"),
+            ("6. L'éclairage interne est assuré par des ......... miniatures en bout de sonde.", ["Choisir...", "LED", "bougies"], "LED", "am_t6"),
+            ("7. Un endoscope rigide utilise une suite de lentilles ......... convergentes.", ["Choisir...", "relais", "divergentes"], "relais", "am_t7"),
+            ("8. Une grande ......... de champ permet de voir net sur plusieurs centimètres.", ["Choisir...", "profondeur", "largeur"], "profondeur", "am_t8"),
+            ("9. Ce contrôle non destructif relève de la maintenance .........", ["Choisir...", "préventive", "corrective"], "préventive", "am_t9"),
+            ("10. L'endoscopie permet de détecter les fissures et la ......... interne.", ["Choisir...", "corrosion", "pression"], "corrosion", "am_t10"),
+        ]
+    },
+    1: {
+        "questions": [
+            {"id": "qam1_1", "q": "Quel appareil optique de précision utilise-t-on en atelier électronique pour souder des composants CMS et inspecter les circuits imprimés en relief ?", "options": ["Une loupe binoculaire (stéréomicroscope)", "Une lunette astronomique", "Un niveau optique"], "rep": "Une loupe binoculaire (stéréomicroscope)"},
+            {"id": "qam1_2", "q": "Pourquoi une loupe binoculaire offre-t-elle une vision en relief (stéréoscopique) indispensable pour manipuler des outils sous l'objectif ?", "options": ["Elle possède deux chemins optiques distincts formant un léger angle entre l'œil gauche et l'œil droit", "Elle utilise un laser rouge", "Elle inverse le haut et le bas"], "rep": "Elle possède deux chemins optiques distincts formant un léger angle entre l'œil gauche et l'œil droit"},
+            {"id": "qam1_3", "q": "Quelle est la différence majeure entre l'image observée dans un microscope biologique classique et dans une loupe binoculaire d'atelier ?", "options": ["La loupe binoculaire intègre des prismes redresseurs donnant une image droite (non inversée)", "La loupe binoculaire grossit 10 000 fois", "La loupe binoculaire n'a pas d'oculaires"], "rep": "La loupe binoculaire intègre des prismes redresseurs donnant une image droite (non inversée)"},
+            {"id": "qam1_4", "q": "Comment appelle-t-on la distance entre l'objectif de la loupe binoculaire et la carte électronique observée ?", "options": ["La distance de travail (souvent 80 à 120 mm pour passer le fer à souder)", "L'intervalle optique Delta", "La distance focale image"], "rep": "La distance de travail (souvent 80 à 120 mm pour passer le fer à souder)"},
+            {"id": "qam1_5", "q": "Si une loupe binoculaire est réglée sur un objectif 2x et équipée d'oculaires 10x, quel est le grossissement total ?", "options": ["20x (2 × 10)", "12x (2 + 10)", "5x (10 / 2)"], "rep": "20x (2 × 10)"},
+            {"id": "qam1_6", "q": "Quel appareil optique utilise le laboratoire de maintenance pour analyser la structure cristalline d'un acier ou l'origine d'une rupture mécanique ?", "options": ["Un microscope métallographique (à éclairage épiscopique par réflexion)", "Une lunette de Galilée", "Un appareil photo jetable"], "rep": "Un microscope métallographique (à éclairage épiscopique par réflexion)"},
+            {"id": "qam1_7", "q": "Pourquoi un microscope métallographique éclaire-t-il l'échantillon métallique par le dessus (à travers l'objectif) plutôt que par dessous ?", "options": ["Parce que le métal est opaque et ne laisse pas passer la lumière par transmission", "Parce que la lampe est trop grosse", "Pour chauffer le métal"], "rep": "Parce que le métal est opaque et ne laisse pas passer la lumière par transmission"},
+            {"id": "qam1_8", "q": "À quoi servent les bonnettes en caoutchouc et le réglage de l'écartement interpupillaire sur les oculaires ?", "options": ["À aligner parfaitement les deux faisceaux avec les yeux du technicien pour éviter la fatigue visuelle", "À augmenter le grossissement", "À protéger la carte électronique"], "rep": "À aligner parfaitement les deux faisceaux avec les yeux du technicien pour éviter la fatigue visuelle"},
+            {"id": "qam1_9", "q": "Que permet la bague de correction dioptrique située sur l'un des oculaires de la loupe binoculaire ?", "options": ["De compenser une différence de vue entre l'œil gauche et l'œil droit de l'opérateur", "De changer la couleur de l'éclairage", "De bloquer le zoom"], "rep": "De compenser une différence de vue entre l'œil gauche et l'œil droit de l'opérateur"},
+            {"id": "qam1_10", "q": "Quelle est l'unité du grossissement d'une loupe binoculaire ou d'un microscope ?", "options": ["Sans unité (noté par un nombre suivi de ×, ex : 20×)", "En mètres", "En kelvins"], "rep": "Sans unité (noté par un nombre suivi de ×, ex : 20×)"},
+        ],
+        "trous": [
+            ("1. En atelier électronique, on utilise une loupe ......... pour voir les soudures en relief.", ["Choisir...", "binoculaire", "monoculaire"], "binoculaire", "am_t1"),
+            ("2. Des ......... redresseurs permettent d'obtenir une image droite facilitant le geste.", ["Choisir...", "prismes", "miroirs plans"], "prismes", "am_t2"),
+            ("3. L'espace libre sous l'objectif pour passer les outils s'appelle la distance de .........", ["Choisir...", "travail", "freinage"], "travail", "am_t3"),
+            ("4. Avec un objectif 3x et des oculaires 10x, le grossissement total vaut .........x.", ["Choisir...", "30", "13"], "30", "am_t4"),
+            ("5. Pour analyser un métal opaque, on utilise un microscope .........", ["Choisir...", "métallographique", "astronomique"], "métallographique", "am_t5"),
+            ("6. Le métal étant opaque, l'éclairage se fait par ......... sur la surface polie.", ["Choisir...", "réflexion", "transparence"], "réflexion", "am_t6"),
+            ("7. Le réglage de l'écartement ......... adapte l'instrument aux yeux de l'opérateur.", ["Choisir...", "interpupillaire", "focal"], "interpupillaire", "am_t7"),
+            ("8. La bague ......... compense la différence de vue entre les deux yeux.", ["Choisir...", "dioptrique", "magnétique"], "dioptrique", "am_t8"),
+            ("9. Les lentilles situées près des yeux de l'observateur sont les .........", ["Choisir...", "oculaires", "objectifs"], "oculaires", "am_t9"),
+            ("10. Le grossissement optique est une grandeur ......... unité.", ["Choisir...", "sans", "en"], "sans", "am_t10"),
+        ]
+    },
+    2: {
+        "questions": [
+            {"id": "qam2_1", "q": "Quel appareil optique de diagnostic détecte à distance les points chauds sur une armoire électrique ou un roulement en rotation ?", "options": ["Une caméra thermique infrarouge", "Une loupe simple", "Un microscope optique"], "rep": "Une caméra thermique infrarouge"},
+            {"id": "qam2_2", "q": "Dans quel domaine du spectre électromagnétique fonctionne le capteur microbolomètre d'une caméra thermique ?", "options": ["L'infrarouge thermique (longueurs d'onde de 8 à 14 µm)", "L'ultraviolet (200 nm)", "Le visible bleu (450 nm)"], "rep": "L'infrarouge thermique (longueurs d'onde de 8 à 14 µm)"},
+            {"id": "qam2_3", "q": "Pourquoi l'objectif d'une caméra thermique est-il fabriqué en germanium (cristal opaque à la lumière visible) plutôt qu'en verre ordinaire ?", "options": ["Parce que le verre ordinaire bloque les rayons infrarouges thermiques alors que le germanium est transparent aux IR", "Parce que le germanium est moins cher que le verre", "Pour colorer l'image en vert"], "rep": "Parce que le verre ordinaire bloque les rayons infrarouges thermiques alors que le germanium est transparent aux IR"},
+            {"id": "qam2_4", "q": "Comment appelle-t-on le paramètre compris entre 0 et 1 qui caractérise la capacité d'une surface à émettre un rayonnement thermique ?", "options": ["L'émissivité (ε)", "L'albédo", "La vergence"], "rep": "L'émissivité (ε)"},
+            {"id": "qam2_5", "q": "Pourquoi une barre de cuivre ou d'inox poli et brillant (faible émissivité ε ≈ 0,10) fausse-t-elle la mesure d'une caméra thermique ?", "options": ["Elle agit comme un miroir infrarouge et réfléchit la chaleur des objets environnants au lieu d'émettre la sienne", "Elle absorbe tous les rayons X", "Elle refroidit la caméra"], "rep": "Elle agit comme un miroir infrarouge et réfléchit la chaleur des objets environnants au lieu d'émettre la sienne"},
+            {"id": "qam2_6", "q": "Quelle astuce utilise le technicien de maintenance pour mesurer avec précision la température d'un tube en métal brillant à la caméra thermique ?", "options": ["Coller un morceau de ruban adhésif isolant noir mat (émissivité connue ε ≈ 0,95) sur le tube", "Arroser le tube d'eau froide", "Éteindre l'éclairage de l'atelier"], "rep": "Coller un morceau de ruban adhésif isolant noir mat (émissivité connue ε ≈ 0,95) sur le tube"},
+            {"id": "qam2_7", "q": "Quelle loi physique établit que tout corps dont la température est supérieure au zéro absolu (-273,15 °C) émet un rayonnement électromagnétique ?", "options": ["La loi du rayonnement du corps noir (Planck / Stefan-Boltzmann)", "La loi d'Archimède", "La loi de Hooke"], "rep": "La loi du rayonnement du corps noir (Planck / Stefan-Boltzmann)"},
+            {"id": "qam2_8", "q": "Que révèle un échauffement anormal localisé sur une borne de disjoncteur dans un tableau électrique ?", "options": ["Un mauvais serrage de la connexion entraînant une résistance de contact élevée (effet Joule)", "Une baisse de tension normale", "Un défaut de peinture"], "rep": "Un mauvais serrage de la connexion entraînant une résistance de contact élevée (effet Joule)"},
+            {"id": "qam2_9", "q": "Comment l'écran de la caméra thermique représente-t-il les écarts de température invisibles à l'œil nu ?", "options": ["En fausses couleurs (palette arc-en-ciel ou fer : du bleu/noir froid au jaune/blanc chaud)", "En texte uniquement", "En ultrasons"], "rep": "En fausses couleurs (palette arc-en-ciel ou fer : du bleu/noir froid au jaune/blanc chaud)"},
+            {"id": "qam2_10", "q": "Quel avantage essentiel offre la thermographie infrarouge lors de l'inspection d'une installation électrique haute tension ?", "options": ["Mesurer la température à distance, sans contact et sans couper la production", "Remplacer les fusibles à distance", "Augmenter le courant"], "rep": "Mesurer la température à distance, sans contact et sans couper la production"},
+        ],
+        "trous": [
+            ("1. La caméra thermique capte le rayonnement ......... émis par les machines.", ["Choisir...", "infrarouge", "ultraviolet"], "infrarouge", "am_t1"),
+            ("2. Son objectif convergent est taillé dans un cristal de ......... transparent aux IR.", ["Choisir...", "germanium", "verre ordinaire"], "germanium", "am_t2"),
+            ("3. Le verre ordinaire est ......... aux rayons infrarouges lointains.", ["Choisir...", "opaque", "transparent"], "opaque", "am_t3"),
+            ("4. La capacité d'un matériau à rayonner sa chaleur s'appelle l'......... (ε).", ["Choisir...", "émissivité", "absorbance"], "émissivité", "am_t4"),
+            ("5. Un métal poli et brillant possède une émissivité très ......... (≈ 0,10).", ["Choisir...", "faible", "élevée"], "faible", "am_t5"),
+            ("6. Pour mesurer sur du métal brillant, on colle un ruban adhésif noir .........", ["Choisir...", "mat", "transparent"], "mat", "am_t6"),
+            ("7. Un mauvais serrage électrique provoque un échauffement par effet .........", ["Choisir...", "Joule", "Doppler"], "Joule", "am_t7"),
+            ("8. L'image thermique est affichée sur l'écran en ......... couleurs.", ["Choisir...", "fausses", "vraies"], "fausses", "am_t8"),
+            ("9. La thermographie s'effectue à distance et sans ......... avec les pièces sous tension.", ["Choisir...", "contact", "objectif"], "contact", "am_t9"),
+            ("10. Le contrôle thermique permet d'anticiper les pannes en maintenance .........", ["Choisir...", "prédictive", "destructive"], "prédictive", "am_t10"),
+        ]
+    }
+}
+
+
+def mettre_a_jour_app_maint_matplotlib(sujet_idx):
+    """Banc d'essai Appareils Optiques adapté à la Maintenance Industrielle."""
+    fig, ax = plt.subplots(figsize=(12, 6.2), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 250)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    if sujet_idx == 0:
+        angle_inc = st.session_state.get("slider_am_s0", 18.0)
+        angle_limite = 24.0
+        ax.add_patch(patches.Rectangle((60, 75), 480, 100, facecolor="#1e293b", edgecolor="#64748b", lw=1.5))
+        ax.add_patch(patches.Rectangle((60, 95), 480, 60, facecolor="#0f172a", edgecolor="#38bdf8", lw=1.5))
+        ax.text(300, 64, "Gaine optique (n2 = 1,45)  /  Cœur de la fibre (n1 = 1,48)", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center")
+
+        if angle_inc <= angle_limite:
+            ax.plot([75, 165, 255, 345, 435, 525], [125, 95, 155, 95, 155, 125], color="#22c55e", lw=3)
+            msg = f"RÉFLEXION TOTALE INTERNE (Angle = {angle_inc:.0f}° ≤ 24°) : Image transmise sans perte !"
+            c_m = "#22c55e"
+            diag = "TRANSMISSION OK"
+        else:
+            ax.plot([75, 165], [125, 95], color="#ef4444", lw=3)
+            ax.plot([165, 225], [95, 65], color="#ef4444", lw=2, ls="--")
+            msg = f"PERTE DE SIGNAL (Rayon de courbure trop serré : {angle_inc:.0f}° > 24°) : La lumière sort de la fibre !"
+            c_m = "#ef4444"
+            diag = "COURBURE EXCESSIVE"
+
+        ax.text(25, 18, "ENDOSCOPIE INDUSTRIELLE : GUIDAGE DE LA LUMIÈRE PAR FIBRE OPTIQUE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, msg, color=c_m, fontsize=8, fontweight="bold")
+        st.session_state.am_mesure_courante = (f"Angle = {angle_inc:.0f}°", "n1=1,48 / n2=1,45", "Limite = 24°", diag)
+
+    elif sujet_idx == 1:
+        obj_bino = st.session_state.get("radio_am_s1", "Objectif 2x (Grossissement total 20x)")
+        g_obj = 1 if "1x" in obj_bino else (2 if "2x" in obj_bino else 4)
+        g_tot = g_obj * 10
+        dist_trav = 115 if g_obj == 1 else (95 if g_obj == 2 else 65)
+
+        ax.add_patch(patches.Rectangle((210, 45), 180, 40, facecolor="#1e3a8a", edgecolor="#38bdf8", lw=1.5))
+        ax.text(300, 65, f"Loupe Binoculaire\n(Oculaires 10x + Obj {g_obj}x)", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        y_carte = 85 + dist_trav
+        ax.plot([265, 300], [85, y_carte], color="#eab308", lw=2)
+        ax.plot([335, 300], [85, y_carte], color="#eab308", lw=2)
+        ax.add_patch(patches.Rectangle((180, y_carte), 240, 18, facecolor="#15803d", edgecolor="white"))
+        ax.text(300, y_carte + 9, "Carte électronique CMS", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        ax.text(25, 18, "CONTRÔLE ÉLECTRONIQUE : LOUPE BINOCULAIRE STÉRÉOSCOPIQUE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 18, "CONTRÔLE ÉLECTRONIQUE : LOUPE BINOCULAIRE STÉRÉOSCOPIQUE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, f"Grossissement total = {g_tot}x  |  Distance de travail libre = {dist_trav} mm  |  Image : Droite & Relief 3D", color="#22c55e", fontsize=8, fontweight="bold")
+        st.session_state.am_mesure_courante = (f"Obj {g_obj}x / Ocu 10x", f"G = {g_tot}x", f"D_trav = {dist_trav} mm", "VISION 3D OK")
+
+    else:
+        surface_ir = st.session_state.get("radio_am_s2", "Borne électrique + Ruban noir mat (ε = 0,95)")
+        if "poli" in surface_ir:
+            eps, temp_lue = 0.12, 26.5
+            msg_ir = "ERREUR DE MESURE : Le cuivre poli réfléchit la pièce (26,5 °C lus au lieu de 85 °C réels) !"
+            c_ir = "#ef4444"
+        else:
+            eps, temp_lue = 0.95, 84.2
+            msg_ir = "MESURE FIABLE (ε = 0,95) : Détection d'un point chaud critique à 84,2 °C ! Resserrer la borne."
+            c_ir = "#22c55e"
+
+        ax.add_patch(patches.Rectangle((65, 95), 110, 65, facecolor="#334155", edgecolor="#38bdf8", lw=1.5))
+        ax.text(120, 127, f"Caméra IR\nObjectif Germanium\nT lue = {temp_lue:.1f} °C", color="#fde047", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        ax.annotate("", xy=(175, 127), xytext=(410, 127), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=3, ls="--"))
+        ax.add_patch(patches.Rectangle((410, 85), 120, 85, facecolor="#b45309" if "poli" in surface_ir else "#1e293b", edgecolor="white", lw=1.5))
+        ax.text(470, 127, f"Borne 85 °C\nε = {eps:.2f}", color="white", fontsize=8.5, fontweight="bold", ha="center", va="center")
+
+        ax.text(25, 18, "THERMOGRAPHIE INFRAROUGE : OBJECTIF EN GERMANIUM ET ÉMISSIVITÉ", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, msg_ir, color=c_ir, fontsize=8, fontweight="bold")
+        st.session_state.am_mesure_courante = (surface_ir.split("(").strip(), f"ε = {eps:.2f}", f"T lue = {temp_lue:.1f} °C", "ALERTE CHAUD" if eps > 0.5 else "REFLET FAUX")
+
+    return fig
+
+
+def afficher_atelier_app_maint(sujet_idx, verrouille=False):
+    if sujet_idx is None:
+        st.warning("Tirez d'abord au sort un sujet de maintenance ci-dessus.")
+        return
+    banque = BANQUES_APP_MAINT[sujet_idx]
+    cle_ordre = f"ordre_quiz_am_{sujet_idx}"
+    if cle_ordre not in st.session_state:
+        lq = list(banque["questions"])
+        random.shuffle(lq)
+        st.session_state[cle_ordre] = lq
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Technique Maintenance (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state[cle_ordre], 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", ["Choisir..."] + q_data["options"], key=f"am_at7_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+    with col_t:
+        st.markdown("##### Synthèse Maintenance (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in banque["trous"]:
+            c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", choix, key=f"{cle}_s{sujet_idx}", disabled=verrouille, label_visibility="collapsed")
+
+
+
+
 
 
 
@@ -2639,13 +3365,453 @@ with tab6:
         st.download_button("Télécharger le rapport officiel de l'Appareil Photo (.html)", data=html_apn, file_name=preparer_nom_fichier("Rapport_Appareil_Photo").replace(".txt", ".html"), mime="text/html", use_container_width=True)
     
 with tab7:
-    st.subheader("Application le domaine de la maintenance")
+    st.subheader("Application dans le domaine de la Maintenance Industrielle")
+
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 16px;">Les appareils optiques au service du diagnostic et du contrôle sans démontage :</p>
+        <p style="margin-bottom: 0; line-height: 1.6;">En maintenance industrielle, les techniciens utilisent l'<strong>endoscope à fibres optiques</strong> pour explorer l'intérieur des machines, la <strong>loupe binoculaire</strong> pour le contrôle électronique et la <strong>caméra thermique infrarouge</strong> pour détecter les échauffements électriques.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    sujets_app_maint = [
+        {"titre": "Cas Maintenance N°1 : Endoscope industriel et fibres optiques", "img": "app_maint_endo.jpg", "leg": "Inspection endoscopique d'une turbine sans démontage", "exp": "**Principe :** La lumière est guidée par **réflexion totale interne** dans la fibre optique (<i>n</i><sub>1</sub> &gt; <i>n</i><sub>2</sub>), tandis qu'un objectif grand-angle forme l'image sur le micro-capteur."},
+        {"titre": "Cas Maintenance N°2 : Loupe binoculaire stéréoscopique en atelier électronique", "img": "app_maint_bino.jpg", "leg": "Contrôle de soudures CMS sous loupe binoculaire", "exp": "**Principe :** Deux trajets optiques inclinés et des **prismes redresseurs** fournissent une **image droite en relief 3D** avec une grande distance de travail."},
+        {"titre": "Cas Maintenance N°3 : Caméra thermique infrarouge et objectif en germanium", "img": "app_maint_thermo.jpg", "leg": "Diagnostic thermographique d'une armoire électrique", "exp": "**Principe :** L'objectif en **germanium** focalise les rayons infrarouges (8 - 14 µm) sur le capteur ; un ruban noir mat (**&epsilon; = 0,95**) est requis sur les métaux brillants."}
+    ]
+
+    if "sujet_am_tire" not in st.session_state:
+        st.session_state.sujet_am_tire = None
+
+    if st.button("TIRER AU SORT UN SUJET MAINTENANCE (APPAREILS OPTIQUES)", key="btn_tirage_am", use_container_width=True):
+        choix = [i for i in range(3) if i != st.session_state.sujet_am_tire]
+        st.session_state.sujet_am_tire = random.choice(choix)
+        st.session_state.mesures_am_log = []
+        st.rerun()
+
+    if st.session_state.sujet_am_tire is None:
+        st.info("Cliquez sur le bouton ci-dessus pour tirer au sort un cas pratique de maintenance.")
+    else:
+        idx_am = st.session_state.sujet_am_tire
+        data_am = sujets_app_maint[idx_am]
+        st.success(f"Sujet attribué : **{data_am['titre']}**")
+        st.markdown(data_am["exp"], unsafe_allow_html=True)
+
+        c_img, c_bd = st.columns(2)
+        with c_img:
+            try: st.image(data_am["img"], caption=data_am["leg"], use_container_width=True)
+            except Exception: st.warning(f"L'image '{data_am['img']}' est introuvable.")
+        with c_bd:
+            try: st.image("bd_app_maint.jpg", caption="La pause BD : Toujours vérifier l'émissivité sur le cuivre poli !", use_container_width=True)
+            except Exception: st.warning("L'image 'bd_app_maint.jpg' est introuvable.")
+
+        st.markdown("---")
+        if "mesures_am_log" not in st.session_state: st.session_state.mesures_am_log = []
+        if idx_am == 0:
+            st.slider("Angle d'incidence dans la fibre optique (°) [Angle limite = 24°] :", 5.0, 40.0, 18.0, 1.0, key="slider_am_s0")
+        elif idx_am == 1:
+            st.radio("Tourelle d'objectif de la loupe binoculaire (Oculaires 10x) :", ["Objectif 1x (Grossissement total 10x)", "Objectif 2x (Grossissement total 20x)", "Objectif 4x (Grossissement total 40x)"], index=1, key="radio_am_s1", horizontal=True)
+        else:
+            st.radio("Cible visée par la caméra thermique :", ["Barre de cuivre poli brillant (ε = 0,12)", "Borne électrique + Ruban noir mat (ε = 0,95)"], index=1, key="radio_am_s2", horizontal=True)
+
+        if st.button("ENREGISTRER CE CONTRÔLE MAINTENANCE", key="btn_rel_am", use_container_width=True):
+            if "am_mesure_courante" in st.session_state:
+                st.session_state.mesures_am_log.append(st.session_state.am_mesure_courante)
+                st.rerun()
+
+        st.pyplot(mettre_a_jour_app_maint_matplotlib(idx_am), use_container_width=True)
+        if st.session_state.mesures_am_log:
+            df_am = pd.DataFrame(st.session_state.mesures_am_log, columns=["Paramètre", "Caractéristique", "Valeur", "Diagnostic"])
+            st.dataframe(df_am, use_container_width=True, hide_index=True)
+
+    st.write("---")
+    if "am_verrouille_tab7" not in st.session_state: st.session_state.am_verrouille_tab7 = False
+    verrou_am = st.session_state.am_verrouille_tab7
+    sujet_actif_am = st.session_state.get("sujet_am_tire", None)
+    afficher_atelier_app_maint(sujet_actif_am, verrouille=verrou_am)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_am = st.checkbox("Je certifie avoir complété l'atelier Maintenance (Appareils Optiques).", key="certif_am7", disabled=verrou_am)
+    if st.button("VALIDER ET EXPORTER LE BILAN MAINTENANCE", key="btn_exp_am7", use_container_width=True, disabled=verrou_am):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif sujet_actif_am is None or not case_certif_am:
+            st.error("Action refusée : Tirez au sort un sujet et cochez la case de certification.")
+        else:
+            bq = BANQUES_APP_MAINT[sujet_actif_am]
+            sc_q = sum(1.0 for q in st.session_state.get(f"ordre_quiz_am_{sujet_actif_am}", []) if st.session_state.get(f"am_at7_g_{q['id']}") == q["rep"])
+            sc_t = sum(1.0 for _, _, rep, cle in bq["trous"] if st.session_state.get(f"{cle}_s{sujet_actif_am}") == rep)
+            st.session_state.score_am7_p1, st.session_state.score_am7_p2, st.session_state.score_final_am7 = sc_q, sc_t, sc_q + sc_t
+            st.session_state.am_verrouille_tab7 = True
+            st.rerun()
+
+    if st.session_state.get("am_verrouille_tab7", False) and sujet_actif_am is not None:
+        scr1, scr2, tot_s = st.session_state.score_am7_p1, st.session_state.score_am7_p2, st.session_state.score_final_am7
+        ts_am = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER MAINTENANCE SCELLÉ | Note : {tot_s:.1f} / 20")
+        bq = BANQUES_APP_MAINT[sujet_actif_am]
+        html_am = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport Maintenance Optique - {n_eleve}</title>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}.status-correct{{color:#10b981;font-weight:bold}}.status-incorrect{{color:#ef4444;font-weight:bold}}</style></head>
+        <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Application Maintenance (Appareils Optiques) - {sujets_app_maint[sujet_actif_am]['titre']}</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_am}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
+        <p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
+        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"""
+        for num, q in enumerate(st.session_state.get(f"ordre_quiz_am_{sujet_actif_am}", []), 1):
+            qid_curr = q["id"]
+            saisie_curr = st.session_state.get(f"am_at7_g_{qid_curr}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie_curr) == str(q["rep"]) else "INCORRECT"
+            v_cls = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_am += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_curr}</td><td>{q['rep']}</td><td class='{v_cls}'>{v_lbl}</td></tr>"
+        html_am += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"
+        for idx_t, (en, _, rep, cle) in enumerate(bq["trous"], 1):
+            saisie_t_curr = st.session_state.get(f"{cle}_s{sujet_actif_am}", "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t_curr) == str(rep) else "INCORRECT"
+            v_cls_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_am += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t_curr}</td><td>{rep}</td><td class='{v_cls_t}'>{v_lbl_t}</td></tr>"
+        html_am += "</tbody></table></body></html>"
+        st.download_button("Télécharger le rapport officiel Maintenance (.html)", data=html_am, file_name=preparer_nom_fichier("Rapport_Maintenance_Appareils_Optiques").replace(".txt", ".html"), mime="text/html", use_container_width=True)
+
+
 
 with tab8:
-    st.subheader("Application le domaine  les travaux publics")
+    st.subheader("Application dans le domaine des Travaux Publics")
+
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 16px;">Les appareils optiques sur les chantiers de génie civil et d'assainissement :</p>
+        <p style="margin-bottom: 0; line-height: 1.6;">Dans les Travaux Publics, le <strong>niveau optique à prisme redresseur</strong> contrôle les altitudes de terrassement, la <strong>caméra robotisée ITV grand-angle</strong> inspecte les collecteurs enterrés et les <strong>jumelles à prismes</strong> permettent l'observation des ouvrages d'art.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    sujets_app_tp = [
+        {"titre": "Chantier N°1 : Niveau optique de chantier et lecture stadimétrique sur mire", "img": "app_tp_niveau.jpg", "leg": "Lunette de nivellement à compensateur automatique et mire parlante", "exp": "**Principe :** Un **prisme redresseur** donne une image droite de la mire, tandis que les fils stadimétriques donnent la distance par **D = 100 &times; &Delta;H**."},
+        {"titre": "Chantier N°2 : Caméra robotisée d'inspection télévisée des canalisations (ITV)", "img": "app_tp_itv.jpg", "leg": "Chariot caméra grand-angle à éclairage LED dans un collecteur", "exp": "**Principe :** Un objectif **grand-angle** étanche projette l'image de la paroi sur un **capteur CMOS**, avec deux points laser calibrés pour mesurer les fissures."},
+        {"titre": "Chantier N°3 : Jumelles à prismes et pupille de sortie sur ouvrages d'art", "img": "app_tp_jumelles.jpg", "leg": "Contrôle visuel à distance d'un tablier de pont aux jumelles 10×42", "exp": "**Principe :** Des **prismes à réflexion totale** replient le faisceau lumineux et redressent l'image ; la **pupille de sortie** vaut **D<sub>objectif</sub> / Grossissement**."}
+    ]
+
+    if "sujet_atp_tire" not in st.session_state:
+        st.session_state.sujet_atp_tire = None
+
+    if st.button("TIRER AU SORT UN CHANTIER TP (APPAREILS OPTIQUES)", key="btn_tirage_atp", use_container_width=True):
+        choix = [i for i in range(3) if i != st.session_state.sujet_atp_tire]
+        st.session_state.sujet_atp_tire = random.choice(choix)
+        st.session_state.mesures_atp_log = []
+        st.rerun()
+
+    if st.session_state.sujet_atp_tire is None:
+        st.info("Cliquez sur le bouton ci-dessus pour tirer au sort un chantier de Travaux Publics.")
+    else:
+        idx_atp = st.session_state.sujet_atp_tire
+        data_atp = sujets_app_tp[idx_atp]
+        st.success(f"Chantier attribué : **{data_atp['titre']}**")
+        st.markdown(data_atp["exp"], unsafe_allow_html=True)
+
+        c_img, c_bd = st.columns(2)
+        with c_img:
+            try: st.image(data_atp["img"], caption=data_atp["leg"], use_container_width=True)
+            except Exception: st.warning(f"L'image '{data_atp['img']}' est introuvable.")
+        with c_bd:
+            try: st.image("bd_app_tp.jpg", caption="La pause BD : D = 100 × ΔH, le calcul mental du chef de chantier !", use_container_width=True)
+            except Exception: st.warning("L'image 'bd_app_tp.jpg' est introuvable.")
+
+        st.markdown("---")
+        if "mesures_atp_log" not in st.session_state: st.session_state.mesures_atp_log = []
+        if idx_atp == 0:
+            st.slider("Distance entre le niveau optique et la mire parlante (m) :", 10.0, 80.0, 35.0, 5.0, key="slider_atp_s0")
+        elif idx_atp == 1:
+            st.radio("Choix de l'objectif sur le chariot caméra ITV :", ["Grand-angle 3,6 mm (Vision 360° paroi)", "Focale standard 16 mm (Vision frontale étroite)"], key="radio_atp_s1", horizontal=True)
+        else:
+            st.radio("Modèle de jumelles utilisé sur le chantier :", ["Jumelles 8 × 32 (Compactes)", "Jumelles 10 × 42 (Chantier jour)", "Jumelles 12 × 50 (Crépuscule / Ouvrages)"], index=1, key="radio_atp_s2", horizontal=True)
+
+        if st.button("ENREGISTRER CE RELEVÉ TP", key="btn_rel_atp", use_container_width=True):
+            if "atp_mesure_courante" in st.session_state:
+                st.session_state.mesures_atp_log.append(st.session_state.atp_mesure_courante)
+                st.rerun()
+
+        st.pyplot(mettre_a_jour_app_tp_matplotlib(idx_atp), use_container_width=True)
+        if st.session_state.mesures_atp_log:
+            df_atp = pd.DataFrame(st.session_state.mesures_atp_log, columns=["Lecture 1", "Lecture 2", "Paramètre optique", "Résultat"])
+            st.dataframe(df_atp, use_container_width=True, hide_index=True)
+
+    st.write("---")
+    if "atp_verrouille_tab8" not in st.session_state: st.session_state.atp_verrouille_tab8 = False
+    verrou_atp = st.session_state.atp_verrouille_tab8
+    sujet_actif_atp = st.session_state.get("sujet_atp_tire", None)
+    afficher_atelier_app_tp(sujet_actif_atp, verrouille=verrou_atp)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_atp = st.checkbox("Je certifie avoir complété l'atelier Travaux Publics (Appareils Optiques).", key="certif_atp8", disabled=verrou_atp)
+    if st.button("VALIDER ET EXPORTER LE BILAN TRAVAUX PUBLICS", key="btn_exp_atp8", use_container_width=True, disabled=verrou_atp):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif sujet_actif_atp is None or not case_certif_atp:
+            st.error("Action refusée : Tirez au sort un chantier et cochez la case de certification.")
+        else:
+            bq = BANQUES_APP_TP[sujet_actif_atp]
+            sc_q = sum(1.0 for q in st.session_state.get(f"ordre_quiz_atp_{sujet_actif_atp}", []) if st.session_state.get(f"atp_at8_g_{q['id']}") == q["rep"])
+            sc_t = sum(1.0 for _, _, rep, cle in bq["trous"] if st.session_state.get(f"{cle}_s{sujet_actif_atp}") == rep)
+            st.session_state.score_atp8_p1, st.session_state.score_atp8_p2, st.session_state.score_final_atp8 = sc_q, sc_t, sc_q + sc_t
+            st.session_state.atp_verrouille_tab8 = True
+            st.rerun()
+
+    if st.session_state.get("atp_verrouille_tab8", False) and sujet_actif_atp is not None:
+        scr1, scr2, tot_s = st.session_state.score_atp8_p1, st.session_state.score_atp8_p2, st.session_state.score_final_atp8
+        ts_atp = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER TRAVAUX PUBLICS SCELLÉ | Note : {tot_s:.1f} / 20")
+        bq = BANQUES_APP_TP[sujet_actif_atp]
+        html_atp = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport TP Appareils Optiques - {n_eleve}</title>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}.status-correct{{color:#10b981;font-weight:bold}}.status-incorrect{{color:#ef4444;font-weight:bold}}</style></head>
+        <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Application Travaux Publics (Appareils Optiques) - {sujets_app_tp[sujet_actif_atp]['titre']}</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_atp}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
+        <p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
+        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"""
+        for num, q in enumerate(st.session_state.get(f"ordre_quiz_atp_{sujet_actif_atp}", []), 1):
+            qid_curr = q["id"]
+            saisie_curr = st.session_state.get(f"atp_at8_g_{qid_curr}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie_curr) == str(q["rep"]) else "INCORRECT"
+            v_cls = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_atp += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_curr}</td><td>{q['rep']}</td><td class='{v_cls}'>{v_lbl}</td></tr>"
+        html_atp += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"
+        for idx_t, (en, _, rep, cle) in enumerate(bq["trous"], 1):
+            saisie_t_curr = st.session_state.get(f"{cle}_s{sujet_actif_atp}", "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t_curr) == str(rep) else "INCORRECT"
+            v_cls_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_atp += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t_curr}</td><td>{rep}</td><td class='{v_cls_t}'>{v_lbl_t}</td></tr>"
+        html_atp += "</tbody></table></body></html>"
+        st.download_button("Télécharger le rapport officiel Travaux Publics (.html)", data=html_atp, file_name=preparer_nom_fichier("Rapport_TP_Appareils_Optiques").replace(".txt", ".html"), mime="text/html", use_container_width=True)
 
 with tab9:
-    st.subheader("Application le domaine du transport routier")
+    st.subheader("Application dans le domaine du Transport Routier")
+
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 16px;">Les appareils optiques embarqués sur les véhicules industriels et routiers :</p>
+        <p style="margin-bottom: 0; line-height: 1.6;">Dans le transport routier, les <strong>miroirs convexes et caméras CMS</strong> suppriment les angles morts, la <strong>caméra pare-brise ADAS calibrée</strong> pilote le freinage d'urgence et les <strong>projecteurs lenticulaires</strong> assurent un éclairage sans éblouissement.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    sujets_app_trans = [
+        {"titre": "Cas Transport N°1 : Miroirs convexes grand-angle et caméras de rétrovision CMS", "img": "app_trans_retro.jpg", "leg": "Caméra de rétrovision CMS et rétroviseur grand-angle sur poids lourd", "exp": "**Principe :** Un **miroir convexe** donne une image **virtuelle, droite et réduite** qui élargit le champ de vision et élimine les angles morts."},
+        {"titre": "Cas Transport N°2 : Caméra pare-brise ADAS et calibrage géométrique", "img": "app_trans_adas.jpg", "leg": "Cible de calibrage statique devant la caméra pare-brise d'un camion", "exp": "**Principe :** L'objectif à focale fixe projette la route sur un **capteur CMOS** ; un **calibrage précis** est indispensable après tout remplacement de pare-brise."},
+        {"titre": "Cas Transport N°3 : Projecteurs lenticulaires Bi-LED et contrôle au régloscope", "img": "app_trans_phare.jpg", "leg": "Optique lenticulaire convergente avec volet de coupure", "exp": "**Principe :** Une **lentille convergente** projette une image réelle et renversée du volet métallique pour créer une **coupure nette** anti-éblouissement."}
+    ]
+
+    if "sujet_atr_tire" not in st.session_state:
+        st.session_state.sujet_atr_tire = None
+
+    if st.button("TIRER AU SORT UN SUJET TRANSPORT (APPAREILS OPTIQUES)", key="btn_tirage_atr", use_container_width=True):
+        choix = [i for i in range(3) if i != st.session_state.sujet_atr_tire]
+        st.session_state.sujet_atr_tire = random.choice(choix)
+        st.session_state.mesures_atr_log = []
+        st.rerun()
+
+    if st.session_state.sujet_atr_tire is None:
+        st.info("Cliquez sur le bouton ci-dessus pour tirer au sort un cas pratique du Transport Routier.")
+    else:
+        idx_atr = st.session_state.sujet_atr_tire
+        data_atr = sujets_app_trans[idx_atr]
+        st.success(f"Étude attribuée : **{data_atr['titre']}**")
+        st.markdown(data_atr["exp"], unsafe_allow_html=True)
+
+        c_img, c_bd = st.columns(2)
+        with c_img:
+            try: st.image(data_atr["img"], caption=data_atr["leg"], use_container_width=True)
+            except Exception: st.warning(f"L'image '{data_atr['img']}' est introuvable.")
+        with c_bd:
+            try: st.image("bd_app_trans.jpg", caption="La pause BD : Grâce au miroir convexe, plus aucun cycliste dans l'angle mort !", use_container_width=True)
+            except Exception: st.warning("L'image 'bd_app_trans.jpg' est introuvable.")
+
+        st.markdown("---")
+        if "mesures_atr_log" not in st.session_state: st.session_state.mesures_atr_log = []
+        if idx_atr == 0:
+            st.radio("Type d'équipement optique de rétrovision :", ["Miroir Plan Classique (Champ 18°)", "Miroir Convexe Grand-Angle (Champ 45°)"], index=1, key="radio_atr_s0", horizontal=True)
+        elif idx_atr == 1:
+            st.slider("Défaut d'alignement angulaire de la caméra ADAS après pose pare-brise (°) :", -2.0, 2.0, 0.0, 0.1, key="slider_atr_s1")
+        else:
+            st.radio("Position du volet interne dans le projecteur lenticulaire :", ["Feux de croisement (Volet de coupure abaissé)", "Feux de route (Volet escamoté)"], key="radio_atr_s2", horizontal=True)
+
+        if st.button("ENREGISTRER CE CONTRÔLE TRANSPORT", key="btn_rel_atr", use_container_width=True):
+            if "atr_mesure_courante" in st.session_state:
+                st.session_state.mesures_atr_log.append(st.session_state.atr_mesure_courante)
+                st.rerun()
+
+        st.pyplot(mettre_a_jour_app_trans_matplotlib(idx_atr), use_container_width=True)
+        if st.session_state.mesures_atr_log:
+            df_atr = pd.DataFrame(st.session_state.mesures_atr_log, columns=["Équipement", "Paramètre", "Mesure", "Diagnostic"])
+            st.dataframe(df_atr, use_container_width=True, hide_index=True)
+
+    st.write("---")
+    if "atr_verrouille_tab9" not in st.session_state: st.session_state.atr_verrouille_tab9 = False
+    verrou_atr = st.session_state.atr_verrouille_tab9
+    sujet_actif_atr = st.session_state.get("sujet_atr_tire", None)
+    afficher_atelier_app_trans(sujet_actif_atr, verrouille=verrou_atr)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_atr = st.checkbox("Je certifie avoir complété l'atelier Transport Routier (Appareils Optiques).", key="certif_atr9", disabled=verrou_atr)
+    if st.button("VALIDER ET EXPORTER LE BILAN TRANSPORT ROUTIER", key="btn_exp_atr9", use_container_width=True, disabled=verrou_atr):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif sujet_actif_atr is None or not case_certif_atr:
+            st.error("Action refusée : Tirez au sort un sujet et cochez la case de certification.")
+        else:
+            bq = BANQUES_APP_TRANS[sujet_actif_atr]
+            sc_q = sum(1.0 for q in st.session_state.get(f"ordre_quiz_atr_{sujet_actif_atr}", []) if st.session_state.get(f"atr_at9_g_{q['id']}") == q["rep"])
+            sc_t = sum(1.0 for _, _, rep, cle in bq["trous"] if st.session_state.get(f"{cle}_s{sujet_actif_atr}") == rep)
+            st.session_state.score_atr9_p1, st.session_state.score_atr9_p2, st.session_state.score_final_atr9 = sc_q, sc_t, sc_q + sc_t
+            st.session_state.atr_verrouille_tab9 = True
+            st.rerun()
+
+    if st.session_state.get("atr_verrouille_tab9", False) and sujet_actif_atr is not None:
+        scr1, scr2, tot_s = st.session_state.score_atr9_p1, st.session_state.score_atr9_p2, st.session_state.score_final_atr9
+        ts_atr = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER TRANSPORT ROUTIER SCELLÉ | Note : {tot_s:.1f} / 20")
+        bq = BANQUES_APP_TRANS[sujet_actif_atr]
+        html_atr = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport Transport Appareils Optiques - {n_eleve}</title>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}.status-correct{{color:#10b981;font-weight:bold}}.status-incorrect{{color:#ef4444;font-weight:bold}}</style></head>
+        <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Application Transport Routier (Appareils Optiques) - {sujets_app_trans[sujet_actif_atr]['titre']}</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_atr}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
+        <p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
+        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"""
+        for num, q in enumerate(st.session_state.get(f"ordre_quiz_atr_{sujet_actif_atr}", []), 1):
+            qid_curr = q["id"]
+            saisie_curr = st.session_state.get(f"atr_at9_g_{qid_curr}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie_curr) == str(q["rep"]) else "INCORRECT"
+            v_cls = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_atr += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_curr}</td><td>{q['rep']}</td><td class='{v_cls}'>{v_lbl}</td></tr>"
+        html_atr += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"
+        for idx_t, (en, _, rep, cle) in enumerate(bq["trous"], 1):
+            saisie_t_curr = st.session_state.get(f"{cle}_s{sujet_actif_atr}", "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t_curr) == str(rep) else "INCORRECT"
+            v_cls_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_atr += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t_curr}</td><td>{rep}</td><td class='{v_cls_t}'>{v_lbl_t}</td></tr>"
+        html_atr += "</tbody></table></body></html>"
+        st.download_button("Télécharger le rapport officiel Transport Routier (.html)", data=html_atr, file_name=preparer_nom_fichier("Rapport_Transport_Appareils_Optiques").replace(".txt", ".html"), mime="text/html", use_container_width=True)
+
+
 
 with tab10:
-    st.subheader("Application le domaine  géomètre topographe")
+    st.subheader("Application dans le domaine du Géomètre Topographe")
+
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 16px;">Les instruments optiques de haute précision du géomètre topographe :</p>
+        <p style="margin-bottom: 0; line-height: 1.6;">Au cœur du métier de géomètre se trouvent la <strong>lunette 30× de station totale à prisme redresseur</strong>, l'<strong>objectif métrique calibré des drones de photogrammétrie</strong> et le <strong>miroir rotatif coaxial des scanners laser 3D</strong>.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    sujets_app_geo = [
+        {"titre": "Mission N°1 : Lunette de station totale (30×), réticule et erreur de parallaxe", "img": "app_geo_station.jpg", "leg": "Visée de précision à la station totale avec réticule éclairé", "exp": "**Principe :** La lunette afocale **30×** intègre un **prisme redresseur** et une lentille interne de mise au point supprimant toute **erreur de parallaxe**."},
+        {"titre": "Mission N°2 : Photogrammétrie par drone et résolution au sol (GSD)", "img": "app_geo_drone.jpg", "leg": "Levé photogrammétrique aérien et calcul de la résolution GSD", "exp": "**Principe :** L'objectif calibré projette le terrain sur le capteur CMOS ; la taille d'un pixel au sol vaut **GSD = (H &times; p) / <i>f'</i>**."},
+        {"titre": "Mission N°3 : Scanner laser 3D terrestre, miroir rotatif et divergence du spot", "img": "app_geo_scanner.jpg", "leg": "Numérisation laser 3D d'une façade par miroir polygonal tournant", "exp": "**Principe :** Un **miroir tournant** dévie le faisceau laser coaxialement à la lentille de réception ; plus la cible est loin, plus le **spot laser** s'élargit."}
+    ]
+
+    if "sujet_ag_tire" not in st.session_state:
+        st.session_state.sujet_ag_tire = None
+
+    if st.button("TIRER AU SORT UNE MISSION GÉOMÈTRE (APPAREILS OPTIQUES)", key="btn_tirage_ag", use_container_width=True):
+        choix = [i for i in range(3) if i != st.session_state.sujet_ag_tire]
+        st.session_state.sujet_ag_tire = random.choice(choix)
+        st.session_state.mesures_ag_log = []
+        st.rerun()
+
+    if st.session_state.sujet_ag_tire is None:
+        st.info("Cliquez sur le bouton ci-dessus pour tirer au sort une mission de Géomètre Topographe.")
+    else:
+        idx_ag = st.session_state.sujet_ag_tire
+        data_ag = sujets_app_geo[idx_ag]
+        st.success(f"Mission attribuée : **{data_ag['titre']}**")
+        st.markdown(data_ag["exp"], unsafe_allow_html=True)
+
+        c_img, c_bd = st.columns(2)
+        with c_img:
+            try: st.image(data_ag["img"], caption=data_ag["leg"], use_container_width=True)
+            except Exception: st.warning(f"L'image '{data_ag['img']}' est introuvable.")
+        with c_bd:
+            try: st.image("bd_app_geo.jpg", caption="La pause BD : Toujours éliminer la parallaxe avant d'enregistrer l'angle !", use_container_width=True)
+            except Exception: st.warning("L'image 'bd_app_geo.jpg' est introuvable.")
+
+        st.markdown("---")
+        if "mesures_ag_log" not in st.session_state: st.session_state.mesures_ag_log = []
+        if idx_ag == 0:
+            st.checkbox("Simuler un défaut de mise au point (présence d'erreur de parallaxe)", key="check_ag_s0")
+        elif idx_ag == 1:
+            c_d1, c_d2 = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_d1: st.slider("Altitude de vol du drone H (m) :", 30.0, 150.0, 80.0, 5.0, key="slider_ag_s1")
+            with c_d2: st.radio("Focale objectif f' (mm) :", [16.0, 20.0, 35.0], index=1, key="radio_ag_s1", horizontal=True)
+        else:
+            st.slider("Distance entre le scanner 3D et la façade (m) :", 10.0, 150.0, 50.0, 5.0, key="slider_ag_s2")
+
+        if st.button("ENREGISTRER CE POINT TOPOGRAPHIQUE", key="btn_rel_ag", use_container_width=True):
+            if "ag_mesure_courante" in st.session_state:
+                st.session_state.mesures_ag_log.append(st.session_state.ag_mesure_courante)
+                st.rerun()
+
+        st.pyplot(mettre_a_jour_app_geo_matplotlib(idx_ag), use_container_width=True)
+        if st.session_state.mesures_ag_log:
+            df_ag = pd.DataFrame(st.session_state.mesures_ag_log, columns=["Paramètre", "Configuration", "Calcul optique", "Diagnostic"])
+            st.dataframe(df_ag, use_container_width=True, hide_index=True)
+
+    st.write("---")
+    if "ag_verrouille_tab10" not in st.session_state: st.session_state.ag_verrouille_tab10 = False
+    verrou_ag = st.session_state.ag_verrouille_tab10
+    sujet_actif_ag = st.session_state.get("sujet_ag_tire", None)
+    afficher_atelier_app_geo(sujet_actif_ag, verrouille=verrou_ag)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_ag = st.checkbox("Je certifie avoir complété l'atelier Géomètre Topographe (Appareils Optiques).", key="certif_ag10", disabled=verrou_ag)
+    if st.button("VALIDER ET EXPORTER LE BILAN GÉOMÈTRE TOPOGRAPHE", key="btn_exp_ag10", use_container_width=True, disabled=verrou_ag):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif sujet_actif_ag is None or not case_certif_ag:
+            st.error("Action refusée : Tirez au sort une mission et cochez la case de certification.")
+        else:
+            bq = BANQUES_APP_GEO[sujet_actif_ag]
+            sc_q = sum(1.0 for q in st.session_state.get(f"ordre_quiz_ag_{sujet_actif_ag}", []) if st.session_state.get(f"ag_at10_g_{q['id']}") == q["rep"])
+            sc_t = sum(1.0 for _, _, rep, cle in bq["trous"] if st.session_state.get(f"{cle}_s{sujet_actif_ag}") == rep)
+            st.session_state.score_ag10_p1, st.session_state.score_ag10_p2, st.session_state.score_final_ag10 = sc_q, sc_t, sc_q + sc_t
+            st.session_state.ag_verrouille_tab10 = True
+            st.rerun()
+
+    if st.session_state.get("ag_verrouille_tab10", False) and sujet_actif_ag is not None:
+        scr1, scr2, tot_s = st.session_state.score_ag10_p1, st.session_state.score_ag10_p2, st.session_state.score_final_ag10
+        ts_ag = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER GÉOMÈTRE TOPOGRAPHE SCELLÉ | Note : {tot_s:.1f} / 20")
+        bq = BANQUES_APP_GEO[sujet_actif_ag]
+        html_ag = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport Géomètre Appareils Optiques - {n_eleve}</title>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}.status-correct{{color:#10b981;font-weight:bold}}.status-incorrect{{color:#ef4444;font-weight:bold}}</style></head>
+        <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Application Géomètre Topographe (Appareils Optiques) - {sujets_app_geo[sujet_actif_ag]['titre']}</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_ag}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
+        <p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
+        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"""
+        for num, q in enumerate(st.session_state.get(f"ordre_quiz_ag_{sujet_actif_ag}", []), 1):
+            qid_curr = q["id"]
+            saisie_curr = st.session_state.get(f"ag_at10_g_{qid_curr}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie_curr) == str(q["rep"]) else "INCORRECT"
+            v_cls = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_ag += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_curr}</td><td>{q['rep']}</td><td class='{v_cls}'>{v_lbl}</td></tr>"
+        html_ag += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"
+        for idx_t, (en, _, rep, cle) in enumerate(bq["trous"], 1):
+            saisie_t_curr = st.session_state.get(f"{cle}_s{sujet_actif_ag}", "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t_curr) == str(rep) else "INCORRECT"
+            v_cls_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_ag += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t_curr}</td><td>{rep}</td><td class='{v_cls_t}'>{v_lbl_t}</td></tr>"
+        html_ag += "</tbody></table></body></html>"
+        st.download_button("Télécharger le rapport officiel Géomètre Topographe (.html)", data=html_ag, file_name=preparer_nom_fichier("Rapport_Geometre_Appareils_Optiques").replace(".txt", ".html"), mime="text/html", use_container_width=True)
+
+
+
+
+
+
