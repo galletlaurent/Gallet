@@ -1000,15 +1000,13 @@ with tab2:
 
 with tab3:
     st.header("Lentilles Minces Convergentes & Relation de Conjugaison")
-
-
     st.markdown("""
-    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
         <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel des Formules de la Dioptrique (Lentilles Convergentes) :</p>
-        <ul>
-            <li><strong>Relation de conjugaison de Descartes :</strong> $\\frac{1}{x'} - \\frac{1}{x} = \\frac{1}{f'}$ &nbsp;(avec $x = \\overline{OA}$ et $x' = \\overline{OA'}$)</li>
-            <li><strong>Vergence d'une lentille :</strong> $C = \\frac{1}{f'}$ &nbsp;(exprimee en Dioptries $\\delta$ avec $f'$ en metres)</li>
-            <li><strong>Grandissement transversal :</strong> $\\gamma = \\frac{\\overline{A'B'}}{\\overline{AB}} = \\frac{x'}{x}$</li>
+        <ul style="margin-bottom: 0; line-height: 1.8;">
+            <li><strong>Relation de conjugaison de Descartes :</strong> <b>1 / <i>x'</i> &minus; 1 / <i>x</i> = 1 / <i>f'</i></b> &nbsp;(avec <i>x</i> = <span style="text-decoration: overline;">OA</span> et <i>x'</i> = <span style="text-decoration: overline;">OA'</span>)</li>
+            <li><strong>Vergence d'une lentille :</strong> <b><i>C</i> = 1 / <i>f'</i></b> &nbsp;(exprimée en Dioptries <b>&delta;</b> avec <i>f'</i> en mètres)</li>
+            <li><strong>Grandissement transversal :</strong> <b>&gamma; = <span style="text-decoration: overline;">A'B'</span> / <span style="text-decoration: overline;">AB</span> = <i>x'</i> / <i>x</i></b></li>
         </ul>
     </div>
     """, unsafe_allow_html=True)
