@@ -1407,10 +1407,101 @@ with tab2:
         elif not case_certif_rd:
             st.error("Action refusée : Cochez la case de certification.")
         else:
+            sc_q = sum(1.0 for q in st.session_state.get("ordre_quiz_rd_aleatoire", []) if st.session_state.get(f"rd_at2_g_{q['id']}") == q["rep"])
+            rep_t = {"rd_t1": "intérieur", "rd_t2": "inversés", "rd_t3": "amont", "rd_t4": "dévié", "rd_t5": "F'", "rd_t6": "parallèle", "rd_t7": "avant", "rd_t8": "virtuelle", "rd_t9": "négative", "rd_t10": "1"}
+            sc_t = sum(1.0 for k, v in rep_t.items() if st.session_state.get(k) == v)
+            st.session_state.score_rd2_p1, st.session_state.score_rd2_p2, st.session_state.score_final_rd2 = sc_q, sc_t, sc_q + sc_t
+            st.session_state.rd_verrouille_tab2 = True
+            st.rerun()
 
+    if st.session_state.get("rd_verrouille_tab2", False):
+        scr1, scr2, tot_s = st.session_state.score_rd2_p1, st.session_state.score_rd2_p2, st.session_state.score_final_rd2
+        ts_rd = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER 2 SCELLÉ | Note : {tot_s:.1f} / 20")
 
+        html_rd = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Atelier 2 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background: #f8fafc; color: #1e293b; }}
+                .header-box {{ background: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; border: 2px solid white; }}
+                table {{ width: 100%; border-collapse: collapse; margin-bottom: 25px; background: white; }}
+                th {{ background: #0f172a; color: white; padding: 10px; text-align: left; }}
+                td {{ padding: 10px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Atelier 2 : Règles de Tracé des Lentilles Divergentes</p>
+                <p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_rd}</p>
+                <div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div>
+            </div>
+            <p style="background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong>
+            </p>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
 
+        for num, q in enumerate(st.session_state.get("ordre_quiz_rd_aleatoire", []), 1):
+            qid_c = q["id"]
+            saisie_q = st.session_state.get(f"rd_at2_g_{qid_c}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie_q) == str(q["rep"]) else "INCORRECT"
+            v_cls = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_rd += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_q}</td><td>{q['rep']}</td><td class='{v_cls}'>{v_lbl}</td></tr>"
 
+        html_rd += """
+                </tbody>
+            </table>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        verif_rd = [
+            ("1. Le symbole d'une lentille divergente porte des flèches pointant vers l'.........", "intérieur", "rd_t1"),
+            ("2. Les foyers F et F' sont ......... par rapport à une lentille convergente.", "inversés", "rd_t2"),
+            ("3. Le foyer image F' est situé en ......... de la lentille (f' < 0).", "amont", "rd_t3"),
+            ("4. Tout rayon passant par le centre optique O n'est pas .........", "dévié", "rd_t4"),
+            ("5. Tout rayon parallèle à l'axe diverge en semblant venir de .........", "F'", "rd_t5"),
+            ("6. Tout rayon visant le foyer objet F ressort ......... à l'axe.", "parallèle", "rd_t6"),
+            ("7. L'image d'un objet réel est toujours située ......... la lentille.", "avant", "rd_t7"),
+            ("8. L'image formée est toujours droite, plus petite et .........", "virtuelle", "rd_t8"),
+            ("9. La vergence C d'une lentille divergente est toujours .........", "négative", "rd_t9"),
+            ("10. Le grandissement γ vérifie toujours 0 < γ < .........", "1", "rd_t10"),
+        ]
+
+        for idx_t, (en, rep, cle) in enumerate(verif_rd, 1):
+            saisie_t = st.session_state.get(cle, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t) == str(rep) else "INCORRECT"
+            v_cls_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_rd += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t}</td><td>{rep}</td><td class='{v_cls_t}'>{v_lbl_t}</td></tr>"
+
+        html_rd += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        st.download_button(
+            "Télécharger le rapport officiel de l'Atelier 2 (.html)",
+            data=html_rd,
+            file_name=preparer_nom_fichier("Rapport_Atelier_2_Regles_Divergente").replace(".txt", ".html"),
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 with tab3:
@@ -1691,6 +1782,113 @@ with tab3:
         )
 
 
+with tab4:
+    st.header("Atelier 4 : Applications dans le domaine de la Maintenance Industrielle")
+
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 16px;">Les lentilles divergentes au service de la sécurité et de la métrologie laser :</p>
+        <p style="margin-bottom: 0; line-height: 1.6;">En maintenance industrielle, les lentilles minces divergentes (<b><i>f'</i> &lt; 0</b>) permettent d'élargir les faisceaux laser haute puissance, d'inspecter les enceintes machines à 180° via des judas grand-angle et de contrôler les doublets optiques.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    sujets_div_maint = [
+        {"titre": "Cas N°1 : Élargisseur de faisceau laser de Galilée (Divergente + Convergente)", "img": "div_maint_laser.jpg", "leg": "Expander de faisceau laser monté sur tête de découpe", "exp": "**Principe :** L'association d'une lentille divergente (<i>f'</i><sub>1</sub> = &minus;25 mm) et d'une lentille convergente (<i>f'</i><sub>2</sub> = +100 mm) séparées de <i>d</i> = 75 mm multiplie le diamètre du faisceau par <b><i>G</i> = |<i>f'</i><sub>2</sub> / <i>f'</i><sub>1</sub>| = 4&times;</b>."},
+        {"titre": "Cas N°2 : Judas optique grand-angle sur porte de sécurité machine", "img": "div_maint_judas.jpg", "leg": "Œilleton grand-angle installé sur carter de centre d'usinage CNC", "exp": "**Principe :** La lentille divergente d'entrée donne une image **virtuelle, droite et rétrécie** couvrant jusqu'à **175°** de champ de vision."},
+        {"titre": "Cas N°3 : Contrôle focométrique de lentilles accolées (C = C1 + C2)", "img": "div_maint_banc.jpg", "leg": "Banc de contrôle optique de doublets achromatiques", "exp": "**Principe :** En associant une lentille convergente (<i>C</i><sub>1</sub> &gt; 0) et une divergente (<i>C</i><sub>2</sub> &lt; 0), la vergence totale vaut <b><i>C</i> = <i>C</i><sub>1</sub> + <i>C</i><sub>2</sub></b>."}
+    ]
+
+    if "sujet_dm_tire" not in st.session_state:
+        st.session_state.sujet_dm_tire = None
+
+    if st.button("TIRER AU SORT UN SUJET MAINTENANCE (DIVERGENTES)", key="btn_tirage_dm", use_container_width=True):
+        choix = [i for i in range(3) if i != st.session_state.sujet_dm_tire]
+        st.session_state.sujet_dm_tire = random.choice(choix)
+        st.session_state.mesures_dm_log = []
+        st.rerun()
+
+    if st.session_state.sujet_dm_tire is None:
+        st.info("Cliquez sur le bouton ci-dessus pour tirer au sort un cas pratique de maintenance.")
+    else:
+        idx_dm = st.session_state.sujet_dm_tire
+        data_dm = sujets_div_maint[idx_dm]
+        st.success(f"Sujet attribué : **{data_dm['titre']}**")
+        st.markdown(data_dm["exp"], unsafe_allow_html=True)
+
+        c_img, c_bd = st.columns(2)
+        with c_img:
+            try: st.image(data_dm["img"], caption=data_dm["leg"], use_container_width=True)
+            except Exception: st.warning(f"L'image '{data_dm['img']}' est introuvable.")
+        with c_bd:
+            try: st.image("bd_div_maint.jpg", caption="La pause BD : Attention à ne pas inverser la lentille divergente au remontage !", use_container_width=True)
+            except Exception: st.warning("L'image 'bd_div_maint.jpg' est introuvable.")
+
+        st.markdown("---")
+        if "mesures_dm_log" not in st.session_state: st.session_state.mesures_dm_log = []
+        if idx_dm == 0:
+            st.slider("Distance d entre L1 et L2 (mm) [Optimal = 75 mm] :", 55.0, 95.0, 75.0, 1.0, key="slider_dm_s0")
+        elif idx_dm == 1:
+            st.slider("Vergence C de la lentille divergente du judas (δ) :", -25.0, -5.0, -15.0, 1.0, key="slider_dm_s1")
+        else:
+            c1_m, c2_m = st.columns(2)
+            with c1_m: st.slider("Vergence lentille convergente C1 (δ) :", 2.0, 15.0, 10.0, 1.0, key="slider_dm_c1_s2")
+            with c2_m: st.slider("Vergence lentille divergente C2 (δ) :", -15.0, -2.0, -4.0, 1.0, key="slider_dm_c2_s2")
+
+        if st.button("ENREGISTRER CE RELEVÉ MAINTENANCE", key="btn_rel_dm", use_container_width=True):
+            if "dm_mesure_courante" in st.session_state:
+                st.session_state.mesures_dm_log.append(st.session_state.dm_mesure_courante)
+                st.rerun()
+
+        st.pyplot(mettre_a_jour_div_maint_matplotlib(idx_dm), use_container_width=True)
+        if st.session_state.mesures_dm_log:
+            df_dm = pd.DataFrame(st.session_state.mesures_dm_log, columns=["Paramètre 1", "Paramètre 2", "Calcul", "Diagnostic"])
+            st.dataframe(df_dm, use_container_width=True, hide_index=True)
+
+    st.write("---")
+    if "dm_verrouille_tab4" not in st.session_state: st.session_state.dm_verrouille_tab4 = False
+    verrou_dm = st.session_state.dm_verrouille_tab4
+    sujet_actif_dm = st.session_state.get("sujet_dm_tire", None)
+    afficher_atelier_div_maint(sujet_actif_dm, verrouille=verrou_dm)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_dm = st.checkbox("Je certifie avoir complété l'Atelier 4 (Maintenance - Divergentes).", key="certif_dm4", disabled=verrou_dm)
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_exp_dm4", use_container_width=True, disabled=verrou_dm):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif sujet_actif_dm is None or not case_certif_dm:
+            st.error("Action refusée : Tirez au sort un sujet et cochez la case de certification.")
+        else:
+            bq = BANQUES_DIV_MAINT[sujet_actif_dm]
+            sc_q = sum(1.0 for q in st.session_state.get(f"ordre_quiz_dm_{sujet_actif_dm}", []) if st.session_state.get(f"dm_at4_g_{q['id']}") == q["rep"])
+            sc_t = sum(1.0 for _, _, rep, cle in bq["trous"] if st.session_state.get(f"{cle}_s{sujet_actif_dm}") == rep)
+            st.session_state.score_dm4_p1, st.session_state.score_dm4_p2, st.session_state.score_final_dm4 = sc_q, sc_t, sc_q + sc_t
+            st.session_state.dm_verrouille_tab4 = True
+            st.rerun()
+
+    if st.session_state.get("dm_verrouille_tab4", False) and sujet_actif_dm is not None:
+        scr1, scr2, tot_s = st.session_state.score_dm4_p1, st.session_state.score_dm4_p2, st.session_state.score_final_dm4
+        ts_dm = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER 4 SCELLÉ | Note : {tot_s:.1f} / 20")
+        bq = BANQUES_DIV_MAINT[sujet_actif_dm]
+        html_dm = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport Atelier 4 - {n_eleve}</title>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}</style></head>
+        <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Atelier 4 : Maintenance (Lentilles Divergentes) - {sujets_div_maint[sujet_actif_dm]['titre']}</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_dm}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
+        <p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
+        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th></tr></thead><tbody>"""
+        for num, q in enumerate(st.session_state.get(f"ordre_quiz_dm_{sujet_actif_dm}", []), 1):
+            qid_curr = q["id"]
+            saisie_curr = st.session_state.get(f"dm_at4_g_{qid_curr}", "Choisir...")
+            html_dm += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_curr}</td><td>{q['rep']}</td></tr>"
+        html_dm += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th></tr></thead><tbody>"
+        for idx_t, (en, _, rep, cle) in enumerate(bq["trous"], 1):
+            saisie_t_curr = st.session_state.get(f"{cle}_s{sujet_actif_dm}", "Choisir...")
+            html_dm += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t_curr}</td><td>{rep}</td></tr>"
+        html_dm += "</tbody></table></body></html>"
+        st.download_button("Télécharger le rapport officiel de l'Atelier 4 (.html)", data=html_dm, file_name=preparer_nom_fichier("Rapport_Atelier_4_Maintenance_Divergentes").replace(".txt", ".html"), mime="text/html", use_container_width=True)
 
 
 
