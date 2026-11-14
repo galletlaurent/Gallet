@@ -1204,20 +1204,18 @@ with tab2:
 
 with tab3:
     st.subheader("La lunette astronomique")
-    
-    # =========================================================================
-    # RAPPEL DE COURS PRÉCIS (FORMAT LATEX)
-    # =========================================================================
+
     st.markdown("""
-    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
-        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel du Modele de la Lunette Afocale :</p>
-        <ul>
-            <li><strong>Configuration afocale :</strong> La distance entre les deux lentilles est egale a la somme de leurs distances focales ($d = O_1O_2 = f'_1 + f'_2$).</li>
-            <li><strong>Grossissement de l'instrument :</strong> Le grossissement nominal se calcule par la relation $G = \\frac{f'_1}{f'_2}$.</li>
-            <li><strong>Confort visuel :</strong> L'image finale sortant de l'oculaire est rejetee a l'infini, permettant a l'oeil du marin ou de l'astronome d'observer l'astre sans aucune fatigue (pas d'accommodation).</li>
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 15px;">Rappel du Modèle de la Lunette Afocale :</p>
+        <ul style="margin-bottom: 0; line-height: 1.8;">
+            <li><strong>Configuration afocale :</strong> La distance entre les deux lentilles est égale à la somme de leurs distances focales (<strong><i>d</i> = O<sub>1</sub>O<sub>2</sub> = <i>f'</i><sub>1</sub> + <i>f'</i><sub>2</sub></strong>).</li>
+            <li><strong>Grossissement de l'instrument :</strong> Le grossissement nominal se calcule par la relation <strong><i>G</i> = <i>f'</i><sub>1</sub> / <i>f'</i><sub>2</sub></strong> (soit <span style="display: inline-block; vertical-align: middle; text-align: center; font-weight: bold; line-height: 1.1; margin-left: 4px;"><span style="display: block; border-bottom: 1px solid #1e293b; padding: 0 3px;"><i>f'</i><sub>1</sub></span><span style="display: block; padding: 0 3px;"><i>f'</i><sub>2</sub></span></span>).</li>
+            <li><strong>Confort visuel :</strong> L'image finale sortant de l'oculaire est rejetée à l'infini, permettant à l'œil du marin ou de l'astronome d'observer l'astre sans aucune fatigue (pas d'accommodation).</li>
         </ul>
     </div>
     """, unsafe_allow_html=True)
+
 
     if "opt7_verrouille" not in st.session_state: st.session_state.opt7_verrouille = False
 
@@ -1436,20 +1434,18 @@ with tab3:
         
 with tab4:
     st.subheader("La lunette de Galilée")
-    
-    # =========================================================================
-    # RAPPEL DE COURS PRÉCIS (FORMAT LATEX)
-    # =========================================================================
+
     st.markdown("""
-    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
-        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel du Modele de la Lunette de Galilee :</p>
-        <ul>
-            <li><strong>Association Optique :</strong> Elle associe un <strong>objectif convergent</strong> ($f'_1 > 0$) et un <strong>oculaire divergent</strong> ($f'_2 < 0$).</li>
-            <li><strong>Condition Afocale :</strong> Le foyer image de l'objectif et le foyer objet de l'oculaire sont confondus ($F'_1 = F_2$). La distance separent les verres est reduite : $d = f'_1 - |f'_2|$.</li>
-            <li><strong>Propriete d'image :</strong> Contrairement au systeme de Kepler, la lunette de Galilee fournit une <strong>image finale droite</strong> (redressee, dans le meme sens que l'objet).</li>
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 15px;">Rappel du Modèle de la Lunette de Galilée :</p>
+        <ul style="margin-bottom: 0; line-height: 1.8;">
+            <li><strong>Association Optique :</strong> Elle associe un <strong>objectif convergent</strong> (<strong><i>f'</i><sub>1</sub> &gt; 0</strong>) et un <strong>oculaire divergent</strong> (<strong><i>f'</i><sub>2</sub> &lt; 0</strong>).</li>
+            <li><strong>Condition Afocale :</strong> Le foyer image de l'objectif et le foyer objet de l'oculaire sont confondus (<strong>F'<sub>1</sub> = F<sub>2</sub></strong>). La distance séparant les verres est réduite : <strong><i>d</i> = <i>f'</i><sub>1</sub> &minus; |<i>f'</i><sub>2</sub>|</strong>.</li>
+            <li><strong>Propriété d'image :</strong> Contrairement au système de Kepler, la lunette de Galilée fournit une <strong>image finale droite</strong> (redressée, dans le même sens que l'objet).</li>
         </ul>
     </div>
     """, unsafe_allow_html=True)
+
 
     if "opt8_verrouille" not in st.session_state: 
         st.session_state.opt8_verrouille = False
@@ -1668,21 +1664,19 @@ with tab4:
 
         
 with tab5:
-    st.header("Le microscope")
-    
-    # =========================================================================
-    # RAPPEL DE COURS PRÉCIS (FORMAT LATEX)
-    # =========================================================================
+    st.subheader("Le microscope")
+
     st.markdown("""
-    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
-        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel du Modele Optique du Microscope :</p>
-        <ul>
-            <li><strong>Grandissement de l'objectif (L1) :</strong> $\\gamma_1 = - \\frac{\\Delta}{f'_1}$ &nbsp;(avec $\\Delta$ l'intervalle optique entre $F'_1$ et $F_2$).</li>
-            <li><strong>Grossissement de l'oculaire (L2) :</strong> $G_{c2} = \\frac{0.25}{f'_2}$ &nbsp;(avec distance minimale de visee standard a $25\\text{ cm}$).</li>
-            <li><strong>Grossissement total de l'instrument :</strong> $G = \\gamma_1 \\cdot G_{c2} = - \\frac{\\Delta \\cdot 0.25}{f'_1 \\cdot f'_2}$.</li>
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 15px;">Rappel du Modèle Optique du Microscope :</p>
+        <ul style="margin-bottom: 0; line-height: 2.0;">
+            <li><strong>Grandissement de l'objectif (L<sub>1</sub>) :</strong> <strong><i>&gamma;</i><sub>1</sub> = &minus; <span style="display: inline-block; vertical-align: middle; text-align: center; line-height: 1.1; margin: 0 3px;"><span style="display: block; border-bottom: 1px solid #1e293b; padding: 0 3px;">&Delta;</span><span style="display: block; padding: 0 3px;"><i>f'</i><sub>1</sub></span></span></strong> (avec <strong>&Delta;</strong> l'intervalle optique entre <strong>F'<sub>1</sub></strong> et <strong>F<sub>2</sub></strong>).</li>
+            <li><strong>Grossissement de l'oculaire (L<sub>2</sub>) :</strong> <strong><i>G</i><sub>c2</sub> = <span style="display: inline-block; vertical-align: middle; text-align: center; line-height: 1.1; margin: 0 3px;"><span style="display: block; border-bottom: 1px solid #1e293b; padding: 0 3px;">0,25</span><span style="display: block; padding: 0 3px;"><i>f'</i><sub>2</sub></span></span></strong> (avec distance minimale de visée standard à <strong>25 cm</strong>).</li>
+            <li><strong>Grossissement total de l'instrument :</strong> <strong><i>G</i> = <i>&gamma;</i><sub>1</sub> &middot; <i>G</i><sub>c2</sub> = &minus; <span style="display: inline-block; vertical-align: middle; text-align: center; line-height: 1.1; margin: 0 3px;"><span style="display: block; border-bottom: 1px solid #1e293b; padding: 0 3px;">&Delta; &middot; 0,25</span><span style="display: block; padding: 0 3px;"><i>f'</i><sub>1</sub> &middot; <i>f'</i><sub>2</sub></span></span></strong>.</li>
         </ul>
     </div>
     """, unsafe_allow_html=True)
+
 
     if "opt9_verrouille" not in st.session_state: st.session_state.opt9_verrouille = False
 
