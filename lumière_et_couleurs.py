@@ -521,23 +521,22 @@ tab7 = onglets[7]
 def afficher_questions_optique2(verrouille=False):
     col_double_quiz_opt2, col_double_trous_opt2 = st.columns(2)
 
-    # --- COLONNE DE GAUCHE : VOTRE QUIZ DE 10 QUESTIONS D'ORIGINE ---
+    # --- COLONNE DE GAUCHE : VOTRE QUIZ DE 10 QUESTIONS ---
     with col_double_quiz_opt2:
-        st.markdown("##### Evaluation : Les differentes lumieres (10 pts)")
+        st.markdown("##### Évaluation : Les différentes lumières (10 pts)")
         if "ordre_questions_opt2" not in st.session_state:
             questions_opt2_base = [
-                ("q1", "Quel type de spectre obtient-on en analysant la lumiere emise par un gaz d'atomes isoles excites ?"),
-                ("q2", "Quelle source lumineuse classique produit un spectre continu contenant toutes les radiations colorees ?"),
-                ("q3", "Lors du test de flamme, quelle couleur caracteristique prend la combustion du chlorure de Sodium (Na) ?"),
-                ("q4", "Quelle couleur de flamme specifique permet d'identifier la presence d'ions Cuivre (Cu) ?"),
-                ("q5", "Pourquoi les raies d'emission d'un element chimique constituent-elles sa signature ou carte d'identite ?"),
-                ("q6", "Comment qualifie-t-on le spectre d'une etoile qui traverse une atmosphere gazeuse plus froide ?"),
-                ("q7", "Quel instrument d'optique muni d'un element dispersif permet d'observer ces raies colorees ?"),
-                ("q8", "Quelle est l'unite de mesure utilisee pour reperer la position exacte d'une raie sur l'ecran ?"),
-                ("q9", "Si une source emet une raie unique a 589 nm, dans quel domaine de couleur se situe-t-elle ?"),
-                ("q10", "Le spectre de la lumiere emise par le Soleil recu sur Terre est un spectre :")
+                ("q1", "Quel type de spectre obtient-on en analysant la lumière émise par un gaz d'atomes isolés excités ?"),
+                ("q2", "Quelle source lumineuse classique produit un spectre continu contenant toutes les radiations colorées ?"),
+                ("q3", "Lors du test de flamme, quelle couleur caractéristique prend la combustion du chlorure de Sodium (Na) ?"),
+                ("q4", "Quelle couleur de flamme spécifique permet d'identifier la présence d'ions Cuivre (Cu) ?"),
+                ("q5", "Pourquoi les raies d'émission d'un élément chimique constituent-elles sa signature ou carte d'identité ?"),
+                ("q6", "Comment qualifie-t-on le spectre d'une étoile qui traverse une atmosphère gazeuse plus froide ?"),
+                ("q7", "Quel instrument d'optique muni d'un élément dispersif permet d'observer ces raies colorées ?"),
+                ("q8", "Quelle est l'unité de mesure utilisée pour repérer la position exacte d'une raie sur l'écran ?"),
+                ("q9", "Si une source émet une raie unique à 589 nm, dans quel domaine de couleur se situe-t-elle ?"),
+                ("q10", "Le spectre de la lumière émise par le Soleil reçu sur Terre est un spectre :")
             ]
-            import random
             random.shuffle(questions_opt2_base)
             st.session_state.ordre_questions_opt2 = questions_opt2_base
 
@@ -547,18 +546,17 @@ def afficher_questions_optique2(verrouille=False):
             cle_opts_unique = f"opts_opt2_shuffled_{q_id}"
             
             if cle_opts_unique not in st.session_state:
-                if q_id == "q1": copie_opts = ["Spectre d'emission de raies", "Spectre continu", "Spectre d'absorption"]
-                elif q_id == "q2": copie_opts = ["Corps dense incandescent (Lampe a filament)", "Lampe a vapeur de gaz", "Laser monochromatique"]
-                elif q_id == "q3": copie_opts = ["Jaune orange intense", "Vert pre", "Bleu azur"]
-                elif q_id == "q4": copie_opts = ["Vert pre / turquoise", "Jaune orange", "Violet pourpre"]
-                elif q_id == "q5": copie_opts = ["Chaque element a des raies uniques", "Elles dependent de la temperature", "Elles sont toutes blanches"]
-                elif q_id == "q6": copie_opts = ["Spectre d'absorption de raies", "Spectre d'emission continu", "Spectre de diffraction"]
-                elif q_id == "q7": copie_opts = ["Spectroscope / Spectrometre", "Microscope", "Lentille convergente simple"]
-                elif q_id == "q8": copie_opts = ["Nanometre (nm)", "Millimetre (mm)", "Hertz (Hz)"]
+                if q_id == "q1": copie_opts = ["Spectre d'émission de raies", "Spectre continu", "Spectre d'absorption"]
+                elif q_id == "q2": copie_opts = ["Corps dense incandescent (Lampe à filament)", "Lampe à vapeur de gaz", "Laser monochromatique"]
+                elif q_id == "q3": copie_opts = ["Jaune orangé intense", "Vert pré", "Bleu azur"]
+                elif q_id == "q4": copie_opts = ["Vert pré / turquoise", "Jaune orangé", "Violet pourpre"]
+                elif q_id == "q5": copie_opts = ["Chaque élément a des raies uniques", "Elles dépendent de la température", "Elles sont toutes blanches"]
+                elif q_id == "q6": copie_opts = ["Spectre d'absorption de raies", "Spectre d'émission continu", "Spectre de diffraction"]
+                elif q_id == "q7": copie_opts = ["Spectroscope / Spectromètre", "Microscope", "Lentille convergente simple"]
+                elif q_id == "q8": copie_opts = ["Nanomètre (nm)", "Millimètre (mm)", "Hertz (Hz)"]
                 elif q_id == "q9": copie_opts = ["Jaune", "Rouge", "Violet"]
-                elif q_id == "q10": copie_opts = ["D'absorption de raies (Fraunhofer)", "D'emission pur", "Continu sans aucune raie"]
+                elif q_id == "q10": copie_opts = ["D'absorption de raies (Fraunhofer)", "D'émission pur", "Continu sans aucune raie"]
                 
-                import random
                 random.shuffle(copie_opts)
                 st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
                 
@@ -570,35 +568,33 @@ def afficher_questions_optique2(verrouille=False):
             with cq_sel:
                 dict_quiz_opt2[f"{q_id}_opt2"] = st.selectbox("", st.session_state[cle_opts_unique], index=idx, key=cle_qo2, disabled=verrouille, label_visibility="collapsed")
 
-    # --- COLONNE DE DROITE : LE TEXTE À TROUS DE SYNTHÈSE HARMONISÉ ---
+    # --- COLONNE DE DROITE : LE TEXTE À TROUS COMPLET (10 ITEMS = 10 PTS) ---
     with col_double_trous_opt2:
-        st.markdown("##### Synthese de cours (Texte a trous) - Optique 2 (10 pts)")
+        st.markdown("##### Synthèse de cours (Texte à trous - 10 items) - Optique 2 (10 pts)")
         
-        co2_1, co2_2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co2_1: st.write("L'excitation thermique de sels metalliques par une flamme produit un spectre d'")
-        with co2_2: t1 = st.selectbox("", ["Choisir...", "Emission", "Absorption", "Reflexion"], key="opt2_t1", disabled=verrouille, label_visibility="collapsed")
-        
-        co2_3, co2_4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co2_3: st.write("La combustion du Sodium se caracterise par une couleur intense dans le")
-        with co2_4: t2 = st.selectbox("", ["Choisir...", "Jaune", "Vert", "Bleu"], key="opt2_t2", disabled=verrouille, label_visibility="collapsed")
+        items_trous_o2 = [
+            ("1. L'excitation thermique de sels métalliques par une flamme produit un spectre d'", ["Choisir...", "Émission", "Absorption", "Réflexion"], "opt2_t1"),
+            ("2. La combustion du Sodium se caractérise par une couleur intense dans le", ["Choisir...", "Jaune", "Vert", "Bleu"], "opt2_t2"),
+            ("3. À l'inverse, un solide porté à haute température émet une lumière au spectre", ["Choisir...", "Continu", "Discontinu", "Monochrome"], "opt2_t3"),
+            ("4. Le rayonnement solaire reçu sur Terre comporte de fines raies sombres d'", ["Choisir...", "Absorption", "Émission", "Diffraction"], "opt2_t4"),
+            ("5. La position précise de ces signatures se mesure sur l'écran en", ["Choisir...", "Nanomètres", "Millimètres", "Degrés"], "opt2_t5"),
+            ("6. La combustion du chlorure de Cuivre donne à la flamme une teinte", ["Choisir...", "Verte", "Rouge", "Violette"], "opt2_t6"),
+            ("7. Chaque atome possède des raies spectrales qui constituent sa carte d'", ["Choisir...", "Identité", "Énergie", "Absorption"], "opt2_t7"),
+            ("8. Une lampe à vapeur de Mercure ou de Sodium émet un spectre de", ["Choisir...", "Raies", "Bandes", "Continu"], "opt2_t8"),
+            ("9. Les raies noires du spectre solaire portent le nom de raies de", ["Choisir...", "Fraunhofer", "Newton", "Descartes"], "opt2_t9"),
+            ("10. L'appareil qui décompose la lumière pour analyser ses raies est un", ["Choisir...", "Spectroscope", "Microscope", "Télescope"], "opt2_t10"),
+        ]
 
-        co2_5, co2_6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co2_5: st.write("A l'inverse, un solide porte a haute temperature emet une lumiere au spectre")
-        with co2_6: t3 = st.selectbox("", ["Choisir...", "Continu", "Discontinu", "Monochrome"], key="opt2_t3", disabled=verrouille, label_visibility="collapsed")
-
-        co2_7, co2_8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co2_7: st.write("Le rayonnement solaire recu sur Terre comporte de fines raies sombres d'")
-        with co2_8: t4 = st.selectbox("", ["Choisir...", "Absorption", "Emission", "Diffraction"], key="opt2_t4", disabled=verrouille, label_visibility="collapsed")
-
-        co2_9, co2_10 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co2_9: st.write("La position precise de ces signatures se mesure sur l'ecran en")
-        with co2_10: t5 = st.selectbox("", ["Choisir...", "Nanometres", "Millimetres", "Degres"], key="opt2_t5", disabled=verrouille, label_visibility="collapsed")
-
-        dict_trous_opt2 = {
-            "t1_opt2": t1, "t2_opt2": t2, "t3_opt2": t3, "t4_opt2": t4, "t5_opt2": t5
-        }
+        dict_trous_opt2 = {}
+        for enonce, options, cle in items_trous_o2:
+            c1, c2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2:
+                val = st.selectbox("", options, key=cle, disabled=verrouille, label_visibility="collapsed")
+                dict_trous_opt2[f"{cle.replace('opt2_', '')}_opt2"] = val
 
     return dict_quiz_opt2, dict_trous_opt2
+
 
 def afficher_questions_optique1(verrouille=False):
     col_double_quiz_opt1, col_double_trous_opt1 = st.columns(2)
@@ -613,18 +609,17 @@ def afficher_questions_optique1(verrouille=False):
         st.markdown("##### Quiz sur la dispersion (10 questions) - Optique 1")
         if "ordre_questions_opt1" not in st.session_state:
             questions_opt1_base = [
-                ("q1", "L'angle de deviation minimale calcule pour le rayonnement rouge vaut :"),
-                ("q2", "L'angle de deviation maximale obtenu pour le rayonnement violet vaut :"),
-                ("q3", "Le phenomene de separation des couleurs par le prisme s'appelle la :"),
+                ("q1", "L'angle de déviation minimale calculé pour le rayonnement rouge vaut :"),
+                ("q2", "L'angle de déviation maximale obtenu pour le rayonnement violet vaut :"),
+                ("q3", "Le phénomène de séparation des couleurs par le prisme s'appelle la :"),
                 ("q4", "La loi de Snell-Descartes relie les indices des milieux aux sinus des :"),
-                ("q5", "Quelle couleur possede l'indice de refraction le plus eleve dans le verre :"),
-                ("q6", "La recomposition de la lumiere blanche peut etre observee grace au disque de :"),
-                ("q7", "La relation geometrique liee a l'angle au sommet A du prisme est :"),
-                ("q8", "Lorsque la vitesse du disque de Newton est maximale, l'oeil percoit la couleur :"),
-                ("q9", "Si l'indice de base du prisme augmente, la deviation globale de tous les rayons :"),
-                ("q10", "Un rayonnement compose d'une seule radiation chromatique est qualifie de :")
+                ("q5", "Quelle couleur possède l'indice de réfraction le plus élevé dans le verre :"),
+                ("q6", "La recomposition de la lumière blanche peut être observée grâce au disque de :"),
+                ("q7", "La relation géométrique liée à l'angle au sommet A du prisme est :"),
+                ("q8", "Lorsque la vitesse du disque de Newton est maximale, l'œil perçoit la couleur :"),
+                ("q9", "Si l'indice de base du prisme augmente, la déviation globale de tous les rayons :"),
+                ("q10", "Un rayonnement composé d'une seule radiation chromatique est qualifié de :")
             ]
-            import random
             random.shuffle(questions_opt1_base)
             st.session_state.ordre_questions_opt1 = questions_opt1_base
 
@@ -637,7 +632,7 @@ def afficher_questions_optique1(verrouille=False):
             cle_opts_unique = f"opts_opt1_shuffled_{q_id}"
             
             if cle_opts_unique not in st.session_state:
-                if q_id == "q3": copie_opts = ["Dispersion", "Reflexion", "Absorption"]
+                if q_id == "q3": copie_opts = ["Dispersion", "Réflexion", "Absorption"]
                 elif q_id == "q4": copie_opts = ["Angles", "Longueurs", "Indices"]
                 elif q_id == "q5": copie_opts = ["Violet", "Rouge", "Vert"]
                 elif q_id == "q6": copie_opts = ["Newton", "Descartes", "Snell"]
@@ -646,7 +641,6 @@ def afficher_questions_optique1(verrouille=False):
                 elif q_id == "q9": copie_opts = ["Augmente", "Diminue", "Reste fixe"]
                 elif q_id == "q10": copie_opts = ["Monochromatique", "Polychromatique", "Laser"]
                 else: copie_opts = list(set(opts_num[1:]))
-                import random
                 random.shuffle(copie_opts)
                 st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
                 
@@ -658,34 +652,34 @@ def afficher_questions_optique1(verrouille=False):
             with cq_sel:
                 dict_quiz_opt1[f"{q_id}_opt1"] = st.selectbox("", st.session_state[cle_opts_unique], index=idx, key=cle_qo1, disabled=verrouille, label_visibility="collapsed")
 
-    # --- COLONNE DE DROITE : LE TEXTE À TROUS ---
+    # --- COLONNE DE DROITE : LE TEXTE À TROUS COMPLET (10 ITEMS = 10 PTS) ---
     with col_double_trous_opt1:
-        st.markdown("##### Synthese de cours (Texte a trous) - Optique 1")
-        co1_1, co1_2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co1_1: st.write("Le prisme permet de separer les radiations de la lumiere blanche par")
-        with co1_2: t1 = st.selectbox("", ["Choisir...", "Dispersion", "Reflexion", "Diffraction"], key="opt1_t1", disabled=verrouille, label_visibility="collapsed")
+        st.markdown("##### Synthèse de cours (Texte à trous - 10 items) - Optique 1")
         
-        co1_3, co1_4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co1_3: st.write("Chaque couleur possede son propre indice de refraction. Le rouge est le moins")
-        with co1_4: t2 = st.selectbox("", ["Choisir...", "Devie", "Ralenti", "Absorbe"], key="opt1_t2", disabled=verrouille, label_visibility="collapsed")
+        items_trous_o1 = [
+            ("1. Le prisme permet de séparer les radiations de la lumière blanche par", ["Choisir...", "Dispersion", "Réflexion", "Diffraction"], "opt1_t1"),
+            ("2. Chaque couleur possède son propre indice de réfraction. Le rouge est le moins", ["Choisir...", "Dévié", "Ralenti", "Absorbé"], "opt1_t2"),
+            ("3. À l'inverse, la radiation visible la plus déviée par le prisme est le", ["Choisir...", "Violet", "Jaune", "Vert"], "opt1_t3"),
+            ("4. Une lumière composée d'une seule radiation colorée est qualifiée de", ["Choisir...", "Monochromatique", "Polychromatique", "Blanche"], "opt1_t4"),
+            ("5. La rotation rapide du disque coloré montre la recomposition", ["Choisir...", "Blanche", "Monochrome", "Spectrale"], "opt1_t5"),
+            ("6. Les trois couleurs primaires de la synthèse additive sont Rouge, Vert et", ["Choisir...", "Bleu", "Jaune", "Cyan"], "opt1_t6"),
+            ("7. En synthèse additive, l'addition du Rouge et du Vert produit du", ["Choisir...", "Jaune", "Magenta", "Cyan"], "opt1_t7"),
+            ("8. En synthèse soustractive, les trois couleurs primaires sont Cyan, Magenta et", ["Choisir...", "Jaune", "Bleu", "Rouge"], "opt1_t8"),
+            ("9. La superposition des trois filtres Cyan, Magenta et Jaune donne du", ["Choisir...", "Noir", "Blanc", "Gris"], "opt1_t9"),
+            ("10. L'unité utilisée pour exprimer la longueur d'onde d'une couleur est le", ["Choisir...", "Nanomètre", "Millimètre", "Degré"], "opt1_t10"),
+        ]
 
-        co1_5, co1_6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co1_5: st.write("La deviation minimale calculee pour le rayonnement rouge correspond a")
-        with co1_6: t3 = st.selectbox("", opts_num, key="opt1_t3", disabled=verrouille, label_visibility="collapsed")
-
-        co1_7, co1_8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co1_7: st.write("Tandis que la deviation maximale du rayonnement violet atteint la valeur de")
-        with co1_8: t4 = st.selectbox("", opts_num, key="opt1_t4", disabled=verrouille, label_visibility="collapsed")
-
-        co1_9, co1_10 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co1_9: st.write("A l'inverse, la rotation rapide du disque colore montre la recomposition")
-        with co1_10: t5 = st.selectbox("", ["Choisir...", "Blanche", "Monochrome", "Spectrale"], key="opt1_t5", disabled=verrouille, label_visibility="collapsed")
-
-        dict_trous_opt1 = {
-            "t1_opt1": t1, "t2_opt1": t2, "t3_opt1": t3, "t4_opt1": t4, "t5_opt1": t5
-        }
+        dict_trous_opt1 = {}
+        for enonce, options, cle in items_trous_o1:
+            c1, c2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2:
+                val = st.selectbox("", options, key=cle, disabled=verrouille, label_visibility="collapsed")
+                dict_trous_opt1[f"{cle.replace('opt1_', '')}_opt1"] = val
 
     return dict_quiz_opt1, dict_trous_opt1
+
+
 
 def afficher_atelier_hist_lumiere(verrouille=False):
     """Affiche le Quiz (10 questions) et le Texte à trous (10 cases) de l'Atelier 1 (Histoire de la lumière)."""
@@ -1082,12 +1076,7 @@ def dessiner_zoom_spectre_atelier2():
     return fig
 
 
-
-
-
-
-
-                        
+   
 def reset_sous():
     """Remet à zéro la synthèse soustractive (Retour au Blanc)."""
     st.session_state.var_cyan = 0
@@ -1839,7 +1828,7 @@ with tab2:
     # =========================================================================
     # VALIDATION DÉFINITIVE ET NOTATION DE L'ATELIER OPTIQUE 1 (Déjà présent au bas)
     # =========================================================================
-    st.write("---")
+     st.write("---")
     st.subheader("Validation et Generation du Bilan Officiel - Optique 1")
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
@@ -1858,23 +1847,21 @@ with tab2:
         elif not case_certif_opt1: 
             st.error("Action refusee : Cochez la case de certification.")
         else:
-            # ÉVALUATION DIRECTE LIÉE AUX VALEURS COURANTES DU LABORATOIRE
-            # Pas besoin de scénario fixe, on note les questions textuelles stables
-            
             # Partie 1 : Quiz (10 Pts)
             attendus_qo1_v = {
                 "q3": "Dispersion", "q4": "Angles", "q5": "Violet", 
                 "q6": "Newton", "q7": "A = r1 + r2", "q8": "Blanche", 
                 "q9": "Augmente", "q10": "Monochromatique"
             }
-            # Calcul de la note du Quiz (ramene sur 10 points pour les questions de cours stables)
             score_quiz_opt1 = sum([1.25 for qk, qv in attendus_qo1_v.items() if st.session_state.get(f"col_g_quiz_opt1_{qk}_opt1") == qv])
             score_quiz_opt1 = min(10.0, round(score_quiz_opt1, 1))
 
-            # Partie 2 : Texte a Trous (10 Pts)
-            attendus_to1_v = {"t1": "Dispersion", "t2": "Devie", "t5": "Blanche"}
-            score_trous_opt1 = sum([3.33 for tk, tv in attendus_to1_v.items() if st.session_state.get(f"opt1_{tk}") == tv])
-            score_trous_opt1 = min(10.0, round(score_trous_opt1, 1))
+            # Partie 2 : Texte a Trous (10 Pts : 10 items x 1 pt)
+            attendus_to1_v = {
+                "t1": "Dispersion", "t2": "Devie", "t3": "Violet", "t4": "Monochromatique", "t5": "Blanche",
+                "t6": "Bleu", "t7": "Jaune", "t8": "Jaune", "t9": "Noir", "t10": "Nanometre"
+            }
+            score_trous_opt1 = round(sum([1.0 for tk, tv in attendus_to1_v.items() if st.session_state.get(f"opt1_{tk}") == tv]), 1)
 
             st.session_state.score_opt1_p1 = score_quiz_opt1
             st.session_state.score_opt1_p2 = score_trous_opt1
@@ -1888,18 +1875,43 @@ with tab2:
         scr2 = st.session_state.get("score_opt1_p2", 0)
         tot_s = st.session_state.get("score_final_opt1", 0)
 
-        # Heure locale francaise native stable (UTC+2)
         from datetime import timedelta
-        timestamp_opt1 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+        timestamp_opt1 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d à %H:%M:%S")
 
-        st.success(f"ATELIER OPTIQUE 1 SCELLE ET VALIDE | Note : {tot_s} / 20")
+        st.success(f"ATELIER OPTIQUE 1 SCELLÉ ET VALIDÉ | Note : {tot_s} / 20")
 
         attendus_qo1_v = {
             "q3": "Dispersion", "q4": "Angles", "q5": "Violet", 
             "q6": "Newton", "q7": "A = r1 + r2", "q8": "Blanche", 
             "q9": "Augmente", "q10": "Monochromatique"
         }
-        attendus_to1_v = {"t1": "Dispersion", "t2": "Devie", "t5": "Blanche"}
+        enonces_qo1_v = {
+            "q3": "Le phénomène de séparation des couleurs par le prisme s'appelle la :",
+            "q4": "La loi de Snell-Descartes relie les indices des milieux aux sinus des :",
+            "q5": "Quelle couleur possède l'indice de réfraction le plus élevé dans le verre :",
+            "q6": "La recomposition de la lumière blanche peut être observée grâce au disque de :",
+            "q7": "La relation géométrique liée à l'angle au sommet A du prisme est :",
+            "q8": "Lorsque la vitesse du disque de Newton est maximale, l'œil perçoit la couleur :",
+            "q9": "Si l'indice de base du prisme augmente, la déviation globale de tous les rayons :",
+            "q10": "Un rayonnement composé d'une seule radiation chromatique est qualifié de :"
+        }
+
+        attendus_to1_v = {
+            "t1": "Dispersion", "t2": "Dévié", "t3": "Violet", "t4": "Monochromatique", "t5": "Blanche",
+            "t6": "Bleu", "t7": "Jaune", "t8": "Jaune", "t9": "Noir", "t10": "Nanomètre"
+        }
+        enonces_to1_v = {
+            "t1": "1. Le prisme permet de séparer les radiations de la lumière blanche par .........",
+            "t2": "2. Chaque couleur possède son propre indice de réfraction. Le rouge est le moins .........",
+            "t3": "3. À l'inverse, la radiation visible la plus déviée par le prisme est le .........",
+            "t4": "4. Une lumière composée d'une seule radiation colorée est qualifiée de .........",
+            "t5": "5. La rotation rapide du disque coloré montre la recomposition .........",
+            "t6": "6. Les trois couleurs primaires de la synthèse additive sont Rouge, Vert et .........",
+            "t7": "7. En synthèse additive, l'addition du Rouge et du Vert produit du .........",
+            "t8": "8. En synthèse soustractive, les trois couleurs primaires sont Cyan, Magenta et .........",
+            "t9": "9. La superposition des trois filtres Cyan, Magenta et Jaune donne du .........",
+            "t10": "10. L'unité utilisée pour exprimer la longueur d'onde d'une couleur est le ........."
+        }
 
         html_export_opt1 = f"""<!DOCTYPE html>
         <html>
@@ -1929,28 +1941,30 @@ with tab2:
             <div class="sub-title">Recapitulatif des scores de competences - Optique 1</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
                 &bull; Partie 1 : Questionnaire Numerique (Quiz items de cours) : <strong>{scr1} / 10</strong><br>
-                &bull; Partie 2 : Synthese de Cours (Texte a trous items de cours) : <strong>{scr2} / 10</strong>
+                &bull; Partie 2 : Synthese de Cours (Texte a trous 10 items) : <strong>{scr2} / 10</strong>
             </p>
 
             <div class="sub-title">PARTIE 1 : QUIZ DE CONNAISSANCES OPTIQUES (10 PTS)</div>
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 10%;">N°</th>
-                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 25%; text-align: center;">Attendu</th>
-                        <th style="width: 25%; text-align: center;">Verdict</th>
+                        <th style="width: 5%;">N°</th>
+                        <th style="width: 45%;">Question posee</th>
+                        <th style="width: 20%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 15%; text-align: center;">Attendu</th>
+                        <th style="width: 15%; text-align: center;">Verdict</th>
                     </tr>
                 </thead>
                 <tbody>
         """
 
-        for idx_t, (q_id, q_txt) in enumerate(attendus_qo1_v.items(), 1):
+        for idx_t, (q_id, attendu) in enumerate(attendus_qo1_v.items(), 1):
             saisie = st.session_state.get(f"col_g_quiz_opt1_{q_id}_opt1", "Choisir...")
-            attendu = attendus_qo1_v[q_id]
+            enonce_q = enonces_qo1_v.get(q_id, "")
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_opt1 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            html_export_opt1 += f"<tr><td>{idx_t}</td><td>{enonce_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
         html_export_opt1 += """
                 </tbody>
             </table>
@@ -1959,20 +1973,45 @@ with tab2:
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 10%;">N°</th>
-                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 25%; text-align: center;">Attendu</th>
-                        <th style="width: 25%; text-align: center;">Verdict</th>
+                        <th style="width: 55%; text-align: left;">Phrase a trous</th>
+                        <th style="width: 15%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 15%; text-align: center;">Attendu</th>
+                        <th style="width: 15%; text-align: center;">Verdict</th>
                     </tr>
                 </thead>
                 <tbody>
         """
 
-        for idx_t, (t_key, t_val) in enumerate(attendus_to1_v.items(), 1):
+        for t_key, t_val in attendus_to1_v.items():
             saisie = st.session_state.get(f"opt1_{t_key}", "Choisir...")
+            phrase_t = enonces_to1_v.get(t_key, t_key)
             v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_opt1 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            html_export_opt1 += f"<tr><td>{idx_t}</td><td>{enonce_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+        html_export_opt1 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 2 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 55%; text-align: left;">Phrase a trous</th>
+                        <th style="width: 15%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 15%; text-align: center;">Attendu</th>
+                        <th style="width: 15%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
+
+        for t_key, t_val in attendus_to1_v.items():
+            saisie = st.session_state.get(f"opt1_{t_key}", "Choisir...")
+            phrase_t = enonces_to1_v.get(t_key, t_key)
+            v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt1 += f"<tr><td style='text-align: left;'>{phrase_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
         html_export_opt1 += """
                 </tbody>
@@ -1993,7 +2032,6 @@ with tab2:
             mime="text/html",
             use_container_width=True
         )
-
 
 
 
@@ -2182,20 +2220,34 @@ with tab3:
         scr2 = st.session_state.get("score_opt2_p2", 0)
         tot_s = st.session_state.get("score_final_opt2", 0)
 
-        # Horodatage local francais natif synchrone
         from datetime import timedelta
-        timestamp_opt2 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+        timestamp_opt2 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d à %H:%M:%S")
 
-        st.success(f"ATELIER OPTIQUE 2 SCELLE ET VALIDE | Note : {tot_s} / 20")
+        st.success(f"ATELIER OPTIQUE 2 SCELLÉ ET VALIDÉ | Note : {tot_s} / 20")
 
         attendus_qo2_v = {
-            "q1": "Spectre d'emission de raies", "q2": "Corps dense incandescent (Lampe a filament)", 
-            "q3": "Jaune orange intense", "q4": "Vert pre / turquoise", 
-            "q5": "Chaque element a des raies uniques", "q6": "Spectre d'absorption de raies", 
-            "q7": "Spectroscope / Spectrometre", "q8": "Nanometre (nm)", 
+            "q1": "Spectre d'émission de raies", "q2": "Corps dense incandescent (Lampe à filament)", 
+            "q3": "Jaune orangé intense", "q4": "Vert pré / turquoise", 
+            "q5": "Chaque élément a des raies uniques", "q6": "Spectre d'absorption de raies", 
+            "q7": "Spectroscope / Spectromètre", "q8": "Nanomètre (nm)", 
             "q9": "Jaune", "q10": "D'absorption de raies (Fraunhofer)"
         }
-        attendus_to2_v = {"t1": "Emission", "t2": "Jaune", "t3": "Continu", "t4": "Absorption", "t5": "Nanometres"}
+        attendus_to2_v = {
+            "t1": "Émission", "t2": "Jaune", "t3": "Continu", "t4": "Absorption", "t5": "Nanomètres",
+            "t6": "Verte", "t7": "Identité", "t8": "Raies", "t9": "Fraunhofer", "t10": "Spectroscope"
+        }
+        enonces_to2_v = {
+            "t1": "1. L'excitation thermique de sels métalliques par une flamme produit un spectre d'.........",
+            "t2": "2. La combustion du Sodium se caractérise par une couleur intense dans le .........",
+            "t3": "3. À l'inverse, un solide porté à haute température émet une lumière au spectre .........",
+            "t4": "4. Le rayonnement solaire reçu sur Terre comporte de fines raies sombres d'.........",
+            "t5": "5. La position précise de ces signatures se mesure sur l'écran en .........",
+            "t6": "6. La combustion du chlorure de Cuivre donne à la flamme une teinte .........",
+            "t7": "7. Chaque atome possède des raies spectrales qui constituent sa carte d'.........",
+            "t8": "8. Une lampe à vapeur de Mercure ou de Sodium émet un spectre de .........",
+            "t9": "9. Les raies noires du spectre solaire portent le nom de raies de .........",
+            "t10": "10. L'appareil qui décompose la lumière pour analyser ses raies est un ........."
+        }
 
         html_export_opt2 = f"""<!DOCTYPE html>
         <html>
@@ -2217,29 +2269,83 @@ with tab3:
         <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
-                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_opt2}</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_opt2}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
 
-            <div class="sub-title">Recapitulatif des scores de competences - Optique 2</div>
+            <div class="sub-title">Récapitulatif des scores de compétences - Optique 2</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
                 &bull; Partie 1 : Questionnaire de Connaissances (Quiz 10 items) : <strong>{scr1} / 10</strong><br>
-                &bull; Partie 2 : Synthese de Cours (Texte a trous 5 items) : <strong>{scr2} / 10</strong>
+                &bull; Partie 2 : Synthèse de Cours (Texte à trous 10 items) : <strong>{scr2} / 10</strong>
             </p>
 
             <div class="sub-title">PARTIE 1 : QUIZ SUR LES DIFFÉRENTES LUMIÈRES (10 PTS)</div>
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 10%;">N°</th>
-                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 25%; text-align: center;">Attendu</th>
-                        <th style="width: 25%; text-align: center;">Verdict</th>
+                        <th style="width: 5%;">N°</th>
+                        <th style="width: 45%;">Question posée</th>
+                        <th style="width: 20%; text-align: center;">Saisie Élève</th>
+                        <th style="width: 15%; text-align: center;">Attendu</th>
+                        <th style="width: 15%; text-align: center;">Verdict</th>
                     </tr>
                 </thead>
                 <tbody>
         """
+
+        ordre_reel_opt2 = st.session_state.get("ordre_questions_opt2", [])
+        for idx_q, (q_id, q_txt) in enumerate(ordre_reel_opt2, 1):
+            saisie = st.session_state.get(f"col_g_quiz_opt2_{q_id}", "Choisir...")
+            attendu = attendus_qo2_v[q_id]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt2 += f"<tr><td>{idx_q}</td><td>{q_txt}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+        html_export_opt2 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 2 : SYNTHÈSE DE COURS (TEXTE À TROUS - 10 PTS)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 55%; text-align: left;">Phrase à trous</th>
+                        <th style="width: 15%; text-align: center;">Saisie Élève</th>
+                        <th style="width: 15%; text-align: center;">Attendu</th>
+                        <th style="width: 15%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
+
+        for t_key, attendu in attendus_to2_v.items():
+            saisie = st.session_state.get(f"opt2_{t_key}", "Choisir...")
+            phrase_t = enonces_to2_v.get(t_key, t_key)
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt2 += f"<tr><td style='text-align: left;'>{phrase_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+        html_export_opt2 += """
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel de spectroscopie généré automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
+        
+        nom_f = f"Rapport_Evaluation_Optique2_{n_eleve}_{p_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+            nom_f = nom_f.replace(c, "_")
+
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER 2 SUR VOTRE ORDINATEUR",
+            data=html_export_opt2,
+            file_name=f"{nom_f}.html",
+            mime="text/html",
+            use_container_width=True
+        )
+
 
         ordre_reel_opt2 = st.session_state.get("ordre_questions_opt2", [])
         for idx_q, (q_id, q_txt) in enumerate(ordre_reel_opt2, 1):
