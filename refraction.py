@@ -2121,11 +2121,11 @@ with tab2:
     # =========================================================================
     st.markdown("""
     <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
-        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel des Formules Fondamentales de la Refraction :</p>
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Rappel des Formules Fondamentales de la Réfraction :</p>
         <ul>
-            <li><strong>Deuxieme loi de Snell-Descartes :</strong> $n_1 \\cdot \\sin(i_1) = n_2 \\cdot \\sin(i_2)$</li>
-            <li><strong>Loi du double dioptre (Lame a faces paralleles) :</strong> Le rayon emergent sort de la lame avec un angle de deviation nul ($i_3 = i_1$) mais subit un <strong>decalage lateral $dx$</strong>.</li>
-            <li><strong>Calcul de la pente :</strong> En tracant $\\sin(i_1)$ en fonction de $\\sin(i_2)$, la droite lineaire possede un coefficient directeur egal au rapport des indices $\\frac{n_2}{n_1}$.</li>
+            <li><strong>Deuxième loi de Snell-Descartes :</strong> <i>n</i><sub>1</sub> &middot; sin(<i>i</i><sub>1</sub>) = <i>n</i><sub>2</sub> &middot; sin(<i>i</i><sub>2</sub>)</li>
+            <li><strong>Loi du double dioptre (Lame à faces parallèles) :</strong> Le rayon émergent sort de la lame avec un angle de déviation nul (<i>i</i><sub>3</sub> = <i>i</i><sub>1</sub>) mais subit un <strong>décalage latéral <i>dx</i></strong>.</li>
+            <li><strong>Calcul de la pente :</strong> En traçant sin(<i>i</i><sub>1</sub>) en fonction de sin(<i>i</i><sub>2</sub>), la droite linéaire possède un coefficient directeur égal au rapport des indices <i>n</i><sub>2</sub> / <i>n</i><sub>1</sub>.</li>
         </ul>
     </div>
     """, unsafe_allow_html=True)
