@@ -1498,25 +1498,37 @@ with tab2:
         with st.container(border=True):
             st.markdown("**Décomposition de la lumière du soleil**")
             
+            # 0. INITIALISATION SÉCURISÉE DES VARIABLES DE SESSION
+            if "var_angle_incidence" not in st.session_state:
+                st.session_state.var_angle_incidence = 45.0
+            if "var_indice_n" not in st.session_state:
+                st.session_state.var_indice_n = 1.50
+            verrou_tab1 = st.session_state.get("mode_examen_tab1", False)
+
             # 1. ON ENREGISTRE D'ABORD LES CURSEURS
             st.session_state.var_angle_incidence = st.slider(
                 "Angle d'incidence i (°):",
-                min_value=10.0, max_value=80.0,
-                value=st.session_state.var_angle_incidence,
-                step=0.5, key="slider_angle",
-                disabled=st.session_state.get("mode_examen_tab1", False))
-            
+                min_value=10.0,
+                max_value=80.0,
+                value=float(st.session_state.get("var_angle_incidence", 45.0)),
+                step=0.5,
+                key="slider_angle",
+                disabled=verrou_tab1
+            )
 
             st.session_state.var_indice_n = st.slider(
                 "Indice de base n :",
-                min_value=1.30, max_value=1.80,
-                value=st.session_state.var_indice_n,
-                step=0.005, key="slider_indice",
-                disabled=st.session_state.mode_examen_tab1
+                min_value=1.30,
+                max_value=1.80,
+                value=float(st.session_state.get("var_indice_n", 1.50)),
+                step=0.005,
+                key="slider_indice",
+                disabled=verrou_tab1
             )
             
             # 2. ON CORRIGE : ON FORCE LE CALCUL TECHNIQUE IMMÉDIATEMENT APRÈS LA LECTURE DES SLIDERS
             fig_decomposition = mettre_a_jour_decomposition()
+
 
             # 3. ON AFFICHE LE TEXTE CALCULÉ ET RAFRAÎCHI
             if st.session_state.var_texte_resultats_decomposition:
