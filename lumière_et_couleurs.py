@@ -1393,9 +1393,8 @@ st.set_page_config(
 
 
 
-
-
-# Couleurs et codes hexadécimaux
+if "var_angle_incidence" not in st.session_state:
+    st.session_state.var_angle_incidence = 30.0
 if "var_rouge" not in st.session_state: st.session_state.var_rouge = 0
 if "var_vert" not in st.session_state: st.session_state.var_vert = 0
 if "var_bleu" not in st.session_state: st.session_state.var_bleu = 0
