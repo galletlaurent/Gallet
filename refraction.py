@@ -656,7 +656,7 @@ def dessiner_fibre_optique_avancee_matplotlib():
         f"• Nombre de rebonds tracés = {nb_rebonds_max}"
     )
 
-    ax.text(25, 20, "ATELIER 3 - OPTIQUE GÉOMÉTRIQUE : LA FIBRE OPTIQUE PRO", color="#38bdf8", fontsize=9, fontweight="bold", ha="left")
+    ax.text(25, 20, "OPTIQUE GÉOMÉTRIQUE : LA FIBRE OPTIQUE PRO", color="#38bdf8", fontsize=9, fontweight="bold", ha="left")
     ax.text(25, 35, msg, color=color, fontsize=7, fontweight="bold", ha="left")
     
     ax.text(w - 60, y_gaine_haut - 12, "Gaine (n2)", color="#64748b", fontsize=7, fontweight="bold")
@@ -876,7 +876,7 @@ def dessiner_double_refraction_lame_matplotlib():
         arc_r1 = patches.Arc((x0, y_dioptre1), 40, 40, angle=0, theta1=90 - theta2_deg, theta2=90, edgecolor="#cbd5e1", lw=1.2, zorder=5)
         ax.add_patch(arc_r1)
 
-    ax.text(25, 20, "ATELIER 2 - DOUBLE DIOPTRE ET TRAJECTOIRES", color="#38bdf8", fontsize=9, fontweight="bold", ha="left")
+    ax.text(25, 20, "DOUBLE DIOPTRE ET TRAJECTOIRES", color="#38bdf8", fontsize=9, fontweight="bold", ha="left")
     ax.text(25, 35, msg, color=color, fontsize=7, fontweight="bold", ha="left")
     ax.text(x_inc - 8, y_inc + 12, "Rayon incident (i1)", color="#cbd5e1", fontsize=7, style="italic", ha="right")
 
@@ -1046,7 +1046,7 @@ def dessiner_graphique_sinus_matplotlib():
     # Titres et axes
     ax.set_xlabel("sin(i)", color="#cbd5e1", fontsize=9, fontweight="bold", labelpad=5)
     ax.set_ylabel("sin(r)", color="#cbd5e1", fontsize=9, fontweight="bold", labelpad=5)
-    ax.set_title("Atelier 4 : Releves sin(r) = f(sin(i))", color="#38bdf8", fontsize=8, style="italic")
+    ax.set_title(" Releves sin(r) = f(sin(i))", color="#38bdf8", fontsize=8, style="italic")
 
     # Superposition permanente des points memorises (Croix vertes d'origine)
     m_sin_i = st.session_state.get("mesures_sin_i", [])
@@ -1107,6 +1107,163 @@ def afficher_questions_refraction_hist(verrouille=False):
             with ct2: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
 
     return st.session_state.ordre_hist_ref, trous_hist_ref
+
+def afficher_questions_optique2(verrouille=False):
+    col_g, col_d = st.columns(2)
+
+    questions_opt2 = [
+        ("qs1", "Quelle est l'expression mathématique exacte de la deuxième loi de Snell-Descartes ?", ["n1 · sin(i1) = n2 · sin(i2)", "n1 + i1 = n2 + i2", "sin(i1) / n1 = sin(i2) / n2", "n1 · cos(i1) = n2 · cos(i2)"], "n1 · sin(i1) = n2 · sin(i2)"),
+        ("qs2", "Dans quel plan se situent le rayon incident, la normale au dioptre et le rayon réfracté ?", ["Dans un même plan (plan d'incidence)", "Dans deux plans perpendiculaires", "Dans un plan parallèle à la surface", "Dans trois plans distincts"], "Dans un même plan (plan d'incidence)"),
+        ("qs3", "Lorsque la lumière passe de l'air (n1 = 1,00) vers l'eau (n2 = 1,33), comment se comporte le rayon réfracté ?", ["Il se rapproche de la normale (i2 < i1)", "Il s'éloigne de la normale (i2 > i1)", "Il repart en arrière à 180°", "Il longe la surface à 90°"], "Il se rapproche de la normale (i2 < i1)"),
+        ("qs4", "Si un rayon lumineux arrive perpendiculairement au dioptre (incidence normale i1 = 0°), que vaut l'angle de réfraction i2 ?", ["0° (le rayon n'est pas dévié)", "90°", "45°", "30°"], "0° (le rayon n'est pas dévié)"),
+        ("qs5", "Que représente le coefficient directeur (la pente) de la droite obtenue en traçant sin(i1) en fonction de sin(i2) ?", ["Le rapport des indices n2 / n1", "La somme des indices n1 + n2", "La vitesse de la lumière c", "La longueur d'onde en nanomètres"], "Le rapport des indices n2 / n1"),
+        ("qs6", "Que vaut l'indice de réfraction n de l'air ou du vide par convention ?", ["1,00", "1,33", "1,52", "2,42"], "1,00"),
+        ("qs7", "Lorsque la lumière passe d'un milieu plus réfringent (verre n1 = 1,52) vers un milieu moins réfringent (air n2 = 1,00), le rayon :", ["S'éloigne de la normale (i2 > i1)", "Se rapproche de la normale (i2 < i1)", "Ne subit aucune déviation", "Devient ultraviolet"], "S'éloigne de la normale (i2 > i1)"),
+        ("qs8", "Comment s'appelle la droite perpendiculaire à la surface de séparation au point d'incidence ?", ["La normale", "La tangente", "L'axe focal", "La diagonale"], "La normale"),
+        ("qs9", "Quel nom donne-t-on à la surface séparant deux milieux transparents d'indices différents ?", ["Un dioptre", "Un prisme", "Un foyer", "Un réseau"], "Un dioptre"),
+        ("qs10", "Si n1 = 1,00 et i1 = 30° dans l'air, et que i2 = 22° dans un liquide, l'indice n2 du liquide est environ égal à :", ["1,33 (Eau)", "1,00 (Air)", "2,42 (Diamant)", "0,75"], "1,33 (Eau)"),
+    ]
+
+    if "ordre_quiz_opt2" not in st.session_state:
+        liste_q2 = list(questions_opt2)
+        random.shuffle(liste_q2)
+        st.session_state.ordre_quiz_opt2 = liste_q2
+
+    trous_opt2 = [
+        ("1. La surface qui sépare deux milieux transparents s'appelle un .........", ["Choisir...", "dioptre", "miroir", "foyer", "écran"], "dioptre", "opt2_t1"),
+        ("2. Les angles i1 et i2 sont toujours mesurés par rapport à la .........", ["Choisir...", "normale", "surface", "horizontale", "source"], "normale", "opt2_t2"),
+        ("3. La deuxième loi s'écrit n1 × sin(i1) = n2 × .........(i2).", ["Choisir...", "sin", "cos", "tan", "log"], "sin", "opt2_t3"),
+        ("4. En incidence normale (i1 = 0°), le rayon n'est pas .........", ["Choisir...", "dévié", "visible", "transmis", "absorbé"], "dévié", "opt2_t4"),
+        ("5. En passant de l'air dans l'eau, le rayon se ......... de la normale.", ["Choisir...", "rapproche", "éloigne", "détache", "retourne"], "rapproche", "opt2_t5"),
+        ("6. En passant du verre dans l'air, le rayon s'......... de la normale.", ["Choisir...", "éloigne", "rapproche", "arrête", "inverse"], "éloigne", "opt2_t6"),
+        ("7. L'indice de réfraction d'un milieu est toujours supérieur ou égal à .........", ["Choisir...", "1", "0", "2", "10"], "1", "opt2_t7"),
+        ("8. Le graphique sin(i1) = f(sin(i2)) est une ......... passant par l'origine.", ["Choisir...", "droite", "parabole", "hyperbole", "sinusoïde"], "droite", "opt2_t8"),
+        ("9. Le coefficient directeur de cette droite est égal à n2 / .........", ["Choisir...", "n1", "i1", "i2", "90"], "n1", "opt2_t9"),
+        ("10. Le rayon incident, la normale et le rayon réfracté sont dans le même .........", ["Choisir...", "plan", "cercle", "cube", "angle"], "plan", "opt2_t10"),
+    ]
+
+    with col_g:
+        st.markdown("##### Quiz Lois de Snell-Descartes - Optique 2 (10 pts)")
+        for idx, (qid, qtxt, opts, _) in enumerate(st.session_state.ordre_quiz_opt2, 1):
+            cq1, cq2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with cq1: st.write(f"{idx}. {qtxt}")
+            with cq2: st.selectbox("", ["Choisir..."] + opts, key=f"col_g_quiz_opt2_{qid}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_d:
+        st.markdown("##### Synthese de cours (Texte a trous) - Optique 2 (10 pts)")
+        for enonce, choix, _, cle in trous_opt2:
+            ct1, ct2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct1: st.write(enonce)
+            with ct2: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+
+    return st.session_state.ordre_quiz_opt2, trous_opt2
+
+
+
+def afficher_questions_optique3(verrouille=False):
+    col_g, col_d = st.columns(2)
+
+    questions_opt3 = [
+        ("qd1", "Combien de dioptres (surfaces de séparation) un rayon lumineux traverse-t-il au total dans une lame à faces parallèles ?", ["2 dioptres (entrée et sortie)", "1 seul dioptre", "4 dioptres", "Aucun dioptre"], "2 dioptres (entrée et sortie)"),
+        ("qd2", "Lorsque le milieu d'entrée et le milieu de sortie sont identiques (ex : Air → Verre → Air), comment ressort le rayon émergent ?", ["Parallèle au rayon incident (s = i1)", "Perpendiculaire au rayon incident", "Réfléchi vers le haut à 180°", "Convergent vers un point unique"], "Parallèle au rayon incident (s = i1)"),
+        ("qd3", "Comment appelle-t-on la distance perpendiculaire séparant le prolongement du rayon incident et le rayon émergent ?", ["Le décalage latéral (dx)", "La distance focale", "L'ouverture numérique", "La longueur d'onde"], "Le décalage latéral (dx)"),
+        ("qd4", "Que se passe-t-il sur le décalage latéral dx si l'on augmente l'épaisseur de la lame en verre ?", ["Le décalage latéral dx augmente proportionnellement", "Le décalage latéral dx devient nul", "Le décalage latéral dx diminue", "Le rayon est bloqué dans le verre"], "Le décalage latéral dx augmente proportionnellement"),
+        ("qd5", "Si l'angle d'incidence d'entrée i1 vaut 0° (incidence normale perpendiculaire à la lame), que vaut le décalage latéral dx ?", ["0 mm (aucune déviation ni décalage)", "45 mm", "100 mm", "Infini"], "0 mm (aucune déviation ni décalage)"),
+        ("qd6", "Lors du passage de l'air (n1 = 1,00) vers le verre (n2 = 1,52), comment évolue l'angle de réfraction r1 par rapport à i1 ?", ["r1 est inférieur à i1 (le rayon se rapproche de la normale)", "r1 est supérieur à i1", "r1 est toujours égal à 90°", "r1 est négatif"], "r1 est inférieur à i1 (le rayon se rapproche de la normale)"),
+        ("qd7", "Quelle relation lie l'angle de réfraction au premier dioptre (r1) et l'angle d'incidence sur le second dioptre (i2) dans une lame à faces parallèles ?", ["Ils sont égaux (r1 = i2) car les deux normales sont parallèles", "Leur somme vaut 180°", "i2 vaut le double de r1", "i2 est toujours nul"], "Ils sont égaux (r1 = i2) car les deux normales sont parallèles"),
+        ("qd8", "Si le milieu de sortie n3 est différent du milieu d'entrée n1 (ex : Air → Verre → Eau), l'angle de sortie s est-il égal à i1 ?", ["Non, car n3 est différent de n1 (s ≠ i1)", "Oui, toujours", "Oui, si le verre est épais", "Non, le rayon s'arrête dans l'eau"], "Non, car n3 est différent de n1 (s ≠ i1)"),
+        ("qd9", "Dans la simulation de la double réfraction, que se produit-il au second dioptre si n2 > n3 et que l'angle r1 dépasse l'angle critique ?", ["Une réflexion totale interne sur la face inférieure de la lame", "Une accélération du laser", "Une extinction complète du faisceau", "Une dispersion en arc-en-ciel uniquement"], "Une réflexion totale interne sur la face inférieure de la lame"),
+        ("qd10", "Quelle loi physique permet de calculer successivement r1 puis l'angle d'émergence s ?", ["La deuxième loi de Snell-Descartes appliquée deux fois", "La loi d'Ohm", "Le principe d'Archimède", "La loi de Boyle-Mariotte"], "La deuxième loi de Snell-Descartes appliquée deux fois"),
+    ]
+
+    if "ordre_quiz_opt3" not in st.session_state:
+        liste_q3 = list(questions_opt3)
+        random.shuffle(liste_q3)
+        st.session_state.ordre_quiz_opt3 = liste_q3
+
+    trous_opt3 = [
+        ("1. Une lame à faces parallèles comporte ......... dioptres successifs.", ["Choisir...", "deux", "trois", "quatre", "un"], "deux", "opt3_t1"),
+        ("2. À l'entrée dans le verre (n2 > n1), le rayon se ......... de la normale.", ["Choisir...", "rapproche", "éloigne", "détache", "retourne"], "rapproche", "opt3_t2"),
+        ("3. Les deux normales aux faces parallèles sont ......... entre elles.", ["Choisir...", "parallèles", "perpendiculaires", "sécantes", "confondues"], "parallèles", "opt3_t3"),
+        ("4. Si n3 = n1, l'angle d'émergence s est ......... à l'angle d'incidence i1.", ["Choisir...", "égal", "supérieur", "inférieur", "opposé"], "égal", "opt3_t4"),
+        ("5. Le rayon émergent sort donc ......... au rayon incident d'entrée.", ["Choisir...", "parallèle", "perpendiculaire", "inversé", "vertical"], "parallèle", "opt3_t5"),
+        ("6. La translation subie par le faisceau s'appelle le ......... latéral dx.", ["Choisir...", "décalage", "foyer", "prisme", "sinus"], "décalage", "opt3_t6"),
+        ("7. Plus la lame est épaisse, plus le décalage dx est .........", ["Choisir...", "grand", "petit", "nul", "négatif"], "grand", "opt3_t7"),
+        ("8. En incidence normale (i1 = 0°), le décalage latéral vaut ......... mm.", ["Choisir...", "0", "45", "90", "100"], "0", "opt3_t8"),
+        ("9. Si n3 ≠ n1, le rayon émergent n'est plus ......... au rayon incident.", ["Choisir...", "parallèle", "visible", "réfracté", "monochromatique"], "parallèle", "opt3_t9"),
+        ("10. Chaque traversée obéit à la loi de .........-Descartes.", ["Choisir...", "Snell", "Newton", "Joule", "Pascal"], "Snell", "opt3_t10"),
+    ]
+
+    with col_g:
+        st.markdown("##### Quiz Double Réfraction - Optique 3 (10 pts)")
+        for idx, (qid, qtxt, opts, _) in enumerate(st.session_state.ordre_quiz_opt3, 1):
+            cq1, cq2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with cq1: st.write(f"{idx}. {qtxt}")
+            with cq2: st.selectbox("", ["Choisir..."] + opts, key=f"col_g_quiz_opt3_{qid}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_d:
+        st.markdown("##### Synthese de cours (Texte a trous) - Optique 3 (10 pts)")
+        for enonce, choix, _, cle in trous_opt3:
+            ct1, ct2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct1: st.write(enonce)
+            with ct2: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+
+    return st.session_state.ordre_quiz_opt3, trous_opt3
+
+
+def afficher_questions_optique4(verrouille=False):
+    col_g, col_d = st.columns(2)
+
+    questions_opt4 = [
+        ("qf1", "Quelle condition stricte sur les indices permet d'observer une réflexion totale interne ?", ["n1 > n2 (milieu incident plus réfringent)", "n1 < n2", "n1 = n2", "n2 > 2,50"], "n1 > n2 (milieu incident plus réfringent)"),
+        ("qf2", "Quelle formule permet de calculer le sinus de l'angle critique (angle limite ic) ?", ["sin(ic) = n2 / n1", "sin(ic) = n1 / n2", "sin(ic) = n1 · n2", "sin(ic) = n1 - n2"], "sin(ic) = n2 / n1"),
+        ("qf3", "Que vaut l'angle de réfraction théorique lorsque l'angle d'incidence est exactement égal à l'angle critique ic ?", ["90° (rayon réfracté rasant le dioptre)", "0°", "45°", "180°"], "90° (rayon réfracté rasant le dioptre)"),
+        ("qf4", "Que se passe-t-il lorsque l'angle d'incidence i dépasse l'angle critique ic (i > ic) ?", ["100 % de la lumière est réfléchie dans le milieu 1 (réflexion totale)", "La lumière est absorbée par le verre", "La lumière traverse en ligne droite", "La fréquence du laser double"], "100 % de la lumière est réfléchie dans le milieu 1 (réflexion totale)"),
+        ("qf5", "Dans une fibre optique à saut d'indice, quelle partie possède l'indice de réfraction le plus élevé ?", ["Le cœur (n1)", "La gaine optique (n2)", "L'air ambiant (n = 1,00)", "La gaine plastique de protection"], "Le cœur (n1)"),
+        ("qf6", "Que vaut l'angle critique à l'interface verre (n1 = 1,50) / air (n2 = 1,00) ?", ["Environ 41,8°", "Environ 90,0°", "Environ 12,5°", "Environ 75,0°"], "Environ 41,8°"),
+        ("qf7", "Comment appelle-t-on le cône d'entrée maximal permettant à un rayon extérieur d'être guidé dans la fibre ?", ["Le cône d'acceptance (lié à l'ouverture numérique ON)", "Le cône de dispersion", "L'angle de Brewster", "L'angle mort"], "Le cône d'acceptance (lié à l'ouverture numérique ON)"),
+        ("qf8", "Quelle est la formule de l'Ouverture Numérique (ON) d'une fibre optique ?", ["ON = √(n1² - n2²)", "ON = n1 + n2", "ON = n1 / n2", "ON = 2 · n1"], "ON = √(n1² - n2²)"),
+        ("qf9", "Si l'angle d'injection externe i1 dans la fibre est trop grand (supérieur à i_max), que devient le rayon dans la fibre ?", ["Il se réfracte dans la gaine et est perdu", "Il rebondit deux fois plus vite", "Il fait demi-tour vers le laser", "Il devient invisible"], "Il se réfracte dans la gaine et est perdu"),
+        ("qf10", "Pourquoi les fibres optiques sont-elles privilégiées pour les télécommunications très haut débit ?", ["Elles transmettent la lumière sur de très longues distances sans perte ni interférence électromagnétique", "Elles fonctionnent sans aucune source lumineuse", "Elles coûtent moins cher que le fil de fer", "Elles transportent du courant haute tension"], "Elles transmettent la lumière sur de très longues distances sans perte ni interférence électromagnétique"),
+    ]
+
+    if "ordre_quiz_opt4" not in st.session_state:
+        liste_q4 = list(questions_opt4)
+        random.shuffle(liste_q4)
+        st.session_state.ordre_quiz_opt4 = liste_q4
+
+    trous_opt4 = [
+        ("1. La réflexion totale exige que l'indice n1 soit ......... à l'indice n2.", ["Choisir...", "supérieur", "inférieur", "égal", "nul"], "supérieur", "opt4_t1"),
+        ("2. L'angle limite ic vérifie la relation sin(ic) = n2 / .........", ["Choisir...", "n1", "90", "1", "c"], "n1", "opt4_t2"),
+        ("3. Lorsque i > ic, le rayon lumineux est intégralement .........", ["Choisir...", "réfléchi", "réfracté", "absorbé", "diffracté"], "réfléchi", "opt4_t3"),
+        ("4. Une fibre optique est composée d'un ......... entouré d'une gaine.", ["Choisir...", "cœur", "prisme", "miroir", "écran"], "cœur", "opt4_t4"),
+        ("5. L'indice du cœur n1 est toujours supérieur à celui de la ......... n2.", ["Choisir...", "gaine", "lentille", "source", "table"], "gaine", "opt4_t5"),
+        ("6. Le signal lumineux progresse dans la fibre par ......... totales successives.", ["Choisir...", "réflexions", "réfractions", "dispersions", "absorptions"], "réflexions", "opt4_t6"),
+        ("7. L'angle maximal d'injection à l'entrée définit le cône d'.........", ["Choisir...", "acceptance", "incidence nulle", "ombre", "réfraction"], "acceptance", "opt4_t7"),
+        ("8. L'ouverture ......... ON mesure la capacité de collecte lumineuse de la fibre.", ["Choisir...", "numérique", "thermique", "magnétique", "acoustique"], "numérique", "opt4_t8"),
+        ("9. Si on courbe trop la fibre, le rayon s'échappe par ......... dans la gaine.", ["Choisir...", "réfraction", "combustion", "polarisation", "convection"], "réfraction", "opt4_t9"),
+        ("10. Au dioptre verre/air (n=1,50), l'angle critique vaut environ ......... degrés.", ["Choisir...", "41.8", "90.0", "15.0", "75.0"], "41.8", "opt4_t10"),
+    ]
+
+    with col_g:
+        st.markdown("##### Quiz Réflexion Totale & Fibre Optique - Optique 4 (10 pts)")
+        for idx, (qid, qtxt, opts, _) in enumerate(st.session_state.ordre_quiz_opt4, 1):
+            cq1, cq2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with cq1: st.write(f"{idx}. {qtxt}")
+            with cq2: st.selectbox("", ["Choisir..."] + opts, key=f"col_g_quiz_opt4_{qid}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_d:
+        st.markdown("##### Synthese de cours (Texte a trous) - Optique 4 (10 pts)")
+        for enonce, choix, _, cle in trous_opt4:
+            ct1, ct2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with ct1: st.write(enonce)
+            with ct2: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+
+    return st.session_state.ordre_quiz_opt4, trous_opt4
+
+
+
+
 
 
 def afficher_questions_optique5(verrouille=False):
@@ -2193,14 +2350,120 @@ with tab2:
                 # APPEL DE VOTRE GRAPHIQUE LINÉAIRE EXPERIMENTAL SIN(R) = F(SIN(I))
         fig_loi_sinus = dessiner_graphique_sinus_matplotlib()
         st.pyplot(fig_loi_sinus, use_container_width=True)
+    st.markdown("---")
+
+    liste_q_opt2, liste_t_opt2 = afficher_questions_optique2(
+        verrouille=st.session_state.get("opt2_verrouille", False)
+    )
+
+    st.write("---")
+    st.subheader("Validation et Generation du Bilan Officiel - Optique 2")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_opt2 = st.checkbox(
+        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 2.",
+        key="check_certif_opt2_officiel_20pts",
+        disabled=st.session_state.get("opt2_verrouille", False)
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_opt2_official_20pts", use_container_width=True, disabled=st.session_state.get("opt2_verrouille", False)):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_opt2:
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_quiz_opt2 = sum(1.0 for qid, _, _, rep in liste_q_opt2 if st.session_state.get(f"col_g_quiz_opt2_{qid}") == rep)
+            score_trous_opt2 = sum(1.0 for _, _, rep, cle in liste_t_opt2 if st.session_state.get(cle) == rep)
+
+            st.session_state.score_opt2_p1 = round(score_quiz_opt2, 1)
+            st.session_state.score_opt2_p2 = round(score_trous_opt2, 1)
+            st.session_state.score_final_opt2 = round(score_quiz_opt2 + score_trous_opt2, 1)
+            st.session_state.opt2_verrouille = True
+            st.rerun()
+
+    if st.session_state.get("opt2_verrouille", False):
+        scr1 = st.session_state.get("score_opt2_p1", 0.0)
+        scr2 = st.session_state.get("score_opt2_p2", 0.0)
+        tot_s = st.session_state.get("score_final_opt2", 0.0)
+
+        from datetime import datetime, timedelta
+        timestamp_opt2 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER OPTIQUE 2 SCELLE ET VALIDE | Note : {tot_s} / 20")
+
+        html_export_opt2 = f"""<!DOCTYPE html>
+        <html>
+        <head><meta charset="utf-8"><title>Rapport Optique 2 - {n_eleve}</title>
+        <style>
+            body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+            .header-box {{ background-color: #0f172a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+            .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #38bdf8; color: #0f172a; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+            .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+            table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+            th {{ background-color: #1e293b; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+            td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+            .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+            .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+        </style></head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Atelier 2 : Lois de Snell-Descartes | Scelle le : {timestamp_opt2}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif des scores - Optique 2</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #38bdf8;">
+                &bull; Partie 1 : Questionnaire Snell-Descartes : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Synthese de Cours (Texte a trous) : <strong>{scr2} / 10</strong>
+            </p>
+            <div class="sub-title">PARTIE 1 : QUIZ SNELL-DESCARTES (10 PTS)</div>
+            <table><thead><tr><th>N°</th><th>Question posée</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align:center;">Verdict</th></tr></thead><tbody>
+        """
+
+        for idx_t, (qid, enonce_q, _, attendu) in enumerate(liste_q_opt2, 1):
+            saisie = st.session_state.get(f"col_g_quiz_opt2_{qid}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt2 += f"<tr><td>{idx_t}</td><td>{enonce_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align:center;'>{v_lbl}</td></tr>"
+
+        html_export_opt2 += """</tbody></table><div class="sub-title">PARTIE 2 : SYNTHESE DE COURS ASSOCIEE (10 PTS)</div><table><thead><tr><th>Phrase explicative à trous</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align:center;">Verdict</th></tr></thead><tbody>"""
+
+        for enonce_t, _, attendu_t, cle_t in liste_t_opt2:
+            saisie_t = st.session_state.get(cle_t, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t) == str(attendu_t) else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_opt2 += f"<tr><td>{enonce_t}</td><td style='text-align:center;'>{saisie_t}</td><td style='text-align:center;'>{attendu_t}</td><td class='{v_class_t}' style='text-align:center;'>{v_lbl_t}</td></tr>"
+
+        html_export_opt2 += """</tbody></table><div style="text-align: center; margin-top: 40px; font-size: 11px; color: #64748b;">Laboratoire d'Optique Physique Appliquee &copy; 2026</div></body></html>"""
+
+        st.download_button(
+            label="Télécharger le relevé de notes au format HTML",
+            data=html_export_opt2,
+            file_name=f"Bilan_Optique2_{n_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
 with tab3:
     st.header("**La double réfraction**")
             
-
     st.markdown("<p style='color:#991b1b; font-weight:bold; margin-bottom:2px;'> DOUBLE REFRACTION</p>", unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #991b1b; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #991b1b; margin-top: 0; font-size: 16px;">Principe de la double réfraction (Lame à faces parallèles) :</p>
+        <ul style="margin-bottom: 0; line-height: 1.6;">
+            <li><strong>Premier dioptre (Entrée Air → Verre) :</strong> Lorsque le rayon lumineux passe d'un milieu moins réfringent (<i>n</i><sub>1</sub> = 1,00) à un milieu plus réfringent (<i>n</i><sub>2</sub> = 1,52), il se rapproche de la normale (<i>r</i><sub>1</sub> &lt; <i>i</i><sub>1</sub>).</li>
+            <li><strong>Second dioptre (Sortie Verre → Air) :</strong> En ressortant dans le même milieu initial (<i>n</i><sub>3</sub> = <i>n</i><sub>1</sub>), le rayon s'écarte de la normale d'un angle identique à l'angle d'entrée (<b><i>s</i> = <i>i</i><sub>1</sub></b>).</li>
+            <li><strong>Décalage latéral (<i>dx</i>) :</strong> Le rayon émergent reste strictement <b>parallèle</b> au rayon incident mais subit une translation latérale <i>dx</i> qui augmente avec l'épaisseur et l'indice de la lame.</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
     
     choix_lampe2 = st.selectbox("Source lumineuse  :", liste_lampes, key="var_choix_lampe_double2", disabled=st.session_state.opt4_verrouille)
     angle_double = st.slider("Angle d'incidence double (°) :", min_value=0.0, max_value=90.0, value=45.0, step=1.0, key="var_angle_double", disabled=st.session_state.opt4_verrouille)
@@ -2218,12 +2481,157 @@ with tab3:
     
     # Boîte blanche flottante mémorisée dans la session
     st.info(st.session_state.get("opt4_txt_box_double", "Ajustez les curseurs pour initialiser la lame."))
+    st.markdown("---")
+
+    liste_q_opt3, liste_t_opt3 = afficher_questions_optique3(
+        verrouille=st.session_state.get("opt3_verrouille", False)
+    )
+
+    st.write("---")
+    st.subheader("Validation et Generation du Bilan Officiel - Optique 3")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_opt3 = st.checkbox(
+        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 3.",
+        key="check_certif_opt3_officiel_20pts",
+        disabled=st.session_state.get("opt3_verrouille", False)
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_opt3_official_20pts", use_container_width=True, disabled=st.session_state.get("opt3_verrouille", False)):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_opt3:
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_quiz_opt3 = sum(1.0 for qid, _, _, rep in liste_q_opt3 if st.session_state.get(f"col_g_quiz_opt3_{qid}") == rep)
+            score_trous_opt3 = sum(1.0 for _, _, rep, cle in liste_t_opt3 if st.session_state.get(cle) == rep)
+
+            st.session_state.score_opt3_p1 = round(score_quiz_opt3, 1)
+            st.session_state.score_opt3_p2 = round(score_trous_opt3, 1)
+            st.session_state.score_final_opt3 = round(score_quiz_opt3 + score_trous_opt3, 1)
+            st.session_state.opt3_verrouille = True
+            st.rerun()
+
+    if st.session_state.get("opt3_verrouille", False):
+        scr1 = st.session_state.get("score_opt3_p1", 0.0)
+        scr2 = st.session_state.get("score_opt3_p2", 0.0)
+        tot_s = st.session_state.get("score_final_opt3", 0.0)
+
+        from datetime import datetime, timedelta
+        timestamp_opt3 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+
+        st.success(f"ATELIER OPTIQUE 3 SCELLE ET VALIDE | Note : {tot_s} / 20")
+
+        html_export_opt3 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Optique 3 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #0f172a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #38bdf8; color: #0f172a; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #1e293b; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Atelier 3 : Double refraction | Scelle le : {timestamp_opt3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+            </div>
+
+            <div class="sub-title">Recapitulatif des scores - Optique 3</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #38bdf8; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
+                &bull; Partie 1 : Questionnaire Double Refraction : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Synthese de Cours (Texte a trous) : <strong>{scr2} / 10</strong>
+            </p>
+
+            <div class="sub-title">PARTIE 1 : QUIZ DOUBLE REFRACTION (10 PTS)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">N°</th>
+                        <th style="width: 45%;">Question posée</th>
+                        <th style="width: 20%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 15%; text-align: center;">Attendu</th>
+                        <th style="width: 15%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
+
+        for idx_t, (qid, enonce_q, _, attendu) in enumerate(liste_q_opt3, 1):
+            saisie = st.session_state.get(f"col_g_quiz_opt3_{qid}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt3 += f"<tr><td>{idx_t}</td><td>{enonce_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+        html_export_opt3 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 2 : SYNTHESE DE COURS ASSOCIEE (10 PTS)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 55%; text-align: left;">Phrase explicative à trous</th>
+                        <th style="width: 15%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 15%; text-align: center;">Attendu</th>
+                        <th style="width: 15%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
+
+        for enonce_t, _, attendu_t, cle_t in liste_t_opt3:
+            saisie_t = st.session_state.get(cle_t, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t) == str(attendu_t) else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_opt3 += f"<tr><td style='text-align: left;'>{enonce_t}</td><td style='text-align:center;'>{saisie_t}</td><td style='text-align:center;'>{attendu_t}</td><td class='{v_class_t}' style='text-align: center;'>{v_lbl_t}</td></tr>"
+
+        html_export_opt3 += """
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #64748b;">
+                Laboratoire d'Optique Physique Appliquee &copy; 2026
+            </div>
+        </body>
+        </html>
+        """
+
+        st.download_button(
+            label="Télécharger le relevé de notes au format HTML",
+            data=html_export_opt3,
+            file_name=f"Bilan_Optique3_{n_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 with tab4:
     st.header("**Réflexion totale : application à la fibre optique**")
 
     st.markdown("<p style='color:#38bdf8; font-weight:bold; margin-bottom:2px;'>- PHÉNOMÈNE DE RÉFLEXION TOTALE INTERNE</p>", unsafe_allow_html=True)
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #0284c7; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #0284c7; margin-top: 0; font-size: 16px;">Conditions de la réflexion totale interne et guidage dans une fibre optique :</p>
+        <ul style="margin-bottom: 0; line-height: 1.6;">
+            <li><strong>Condition d'indices :</strong> La réflexion totale ne peut se produire que lorsque la lumière passe d'un milieu plus réfringent vers un milieu moins réfringent (<b><i>n</i><sub>1</sub> &gt; <i>n</i><sub>2</sub></b>, par exemple du verre vers l'air ou du cœur vers la gaine).</li>
+            <li><strong>Angle critique (<i>i</i><sub>c</sub>) :</strong> Lorsque l'angle de réfraction atteint 90° (rayon rasant), l'angle d'incidence vaut <b>sin(<i>i</i><sub>c</sub>) = <i>n</i><sub>2</sub> / <i>n</i><sub>1</sub></b>.</li>
+            <li><strong>Réflexion totale (<i>i</i> &gt; <i>i</i><sub>c</sub>) :</strong> Dès que l'angle d'incidence dépasse l'angle critique, plus aucun rayon ne traverse l'interface. <b>100 % de la lumière est réfléchie</b> à l'intérieur du cœur de la fibre sans perte d'énergie.</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Sélecteurs pour la réflexion totale directe (Source en bas)
     choix_lampe_refl = st.selectbox("Source lumineuse (Réflexion totale) :", liste_lampes, key="var_choix_lampe_refl", index=0)
@@ -2272,6 +2680,102 @@ with tab4:
 
     # 4. Boîte d'information mémorisée dans la session
     st.info(st.session_state.get("opt4_txt_box_fibre", "Ajustez les curseurs pour initialiser la simulation de la fibre optique."))     
+    st.markdown("---")
+
+    liste_q_opt4, liste_t_opt4 = afficher_questions_optique4(
+        verrouille=st.session_state.get("opt4_fibre_verrouille", False)
+    )
+
+    st.write("---")
+    st.subheader("Validation et Generation du Bilan Officiel - Optique 4")
+
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_opt4 = st.checkbox(
+        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 4.",
+        key="check_certif_opt4_officiel_20pts",
+        disabled=st.session_state.get("opt4_fibre_verrouille", False)
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_opt4_official_20pts", use_container_width=True, disabled=st.session_state.get("opt4_fibre_verrouille", False)):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_opt4:
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_quiz_opt4 = sum(1.0 for qid, _, _, rep in liste_q_opt4 if st.session_state.get(f"col_g_quiz_opt4_{qid}") == rep)
+            score_trous_opt4 = sum(1.0 for _, _, rep, cle in liste_t_opt4 if st.session_state.get(cle) == rep)
+
+            st.session_state.score_opt4_p1 = round(score_quiz_opt4, 1)
+            st.session_state.score_opt4_p2 = round(score_trous_opt4, 1)
+            st.session_state.score_final_opt4 = round(score_quiz_opt4 + score_trous_opt4, 1)
+            st.session_state.opt4_fibre_verrouille = True
+            st.rerun()
+
+    if st.session_state.get("opt4_fibre_verrouille", False):
+        scr1 = st.session_state.get("score_opt4_p1", 0.0)
+        scr2 = st.session_state.get("score_opt4_p2", 0.0)
+        tot_s = st.session_state.get("score_final_opt4", 0.0)
+
+        from datetime import datetime, timedelta
+        timestamp_opt4 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER OPTIQUE 4 SCELLE ET VALIDE | Note : {tot_s} / 20")
+
+        html_export_opt4 = f"""<!DOCTYPE html>
+        <html>
+        <head><meta charset="utf-8"><title>Rapport Optique 4 - {n_eleve}</title>
+        <style>
+            body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+            .header-box {{ background-color: #0f172a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+            .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #38bdf8; color: #0f172a; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+            .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+            table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+            th {{ background-color: #1e293b; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+            td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+            .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+            .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+        </style></head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Atelier 4 : Reflexion totale & Fibre optique | Scelle le : {timestamp_opt4}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif des scores - Optique 4</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #38bdf8;">
+                &bull; Partie 1 : Questionnaire Fibre Optique : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Synthese de Cours (Texte a trous) : <strong>{scr2} / 10</strong>
+            </p>
+            <div class="sub-title">PARTIE 1 : QUIZ FIBRE OPTIQUE (10 PTS)</div>
+            <table><thead><tr><th>N°</th><th>Question posée</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align:center;">Verdict</th></tr></thead><tbody>
+        """
+
+        for idx_t, (qid, enonce_q, _, attendu) in enumerate(liste_q_opt4, 1):
+            saisie = st.session_state.get(f"col_g_quiz_opt4_{qid}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt4 += f"<tr><td>{idx_t}</td><td>{enonce_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align:center;'>{v_lbl}</td></tr>"
+
+        html_export_opt4 += """</tbody></table><div class="sub-title">PARTIE 2 : SYNTHESE DE COURS ASSOCIEE (10 PTS)</div><table><thead><tr><th>Phrase explicative à trous</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align:center;">Verdict</th></tr></thead><tbody>"""
+
+        for enonce_t, _, attendu_t, cle_t in liste_t_opt4:
+            saisie_t = st.session_state.get(cle_t, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t) == str(attendu_t) else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_opt4 += f"<tr><td>{enonce_t}</td><td style='text-align:center;'>{saisie_t}</td><td style='text-align:center;'>{attendu_t}</td><td class='{v_class_t}' style='text-align:center;'>{v_lbl_t}</td></tr>"
+
+        html_export_opt4 += """</tbody></table><div style="text-align: center; margin-top: 40px; font-size: 11px; color: #64748b;">Laboratoire d'Optique Physique Appliquee &copy; 2026</div></body></html>"""
+
+        st.download_button(
+            label="Télécharger le relevé de notes au format HTML",
+            data=html_export_opt4,
+            file_name=f"Bilan_Optique4_{n_eleve}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 
