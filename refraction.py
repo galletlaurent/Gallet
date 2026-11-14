@@ -2876,9 +2876,8 @@ with tab5:
 
     st.markdown("---")
 
-     dict_quiz_opt5, dict_trous_opt5, enonces_q_opt5, enonces_t_opt5 = afficher_questions_optique5(
-         verrouille=st.session_state.get("opt5_verrouille", False)
-     )
+    dict_quiz_opt5, dict_trous_opt5, enonces_q_opt5, enonces_t_opt5 = afficher_questions_optique5(
+         verrouille=st.session_state.get("opt5_verrouille", False))
 
 
     st.write("---")
