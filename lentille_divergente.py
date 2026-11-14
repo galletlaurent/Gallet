@@ -517,6 +517,210 @@ tab5 = onglets[5]
 tab6 = onglets[6]
 tab7 = onglets[7]
 
+BANQUES_DIV_MAINT = {
+    0: {
+        "questions": [
+            {"id": "qdm0_1", "q": "Quel dispositif optique associe une lentille divergente et une lentille convergente pour augmenter le diamètre d'un faisceau laser de découpe ou de mesure ?", "options": ["Un élargisseur de faisceau (beam expander de Galilée)", "Un prisme dispersif", "Un miroir plan"], "rep": "Un élargisseur de faisceau (beam expander de Galilée)"},
+            {"id": "qdm0_2", "q": "Pourquoi place-t-on une lentille divergente en entrée d'un élargisseur de faisceau laser industriel ?", "options": ["Pour faire diverger le faisceau fin avant qu'il ne soit rendu parallèle par la lentille convergente de sortie", "Pour bloquer 90 % de la puissance du laser", "Pour changer la couleur du laser"], "rep": "Pour faire diverger le faisceau fin avant qu'il ne soit rendu parallèle par la lentille convergente de sortie"},
+            {"id": "qdm0_3", "q": "Comment sont disposés les foyers de la lentille divergente (f'1 < 0) et de la lentille convergente (f'2 > 0) dans un élargisseur afocal ?", "options": ["Leurs foyers images F'1 et objet F2 sont confondus (distance d = f'1 + f'2)", "Les deux lentilles sont collées l'une contre l'autre", "Elles sont séparées de 10 mètres"], "rep": "Leurs foyers images F'1 et objet F2 sont confondus (distance d = f'1 + f'2)"},
+            {"id": "qdm0_4", "q": "Comment calcule-t-on le facteur d'élargissement G du diamètre du faisceau laser ?", "options": ["G = |f'2 / f'1|", "G = f'1 + f'2", "G = f'1 × f'2"], "rep": "G = |f'2 / f'1|"},
+            {"id": "qdm0_5", "q": "Quel est l'intérêt en maintenance laser d'élargir un faisceau avant de l'envoyer sur une longue distance dans la machine ?", "options": ["Réduire la divergence naturelle du faisceau et diminuer la densité de puissance sur les miroirs de renvoi", "Rendre le laser visible dans le noir", "Refroidir le tube laser"], "rep": "Réduire la divergence naturelle du faisceau et diminuer la densité de puissance sur les miroirs de renvoi"},
+            {"id": "qdm0_6", "q": "Si la lentille divergente a une focale f'1 = -25 mm et la convergente f'2 = +100 mm, quelle distance d sépare les deux lentilles ?", "options": ["75 mm (car d = -25 + 100 = 75 mm)", "125 mm", "25 mm"], "rep": "75 mm (car d = -25 + 100 = 75 mm)"},
+            {"id": "qdm0_7", "q": "Avec f'1 = -25 mm et f'2 = +100 mm, par combien le diamètre du faisceau laser est-il multiplié ?", "options": ["Par 4 (G = 100 / 25 = 4×)", "Par 25", "Par 125"], "rep": "Par 4 (G = 100 / 25 = 4×)"},
+            {"id": "qdm0_8", "q": "Pourquoi préfère-t-on un montage de Galilée (divergente + convergente) à un montage de Kepler (deux convergentes) pour les lasers haute puissance ?", "options": ["Parce qu'il n'y a pas de point de focalisation interne où l'air pourrait s'ioniser (claquage plasma)", "Parce que les lentilles divergentes sont incassables", "Parce qu'il ne nécessite aucun réglage"], "rep": "Parce qu'il n'y a pas de point de focalisation interne où l'air pourrait s'ioniser (claquage plasma)"},
+            {"id": "qdm0_9", "q": "Que se passe-t-il en sortie si le technicien dérègle la distance d entre les deux lentilles de l'élargisseur ?", "options": ["Le faisceau de sortie n'est plus parallèle (il converge ou diverge)", "La longueur d'onde du laser change", "Le laser s'éteint"], "rep": "Le faisceau de sortie n'est plus parallèle (il converge ou diverge)"},
+            {"id": "qdm0_10", "q": "Quelle précaution d'entretien prolonge la durée de vie de la lentille divergente d'entrée soumise à une forte densité d'énergie ?", "options": ["Maintenir sa surface parfaitement propre sans poussière ni trace de doigt avant chaque remise en service", "Appliquer de la graisse silicone sur la lentille", "La nettoyer avec un solvant abrasif"], "rep": "Maintenir sa surface parfaitement propre sans poussière ni trace de doigt avant chaque remise en service"},
+        ],
+        "trous": [
+            ("1. Un élargisseur de Galilée associe une lentille ......... en entrée et une convergente en sortie.", ["Choisir...", "divergente", "plane"], "divergente", "dm_t1"),
+            ("2. La lentille divergente possède une distance focale f'1 .........", ["Choisir...", "négative", "positive"], "négative", "dm_t2"),
+            ("3. Dans un système afocal, un faisceau entrant parallèle ressort .........", ["Choisir...", "parallèle", "focalisé"], "parallèle", "dm_t3"),
+            ("4. Le facteur d'élargissement du diamètre vaut G = |f'2 / .........|.", ["Choisir...", "f'1", "2"], "f'1", "dm_t4"),
+            ("5. Élargir le faisceau réduit la ......... thermique sur les miroirs de renvoi.", ["Choisir...", "charge", "vitesse"], "charge", "dm_t5"),
+            ("6. La distance entre les deux lentilles vérifie d = f'1 + .........", ["Choisir...", "f'2", "100"], "f'2", "dm_t6"),
+            ("7. Ce montage évite tout point de ......... interne dans l'air.", ["Choisir...", "focalisation", "réflexion"], "focalisation", "dm_t7"),
+            ("8. Si f'1 = -25 mm et f'2 = +100 mm, le diamètre est multiplié par .........", ["Choisir...", "4", "100"], "4", "dm_t8"),
+            ("9. Si l'écartement d est déréglé, le faisceau de sortie n'est plus .........", ["Choisir...", "parallèle", "visible"], "parallèle", "dm_t9"),
+            ("10. Une poussière sur la lentille d'entrée risque de la faire ......... sous l'effet du laser.", ["Choisir...", "fissurer", "fondre doucement"], "fissurer", "dm_t10"),
+        ]
+    },
+    1: {
+        "questions": [
+            {"id": "qdm1_1", "q": "Quel dispositif optique équipé d'une lentille divergente permet d'observer l'intérieur d'une enceinte machine fermée avec un très large champ de vision ?", "options": ["Un judas optique grand-angle (œilleton de porte de sécurité)", "Un microscope électronique", "Une loupe d'horloger"], "rep": "Un judas optique grand-angle (œilleton de porte de sécurité)"},
+            {"id": "qdm1_2", "q": "Quel est le rôle de la lentille divergente placée du côté extérieur (côté zone dangereuse/machine) du judas optique ?", "options": ["Capturer un angle de vue très large (jusqu'à 160°-180°) et former une image virtuelle réduite", "Grossir 100 fois un boulon", "Bloquer la lumière blanche"], "rep": "Capturer un angle de vue très large (jusqu'à 160°-180°) et former une image virtuelle réduite"},
+            {"id": "qdm1_3", "q": "De quelle nature est l'image observée par le technicien de maintenance à travers un judas grand-angle ?", "options": ["Virtuelle, droite (à l'endroit) et fortement rétrécie", "Réelle et renversée", "Plus grande que la machine"], "rep": "Virtuelle, droite (à l'endroit) et fortement rétrécie"},
+            {"id": "qdm1_4", "q": "Pourquoi ne peut-on pas voir depuis l'intérieur de la machine ce qui se passe à l'extérieur à travers un judas optique ?", "options": ["La combinaison optique asymétrique (divergente en entrée, convergente en oculaire) rend l'image minuscule et floue en sens inverse", "Le verre est un miroir sans tain", "Un clapet ferme le trou"], "rep": "La combinaison optique asymétrique (divergente en entrée, convergente en oculaire) rend l'image minuscule et floue en sens inverse"},
+            {"id": "qdm1_5", "q": "Quel avantage sécuritaire apporte un judas optique grand-angle sur le carter d'un centre d'usinage CNC ?", "options": ["Vérifier visuellement la présence d'un opérateur ou d'un outil sans ouvrir la porte ni couper le cycle", "Mesurer la vitesse de rotation de la broche", "Éclairer l'atelier"], "rep": "Vérifier visuellement la présence d'un opérateur ou d'un outil sans ouvrir la porte ni couper le cycle"},
+            {"id": "qdm1_6", "q": "Quel est le signe du grandissement γ d'un judas grand-angle composé d'une lentille divergente ?", "options": ["Positif et très inférieur à 1 (0 < γ << 1)", "Négatif (-5)", "Supérieur à +10"], "rep": "Positif et très inférieur à 1 (0 < γ << 1)"},
+            {"id": "qdm1_7", "q": "Dans la simulation du judas optique, comment évolue l'angle du champ de vision lorsque la vergence C devient plus négative (ex : -20 δ au lieu de -5 δ) ?", "options": ["L'angle du champ de vision s'élargit considérablement", "L'angle se rétrécit", "L'image se retourne à l'envers"], "rep": "L'angle du champ de vision s'élargit considérablement"},
+            {"id": "qdm1_8", "q": "Quel matériau transparent résistant aux impacts de copeaux protège la lentille divergente d'un judas industriel ?", "options": ["Un hublot en polycarbonate haute résistance", "Une feuille de papier calque", "Du verre fin non trempé"], "rep": "Un hublot en polycarbonate haute résistance"},
+            {"id": "qdm1_9", "q": "Quel symptôme indique qu'un judas optique de cellule robotisée doit être remplacé lors d'une visite préventive ?", "options": ["Des micro-rayures ou un voile opaque dû aux projections de liquide de coupe réduisant la visibilité", "Un changement de distance focale", "Une consommation électrique excessive"], "rep": "Des micro-rayures ou un voile opaque dû aux projections de liquide de coupe réduisant la visibilité"},
+            {"id": "qdm1_10", "q": "Quelle loi optique permet de tracer la déviation vers l'extérieur des rayons incidents à travers la lentille divergente du judas ?", "options": ["La loi de réfraction de Snell-Descartes", "La loi d'Ohm", "La loi de Joule"], "rep": "La loi de réfraction de Snell-Descartes"},
+        ],
+        "trous": [
+            ("1. Un judas de sécurité machine utilise une lentille ......... grand-angle.", ["Choisir...", "divergente", "convergente"], "divergente", "dm_t1"),
+            ("2. Cette lentille permet d'obtenir un très large ......... de vision (jusqu'à 180°).", ["Choisir...", "champ", "rayon"], "champ", "dm_t2"),
+            ("3. L'image observée par le technicien est droite, rétrécie et .........", ["Choisir...", "virtuelle", "réelle"], "virtuelle", "dm_t3"),
+            ("3. L'image observée par le technicien est droite, rétrécie et .........", ["Choisir...", "virtuelle", "réelle"], "virtuelle", "dm_t3"),
+            ("4. Comme l'image est plus petite que la zone observée, 0 < γ < .........", ["Choisir...", "1", "10"], "1", "dm_t4"),
+            ("5. Plus la vergence C est ........., plus l'angle de vue est large.", ["Choisir...", "négative", "positive"], "négative", "dm_t5"),
+            ("6. Le judas permet d'inspecter l'enceinte sans ouvrir la ......... de sécurité.", ["Choisir...", "porte", "vanne"], "porte", "dm_t6"),
+            ("7. Un écran en ......... protège l'optique contre les projections de copeaux.", ["Choisir...", "polycarbonate", "carton"], "polycarbonate", "dm_t7"),
+            ("8. Les rayons lumineux s'écartent de l'axe ......... en traversant la lentille.", ["Choisir...", "optique", "vertical"], "optique", "dm_t8"),
+            ("9. Les projections d'huile de coupe rendent la vision .........", ["Choisir...", "floue", "zoomée"], "floue", "dm_t9"),
+            ("10. Le calcul de position image applique la formule de .........", ["Choisir...", "Descartes", "Newton"], "Descartes", "dm_t10"),
+        ]
+    },
+    2: {
+        "questions": [
+            {"id": "qdm2_1", "q": "Dans un appareil photo d'inspection de maintenance ou un viseur optique, comment augmente-t-on la distance focale f' d'un téléobjectif sans rallonger le boîtier ?", "options": ["En plaçant un groupe de lentilles divergentes (téléconvertisseur) derrière l'objectif convergent", "En retirant toutes les lentilles", "En ajoutant un miroir plan"], "rep": "En plaçant un groupe de lentilles divergentes (téléconvertisseur) derrière l'objectif convergent"},
+            {"id": "qdm2_2", "q": "Quel est l'effet d'une lentille divergente placée sur le trajet d'un faisceau convergent ?", "options": ["Elle réduit l'angle de convergence et repousse le point de focalisation plus loin en arrière", "Elle rapproche le foyer image F' de la lentille", "Elle bloque totalement la lumière"], "rep": "Elle réduit l'angle de convergence et repousse le point de focalisation plus loin en arrière"},
+            {"id": "qdm2_3", "q": "En augmentant la distance focale équivalente du système optique, comment évolue le grandissement des détails d'une pièce éloignée ?", "options": ["Le grandissement augmente (effet zoom / téléobjectif)", "Le grandissement diminue", "L'image devient inversée gauche-droite"], "rep": "Le grandissement augmente (effet zoom / téléobjectif)"},
+            {"id": "qdm2_4", "q": "Dans un objectif grand-angle de caméra d'inspection de cuves (montage rétrofocus), où est placée la lentille divergente ?", "options": ["À l'avant de l'objectif, face à la zone à inspecter", "Derrière le capteur CMOS", "Sur le trépied"], "rep": "À l'avant de l'objectif, face à la zone à inspecter"},
+            {"id": "qdm2_5", "q": "Pourquoi les lentilles divergentes en verre flint sont-elles indispensables dans tous les objectifs d'inspection de précision ?", "options": ["Pour corriger les aberrations chromatiques et la courbure de champ des lentilles convergentes", "Pour alourdir la caméra", "Pour filtrer les ondes radio"], "rep": "Pour corriger les aberrations chromatiques et la courbure de champ des lentilles convergentes"},
+            {"id": "qdm2_6", "q": "Si l'on accole une lentille convergente de vergence C1 = +10 δ et une lentille divergente de vergence C2 = -4 δ, quelle est la vergence totale C ?", "options": ["+ 6 dioptries (car C = C1 + C2 = 10 - 4)", "+ 14 dioptries", "- 40 dioptries"], "rep": "+ 6 dioptries (car C = C1 + C2 = 10 - 4)"},
+            {"id": "qdm2_7", "q": "Que se passe-t-il si l'on accole deux lentilles de vergences opposées exactes (C1 = +8 δ et C2 = -8 δ) ?", "options": ["La vergence totale est nulle (C = 0 δ) : l'ensemble se comporte comme une lame à faces parallèles", "La distance focale vaut 16 cm", "Le faisceau est réfléchi"], "rep": "La vergence totale est nulle (C = 0 δ) : l'ensemble se comporte comme une lame à faces parallèles"},
+            {"id": "qdm2_8", "q": "Quel contrôle optique réalise-t-on en maintenance sur un banc de collimation pour vérifier la vergence d'une lentille divergente ?", "options": ["La focométrie par association avec une lentille convergente connue (méthode de Badal)", "La pesée sur balance de précision", "La mesure au pied à coulisse uniquement"], "rep": "La focométrie par association avec une lentille convergente connue (méthode de Badal)"},
+            {"id": "qdm2_9", "q": "Quelle est la conséquence d'un choc mécanique qui décentre la lentille divergente interne d'un objectif de contrôle ?", "options": ["Une perte de netteté asymétrique sur un côté de l'image (décentrement optique)", "Une hausse de la luminosité", "Une augmentation de la batterie"], "rep": "Une perte de netteté asymétrique sur un côté de l'image (décentrement optique)"},
+            {"id": "qdm2_10", "q": "Quelle relation mathématique donne la vergence équivalente de deux lentilles minces accolées ?", "options": ["C = C1 + C2", "C = C1 × C2", "C = C1 / C2"], "rep": "C = C1 + C2"},
+        ],
+        "trous": [
+            ("1. Un téléconvertisseur utilise une lentille ......... pour allonger la focale.", ["Choisir...", "divergente", "plane"], "divergente", "dm_t1"),
+            ("2. La lentille divergente repousse le foyer image plus ......... en arrière.", ["Choisir...", "loin", "près"], "loin", "dm_t2"),
+            ("3. La vergence de deux lentilles accolées vaut C = C1 + .........", ["Choisir...", "C2", "10"], "C2", "dm_t3"),
+            ("4. Si C1 = +10 δ et C2 = -4 δ, la vergence résultante vaut +......... δ.", ["Choisir...", "6", "14"], "6", "dm_t4"),
+            ("5. Si C1 + C2 = 0, le système est équivalent à une lame à faces .........", ["Choisir...", "parallèles", "courbes"], "parallèles", "dm_t5"),
+            ("6. L'association convergent + divergent corrige les aberrations .........", ["Choisir...", "chromatiques", "thermiques"], "chromatiques", "dm_t6"),
+            ("7. La mesure expérimentale de la focale d'une lentille s'appelle la .........", ["Choisir...", "focométrie", "calorimétrie"], "focométrie", "dm_t7"),
+            ("8. Un choc déplaçant la lentille interne provoque un ......... optique.", ["Choisir...", "décentrement", "court-circuit"], "décentrement", "dm_t8"),
+            ("9. L'allongement de la focale augmente le ......... des détails éloignés.", ["Choisir...", "grandissement", "poids"], "grandissement", "dm_t9"),
+            ("10. La vergence d'une lentille divergente est toujours .........", ["Choisir...", "négative", "positive"], "négative", "dm_t10"),
+        ]
+    }
+}
+
+
+def mettre_a_jour_div_maint_matplotlib(sujet_idx):
+    """Banc d'essai optique lentilles divergentes adapté à la maintenance industrielle."""
+    fig, ax = plt.subplots(figsize=(12, 6.2), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 250)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    if sujet_idx == 0:
+        dist_lentilles = st.session_state.get("slider_dm_s0", 75.0)
+        f1_div = -25.0
+        f2_conv = 100.0
+        d_optimal = f1_div + f2_conv
+
+        x1, y0 = 180.0, 125.0
+        x2 = x1 + dist_lentilles * 2.2
+
+        ax.plot(list((20, 580)), list((y0, y0)), color="#64748b", lw=1.2, ls="-.")
+        ax.plot(list((x1, x1)), list((65, 185)), color="#38bdf8", lw=3)
+        ax.text(x1, 55, "L1 Divergente\n(f'1 = -25 mm)", color="#38bdf8", fontsize=7.5, fontweight="bold", ha="center")
+
+        ax.plot(list((x2, x2)), list((40, 210)), color="#22c55e", lw=3.5)
+        ax.text(x2, 32, "L2 Convergente\n(f'2 = +100 mm)", color="#86efac", fontsize=7.5, fontweight="bold", ha="center")
+
+        ecart_d = dist_lentilles - d_optimal
+        pente_out = -ecart_d * 0.008
+        for dy in [-14, 14]:
+            ax.plot(list((40, x1)), list((y0 + dy, y0 + dy)), color="#ef4444", lw=2)
+            dy2 = dy * (dist_lentilles / 25.0)
+            ax.plot(list((x1, x2)), list((y0 + dy, y0 + dy2)), color="#ef4444", lw=2)
+            y_fin = (y0 + dy2) + pente_out * (dy / 14.0) * (560 - x2)
+            c_out = "#22c55e" if abs(ecart_d) <= 1.5 else "#f59e0b"
+            ax.annotate("", xy=(560, y_fin), xytext=(x2, y0 + dy2), arrowprops=dict(arrowstyle="->", color=c_out, lw=2))
+
+        statut = "FAISCEAU ÉLARGI (×4) ET PARALLÈLE : Écartement d = 75 mm optimal !" if abs(ecart_d) <= 1.5 else f"DÉRÉGLÉ (Écart {ecart_d:+.0f} mm) : Réglez la distance L1-L2 à 75 mm."
+        c_stat = "#22c55e" if abs(ecart_d) <= 1.5 else "#ef4444"
+        ax.text(25, 18, "MAINTENANCE LASER : ÉLARGISSEUR DE FAISCEAU AFOCAL DE GALILÉE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, statut, color=c_stat, fontsize=8, fontweight="bold")
+        st.session_state.dm_mesure_courante = (f"d = {dist_lentilles:.0f} mm", "Cible = 75 mm", "Facteur G = 4×", "PARALLÈLE" if abs(ecart_d) <= 1.5 else "DÉRÉGLÉ")
+
+    elif sujet_idx == 1:
+        vergence_judas = st.session_state.get("slider_dm_s1", -15.0)
+        champ_deg = int(min(175, 60 + abs(vergence_judas) * 4.5))
+        x0, y0 = 260.0, 130.0
+
+        ax.add_patch(patches.Rectangle((x0 - 8, 30), 16, 200, facecolor="#475569", edgecolor="#94a3b8"))
+        ax.plot(list((x0, x0)), list((95, 165)), color="#38bdf8", lw=4)
+        ax.text(x0, 22, f"Porte Machine + Judas (C = {vergence_judas:.0f} δ)", color="#38bdf8", fontsize=8, fontweight="bold", ha="center")
+
+        rad_c = math.radians(champ_deg / 2.0)
+        dy_champ = min(105.0, 220.0 * math.tan(rad_c) * 0.45)
+        ax.fill(list((x0, 40, 40)), list((y0, y0 - dy_champ, y0 + dy_champ)), color="#22c55e", alpha=0.22)
+        ax.plot(list((40, x0)), list((y0 - dy_champ, y0 - 15)), color="#fde047", lw=1.8)
+        ax.plot(list((40, x0)), list((y0 + dy_champ, y0 + 15)), color="#fde047", lw=1.8)
+        ax.annotate("", xy=(470, y0 - 15), xytext=(x0, y0 - 15), arrowprops=dict(arrowstyle="->", color="#22c55e", lw=2))
+        ax.annotate("", xy=(470, y0 + 15), xytext=(x0, y0 + 15), arrowprops=dict(arrowstyle="->", color="#22c55e", lw=2))
+        ax.text(485, y0, "Œil Opérateur", color="#86efac", fontsize=8, fontweight="bold", va="center")
+
+        ax.text(25, 18, "SÉCURITÉ MACHINE : JUDAS OPTIQUE GRAND-ANGLE DIVERGENT", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, f"Vergence C = {vergence_judas:.0f} δ  |  Champ de vision couvert : {champ_deg}° (Image virtuelle droite et rétrécie)", color="#22c55e", fontsize=8, fontweight="bold")
+        st.session_state.dm_mesure_courante = (f"C = {vergence_judas:.0f} δ", f"Champ = {champ_deg}°", "0 < γ < 1", "VISIBILITÉ OK")
+
+    else:
+        c1_conv = st.session_state.get("slider_dm_c1_s2", 10.0)
+        c2_div = st.session_state.get("slider_dm_c2_s2", -4.0)
+        c_tot = c1_conv + c2_div
+        x0, y0 = 240.0, 130.0
+
+        ax.plot(list((20, 580)), list((y0, y0)), color="#64748b", lw=1.2, ls="-.")
+        ax.plot(list((x0 - 4, x0 - 4)), list((50, 210)), color="#22c55e", lw=3)
+        ax.plot(list((x0 + 4, x0 + 4)), list((50, 210)), color="#38bdf8", lw=3)
+        ax.text(x0, 38, f"Doublet (C1={c1_conv:+.0f}δ | C2={c2_div:+.0f}δ)", color="#38bdf8", fontsize=8, fontweight="bold", ha="center")
+
+        for dy in [-45, -22, 22, 45]:
+            ax.plot(list((40, x0 - 4)), list((y0 + dy, y0 + dy)), color="#ef4444", lw=1.8)
+            if abs(c_tot) < 0.1:
+                ax.annotate("", xy=(560, y0 + dy), xytext=(x0 + 4, y0 + dy), arrowprops=dict(arrowstyle="->", color="#eab308", lw=2))
+            elif c_tot > 0:
+                f_px = min(300.0, 1200.0 / c_tot)
+                ax.annotate("", xy=(x0 + f_px, y0), xytext=(x0 + 4, y0 + dy), arrowprops=dict(arrowstyle="->", color="#22c55e", lw=2))
+            else:
+                pente_d = (dy / 45.0) * 0.25 * (abs(c_tot) / 5.0)
+                ax.annotate("", xy=(560, y0 + dy + pente_d * 300.0), xytext=(x0 + 4, y0 + dy), arrowprops=dict(arrowstyle="->", color="#a855f7", lw=2))
+
+        nature = "LAME PARALLÈLE (C = 0 δ)" if abs(c_tot) < 0.1 else ("CONVERGENT (C > 0)" if c_tot > 0 else "DIVERGENT (C < 0)")
+        ax.text(25, 18, "FOCOMÉTRIE : VERGENCE ÉQUIVALENTE DE DEUX LENTILLES ACCOLÉES (C = C1 + C2)", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, f"Vergence totale : C = ({c1_conv:+.0f}) + ({c2_div:+.0f}) = {c_tot:+.1f} δ  =>  Système {nature}", color="#22c55e", fontsize=8, fontweight="bold")
+        st.session_state.dm_mesure_courante = (f"C1 = {c1_conv:+.0f} δ", f"C2 = {c2_div:+.0f} δ", f"C_tot = {c_tot:+.1f} δ", nature)
+
+    return fig
+
+
+def afficher_atelier_div_maint(sujet_idx, verrouille=False):
+    if sujet_idx is None:
+        st.warning("Tirez d'abord au sort un sujet de maintenance ci-dessus.")
+        return
+    banque = BANQUES_DIV_MAINT[sujet_idx]
+    cle_ordre = f"ordre_quiz_dm_{sujet_idx}"
+    if cle_ordre not in st.session_state:
+        lq = list(banque["questions"])
+        random.shuffle(lq)
+        st.session_state[cle_ordre] = lq
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Technique Maintenance (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state[cle_ordre], 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", ["Choisir..."] + q_data["options"], key=f"dm_at4_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+    with col_t:
+        st.markdown("##### Synthèse Maintenance (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in banque["trous"]:
+            c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", choix, key=f"{cle}_s{sujet_idx}", disabled=verrouille, label_visibility="collapsed")
+
+
+
+
+
 def afficher_questions_optique6(verrouille=False):
     col_double_quiz_opt6, col_double_trous_opt6 = st.columns(2)
 
@@ -589,7 +793,54 @@ def afficher_questions_optique6(verrouille=False):
 
     return dict_quiz_opt6, dict_trous_opt6
 
+def afficher_atelier_regles_div(verrouille=False):
+    """Affiche le Quiz (10 questions) et le Texte à trous (10 cases) de l'Atelier 2 (Règles de tracé divergentes)."""
+    questions_rd = [
+        {"id": "qrd1", "q": "Quelle est la caractéristique géométrique d'une lentille mince divergente ?", "options": ["Ses bords sont plus épais que son centre", "Ses bords sont plus minces que son centre", "Elle est parfaitement cylindrique"], "rep": "Ses bords sont plus épais que son centre"},
+        {"id": "qrd2", "q": "Où est situé le foyer image F' d'une lentille divergente ?", "options": ["En amont (du côté de la lumière incidente, donc f' < 0)", "En aval (après la lentille, f' > 0)", "Sur le centre optique O"], "rep": "En amont (du côté de la lumière incidente, donc f' < 0)"},
+        {"id": "qrd3", "q": "Comment ressort un rayon incident parallèle à l'axe optique après avoir traversé une lentille divergente ?", "options": ["Il s'écarte de l'axe optique en semblant provenir du foyer image F'", "Il converge vers le foyer image F'", "Il traverse tout droit sans déviation"], "rep": "Il s'écarte de l'axe optique en semblant provenir du foyer image F'"},
+        {"id": "qrd4", "q": "Que fait un rayon incident passant par le centre optique O d'une lentille divergente ?", "options": ["Il traverse la lentille en ligne droite sans être dévié", "Il est réfléchi à 180°", "Il ressort parallèlement à l'axe optique"], "rep": "Il traverse la lentille en ligne droite sans être dévié"},
+        {"id": "qrd5", "q": "Comment ressort un rayon incident dont le prolongement vise le foyer objet F (situé après la lentille) ?", "options": ["Il ressort parallèlement à l'axe optique", "Il passe par le centre optique O", "Il diverge vers le bas"], "rep": "Il ressort parallèlement à l'axe optique"},
+        {"id": "qrd6", "q": "Quelles sont toujours les 3 propriétés de l'image A'B' d'un objet réel donnée par une lentille divergente ?", "options": ["Virtuelle, droite et plus petite que l'objet", "Réelle, renversée et plus grande", "Virtuelle, renversée et plus petite"], "rep": "Virtuelle, droite et plus petite que l'objet"},
+        {"id": "qrd7", "q": "Quel est le signe de la distance focale f' et de la vergence C d'une lentille divergente ?", "options": ["Négatif (f' < 0 et C < 0)", "Positif (f' > 0 et C > 0)", "Nul"], "rep": "Négatif (f' < 0 et C < 0)"},
+        {"id": "qrd8", "q": "Une lentille divergente de distance focale f' = -25 cm (-0,25 m) possède une vergence C égale à :", "options": ["- 4,0 dioptries (δ)", "+ 4,0 dioptries (δ)", "- 0,25 dioptrie (δ)"], "rep": "- 4,0 dioptries (δ)"},
+        {"id": "qrd9", "q": "Peut-on projeter directement sur un écran l'image d'un objet réel formée par une lentille divergente seule ?", "options": ["Non, car l'image est toujours virtuelle (située avant la lentille)", "Oui, à n'importe quelle distance", "Oui, si l'objet est très grand"], "rep": "Non, car l'image est toujours virtuelle (située avant la lentille)"},
+        {"id": "qrd10", "q": "Pourquoi représente-t-on certains rayons en pointillés avant une lentille divergente ?", "options": ["Ce sont les prolongements virtuels des rayons qui permettent de localiser l'image virtuelle A'B'", "Ce sont des rayons infrarouges invisibles", "Ce sont des rayons arrêtés par la lentille"], "rep": "Ce sont les prolongements virtuels des rayons qui permettent de localiser l'image virtuelle A'B'"},
+    ]
 
+    if "ordre_quiz_rd_aleatoire" not in st.session_state:
+        random.shuffle(questions_rd)
+        st.session_state.ordre_quiz_rd_aleatoire = questions_rd
+
+    champs_rd = [
+        ("1. Le symbole d'une lentille divergente porte des flèches pointant vers l'.........", ["Choisir...", "intérieur", "extérieur"], "intérieur", "rd_t1"),
+        ("2. Les foyers F et F' sont ......... par rapport à une lentille convergente.", ["Choisir...", "inversés", "identiques"], "inversés", "rd_t2"),
+        ("3. Le foyer image F' est situé en ......... de la lentille (f' < 0).", ["Choisir...", "amont", "aval"], "amont", "rd_t3"),
+        ("4. Tout rayon passant par le centre optique O n'est pas .........", ["Choisir...", "dévié", "transmis"], "dévié", "rd_t4"),
+        ("5. Tout rayon parallèle à l'axe diverge en semblant venir de .........", ["Choisir...", "F'", "F"], "F'", "rd_t5"),
+        ("6. Tout rayon visant le foyer objet F ressort ......... à l'axe.", ["Choisir...", "parallèle", "perpendiculaire"], "parallèle", "rd_t6"),
+        ("7. L'image d'un objet réel est toujours située ......... la lentille.", ["Choisir...", "avant", "après"], "avant", "rd_t7"),
+        ("8. L'image formée est toujours droite, plus petite et .........", ["Choisir...", "virtuelle", "réelle"], "virtuelle", "rd_t8"),
+        ("9. La vergence C d'une lentille divergente est toujours .........", ["Choisir...", "négative", "positive"], "négative", "rd_t9"),
+        ("10. Le grandissement γ vérifie toujours 0 < γ < .........", ["Choisir...", "1", "10"], "1", "rd_t10"),
+    ]
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Règles de Tracé Divergente (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_rd_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", ["Choisir..."] + q_data["options"], key=f"rd_at2_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_t:
+        st.markdown("##### Synthèse Règles de Tracé (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in champs_rd:
+            c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+
+
+        
 def afficher_atelier_hist_div(verrouille=False):
     """Affiche le Quiz (10 questions) et le Texte à trous (10 cases) de l'Atelier 1 (Histoire des lentilles divergentes)."""
     questions_hd = [
@@ -1038,7 +1289,124 @@ def valider_session():
         )
 
 
+with tab1:
+    st.header("Atelier 1 : Histoire des lentilles divergentes et de la correction de la myopie")
 
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Objectif de l'atelier :</p>
+        <p style="margin-bottom: 0;">Découvrir l'histoire des lentilles divergentes (biconcaves et plan-concaves), depuis l'émeraude de Néron jusqu'à la lunette de Galilée et aux doublets achromatiques.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col_d1, col_d2, col_d3, col_d4 = st.columns(4)
+    with col_d1:
+        try: st.image("neron_emeraude.jpg", caption="L'Antiquité : L'émeraude de Néron", use_container_width=True)
+        except Exception: st.warning("L'image 'neron_emeraude.jpg' est introuvable.")
+        st.info("**L'Antiquité : Les pierres concaves**\n* L'historien Pline l'Ancien rapporte que l'empereur Néron regardait les jeux du cirque à travers une émeraude taillée en creux (divergente) pour corriger sa myopie.")
+
+    with col_d2:
+        try: st.image("kepler.jpg", caption="Johannes Kepler (1571 - 1630)", use_container_width=True)
+        except Exception: st.warning("L'image 'kepler.jpg' est introuvable.")
+        st.info("**Johannes Kepler (1604)**\n* Démontre que dans un œil myope, les rayons convergent trop tôt devant la rétine.\n* Prouve qu'un verre divergent repousse le foyer sur la rétine.")
+
+    with col_d3:
+        try: st.image("galilee_lunette.jpg", caption="Galilée et sa lunette (1609)", use_container_width=True)
+        except Exception: st.warning("L'image 'galilee_lunette.jpg' est introuvable.")
+        st.info("**Galilée (1609)**\n* Associe un objectif convergent et un oculaire divergent.\n* Obtient une image droite (à l'endroit), principe toujours utilisé dans les jumelles de théâtre.")
+
+    with col_d4:
+        try: st.image("dollond_doublet.jpg", caption="John Dollond (1758)", use_container_width=True)
+        except Exception: st.warning("L'image 'dollond_doublet.jpg' est introuvable.")
+        st.info("**John Dollond (1758)**\n* Invente le doublet achromatique en accolant une lentille convergente (crown) et une divergente (flint) pour supprimer les défauts de couleur.")
+
+    st.markdown("---")
+    if "hd_verrouille_tab1" not in st.session_state: st.session_state.hd_verrouille_tab1 = False
+    verrou_hd = st.session_state.hd_verrouille_tab1
+    afficher_atelier_hist_div(verrouille=verrou_hd)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_hd = st.checkbox("Je certifie avoir complété l'Atelier 1 (Histoire des lentilles divergentes).", key="certif_hd1", disabled=verrou_hd)
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_exp_hd1", use_container_width=True, disabled=verrou_hd):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_hd:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            sc_q = sum(1.0 for q in st.session_state.get("ordre_quiz_hd_aleatoire", []) if st.session_state.get(f"hd_at1_g_{q['id']}") == q["rep"])
+            rep_t = {"hd_t1": "épais", "hd_t2": "Néron", "hd_t3": "myopie", "hd_t4": "Kepler", "hd_t5": "Galilée", "hd_t6": "droite", "hd_t7": "avant", "hd_t8": "rétine", "hd_t9": "Dollond", "hd_t10": "chromatiques"}
+            sc_t = sum(1.0 for k, v in rep_t.items() if st.session_state.get(k) == v)
+            st.session_state.score_hd1_p1, st.session_state.score_hd1_p2, st.session_state.score_final_hd1 = sc_q, sc_t, sc_q + sc_t
+            st.session_state.hd_verrouille_tab1 = True
+            st.rerun()
+
+    if st.session_state.get("hd_verrouille_tab1", False):
+        scr1, scr2, tot_s = st.session_state.score_hd1_p1, st.session_state.score_hd1_p2, st.session_state.score_final_hd1
+        ts_hd = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER 1 SCELLÉ | Note : {tot_s:.1f} / 20")
+        html_hd = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport Atelier 1 - {n_eleve}</title>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}</style></head>
+        <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Atelier 1 : Histoire des Lentilles Divergentes</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_hd}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
+        <p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
+        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th></tr></thead><tbody>"""
+        for num, q in enumerate(st.session_state.get("ordre_quiz_hd_aleatoire", []), 1):
+            qid_c = q["id"]
+            html_hd += f"<tr><td>{num}</td><td>{q['q']}</td><td>{st.session_state.get(f'hd_at1_g_{qid_c}', 'Choisir...')}</td><td>{q['rep']}</td></tr>"
+        html_hd += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th></tr></thead><tbody>"
+        verif_hd = [("1. Bords plus ......... que le centre.", "épais", "hd_t1"), ("2. Empereur romain .........", "Néron", "hd_t2"), ("3. Défaut visuel : .........", "myopie", "hd_t3"), ("4. Savant de 1604 : .........", "Kepler", "hd_t4"), ("5. Savant de 1609 : .........", "Galilée", "hd_t5"), ("6. Image .........", "droite", "hd_t6"), ("7. En ......... de la rétine.", "avant", "hd_t7"), ("8. Sur la .........", "rétine", "hd_t8"), ("9. Doublet de .........", "Dollond", "hd_t9"), ("10. Aberrations .........", "chromatiques", "hd_t10")]
+        for idx_t, (en, rep, cle) in enumerate(verif_hd, 1):
+            html_hd += f"<tr><td>{idx_t}</td><td>{en}</td><td>{st.session_state.get(cle, 'Choisir...')}</td><td>{rep}</td></tr>"
+        html_hd += "</tbody></table></body></html>"
+        st.download_button("Télécharger le rapport officiel de l'Atelier 1 (.html)", data=html_hd, file_name=preparer_nom_fichier("Rapport_Atelier_1_Histoire_Divergentes").replace(".txt", ".html"), mime="text/html", use_container_width=True)
+
+
+with tab2:
+    st.header("Atelier 2 : Définition et règles de tracé des rayons (Lentille divergente)")
+
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 16px;">Les 3 rayons particuliers d'une lentille mince divergente :</p>
+        <ul style="margin-bottom: 0; line-height: 1.7;">
+            <li><strong>Rayon 1 (Jaune - Parallèle à l'axe) :</strong> Tout rayon incident parallèle à l'axe optique diverge en semblant provenir du <strong>foyer image virtuel F'</strong> (situé en amont).</li>
+            <li><strong>Rayon 2 (Bleu - Centre optique O) :</strong> Tout rayon incident passant par le centre optique <strong>O</strong> n'est <strong>pas dévié</strong>.</li>
+            <li><strong>Rayon 3 (Rose - Vise le foyer objet F) :</strong> Tout rayon incident dont le prolongement passe par le foyer objet <strong>F</strong> ressort <strong>parallèlement à l'axe optique</strong>.</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col_rd1, col_rd2 = st.columns([0.55, 0.45])
+    with col_rd1:
+        st.radio(
+            "Sélectionnez le rayon à observer :",
+            ["Tous les 3 rayons particuliers", "Rayon 1 : Parallèle → Semble venir de F'", "Rayon 2 : Passe par O → Non dévié", "Rayon 3 : Vise F → Ressort parallèle"],
+            key="radio_regles_div_rayon"
+        )
+    with col_rd2:
+        st.slider("Distance focale |f'| de démonstration (px) :", min_value=60.0, max_value=140.0, value=100.0, step=5.0, key="slider_regles_div_f")
+
+    st.pyplot(dessiner_regles_trace_divergente_matplotlib(), use_container_width=True)
+
+    st.markdown("---")
+    if "rd_verrouille_tab2" not in st.session_state: st.session_state.rd_verrouille_tab2 = False
+    verrou_rd = st.session_state.rd_verrouille_tab2
+    afficher_atelier_regles_div(verrouille=verrou_rd)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_rd = st.checkbox("Je certifie avoir complété l'Atelier 2 (Règles de tracé - Divergente).", key="certif_rd2", disabled=verrou_rd)
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_exp_rd2", use_container_width=True, disabled=verrou_rd):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_rd:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
 
 
 
