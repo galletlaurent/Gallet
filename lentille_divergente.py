@@ -520,7 +520,6 @@ tab7 = onglets[7]
 def afficher_questions_optique6(verrouille=False):
     col_double_quiz_opt6, col_double_trous_opt6 = st.columns(2)
 
-    # --- COLONNE DE GAUCHE : LE QUIZ DE CONNAISSANCES SUR LES LENTILLES DIVERGENTES ---
     with col_double_quiz_opt6:
         st.markdown("##### Quiz sur les lentilles divergentes (10 questions) - Optique 6 (10 pts)")
         if "ordre_questions_opt6" not in st.session_state:
@@ -536,7 +535,6 @@ def afficher_questions_optique6(verrouille=False):
                 ("q9", "Si une lentille divergente a une distance focale f' = -50 cm, sa vergence C vaut :"),
                 ("q10", "Dans la relation de conjugaison de Descartes, la formule reste-t-elle identique a celle des convergentes :")
             ]
-            import random
             random.shuffle(questions_opt6_base)
             st.session_state.ordre_questions_opt6 = questions_opt6_base
 
@@ -556,7 +554,6 @@ def afficher_questions_optique6(verrouille=False):
                 elif q_id == "q8": copie_opts = ["Positif et inferieur a 1 (0 < g < 1)", "Negatif", "Superieur a 1"]
                 elif q_id == "q9": copie_opts = ["-2.00 δ", "+2.00 δ", "-0.02 δ"]
                 elif q_id == "q10": copie_opts = ["Oui, ce sont les valeurs numeriques de f' et x qui changent de signe", "Non, la formule devient 1/x' + 1/x = -1/f'", "Non, les inverses deviennent des carres"]
-                import random
                 random.shuffle(copie_opts)
                 st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
                 
@@ -568,31 +565,77 @@ def afficher_questions_optique6(verrouille=False):
             with cq_sel:
                 dict_quiz_opt6[f"{q_id}_opt6"] = st.selectbox("", st.session_state[cle_opts_unique], index=idx, key=cle_qo6, disabled=verrouille, label_visibility="collapsed")
 
-    # --- COLONNE DE DROITE : LE TEXTE À TROUS DE SYNTHÈSE DES LENTILLES DIVERGENTES ---
     with col_double_trous_opt6:
         st.markdown("##### Synthese de cours (Texte a trous) - Optique 6 (10 pts)")
         
-        co6_1, co6_2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co6_1: st.write("Une lentille mince possede des bords plus epais que son centre. Elle est qualifiee de")
-        with co6_2: t1 = st.selectbox("", ["Choisir...", "Divergente", "Convergente", "Plane"], key="opt6_t1", disabled=verrouille, label_visibility="collapsed")
-        
-        co6_3, co6_4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co6_3: st.write("Sa distance focale f' et sa vergence C ont la particularite d'etre de signe")
-        with co6_4: t2 = st.selectbox("", ["Choisir...", "Negatif", "Positif", "Neutre"], key="opt6_t2", disabled=verrouille, label_visibility="collapsed")
+        trous_div = [
+            ("1. Une lentille mince possede des bords plus epais que son centre. Elle est qualifiee de", ["Choisir...", "Divergente", "Convergente", "Plane"], "opt6_t1"),
+            ("2. Sa distance focale f' et sa vergence C ont la particularite d'etre de signe", ["Choisir...", "Negatif", "Positif", "Neutre"], "opt6_t2"),
+            ("3. Un rayon incident parallele a l'axe ressort en s'eloignant : son prolongement passe par le foyer", ["Choisir...", "Image F'", "Objet F", "Central O"], "opt6_t3"),
+            ("4. Pour un objet reel, la fleche de l'image obtenue est toujours droite, plus petite et de nature", ["Choisir...", "Virtuelle", "Reelle", "Infinie"], "opt6_t4"),
+            ("5. Tout rayon lumineux passant par le centre optique O traverse la lentille sans", ["Choisir...", "Deviation", "Reflexion", "Absorption"], "opt6_t5"),
+            ("6. Le foyer image F' d'une lentille divergente est situe en amont : il est donc", ["Choisir...", "Virtuel", "Reel", "Inexistant"], "opt6_t6"),
+            ("7. Un rayon incident dont le prolongement vise le foyer objet F ressort", ["Choisir...", "Parallele", "Perpendiculaire", "Inverse"], "opt6_t7"),
+            ("8. Une lentille divergente corrige le defaut visuel de l'oeil appele la", ["Choisir...", "Myopie", "Presbytie", "Cataracte"], "opt6_t8"),
+            ("9. Pour une focale f' = -50 cm (-0,50 m), la vergence C vaut -2,00", ["Choisir...", "Dioptries", "Metres", "Degres"], "opt6_t9"),
+            ("10. Le grandissement gamma d'une lentille divergente est toujours compris entre 0 et", ["Choisir...", "1", "10", "100"], "opt6_t10"),
+        ]
 
-        co6_5, co6_6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co6_5: st.write("Un rayon incident parallele a l'axe ressort en s'eloignant de celui-ci : son prolongement passe par le foyer")
-        with co6_6: t3 = st.selectbox("", ["Choisir...", "Image F'", "Objet F", "Central O"], key="opt6_t3", disabled=verrouille, label_visibility="collapsed")
-
-        co6_7, co6_8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co6_7: st.write("Pour un objet reel, la fleche de l'image obtenue est toujours droite, plus petite et de nature")
-        with co6_8: t4 = st.selectbox("", ["Choisir...", "Virtuelle", "Reelle", "Infinie"], key="opt6_t4", disabled=verrouille, label_visibility="collapsed")
-
-        dict_trous_opt6 = {
-            "t1_opt6": t1, "t2_opt6": t2, "t3_opt6": t3, "t4_opt6": t4
-        }
+        dict_trous_opt6 = {}
+        for enonce_t, opts_t, cle_t in trous_div:
+            c1, c2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with c1: st.write(enonce_t)
+            with c2: dict_trous_opt6[cle_t] = st.selectbox("", opts_t, key=cle_t, disabled=verrouille, label_visibility="collapsed")
 
     return dict_quiz_opt6, dict_trous_opt6
+
+
+def afficher_atelier_hist_div(verrouille=False):
+    """Affiche le Quiz (10 questions) et le Texte à trous (10 cases) de l'Atelier 1 (Histoire des lentilles divergentes)."""
+    questions_hd = [
+        {"id": "qhd1", "q": "Quel défaut de vision (difficulté à voir nettement de loin) est corrigé par des lentilles divergentes ?", "options": ["La myopie", "La presbytie", "Le daltonisme"], "rep": "La myopie"},
+        {"id": "qhd2", "q": "Qui est représenté sur le plus ancien portrait connu portant des lunettes à verres divergents (peint en 1517 par Raphaël) ?", "options": ["Le pape Léon X", "Galilée", "Napoléon Bonaparte"], "rep": "Le pape Léon X"},
+        {"id": "qhd3", "q": "Quel astronome allemand a expliqué dès 1604 (Paralipomènes à Vitellion) comment les verres concaves corrigent la myopie ?", "options": ["Johannes Kepler", "Isaac Newton", "Archimède"], "rep": "Johannes Kepler"},
+        {"id": "qhd4", "q": "Quel type de lentille Galilée a-t-il utilisé comme oculaire dans sa lunette astronomique de 1609 pour obtenir une image droite ?", "options": ["Une lentille divergente (plan-concave)", "Un prisme en coin de cube", "Un miroir parabolique"], "rep": "Une lentille divergente (plan-concave)"},
+        {"id": "qhd5", "q": "Comment appelle-t-on la combinaison d'un objectif convergent et d'un oculaire divergent inventée en 1608-1609 ?", "options": ["La lunette de Galilée (utilisée aujourd'hui dans les jumelles de théâtre)", "Le microscope électronique", "Le périscope naval"], "rep": "La lunette de Galilée (utilisée aujourd'hui dans les jumelles de théâtre)"},
+        {"id": "qhd6", "q": "Quel savant a inventé le doublet achromatique en 1758 en associant une lentille convergente (crown) et une lentille divergente (flint) ?", "options": ["John Dollond", "René Descartes", "Euclide"], "rep": "John Dollond"},
+        {"id": "qhd7", "q": "Quel défaut optique des lentilles simples est supprimé en accolant une lentille divergente en verre flint à une convergente en verre crown ?", "options": ["L'aberration chromatique (les irisations colorées sur les bords)", "La réflexion totale", "La gravité"], "rep": "L'aberration chromatique (les irisations colorées sur les bords)"},
+        {"id": "qhd8", "q": "Où se forme l'image d'un objet lointain dans un œil myope non corrigé ?", "options": ["En avant de la rétine (œil trop long ou trop convergent)", "Derrière la rétine", "Sur le cristallin"], "rep": "En avant de la rétine (œil trop long ou trop convergent)"},
+        {"id": "qhd9", "q": "Pourquoi place-t-on un verre divergent devant un œil myope ?", "options": ["Pour faire diverger légèrement les rayons et repousser l'image exactement sur la rétine", "Pour grossir l'image 50 fois", "Pour bloquer la lumière bleue"], "rep": "Pour faire diverger légèrement les rayons et repousser l'image exactement sur la rétine"},
+        {"id": "qhd10", "q": "Quel empereur romain myope utilisait déjà une émeraude taillée concave (divergente) pour regarder les combats de gladiateurs ?", "options": ["L'empereur Néron", "Jules César", "Charlemagne"], "rep": "L'empereur Néron"},
+    ]
+
+    if "ordre_quiz_hd_aleatoire" not in st.session_state:
+        random.shuffle(questions_hd)
+        st.session_state.ordre_quiz_hd_aleatoire = questions_hd
+
+    champs_hd = [
+        ("1. Une lentille divergente possède des bords plus ......... que son centre.", ["Choisir...", "épais", "minces"], "épais", "hd_t1"),
+        ("2. L'empereur romain ......... utilisait une émeraude concave pour voir de loin.", ["Choisir...", "Néron", "Auguste"], "Néron", "hd_t2"),
+        ("3. Les verres divergents corrigent le défaut visuel appelé la .........", ["Choisir...", "myopie", "presbytie"], "myopie", "hd_t3"),
+        ("4. En 1604, Johannes ......... explique le fonctionnement des verres concaves.", ["Choisir...", "Kepler", "Pascal"], "Kepler", "hd_t4"),
+        ("5. En 1609, ......... utilise une lentille divergente comme oculaire de sa lunette.", ["Choisir...", "Galilée", "Newton"], "Galilée", "hd_t5"),
+        ("6. La lunette de Galilée donne directement une image ......... (à l'endroit).", ["Choisir...", "droite", "renversée"], "droite", "hd_t6"),
+        ("7. Dans un œil myope, l'image se forme en ......... de la rétine.", ["Choisir...", "avant", "arrière"], "avant", "hd_t7"),
+        ("8. Le verre divergent repousse l'image sur la ......... pour la rendre nette.", ["Choisir...", "rétine", "cornée"], "rétine", "hd_t8"),
+        ("9. En 1758, John ......... associe lentille convergente et divergente.", ["Choisir...", "Dollond", "Fresnel"], "Dollond", "hd_t9"),
+        ("10. Ce doublet supprime les aberrations ......... dans les objectifs photo.", ["Choisir...", "chromatiques", "thermiques"], "chromatiques", "hd_t10"),
+    ]
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Historique Lentilles Divergentes (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_hd_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", ["Choisir..."] + q_data["options"], key=f"hd_at1_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_t:
+        st.markdown("##### Synthèse Historique (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in champs_hd:
+            c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+
 
 def mettre_a_jour_graphique_lentille_divergente_matplotlib():
     import matplotlib.pyplot as plt
@@ -1085,10 +1128,8 @@ with tab3:
         st.subheader("Relation de Descartes")
         fig_courbe2 = mettre_a_jour_graphique_lentille_divergente_matplotlib()
         st.pyplot(fig_courbe2, use_container_width=True)
-
     st.write("---")
     dict_q6, dict_t6 = afficher_questions_optique6(verrouille=st.session_state.get("opt6_verrouille", False))
-
 
     # =========================================================================
     # MODULE DE NOTATION ET D'EXPORTATION AUTOMATIQUE SUR 20 POINTS - ATELIER 6
@@ -1122,12 +1163,12 @@ with tab3:
             }
             score_quiz_opt6 = sum([1.0 for qk, qv in attendus_qo6_v.items() if st.session_state.get(f"col_g_quiz_opt6_{qk}") == qv])
 
-            # Moteur de correction automatique du Texte a trous (10 Pts)
-            score_trous_opt6 = 0.0
-            if st.session_state.get("opt6_t1") == "Divergente": score_trous_opt6 += 2.5
-            if st.session_state.get("opt6_t2") == "Negatif": score_trous_opt6 += 2.5
-            if st.session_state.get("opt6_t3") == "Image F'": score_trous_opt6 += 2.5
-            if st.session_state.get("opt6_t4") == "Virtuelle": score_trous_opt6 += 2.5
+            # Moteur de correction automatique du Texte a trous (10 Pts : 10 items x 1 pt)
+            attendus_to6_v = {
+                "t1": "Divergente", "t2": "Negatif", "t3": "Image F'", "t4": "Virtuelle", "t5": "Deviation",
+                "t6": "Virtuel", "t7": "Parallele", "t8": "Myopie", "t9": "Dioptries", "t10": "1"
+            }
+            score_trous_opt6 = sum([1.0 for tk, tv in attendus_to6_v.items() if st.session_state.get(f"opt6_{tk}") == tv])
 
             st.session_state.score_opt6_p1 = round(score_quiz_opt6, 1)
             st.session_state.score_opt6_p2 = round(score_trous_opt6, 1)
@@ -1142,7 +1183,7 @@ with tab3:
         tot_s = st.session_state.get("score_final_opt6", 0.0)
 
         from datetime import timedelta
-        timestamp_opt6 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+        timestamp_opt6 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
 
         st.success(f"ATELIER OPTIQUE 6 SCELLE | Note de session : {tot_s} / 20")
 
@@ -1153,7 +1194,35 @@ with tab3:
             "q7": "Virtuelle, droite et plus petite", "q8": "Positif et inferieur a 1 (0 < g < 1)", 
             "q9": "-2.00 δ", "q10": "Oui, ce sont les valeurs numeriques de f' et x qui changent de signe"
         }
-        attendus_to6_v = {"t1": "Divergente", "t2": "Negatif", "t3": "Image F'", "t4": "Virtuelle"}
+        enonces_qo6_v = {
+            "q1": "D'un point de vue geometrique, une lentille mince est qualifiee de divergente si ses bords sont :",
+            "q2": "Le symbole d'une lentille divergente sur un schema optique est represente par :",
+            "q3": "La distance focale f' d'une lentille divergente est une grandeur physique :",
+            "q4": "Par consequent, la vergence C d'une lentille divergente s'exprime par une valeur :",
+            "q5": "Un rayon incident parallele a l'axe optique ressort de la lentille divergente en semblant provenir de :",
+            "q6": "Un rayon incident dont le prolongement passe par le foyer objet F ressort de la lentille :",
+            "q7": "Pour un objet reel AB place avant la lentille divergente, l'image A'B' obtenue est toujours :",
+            "q8": "Le grandissement gamma pour une lentille divergente avec un objet reel est toujours :",
+            "q9": "Si une lentille divergente a une distance focale f' = -50 cm, sa vergence C vaut :",
+            "q10": "Dans la relation de conjugaison de Descartes, la formule reste-t-elle identique a celle des convergentes :"
+        }
+
+        attendus_to6_v = {
+            "t1": "Divergente", "t2": "Negatif", "t3": "Image F'", "t4": "Virtuelle", "t5": "Deviation",
+            "t6": "Virtuel", "t7": "Parallele", "t8": "Myopie", "t9": "Dioptries", "t10": "1"
+        }
+        enonces_to6_v = {
+            "t1": "1. Une lentille mince possede des bords plus epais que son centre. Elle est qualifiee de .........",
+            "t2": "2. Sa distance focale f' et sa vergence C ont la particularite d'etre de signe .........",
+            "t3": "3. Un rayon incident parallele a l'axe ressort en s'eloignant : son prolongement passe par le foyer .........",
+            "t4": "4. Pour un objet reel, la fleche de l'image obtenue est toujours droite, plus petite et de nature .........",
+            "t5": "5. Tout rayon lumineux passant par le centre optique O traverse la lentille sans .........",
+            "t6": "6. Le foyer image F' d'une lentille divergente est situe en amont : il est donc .........",
+            "t7": "7. Un rayon incident dont le prolongement vise le foyer objet F ressort .........",
+            "t8": "8. Une lentille divergente corrige le defaut visuel de l'oeil appele la .........",
+            "t9": "9. Pour une focale f' = -50 cm (-0,50 m), la vergence C vaut -2,00 .........",
+            "t10": "10. Le grandissement gamma d'une lentille divergente est toujours compris entre 0 et ........."
+        }
 
         html_export_opt6 = f"""<!DOCTYPE html>
         <html>
@@ -1176,35 +1245,38 @@ with tab3:
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_opt6}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Atelier : Lentilles Minces Divergentes | Scelle le : {timestamp_opt6}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
 
             <div class="sub-title">Recapitulatif des scores de competences - Optique 6</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
                 &bull; Partie 1 : Quiz de Connaissances (10 items) : <strong>{scr1} / 10</strong><br>
-                &bull; Partie 2 : Synthese de Cours (Texte a trous 4 items) : <strong>{scr2} / 10</strong>
+                &bull; Partie 2 : Synthese de Cours (Texte a trous 10 items) : <strong>{scr2} / 10</strong>
             </p>
 
             <div class="sub-title">PARTIE 1 : QUIZ SUR LA DIVERGENCE (10 PTS)</div>
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 10%;">N°</th>
-                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 25%; text-align: center;">Attendu</th>
-                        <th style="width: 25%; text-align: center;">Verdict</th>
+                        <th style="width: 5%;">N°</th>
+                        <th style="width: 45%;">Question posée</th>
+                        <th style="width: 20%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 15%; text-align: center;">Attendu</th>
+                        <th style="width: 15%; text-align: center;">Verdict</th>
                     </tr>
                 </thead>
                 <tbody>
         """
 
-        for idx_q, (q_id, q_txt) in enumerate(attendus_qo6_v.items(), 1):
+        for idx_q, (q_id, attendu) in enumerate(attendus_qo6_v.items(), 1):
             saisie = st.session_state.get(f"col_g_quiz_opt6_{q_id}", "Choisir...")
-            attendu = attendus_qo6_v[q_id]
+            enonce_q = enonces_qo6_v.get(q_id, f"Question {idx_q}")
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_opt6 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            html_export_opt6 += f"<tr><td>{idx_q}</td><td>{enonce_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
         html_export_opt6 += """
                 </tbody>
@@ -1214,20 +1286,21 @@ with tab3:
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 10%;">N°</th>
-                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 25%; text-align: center;">Attendu</th>
-                        <th style="width: 25%; text-align: center;">Verdict</th>
+                        <th style="width: 55%; text-align: left;">Phrase explicative à trous</th>
+                        <th style="width: 15%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 15%; text-align: center;">Attendu</th>
+                        <th style="width: 15%; text-align: center;">Verdict</th>
                     </tr>
                 </thead>
                 <tbody>
         """
 
-        for idx_t, (t_key, t_val) in enumerate(attendus_to6_v.items(), 1):
-            saisie = st.session_state.get(f"opt6_{t_key}", "Choisir...")
-            v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_opt6 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+        for t_key, attendu_t in attendus_to6_v.items():
+            saisie_t = st.session_state.get(f"opt6_{t_key}", "Choisir...")
+            phrase_t = enonces_to6_v.get(t_key, t_key)
+            v_lbl_t = "CORRECT" if str(saisie_t) == str(attendu_t) else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_opt6 += f"<tr><td style='text-align: left;'>{phrase_t}</td><td style='text-align:center;'>{saisie_t}</td><td style='text-align:center;'>{attendu_t}</td><td class='{v_class_t}' style='text-align: center;'>{v_lbl_t}</td></tr>"
 
         html_export_opt6 += """
                 </tbody>
@@ -1248,9 +1321,6 @@ with tab3:
             mime="text/html",
             use_container_width=True
         )
-
-
-
 
 
 
