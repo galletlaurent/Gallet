@@ -2614,6 +2614,11 @@ with tab5:
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    if "dtp_verrouille_tab5" not in st.session_state:
+        st.session_state.dtp_verrouille_tab5 = False
+    verrou_dtp = st.session_state.dtp_verrouille_tab5
+    sujet_actif_dtp = st.session_state.get("sujet_dtp_tire", None)
+    afficher_atelier_div_tp(sujet_actif_dtp, verrouille=verrou_dtp)
 
     case_certif_dtp = st.checkbox("Je certifie avoir complété l'Atelier 5 (Travaux Publics - Divergentes).", key="certif_dtp5", disabled=verrou_dtp)
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_exp_dtp5", use_container_width=True, disabled=verrou_dtp):
