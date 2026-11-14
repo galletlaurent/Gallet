@@ -1811,13 +1811,20 @@ with tab3:
 
             # Menu deroulant pour le choix du flacon de sel
             liste_metaux = list(st.session_state.catalogue_metaux.keys())
+            
+            # Initialisation securisee des variables de session
+            if "var_sel_metal" not in st.session_state or st.session_state.var_sel_metal not in liste_metaux:
+                st.session_state.var_sel_metal = liste_metaux[0]
+            verrou_tab2 = st.session_state.get("mode_examen_tab2", False)
+
             st.session_state.var_sel_metal = st.selectbox(
                 "Choisir un flacon de sel :",
                 options=liste_metaux,
                 index=liste_metaux.index(st.session_state.var_sel_metal),
                 key="select_metal_tab2_final",
-                disabled=st.session_state.mode_examen_tab2,
+                disabled=verrou_tab2,
             )
+
 
             # Recuperation des donnees du metal et mise a jour de la description
             info_metal = gerer_changement_metal()
