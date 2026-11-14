@@ -1418,7 +1418,10 @@ def afficher_questions_optique5(verrouille=False):
             with ct1: st.write(enonce_t)
             with ct2: dict_trous_opt5[cle_t] = st.selectbox("", opts_t, key=f"opt5_{cle_t}", disabled=verrouille, label_visibility="collapsed")
 
-    return dict_quiz_opt5, dict_trous_opt5
+        dict_enonces_q = dict(st.session_state[cle_session_ordre])
+        dict_enonces_t = {cle_t: enonce_t for enonce_t, _, cle_t in phrases}
+        return dict_quiz_opt5, dict_trous_opt5, dict_enonces_q, dict_enonces_t
+
 
 def afficher_questions_optique6(verrouille=False):
     col_double_quiz_opt6, col_double_trous_opt6 = st.columns(2)
@@ -1572,7 +1575,11 @@ def afficher_questions_optique6(verrouille=False):
             with ct1: st.write(enonce_t)
             with ct2: dict_trous_opt6[cle_t] = st.selectbox("", opts_t, key=f"opt6_{cle_t}", disabled=verrouille, label_visibility="collapsed")
 
-    return dict_quiz_opt6, dict_trous_opt6
+        dict_enonces_q = dict(st.session_state[cle_session_ordre])
+        dict_enonces_t = {cle_t: enonce_t for enonce_t, _, cle_t in phrases}
+        return dict_quiz_opt6, dict_trous_opt6, dict_enonces_q, dict_enonces_t
+
+
 def afficher_questions_optique7(verrouille=False):
     col_double_quiz_opt7, col_double_trous_opt7 = st.columns(2)
 
@@ -2040,7 +2047,10 @@ def afficher_questions_optique8(verrouille=False):
             with ct1: st.write(enonce_t)
             with ct2: dict_trous_opt8[cle_t] = st.selectbox("", opts_t, key=f"opt8_{cle_t}", disabled=verrouille, label_visibility="collapsed")
 
-    return dict_quiz_opt8, dict_trous_opt8
+        dict_enonces_q = dict(st.session_state[cle_session_ordre])
+        dict_enonces_t = {cle_t: enonce_t for enonce_t, _, cle_t in phrases}
+        return dict_quiz_opt8, dict_trous_opt8, dict_enonces_q, dict_enonces_t
+
 
 
 
