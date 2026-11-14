@@ -2876,9 +2876,10 @@ with tab5:
 
     st.markdown("---")
 
-    dict_quiz_opt5, dict_trous_opt5 = afficher_questions_optique5(
-        verrouille=st.session_state.get("opt5_verrouille", False)
-    )
+     dict_quiz_opt5, dict_trous_opt5, enonces_q_opt5, enonces_t_opt5 = afficher_questions_optique5(
+         verrouille=st.session_state.get("opt5_verrouille", False)
+     )
+
 
     st.write("---")
     st.subheader("Validation et Generation du Bilan Officiel - Optique 5")
@@ -2975,50 +2976,52 @@ with tab5:
                 &bull; Partie 1 : Questionnaire d'application maintenance : <strong>{scr1} / 10</strong><br>
                 &bull; Partie 2 : Synthese de Cours (Texte a trous) : <strong>{scr2} / 10</strong>
             </p>
+             <div class="sub-title">PARTIE 1 : QUIZ MAINTENANCE INDUSTRIELLE (10 PTS)</div>
+             <table>
+                 <thead>
+                     <tr>
+                         <th style="width: 5%;">N°</th>
+                         <th style="width: 45%;">Question posée</th>
+                         <th style="width: 20%; text-align: center;">Saisie Eleve</th>
+                         <th style="width: 15%; text-align: center;">Attendu</th>
+                         <th style="width: 15%; text-align: center;">Verdict</th>
+                     </tr>
+                 </thead>
+                 <tbody>
+         """
 
-            <div class="sub-title">PARTIE 1 : QUIZ MAINTENANCE INDUSTRIELLE (10 PTS)</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 10%;">Question</th>
-                        <th style="width: 35%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 35%; text-align: center;">Attendu</th>
-                        <th style="width: 20%; text-align: center;">Verdict</th>
-                    </tr>
-                </thead>
-                <tbody>
-        """
+         for idx_q, (q_id, attendu) in enumerate(dict_q_m_actif.items(), 1):
+             saisie = st.session_state.get(f"col_g_quiz_opt5_{cas_m_actif}_{q_id}", "Choisir...")
+             enonce_q = enonces_q_opt5.get(q_id, f"Question {idx_q}")
+             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+             html_export_opt5 += f"<tr><td>{idx_q}</td><td>{enonce_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align:center;'>{v_lbl}</td></tr>"
 
-        for idx_q, (q_id, attendu) in enumerate(dict_q_m_actif.items(), 1):
-            saisie = st.session_state.get(f"col_g_quiz_opt5_{cas_m_actif}_{q_id}", "Choisir...")
-            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_opt5 += f"<tr><td>Question {idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align:center;'>{v_lbl}</td></tr>"
+         html_export_opt5 += """
+                 </tbody>
+             </table>
 
-        html_export_opt5 += """
-                </tbody>
-            </table>
+             <div class="sub-title">PARTIE 2 : SYNTHESE DE COURS ASSOCIEE (10 PTS)</div>
+             <table>
+                 <thead>
+                     <tr>
+                         <th style="width: 55%; text-align: left;">Phrase explicative à trous</th>
+                         <th style="width: 15%; text-align: center;">Saisie Eleve</th>
+                         <th style="width: 15%; text-align: center;">Attendu</th>
+                         <th style="width: 15%; text-align: center;">Verdict</th>
+                     </tr>
+                 </thead>
+                 <tbody>
+         """
 
-            <div class="sub-title">PARTIE 2 : SYNTHESE DE COURS ASSOCIEE (10 PTS)</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 15%;">Trou</th>
-                        <th style="width: 35%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 35%; text-align: center;">Attendu</th>
-                        <th style="width: 15%; text-align: center;">Verdict</th>
-                    </tr>
-                </thead>
-                <tbody>
-        """
-
-        for idx_t in range(1, 11):
-            t_key = f"t{idx_t}_opt5"
-            saisie_t = st.session_state.get(f"opt5_{t_key}", "Choisir...")
-            attendu_t = dict_t_m_actif.get(t_key, "Inconnu")
-            v_lbl_t = "CORRECT" if str(saisie_t) == str(attendu_t) else "INCORRECT"
-            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
-            html_export_opt5 += f"<tr><td>Trou {idx_t}</td><td style='text-align:center;'>{saisie_t}</td><td style='text-align:center;'>{attendu_t}</td><td class='{v_class_t}' style='text-align:center;'>{v_lbl_t}</td></tr>"
+         for idx_t in range(1, 11):
+             t_key = f"t{idx_t}_opt5"
+             saisie_t = st.session_state.get(f"opt5_{t_key}", "Choisir...")
+             attendu_t = dict_t_m_actif.get(t_key, "Inconnu")
+             phrase_t = enonces_t_opt5.get(t_key, f"Phrase {idx_t}")
+             v_lbl_t = "CORRECT" if str(saisie_t) == str(attendu_t) else "INCORRECT"
+             v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+             html_export_opt5 += f"<tr><td style='text-align: left;'>{phrase_t}</td><td style='text-align:center;'>{saisie_t}</td><td style='text-align:center;'>{attendu_t}</td><td class='{v_class_t}' style='text-align:center;'>{v_lbl_t}</td></tr>"
 
         html_export_opt5 += """
                 </tbody>
@@ -3138,9 +3141,10 @@ with tab6:
 
     st.markdown("---")
 
-    dict_quiz_opt6, dict_trous_opt6 = afficher_questions_optique6(
-        verrouille=st.session_state.get("opt6_verrouille", False)
-    )
+     dict_quiz_opt6, dict_trous_opt6, enonces_q_opt6, enonces_t_opt6 = afficher_questions_optique6(
+         verrouille=st.session_state.get("opt6_verrouille", False)
+     )
+
 
     st.write("---")
     st.subheader("Validation et Generation du Bilan Officiel - Optique 6")
@@ -3229,27 +3233,27 @@ with tab6:
                 &bull; Partie 1 : Questionnaire Travaux Publics : <strong>{scr1} / 10</strong><br>
                 &bull; Partie 2 : Synthese de Cours (Texte a trous) : <strong>{scr2} / 10</strong>
             </p>
-            <div class="sub-title">PARTIE 1 : QUIZ TRAVAUX PUBLICS (10 PTS)</div>
-            <table><thead><tr><th>Question</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align:center;">Verdict</th></tr></thead><tbody>
-        """
+             <div class="sub-title">PARTIE 1 : QUIZ TRAVAUX PUBLICS (10 PTS)</div>
+             <table><thead><tr><th style="width: 5%;">N°</th><th style="width: 45%;">Question posée</th><th style="width: 20%; text-align:center;">Saisie Eleve</th><th style="width: 15%; text-align:center;">Attendu</th><th style="width: 15%; text-align:center;">Verdict</th></tr></thead><tbody>
+         """
 
-        for idx_q, (q_id, attendu) in enumerate(rep_quiz_tp[cas_tp_actif].items(), 1):
-            saisie = st.session_state.get(f"col_g_quiz_opt6_{cas_tp_actif}_{q_id}", "Choisir...")
-            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_opt6 += f"<tr><td>Question {idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align:center;'>{v_lbl}</td></tr>"
+         for idx_q, (q_id, attendu) in enumerate(rep_quiz_tp[cas_tp_actif].items(), 1):
+             saisie = st.session_state.get(f"col_g_quiz_opt6_{cas_tp_actif}_{q_id}", "Choisir...")
+             enonce_q = enonces_q_opt6.get(q_id, f"Question {idx_q}")
+             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+             html_export_opt6 += f"<tr><td>{idx_q}</td><td>{enonce_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align:center;'>{v_lbl}</td></tr>"
 
-        html_export_opt6 += """</tbody></table><div class="sub-title">PARTIE 2 : SYNTHESE DE COURS ASSOCIEE (10 PTS)</div><table><thead><tr><th>Trou</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align:center;">Verdict</th></tr></thead><tbody>"""
+         html_export_opt6 += """</tbody></table><div class="sub-title">PARTIE 2 : SYNTHESE DE COURS ASSOCIEE (10 PTS)</div><table><thead><tr><th style="width: 55%; text-align: left;">Phrase explicative à trous</th><th style="width: 15%; text-align:center;">Saisie Eleve</th><th style="width: 15%; text-align:center;">Attendu</th><th style="width: 15%; text-align:center;">Verdict</th></tr></thead><tbody>"""
 
-        for idx_t in range(1, 11):
-            t_key = f"t{idx_t}_opt6"
-            saisie_t = st.session_state.get(f"opt6_{t_key}", "Choisir...")
-            attendu_t = rep_trous_tp[cas_tp_actif].get(t_key, "Inconnu")
-            v_lbl_t = "CORRECT" if str(saisie_t) == str(attendu_t) else "INCORRECT"
-            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
-            html_export_opt6 += f"<tr><td>Trou {idx_t}</td><td style='text-align:center;'>{saisie_t}</td><td style='text-align:center;'>{attendu_t}</td><td class='{v_class_t}' style='text-align:center;'>{v_lbl_t}</td></tr>"
-
-        html_export_opt6 += """</tbody></table><div style="text-align: center; margin-top: 40px; font-size: 11px; color: #64748b;">Laboratoire d'Optique Physique Appliquee &copy; 2026</div></body></html>"""
+         for idx_t in range(1, 11):
+             t_key = f"t{idx_t}_opt6"
+             saisie_t = st.session_state.get(f"opt6_{t_key}", "Choisir...")
+             attendu_t = rep_trous_tp[cas_tp_actif].get(t_key, "Inconnu")
+             phrase_t = enonces_t_opt6.get(t_key, f"Phrase {idx_t}")
+             v_lbl_t = "CORRECT" if str(saisie_t) == str(attendu_t) else "INCORRECT"
+             v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+             html_export_opt6 += f"<tr><td style='text-align: left;'>{phrase_t}</td><td style='text-align:center;'>{saisie_t}</td><td style='text-align:center;'>{attendu_t}</td><td class='{v_class_t}' style='text-align:center;'>{v_lbl_t}</td></tr>"
 
         st.download_button(
             label="Télécharger le relevé de notes au format HTML",
@@ -3880,9 +3884,10 @@ with tab8:
 
     st.markdown("---")
 
-    dict_quiz_opt8, dict_trous_opt8 = afficher_questions_optique8(
-        verrouille=st.session_state.get("opt8_verrouille", False)
-    )
+     dict_quiz_opt8, dict_trous_opt8, enonces_q_opt8, enonces_t_opt8 = afficher_questions_optique8(
+         verrouille=st.session_state.get("opt8_verrouille", False)
+     )
+
 
     st.write("---")
     st.subheader("Validation et Generation du Bilan Officiel - Optique 8")
@@ -3969,27 +3974,27 @@ with tab8:
                 &bull; Partie 1 : Questionnaire Geometre Topographe : <strong>{scr1} / 10</strong><br>
                 &bull; Partie 2 : Synthese de Cours (Texte a trous) : <strong>{scr2} / 10</strong>
             </p>
-            <div class="sub-title">PARTIE 1 : QUIZ GEOMETRE TOPOGRAPHE (10 PTS)</div>
-            <table><thead><tr><th>Question</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align:center;">Verdict</th></tr></thead><tbody>
-        """
+             <div class="sub-title">PARTIE 1 : QUIZ GEOMETRE TOPOGRAPHE (10 PTS)</div>
+             <table><thead><tr><th style="width: 5%;">N°</th><th style="width: 45%;">Question posée</th><th style="width: 20%; text-align:center;">Saisie Eleve</th><th style="width: 15%; text-align:center;">Attendu</th><th style="width: 15%; text-align:center;">Verdict</th></tr></thead><tbody>
+         """
 
-        for idx_q, (q_id, attendu) in enumerate(rep_quiz_g[cas_g_actif].items(), 1):
-            saisie = st.session_state.get(f"col_g_quiz_opt8_{cas_g_actif}_{q_id}", "Choisir...")
-            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_opt8 += f"<tr><td>Question {idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align:center;'>{v_lbl}</td></tr>"
+         for idx_q, (q_id, attendu) in enumerate(rep_quiz_g[cas_g_actif].items(), 1):
+             saisie = st.session_state.get(f"col_g_quiz_opt8_{cas_g_actif}_{q_id}", "Choisir...")
+             enonce_q = enonces_q_opt8.get(q_id, f"Question {idx_q}")
+             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+             html_export_opt8 += f"<tr><td>{idx_q}</td><td>{enonce_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align:center;'>{v_lbl}</td></tr>"
 
-        html_export_opt8 += """</tbody></table><div class="sub-title">PARTIE 2 : SYNTHESE DE COURS ASSOCIEE (10 PTS)</div><table><thead><tr><th>Trou</th><th style="text-align:center;">Saisie Eleve</th><th style="text-align:center;">Attendu</th><th style="text-align:center;">Verdict</th></tr></thead><tbody>"""
+         html_export_opt8 += """</tbody></table><div class="sub-title">PARTIE 2 : SYNTHESE DE COURS ASSOCIEE (10 PTS)</div><table><thead><tr><th style="width: 55%; text-align: left;">Phrase explicative à trous</th><th style="width: 15%; text-align:center;">Saisie Eleve</th><th style="width: 15%; text-align:center;">Attendu</th><th style="width: 15%; text-align:center;">Verdict</th></tr></thead><tbody>"""
 
-        for idx_t in range(1, 11):
-            t_key = f"t{idx_t}_opt8"
-            saisie_t = st.session_state.get(f"opt8_{t_key}", "Choisir...")
-            attendu_t = rep_trous_g[cas_g_actif].get(t_key, "Inconnu")
-            v_lbl_t = "CORRECT" if str(saisie_t) == str(attendu_t) else "INCORRECT"
-            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
-            html_export_opt8 += f"<tr><td>Trou {idx_t}</td><td style='text-align:center;'>{saisie_t}</td><td style='text-align:center;'>{attendu_t}</td><td class='{v_class_t}' style='text-align:center;'>{v_lbl_t}</td></tr>"
-
-        html_export_opt8 += """</tbody></table><div style="text-align: center; margin-top: 40px; font-size: 11px; color: #64748b;">Laboratoire d'Optique Physique Appliquee &copy; 2026</div></body></html>"""
+         for idx_t in range(1, 11):
+             t_key = f"t{idx_t}_opt8"
+             saisie_t = st.session_state.get(f"opt8_{t_key}", "Choisir...")
+             attendu_t = rep_trous_g[cas_g_actif].get(t_key, "Inconnu")
+             phrase_t = enonces_t_opt8.get(t_key, f"Phrase {idx_t}")
+             v_lbl_t = "CORRECT" if str(saisie_t) == str(attendu_t) else "INCORRECT"
+             v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+             html_export_opt8 += f"<tr><td style='text-align: left;'>{phrase_t}</td><td style='text-align:center;'>{saisie_t}</td><td style='text-align:center;'>{attendu_t}</td><td class='{v_class_t}' style='text-align:center;'>{v_lbl_t}</td></tr>"
 
         st.download_button(
             label="Télécharger le relevé de notes au format HTML",
