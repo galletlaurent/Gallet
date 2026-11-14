@@ -528,21 +528,20 @@ def afficher_questions_optique9(verrouille=False):
     col_double_quiz_opt9, col_double_trous_opt9 = st.columns(2)
 
     with col_double_quiz_opt9:
-        st.markdown("##### Quiz sur le microscope (10 questions) - Optique 9 (10 pts)")
+        st.markdown("##### Quiz sur le microscope (10 questions - 10 pts)")
         if "ordre_questions_opt9" not in st.session_state:
             questions_opt9_base = [
-                ("q1", "Dans un microscope, la premiere lentille convergente tres puissante pres de l'objet s'appelle l' :"),
-                ("q2", "La distance fixe separent le foyer image de l'objectif F'1 et le foyer objet de l'oculaire F2 est appelee l' :"),
-                ("q3", "L'image intermediaire A1B1 creee par l'objectif du microscope est une image :"),
-                ("q4", "La seconde lentille (l'oculaire) joue le role d'une loupe. Elle observe l'image intermédiaire placee :"),
-                ("q5", "Pour un confort visuel maximal de l'observateur (oeil au repos sans accommoder), l'image finale doit se former :"),
+                ("q1", "Dans un microscope, la première lentille convergente très puissante près de l'objet s'appelle l' :"),
+                ("q2", "La distance fixe séparant le foyer image de l'objectif F'1 et le foyer objet de l'oculaire F2 est appelée l' :"),
+                ("q3", "L'image intermédiaire A1B1 créée par l'objectif du microscope est une image :"),
+                ("q4", "La seconde lentille (l'oculaire) joue le rôle d'une loupe. Elle observe l'image intermédiaire placée :"),
+                ("q5", "Pour un confort visuel maximal de l'observateur (œil au repos sans accommoder), l'image finale doit se former :"),
                 ("q6", "Le grandissement transversal de l'objectif d'un microscope est une grandeur physique de signe :"),
-                ("q7", "Le grossissement total G du microscope est egal au produit du grossissement de l'oculaire par :"),
+                ("q7", "Le grossissement total G du microscope est égal au produit du grossissement de l'oculaire par :"),
                 ("q8", "Si le grandissement de l'objectif vaut -10 et le grossissement de l'oculaire vaut 4, le grossissement total vaut :"),
-                ("q9", "Par rapport a l'objet micro-optique reel place sur la platine, l'image finale observee est :"),
-                ("q10", "La puissance d'un microscope s'exprime couramment en dioptries ou par son grossissement commercial note :")
+                ("q9", "Par rapport à l'objet micro-optique réel placé sur la platine, l'image finale observée est :"),
+                ("q10", "La puissance d'un microscope s'exprime couramment en dioptries ou par son grossissement commercial noté :")
             ]
-            import random
             random.shuffle(questions_opt9_base)
             st.session_state.ordre_questions_opt9 = questions_opt9_base
 
@@ -552,17 +551,16 @@ def afficher_questions_optique9(verrouille=False):
             cle_opts_unique = f"opts_opt9_shuffled_{q_id}"
             
             if cle_opts_unique not in st.session_state:
-                if q_id == "q1": copie_opts = ["Objectif (de tres courte distance focale)", "Oculaire", "Condenseur de champ"]
-                elif q_id == "q2": copie_opts = ["Intervalle optique Delta", "Distance focale totale", "Longueur mecanique du tube"]
-                elif q_id == "q3": copie_opts = ["Reelle, renversee et tres agrandie", "Virtuelle, droite et plus petite", "Virtuelle et renversee"]
-                elif q_id == "q4": copie_opts = ["Pile dans son plan focal objet (foyer F2)", "Sur son centre optique O2", "A l'infini en aval"]
-                elif q_id == "q5": copie_opts = ["A l'infini", "Sur la lentille objectif", "Au niveau du cercle oculaire"]
-                elif q_id == "q6": copie_opts = ["Negatif (car l'image intermediaire est renversee)", "Positif", "Nul"]
+                if q_id == "q1": copie_opts = ["Objectif (de très courte distance focale)", "Oculaire", "Condenseur de champ"]
+                elif q_id == "q2": copie_opts = ["Intervalle optique Delta", "Distance focale totale", "Longueur mécanique du tube"]
+                elif q_id == "q3": copie_opts = ["Réelle, renversée et très agrandie", "Virtuelle, droite et plus petite", "Virtuelle et renversée"]
+                elif q_id == "q4": copie_opts = ["Pile dans son plan focal objet (foyer F2)", "Sur son centre optique O2", "À l'infini en aval"]
+                elif q_id == "q5": copie_opts = ["À l'infini", "Sur la lentille objectif", "Au niveau du cercle oculaire"]
+                elif q_id == "q6": copie_opts = ["Négatif (car l'image intermédiaire est renversée)", "Positif", "Nul"]
                 elif q_id == "q7": copie_opts = ["Le grandissement de l'objectif", "La vergence de l'objectif", "La distance focale de l'oculaire"]
                 elif q_id == "q8": copie_opts = ["-40", "40", "-2.5"]
-                elif q_id == "q9": copie_opts = ["Renversee et fortement agrandie", "Droite et agrandie", "Renversee et plus petite"]
-                elif q_id == "q10": copie_opts = ["Un nombre suivi de la lettre X (ex: x40)", "Un angle en radians", "Une valeur en metres"]
-                import random
+                elif q_id == "q9": copie_opts = ["Renversée et fortement agrandie", "Droite et agrandie", "Renversée et plus petite"]
+                elif q_id == "q10": copie_opts = ["Un nombre suivi de la lettre X (ex: x40)", "Un angle en radians", "Une valeur en mètres"]
                 random.shuffle(copie_opts)
                 st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
                 
@@ -575,48 +573,50 @@ def afficher_questions_optique9(verrouille=False):
                 dict_quiz_opt9[f"{q_id}_opt9"] = st.selectbox("", st.session_state[cle_opts_unique], index=idx, key=cle_qo9, disabled=verrouille, label_visibility="collapsed")
 
     with col_double_trous_opt9:
-        st.markdown("##### Synthese de cours (Texte a trous) - Optique 9 (10 pts)")
+        st.markdown("##### Synthèse de cours (Texte à trous - 10 items) - Optique 9 (10 pts)")
         
-        co9_1, co9_2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co9_1: st.write("Le microscope compose utilise deux systemes convergents. Le premier est l'")
-        with co9_2: t1 = st.selectbox("", ["Choisir...", "Objectif", "Oculaire", "Miroir"], key="opt9_t1", disabled=verrouille, label_visibility="collapsed")
-        
-        co9_3, co9_4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co9_3: st.write("de tres courte focale, qui genere une image intermediaire reelle. Le second est l'")
-        with co9_4: t2 = st.selectbox("", ["Choisir...", "Oculaire", "Objectif", "Prisme"], key="opt9_t2", disabled=verrouille, label_visibility="collapsed")
+        items_trous_o9 = [
+            ("1. Le microscope composé utilise deux systèmes convergents. Le premier est l'", ["Choisir...", "Objectif", "Oculaire", "Miroir"], "opt9_t1"),
+            ("2. De très courte focale, il génère une image intermédiaire réelle. Le second est l'", ["Choisir...", "Oculaire", "Objectif", "Prisme"], "opt9_t2"),
+            ("3. Il fait office de loupe pour observer cette dernière. La distance fixe F'1F2 s'appelle l'", ["Choisir...", "Intervalle optique", "Axe de visée", "Diamètre utile"], "opt9_t3"),
+            ("4. L'image intermédiaire A1B1 formée par l'objectif est réelle et", ["Choisir...", "Renversée", "Droite", "Virtuelle"], "opt9_t4"),
+            ("5. Pour que l'œil observe sans fatigue, l'image finale est rejetée à l'", ["Choisir...", "Infini", "Objectif", "Foyer F1"], "opt9_t5"),
+            ("6. Le grandissement transversal de l'objectif d'un microscope est toujours", ["Choisir...", "Négatif", "Positif", "Nul"], "opt9_t6"),
+            ("7. La distance minimale de vision distincte standard est fixée à", ["Choisir...", "25 cm", "100 cm", "1 mm"], "opt9_t7"),
+            ("8. Le grossissement total G est le produit du grandissement de l'objectif par celui de l'", ["Choisir...", "Oculaire", "Écran", "Condenseur"], "opt9_t8"),
+            ("9. Par rapport à l'objet placé sur la platine, l'image finale perçue est", ["Choisir...", "Renversée", "Droite", "Réduite"], "opt9_t9"),
+            ("10. Le grossissement commercial d'un microscope s'écrit avec la lettre", ["Choisir...", "X", "V", "D"], "opt9_t10"),
+        ]
 
-        co9_5, co9_6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co9_5: st.write("qui fait office de loupe pour observer cette derniere. La distance fixe F'1F2 s'appelle l'")
-        with co9_6: t3 = st.selectbox("", ["Choisir...", "Intervalle optique", "Axe de visée", "Diametre utile"], key="opt9_t3", disabled=verrouille, label_visibility="collapsed")
-
-        co9_7, co9_8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co9_7: st.write("L'image finale de la structure cellulaire ou micro-mecanique est ainsi rejetee a l'infini.")
-
-        dict_trous_opt9 = {
-            "t1_opt9": t1, "t2_opt9": t2, "t3_opt9": t3
-        }
+        dict_trous_opt9 = {}
+        for enonce, options, cle in items_trous_o9:
+            c1, c2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2:
+                val = st.selectbox("", options, key=cle, disabled=verrouille, label_visibility="collapsed")
+                dict_trous_opt9[f"{cle.replace('opt9_', '')}_opt9"] = val
 
     return dict_quiz_opt9, dict_trous_opt9
+
 
 def afficher_questions_optique8(verrouille=False):
     col_double_quiz_opt8, col_double_trous_opt8 = st.columns(2)
 
     with col_double_quiz_opt8:
-        st.markdown("##### Quiz sur la lunette de Galilee (10 questions) - Optique 8 (10 pts)")
+        st.markdown("##### Quiz sur la lunette de Galilée (10 questions - 10 pts)")
         if "ordre_questions_opt8" not in st.session_state:
             questions_opt8_base = [
-                ("q1", "Quelle est la principale difference de constitution entre la lunette de Galilee et celle de Kepler :"),
-                ("q2", "L'oculaire utilise dans une lunette de Galilee possede une distance focale f'2 :"),
-                ("q3", "Pour qu'une lunette de Galilee soit afocale, le foyer image F'1 de l'objectif doit etre confondu avec :"),
-                ("q4", "Par rapport a la lunette de Kepler, l'image finale observee a travers la lunette de Galilee est :"),
-                ("q5", "L'encombrement de l'instrument (distance O1O2) d'une lunette de Galilee afocale est egal a :"),
-                ("q6", "La distance separent les deux lentilles O1O2 d'une lunette de Galilee est necessairement :"),
-                ("q7", "Le grossissement nominal G d'une lunette afocale est calculé par G = - f'1 / f'2. Pour Galilee, G est :"),
+                ("q1", "Quelle est la principale différence de constitution entre la lunette de Galilée et celle de Kepler :"),
+                ("q2", "L'oculaire utilisé dans une lunette de Galilée possède une distance focale f'2 :"),
+                ("q3", "Pour qu'une lunette de Galilée soit afocale, le foyer image F'1 de l'objectif doit être confondu avec :"),
+                ("q4", "Par rapport à la lunette de Kepler, l'image finale observée à travers la lunette de Galilée est :"),
+                ("q5", "L'encombrement de l'instrument (distance O1O2) d'une lunette de Galilée afocale est égal à :"),
+                ("q6", "La distance séparant les deux lentilles O1O2 d'une lunette de Galilée est nécessairement :"),
+                ("q7", "Le grossissement nominal G d'une lunette afocale est calculé par G = - f'1 / f'2. Pour Galilée, G est :"),
                 ("q8", "Si l'objectif fait f'1 = 60 cm et l'oculaire f'2 = -15 cm, le grossissement G vaut :"),
-                ("q9", "Quel est l'inconvenient principal d'une lunette de Galilee par rapport a une lunette de Kepler :"),
-                ("q10", "Dans quel instrument grand public retrouve-t-on couramment le systeme optique de Galilee :")
+                ("q9", "Quel est l'inconvénient principal d'une lunette de Galilée par rapport à une lunette de Kepler :"),
+                ("q10", "Dans quel instrument grand public retrouve-t-on couramment le système optique de Galilée :")
             ]
-            import random
             random.shuffle(questions_opt8_base)
             st.session_state.ordre_questions_opt8 = questions_opt8_base
 
@@ -626,17 +626,16 @@ def afficher_questions_optique8(verrouille=False):
             cle_opts_unique = f"opts_opt8_shuffled_{q_id}"
             
             if cle_opts_unique not in st.session_state:
-                if q_id == "q1": copie_opts = ["L'oculaire de Galilee est une lentille divergente", "L'objectif de Galilee est une lentille divergente", "Galilee comporte trois miroirs prismatiques"]
-                elif q_id == "q2": copie_opts = ["Strictement negative (f'2 < 0)", "Strictement positive (f'2 > 0)", "Rigoureusement nulle"]
+                if q_id == "q1": copie_opts = ["L'oculaire de Galilée est une lentille divergente", "L'objectif de Galilée est une lentille divergente", "Galilée comporte trois miroirs prismatiques"]
+                elif q_id == "q2": copie_opts = ["Strictement négative (f'2 < 0)", "Strictement positive (f'2 > 0)", "Rigoureusement nulle"]
                 elif q_id == "q3": copie_opts = ["Le foyer objet F2 de l'oculaire divergent", "Le foyer image F'2 de l'oculaire divergent", "Le centre optique O2"]
-                elif q_id == "q4": copie_opts = ["Droite (dans le meme sens que l'astre)", "Renversee (haut-bas)", "Inclinee a 90 degres"]
-                elif q_id == "q5": copie_opts = ["f'1 + f'2 (ce qui donne une soustraction car f'2 est negatif)", "f'1 - f'2 (ce qui donne une addition)", "f'1 * f'2"]
+                elif q_id == "q4": copie_opts = ["Droite (dans le même sens que l'astre)", "Renversée (haut-bas)", "Inclinée à 90 degrés"]
+                elif q_id == "q5": copie_opts = ["f'1 + f'2 (ce qui donne une soustraction car f'2 est négatif)", "f'1 - f'2 (ce qui donne une addition)", "f'1 * f'2"]
                 elif q_id == "q6": copie_opts = ["Plus courte que celle de Kepler", "Plus longue que celle de Kepler", "Rigoureusement identique"]
-                elif q_id == "q7": copie_opts = ["Positif (l'image finale est droite)", "Negatif (l'image finale est inversee)", "Nul"]
-                elif q_id == "q8": copie_opts = ["4.0 (car f'2 est negatif)", "-4.0", "0.25"]
-                elif q_id == "q9": copie_opts = ["Un champ visuel tres etroit", "Une image totalement floue au centre", "Une perte totale de luminosite"]
-                elif q_id == "q10": copie_opts = ["Les jumelles de theatre (ou de spectacle)", "Les microscopes biologiques", "Les telemetres de topographie"]
-                import random
+                elif q_id == "q7": copie_opts = ["Positif (l'image finale est droite)", "Négatif (l'image finale est inversée)", "Nul"]
+                elif q_id == "q8": copie_opts = ["4.0 (car f'2 est négatif)", "-4.0", "0.25"]
+                elif q_id == "q9": copie_opts = ["Un champ visuel très étroit", "Une image totalement floue au centre", "Une perte totale de luminosité"]
+                elif q_id == "q10": copie_opts = ["Les jumelles de théâtre (ou de spectacle)", "Les microscopes biologiques", "Les télémètres de topographie"]
                 random.shuffle(copie_opts)
                 st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
                 
@@ -649,27 +648,28 @@ def afficher_questions_optique8(verrouille=False):
                 dict_quiz_opt8[f"{q_id}_opt8"] = st.selectbox("", st.session_state[cle_opts_unique], index=idx, key=cle_qo8, disabled=verrouille, label_visibility="collapsed")
 
     with col_double_trous_opt8:
-        st.markdown("##### Synthese de cours (Texte a trous) - Optique 8 (10 pts)")
+        st.markdown("##### Synthèse de cours (Texte à trous - 10 items) - Optique 8 (10 pts)")
         
-        co8_1, co8_2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co8_1: st.write("La lunette de Galilee se distingue par l'utilisation d'un oculaire de nature")
-        with co8_2: t1 = st.selectbox("", ["Choisir...", "Divergente", "Convergente", "Prismatique"], key="opt8_t1", disabled=verrouille, label_visibility="collapsed")
-        
-        co8_3, co8_4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co8_3: st.write("Pour obtenir la configuration afocale, le foyer image de l'objectif coincide avec le foyer")
-        with co8_4: t2 = st.selectbox("", ["Choisir...", "Objet F2", "Image F'2", "Central O2"], key="opt8_t2", disabled=verrouille, label_visibility="collapsed")
+        items_trous_o8 = [
+            ("1. La lunette de Galilée se distingue par l'utilisation d'un oculaire de nature", ["Choisir...", "Divergente", "Convergente", "Prismatique"], "opt8_t1"),
+            ("2. Pour obtenir la configuration afocale, le foyer image de l'objectif coïncide avec le foyer", ["Choisir...", "Objet F2", "Image F'2", "Central O2"], "opt8_t2"),
+            ("3. L'avantage majeur de ce montage est de générer une image finale", ["Choisir...", "Droite", "Inversée", "Virtuelle pure"], "opt8_t3"),
+            ("4. Son objectif est une lentille convergente dont la distance focale f'1 est", ["Choisir...", "Positive", "Négative", "Nulle"], "opt8_t4"),
+            ("5. La longueur de la lunette de Galilée (d = f'1 - |f'2|) est plus", ["Choisir...", "Courte", "Longue", "Lourde"], "opt8_t5"),
+            ("6. Le grossissement nominal G de la lunette de Galilée est de signe", ["Choisir...", "Positif", "Négatif", "Nul"], "opt8_t6"),
+            ("7. Pour observer l'astre sans fatigue oculaire, l'image finale est rejetée à l'", ["Choisir...", "Infini", "Objectif", "Foyer F1"], "opt8_t7"),
+            ("8. Le principal défaut optique de la lunette de Galilée est un champ visuel très", ["Choisir...", "Étroit", "Large", "Sombre"], "opt8_t8"),
+            ("9. On utilise encore ce principe optique dans les jumelles de", ["Choisir...", "Théâtre", "Chasse longue portée", "Astronomie"], "opt8_t9"),
+            ("10. Un système optique qui transforme un faisceau parallèle en faisceau parallèle est dit", ["Choisir...", "Afocal", "Divergent", "Dispersif"], "opt8_t10"),
+        ]
 
-        co8_5, co8_6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co8_5: st.write("de l'oculaire. L'avantage majeur de ce montage est de generer une image finale")
-        with co8_6: t3 = st.selectbox("", ["Choisir...", "Droite", "Inversee", "Virtuelle pure"], key="opt8_t3", disabled=verrouille, label_visibility="collapsed")
-
-        co8_7, co8_8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co8_7: st.write("ce qui dispense de l'utilisation d'un vehicule de redressement. Son grossissement est")
-        with col_double_trous_opt8: st.write("calcule positivement par le rapport des focales.")
-
-        dict_trous_opt8 = {
-            "t1_opt8": t1, "t2_opt8": t2, "t3_opt8": t3
-        }
+        dict_trous_opt8 = {}
+        for enonce, options, cle in items_trous_o8:
+            c1, c2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2:
+                val = st.selectbox("", options, key=cle, disabled=verrouille, label_visibility="collapsed")
+                dict_trous_opt8[f"{cle.replace('opt8_', '')}_opt8"] = val
 
     return dict_quiz_opt8, dict_trous_opt8
 
@@ -680,21 +680,20 @@ def afficher_questions_optique7(verrouille=False):
 
     # --- COLONNE DE GAUCHE : LE QUIZ DE CONNAISSANCES SUR LA LUNETTE ---
     with col_double_quiz_opt7:
-        st.markdown("##### Quiz sur la lunette astronomique (10 questions) - Optique 7 (10 pts)")
+        st.markdown("##### Quiz sur la lunette astronomique (10 questions - 10 pts)")
         if "ordre_questions_opt7" not in st.session_state:
             questions_opt7_base = [
-                ("q1", "Dans une lunette astronomique, la premiere lentille qui reçoit les rayons de l'astre est l' :"),
-                ("q2", "La seconde lentille devant laquelle l'observateur place son oeil s'appelle l' :"),
-                ("q3", "Une lunette astronomique est dite 'afocale' si l'image d'un objet situe a l'infini se forme :"),
+                ("q1", "Dans une lunette astronomique, la première lentille qui reçoit les rayons de l'astre est l' :"),
+                ("q2", "La seconde lentille devant laquelle l'observateur place son œil s'appelle l' :"),
+                ("q3", "Une lunette astronomique est dite « afocale » si l'image d'un objet situé à l'infini se forme :"),
                 ("q4", "Pour qu'une lunette soit parfaitement afocale, il faut que le foyer image F'1 de l'objectif soit confondu avec :"),
-                ("q5", "Quelle est la nature de l'image intermediaire A1B1 creee entre l'objectif et l'oculaire :"),
-                ("q6", "L'image finale de l'astre observee par l'etudiant a travers la lunette afocale est situee :"),
-                ("q7", "Le grossissement G d'une lunette afocale est donne par le rapport des distances focales :"),
+                ("q5", "Quelle est la nature de l'image intermédiaire A1B1 créée entre l'objectif et l'oculaire :"),
+                ("q6", "L'image finale de l'astre observée par l'étudiant à travers la lunette afocale est située :"),
+                ("q7", "Le grossissement G d'une lunette afocale est donné par le rapport des distances focales :"),
                 ("q8", "Si l'objectif a une focale f'1 = 100 cm et l'oculaire f'2 = 5 cm, le grossissement G de la lunette vaut :"),
-                ("q9", "Par rapport a l'astre reel pointe dans le ciel, l'image finale observee a travers la lunette est :"),
-                ("q10", "Le cercle oculaire correspond a la zone ou la luminosite est maximale. Il est l'image de :")
+                ("q9", "Par rapport à l'astre réel pointé dans le ciel, l'image finale observée à travers la lunette est :"),
+                ("q10", "Le cercle oculaire correspond à la zone où la luminosité est maximale. Il est l'image de :")
             ]
-            import random
             random.shuffle(questions_opt7_base)
             st.session_state.ordre_questions_opt7 = questions_opt7_base
 
@@ -706,15 +705,14 @@ def afficher_questions_optique7(verrouille=False):
             if cle_opts_unique not in st.session_state:
                 if q_id == "q1": copie_opts = ["Objectif (de grande distance focale)", "Oculaire (de courte distance focale)", "Miroir parabolique"]
                 elif q_id == "q2": copie_opts = ["Oculaire", "Objectif", "Diaphragme de champ"]
-                elif q_id == "q3": copie_opts = ["A l'infini (confort de vision sans fatigue pour l'oeil)", "Sur le centre optique O1", "Entre les deux lentilles"]
+                elif q_id == "q3": copie_opts = ["À l'infini (confort de vision sans fatigue pour l'œil)", "Sur le centre optique O1", "Entre les deux lentilles"]
                 elif q_id == "q4": copie_opts = ["Le foyer objet F2 de l'oculaire", "Le foyer image F'2 de l'oculaire", "Le centre optique O2"]
-                elif q_id == "q5": copie_opts = ["Reelle et renversee (situee dans le plan focal commun)", "Virtuelle et droite", "Reelle et droite"]
-                elif q_id == "q6": copie_opts = ["A l'infini (pas besoin d'accommoder)", "A la distance minimale de vision distincte", "Pile sur la lentille oculaire"]
+                elif q_id == "q5": copie_opts = ["Réelle et renversée (située dans le plan focal commun)", "Virtuelle et droite", "Réelle et droite"]
+                elif q_id == "q6": copie_opts = ["À l'infini (pas besoin d'accommoder)", "À la distance minimale de vision distincte", "Pile sur la lentille oculaire"]
                 elif q_id == "q7": copie_opts = ["G = f'1 / f'2", "G = f'2 / f'1", "G = f'1 * f'2"]
                 elif q_id == "q8": copie_opts = ["20", "200", "0.05"]
-                elif q_id == "q9": copie_opts = ["Renversee (haut-bas et droite-gauche)", "Droite (dans le meme sens)", "Inclinee a 45 degres"]
+                elif q_id == "q9": copie_opts = ["Renversée (haut-bas et droite-gauche)", "Droite (dans le même sens)", "Inclinée à 45 degrés"]
                 elif q_id == "q10": copie_opts = ["L'objectif par l'oculaire", "L'oculaire par l'objectif", "L'astre par l'oculaire"]
-                import random
                 random.shuffle(copie_opts)
                 st.session_state[cle_opts_unique] = ["Choisir..."] + copie_opts
                 
@@ -726,33 +724,33 @@ def afficher_questions_optique7(verrouille=False):
             with cq_sel:
                 dict_quiz_opt7[f"{q_id}_opt7"] = st.selectbox("", st.session_state[cle_opts_unique], index=idx, key=cle_qo7, disabled=verrouille, label_visibility="collapsed")
 
-    # --- COLONNE DE DROITE : LE TEXTE À TROUS DE SYNTHÈSE DU DOUBLE SYSTÈME AFOCAL ---
+    # --- COLONNE DE DROITE : LE TEXTE À TROUS COMPLET (10 ITEMS = 10 PTS) ---
     with col_double_trous_opt7:
-        st.markdown("##### Synthese de cours (Texte a trous) - Optique 7 (10 pts)")
+        st.markdown("##### Synthèse de cours (Texte à trous - 10 items) - Optique 7 (10 pts)")
         
-        co7_1, co7_2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co7_1: st.write("La lunette astronomique est composee de deux lentilles convergentes. La premiere est l'")
-        with co7_2: t1 = st.selectbox("", ["Choisir...", "Objectif", "Oculaire", "Inverseur"], key="opt7_t1", disabled=verrouille, label_visibility="collapsed")
-        
-        co7_3, co7_4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co7_3: st.write("de grande distance focale, et la seconde, proche de l'oeil, est l'")
-        with co7_4: t2 = st.selectbox("", ["Choisir...", "Oculaire", "Objectif", "Prisme"], key="opt7_t2", disabled=verrouille, label_visibility="collapsed")
+        items_trous_o7 = [
+            ("1. La lunette astronomique est composée de deux lentilles convergentes. La première est l'", ["Choisir...", "Objectif", "Oculaire", "Inverseur"], "opt7_t1"),
+            ("2. de grande distance focale, et la seconde, proche de l'œil, est l'", ["Choisir...", "Oculaire", "Objectif", "Prisme"], "opt7_t2"),
+            ("3. Lorsque le foyer image de la première coïncide avec le foyer objet de la seconde, le système est", ["Choisir...", "Afocal", "Convergent", "Divergent"], "opt7_t3"),
+            ("4. L'image d'un astre lointain sort alors à l'infini, permettant d'observer sans fatigue. Le", ["Choisir...", "Grossissement", "Grandissement", "Champ"], "opt7_t4"),
+            ("5. de l'appareil correspond au rapport de la focale de l'objectif sur celle de l'", ["Choisir...", "Oculaire", "Écran", "Prisme"], "opt7_t5"),
+            ("6. L'image intermédiaire A1B1 formée dans le plan focal commun est réelle et", ["Choisir...", "Renversée", "Droite", "Virtuelle"], "opt7_t6"),
+            ("7. La longueur totale d'une lunette afocale est égale à la somme d = f'1 +", ["Choisir...", "f'2", "25 cm", "0"], "opt7_t7"),
+            ("8. Pour observer sans accommoder, l'image finale de l'astre est rejetée à l'", ["Choisir...", "Infini", "Foyer F1", "Centre O1"], "opt7_t8"),
+            ("9. La zone la plus lumineuse où placer la pupille de l'œil s'appelle le cercle", ["Choisir...", "Oculaire", "Polychromatique", "Nodal"], "opt7_t9"),
+            ("10. Par rapport à l'objet céleste observé, l'image finale vue dans cette lunette est", ["Choisir...", "Renversée", "Droite", "Réduite"], "opt7_t10"),
+        ]
 
-        co7_5, co7_6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co7_5: st.write("Lorsque le foyer image de la premiere coincide avec le foyer objet de la seconde, le systeme est")
-        with co7_6: t3 = st.selectbox("", ["Choisir...", "Afocal", "Convergent", "Divergent"], key="opt7_t3", disabled=verrouille, label_visibility="collapsed")
-
-        co7_7, co7_8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co7_7: st.write("L'image d'un astre lointain sort alors a l'infini, permettant d'observer sans fatigue. Le")
-        with co7_8: t4 = st.selectbox("", ["Choisir...", "Grossissement", "Grandissement", "Champ"], key="opt7_t4", disabled=verrouille, label_visibility="collapsed")
-        
-        st.write("de l'appareil correspond au rapport de la focale de l'objectif sur celle de l'oculaire.")
-
-        dict_trous_opt7 = {
-            "t1_opt7": t1, "t2_opt7": t2, "t3_opt7": t3, "t4_opt7": t4
-        }
+        dict_trous_opt7 = {}
+        for enonce, options, cle in items_trous_o7:
+            c1, c2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2:
+                val = st.selectbox("", options, key=cle, disabled=verrouille, label_visibility="collapsed")
+                dict_trous_opt7[f"{cle.replace('opt7_', '')}_opt7"] = val
 
     return dict_quiz_opt7, dict_trous_opt7
+
 
 def dessiner_microscope_matplotlib():
     import math
@@ -1289,26 +1287,26 @@ with tab3:
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 7", key="btn_export_opt7_official_20pts", use_container_width=True, disabled=st.session_state.get("opt7_verrouille", False)):
         if not st.session_state.get("verrouille", False): 
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_opt7: 
-            st.error("Action refusee : Cochez la case de certification.")
+            st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Moteur de correction automatique du Quiz (Partie 1)
+            # Moteur de correction automatique du Quiz (Partie 1 : 10 Pts)
             attendus_qo7_v = {
                 "q1": "Objectif (de grande distance focale)", "q2": "Oculaire", 
-                "q3": "A l'infini (confort de vision sans fatigue pour l'oeil)", 
-                "q4": "Le foyer objet F2 de l'oculaire", "q5": "Reelle et renversee (situee dans le plan focal commun)", 
-                "q6": "A l'infini (pas besoin d'accommoder)", "q7": "G = f'1 / f'2", 
-                "q8": "20", "q9": "Renversee (haut-bas et droite-gauche)", "q10": "L'objectif par l'oculaire"
+                "q3": "À l'infini (confort de vision sans fatigue pour l'œil)", 
+                "q4": "Le foyer objet F2 de l'oculaire", "q5": "Réelle et renversée (située dans le plan focal commun)", 
+                "q6": "À l'infini (pas besoin d'accommoder)", "q7": "G = f'1 / f'2", 
+                "q8": "20", "q9": "Renversée (haut-bas et droite-gauche)", "q10": "L'objectif par l'oculaire"
             }
             score_quiz_opt7 = sum([1.0 for qk, qv in attendus_qo7_v.items() if st.session_state.get(f"col_g_quiz_opt7_{qk}") == qv])
 
-            # Moteur de correction automatique du Texte a trous (Partie 2)
-            score_trous_opt7 = 0.0
-            if st.session_state.get("opt7_t1") == "Objectif": score_trous_opt7 += 2.5
-            if st.session_state.get("opt7_t2") == "Oculaire": score_trous_opt7 += 2.5
-            if st.session_state.get("opt7_t3") == "Afocal": score_trous_opt7 += 2.5
-            if st.session_state.get("opt7_t4") == "Grossissement": score_trous_opt7 += 2.5
+            # Moteur de correction automatique du Texte à trous (Partie 2 : 10 items x 1 pt = 10 Pts)
+            attendus_to7_v = {
+                "t1": "Objectif", "t2": "Oculaire", "t3": "Afocal", "t4": "Grossissement", "t5": "Oculaire",
+                "t6": "Renversée", "t7": "f'2", "t8": "Infini", "t9": "Oculaire", "t10": "Renversée"
+            }
+            score_trous_opt7 = sum([1.0 for tk, tv in attendus_to7_v.items() if st.session_state.get(f"opt7_{tk}") == tv])
 
             st.session_state.score_opt7_p1 = round(score_quiz_opt7, 1)
             st.session_state.score_opt7_p2 = round(score_trous_opt7, 1)
@@ -1322,20 +1320,34 @@ with tab3:
         scr2 = st.session_state.get("score_opt7_p2", 0.0)
         tot_s = st.session_state.get("score_final_opt7", 0.0)
 
-        from datetime import timedelta
-        from datetime import datetime
-        timestamp_opt7 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+        from datetime import timedelta, datetime
+        timestamp_opt7 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d à %H:%M:%S")
 
-        st.success(f"ATELIER OPTIQUE 7 SCELLE | Note de session : {tot_s} / 20")
+        st.success(f"ATELIER OPTIQUE 7 SCELLÉ | Note de session : {tot_s} / 20")
 
         attendus_qo7_v = {
             "q1": "Objectif (de grande distance focale)", "q2": "Oculaire", 
-            "q3": "A l'infini (confort de vision sans fatigue pour l'oeil)", 
-            "q4": "Le foyer objet F2 de l'oculaire", "q5": "Reelle et renversee (situee dans le plan focal commun)", 
-            "q6": "A l'infini (pas besoin d'accommoder)", "q7": "G = f'1 / f'2", 
-            "q8": "20", "q9": "Renversee (haut-bas et droite-gauche)", "q10": "L'objectif par l'oculaire"
+            "q3": "À l'infini (confort de vision sans fatigue pour l'œil)", 
+            "q4": "Le foyer objet F2 de l'oculaire", "q5": "Réelle et renversée (située dans le plan focal commun)", 
+            "q6": "À l'infini (pas besoin d'accommoder)", "q7": "G = f'1 / f'2", 
+            "q8": "20", "q9": "Renversée (haut-bas et droite-gauche)", "q10": "L'objectif par l'oculaire"
         }
-        attendus_to7_v = {"t1": "Objectif", "t2": "Oculaire", "t3": "Afocal", "t4": "Grossissement"}
+        attendus_to7_v = {
+            "t1": "Objectif", "t2": "Oculaire", "t3": "Afocal", "t4": "Grossissement", "t5": "Oculaire",
+            "t6": "Renversée", "t7": "f'2", "t8": "Infini", "t9": "Oculaire", "t10": "Renversée"
+        }
+        enonces_to7_v = {
+            "t1": "1. La lunette astronomique est composée de deux lentilles convergentes. La première est l'.........",
+            "t2": "2. de grande distance focale, et la seconde, proche de l'œil, est l'.........",
+            "t3": "3. Lorsque le foyer image de la première coïncide avec le foyer objet de la seconde, le système est .........",
+            "t4": "4. L'image d'un astre lointain sort alors à l'infini, permettant d'observer sans fatigue. Le .........",
+            "t5": "5. de l'appareil correspond au rapport de la focale de l'objectif sur celle de l'.........",
+            "t6": "6. L'image intermédiaire A1B1 formée dans le plan focal commun est réelle et .........",
+            "t7": "7. La longueur totale d'une lunette afocale est égale à la somme d = f'1 + .........",
+            "t8": "8. Pour observer sans accommoder, l'image finale de l'astre est rejetée à l'.........",
+            "t9": "9. La zone la plus lumineuse où placer la pupille de l'œil s'appelle le cercle .........",
+            "t10": "10. Par rapport à l'objet céleste observé, l'image finale vue dans cette lunette est ........."
+        }
 
         html_export_opt7 = f"""<!DOCTYPE html>
         <html>
@@ -1349,7 +1361,6 @@ with tab3:
                 .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
                 table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
                 th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-
                 td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
                 .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
                 .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
@@ -1358,70 +1369,73 @@ with tab3:
         <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
-                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_opt7}</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_opt7}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
 
-            <div class="sub-title">Recapitulatif des scores de competences - Optique 7</div>
+            <div class="sub-title">Récapitulatif des scores de compétences - Optique 7</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
                 &bull; Partie 1 : Quiz de Connaissances (10 items) : <strong>{scr1} / 10</strong><br>
-                &bull; Partie 2 : Synthese de Cours (Texte a trous 4 items) : <strong>{scr2} / 10</strong>
+                &bull; Partie 2 : Synthèse de Cours (Texte à trous 10 items) : <strong>{scr2} / 10</strong>
             </p>
 
-            <div class="sub-title">PARTIE 1 : QUIZ SUR LA LUNETTE KEPLERIENNE (10 PTS)</div>
+            <div class="sub-title">PARTIE 1 : QUIZ SUR LA LUNETTE KÉPLÉRIENNE (10 PTS)</div>
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 10%;">N°</th>
-                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 25%; text-align: center;">Attendu</th>
-                        <th style="width: 25%; text-align: center;">Verdict</th>
+                        <th style="width: 5%;">N°</th>
+                        <th style="width: 45%;">Question posée</th>
+                        <th style="width: 20%; text-align: center;">Saisie Élève</th>
+                        <th style="width: 15%; text-align: center;">Attendu</th>
+                        <th style="width: 15%; text-align: center;">Verdict</th>
                     </tr>
                 </thead>
                 <tbody>
         """
 
-        for idx_q, (q_id, q_txt) in enumerate(attendus_qo7_v.items(), 1):
+        ordre_reel_opt7 = st.session_state.get("ordre_questions_opt7", [])
+        for idx_q, (q_id, q_txt) in enumerate(ordre_reel_opt7, 1):
             saisie = st.session_state.get(f"col_g_quiz_opt7_{q_id}", "Choisir...")
             attendu = attendus_qo7_v[q_id]
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_opt7 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            html_export_opt7 += f"<tr><td>{idx_q}</td><td>{q_txt}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
         html_export_opt7 += """
                 </tbody>
             </table>
 
-            <div class="sub-title">PARTIE 2 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
+            <div class="sub-title">PARTIE 2 : SYNTHÈSE DE COURS (TEXTE À TROUS - 10 PTS)</div>
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 10%;">N°</th>
-                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 25%; text-align: center;">Attendu</th>
-                        <th style="width: 25%; text-align: center;">Verdict</th>
+                        <th style="width: 55%; text-align: left;">Phrase à trous</th>
+                        <th style="width: 15%; text-align: center;">Saisie Élève</th>
+                        <th style="width: 15%; text-align: center;">Attendu</th>
+                        <th style="width: 15%; text-align: center;">Verdict</th>
                     </tr>
                 </thead>
                 <tbody>
         """
 
-        for idx_t, (t_key, t_val) in enumerate(attendus_to7_v.items(), 1):
+        for t_key, t_val in attendus_to7_v.items():
             saisie = st.session_state.get(f"opt7_{t_key}", "Choisir...")
+            phrase_t = enonces_to7_v.get(t_key, t_key)
             v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_opt7 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            html_export_opt7 += f"<tr><td style='text-align: left;'>{phrase_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
         html_export_opt7 += """
                 </tbody>
             </table>
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'optique geometrique genere automatiquement &bull; Professeur Laurent GALLET</div>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'optique géométrique généré automatiquement &bull; Professeur Laurent GALLET</div>
         </body>
         </html>
         """
 
         nom_f = f"Rapport_Evaluation_Optique7_{n_eleve}_{p_eleve}_{c_eleve}"
-        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
             nom_f = nom_f.replace(c, "_")
 
         st.download_button(
@@ -1431,6 +1445,9 @@ with tab3:
             mime="text/html",
             use_container_width=True
         )
+
+
+
         
 with tab4:
     st.subheader("La lunette de Galilée")
@@ -1508,43 +1525,44 @@ with tab4:
     # ZONE DE CALCUL DE NOTE ET PRODUCTION DU RAPPORT HTML
     # =========================================================================
     st.write("---")
-    st.subheader("Validation et Generation du Bilan Officiel - Atelier 8")
+    st.subheader("Validation et Génération du Bilan Officiel - Atelier 8")
 
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_opt8 = st.checkbox(
-        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 8.", 
+        "Je certifie avoir complété l'intégralité des questionnaires de l'Atelier 8.", 
         key="check_certif_opt8_officiel_20pts", 
         disabled=st.session_state.get("opt8_verrouille", False)
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 8", key="btn_export_opt8_official_20pts", use_container_width=True, disabled=st.session_state.get("opt8_verrouille", False)):
         if not st.session_state.get("verrouille", False): 
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_opt8: 
-            st.error("Action refusee : Cochez la case de certification.")
+            st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Correction Automatique de la Partie 1
+            # Correction Automatique de la Partie 1 (10 Pts)
             attendus_qo8_v = {
-                "q1": "L'oculaire de Galilee est une lentille divergente", "q2": "Strictement negative (f'2 < 0)", 
-                "q3": "Le foyer objet F2 de l'oculaire divergent", "q4": "Droite (dans le meme sens que l'astre)", 
-                "q5": "f'1 + f'2 (ce qui donne une soustraction car f'2 est negatif)", "q6": "Plus courte que celle de Kepler", 
-                "q7": "Positif (l'image finale est droite)", "q8": "4.0 (car f'2 est negatif)", 
-                "q9": "Un champ visuel tres etroit", "q10": "Les jumelles de theatre (ou de spectacle)"
+                "q1": "L'oculaire de Galilée est une lentille divergente", "q2": "Strictement négative (f'2 < 0)", 
+                "q3": "Le foyer objet F2 de l'oculaire divergent", "q4": "Droite (dans le même sens que l'astre)", 
+                "q5": "f'1 + f'2 (ce qui donne une soustraction car f'2 est négatif)", "q6": "Plus courte que celle de Kepler", 
+                "q7": "Positif (l'image finale est droite)", "q8": "4.0 (car f'2 est négatif)", 
+                "q9": "Un champ visuel très étroit", "q10": "Les jumelles de théâtre (ou de spectacle)"
             }
             score_quiz_opt8 = sum([1.0 for qk, qv in attendus_qo8_v.items() if st.session_state.get(f"col_g_quiz_opt8_{qk}") == qv])
 
-            # Correction Automatique de la Partie 2
-            score_trous_opt8 = 0.0
-            if st.session_state.get("opt8_t1") == "Divergente": score_trous_opt8 += 3.33
-            if st.session_state.get("opt8_t2") == "Objet F2": score_trous_opt8 += 3.33
-            if st.session_state.get("opt8_t3") == "Droite": score_trous_opt8 += 3.34
+            # Correction Automatique de la Partie 2 (10 Pts : 10 items x 1 pt)
+            attendus_to8_v = {
+                "t1": "Divergente", "t2": "Objet F2", "t3": "Droite", "t4": "Positive", "t5": "Courte",
+                "t6": "Positif", "t7": "Infini", "t8": "Étroit", "t9": "Théâtre", "t10": "Afocal"
+            }
+            score_trous_opt8 = sum([1.0 for tk, tv in attendus_to8_v.items() if st.session_state.get(f"opt8_{tk}") == tv])
 
             st.session_state.score_opt8_p1 = round(score_quiz_opt8, 1)
-            st.session_state.score_opt8_p2 = round(min(10.0, score_trous_opt8), 1)
-            st.session_state.score_final_opt8 = round(score_quiz_opt8 + min(10.0, score_trous_opt8), 1)
+            st.session_state.score_opt8_p2 = round(score_trous_opt8, 1)
+            st.session_state.score_final_opt8 = round(score_quiz_opt8 + score_trous_opt8, 1)
             st.session_state.opt8_verrouille = True
             st.rerun()
 
@@ -1553,20 +1571,34 @@ with tab4:
         scr2 = st.session_state.get("score_opt8_p2", 0.0)
         tot_s = st.session_state.get("score_final_opt8", 0.0)
 
-        from datetime import timedelta
-        from datetime import datetime
-        timestamp_opt8 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+        from datetime import timedelta, datetime
+        timestamp_opt8 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d à %H:%M:%S")
 
-        st.success(f"ATELIER OPTIQUE 8 SCELLE | Note de session : {tot_s} / 20")
+        st.success(f"ATELIER OPTIQUE 8 SCELLÉ | Note de session : {tot_s} / 20")
 
         attendus_qo8_v = {
-            "q1": "L'oculaire de Galilee est une lentille divergente", "q2": "Strictement negative (f'2 < 0)", 
-            "q3": "Le foyer objet F2 de l'oculaire divergent", "q4": "Droite (dans le meme sens que l'astre)", 
-            "q5": "f'1 + f'2 (ce qui donne une soustraction car f'2 est negatif)", "q6": "Plus courte que celle de Kepler", 
-            "q7": "Positif (l'image finale est droite)", "q8": "4.0 (car f'2 est negatif)", 
-            "q9": "Un champ visuel tres etroit", "q10": "Les jumelles de theatre (ou de spectacle)"
+            "q1": "L'oculaire de Galilée est une lentille divergente", "q2": "Strictement négative (f'2 < 0)", 
+            "q3": "Le foyer objet F2 de l'oculaire divergent", "q4": "Droite (dans le même sens que l'astre)", 
+            "q5": "f'1 + f'2 (ce qui donne une soustraction car f'2 est négatif)", "q6": "Plus courte que celle de Kepler", 
+            "q7": "Positif (l'image finale est droite)", "q8": "4.0 (car f'2 est négatif)", 
+            "q9": "Un champ visuel très étroit", "q10": "Les jumelles de théâtre (ou de spectacle)"
         }
-        attendus_to8_v = {"t1": "Divergente", "t2": "Objet F2", "t3": "Droite"}
+        attendus_to8_v = {
+            "t1": "Divergente", "t2": "Objet F2", "t3": "Droite", "t4": "Positive", "t5": "Courte",
+            "t6": "Positif", "t7": "Infini", "t8": "Étroit", "t9": "Théâtre", "t10": "Afocal"
+        }
+        enonces_to8_v = {
+            "t1": "1. La lunette de Galilée se distingue par l'utilisation d'un oculaire de nature .........",
+            "t2": "2. Pour obtenir la configuration afocale, le foyer image de l'objectif coïncide avec le foyer .........",
+            "t3": "3. L'avantage majeur de ce montage est de générer une image finale .........",
+            "t4": "4. Son objectif est une lentille convergente dont la distance focale f'1 est .........",
+            "t5": "5. La longueur de la lunette de Galilée (d = f'1 - |f'2|) est plus .........",
+            "t6": "6. Le grossissement nominal G de la lunette de Galilée est de signe .........",
+            "t7": "7. Pour observer l'astre sans fatigue oculaire, l'image finale est rejetée à l'.........",
+            "t8": "8. Le principal défaut optique de la lunette de Galilée est un champ visuel très .........",
+            "t9": "9. On utilise encore ce principe optique dans les jumelles de .........",
+            "t10": "10. Un système optique qui transforme un faisceau parallèle en faisceau parallèle est dit ........."
+        }
 
         html_export_opt8 = f"""<!DOCTYPE html>
         <html>
@@ -1588,70 +1620,97 @@ with tab4:
         <body>
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
-                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_opt8}</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_opt8}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
 
-            <div class="sub-title">Recapitulatif des scores de competences - Optique 8</div>
+            <div class="sub-title">Récapitulatif des scores de compétences - Optique 8</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
                 &bull; Partie 1 : Quiz de Connaissances (10 items) : <strong>{scr1} / 10</strong><br>
-                &bull; Partie 2 : Synthese de Cours (Texte a trous) : <strong>{scr2} / 10</strong>
+                &bull; Partie 2 : Synthèse de Cours (Texte à trous 10 items) : <strong>{scr2} / 10</strong>
             </p>
 
             <div class="sub-title">PARTIE 1 : QUIZ LUNETTE GALILÉENNE (10 PTS)</div>
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 10%;">N°</th>
-                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 25%; text-align: center;">Attendu</th>
-                        <th style="width: 25%; text-align: center;">Verdict</th>
+                        <th style="width: 5%;">N°</th>
+                        <th style="width: 45%;">Question posée</th>
+                        <th style="width: 20%; text-align: center;">Saisie Élève</th>
+                        <th style="width: 15%; text-align: center;">Attendu</th>
+                        <th style="width: 15%; text-align: center;">Verdict</th>
                     </tr>
                 </thead>
                 <tbody>
         """
 
-        for idx_q, (q_id, q_txt) in enumerate(attendus_qo8_v.items(), 1):
+        ordre_reel_opt8 = st.session_state.get("ordre_questions_opt8", [])
+        for idx_q, (q_id, q_txt) in enumerate(ordre_reel_opt8, 1):
             saisie = st.session_state.get(f"col_g_quiz_opt8_{q_id}", "Choisir...")
             attendu = attendus_qo8_v[q_id]
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_opt8 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            html_export_opt8 += f"<tr><td>{idx_q}</td><td>{q_txt}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
         html_export_opt8 += """
                 </tbody>
             </table>
 
-            <div class="sub-title">PARTIE 2 : SYNTHESE DE COURS (TEXTE A TROUS - 10 PTS)</div>
+            <div class="sub-title">PARTIE 2 : SYNTHÈSE DE COURS (TEXTE À TROUS - 10 PTS)</div>
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 10%;">N°</th>
-                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 25%; text-align: center;">Attendu</th>
-                        <th style="width: 25%; text-align: center;">Verdict</th>
+                        <th style="width: 55%; text-align: left;">Phrase à trous</th>
+                        <th style="width: 15%; text-align: center;">Saisie Élève</th>
+                        <th style="width: 15%; text-align: center;">Attendu</th>
+                        <th style="width: 15%; text-align: center;">Verdict</th>
                     </tr>
                 </thead>
                 <tbody>
         """
 
-        for idx_t, (t_key, t_val) in enumerate(attendus_to8_v.items(), 1):
+        for t_key, t_val in attendus_to8_v.items():
             saisie = st.session_state.get(f"opt8_{t_key}", "Choisir...")
+            phrase_t = enonces_to8_v.get(t_key, t_key)
             v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_opt8 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            html_export_opt8 += f"<tr><td style='text-align: left;'>{phrase_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
         html_export_opt8 += """
                 </tbody>
             </table>
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'optique geometrique genere automatiquement &bull; Professeur Laurent GALLET</div>
+
+            <div class="sub-title">PARTIE 2 : SYNTHÈSE DE COURS (TEXTE À TROUS - 10 PTS)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 55%; text-align: left;">Phrase à trous</th>
+                        <th style="width: 15%; text-align: center;">Saisie Élève</th>
+                        <th style="width: 15%; text-align: center;">Attendu</th>
+                        <th style="width: 15%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
+
+        for t_key, t_val in attendus_to8_v.items():
+            saisie = st.session_state.get(f"opt8_{t_key}", "Choisir...")
+            phrase_t = enonces_to8_v.get(t_key, t_key)
+            v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt8 += f"<tr><td style='text-align: left;'>{phrase_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+        html_export_opt8 += """
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel généré automatiquement &bull; Professeur Laurent GALLET</div>
         </body>
         </html>
         """
 
         nom_f = f"Rapport_Evaluation_Optique8_{n_eleve}_{p_eleve}_{c_eleve}"
-        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
             nom_f = nom_f.replace(c, "_")
 
         st.download_button(
@@ -1747,36 +1806,43 @@ with tab5:
     dict_q9, dict_t9 = afficher_questions_optique9(verrouille=st.session_state.get("opt9_verrouille", False))
 
     st.write("---")
-    st.subheader("Validation et Generation du Bilan Officiel - Atelier 9")
+    st.subheader("Validation et Génération du Bilan Officiel - Atelier 9")
 
     case_certif_opt9 = st.checkbox(
-        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 9.", 
+        "Je certifie avoir complété l'intégralité des questionnaires de l'Atelier 9.", 
         key="check_certif_opt9_officiel_20pts", 
         disabled=st.session_state.get("opt9_verrouille", False)
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 9", key="btn_export_opt9_official_20pts", use_container_width=True, disabled=st.session_state.get("opt9_verrouille", False)):
-        if not st.session_state.get("verrouille", False): st.error("Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_opt9: st.error("Cochez la case de certification.")
+        if not st.session_state.get("verrouille", False): 
+            st.error("Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_opt9: 
+            st.error("Cochez la case de certification.")
         else:
+            # Partie 1 : Quiz (10 Pts)
             attendus_qo9_v = {
-                "q1": "Objectif (de tres courte distance focale)", "q2": "Oculaire", "q3": "Reelle, renversee et tres agrandie",
-                "q4": "Pile sur le foyer objet F2 de l'oculaire", "q5": "Le foyer image F'1 de l'objectif et le foyer objet F2 de l'oculaire",
-                "q6": "gamma1 = - delta / f'1", "q7": "Gc2 = 0.25 / f'2", "q8": "Du grandissement de l'objectif par le grossissement de l'oculaire",
-                "q9": "-40 (l'image est inversee et 40 fois plus grande)", "q10": "Inversee et virtuelle"
+                "q1": "Objectif (de très courte distance focale)", "q2": "Intervalle optique Delta",
+                "q3": "Réelle, renversée et très agrandie", "q4": "Pile dans son plan focal objet (foyer F2)",
+                "q5": "À l'infini", "q6": "Négatif (car l'image intermédiaire est renversée)",
+                "q7": "Le grandissement de l'objectif", "q8": "-40",
+                "q9": "Renversée et fortement agrandie", "q10": "Un nombre suivi de la lettre X (ex: x40)"
             }
             score_quiz_opt9 = sum([1.0 for qk, qv in attendus_qo9_v.items() if st.session_state.get(f"col_g_quiz_opt9_{qk}") == qv])
 
-            score_trous_opt9 = 0.0
-            if st.session_state.get("opt9_t1") == "Objectif": score_trous_opt9 += 3.33
-            if st.session_state.get("opt9_t2") == "Oculaire": score_trous_opt9 += 3.33
-            if st.session_state.get("opt9_t3") == "Optique": score_trous_opt9 += 3.34
+            # Partie 2 : Texte à trous (10 Pts : 10 items x 1 pt)
+            attendus_to9_v = {
+                "t1": "Objectif", "t2": "Oculaire", "t3": "Intervalle optique", "t4": "Renversée", "t5": "Infini",
+                "t6": "Négatif", "t7": "25 cm", "t8": "Oculaire", "t9": "Renversée", "t10": "X"
+            }
+            score_trous_opt9 = sum([1.0 for tk, tv in attendus_to9_v.items() if st.session_state.get(f"opt9_{tk}") == tv])
 
             st.session_state.score_opt9_p1 = round(score_quiz_opt9, 1)
-            st.session_state.score_opt9_p2 = round(min(10.0, score_trous_opt9), 1)
-            st.session_state.score_final_opt9 = round(score_quiz_opt9 + min(10.0, score_trous_opt9), 1)
+            st.session_state.score_opt9_p2 = round(score_trous_opt9, 1)
+            st.session_state.score_final_opt9 = round(score_quiz_opt9 + score_trous_opt9, 1)
             st.session_state.opt9_verrouille = True
             st.rerun()
+
 
 with tab6:
     st.subheader("L'appareil photographique")
