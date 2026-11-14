@@ -524,7 +524,7 @@ def afficher_questions_optique5(verrouille=False):
 
     # --- COLONNE DE GAUCHE : LE QUIZ DE CONNAISSANCES SUR LES LENTILLES ---
     with col_double_quiz_opt5:
-        st.markdown("##### Quiz sur les lentilles convergentes (10 questions) - Optique 5 (10 pts)")
+        st.markdown("##### Quiz sur les lentilles convergentes (10 questions) - (10 pts)")
         if "ordre_questions_opt5" not in st.session_state:
             questions_opt5_base = [
                 ("q1", "D'apres la relation de conjugaison de Descartes, la formule exacte est :"),
@@ -570,28 +570,53 @@ def afficher_questions_optique5(verrouille=False):
             with cq_sel:
                 dict_quiz_opt5[f"{q_id}_opt5"] = st.selectbox("", st.session_state[cle_opts_unique], index=idx, key=cle_qo5, disabled=verrouille, label_visibility="collapsed")
 
-    # --- COLONNE DE DROITE : LE TEXTE À TROUS DE SYNTHÈSE DES LENTILLES ---
+    # --- COLONNE DE DROITE : LE TEXTE À TROUS DE SYNTHÈSE DES LENTILLES (10 TROUS = 10 PTS) ---
     with col_double_trous_opt5:
-        st.markdown("##### Synthese de cours (Texte a trous) - Optique 5 (10 pts)")
+        st.markdown("##### Synthese de cours (Texte a trous) - (10 pts)")
         
         co5_1, co5_2 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co5_1: st.write("Une lentille mince possede des bords plus minces que son centre. Elle est qualifiee de")
+        with co5_1: st.write("1. Une lentille mince possede des bords plus minces que son centre. Elle est qualifiee de")
         with co5_2: t1 = st.selectbox("", ["Choisir...", "Convergente", "Divergente", "Cylindrique"], key="opt5_t1", disabled=verrouille, label_visibility="collapsed")
         
         co5_3, co5_4 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co5_3: st.write("Tout rayon incident parallele a l'axe optique ressort en convergeant vers le foyer")
+        with co5_3: st.write("2. Tout rayon incident parallele a l'axe optique ressort en convergeant vers le foyer")
         with co5_4: t2 = st.selectbox("", ["Choisir...", "Image F'", "Objet F", "Central O"], key="opt5_t2", disabled=verrouille, label_visibility="collapsed")
 
         co5_5, co5_6 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co5_5: st.write("La relation de conjugaison permet de calculer la position x' de l'image. Sa vergence s'exprime en")
+        with co5_5: st.write("3. La relation de conjugaison permet de calculer la position x' de l'image. Sa vergence s'exprime en")
         with co5_6: t3 = st.selectbox("", ["Choisir...", "Dioptries", "Metres", "Degres"], key="opt5_t3", disabled=verrouille, label_visibility="collapsed")
 
         co5_7, co5_8 = st.columns([0.75, 0.25], vertical_alignment="bottom")
-        with co5_7: st.write("Enfin, le rapport des dimensions entre l'image et l'objet definit le")
+        with co5_7: st.write("4. Enfin, le rapport des dimensions entre l'image et l'objet definit le")
         with co5_8: t4 = st.selectbox("", ["Choisir...", "Grandissement", "Pouvoir separateur", "Facteur de forme"], key="opt5_t4", disabled=verrouille, label_visibility="collapsed")
 
+        co5_9, co5_10 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co5_9: st.write("5. Tout rayon passant par le centre optique O traverse la lentille sans aucune")
+        with co5_10: t5 = st.selectbox("", ["Choisir...", "Deviation", "Reflexion", "Dispersion"], key="opt5_t5", disabled=verrouille, label_visibility="collapsed")
+
+        co5_11, co5_12 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co5_11: st.write("6. Tout rayon passant par le foyer objet F ressort de la lentille parallèlement à l'axe")
+        with co5_12: t6 = st.selectbox("", ["Choisir...", "Optique", "Vertical", "Transversal"], key="opt5_t6", disabled=verrouille, label_visibility="collapsed")
+
+        co5_13, co5_14 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co5_13: st.write("7. La distance entre le centre optique O et le foyer image F' s'appelle la distance")
+        with co5_14: t7 = st.selectbox("", ["Choisir...", "Focale", "Frontale", "Critique"], key="opt5_t7", disabled=verrouille, label_visibility="collapsed")
+
+        co5_15, co5_16 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co5_15: st.write("8. Lorsque l'image se projette sur un ecran derriere la lentille, elle est qualifiee de")
+        with co5_16: t8 = st.selectbox("", ["Choisir...", "Reelle", "Virtuelle", "Droite"], key="opt5_t8", disabled=verrouille, label_visibility="collapsed")
+
+        co5_17, co5_18 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co5_17: st.write("9. Si le grandissement gamma est negatif, l'image obtenue sur l'ecran est")
+        with co5_18: t9 = st.selectbox("", ["Choisir...", "Renversee", "Droite", "Infinie"], key="opt5_t9", disabled=verrouille, label_visibility="collapsed")
+
+        co5_19, co5_20 = st.columns([0.75, 0.25], vertical_alignment="bottom")
+        with co5_19: st.write("10. Lorsque l'objet est place exactement sur le foyer objet F, l'image se forme a l'")
+        with co5_20: t10 = st.selectbox("", ["Choisir...", "Infini", "Origine", "Centre O"], key="opt5_t10", disabled=verrouille, label_visibility="collapsed")
+
         dict_trous_opt5 = {
-            "t1_opt5": t1, "t2_opt5": t2, "t3_opt5": t3, "t4_opt5": t4
+            "t1_opt5": t1, "t2_opt5": t2, "t3_opt5": t3, "t4_opt5": t4, "t5_opt5": t5,
+            "t6_opt5": t6, "t7_opt5": t7, "t8_opt5": t8, "t9_opt5": t9, "t10_opt5": t10
         }
 
     return dict_quiz_opt5, dict_trous_opt5
@@ -600,116 +625,7 @@ def afficher_questions_optique5(verrouille=False):
 
 
 
-def mettre_a_jour_lentille_divergente_matplotlib():
-    import math
-    import matplotlib.pyplot as plt
-    import matplotlib.patches as patches
 
-    w, h = 1500, 280
-    x0, y0 = 750.0, 140.0  
-
-    fig, ax = plt.subplots(figsize=(10, 3.5), facecolor="#0f172a")
-    ax.set_facecolor("#0f172a")
-    ax.set_xlim(15, w - 15)
-    ax.set_ylim(0, h)
-    ax.invert_yaxis()  
-    ax.axis("off")
-
-    x_obj = st.session_state.get("slide_len2_x", -80.0)
-    f_prime = st.session_state.get("slide_len2_f", -100.0) # Valeur negative pour une divergente
-    h_obj = st.session_state.get("slide_len2_ab", 40.0)
-    
-    xa = x0 + x_obj                          
-    xf = x0 - f_prime  # Foyer objet réel (a droite, valeur positive apres soustraction)
-    xf_prime = x0 + f_prime  # Foyer image virtuel (a gauche, valeur negative)
-
-    ax.plot([15, w - 15], [y0, y0], color="#cbd5e1", lw=1.5)
-    ax.text(w - 25, y0 + 14, "Axe optique", color="#64748b", fontsize=7, style="italic", ha="right")
-
-    # REPARATION DES FLÈCHES DE LA LENTILLE DIVERGENTE (FLECHES VERS L'INTÉRIEUR)
-    ax.plot([x0, x0], [20, h - 20], color="#3b82f6", lw=3)
-    
-    # Flèche inversée tout en haut (pointant vers le centre)
-    ax.plot([x0 - 10, x0, x0 + 10], [10, 25, 10], color="#3b82f6", lw=3)
-    
-    # Flèche inversée tout en bas (pointant vers le centre)
-    ax.plot([x0 - 10, x0, x0 + 10], [h - 10, h - 25, h - 10], color="#3b82f6", lw=3)
-    
-    ax.text(x0 + 15, 25, "Lentille Divergente (L)", color="#38bdf8", fontsize=8, fontweight="bold", ha="left")
-    ax.text(x0 - 12, y0 + 14, "O", color="#cbd5e1", fontsize=8, fontweight="bold", ha="right")
-
-    ax.plot([xf, xf], [y0 - 5, y0 + 5], color="#cbd5e1", lw=2)
-    ax.text(xf, y0 + 14, "F", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center")
-    ax.plot([xf_prime, xf_prime], [y0 - 5, y0 + 5], color="#cbd5e1", lw=2)
-    ax.text(xf_prime, y0 + 14, "F'", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center")
-
-    ax.annotate("", xy=(xa, y0 - h_obj), xytext=(xa, y0), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5))
-    ax.text(xa + 8, y0 + 14, "A", color="#ef4444", fontsize=8, fontweight="bold")
-    ax.text(xa + 8, y0 - h_obj - 6, "B", color="#ef4444", fontsize=8, fontweight="bold")
-
-    denominateur = x_obj + f_prime
-    vergence_c_box = 100.0 / f_prime
-
-    chk_b = st.session_state.get("chk_rayon2_bleu", True)
-    chk_j = st.session_state.get("chk_rayon2_jaune", True)
-    chk_r = st.session_state.get("chk_rayon2_rose", True)
-    chk_img = st.session_state.get("chk_afficher_image2_verte", True)
-
-    x_image = (f_prime * x_obj) / denominateur
-    grandissement = x_image / x_obj
-    h_image = h_obj * grandissement
-    xa_prime = x0 + x_image
-    taille_image_cm = abs(h_obj * grandissement)
-
-    msg_lentille = "IMAGE VIRTUELLE : En amont (droite et plus petite)."
-    couleur_msg = "#38bdf8"
-    couleur_image = "#a855f7"
-
-    # 1. RAYON CENTRAL (Bleu)
-    if chk_b:
-        ax.plot([xa, x0], [y0 - h_obj, y0], color="#2563eb", lw=1.5)
-        ax.plot([x0, w - 40], [y0, y0 + (w - 40 - x0) * (y0 - (y0 - h_obj)) / (x0 - xa)], color="#2563eb", lw=1.5)
-
-    # 2. RAYON PARALLÈLE REPARÉ (Jaune) : Arrive horizontal, diverge aligne sur F'
-    if chk_j:
-        ax.plot([xa, x0], [y0 - h_obj, y0 - h_obj], color="#eab308", lw=1.5)
-        # Calcul de la pente divergente reelle a partir du foyer image virtuel F'
-        pente_j = (y0 - h_obj - y0) / (x0 - xf_prime)
-        x_end_j = w - 20
-        y_end_j = y0 - h_obj + (x_end_j - x0) * pente_j
-        ax.plot([x0, x_end_j], [y0 - h_obj, y_end_j], color="#eab308", lw=1.5)
-        ax.plot([x0, xf_prime], [y0 - h_obj, y0], color="#eab308", lw=1.5, linestyle="--")
-
-    # 3. RAYON FOCAL REPARÉ (Rose) : Vise F, ressort horizontalement parallele
-    if chk_r:
-        pente_r = (y0 - (y0 - h_obj)) / (xf - xa)
-        h_impact_r = y0 - h_obj + (x0 - xa) * pente_r
-        ax.plot([xa, x0], [y0 - h_obj, h_impact_r], color="#ec4899", lw=1.5)
-        ax.plot([x0, w - 20], [h_impact_r, h_impact_r], color="#ec4899", lw=1.5)
-        ax.plot([x0, xf], [h_impact_r, y0], color="#ec4899", lw=1.5, linestyle="--")
-        ax.plot([x0, xa_prime], [h_impact_r, h_impact_r], color="#ec4899", lw=1.5, linestyle="--")
-
-    if chk_img:
-        ax.annotate("", xy=(xa_prime, y0 - h_image), xytext=(xa_prime, y0), arrowprops=dict(arrowstyle="->", color=couleur_image, lw=2.5))
-        ax.text(xa_prime + 8, y0 + 14, "A'", color=couleur_image, fontsize=7, fontweight="bold")
-        ax.text(xa_prime + 8, y0 - h_image - 6, "B'", color=couleur_image, fontsize=7, fontweight="bold")
-
-    txt_box_lentille = (
-        f"Lentille Divergente :\n"
-        f"• Objet x = {x_obj:.1f} cm\n"
-        f"• Taille AB = {h_obj:.1f} cm\n"
-        f"• Focale f' = {f_prime:.1f} cm\n"
-        f"• Image x' = {x_image:.1f} cm\n"
-        f"• Taille A'B' = {taille_image_cm:.1f} cm\n"
-        f"• Vergence C = {vergence_c_box:.2f} δ\n"
-        f"• Grandissement g = {grandissement:.2f}"
-    )
-
-    ax.text(20, 20, "OPTIQUE : LENTILLES MINCES DIVERGENTES", color="#38bdf8", fontsize=9, fontweight="bold", ha="left")
-    ax.text(20, 35, msg_lentille, color=couleur_msg, fontsize=7, fontweight="bold", ha="left")
-
-    st.session_state.opt6_txt_box_lentille = txt_box_lentille
-    return fig
 
 def mettre_a_jour_graphique_lentille_matplotlib():
     import matplotlib.pyplot as plt
@@ -1106,12 +1022,13 @@ with tab3:
         st.subheader("Relation de Descartes")
         fig_courbe_descartes = mettre_a_jour_graphique_lentille_matplotlib()
         st.pyplot(fig_courbe_descartes, use_container_width=True)
+        
     st.write("---")
     dict_q5, dict_t5 = afficher_questions_optique5(verrouille=st.session_state.get("opt5_verrouille", False))
 
-        # =========================================================================
-        # MODULE DE NOTATION ET D'EXPORTATION AUTOMATIQUE SUR 20 POINTS
-        # =========================================================================
+    # =========================================================================
+    # MODULE DE NOTATION ET D'EXPORTATION AUTOMATIQUE SUR 20 POINTS
+    # =========================================================================
     st.write("---")
     st.subheader("Validation et Generation du Bilan Officiel - Optique 5")
 
@@ -1125,27 +1042,27 @@ with tab3:
         disabled=st.session_state.get("opt5_verrouille", False)
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER ", key="btn_export_opt5_official_20pts", use_container_width=True, disabled=st.session_state.get("opt5_verrouille", False)):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_opt5_official_20pts", use_container_width=True, disabled=st.session_state.get("opt5_verrouille", False)):
         if not st.session_state.get("verrouille", False): 
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_opt5: 
             st.error("Action refusee : Cochez la case de certification.")
         else:
-            # Moteur de correction automatique du Quiz
+            # Moteur de correction automatique du Quiz (10 questions = 10 pts)
             attendus_qo5_v = {
                 "q1": "1/x' - 1/x = 1/f'", "q2": "Continue en ligne droite sans subir de deviation", 
                 "q3": "Le foyer image F'", "q4": "La dioptrie (delta)", "q5": "Reelle et renversee", 
                 "q6": "Renversee par rapport a l'objet", "q7": "A l'infini", 
-                "q8": "Plus minces que son centre", "q9": "+2.0", "q10": "-1"
+                "q8": "Plus minces que son centre", "q9": "+2.0", "q10": "1 (droite inclinee a 45 degres)"
             }
             score_quiz_opt5 = sum([1.0 for qk, qv in attendus_qo5_v.items() if st.session_state.get(f"col_g_quiz_opt5_{qk}") == qv])
 
-            # Moteur de correction automatique du Texte a trous
-            score_trous_opt5 = 0.0
-            if st.session_state.get("opt5_t1") == "Convergente": score_trous_opt5 += 2.5
-            if st.session_state.get("opt5_t2") == "Image F'": score_trous_opt5 += 2.5
-            if st.session_state.get("opt5_t3") == "Dioptries": score_trous_opt5 += 2.5
-            if st.session_state.get("opt5_t4") == "Grandissement": score_trous_opt5 += 2.5
+            # Moteur de correction automatique du Texte a trous (10 trous = 10 pts)
+            attendus_to5_v = {
+                "t1": "Convergente", "t2": "Image F'", "t3": "Dioptries", "t4": "Grandissement", "t5": "Deviation",
+                "t6": "Optique", "t7": "Focale", "t8": "Reelle", "t9": "Renversee", "t10": "Infini"
+            }
+            score_trous_opt5 = sum([1.0 for tk, tv in attendus_to5_v.items() if st.session_state.get(f"opt5_{tk}") == tv])
 
             st.session_state.score_opt5_p1 = round(score_quiz_opt5, 1)
             st.session_state.score_opt5_p2 = round(score_trous_opt5, 1)
@@ -1153,31 +1070,59 @@ with tab3:
             st.session_state.opt5_verrouille = True
             st.rerun()
 
-    # LE BLOC D'EXPORT PERMANENT LIÉ AU VERROU (RESTAURÉ)
+    # LE BLOC D'EXPORT PERMANENT LIÉ AU VERROU
     if st.session_state.get("opt5_verrouille", False):
         scr1 = st.session_state.get("score_opt5_p1", 0.0)
         scr2 = st.session_state.get("score_opt5_p2", 0.0)
         tot_s = st.session_state.get("score_final_opt5", 0.0)
 
-        from datetime import timedelta
-        timestamp_opt5 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
+        from datetime import datetime, timedelta
+        timestamp_opt5 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER OPTIQUE  SCELLE | Note de session : {tot_s} / 20")
+        st.success(f"ATELIER OPTIQUE 5 SCELLE | Note de session : {tot_s} / 20")
 
         attendus_qo5_v = {
             "q1": "1/x' - 1/x = 1/f'", "q2": "Continue en ligne droite sans subir de deviation", 
             "q3": "Le foyer image F'", "q4": "La dioptrie (delta)", "q5": "Reelle et renversee", 
             "q6": "Renversee par rapport a l'objet", "q7": "A l'infini", 
-            "q8": "Plus minces que son centre", "q9": "+2.0", "q10": "-1"
+            "q8": "Plus minces que son centre", "q9": "+2.0", "q10": "1 (droite inclinee a 45 degres)"
         }
-        attendus_to5_v = {"t1": "Convergente", "t2": "Image F'", "t3": "Dioptries", "t4": "Grandissement"}
+        enonces_qo5_v = {
+            "q1": "D'apres la relation de conjugaison de Descartes, la formule exacte est :",
+            "q2": "Un rayon lumineux passant par le centre optique O d'une lentille mince :",
+            "q3": "Un rayon incident parallele a l'axe optique ressort de la lentille en passant par :",
+            "q4": "La vergence C d'une lentille est l'inverse de sa distance focale f'. Son unite est :",
+            "q5": "Si l'objet AB est situe a une distance superieure a la distance focale (x > f'), l'image obtenue est :",
+            "q6": "Si le grandissement gamma est negatif (gamma < 0), cela signifie geometriquement que l'image est :",
+            "q7": "Lorsque l'objet AB est deplace et positionne pile sur le foyer objet F, l'image se forme :",
+            "q8": "Une lentille mince est qualifiee de convergente si ses bords sont :",
+            "q9": "Si la taille de l'image est deux fois plus grande que l'objet et de meme sens, gamma vaut :",
+            "q10": "Lorsqu'on trace le graphique de 1/x' en fonction de 1/x, la courbe obtenue est une droite de pente :"
+        }
+
+        attendus_to5_v = {
+            "t1": "Convergente", "t2": "Image F'", "t3": "Dioptries", "t4": "Grandissement", "t5": "Deviation",
+            "t6": "Optique", "t7": "Focale", "t8": "Reelle", "t9": "Renversee", "t10": "Infini"
+        }
+        enonces_to5_v = {
+            "t1": "1. Une lentille mince possede des bords plus minces que son centre. Elle est qualifiee de .........",
+            "t2": "2. Tout rayon incident parallele a l'axe optique ressort en convergeant vers le foyer .........",
+            "t3": "3. La relation de conjugaison permet de calculer la position x' de l'image. Sa vergence s'exprime en .........",
+            "t4": "4. Enfin, le rapport des dimensions entre l'image et l'objet definit le .........",
+            "t5": "5. Tout rayon passant par le centre optique O traverse la lentille sans aucune .........",
+            "t6": "6. Tout rayon passant par le foyer objet F ressort de la lentille parallelement a l'axe .........",
+            "t7": "7. La distance entre le centre optique O et le foyer image F' s'appelle la distance .........",
+            "t8": "8. Lorsque l'image se projette sur un ecran derriere la lentille, elle est qualifiee de .........",
+            "t9": "9. Si le grandissement gamma est negatif, l'image obtenue sur l'ecran est .........",
+            "t10": "10. Lorsque l'objet est place exactement sur le foyer objet F, l'image se forme a l'........."
+        }
 
         # Generation du document HTML propre pour le professeur Gallet
         html_export_opt5 = f"""<!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
-            <title>Rapport Optique  - {n_eleve}</title>
+            <title>Rapport Optique 5 - {n_eleve}</title>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
                 .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
@@ -1194,35 +1139,37 @@ with tab3:
             <div class="header-box">
                 <h1>Professeur Laurent GALLET</h1>
                 <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_opt5}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Atelier : Lentilles Minces Convergentes | Scelle le : {timestamp_opt5}</p>
                 <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
             </div>
 
             <div class="sub-title">Recapitulatif des scores de competences - Optique 5</div>
             <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
                 &bull; Partie 1 : Quiz de Connaissances (10 items) : <strong>{scr1} / 10</strong><br>
-                &bull; Partie 2 : Synthese de Cours (Texte a trous 4 items) : <strong>{scr2} / 10</strong>
+                &bull; Partie 2 : Synthese de Cours (Texte a trous 10 items) : <strong>{scr2} / 10</strong>
             </p>
 
             <div class="sub-title">PARTIE 1 : QUIZ DE CONJUGAISON (10 PTS)</div>
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 10%;">N°</th>
-                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 25%; text-align: center;">Attendu</th>
-                        <th style="width: 25%; text-align: center;">Verdict</th>
+                        <th style="width: 5%;">N°</th>
+                        <th style="width: 45%;">Question posée</th>
+                        <th style="width: 20%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 15%; text-align: center;">Attendu</th>
+                        <th style="width: 15%; text-align: center;">Verdict</th>
                     </tr>
                 </thead>
                 <tbody>
         """
 
-        for idx_q, (q_id, q_txt) in enumerate(attendus_qo5_v.items(), 1):
+        for idx_q, (q_id, attendu) in enumerate(attendus_qo5_v.items(), 1):
             saisie = st.session_state.get(f"col_g_quiz_opt5_{q_id}", "Choisir...")
-            attendu = attendus_qo5_v[q_id]
+            enonce_q = enonces_qo5_v.get(q_id, f"Question {idx_q}")
             v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_opt5 += f"<tr><td>{idx_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt5 += f"<tr><td>{idx_q}</td><td>{enonce_q}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
 
         html_export_opt5 += """
                 </tbody>
@@ -1232,40 +1179,40 @@ with tab3:
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 10%;">N°</th>
-                        <th style="width: 40%; text-align: center;">Saisie Eleve</th>
-                        <th style="width: 25%; text-align: center;">Attendu</th>
-                        <th style="width: 25%; text-align: center;">Verdict</th>
+                        <th style="width: 55%; text-align: left;">Phrase explicative à trous</th>
+                        <th style="width: 15%; text-align: center;">Saisie Eleve</th>
+                        <th style="width: 15%; text-align: center;">Attendu</th>
+                        <th style="width: 15%; text-align: center;">Verdict</th>
                     </tr>
                 </thead>
                 <tbody>
         """
 
-        for idx_t, (t_key, t_val) in enumerate(attendus_to5_v.items(), 1):
-            saisie = st.session_state.get(f"opt5_{t_key}", "Choisir...")
-            v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
-            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-            html_export_opt5 += f"<tr><td>{idx_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+        for t_key, attendu_t in attendus_to5_v.items():
+            saisie_t = st.session_state.get(f"opt5_{t_key}", "Choisir...")
+            phrase_t = enonces_to5_v.get(t_key, t_key)
+            v_lbl_t = "CORRECT" if str(saisie_t) == str(attendu_t) else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_opt5 += f"<tr><td style='text-align: left;'>{phrase_t}</td><td style='text-align:center;'>{saisie_t}</td><td style='text-align:center;'>{attendu_t}</td><td class='{v_class_t}' style='text-align: center;'>{v_lbl_t}</td></tr>"
 
         html_export_opt5 += """
                 </tbody>
             </table>
-            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'optique geometrique genere automatiquement &bull; Professeur Laurent GALLET</div>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #64748b;">
+                Laboratoire d'Optique Physique Appliquee &copy; 2026
+            </div>
         </body>
         </html>
         """
 
-        nom_f = f"Rapport_Evaluation_Optique_{n_eleve}_{p_eleve}_{c_eleve}"
-        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
-            nom_f = nom_f.replace(c, "_")
-
         st.download_button(
-            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DE L'ATELIER  SUR VOTRE ORDINATEUR",
+            label="Télécharger le relevé de notes au format HTML",
             data=html_export_opt5,
-            file_name=f"{nom_f}.html",
+            file_name=f"Bilan_Optique5_{n_eleve}.html",
             mime="text/html",
             use_container_width=True
         )
+
 
 
 
