@@ -717,6 +717,78 @@ def afficher_atelier_div_maint(sujet_idx, verrouille=False):
             with c1: st.write(enonce)
             with c2: st.selectbox("", choix, key=f"{cle}_s{sujet_idx}", disabled=verrouille, label_visibility="collapsed")
 
+def dessiner_regles_trace_divergente_matplotlib():
+    """Schéma pédagogique interactif des 3 rayons particuliers d'une lentille divergente."""
+    fig, ax = plt.subplots(figsize=(11, 4.5), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 240)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    x0, y0 = 300.0, 120.0
+    f_px = st.session_state.get("slider_regles_div_f", 100.0)
+    choix_rayon = st.session_state.get("radio_regles_div_rayon", "Tous les 3 rayons particuliers")
+
+    ax.plot(list((20, 580)), list((y0, y0)), color="#cbd5e1", lw=1.3, ls="-.")
+    ax.text(575, y0 + 14, "Axe optique", color="#94a3b8", fontsize=8, ha="right")
+
+    # Lentille divergente (flèches inversées vers l'intérieur)
+    ax.plot(list((x0, x0)), list((25, 215)), color="#38bdf8", lw=3)
+    ax.plot(list((x0 - 9, x0, x0 + 9)), list((15, 28, 15)), color="#38bdf8", lw=3)
+    ax.plot(list((x0 - 9, x0, x0 + 9)), list((225, 212, 225)), color="#38bdf8", lw=3)
+    ax.text(x0 + 12, 30, "Lentille Divergente (L)", color="#38bdf8", fontsize=8.5, fontweight="bold")
+    ax.text(x0 - 10, y0 + 14, "O", color="#cbd5e1", fontsize=8.5, fontweight="bold", ha="right")
+
+    # Foyers inversés : F' (image virtuel) à GAUCHE, F (objet virtuel) à DROITE
+    xfp = x0 - f_px
+    xf = x0 + f_px
+    ax.scatter(list((xfp, xf)), list((y0, y0)), color="#fde047", s=45, zorder=5)
+    ax.text(xfp, y0 + 16, "F' (Foyer image)", color="#fde047", fontsize=8, fontweight="bold", ha="center")
+    ax.text(xf, y0 + 16, "F (Foyer objet)", color="#fde047", fontsize=8, fontweight="bold", ha="center")
+
+    # Point objet B à gauche
+    xb, yb = 110.0, 55.0
+    ax.annotate("", xy=(xb, yb), xytext=(xb, y0), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5))
+    ax.text(xb - 6, y0 + 14, "A", color="#ef4444", fontsize=8.5, fontweight="bold", ha="right")
+    ax.text(xb - 6, yb, "B", color="#ef4444", fontsize=8.5, fontweight="bold", ha="right")
+
+    x_obj = xb - x0
+    f_neg = -f_px
+    x_img = (f_neg * x_obj) / (x_obj + f_neg)
+    h_obj = y0 - yb
+    h_img = h_obj * (x_img / x_obj)
+    xbp = x0 + x_img
+    ybp = y0 - h_img
+
+    # Rayon 1 : Parallèle -> diverge en semblant venir de F'
+    if "1" in choix_rayon or "Tous" in choix_rayon:
+        ax.annotate("", xy=(x0, yb), xytext=(xb, yb), arrowprops=dict(arrowstyle="->", color="#eab308", lw=2))
+        pente1 = (yb - y0) / (x0 - xfp)
+        ax.annotate("", xy=(560, yb + pente1 * (560 - x0)), xytext=(x0, yb), arrowprops=dict(arrowstyle="->", color="#eab308", lw=2))
+        ax.plot(list((xfp, x0)), list((y0, yb)), color="#eab308", lw=1.3, ls="--")
+
+    # Rayon 2 : Passe par O -> non dévié
+    if "2" in choix_rayon or "Tous" in choix_rayon:
+        pente2 = (y0 - yb) / (x0 - xb)
+        ax.annotate("", xy=(560, yb + pente2 * (560 - xb)), xytext=(xb, yb), arrowprops=dict(arrowstyle="->", color="#3b82f6", lw=2))
+
+    # Rayon 3 : Vise F -> ressort parallèle à l'axe
+    if "3" in choix_rayon or "Tous" in choix_rayon:
+        pente3 = (y0 - yb) / (xf - xb)
+        y_hit3 = yb + pente3 * (x0 - xb)
+        ax.annotate("", xy=(x0, y_hit3), xytext=(xb, yb), arrowprops=dict(arrowstyle="->", color="#ec4899", lw=2))
+        ax.plot(list((x0, xf)), list((y_hit3, y0)), color="#ec4899", lw=1.3, ls="--")
+        ax.annotate("", xy=(560, y_hit3), xytext=(x0, y_hit3), arrowprops=dict(arrowstyle="->", color="#ec4899", lw=2))
+        ax.plot(list((xbp, x0)), list((y_hit3, y_hit3)), color="#ec4899", lw=1.3, ls="--")
+
+    # Image virtuelle A'B'
+    ax.annotate("", xy=(xbp, ybp), xytext=(xbp, y0), arrowprops=dict(arrowstyle="->", color="#a855f7", lw=2.5))
+    ax.text(xbp - 6, y0 + 14, "A'", color="#c084fc", fontsize=8.5, fontweight="bold", ha="right")
+    ax.text(xbp - 6, ybp - 4, "B'", color="#c084fc", fontsize=8.5, fontweight="bold", ha="right")
+
+    ax.text(20, 18, "RÈGLES DE CONSTRUCTION GÉOMÉTRIQUE D'UNE LENTILLE DIVERGENTE", color="#38bdf8", fontsize=9, fontweight="bold")
+    return fig
 
 
 
