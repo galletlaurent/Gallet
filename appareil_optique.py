@@ -524,6 +524,55 @@ tab9 = onglets[9]
 tab10 = onglets[10]
 
 
+
+def afficher_atelier_hist_optique(verrouille=False):
+    """Affiche le Quiz (10 questions) et le Texte à trous (10 cases) de l'Histoire des appareils optiques."""
+    questions_ho = [
+        {"id": "qho1", "q": "Quel savant arabe du XIe siècle a décrit le principe de la chambre noire (camera obscura) projetant une image renversée ?", "options": ["Ibn al-Haytham (Alhazen)", "Aristote", "Archimède"], "rep": "Ibn al-Haytham (Alhazen)"},
+        {"id": "qho2", "q": "Quel artisan opticien hollandais a déposé le premier brevet de lunette d'approche en 1608 ?", "options": ["Hans Lippershey", "Johannes Kepler", "Isaac Newton"], "rep": "Hans Lippershey"},
+        {"id": "qho3", "q": "En quelle année Galilée a-t-il perfectionné la lunette astronomique pour découvrir les cratères de la Lune et les satellites de Jupiter ?", "options": ["1609", "1492", "1889"], "rep": "1609"},
+        {"id": "qho4", "q": "Quelle est la particularité de l'oculaire de la lunette inventée par Galilée ?", "options": ["C'est une lentille divergente qui donne une image droite", "C'est un miroir sphérique", "C'est un prisme triangulaire"], "rep": "C'est une lentille divergente qui donne une image droite"},
+        {"id": "qho5", "q": "Quel astronome allemand a remplacé en 1611 l'oculaire divergent de Galilée par un oculaire convergent pour élargir le champ de vision ?", "options": ["Johannes Kepler", "Nicolas Copernic", "Tycho Brahe"], "rep": "Johannes Kepler"},
+        {"id": "qho6", "q": "Quel savant anglais a inventé en 1668 le premier télescope réflecteur utilisant un miroir concave à la place d'une lentille objectif ?", "options": ["Isaac Newton", "Thomas Young", "Robert Hooke"], "rep": "Isaac Newton"},
+        {"id": "qho7", "q": "Quel naturaliste néerlandais du XVIIe siècle a observé les premiers micro-organismes (bactéries, globules) avec un microscope simple à une lentille ?", "options": ["Antoni van Leeuwenhoek", "Louis Pasteur", "Blaise Pascal"], "rep": "Antoni van Leeuwenhoek"},
+        {"id": "qho8", "q": "Quel scientifique anglais a publié en 1665 l'ouvrage Micrographia décrivant les cellules observées au microscope composé ?", "options": ["Robert Hooke", "Michael Faraday", "James Watt"], "rep": "Robert Hooke"},
+        {"id": "qho9", "q": "Quel inventeur français a réalisé en 1826-1827 la première photographie permanente de l'histoire à l'aide d'une chambre noire ?", "options": ["Nicéphore Niépce", "Louis Daguerre", "Gustave Eiffel"], "rep": "Nicéphore Niépce"},
+        {"id": "qho10", "q": "Quel composant électronique a remplacé la pellicule argentique dans les appareils photographiques modernes ?", "options": ["Le capteur numérique CMOS / CCD", "Le tube cathodique", "La bobine de Tesla"], "rep": "Le capteur numérique CMOS / CCD"},
+    ]
+
+    if "ordre_quiz_ho_aleatoire" not in st.session_state:
+        random.shuffle(questions_ho)
+        st.session_state.ordre_quiz_ho_aleatoire = questions_ho
+
+    champs_ho = [
+        ("1. Au XIe siècle, Alhazen décrit la chambre ......... qui projette une image renversée.", ["Choisir...", "noire", "claire"], "noire", "ho_t1"),
+        ("2. En 1609, ......... observe les astres avec une lunette munie d'un oculaire divergent.", ["Choisir...", "Galilée", "Newton"], "Galilée", "ho_t2"),
+        ("3. En 1611, Johannes ......... utilise deux lentilles convergentes pour élargir le champ.", ["Choisir...", "Kepler", "Euclide"], "Kepler", "ho_t3"),
+        ("4. En 1668, Isaac ......... remplace la lentille objectif par un miroir concave.", ["Choisir...", "Newton", "Descartes"], "Newton", "ho_t4"),
+        ("5. Un télescope utilise un ......... alors qu'une lunette utilise uniquement des lentilles.", ["Choisir...", "miroir", "prisme"], "miroir", "ho_t5"),
+        ("6. Au XVIIe siècle, Van Leeuwenhoek observe les bactéries grâce à une ......... puissante.", ["Choisir...", "loupe", "jumelle"], "loupe", "ho_t6"),
+        ("7. Robert Hooke utilise un ......... composé pour découvrir les cellules végétales.", ["Choisir...", "microscope", "périscope"], "microscope", "ho_t7"),
+        ("8. En 1827, Nicéphore ......... fixe la première image photographique de l'histoire.", ["Choisir...", "Niépce", "Lumière"], "Niépce", "ho_t8"),
+        ("9. Dans un appareil photo, l'objectif forme une image ......... sur le capteur.", ["Choisir...", "réelle", "virtuelle"], "réelle", "ho_t9"),
+        ("10. Les appareils photo numériques utilisent un capteur électronique .........", ["Choisir...", "CMOS", "thermique"], "CMOS", "ho_t10"),
+    ]
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Historique : Les appareils optiques (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_ho_aleatoire, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", ["Choisir..."] + q_data["options"], key=f"ho_at1_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+
+    with col_t:
+        st.markdown("##### Synthèse Historique (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in champs_ho:
+            c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+
+
+
 def afficher_questions_optique9(verrouille=False):
     col_double_quiz_opt9, col_double_trous_opt9 = st.columns(2)
 
@@ -1195,7 +1244,98 @@ def valider_session():
 
 
 with tab1:
-    st.subheader("L'histoire des appareils optique")
+    st.subheader("L'histoire des appareils optiques")
+
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0;">Objectif de l'atelier :</p>
+        <p style="margin-bottom: 0;">Découvrir comment l'homme a assemblé lentilles et miroirs pour explorer l'infiniment grand (lunettes et télescopes), l'infiniment petit (loupes et microscopes) et fixer les images (chambre noire et photographie).</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col_h1, col_h2, col_h3, col_h4 = st.columns(4)
+    with col_h1:
+        try: st.image("camera_obscura.jpg", caption="Chambre noire d'Alhazen (XIe siècle)", use_container_width=True)
+        except Exception: st.warning("Image 'camera_obscura.jpg' introuvable.")
+        st.info("**La Chambre Noire (XIe siècle)**\n* Décrite par **Ibn al-Haytham (Alhazen)**.\n* Ancêtre de l'appareil photo : projette une image réelle et renversée sur un écran.")
+
+    with col_h2:
+        try: st.image("lunette_galilee.jpg", caption="Lunette de Galilée (1609) & Kepler (1611)", use_container_width=True)
+        except Exception: st.warning("Image 'lunette_galilee.jpg' introuvable.")
+        st.info("**Lunettes Astronomiques (1609 - 1611)**\n* **Galilée** utilise un oculaire divergent (image droite).\n* **Kepler** utilise deux lentilles convergentes pour un champ plus large.")
+
+    with col_h3:
+        try: st.image("telescope_newton.jpg", caption="Télescope de Newton (1668)", use_container_width=True)
+        except Exception: st.warning("Image 'telescope_newton.jpg' introuvable.")
+        st.info("**Le Télescope à Miroir (1668)**\n* **Isaac Newton** remplace la lentille objectif par un **miroir concave**.\n* Supprime les défauts de couleurs (aberrations chromatiques).")
+
+    with col_h4:
+        try: st.image("microscope_ancien.jpg", caption="Microscopes de Hooke et Leeuwenhoek", use_container_width=True)
+        except Exception: st.warning("Image 'microscope_ancien.jpg' introuvable.")
+        st.info("**Microscope & Photographie**\n* **Hooke** et **Leeuwenhoek** révèlent le monde cellulaire.\n* **Niépce (1827)** réalise la première photographie permanente.")
+
+    st.markdown("---")
+    if "ho_verrouille_tab1" not in st.session_state:
+        st.session_state.ho_verrouille_tab1 = False
+    verrou_ho = st.session_state.ho_verrouille_tab1
+    afficher_atelier_hist_optique(verrouille=verrou_ho)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_ho = st.checkbox("Je certifie avoir complété l'Atelier Historique des appareils optiques.", key="certif_ho1", disabled=verrou_ho)
+    if st.button("VALIDER ET EXPORTER LE BILAN HISTORIQUE", key="btn_exp_ho1", use_container_width=True, disabled=verrou_ho):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_ho:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            sc_q = sum(1.0 for q in st.session_state.get("ordre_quiz_ho_aleatoire", []) if st.session_state.get(f"ho_at1_g_{q['id']}") == q["rep"])
+            rep_t = {"ho_t1": "noire", "ho_t2": "Galilée", "ho_t3": "Kepler", "ho_t4": "Newton", "ho_t5": "miroir", "ho_t6": "loupe", "ho_t7": "microscope", "ho_t8": "Niépce", "ho_t9": "réelle", "ho_t10": "CMOS"}
+            sc_t = sum(1.0 for k, v in rep_t.items() if st.session_state.get(k) == v)
+            st.session_state.score_ho1_p1, st.session_state.score_ho1_p2, st.session_state.score_final_ho1 = sc_q, sc_t, sc_q + sc_t
+            st.session_state.ho_verrouille_tab1 = True
+            st.rerun()
+
+    if st.session_state.get("ho_verrouille_tab1", False):
+        scr1, scr2, tot_s = st.session_state.score_ho1_p1, st.session_state.score_ho1_p2, st.session_state.score_final_ho1
+        ts_ho = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER HISTORIQUE SCELLÉ | Note : {tot_s:.1f} / 20")
+
+        html_ho = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport Histoire Appareils Optiques - {n_eleve}</title>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}.status-correct{{color:#10b981;font-weight:bold}}.status-incorrect{{color:#ef4444;font-weight:bold}}</style></head>
+        <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Atelier 1 : Histoire des Appareils Optiques</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_ho}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
+        <p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
+        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"""
+        for num, q in enumerate(st.session_state.get("ordre_quiz_ho_aleatoire", []), 1):
+            qid_c = q["id"]
+            saisie_q = st.session_state.get(f"ho_at1_g_{qid_c}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie_q) == str(q["rep"]) else "INCORRECT"
+            v_cls = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_ho += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_q}</td><td>{q['rep']}</td><td class='{v_cls}'>{v_lbl}</td></tr>"
+        html_ho += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"
+        verif_ho = [
+            ("1. Au XIe siècle, Alhazen décrit la chambre ......... qui projette une image renversée.", "noire", "ho_t1"),
+            ("2. En 1609, ......... observe les astres avec une lunette munie d'un oculaire divergent.", "Galilée", "ho_t2"),
+            ("3. En 1611, Johannes ......... utilise deux lentilles convergentes pour élargir le champ.", "Kepler", "ho_t3"),
+            ("4. En 1668, Isaac ......... remplace la lentille objectif par un miroir concave.", "Newton", "ho_t4"),
+            ("5. Un télescope utilise un ......... alors qu'une lunette utilise uniquement des lentilles.", "miroir", "ho_t5"),
+            ("6. Au XVIIe siècle, Van Leeuwenhoek observe les bactéries grâce à une ......... puissante.", "loupe", "ho_t6"),
+            ("7. Robert Hooke utilise un ......... composé pour découvrir les cellules végétales.", "microscope", "ho_t7"),
+            ("8. En 1827, Nicéphore ......... fixe la première image photographique de l'histoire.", "Niépce", "ho_t8"),
+            ("9. Dans un appareil photo, l'objectif forme une image ......... sur le capteur.", "réelle", "ho_t9"),
+            ("10. Les appareils photo numériques utilisent un capteur électronique .........", "CMOS", "ho_t10"),
+        ]
+        for idx_t, (en, rep, cle) in enumerate(verif_ho, 1):
+            saisie_t = st.session_state.get(cle, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t) == str(rep) else "INCORRECT"
+            v_cls_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_ho += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t}</td><td>{rep}</td><td class='{v_cls_t}'>{v_lbl_t}</td></tr>"
+        html_ho += "</tbody></table></body></html>"
+        st.download_button("Télécharger le rapport officiel de l'Atelier Historique (.html)", data=html_ho, file_name=preparer_nom_fichier("Rapport_Histoire_Appareils_Optiques").replace(".txt", ".html"), mime="text/html", use_container_width=True)
+
 
 with tab2:
     st.subheader("La loupe")
@@ -1842,6 +1982,140 @@ with tab5:
             st.session_state.score_final_opt9 = round(score_quiz_opt9 + score_trous_opt9, 1)
             st.session_state.opt9_verrouille = True
             st.rerun()
+    if st.session_state.get("opt9_verrouille", False):
+        scr1 = st.session_state.get("score_opt9_p1", 0.0)
+        scr2 = st.session_state.get("score_opt9_p2", 0.0)
+        tot_s = st.session_state.get("score_final_opt9", 0.0)
+
+        p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+        n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+        c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+        from datetime import timedelta, datetime
+        timestamp_opt9 = (datetime.now() + timedelta(hours=1)).strftime("%Y-%m-%d à %H:%M:%S")
+
+        st.success(f"ATELIER OPTIQUE 9 SCELLÉ | Note de session : {tot_s} / 20")
+
+        attendus_qo9_v = {
+            "q1": "Objectif (de très courte distance focale)", "q2": "Intervalle optique Delta",
+            "q3": "Réelle, renversée et très agrandie", "q4": "Pile dans son plan focal objet (foyer F2)",
+            "q5": "À l'infini", "q6": "Négatif (car l'image intermédiaire est renversée)",
+            "q7": "Le grandissement de l'objectif", "q8": "-40",
+            "q9": "Renversée et fortement agrandie", "q10": "Un nombre suivi de la lettre X (ex: x40)"
+        }
+        attendus_to9_v = {
+            "t1": "Objectif", "t2": "Oculaire", "t3": "Intervalle optique", "t4": "Renversée", "t5": "Infini",
+            "t6": "Négatif", "t7": "25 cm", "t8": "Oculaire", "t9": "Renversée", "t10": "X"
+        }
+        enonces_to9_v = {
+            "t1": "1. Le microscope composé utilise deux systèmes convergents. Le premier est l'.........",
+            "t2": "2. De très courte focale, il génère une image intermédiaire réelle. Le second est l'.........",
+            "t3": "3. Il fait office de loupe pour observer cette dernière. La distance fixe F'1F2 s'appelle l'.........",
+            "t4": "4. L'image intermédiaire A1B1 formée par l'objectif est réelle et .........",
+            "t5": "5. Pour que l'œil observe sans fatigue, l'image finale est rejetée à l'.........",
+            "t6": "6. Le grandissement transversal de l'objectif d'un microscope est toujours .........",
+            "t7": "7. La distance minimale de vision distincte standard est fixée à .........",
+            "t8": "8. Le grossissement total G est le produit du grandissement de l'objectif par celui de l'.........",
+            "t9": "9. Par rapport à l'objet placé sur la platine, l'image finale perçue est .........",
+            "t10": "10. Le grossissement commercial d'un microscope s'écrit avec la lettre ........."
+        }
+
+        html_export_opt9 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Optique 9 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_opt9}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s}</span> / 20</div>
+            </div>
+
+            <div class="sub-title">Récapitulatif des scores de compétences - Optique 9 (Microscope)</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #eab308; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 25px;">
+                &bull; Partie 1 : Quiz de Connaissances (10 items) : <strong>{scr1} / 10</strong><br>
+                &bull; Partie 2 : Synthèse de Cours (Texte à trous 10 items) : <strong>{scr2} / 10</strong>
+            </p>
+
+            <div class="sub-title">PARTIE 1 : QUIZ SUR LE MICROSCOPE (10 PTS)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">N°</th>
+                        <th style="width: 45%;">Question posée</th>
+                        <th style="width: 20%; text-align: center;">Saisie Élève</th>
+                        <th style="width: 15%; text-align: center;">Attendu</th>
+                        <th style="width: 15%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
+
+        ordre_reel_opt9 = st.session_state.get("ordre_questions_opt9", [])
+        for idx_q, (q_id, q_txt) in enumerate(ordre_reel_opt9, 1):
+            saisie = st.session_state.get(f"col_g_quiz_opt9_{q_id}", "Choisir...")
+            attendu = attendus_qo9_v[q_id]
+            v_lbl = "CORRECT" if str(saisie) == str(attendu) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt9 += f"<tr><td>{idx_q}</td><td>{q_txt}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{attendu}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+        html_export_opt9 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">PARTIE 2 : SYNTHÈSE DE COURS (TEXTE À TROUS - 10 PTS)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 55%; text-align: left;">Phrase à trous</th>
+                        <th style="width: 15%; text-align: center;">Saisie Élève</th>
+                        <th style="width: 15%; text-align: center;">Attendu</th>
+                        <th style="width: 15%; text-align: center;">Verdict</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
+
+        for t_key, t_val in attendus_to9_v.items():
+            saisie = st.session_state.get(f"opt9_{t_key}", "Choisir...")
+            phrase_t = enonces_to9_v.get(t_key, t_key)
+            v_lbl = "CORRECT" if str(saisie) == str(t_val) else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_opt9 += f"<tr><td style='text-align: left;'>{phrase_t}</td><td style='text-align:center;'>{saisie}</td><td style='text-align:center;'>{t_val}</td><td class='{v_class}' style='text-align: center;'>{v_lbl}</td></tr>"
+
+        html_export_opt9 += """
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px;">Document officiel d'optique géométrique généré automatiquement &bull; Professeur Laurent GALLET</div>
+        </body>
+        </html>
+        """
+
+        nom_f = f"Rapport_Evaluation_Optique9_{n_eleve}_{p_eleve}_{c_eleve}"
+        for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]:
+            nom_f = nom_f.replace(c, "_")
+
+        st.download_button(
+            label="CLIQUEZ ICI POUR ENREGISTRER LE RAPPORT DU MICROSCOPE SUR VOTRE ORDINATEUR",
+            data=html_export_opt9,
+            file_name=f"{nom_f}.html",
+            mime="text/html",
+            use_container_width=True
+        )
 
 
 with tab6:
