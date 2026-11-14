@@ -2504,6 +2504,11 @@ with tab4:
     p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
     n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+    if "dm_verrouille_tab4" not in st.session_state:
+        st.session_state.dm_verrouille_tab4 = False
+    verrou_dm = st.session_state.dm_verrouille_tab4
+    sujet_actif_dm = st.session_state.get("sujet_dm_tire", None)
+    afficher_atelier_div_maint(sujet_actif_dm, verrouille=verrou_dm)
 
     case_certif_dm = st.checkbox("Je certifie avoir complété l'Atelier 4 (Maintenance - Divergentes).", key="certif_dm4", disabled=verrou_dm)
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_exp_dm4", use_container_width=True, disabled=verrou_dm):
