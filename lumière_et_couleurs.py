@@ -1276,92 +1276,41 @@ def recuperer_couleurs_newton():
 
 
 def dessiner_disque_newton():
-    """Génère la figure Matplotlib du disque de Newton avec blanchiment physique
+    """Dessine le disque de Newton avec rotation réelle calculée à chaque image."""
+    vitesse = float(st.session_state.get("var_vitesse_disque", 10.0))
+    anim_en_cours = bool(st.session_state.get("anim_en_cours", False))
+    angle_rot = float(st.session_state.get("angle_rotation_disque", 0.0))
 
-    calculé de manière linéaire selon la vitesse (0 à 25 tr/s).
-    """
-    # 1. Récupération des paramètres depuis le session_state
-    vitesse = st.session_state.var_vitesse_disque
-    anim_en_cours = st.session_state.anim_en_cours
-    angle_rotation = getattr(st.session_state, "angle_rotation_disque", 0.0)
-
-    # Configuration de la figure Matplotlib
-    fig, ax = plt.subplots(figsize=(4, 4), facecolor="#0f172a")
+    fig, ax = plt.subplots(figsize=(4.2, 4.2), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
-    ax.set_xlim(-110, 110)
-    ax.set_ylim(-110, 110)
+    ax.set_xlim(-115, 115)
+    ax.set_ylim(-115, 115)
     ax.axis("off")
 
-    rayon_disque = 100.0
-    ouverture_secteur = 360.0 / 7.0
+    fusion = min(1.0, vitesse / 25.0) if anim_en_cours else 0.0
 
-    # Calcul mathématique du blanchiment (Maximum à 25 tours/seconde)
-    if anim_en_cours:
-        facteur_blanchiment = vitesse / 25.0
-        if facteur_blanchiment > 1.0:
-            facteur_blanchiment = 1.0
-    else:
-        facteur_blanchiment = 0.0
+    r_list = list((239, 249, 234, 34, 37, 79, 124))
+    g_list = list((68, 115, 179, 197, 99, 70, 58))
+    b_list = list((68, 22, 8, 94, 235, 229, 237))
 
-    # Base des 7 couleurs de Newton
-    couleurs = recuperer_couleurs_newton()
-
-    # Dictionnaire de conversion RVB d'origine
-    rgb_base = {
-        "#ef4444": (239, 68, 68),  # Rouge
-        "#f97316": (249, 115, 22),  # Orange
-        "#eab308": (234, 179, 8),  # Jaune
-        "#22c55e": (34, 197, 94),  # Vert
-        "#2563eb": (37, 99, 235),  # Bleu
-        "#4f46e5": (79, 70, 229),  # Indigo
-        "#7c3aed": (124, 58, 237),  # Violet
-    }
-
-    # Tracé des 7 secteurs avec transition continue vers le blanc pur
-    for i, couleur in enumerate(couleurs):
-        angle_depart = (angle_rotation + (i * ouverture_secteur)) % 360.0
-        hex_code = couleur["code"]
-
-        if hex_code in rgb_base:
-            r, g, b = rgb_base[hex_code]
-            # Interpolation linéaire vers le blanc (255, 255, 255)
-            new_r = int(r + (255 - r) * facteur_blanchiment)
-            new_g = int(g + (255 - g) * facteur_blanchiment)
-            new_b = int(b + (255 - b) * facteur_blanchiment)
-            # Conversion en format normalisé pour Matplotlib (0.0 à 1.0)
-            color_plt = (new_r / 255.0, new_g / 255.0, new_b / 255.0)
-        else:
-            color_plt = hex_code
-
-        # Création de la portion de cercle (Wedge) pour Matplotlib
-        wedge = patches.Wedge(
-            (0, 0),
-            rayon_disque,
-            angle_depart,
-            angle_depart + ouverture_secteur,
-            facecolor=color_plt,
-            edgecolor=color_plt,
-        )
+    ouverture = 360.0 / 7.0
+    for i in range(7):
+        a_dep = (angle_rot + i * ouverture) % 360.0
+        nr = int(r_list[i] + (255 - r_list[i]) * fusion) / 255.0
+        ng = int(g_list[i] + (255 - g_list[i]) * fusion) / 255.0
+        nb = int(b_list[i] + (255 - b_list[i]) * fusion) / 255.0
+        wedge = patches.Wedge((0, 0), 98.0, a_dep, a_dep + ouverture, facecolor=(nr, ng, nb), edgecolor=(nr, ng, nb))
         ax.add_patch(wedge)
 
-    # Axe central fixe
-    axe_central = plt.Circle(
-        (0, 0), 5, facecolor="#1e293b", edgecolor="white", lw=1
-    )
-    ax.add_patch(axe_central)
+    if fusion < 0.85:
+        rad = math.radians(angle_rot + 25.0)
+        ax.add_patch(plt.Circle((82.0 * math.cos(rad), 82.0 * math.sin(rad)), 4.5, facecolor="#0f172a"))
 
-    # Texte indicatif de l'état de la vitesse en haut à gauche
-    txt_vitesse = f"{vitesse:.1f} tr/s" if anim_en_cours else "Statique"
-    ax.text(
-        -105,
-        95,
-        f"Vitesse : {txt_vitesse}",
-        color="white",
-        fontsize=9,
-        fontweight="bold",
-    )
-
+    ax.add_patch(plt.Circle((0, 0), 7, facecolor="#1e293b", edgecolor="white", lw=1.5))
+    txt_v = f"{vitesse:.1f} tr/s" if anim_en_cours else "Arrêté"
+    ax.text(-110, 102, f"Vitesse : {txt_v}", color="#38bdf8", fontsize=9, fontweight="bold")
     return fig
+
 
 def gerer_action_disque():
     """Gère l'état d'activation et le calcul d'angle statique du disque de Newton."""
@@ -1558,12 +1507,10 @@ with tab2:
 
 
     with col_droite:
-        # 4. AFFICHAGE DIRECT DES FIGURES DE DIFFRACTION DE L'ATELIER
         st.pyplot(fig_decomposition)
         st.markdown("---")
         fig_disque = dessiner_disque_newton()
         st.pyplot(fig_disque)
-
     # =========================================================================
     # LABO DE SIMULATION : SYNTHÈSE ADDITIVE ET SOUSTRACTIVE
     # =========================================================================
@@ -1794,6 +1741,13 @@ with tab2:
             mime="text/html",
             use_container_width=True
         )
+
+    if st.session_state.get("anim_en_cours", False):
+        vit = float(st.session_state.get("var_vitesse_disque", 10.0))
+        st.session_state.angle_rotation_disque = (st.session_state.get("angle_rotation_disque", 0.0) + vit * 7.0) % 360.0
+        time.sleep(0.06)
+        st.rerun()
+
 
 with tab3:
     st.subheader("2. Les différentes lumières")
