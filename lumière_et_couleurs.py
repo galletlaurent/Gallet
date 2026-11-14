@@ -1885,6 +1885,12 @@ with tab3:
 
             # Menu deroulant pour le choix de l'ampoule / source lumineuse
             liste_lampes = list(st.session_state.lampes_data.keys())
+
+            # Initialisation securisee des variables de session
+            if "source_lumineuse_choisie" not in st.session_state or st.session_state.source_lumineuse_choisie not in liste_lampes:
+                st.session_state.source_lumineuse_choisie = liste_lampes[0]
+            verrou_tab2 = st.session_state.get("mode_examen_tab2", False)
+
             st.session_state.source_lumineuse_choisie = st.selectbox(
                 "Source lumineuse :",
                 options=liste_lampes,
@@ -1892,7 +1898,7 @@ with tab3:
                     st.session_state.source_lumineuse_choisie
                 ),
                 key="select_lampe_tab2_final",
-                disabled=st.session_state.mode_examen_tab2,
+                disabled=verrou_tab2,
             )
 
             # Identification et coloration de la boite du type de spectre de l'ampoule
@@ -1915,10 +1921,12 @@ with tab3:
             st.markdown("---")
             fig_spectre_zoom = dessiner_zoom_spectre_atelier2()
             st.pyplot(fig_spectre_zoom)
+
         if "opt2_verrouille" not in st.session_state:
             st.session_state.opt2_verrouille = False
         if "opt2_afficher_correction" not in st.session_state:
             st.session_state.opt2_afficher_correction = False
+
 
     # Raccordement officiel a la fonction globale des questionnaires
     st.write("---")
