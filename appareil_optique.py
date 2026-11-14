@@ -801,11 +801,10 @@ def afficher_questions_optique7(verrouille=False):
     return dict_quiz_opt7, dict_trous_opt7
 
 def dessiner_loupe_matplotlib():
-    echelle_x = 4.0
-    w, h = 680, 260
-    y0 = h / 2.0
+    w, h = 680, 275
+    y0 = h / 2.0 + 8.0
 
-    fig, ax = plt.subplots(figsize=(10, 3.8), facecolor="#0f172a")
+    fig, ax = plt.subplots(figsize=(10, 4.0), facecolor="#0f172a")
     ax.set_facecolor("#0f172a")
     ax.set_xlim(0, w)
     ax.set_ylim(0, h)
@@ -813,66 +812,82 @@ def dessiner_loupe_matplotlib():
     ax.axis("off")
 
     f_cm = st.session_state.get("slide_loupe_f", 10.0)
-    d_obj_cm = st.session_state.get("slide_loupe_d", 7.0)
-    h_obj_cm = st.session_state.get("slide_loupe_ab", 3.0)
+    d_obj_cm = st.session_state.get("slide_loupe_d", 6.0)
+    h_obj_cm = st.session_state.get("slide_loupe_ab", 2.0)
 
-    if d_obj_cm >= f_cm:
-        d_obj_cm = f_cm - 0.5
+    # Sécurité pour rester en mode loupe (objet strictement avant F)
+    if d_obj_cm >= f_cm - 0.8:
+        d_obj_cm = f_cm - 0.8
 
-    x_lentille = 400.0
+    # Formule de conjugaison exacte : 1/OA' - 1/OA = 1/f' avec OA = -d_obj_cm
+    oa_prime_cm = (f_cm * (-d_obj_cm)) / (f_cm + (-d_obj_cm))
+    gamma = oa_prime_cm / (-d_obj_cm)
+    h_img_cm = h_obj_cm * gamma
+
+    # Adaptation automatique de l'échelle pour que A'B' reste toujours dans le cadre sans déformation
+    x_lentille = 430.0
+    echelle_x = min(14.0, (x_lentille - 45.0) / abs(oa_prime_cm))
+    echelle_y = min(22.0, (y0 - 42.0) / h_img_cm)
+
     f_px = f_cm * echelle_x
     xf = x_lentille - f_px
     xf_prime = x_lentille + f_px
 
     xa = x_lentille - d_obj_cm * echelle_x
-    h_obj = h_obj_cm * echelle_x * 2.5
+    h_obj = h_obj_cm * echelle_y
 
-    # Formule de conjugaison 1/OA' - 1/OA = 1/f' avec OA = -d_obj_cm
-    oa_prime_cm = (f_cm * (-d_obj_cm)) / (f_cm + (-d_obj_cm))
-    gamma = oa_prime_cm / (-d_obj_cm)
     xa_prime = x_lentille + oa_prime_cm * echelle_x
-    h_img = h_obj * gamma
+    h_img = h_img_cm * echelle_y
 
-    # Axe optique et foyers
+    # Axe optique et foyers F et F'
     ax.plot([15, w - 15], [y0, y0], color="#cbd5e1", lw=1.5, zorder=1)
     ax.plot([xf, xf], [y0 - 5, y0 + 5], color="#cbd5e1", lw=1.5)
-    ax.text(xf, y0 + 16, "F", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center")
+    ax.text(xf, y0 + 17, "F", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center")
     ax.plot([xf_prime, xf_prime], [y0 - 5, y0 + 5], color="#cbd5e1", lw=1.5)
-    ax.text(xf_prime, y0 + 16, "F'", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center")
+    ax.text(xf_prime, y0 + 17, "F'", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center")
 
-    # Lentille convergente
-    ax.plot([x_lentille, x_lentille], [15, h - 15], color="#3b82f6", lw=2.5, zorder=3)
-    ax.plot([x_lentille - 6, x_lentille, x_lentille + 6], [23, 15, 23], color="#3b82f6", lw=2)
-    ax.plot([x_lentille - 6, x_lentille, x_lentille + 6], [h - 23, h - 15, h - 23], color="#3b82f6", lw=2)
-    ax.text(x_lentille + 10, y0 + 14, "O", color="#cbd5e1", fontsize=8, fontweight="bold")
+    # Lentille convergente (raccourcie en haut pour ne pas toucher le titre)
+    y_top_l, y_bot_l = 36, h - 18
+    ax.plot([x_lentille, x_lentille], [y_top_l, y_bot_l], color="#3b82f6", lw=2.5, zorder=3)
+    ax.plot([x_lentille - 6, x_lentille, x_lentille + 6], [y_top_l + 8, y_top_l, y_top_l + 8], color="#3b82f6", lw=2)
+    ax.plot([x_lentille - 6, x_lentille, x_lentille + 6], [y_bot_l - 8, y_bot_l, y_bot_l - 8], color="#3b82f6", lw=2)
+    ax.text(x_lentille + 10, y0 + 15, "O", color="#cbd5e1", fontsize=8, fontweight="bold")
 
-    # Objet réel AB
-    ax.annotate("", xy=(xa, y0 - h_obj), xytext=(xa, y0), arrowprops=dict(arrowstyle="->", color="#a855f7", lw=2.5), zorder=4)
-    ax.text(xa, y0 + 14, "A", color="#a855f7", fontsize=8, fontweight="bold", ha="center")
+    # Objet réel AB (Violet)
+    ax.annotate("", xy=(xa, y0 - h_obj), xytext=(xa, y0), arrowprops=dict(arrowstyle="->", color="#a855f7", lw=2.5), zorder=5)
+    ax.text(xa, y0 + 15, "A", color="#a855f7", fontsize=8, fontweight="bold", ha="center")
     ax.text(xa, y0 - h_obj - 6, "B", color="#a855f7", fontsize=8, fontweight="bold", ha="center")
 
-    # Image virtuelle A'B' (limitée à l'écran si très éloignée)
-    xa_vis = max(35.0, xa_prime)
-    h_vis = min(105.0, h_img)
-    ax.annotate("", xy=(xa_vis, y0 - h_vis), xytext=(xa_vis, y0), arrowprops=dict(arrowstyle="->", color="#10b981", lw=2.2, ls="--"), zorder=4)
-    ax.text(xa_vis, y0 + 14, "A'", color="#10b981", fontsize=8, fontweight="bold", ha="center")
-    ax.text(xa_vis, y0 - h_vis - 6, "B'", color="#10b981", fontsize=8, fontweight="bold", ha="center")
+    # Image virtuelle A'B' (Vert pointillé) — position et hauteur exactes
+    ax.annotate("", xy=(xa_prime, y0 - h_img), xytext=(xa_prime, y0), arrowprops=dict(arrowstyle="->", color="#10b981", lw=2.2, ls="--"), zorder=5)
+    ax.text(xa_prime, y0 + 15, "A'", color="#10b981", fontsize=8, fontweight="bold", ha="center")
+    ax.text(xa_prime, y0 - h_img - 6, "B'", color="#10b981", fontsize=8, fontweight="bold", ha="center")
 
-    # Rayons lumineux
-    x_fin = x_lentille + 140.0
+    x_fin = x_lentille + 145.0
+
+    # 1. RAYON BLEU : passe par le centre optique O sans être dévié
     pente_bleu = h_obj / (x_lentille - xa)
-    ax.plot([xa, x_fin], [y0 - h_obj, y0 + (x_fin - x_lentille) * pente_bleu], color="#2563eb", lw=1.5)
-    ax.plot([xa_vis, xa], [y0 - h_vis, y0 - h_obj], color="#2563eb", lw=1.2, ls=":")
+    ax.plot([xa, x_fin], [y0 - h_obj, y0 + (x_fin - x_lentille) * pente_bleu], color="#2563eb", lw=1.6, zorder=4)
+    ax.plot([xa_prime, xa], [y0 - h_img, y0 - h_obj], color="#2563eb", lw=1.3, ls=":", zorder=4)
 
-    ax.plot([xa, x_lentille], [y0 - h_obj, y0 - h_obj], color="#eab308", lw=1.5)
+    # 2. RAYON JAUNE : arrive parallèle à l'axe, ressort en passant par F'
+    ax.plot([xa, x_lentille], [y0 - h_obj, y0 - h_obj], color="#eab308", lw=1.6, zorder=4)
     pente_jaune = h_obj / f_px
-    ax.plot([x_lentille, x_fin], [y0 - h_obj, y0 - h_obj + (x_fin - x_lentille) * pente_jaune], color="#eab308", lw=1.5)
-    ax.plot([xa_vis, x_lentille], [y0 - h_vis, y0 - h_obj], color="#eab308", lw=1.2, ls=":")
+    ax.plot([x_lentille, x_fin], [y0 - h_obj, y0 - h_obj + (x_fin - x_lentille) * pente_jaune], color="#eab308", lw=1.6, zorder=4)
+    ax.plot([xa_prime, x_lentille], [y0 - h_img, y0 - h_obj], color="#eab308", lw=1.3, ls=":", zorder=4)
+
+    # 3. RAYON ROSE : aligné avec F et B, ressort parallèle à l'axe optique
+    y_impact_rose = y0 - h_img
+    ax.plot([xa, x_lentille], [y0 - h_obj, y_impact_rose], color="#ec4899", lw=1.6, zorder=4)
+    ax.plot([x_lentille, x_fin], [y_impact_rose, y_impact_rose], color="#ec4899", lw=1.6, zorder=4)
+    ax.plot([xa_prime, x_lentille], [y0 - h_img, y_impact_rose], color="#ec4899", lw=1.3, ls=":", zorder=4)
 
     # Œil observateur
     x_oeil = x_fin + 15.0
-    ax.add_patch(patches.Arc((x_oeil, y0 + 15), 20, 28, angle=90, theta1=0, theta2=180, edgecolor="#cbd5e1", lw=2))
-    ax.add_patch(patches.Ellipse((x_oeil - 1.5, y0 + 15), 7, 10, facecolor="#3b82f6"))
+    y_oeil = y0 + 18.0
+    ax.add_patch(patches.Arc((x_oeil, y_oeil), 20, 28, angle=90, theta1=0, theta2=180, edgecolor="#cbd5e1", lw=2, zorder=5))
+    ax.add_patch(patches.Ellipse((x_oeil - 1.5, y_oeil), 7, 10, facecolor="#3b82f6", edgecolor="#1e3a8a", zorder=5))
+    ax.add_patch(patches.Ellipse((x_oeil - 1.5, y_oeil), 3, 6, facecolor="black", zorder=5))
 
     gc = 25.0 / f_cm
     st.session_state.loupe_txt_panneau_bas = (
@@ -1645,7 +1660,7 @@ with tab2:
         with st.container(border=True):
             st.markdown("<p style='color:#1e3a8a; font-weight:bold; margin-bottom:5px;'>PARAMÈTRES DE LA LOUPE</p>", unsafe_allow_html=True)
             f_loupe = st.slider("Distance focale f' (cm) :", 4.0, 20.0, 10.0, 0.5, key="slide_loupe_f", disabled=st.session_state.loupe_verrouille)
-            d_loupe = st.slider("Distance objet |OA| (cm) :", 1.0, 19.0, 7.0, 0.5, key="slide_loupe_d", disabled=st.session_state.loupe_verrouille)
+            d_loupe = st.slider("Distance objet |OA| (cm) :", 1.0, 19.0, 6.0, 0.5, key="slide_loupe_d", disabled=st.session_state.loupe_verrouille)
             ab_loupe = st.slider("Hauteur objet AB (cm) :", 1.0, 5.0, 3.0, 0.5, key="slide_loupe_ab", disabled=st.session_state.loupe_verrouille)
 
         with st.container(border=True):
