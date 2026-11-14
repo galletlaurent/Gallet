@@ -1504,7 +1504,7 @@ with tab2:
                 min_value=10.0, max_value=80.0,
                 value=st.session_state.var_angle_incidence,
                 step=0.5, key="slider_angle",
-                disabled=st.session_state.get("mode_examen_tab1", False)
+                disabled=st.session_state.get("mode_examen_tab1", False))
             
 
             st.session_state.var_indice_n = st.slider(
