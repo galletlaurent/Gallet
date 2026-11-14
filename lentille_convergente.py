@@ -1125,7 +1125,7 @@ with tab3:
         disabled=st.session_state.get("opt5_verrouille", False)
     )
 
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_opt5_official_20pts", use_container_width=True, disabled=st.session_state.get("opt5_verrouille", False)):
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER ", key="btn_export_opt5_official_20pts", use_container_width=True, disabled=st.session_state.get("opt5_verrouille", False)):
         if not st.session_state.get("verrouille", False): 
             st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
         elif not case_certif_opt5: 
@@ -1162,7 +1162,7 @@ with tab3:
         from datetime import timedelta
         timestamp_opt5 = (datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d a %H:%M:%S")
 
-        st.success(f"ATELIER OPTIQUE 5 SCELLE | Note de session : {tot_s} / 20")
+        st.success(f"ATELIER OPTIQUE  SCELLE | Note de session : {tot_s} / 20")
 
         attendus_qo5_v = {
             "q1": "1/x' - 1/x = 1/f'", "q2": "Continue en ligne droite sans subir de deviation", 
@@ -1255,7 +1255,7 @@ with tab3:
         </html>
         """
 
-        nom_f = f"Rapport_Evaluation_Optique5_{n_eleve}_{p_eleve}_{c_eleve}"
+        nom_f = f"Rapport_Evaluation_Optique_{n_eleve}_{p_eleve}_{c_eleve}"
         for c in ["/", "\\", "*", "?", '"', "<", ">", "|", ":"]: 
             nom_f = nom_f.replace(c, "_")
 
