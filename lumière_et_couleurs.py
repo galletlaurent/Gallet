@@ -1744,8 +1744,8 @@ with tab2:
 
     if st.session_state.get("anim_en_cours", False):
         vit = float(st.session_state.get("var_vitesse_disque", 10.0))
-        st.session_state.angle_rotation_disque = (st.session_state.get("angle_rotation_disque", 0.0) + vit * 7.0) % 360.0
-        time.sleep(0.06)
+        st.session_state.angle_rotation_disque = (st.session_state.get("angle_rotation_disque", 0.0) + vit * 19.0) % 360.0
+        time.sleep(0.015)
         st.rerun()
 
 
