@@ -1826,6 +1826,12 @@ with tab3:
             )
 
 
+            # Initialisation securisee des etats du bruleur Bunsen
+            if "var_combustion_active" not in st.session_state:
+                st.session_state.var_combustion_active = False
+            if "var_versement_poudre" not in st.session_state:
+                st.session_state.var_versement_poudre = False
+
             # Recuperation des donnees du metal et mise a jour de la description
             info_metal = gerer_changement_metal()
             st.info(f"**Analyse :** {info_metal['descr']}")
@@ -1833,25 +1839,29 @@ with tab3:
             # Bouton d'action pour declencher la combustion sequentielle
             label_bouton = (
                 "Eteindre le bruleur"
-                if st.session_state.var_combustion_active
+                if st.session_state.get("var_combustion_active", False)
                 else "Bruler l'echantillon (Test de flamme)"
             )
             if st.button(
-                label_bouton, key="btn_flamme_tab2_final", use_container_width=True
+                label_bouton,
+                key="btn_flamme_tab2_final",
+                use_container_width=True,
+                disabled=st.session_state.get("mode_examen_tab2", False),
             ):
                 declencher_test_flamme_web()
                 st.rerun()
 
             # Rendu visuel de la simulation de la flamme du bec bunsen
             st.markdown("**Visualisation du brûleur Bec Bunsen :**")
-            if st.session_state.var_versement_poudre:
+            if st.session_state.get("var_versement_poudre", False):
                 st.markdown(
                     '<div style="background-color: #475569; height: 120px; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 2px dashed #94a3b8;"><span style="color: #ffffff; font-weight: bold;">Versement de la poudre en cours...</span></div>',
                     unsafe_allow_html=True,
                 )
-            elif st.session_state.var_combustion_active:
+            elif st.session_state.get("var_combustion_active", False):
+                metal_courant = st.session_state.get("var_sel_metal", "Lithium (Li)")
                 st.markdown(
-                    f'<div style="background-color: {info_metal["couleur"]}; height: 120px; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 1px solid #ffffff;"><span style="color: #0d1117; font-weight: bold;">Combustion active : {st.session_state.var_sel_metal}</span></div>',
+                    f'<div style="background-color: {info_metal["couleur"]}; height: 120px; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 1px solid #ffffff;"><span style="color: #0d1117; font-weight: bold;">Combustion active : {metal_courant}</span></div>',
                     unsafe_allow_html=True,
                 )
             else:
@@ -1859,6 +1869,7 @@ with tab3:
                     '<div style="background-color: #0d1117; height: 120px; border-radius: 4px; display: flex; align-items: center; justify-content: center; border: 1px solid #334155;"><span style="color: #64748b; font-style: italic;">[ Bruleur eteint - Cliquez sur Bruler ]</span></div>',
                     unsafe_allow_html=True,
                 )
+
 
         # Affichage du profil du spectre de raies de la flamme en dessous
         st.markdown("---")
