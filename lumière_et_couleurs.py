@@ -517,6 +517,780 @@ tab5 = onglets[5]
 tab6 = onglets[6]
 tab7 = onglets[7]
 
+BANQUES_LUM_GEO = {
+    0: {
+        "questions": [
+            {"id": "qlg0_1", "q": "Pourquoi les niveaux laser rotatifs et lasers d'intérieur modernes de chantier utilisent-ils une diode laser verte (532 nm) plutôt que rouge (635 nm) ?", "options": ["L'œil humain est environ 4 fois plus sensible au vert (532 nm) qu'au rouge en plein jour", "Le laser vert traverse les murs en béton", "Le laser vert consomme 10 fois moins d'énergie"], "rep": "L'œil humain est environ 4 fois plus sensible au vert (532 nm) qu'au rouge en plein jour"},
+            {"id": "qlg0_2", "q": "À quelle longueur d'onde précise se situe le maximum de sensibilité diurne (vision photopique) de l'œil humain ?", "options": ["555 nm (jaune-vert)", "410 nm (violet)", "680 nm (rouge profond)"], "rep": "555 nm (jaune-vert)"},
+            {"id": "qlg0_3", "q": "Comment qualifie-t-on la lumière émise par un laser topographique (une seule longueur d'onde très pure) ?", "options": ["Monochromatique et cohérente", "Polychromatique blanche", "Incohérente thermique"], "rep": "Monochromatique et cohérente"},
+            {"id": "qlg0_4", "q": "Quel accessoire utilise le géomètre topographe sur le terrain pour repérer plus facilement le trait laser rouge ou vert en plein soleil ?", "options": ["Des lunettes filtrantes de la même couleur que le laser (qui bloquent les autres couleurs du soleil) ou une cellule de réception", "Des lunettes de soudure noires", "Un prisme de Newton"], "rep": "Des lunettes filtrantes de la même couleur que le laser (qui bloquent les autres couleurs du soleil) ou une cellule de réception"},
+            {"id": "qlg0_5", "q": "Comment agissent les lunettes rouges portées par un géomètre travaillant avec un laser rouge 635 nm ?", "options": ["Par synthèse soustractive : elles absorbent le bleu et le vert du soleil et augmentent le contraste du trait rouge", "Elles amplifient la puissance du laser", "Elles transforment le rouge en vert"], "rep": "Par synthèse soustractive : elles absorbent le bleu et le vert du soleil et augmentent le contraste du trait rouge"},
+            {"id": "qlg0_6", "q": "Quelle surface de chantier renvoie le mieux le faisceau d'un télémètre laser sans prisme ?", "options": ["Une façade claire mate à albédo élevé (enduit blanc ou béton clair)", "Une vitre inclinée ou un revêtement bitumineux noir", "Une flaque d'eau"], "rep": "Une façade claire mate à albédo élevé (enduit blanc ou béton clair)"},
+            {"id": "qlg0_7", "q": "Pourquoi un télémètre laser sans prisme peine-t-il à mesurer la distance d'un bardage métallique noir mat ?", "options": ["Le noir mat absorbe la majorité de l'énergie lumineuse (faible albédo) et renvoie un signal très faible", "Le métal noir dévie la lumière à 90°", "La vitesse de la lumière diminue devant le noir"], "rep": "Le noir mat absorbe la majorité de l'énergie lumineuse (faible albédo) et renvoie un signal très faible"},
+            {"id": "qlg0_8", "q": "Dans quel domaine spectral fonctionne le distancemètre électronique (EDM) d'une station totale mesurant sur un prisme à 2 kilomètres ?", "options": ["L'infrarouge proche (environ 850 nm, invisible à l'œil nu)", "L'ultraviolet lointain", "Le bleu à 450 nm"], "rep": "L'infrarouge proche (environ 850 nm, invisible à l'œil nu)"},
+            {"id": "qlg0_9", "q": "Quelle classe de sécurité laser équipe la quasi-totalité des niveaux laser et stations totales de chantier ?", "options": ["Classe 2 (puissance < 1 mW, réflexe palpébral protecteur) ou Classe 3R", "Classe 4 (découpe industrielle)", "Classe 0"], "rep": "Classe 2 (puissance < 1 mW, réflexe palpébral protecteur) ou Classe 3R"},
+            {"id": "qlg0_10", "q": "Quelle est la vitesse de propagation du faisceau laser dans l'atmosphère utilisée pour calculer les distances topographiques ?", "options": ["Environ 299 700 km/s (corrigée de l'indice de réfraction de l'air)", "340 m/s", "1 000 km/h"], "rep": "Environ 299 700 km/s (corrigée de l'indice de réfraction de l'air)"},
+        ],
+        "trous": [
+            ("1. Un laser vert (532 nm) est environ ......... fois plus visible qu'un laser rouge de jour.", ["Choisir...", "4", "100"], "4", "lgeo_t1"),
+            ("2. L'œil humain atteint son pic de sensibilité diurne autour de ......... nm.", ["Choisir...", "555", "700"], "555", "lgeo_t2"),
+            ("3. La lumière d'un laser ne contient qu'une seule longueur d'onde : elle est .........", ["Choisir...", "monochromatique", "blanche"], "monochromatique", "lgeo_t3"),
+            ("4. Les lunettes filtrantes rouges améliorent le contraste par synthèse .........", ["Choisir...", "soustractive", "additive"], "soustractive", "lgeo_t4"),
+            ("5. Le distancemètre longue portée d'une station totale émet dans l'.........", ["Choisir...", "infrarouge", "ultraviolet"], "infrarouge", "lgeo_t5"),
+            ("6. Une surface blanche mate possède un ......... élevé et renvoie bien le laser.", ["Choisir...", "albédo", "poids"], "albédo", "lgeo_t6"),
+            ("7. Un revêtement noir mat ......... la majorité du faisceau laser incident.", ["Choisir...", "absorbe", "réfléchit"], "absorbe", "lgeo_t7"),
+            ("8. Les lasers de chantier appartiennent généralement à la Classe ......... (< 1 mW).", ["Choisir...", "2", "4"], "2", "lgeo_t8"),
+            ("9. La lumière se propage dans l'air à environ 300 000 ......... par seconde.", ["Choisir...", "kilomètres", "mètres"], "kilomètres", "lgeo_t9"),
+            ("10. Sur un chantier très ensoleillé, on utilise une ......... de réception pour capter le laser.", ["Choisir...", "cellule", "loupe"], "cellule", "lgeo_t10"),
+        ]
+    },
+    1: {
+        "questions": [
+            {"id": "qlg1_1", "q": "Quel capteur embarqué sur un drone topographique permet d'analyser la santé des cultures, des forêts ou l'humidité des sols grâce aux couleurs invisibles ?", "options": ["Une caméra multispectrale (captant le Rouge, le Vert, le Bleu, le Red-Edge et le Proche Infrarouge)", "Un appareil photo noir et blanc", "Un simple microphone"], "rep": "Une caméra multispectrale (captant le Rouge, le Vert, le Bleu, le Red-Edge et le Proche Infrarouge)"},
+            {"id": "qlg1_2", "q": "Pourquoi une végétation saine et bien irriguée apparaît-elle verte à l'œil nu ?", "options": ["La chlorophylle absorbe le bleu et le rouge pour la photosynthèse et réfléchit le vert", "La plante émet de la lumière verte la nuit", "La terre est bleue"], "rep": "La chlorophylle absorbe le bleu et le rouge pour la photosynthèse et réfléchit le vert"},
+            {"id": "qlg1_3", "q": "Comment se comporte une feuille végétale en bonne santé dans le Proche Infrarouge (PIR, 750 - 900 nm) ?", "options": ["Elle réfléchit très fortement le proche infrarouge (réflectance > 50 %)", "Elle absorbe 100 % de l'infrarouge", "Elle devient transparente"], "rep": "Elle réfléchit très fortement le proche infrarouge (réflectance > 50 %)"},
+            {"id": "qlg1_4", "q": "Comment appelle-t-on l'indice normalisé calculé par les géomètres à partir de la bande Rouge (R) et du Proche Infrarouge (PIR) : (PIR - R) / (PIR + R) ?", "options": ["L'indice NDVI (Normalized Difference Vegetation Index)", "L'indice IRC", "L'indice de réfraction n"], "rep": "L'indice NDVI (Normalized Difference Vegetation Index)"},
+            {"id": "qlg1_5", "q": "Quelle valeur prend l'indice NDVI pour une végétation très dense et vigoureuse ?", "options": ["Proche de + 0,70 à + 0,90", "Négative (- 0,80)", "Égale à 0"], "rep": "Proche de + 0,70 à + 0,90"},
+            {"id": "qlg1_6", "q": "Quelle valeur prend l'indice NDVI pour une surface d'eau libre (lac, rivière) qui absorbe fortement le proche infrarouge ?", "options": ["Une valeur négative (comprise entre - 1 et 0)", "Une valeur égale à + 1", "Une valeur de + 0,85"], "rep": "Une valeur négative (comprise entre - 1 et 0)"},
+            {"id": "qlg1_7", "q": "Quelle valeur prend l'indice NDVI pour un sol nu, un parking en enrobé ou du béton ?", "options": ["Proche de 0 (entre 0,05 et 0,15)", "Égale à + 0,95", "Égale à - 0,90"], "rep": "Proche de 0 (entre 0,05 et 0,15)"},
+            {"id": "qlg1_8", "q": "Quel panneau de référence le géomètre photographie-t-il au sol avant le décollage du drone multispectral ?", "options": ["Une mire de calibrage radiométrique (gris neutre étalonné) pour corriger l'ensoleillement du jour", "Un panneau stop", "Une mire de nivellement optique"], "rep": "Une mire de calibrage radiométrique (gris neutre étalonné) pour corriger l'ensoleillement du jour"},
+            {"id": "qlg1_9", "q": "Comment appelle-t-on l'image aérienne assemblée et géoréférencée où chaque pixel possède ses vraies coordonnées (X, Y) ?", "options": ["Une orthophotographie (ou orthomosaïque)", "Un croquis à main levée", "Un profil en long"], "rep": "Une orthophotographie (ou orthomosaïque)"},
+            {"id": "qlg1_10", "q": "En télédétection satellite ou drone, que signifie le sigle RVB (ou RGB) ?", "options": ["Rouge, Vert, Bleu (les trois canaux de la synthèse additive)", "Réseau, Voirie, Bâtiment", "Rayon, Vergence, Base"], "rep": "Rouge, Vert, Bleu (les trois canaux de la synthèse additive)"},
+        ],
+        "trous": [
+            ("1. Une caméra ......... capte des bandes visibles et proches infrarouges par drone.", ["Choisir...", "multispectrale", "thermique seule"], "multispectrale", "lgeo_t1"),
+            ("2. La chlorophylle des plantes ......... fortement la lumière rouge.", ["Choisir...", "absorbe", "réfléchit"], "absorbe", "lgeo_t2"),
+            ("3. À l'inverse, une végétation saine réfléchit massivement le proche .........", ["Choisir...", "infrarouge", "ultraviolet"], "infrarouge", "lgeo_t3"),
+            ("4. L'indice de végétation calculé par (PIR - R) / (PIR + R) s'appelle le .........", ["Choisir...", "NDVI", "IRC"], "NDVI", "lgeo_t4"),
+            ("5. Pour une forêt dense, l'indice NDVI est élevé, proche de .........", ["Choisir...", "+ 0,80", "- 0,80"], "+ 0,80", "lgeo_t5"),
+            ("6. Pour une étendue d'eau, l'indice NDVI est .........", ["Choisir...", "négatif", "égal à +1"], "négatif", "lgeo_t6"),
+            ("7. Pour une route en béton ou enrobé, le NDVI est proche de .........", ["Choisir...", "0", "+ 0,90"], "0", "lgeo_t7"),
+            ("8. Avant le vol, on calibre le capteur sur une mire ......... étalonnée.", ["Choisir...", "radiométrique", "acoustique"], "radiométrique", "lgeo_t8"),
+            ("9. La carte aérienne assemblée et géoréférencée est une .........", ["Choisir...", "orthophotographie", "radiographie"], "orthophotographie", "lgeo_t9"),
+            ("10. Les images couleurs classiques utilisent les trois canaux Rouge, Vert et .........", ["Choisir...", "Bleu", "Jaune"], "Bleu", "lgeo_t10"),
+        ]
+    },
+    2: {
+        "questions": [
+            {"id": "qlg2_1", "q": "Comment un scanner laser 3D terrestre (LiDAR topographique) génère-t-il un nuage de points colorisé réaliste d'un monument historique ?", "options": ["Il associe chaque mesure de distance laser (X, Y, Z) aux couleurs (R, V, B) capturées par un appareil photo calibré intégré", "Il peint le monument avec des lasers", "Il devine les couleurs au hasard"], "rep": "Il associe chaque mesure de distance laser (X, Y, Z) aux couleurs (R, V, B) capturées par un appareil photo calibré intégré"},
+            {"id": "qlg2_2", "q": "Quelle propriété physique de la lumière utilise-t-on dans un distancemètre électro-optique de haute précision (précision millimétrique) ?", "options": ["La mesure du déphasage entre l'onde lumineuse modulée émise et l'onde réfléchie par le prisme", "La couleur de la batterie", "La température de la lentille"], "rep": "La mesure du déphasage entre l'onde lumineuse modulée émise et l'onde réfléchie par le prisme"},
+            {"id": "qlg2_3", "q": "Pourquoi un prisme topographique (rétroréflecteur à coin de cube) renvoie-t-il toujours le faisceau lumineux exactement vers la station totale ?", "options": ["Grâce à trois réflexions totales internes successives sur ses trois faces perpendiculaires à 90°", "Parce qu'il contient un moteur électrique", "Par absorption sélective"], "rep": "Grâce à trois réflexions totales internes successives sur ses trois faces perpendiculaires à 90°"},
+            {"id": "qlg2_4", "q": "Pourquoi la vitesse de la lumière dans l'air varie-t-elle légèrement selon la température, la pression atmosphérique et l'humidité (correction PPM) ?", "options": ["Parce que ces paramètres modifient l'indice de réfraction n de l'air (v = c / n)", "Parce que le laser s'use", "Parce que la Terre tourne"], "rep": "Parce que ces paramètres modifient l'indice de réfraction n de l'air (v = c / n)"},
+            {"id": "qlg2_5", "q": "Que signifie l'acronyme PPM affiché dans les paramètres atmosphériques d'une station totale ?", "options": ["Parties Par Million (correction de distance en millimètres par kilomètre)", "Points Par Minute", "Prisme Pour Mire"], "rep": "Parties Par Million (correction de distance en millimètres par kilomètre)"},
+            {"id": "qlg2_6", "q": "Lors de la colorisation RVB d'un nuage de points 3D par scanner, pourquoi faut-il éviter les forts contrastes ombre / plein soleil sur la façade ?", "options": ["Les écarts de luminosité créent des raccords de couleurs disgracieux sur le modèle 3D texturé", "Le laser ne fonctionne pas à l'ombre", "Le trépied glisse au soleil"], "rep": "Les écarts de luminosité créent des raccords de couleurs disgracieux sur le modèle 3D texturé"},
+            {"id": "qlg2_7", "q": "Quelle grandeur appelée « intensité de réflectance » enregistre le scanner laser en plus des coordonnées (X, Y, Z) ?", "options": ["La puissance du signal laser renvoyé par chaque matériau (permettant de distinguer les marquages blancs de l'enrobé noir même de nuit)", "La masse de la façade", "L'âge du bâtiment"], "rep": "La puissance du signal laser renvoyé par chaque matériau (permettant de distinguer les marquages blancs de l'enrobé noir même de nuit)"},
+            {"id": "qlg2_8", "q": "Quelle loi optique régit les trois réflexions totales à l'intérieur d'un prisme topographique à coin de cube ?", "options": ["Les lois de la réflexion et de la réfraction de Snell-Descartes", "La loi de Coulomb", "Le théorème de Pythagore"], "rep": "Les lois de la réflexion et de la réfraction de Snell-Descartes"},
+            {"id": "qlg2_9", "q": "Si l'indice de réfraction n de l'air augmente (air froid et haute pression), comment évolue la vitesse de propagation v = c / n de l'onde lumineuse ?", "options": ["Elle diminue légèrement", "Elle augmente", "Elle devient infinie"], "rep": "Elle diminue légèrement"},
+            {"id": "qlg2_10", "q": "Dans un scanner laser 3D, comment appelle-t-on l'ensemble des millions de points mesurés dans l'espace ?", "options": ["Un nuage de points 3D colorisé (Point Cloud)", "Un spectre de raies", "Un nivellement direct"], "rep": "Un nuage de points 3D colorisé (Point Cloud)"},
+        ],
+        "trous": [
+            ("1. Un prisme topographique à coin de cube renvoie la lumière par ......... totale interne.", ["Choisir...", "réflexion", "absorption"], "réflexion", "lgeo_t1"),
+            ("2. Ses trois faces réfléchissantes forment entre elles des angles de ......... degrés.", ["Choisir...", "90", "45"], "90", "lgeo_t2"),
+            ("3. Le scanner 3D associe chaque point (X, Y, Z) aux trois couleurs Rouge, Vert et .........", ["Choisir...", "Bleu", "Jaune"], "Bleu", "lgeo_t3"),
+            ("4. L'ensemble des mesures forme un ......... de points 3D colorisé.", ["Choisir...", "nuage", "spectre"], "nuage", "lgeo_t4"),
+            ("5. La vitesse de la lumière dans l'air vaut v = c / .........", ["Choisir...", "n", "f"], "n", "lgeo_t5"),
+            ("6. La température et la pression modifient l'......... de réfraction de l'air.", ["Choisir...", "indice", "albédo"], "indice", "lgeo_t6"),
+            ("7. La correction atmosphérique des distances s'exprime en ......... (Parties Par Million).", ["Choisir...", "PPM", "LUX"], "PPM", "lgeo_t7"),
+            ("8. Le distancemètre mesure le ......... entre l'onde émise et l'onde reçue.", ["Choisir...", "déphasage", "poids"], "déphasage", "lgeo_t8"),
+            ("9. Même dans le noir, l'......... de réflectance permet de voir les bandes blanches au sol.", ["Choisir...", "intensité", "épaisseur"], "intensité", "lgeo_t9"),
+            ("10. Les réflexions dans le prisme obéissent aux lois de .........", ["Choisir...", "Descartes", "Newton"], "Descartes", "lgeo_t10"),
+        ]
+    }
+}
+
+
+def mettre_a_jour_lum_geo_matplotlib(sujet_idx):
+    """Banc d'essai optique Lumière & Couleurs adapté au Géomètre Topographe."""
+    fig, ax = plt.subplots(figsize=(12, 6.2), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 250)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    if sujet_idx == 0:
+        coul_laser = st.session_state.get("radio_lgeo_s0", "Laser Vert Chantier (532 nm)")
+        if "Rouge" in coul_laser:
+            c_ray, sens_rel, portee_vis = "#ef4444", "25 % (Faible en plein soleil)", "35 m"
+        else:
+            c_ray, sens_rel, portee_vis = "#22c55e", "92 % (Proche du pic 555 nm)", "120 m"
+
+        ax.add_patch(patches.Rectangle((55, 105), 80, 45, facecolor="#334155", edgecolor="white"))
+        ax.text(95, 127, "Niveau\nLaser", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        ax.plot(list((135, 510)), list((127, 127)), color=c_ray, lw=4.5)
+        ax.add_patch(patches.Rectangle((510, 65), 25, 125, facecolor="#cbd5e1", edgecolor="white"))
+        ax.text(522, 205, "Mire / Mur", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center")
+
+        ax.text(25, 18, "TOPOGRAPHIE DE CHANTIER : VISIBILITÉ DES LASERS ROUGE (635 NM) VS VERT (532 NM)", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, f"{coul_laser}  |  Sensibilité œil humain : {sens_rel}  |  Portée visuelle : {portee_vis}", color=c_ray, fontsize=8, fontweight="bold")
+        st.session_state.lgeo_mesure_courante = (coul_laser, sens_rel, f"Portée = {portee_vis}", "VISIBILITÉ MAX" if "Vert" in coul_laser else "LUNETTE ROUGE")
+
+    elif sujet_idx == 1:
+        surface = st.session_state.get("radio_lgeo_s1", "Végétation dense irriguée (Forêt / Culture)")
+        if "Végétation" in surface:
+            r_val, pir_val, c_zone = 0.08, 0.72, "#22c55e"
+        elif "Sol" in surface:
+            r_val, pir_val, c_zone = 0.28, 0.32, "#94a3b8"
+        else:
+            r_val, pir_val, c_zone = 0.12, 0.03, "#3b82f6"
+
+        ndvi = round((pir_val - r_val) / (pir_val + r_val), 2)
+        ax.add_patch(patches.Rectangle((220, 35), 160, 40, facecolor="#1e3a8a", edgecolor="#38bdf8", lw=1.5))
+        ax.text(300, 55, "Drone Multispectral\n(Capteurs R + PIR)", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        ax.add_patch(patches.Rectangle((60, 175), 480, 45, facecolor=c_zone, edgecolor="white", lw=1.5))
+        ax.text(300, 197, f"{surface}  =>  NDVI = {ndvi:+.2f}", color="white", fontsize=9, fontweight="bold", ha="center", va="center")
+
+        ax.annotate("", xy=(250, 75), xytext=(220, 175), arrowprops=dict(arrowstyle="->", color="#ef4444", lw=2.5))
+        ax.text(175, 125, f"Rouge réfléchi\nR = {r_val:.2f}", color="#fca5a5", fontsize=8, fontweight="bold", ha="center")
+
+        ax.annotate("", xy=(350, 75), xytext=(380, 175), arrowprops=dict(arrowstyle="->", color="#a855f7", lw=3))
+        ax.text(435, 125, f"Proche IR réfléchi\nPIR = {pir_val:.2f}", color="#d8b4fe", fontsize=8, fontweight="bold", ha="center")
+
+        ax.text(25, 18, "TÉLÉDÉTECTION DRONE : CALCUL DE L'INDICE SPECTRAL NDVI = (PIR - R) / (PIR + R)", color="#38bdf8", fontsize=9, fontweight="bold")
+        st.session_state.lgeo_mesure_courante = (surface.split("(")[0].strip(), f"R = {r_val:.2f}", f"PIR = {pir_val:.2f}", f"NDVI = {ndvi:+.2f}")
+
+    else:
+        temp_air = st.session_state.get("slider_lgeo_s2", 15.0)
+        ppm = round((temp_air - 15.0) * 1.0, 1)
+        dist_base = 1000.0
+        dist_corr = round(dist_base + (ppm / 1000.0), 4)
+
+        ax.add_patch(patches.Rectangle((55, 100), 90, 60, facecolor="#1e3a8a", edgecolor="#38bdf8", lw=1.5))
+        ax.text(100, 130, "Station Totale\n(IR 850 nm)", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        ax.plot(list((145, 495)), list((122, 122)), color="#ef4444", lw=2.5)
+        ax.plot(list((495, 145)), list((138, 138)), color="#22c55e", lw=2.5, ls="--")
+
+        ax.add_patch(patches.Polygon(list(((495, 130), (535, 100), (535, 160))), facecolor="#e0f2fe", edgecolor="#38bdf8", lw=2))
+        ax.text(515, 178, "Prisme\nCoin de cube", color="#fde047", fontsize=8, fontweight="bold", ha="center")
+
+        ax.text(25, 18, "DISTANCEMÈTRE LASER : RÉFLEXION TOTALE SUR PRISME ET CORRECTION ATMOSPHÉRIQUE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, f"Température air = {temp_air:.0f} °C  |  Correction = {ppm:+.1f} ppm  =>  Distance corrigée = {dist_corr:.4f} m", color="#22c55e", fontsize=8, fontweight="bold")
+        st.session_state.lgeo_mesure_courante = (f"T = {temp_air:.0f} °C", f"Corr = {ppm:+.1f} ppm", f"D = {dist_corr:.4f} m", "PRISME LOCK")
+
+    return fig
+
+
+def afficher_atelier_lum_geo(sujet_idx, verrouille=False):
+    if sujet_idx is None:
+        st.warning("Tirez d'abord au sort une mission Géomètre ci-dessus.")
+        return
+    banque = BANQUES_LUM_GEO[sujet_idx]
+    cle_ordre = f"ordre_quiz_lgeo_{sujet_idx}"
+    if cle_ordre not in st.session_state:
+        lq = list(banque["questions"])
+        random.shuffle(lq)
+        st.session_state[cle_ordre] = lq
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Technique Géomètre Topographe (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state[cle_ordre], 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", ["Choisir..."] + q_data["options"], key=f"lgeo_at7_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+    with col_t:
+        st.markdown("##### Synthèse Géomètre Topographe (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in banque["trous"]:
+            c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", choix, key=f"{cle}_s{sujet_idx}", disabled=verrouille, label_visibility="collapsed")
+
+
+
+
+
+
+BANQUES_LUM_TRANS = {
+    0: {
+        "questions": [
+            {"id": "qltr0_1", "q": "Quelle couleur réglementaire doivent émettre les feux de position arrière et les feux stop d'un véhicule routier ?", "options": ["Rouge (longueur d'onde autour de 630 à 660 nm)", "Bleu azur", "Vert émeraude"], "rep": "Rouge (longueur d'onde autour de 630 à 660 nm)"},
+            {"id": "qltr0_2", "q": "Pourquoi le rouge est-il universellement choisi pour les feux stop et les signaux d'arrêt ?", "options": ["C'est la radiation visible la moins diffusée par le brouillard et associée immédiatement au danger", "C'est la couleur la plus froide", "C'est la seule couleur produite par les LED"], "rep": "C'est la radiation visible la moins diffusée par le brouillard et associée immédiatement au danger"},
+            {"id": "qltr0_3", "q": "Quelle couleur réglementaire est imposée pour les indicateurs de direction (clignotants) et feux de détresse ?", "options": ["Jaune-orangé (ambre, autour de 590 nm)", "Blanc pur", "Bleu"], "rep": "Jaune-orangé (ambre, autour de 590 nm)"},
+            {"id": "qltr0_4", "q": "Dans un phare équipé d'une ampoule halogène à spectre continu, comment obtient-on la lumière rouge d'un feu stop ?", "options": ["Par synthèse soustractive : le cabochon rouge absorbe le bleu et le vert et ne transmet que le rouge", "Par synthèse additive", "Par diffraction"], "rep": "Par synthèse soustractive : le cabochon rouge absorbe le bleu et le vert et ne transmet que le rouge"},
+            {"id": "qltr0_5", "q": "Quel avantage énergétique apportent les LED monochromatiques rouges ou ambrées par rapport à une ampoule halogène derrière un filtre ?", "options": ["Elles émettent directement la bonne couleur sans gaspiller d'énergie absorbée par un filtre coloré", "Elles chauffent davantage le plastique", "Elles consomment dix fois plus"], "rep": "Elles émettent directement la bonne couleur sans gaspiller d'énergie absorbée par un filtre coloré"},
+            {"id": "qltr0_6", "q": "Quelle couleur émettent obligatoirement les feux de recul à l'arrière d'un poids lourd ou d'une voiture ?", "options": ["Blanc", "Rouge", "Vert"], "rep": "Blanc"},
+            {"id": "qltr0_7", "q": "Quelle est la couleur réservée aux feux de gabarit latéraux d'un ensemble routier de plus de 6 mètres ?", "options": ["Jaune-orangé (ambre)", "Bleu", "Violet"], "rep": "Jaune-orangé (ambre)"},
+            {"id": "qltr0_8", "q": "Si l'on éclaire un panneau stop rouge avec la lumière bleue pure d'un gyrophare de police la nuit, de quelle couleur apparaît le fond du panneau ?", "options": ["Noir sombre (car le rouge absorbe le bleu)", "Blanc pur", "Vert vif"], "rep": "Noir sombre (car le rouge absorbe le bleu)"},
+            {"id": "qltr0_9", "q": "Quel est le rôle des microprismes moulés à l'intérieur des catadioptres rouges arrière d'une semi-remorque ?", "options": ["Renvoyer la lumière des phares des véhicules suiveurs par rétroréflexion même moteur éteint", "Éclairer l'intérieur de la remorque", "Mesurer la vitesse"], "rep": "Renvoyer la lumière des phares des véhicules suiveurs par rétroréflexion même moteur éteint"},
+            {"id": "qltr0_10", "q": "À quels véhicules sont strictement réservés les feux spéciaux bleus à éclats ?", "options": ["Aux véhicules d'intérêt général prioritaires (police, gendarmerie, pompiers, SAMU)", "Aux convois exceptionnels", "Aux dépanneuses"], "rep": "Aux véhicules d'intérêt général prioritaires (police, gendarmerie, pompiers, SAMU)"},
+        ],
+        "trous": [
+            ("1. Les feux stop et de position arrière émettent une lumière de couleur .........", ["Choisir...", "rouge", "bleue"], "rouge", "ltr_t1"),
+            ("2. Les clignotants et feux de gabarit latéraux sont de couleur jaune-.........", ["Choisir...", "orangé", "vert"], "orangé", "ltr_t2"),
+            ("3. Un filtre rouge placé devant une lampe blanche agit par synthèse .........", ["Choisir...", "soustractive", "additive"], "soustractive", "ltr_t3"),
+            ("4. Le filtre rouge ......... les radiations bleues et vertes de la lumière blanche.", ["Choisir...", "absorbe", "amplifie"], "absorbe", "ltr_t4"),
+            ("5. Les LED colorées émettent directement une lumière quasi ......... sans perte.", ["Choisir...", "monochromatique", "blanche"], "monochromatique", "ltr_t5"),
+            ("6. Les feux de recul émettent obligatoirement une lumière .........", ["Choisir...", "blanche", "rouge"], "blanche", "ltr_t6"),
+            ("7. Les catadioptres arrière fonctionnent la nuit par .........", ["Choisir...", "rétroréflexion", "dispersion"], "rétroréflexion", "ltr_t7"),
+            ("8. La lumière rouge est moins ......... par les gouttelettes de brouillard.", ["Choisir...", "diffusée", "rapide"], "diffusée", "ltr_t8"),
+            ("9. Les gyrophares des convois exceptionnels sont de couleur .........", ["Choisir...", "orange", "bleue"], "orange", "ltr_t9"),
+            ("10. Un objet rouge éclairé uniquement en lumière bleue paraît .........", ["Choisir...", "noir", "blanc"], "noir", "ltr_t10"),
+        ]
+    },
+    1: {
+        "questions": [
+            {"id": "qltr1_1", "q": "Quelle température de couleur (en kelvins) caractérise les phares LED modernes des poids lourds et voitures ?", "options": ["5000 K à 6000 K (blanc froid proche de la lumière du jour)", "2000 K (jaune bougie)", "12000 K (violet)"], "rep": "5000 K à 6000 K (blanc froid proche de la lumière du jour)"},
+            {"id": "qltr1_2", "q": "Pourquoi les anciens phares automobiles français étaient-ils équipés d'ampoules jaunes (3000 K) jusqu'en 1993 ?", "options": ["Pour réduire l'éblouissement nocturne des conducteurs arrivant en face en filtrant le bleu", "Parce que le verre blanc n'existait pas", "Pour éclairer plus loin que le blanc"], "rep": "Pour réduire l'éblouissement nocturne des conducteurs arrivant en face en filtrant le bleu"},
+            {"id": "qltr1_3", "q": "Quel avantage procure un éclairage LED blanc neutre (5500 K) par rapport aux anciennes ampoules halogènes jaunâtres (3200 K) sur autoroute ?", "options": ["Un meilleur contraste des panneaux, des marquages au sol et une détection plus rapide des obstacles", "Une consommation électrique doublée", "Une portée limitée à 10 mètres"], "rep": "Un meilleur contraste des panneaux, des marquages au sol et une détection plus rapide des obstacles"},
+            {"id": "qltr1_4", "q": "Quel inconvénient présente une lumière trop riche en bleu (température > 6500 K) par temps de brouillard dense ou de neige ?", "options": ["Les courtes longueurs d'onde bleues sont fortement diffusées par les gouttelettes, créant un mur blanc éblouissant", "La lumière traverse le brouillard sans aucune diffusion", "Les panneaux deviennent invisibles"], "rep": "Les courtes longueurs d'onde bleues sont fortement diffusées par les gouttelettes, créant un mur blanc éblouissant"},
+            {"id": "qltr1_5", "q": "Comment s'appelle le phénomène physique par lequel les fines gouttelettes de brouillard renvoient la lumière bleue vers le conducteur ?", "options": ["La diffusion de la lumière", "La réfraction totale", "L'absorption atomique"], "rep": "La diffusion de la lumière"},
+            {"id": "qltr1_6", "q": "Quel défaut de réglage d'un phare de poids lourd provoque l'éblouissement dangereux des automobilistes arrivant en sens inverse ?", "options": ["Un faisceau de croisement réglé trop haut (rabattement insuffisant)", "Une ampoule trop propre", "Une batterie trop chargée"], "rep": "Un faisceau de croisement réglé trop haut (rabattement insuffisant)"},
+            {"id": "qltr1_7", "q": "Quel appareil utilise le contrôleur technique pour vérifier l'inclinaison et l'intensité lumineuse des feux d'un véhicule ?", "options": ["Un régloscope (ou contrôloscope de phares)", "Un sonomètre", "Un opacimètre"], "rep": "Un régloscope (ou contrôloscope de phares)"},
+            {"id": "qltr1_8", "q": "Comment agissent les lunettes de conduite de nuit à verres jaunes légèrement teintés ?", "options": ["Elles filtrent une partie du pic bleu des phares LED adverses pour diminuer l'éblouissement", "Elles amplifient les rayons X", "Elles rendent la route bleue"], "rep": "Elles filtrent une partie du pic bleu des phares LED adverses pour diminuer l'éblouissement"},
+            {"id": "qltr1_9", "q": "Comment fonctionnent les feux de route adaptatifs matriciels (Matrix LED) sur les véhicules récents ?", "options": ["Une caméra détecte les phares et feux arrière des autres usagers et éteint sélectivement les segments LED correspondants", "Ils éteignent tous les phares dès qu'il fait nuit", "Ils clignotent en permanence"], "rep": "Une caméra détecte les phares et feux arrière des autres usagers et éteint sélectivement les segments LED correspondants"},
+            {"id": "qltr1_10", "q": "Quelle est l'unité de mesure de la température de couleur d'un projecteur LED ?", "options": ["Le kelvin (K)", "Le lux (lx)", "Le watt (W)"], "rep": "Le kelvin (K)"},
+        ],
+        "trous": [
+            ("1. Les phares LED modernes émettent une lumière blanche autour de ......... K.", ["Choisir...", "5500", "2000"], "5500", "ltr_t1"),
+            ("2. Les anciennes ampoules halogènes ont une teinte plus chaude autour de ......... K.", ["Choisir...", "3200", "8000"], "3200", "ltr_t2"),
+            ("3. Dans le brouillard, les radiations ......... sont les plus diffusées par les gouttelettes.", ["Choisir...", "bleues", "rouges"], "bleues", "ltr_t3"),
+            ("4. Le réglage de la hauteur des phares se contrôle au garage avec un .........", ["Choisir...", "régloscope", "luxmètre"], "régloscope", "ltr_t4"),
+            ("5. Des verres de conduite teintés en ......... filtrent l'excès de lumière bleue la nuit.", ["Choisir...", "jaune", "bleu"], "jaune", "ltr_t5"),
+            ("6. Les phares ......... LED découpent le faisceau pour ne pas éblouir les autres usagers.", ["Choisir...", "Matrix", "Sodium"], "Matrix", "ltr_t6"),
+            ("7. La température de couleur s'exprime en .........", ["Choisir...", "kelvins", "nanomètres"], "kelvins", "ltr_t7"),
+            ("8. Une lumière à 5500 K améliore le ......... des panneaux et marquages au sol.", ["Choisir...", "contraste", "poids"], "contraste", "ltr_t8"),
+            ("9. Les feux de croisement sont inclinés vers le ......... pour éviter l'éblouissement.", ["Choisir...", "bas", "haut"], "bas", "ltr_t9"),
+            ("10. Le spectre d'une LED blanche présente un pic important dans le .........", ["Choisir...", "bleu", "vert"], "bleu", "ltr_t10"),
+        ]
+    },
+    2: {
+        "questions": [
+            {"id": "qltr2_1", "q": "Comment un capteur LiDAR (télédétection par laser) embarqué sur un poids lourd ou véhicule autonome mesure-t-il la distance des obstacles ?", "options": ["En mesurant le temps de vol (aller-retour) d'une impulsion lumineuse laser infrarouge réfléchie par l'obstacle", "En pesant l'obstacle", "En émettant des ultrasons audibles"], "rep": "En mesurant le temps de vol (aller-retour) d'une impulsion lumineuse laser infrarouge réfléchie par l'obstacle"},
+            {"id": "qltr2_2", "q": "Dans quel domaine spectral invisible fonctionnent la majorité des capteurs LiDAR automobiles (905 nm ou 1550 nm) ?", "options": ["L'infrarouge proche (IR)", "L'ultraviolet (UV)", "Les rayons gamma"], "rep": "L'infrarouge proche (IR)"},
+            {"id": "qltr2_3", "q": "Pourquoi utilise-t-on un faisceau infrarouge invisible plutôt qu'un laser rouge ou vert visible pour le LiDAR d'un camion ?", "options": ["Pour ne pas éblouir ni distraire les autres conducteurs sur la route", "Parce que la lumière visible ne se réfléchit pas", "Parce que l'infrarouge est plus lent"], "rep": "Pour ne pas éblouir ni distraire les autres conducteurs sur la route"},
+            {"id": "qltr2_4", "q": "Quelle surface de véhicule renvoie le moins bien le faisceau infrarouge d'un capteur LiDAR ?", "options": ["Une carrosserie noire mate (faible albédo) qui absorbe la majorité du rayonnement", "Une plaque d'immatriculation blanche rétroréfléchissante", "Un panneau routier neuf"], "rep": "Une carrosserie noire mate (faible albédo) qui absorbe la majorité du rayonnement"},
+            {"id": "qltr2_5", "q": "Quel système d'aide à la conduite utilise une caméra couleur RVB derrière le pare-brise pour lire les panneaux de limitation de vitesse ?", "options": ["La reconnaissance optique de panneaux (TSR) basée sur la détection des formes et des couleurs (cercles rouges)", "L'ABS", "Le régulateur de pression de pneus"], "rep": "La reconnaissance optique de panneaux (TSR) basée sur la détection des formes et des couleurs (cercles rouges)"},
+            {"id": "qltr2_6", "q": "Comment la caméra de maintien dans la voie (LKA) repère-t-elle les lignes blanches ou jaunes sur la chaussée ?", "options": ["Par le fort contraste lumineux (différence d'albédo) entre la bande claire et l'enrobé sombre", "Par détection magnétique", "Par mesure thermique"], "rep": "Par le fort contraste lumineux (différence d'albédo) entre la bande claire et l'enrobé sombre"},
+            {"id": "qltr2_7", "q": "Quelle anomalie visuelle appelée daltonisme touche environ 8 % des hommes et affecte la distinction entre le rouge et le vert ?", "options": ["Une déficience des cônes rétiniens sensibles au rouge ou au vert", "Une myopie sévère", "Une cataracte"], "rep": "Une déficience des cônes rétiniens sensibles au rouge ou au vert"},
+            {"id": "qltr2_8", "q": "Comment les feux tricolores routiers sont-ils normalisés pour qu'un conducteur daltonien puisse les interpréter sans erreur ?", "options": ["Par la position fixe des feux (rouge toujours en haut, orange au milieu, vert toujours en bas)", "Par la taille des poteaux", "Par un signal sonore permanent"], "rep": "Par la position fixe des feux (rouge toujours en haut, orange au milieu, vert toujours en bas)"},
+            {"id": "qltr2_9", "q": "Quelle est la vitesse de propagation de l'impulsion laser infrarouge utilisée dans le calcul de distance d'un LiDAR ?", "options": ["c ≈ 300 000 km/s (3 × 10⁸ m/s)", "340 m/s", "100 km/h"], "rep": "c ≈ 300 000 km/s (3 × 10⁸ m/s)"},
+            {"id": "qltr2_10", "q": "Pourquoi le pare-brise devant la caméra ADAS doit-il être parfaitement propre et exempt d'impact ?", "options": ["Les salissures diffusent la lumière et empêchent l'analyse fidèle des couleurs et des lignes", "Pour réduire la consommation de carburant", "Pour refroidir le moteur"], "rep": "Les salissures diffusent la lumière et empêchent l'analyse fidèle des couleurs et des lignes"},
+        ],
+        "trous": [
+            ("1. Les capteurs LiDAR utilisent des impulsions laser dans le domaine ......... (905 nm).", ["Choisir...", "infrarouge", "ultraviolet"], "infrarouge", "ltr_t1"),
+            ("2. Le faisceau est invisible afin de ne pas ......... les autres conducteurs.", ["Choisir...", "éblouir", "ralentir"], "éblouir", "ltr_t2"),
+            ("3. Une carrosserie ......... mate absorbe le rayonnement et réduit la portée du LiDAR.", ["Choisir...", "noire", "blanche"], "noire", "ltr_t3"),
+            ("4. Les caméras ADAS repèrent les lignes au sol grâce au ......... clair/sombre.", ["Choisir...", "contraste", "bruit"], "contraste", "ltr_t4"),
+            ("5. Les panneaux d'interdiction sont détectés par leur bordure de couleur .........", ["Choisir...", "rouge", "bleue"], "rouge", "ltr_t5"),
+            ("6. Le ......... est une anomalie de perception entre le rouge et le vert.", ["Choisir...", "daltonisme", "astigmatisme"], "daltonisme", "ltr_t6"),
+            ("7. Sur un feu tricolore, le feu ......... est toujours placé en haut.", ["Choisir...", "rouge", "vert"], "rouge", "ltr_t7"),
+            ("8. La vitesse des impulsions laser dans l'air vaut environ 300 000 ........./s.", ["Choisir...", "km", "m"], "km", "ltr_t8"),
+            ("9. Les trois capteurs d'une caméra couleur sont sensibles au Rouge, Vert et .........", ["Choisir...", "Bleu", "Jaune"], "Bleu", "ltr_t9"),
+            ("10. Le calcul de distance LiDAR mesure le ......... de vol aller-retour de la lumière.", ["Choisir...", "temps", "poids"], "temps", "ltr_t10"),
+        ]
+    }
+}
+
+
+def mettre_a_jour_lum_trans_matplotlib(sujet_idx):
+    """Banc d'essai optique Lumière & Couleurs adapté au Transport Routier."""
+    fig, ax = plt.subplots(figsize=(12, 6.2), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 250)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    if sujet_idx == 0:
+        filtre = st.session_state.get("radio_ltr_s0", "Cabochon Rouge (Feu Stop)")
+        ax.add_patch(patches.Rectangle((45, 105), 75, 50, facecolor="#fef08a", edgecolor="white"))
+        ax.text(82, 130, "Ampoule\nBlanche", color="#0f172a", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        ax.plot(list((120, 240)), list((115, 115)), color="#ef4444", lw=4)
+        ax.plot(list((120, 240)), list((130, 130)), color="#22c55e", lw=4)
+        ax.plot(list((120, 240)), list((145, 145)), color="#3b82f6", lw=4)
+
+        if "Rouge" in filtre:
+            c_f, c_out, txt_out = "#ef4444", "#ef4444", "TRANSMISSION ROUGE : Vert et Bleu absorbés (Synthèse soustractive)"
+        elif "Ambre" in filtre:
+            c_f, c_out, txt_out = "#f59e0b", "#f59e0b", "TRANSMISSION AMBRE (Rouge + Vert) : Bleu absorbé (Clignotant)"
+        else:
+            c_f, c_out, txt_out = "#ffffff", "#ffffff", "TRANSMISSION BLANCHE : Toutes radiations transmises (Feu de recul)"
+
+        ax.add_patch(patches.Rectangle((240, 75), 35, 110, facecolor=c_f, edgecolor="white", lw=2))
+        ax.text(257, 62, filtre, color=c_f, fontsize=8, fontweight="bold", ha="center")
+
+        ax.plot(list((275, 480)), list((130, 130)), color=c_out, lw=8)
+        ax.text(380, 112, "Faisceau émergent", color=c_out, fontsize=8, fontweight="bold", ha="center")
+
+        ax.text(25, 18, "SIGNALISATION VÉHICULE : SYNTHÈSE SOUSTRACTIVE DES FEUX ARRIÈRE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, txt_out, color="#22c55e", fontsize=8, fontweight="bold")
+        st.session_state.ltr_mesure_courante = (filtre, "Source RVB", "Filtrage sélectif", "CONFORME CODE ROUTE")
+
+    elif sujet_idx == 1:
+        temp_k = st.session_state.get("slider_ltr_s1", 5500)
+        brouillard = st.session_state.get("check_ltr_s1", False)
+        if temp_k < 3800:
+            c_phare, teinte = "#fde047", "Blanc Chaud / Jaune (Halogène)"
+        elif temp_k <= 6000:
+            c_phare, teinte = "#ffffff", "Blanc Neutre Jour (LED Homologuée)"
+        else:
+            c_phare, teinte = "#93c5fd", "Blanc Bleuté Froid (> 6000 K)"
+
+        ax.add_patch(patches.Rectangle((55, 100), 85, 60, facecolor="#1e3a8a", edgecolor="#38bdf8", lw=1.5))
+        ax.text(97, 130, f"Phare LED\n{temp_k} K", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        alpha_f = 0.18 if (brouillard and temp_k > 5500) else 0.35
+        ax.fill(list((140, 520, 520)), list((130, 75, 185)), color=c_phare, alpha=alpha_f)
+
+        if brouillard and temp_k > 5500:
+            ax.text(330, 130, "BROUILLARD : Forte diffusion du bleu !\nÉblouissement retour conducteur", color="#ef4444", fontsize=8.5, fontweight="bold", ha="center", va="center")
+            diag_p = "DANGER BROUILLARD : Trop de bleu diffusé ! Utiliser les feux antibrouillard bas."
+            c_dp = "#ef4444"
+        else:
+            ax.text(340, 130, f"Éclairage optimal : {teinte}", color=c_phare, fontsize=8.5, fontweight="bold", ha="center", va="center")
+            diag_p = f"VISIBILITÉ OPTIMALE : Température {temp_k} K adaptée aux conditions."
+            c_dp = "#22c55e"
+
+        ax.text(25, 18, "ÉCLAIRAGE ROUTIER : TEMPÉRATURE DE COULEUR ET DIFFUSION ATMOSPHÉRIQUE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, diag_p, color=c_dp, fontsize=8, fontweight="bold")
+        st.session_state.ltr_mesure_courante = (f"{temp_k} K", "Brouillard" if brouillard else "Temps clair", teinte, "ATTENTION" if (brouillard and temp_k > 5500) else "OPTIMAL")
+
+    else:
+        cible_coul = st.session_state.get("radio_ltr_s2", "Plaque rétroréfléchissante blanche (Albédo 0,85)")
+        if "noire" in cible_coul:
+            c_cib, portee_m, alb = "#1e293b", 65, 0.08
+        elif "grise" in cible_coul:
+            c_cib, portee_m, alb = "#94a3b8", 140, 0.45
+        else:
+            c_cib, portee_m, alb = "#f8fafc", 220, 0.85
+
+        ax.add_patch(patches.Rectangle((55, 100), 90, 60, facecolor="#1e3a8a", edgecolor="#38bdf8", lw=1.5))
+        ax.text(100, 130, "Capteur LiDAR\n(IR 905 nm)", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        xc = 200.0 + (portee_m / 240.0) * 310.0
+        ax.plot(list((145, xc)), list((122, 122)), color="#ef4444", lw=2.5, ls="--")
+        ax.plot(list((xc, 145)), list((138, 138)), color="#22c55e", lw=2.5, ls=":")
+
+        ax.add_patch(patches.Rectangle((xc, 95), 40, 70, facecolor=c_cib, edgecolor="#eab308", lw=2))
+        ax.text(xc + 20, 180, f"Obstacle\nPortée = {portee_m} m", color="#fde047", fontsize=7.5, fontweight="bold", ha="center")
+
+        ax.text(25, 18, "AIDES À LA CONDUITE (ADAS) : PORTÉE LIDAR SELON L'ALBÉDO DE L'OBSTACLE", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, f"Albédo cible = {alb:.2f}  =>  Portée de détection LiDAR = {portee_m} mètres", color="#22c55e" if portee_m >= 140 else "#f59e0b", fontsize=8, fontweight="bold")
+        st.session_state.ltr_mesure_courante = (f"Albédo = {alb:.2f}", "IR 905 nm", f"Portée = {portee_m} m", "DÉTECTION OK")
+
+    return fig
+
+
+def afficher_atelier_lum_trans(sujet_idx, verrouille=False):
+    if sujet_idx is None:
+        st.warning("Tirez d'abord au sort un sujet Transport Routier ci-dessus.")
+        return
+    banque = BANQUES_LUM_TRANS[sujet_idx]
+    cle_ordre = f"ordre_quiz_ltr_{sujet_idx}"
+    if cle_ordre not in st.session_state:
+        lq = list(banque["questions"])
+        random.shuffle(lq)
+        st.session_state[cle_ordre] = lq
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Technique Transport Routier (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state[cle_ordre], 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", ["Choisir..."] + q_data["options"], key=f"ltr_at6_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+    with col_t:
+        st.markdown("##### Synthèse Transport Routier (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in banque["trous"]:
+            c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", choix, key=f"{cle}_s{sujet_idx}", disabled=verrouille, label_visibility="collapsed")
+
+
+BANQUES_LUM_TP = {
+    0: {
+        "questions": [
+            {"id": "qltp0_1", "q": "Quel phénomène optique permet aux gilets haute visibilité et panneaux de chantier jaune-vert d'être très lumineux à l'aube et au crépuscule ?", "options": ["La fluorescence : les pigments convertissent les UV invisibles en lumière visible", "La réflexion totale interne", "L'incandescence thermique"], "rep": "La fluorescence : les pigments convertissent les UV invisibles en lumière visible"},
+            {"id": "qltp0_2", "q": "Comment agit la bande rétroréfléchissante grise d'un gilet ou d'un cône de chantier éclairée la nuit par les phares ?", "options": ["Elle renvoie la lumière directement vers les phares grâce à des microbilles de verre ou microprismes", "Elle absorbe toute la lumière", "Elle disperse la lumière vers le ciel"], "rep": "Elle renvoie la lumière directement vers les phares grâce à des microbilles de verre ou microprismes"},
+            {"id": "qltp0_3", "q": "Pourquoi associe-t-on couleur fluorescente et bandes rétroréfléchissantes sur les EPI des Travaux Publics ?", "options": ["La fluorescence agit de jour et au crépuscule, la rétroréflexion agit de nuit sous les phares", "Pour réduire le poids du gilet", "Pour imperméabiliser le tissu"], "rep": "La fluorescence agit de jour et au crépuscule, la rétroréflexion agit de nuit sous les phares"},
+            {"id": "qltp0_4", "q": "À quelle longueur d'onde l'œil humain présente-t-il sa sensibilité maximale de jour (vision photopique) ?", "options": ["Autour de 555 nm (jaune-vert)", "Autour de 400 nm (violet)", "Autour de 750 nm (infrarouge)"], "rep": "Autour de 555 nm (jaune-vert)"},
+            {"id": "qltp0_5", "q": "Quelle norme européenne régit les vêtements de signalisation à haute visibilité sur les chantiers ?", "options": ["La norme EN ISO 20471", "La norme Euro 6", "La norme NF C 15-100"], "rep": "La norme EN ISO 20471"},
+            {"id": "qltp0_6", "q": "Que se passe-t-il si un gilet fluorescent reste exposé plusieurs mois en plein soleil ?", "options": ["Les rayons UV dégradent les pigments fluorescents : le gilet pâlit et perd sa visibilité", "Le gilet devient rétroréfléchissant", "La couleur devient plus foncée"], "rep": "Les rayons UV dégradent les pigments fluorescents : le gilet pâlit et perd sa visibilité"},
+            {"id": "qltp0_7", "q": "Pourquoi la boue sur les bandes rétroréfléchissantes d'un panneau annule-t-elle leur efficacité la nuit ?", "options": ["La couche opaque bloque les rayons avant qu'ils n'atteignent les microbilles de verre", "La boue change l'indice de réfraction de l'air", "Les phares s'éteignent"], "rep": "La couche opaque bloque les rayons avant qu'ils n'atteignent les microbilles de verre"},
+            {"id": "qltp0_8", "q": "Quelle classe de film rétroréfléchissant offre la distance de visibilité maximale sur autoroute ?", "options": ["La Classe 3 (microprismes haute intensité)", "La Classe 1", "Aucune différence"], "rep": "La Classe 3 (microprismes haute intensité)"},
+            {"id": "qltp0_9", "q": "Quel rayonnement solaire invisible active les pigments fluorescents par temps couvert ?", "options": ["Les rayons ultraviolets (UV)", "Les ondes radio", "Les rayons X"], "rep": "Les rayons ultraviolets (UV)"},
+            {"id": "qltp0_10", "q": "Quelle couleur est réservée en France à la signalisation temporaire de chantier ?", "options": ["Le fond jaune", "Le fond bleu", "Le fond vert"], "rep": "Le fond jaune"},
+        ],
+        "trous": [
+            ("1. Les gilets de chantier utilisent des pigments ......... pour transformer les UV en lumière visible.", ["Choisir...", "fluorescents", "opaques"], "fluorescents", "ltp_t1"),
+            ("2. La nuit, les bandes grises renvoient la lumière vers les phares par .........", ["Choisir...", "rétroréflexion", "absorption"], "rétroréflexion", "ltp_t2"),
+            ("3. Ces bandes contiennent des microbilles de verre ou des .........", ["Choisir...", "microprismes", "miroirs plans"], "microprismes", "ltp_t3"),
+            ("4. L'œil humain est le plus sensible autour de 555 nm, dans le .........", ["Choisir...", "jaune-vert", "violet"], "jaune-vert", "ltp_t4"),
+            ("5. La fluorescence est particulièrement efficace de jour et au .........", ["Choisir...", "crépuscule", "sous-sol"], "crépuscule", "ltp_t5"),
+            ("6. Les vêtements haute visibilité sont classés selon la norme EN ISO .........", ["Choisir...", "20471", "9001"], "20471", "ltp_t6"),
+            ("7. En France, les panneaux temporaires de chantier ont un fond .........", ["Choisir...", "jaune", "bleu"], "jaune", "ltp_t7"),
+            ("8. Une exposition prolongée au soleil dégrade les pigments sous l'effet des .........", ["Choisir...", "UV", "infrarouges"], "UV", "ltp_t8"),
+            ("9. Les films de Classe ......... offrent la visibilité maximale sur autoroute.", ["Choisir...", "3", "1"], "3", "ltp_t9"),
+            ("10. Le nettoyage régulier des panneaux évite l'......... de la lumière par la boue.", ["Choisir...", "absorption", "dispersion"], "absorption", "ltp_t10"),
+        ]
+    },
+    1: {
+        "questions": [
+            {"id": "qltp1_1", "q": "Dans les tranchées TP, pourquoi utilise-t-on des grillages avertisseurs de couleurs normalisées ?", "options": ["Pour identifier visuellement la nature du réseau enterré avant tout coup de godet", "Pour décorer la tranchée", "Pour mesurer la profondeur de fouille"], "rep": "Pour identifier visuellement la nature du réseau enterré avant tout coup de godet"},
+            {"id": "qltp1_2", "q": "Quelle couleur normalisée identifie un réseau électrique enterré ?", "options": ["Rouge", "Bleu", "Jaune"], "rep": "Rouge"},
+            {"id": "qltp1_3", "q": "Quelle couleur identifie un réseau de gaz combustible enterré sur un chantier TP ?", "options": ["Jaune", "Vert", "Marron"], "rep": "Jaune"},
+            {"id": "qltp1_4", "q": "Quelle couleur identifie une canalisation d'eau potable enterrée ?", "options": ["Bleu", "Rouge", "Orange"], "rep": "Bleu"},
+            {"id": "qltp1_5", "q": "Pourquoi un éclairage de chantier nocturne à vapeur de sodium (lumière jaune) est-il dangereux près des réseaux ?", "options": ["Son faible IRC empêche de distinguer les grillages rouges, bleus, verts et jaunes", "Il éclaire trop fort", "Il fait fondre les gaines plastiques"], "rep": "Son faible IRC empêche de distinguer les grillages rouges, bleus, verts et jaunes"},
+            {"id": "qltp1_6", "q": "Quel type de projecteur de chantier privilégier la nuit pour respecter le code couleur des réseaux ?", "options": ["Un mât d'éclairage LED blanc neutre (4500 K) avec IRC ≥ 80", "Une lampe au sodium jaune (IRC 22)", "Un projecteur rouge pur"], "rep": "Un mât d'éclairage LED blanc neutre (4500 K) avec IRC ≥ 80"},
+            {"id": "qltp1_7", "q": "Quelle couleur de grillage avertisseur correspond aux réseaux de fibre optique et télécoms ?", "options": ["Vert", "Bleu", "Jaune"], "rep": "Vert"},
+            {"id": "qltp1_8", "q": "À quelle hauteur au-dessus d'une canalisation pose-t-on le grillage avertisseur coloré ?", "options": ["Entre 20 cm et 30 cm au-dessus de la canalisation", "Directement sous le tuyau", "À 2 mètres au-dessus du trottoir"], "rep": "Entre 20 cm et 30 cm au-dessus de la canalisation"},
+            {"id": "qltp1_9", "q": "Quelle couleur identifie les réseaux d'assainissement et eaux usées ?", "options": ["Marron", "Blanc", "Rose"], "rep": "Marron"},
+            {"id": "qltp1_10", "q": "Quelle grandeur photométrique vérifie-t-on sur un chantier nocturne ?", "options": ["L'éclairement lumineux en lux (lx)", "La vergence en dioptries", "La masse volumique en kg/m³"], "rep": "L'éclairement lumineux en lux (lx)"},
+        ],
+        "trous": [
+            ("1. En tranchée, un grillage avertisseur ......... signale un câble électrique.", ["Choisir...", "rouge", "bleu"], "rouge", "ltp_t1"),
+            ("2. Le grillage avertisseur de couleur ......... signale une canalisation de gaz.", ["Choisir...", "jaune", "vert"], "jaune", "ltp_t2"),
+            ("3. Le réseau d'eau potable est repéré par la couleur .........", ["Choisir...", "bleue", "rouge"], "bleue", "ltp_t3"),
+            ("4. Les réseaux de fibre optique et télécoms utilisent la couleur .........", ["Choisir...", "verte", "jaune"], "verte", "ltp_t4"),
+            ("5. Le grillage se pose environ ......... cm au-dessus de la canalisation.", ["Choisir...", "20 à 30", "200"], "20 à 30", "ltp_t5"),
+            ("6. De nuit, il faut éclairer la tranchée avec des LED ayant un ......... supérieur à 80.", ["Choisir...", "IRC", "poids"], "IRC", "ltp_t6"),
+            ("7. Une lampe au sodium jaune altère la perception des ......... des réseaux.", ["Choisir...", "couleurs", "profondeurs"], "couleurs", "ltp_t7"),
+            ("8. La température de couleur recommandée sur un mât LED est autour de ......... K.", ["Choisir...", "4500", "1800"], "4500", "ltp_t8"),
+            ("9. Les réseaux d'assainissement sont repérés par la couleur .........", ["Choisir...", "marron", "bleue"], "marron", "ltp_t9"),
+            ("10. L'éclairement sur le chantier se mesure en .........", ["Choisir...", "lux", "watts"], "lux", "ltp_t10"),
+        ]
+    },
+    2: {
+        "questions": [
+            {"id": "qltp2_1", "q": "Comment appelle-t-on le pouvoir réfléchissant d'une surface routière (rapport énergie réfléchie / reçue) ?", "options": ["L'albédo (compris entre 0 et 1)", "La vergence", "La réfraction"], "rep": "L'albédo (compris entre 0 et 1)"},
+            {"id": "qltp2_2", "q": "Pourquoi un enrobé bitumineux noir neuf (albédo ≈ 0,05) chauffe-t-il énormément en été en ville ?", "options": ["Parce qu'il absorbe environ 95 % du rayonnement solaire et le transforme en chaleur", "Parce qu'il réfléchit 95 % de la lumière", "Parce qu'il est composé de verre"], "rep": "Parce qu'il absorbe environ 95 % du rayonnement solaire et le transforme en chaleur"},
+            {"id": "qltp2_3", "q": "Quel phénomène climatique urbain est aggravé par les revêtements routiers sombres à faible albédo ?", "options": ["L'îlot de chaleur urbain (ICU)", "L'effet de serre marin", "Les pluies acides"], "rep": "L'îlot de chaleur urbain (ICU)"},
+            {"id": "qltp2_4", "q": "Quelle solution technique mettent en œuvre les entreprises de Travaux Publics pour réduire la température des chaussées en été ?", "options": ["Des revêtements clairs ou enrobés végétaux / réflectifs à albédo élevé (0,35 à 0,55)", "Des enrobés encore plus noirs", "Des plaques d'acier"], "rep": "Des revêtements clairs ou enrobés végétaux / réflectifs à albédo élevé (0,35 à 0,55)"},
+            {"id": "qltp2_5", "q": "Quel avantage secondaire procure une chaussée claire à albédo élevé lors de l'éclairage public nocturne ?", "options": ["Elle réfléchit mieux la lumière des lampadaires, permettant de réduire la puissance électrique", "Elle émet sa propre lumière sans lampadaire", "Elle absorbe les phares des voitures"], "rep": "Elle réfléchit mieux la lumière des lampadaires, permettant de réduire la puissance électrique"},
+            {"id": "qltp2_6", "q": "Quel instrument optique utilise-t-on sur chantier pour mesurer l'albédo d'un revêtement routier ?", "options": ["Un albédomètre (double pyranomètre)", "Un théodolite", "Un scléromètre"], "rep": "Un albédomètre (double pyranomètre)"},
+            {"id": "qltp2_7", "q": "Quelle est la valeur de l'albédo d'une surface parfaitement noire absorbant toute la lumière ?", "options": ["0", "1", "0,5"], "rep": "0"},
+            {"id": "qltp2_8", "q": "Quelle est la valeur de l'albédo de la neige fraîche ou d'un marquage routier blanc très réfléchissant ?", "options": ["Proche de 0,80 à 0,90", "Proche de 0,05", "Négative"], "rep": "Proche de 0,80 à 0,90"},
+            {"id": "qltp2_9", "q": "De combien de degrés peut baisser la température de surface d'une voirie en passant d'un enrobé noir (0,05) à un revêtement clair (0,45) en été ?", "options": ["De 8 °C à 15 °C en surface", "De 0,1 °C", "De 100 °C"], "rep": "De 8 °C à 15 °C en surface"},
+            {"id": "qltp2_10", "q": "Pourquoi ajoute-t-on des microbilles de verre à la surface de la peinture blanche des bandes de signalisation routière ?", "options": ["Pour rendre le marquage rétroréfléchissant la nuit sous les phares", "Pour rendre la route glissante", "Pour colorer la peinture en bleu"], "rep": "Pour rendre le marquage rétroréfléchissant la nuit sous les phares"},
+        ],
+        "trous": [
+            ("1. Le rapport entre la lumière réfléchie et la lumière reçue s'appelle l'.........", ["Choisir...", "albédo", "indice"], "albédo", "ltp_t1"),
+            ("2. Un enrobé bitumineux noir neuf possède un albédo très faible, proche de .........", ["Choisir...", "0,05", "0,85"], "0,05", "ltp_t2"),
+            ("3. Le noir ......... la quasi-totalité du rayonnement solaire et le transforme en chaleur.", ["Choisir...", "absorbe", "réfléchit"], "absorbe", "ltp_t3"),
+            ("4. Les surfaces sombres en ville créent des ......... de chaleur urbains.", ["Choisir...", "îlots", "puits"], "îlots", "ltp_t4"),
+            ("5. Les revêtements routiers ......... réfléchissent davantage la lumière solaire.", ["Choisir...", "clairs", "noirs"], "clairs", "ltp_t5"),
+            ("6. L'albédo d'une surface est toujours compris entre 0 et .........", ["Choisir...", "1", "100"], "1", "ltp_t6"),
+            ("7. L'instrument qui mesure le rayonnement réfléchi par un sol est un .........", ["Choisir...", "albédomètre", "luxmètre"], "albédomètre", "ltp_t7"),
+            ("8. Une chaussée claire permet d'économiser l'énergie de l'......... public la nuit.", ["Choisir...", "éclairage", "arrosage"], "éclairage", "ltp_t8"),
+            ("9. On incorpore des ......... de verre dans la peinture routière pour la visibilité nocturne.", ["Choisir...", "microbilles", "graviers noirs"], "microbilles", "ltp_t9"),
+            ("10. Le passage à un enrobé clair peut abaisser la température de surface de ......... °C.", ["Choisir...", "10", "0"], "10", "ltp_t10"),
+        ]
+    }
+}
+
+
+def mettre_a_jour_lum_tp_matplotlib(sujet_idx):
+    """Banc d'essai optique Lumière & Couleurs adapté aux Travaux Publics."""
+    fig, ax = plt.subplots(figsize=(12, 6.2), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 250)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    if sujet_idx == 0:
+        moment = st.session_state.get("radio_ltp_s0", "Crépuscule (UV dominants)")
+        ax.add_patch(patches.Rectangle((60, 85), 95, 95, facecolor="#eab308", edgecolor="white", lw=2))
+        ax.add_patch(patches.Rectangle((60, 122), 95, 22, facecolor="#cbd5e1"))
+        ax.text(107, 195, "Gilet EPI TP\n(Fluo + Rétro)", color="#fde047", fontsize=8, fontweight="bold", ha="center")
+
+        if "Crépuscule" in moment:
+            ax.annotate("", xy=(155, 105), xytext=(480, 50), arrowprops=dict(arrowstyle="->", color="#a855f7", lw=2.5, ls="--"))
+            ax.annotate("", xy=(480, 80), xytext=(155, 105), arrowprops=dict(arrowstyle="->", color="#bef264", lw=3))
+            msg = "FLUORESCENCE ACTIVE : Les UV du ciel sont convertis en lumière jaune-vert très visible !"
+            c_msg = "#22c55e"
+        else:
+            ax.annotate("", xy=(155, 133), xytext=(480, 133), arrowprops=dict(arrowstyle="->", color="#ffffff", lw=2.5))
+            ax.annotate("", xy=(480, 145), xytext=(155, 133), arrowprops=dict(arrowstyle="->", color="#38bdf8", lw=3))
+            msg = "RÉTRORÉFLEXION NOCTURNE : Les microbilles renvoient 100% du faisceau vers les phares !"
+            c_msg = "#38bdf8"
+
+        ax.add_patch(patches.Rectangle((480, 45), 75, 125, facecolor="#1e3a8a", edgecolor="white"))
+        ax.text(517, 107, "Observateur\n(Conducteur)", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+        ax.text(25, 18, "SIGNALISATION DE CHANTIER : FLUORESCENCE ET RÉTRORÉFLEXION", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, msg, color=c_msg, fontsize=8, fontweight="bold")
+        st.session_state.ltp_mesure_courante = (moment, "Gilet Classe 3", "Visibilité maximale", "CONFORME EPI")
+
+    elif sujet_idx == 1:
+        eclairage_tr = st.session_state.get("radio_ltp_s1", "Mât LED Blanc Neutre (4500 K - IRC 90)")
+        if "Sodium" in eclairage_tr:
+            c_fond, c_r, c_b, c_v, irc_t = "#d97706", "#78350f", "#451a03", "#713f12", 22
+            diag_t = "DANGER RÉSEAUX : IRC = 22 ! Les grillages Rouge (Élec) et Bleu (Eau) sont confondus !"
+        else:
+            c_fond, c_r, c_b, c_v, irc_t = "#334155", "#ef4444", "#3b82f6", "#22c55e", 90
+            diag_t = "CHANTIER SÉCURISÉ : IRC = 90 ! Identification parfaite des réseaux Rouge, Bleu, Jaune et Vert."
+
+        ax.add_patch(patches.Rectangle((55, 52), 490, 170, facecolor=c_fond, edgecolor="#38bdf8", lw=2))
+        reseaux = [("Grillage ROUGE (Électricité)", c_r, 85), ("Grillage BLEU (Eau potable)", c_b, 122), ("Grillage JAUNE (Gaz)", "#eab308", 159), ("Grillage VERT (Fibre / Télécom)", c_v, 196)]
+        for lbl, col, yy in reseaux:
+            ax.add_patch(patches.Rectangle((110, yy - 12), 380, 22, facecolor=col, edgecolor="white"))
+            ax.text(300, yy - 1, lbl, color="white" if col != "#eab308" else "#0f172a", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        ax.text(25, 18, "TERRASSEMENT NOCTURNE : IDENTIFICATION DES RÉSEAUX ENTERRÉS PAR COULEUR", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, diag_t, color="#22c55e" if irc_t >= 80 else "#ef4444", fontsize=8, fontweight="bold")
+        st.session_state.ltp_mesure_courante = (eclairage_tr.split("(").strip(), f"IRC = {irc_t}", "4 réseaux", "SÉCURITÉ OK" if irc_t >= 80 else "RISQUE ACCROCHAGE")
+
+    else:
+        albedo = st.session_state.get("slider_ltp_s2", 0.35)
+        flux_recu = 900.0
+        flux_ref = round(flux_recu * albedo, 0)
+        flux_abs = round(flux_recu * (1.0 - albedo), 0)
+        temp_surf = round(64.0 - albedo * 35.0, 1)
+
+        gris = int(35 + albedo * 200)
+        c_sol = f"#{gris:02x}{gris:02x}{gris:02x}"
+        ax.add_patch(patches.Rectangle((60, 165), 480, 45, facecolor=c_sol, edgecolor="white", lw=1.5))
+        ax.text(300, 187, f"Revêtement routier (Albédo = {albedo:.2f})", color="white" if albedo < 0.4 else "#0f172a", fontsize=8.5, fontweight="bold", ha="center", va="center")
+
+        ax.annotate("", xy=(240, 165), xytext=(150, 55), arrowprops=dict(arrowstyle="->", color="#fde047", lw=4))
+        ax.text(145, 75, f"Soleil : {flux_recu:.0f} W/m²", color="#fde047", fontsize=8, fontweight="bold")
+
+        ax.annotate("", xy=(420, 55), xytext=(310, 165), arrowprops=dict(arrowstyle="->", color="#38bdf8", lw=max(1.0, albedo * 6.0)))
+        ax.text(390, 75, f"Réfléchi : {flux_ref:.0f} W/m²", color="#38bdf8", fontsize=8, fontweight="bold")
+
+        ax.text(25, 18, "VOIRIE DURABLE : ALBÉDO DES REVÊTEMENTS ET ÎLOTS DE CHALEUR URBAINS", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, f"Albédo = {albedo:.2f} | Énergie absorbée = {flux_abs:.0f} W/m² | Température chaussée en été = {temp_surf:.1f} °C", color="#22c55e" if albedo >= 0.35 else "#f59e0b", fontsize=8, fontweight="bold")
+        st.session_state.ltp_mesure_courante = (f"Albédo = {albedo:.2f}", f"Abs = {flux_abs:.0f} W/m²", f"T = {temp_surf:.1f} °C", "FRAÎCHEUR" if albedo >= 0.35 else "ÎLOT CHALEUR")
+
+    return fig
+
+
+def afficher_atelier_lum_tp(sujet_idx, verrouille=False):
+    if sujet_idx is None:
+        st.warning("Tirez d'abord au sort un chantier TP ci-dessus.")
+        return
+    banque = BANQUES_LUM_TP[sujet_idx]
+    cle_ordre = f"ordre_quiz_ltp_{sujet_idx}"
+    if cle_ordre not in st.session_state:
+        lq = list(banque["questions"])
+        random.shuffle(lq)
+        st.session_state[cle_ordre] = lq
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Technique Travaux Publics (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state[cle_ordre], 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", ["Choisir..."] + q_data["options"], key=f"ltp_at5_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+    with col_t:
+        st.markdown("##### Synthèse Travaux Publics (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in banque["trous"]:
+            c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", choix, key=f"{cle}_s{sujet_idx}", disabled=verrouille, label_visibility="collapsed")
+
+
+
+
+
+
+BANQUES_LUM_MAINT = {
+    0: {
+        "questions": [
+            {"id": "qlm0_1", "q": "Quel principe de la synthèse soustractive utilise-t-on en vision industrielle pour faire ressortir en noir un défaut rouge sur une pièce métallique ?", "options": ["Éclairer la pièce avec une lumière complémentaire (cyan ou verte) qui est absorbée par le rouge", "Éclairer la pièce avec une lumière rouge", "Éteindre toutes les lumières de l'atelier"], "rep": "Éclairer la pièce avec une lumière complémentaire (cyan ou verte) qui est absorbée par le rouge"},
+            {"id": "qlm0_2", "q": "Quelle couleur perçoit une caméra monochrome si on éclaire une étiquette bleue avec une lumière rouge pure ?", "options": ["Du noir (car le pigment bleu absorbe la lumière rouge et ne renvoie rien)", "Du blanc éclatant", "Du jaune vif"], "rep": "Du noir (car le pigment bleu absorbe la lumière rouge et ne renvoie rien)"},
+            {"id": "qlm0_3", "q": "Pourquoi utilise-t-on des projecteurs LED monochromatiques (rouges, verts ou bleus) sur les lignes de contrôle automatisé ?", "options": ["Pour augmenter fortement le contraste entre les défauts et la surface saine de la pièce", "Pour chauffer les pièces avant soudage", "Pour économiser la peinture"], "rep": "Pour augmenter fortement le contraste entre les défauts et la surface saine de la pièce"},
+            {"id": "qlm0_4", "q": "Quelle est la couleur complémentaire du rouge en synthèse additive ?", "options": ["Le cyan (vert + bleu)", "Le jaune", "Le magenta"], "rep": "Le cyan (vert + bleu)"},
+            {"id": "qlm0_5", "q": "Si l'on veut faire disparaître un marquage jaune sur un emballage lors d'un contrôle optique, quelle lumière d'éclairage faut-il choisir ?", "options": ["Une lumière jaune (ou rouge + vert) qui sera réfléchie aussi bien par le fond blanc que par le marquage jaune", "Une lumière bleue", "Une lumière ultraviolette"], "rep": "Une lumière jaune (ou rouge + vert) qui sera réfléchie aussi bien par le fond blanc que par le marquage jaune"},
+            {"id": "qlm0_6", "q": "Quel rayonnement invisible (longueur d'onde < 400 nm) utilise-t-on en contrôle non destructif par ressuage fluorescent pour détecter les microfissures ?", "options": ["Les rayons ultraviolets (UV-A / lumière noire)", "Les rayons infrarouges lointains", "Les ondes radio"], "rep": "Les rayons ultraviolets (UV-A / lumière noire)"},
+            {"id": "qlm0_7", "q": "Lors d'un contrôle par ressuage UV, pourquoi le pénétrant piégé dans une fissure émet-il une lumière jaune-verte visible ?", "options": ["Par phénomène de fluorescence : il absorbe l'énergie UV invisible et réémet de la lumière visible", "Par combustion chimique", "Par réflexion totale sur le métal"], "rep": "Par phénomène de fluorescence : il absorbe l'énergie UV invisible et réémet de la lumière visible"},
+            {"id": "qlm0_8", "q": "Quelle précaution de sécurité est obligatoire lors de l'utilisation d'une lampe UV de contrôle en maintenance ?", "options": ["Porter des lunettes de protection filtrant les UV (anti-UV)", "Regarder directement la lampe pour vérifier son intensité", "Travailler sans gants"], "rep": "Porter des lunettes de protection filtrant les UV (anti-UV)"},
+            {"id": "qlm0_9", "q": "Quelle couleur d'éclairage LED est privilégiée pour inspecter des soudures en cuivre ou laiton afin d'éviter les reflets éblouissants ?", "options": ["La lumière bleue (450 nm) qui est fortement absorbée par le cuivre", "La lumière infrarouge", "La lumière jaune"], "rep": "La lumière bleue (450 nm) qui est fortement absorbée par le cuivre"},
+            {"id": "qlm0_10", "q": "La couleur apparente d'un objet dépend à la fois de ses pigments et de :", "options": ["La composition spectrale de la lumière qui l'éclaire", "La pression atmosphérique", "La masse de l'objet"], "rep": "La composition spectrale de la lumière qui l'éclaire"},
+        ],
+        "trous": [
+            ("1. La couleur d'un objet dépend de la lumière qui l'éclaire et de l'......... sélective de sa surface.", ["Choisir...", "absorption", "réflexion totale"], "absorption", "lm_t1"),
+            ("2. Un objet bleu éclairé uniquement en lumière rouge apparaît .........", ["Choisir...", "noir", "blanc"], "noir", "lm_t2"),
+            ("3. En vision industrielle, on utilise une lumière ......... pour maximiser le contraste d'un défaut.", ["Choisir...", "complémentaire", "infrarouge"], "complémentaire", "lm_t3"),
+            ("4. La couleur complémentaire du rouge est le .........", ["Choisir...", "cyan", "jaune"], "cyan", "lm_t4"),
+            ("5. Le contrôle non destructif par ressuage utilise une lampe à rayons .........", ["Choisir...", "ultraviolets", "X"], "ultraviolets", "lm_t5"),
+            ("6. Les UV ont une longueur d'onde inférieure à ......... nm.", ["Choisir...", "400", "700"], "400", "lm_t6"),
+            ("7. Le produit pénétrant révèle les fissures par phénomène de .........", ["Choisir...", "fluorescence", "dispersion"], "fluorescence", "lm_t7"),
+            ("8. Le technicien doit porter des lunettes de protection .........", ["Choisir...", "anti-UV", "grossissantes"], "anti-UV", "lm_t8"),
+            ("9. Une surface blanche ......... toutes les radiations du spectre visible.", ["Choisir...", "diffuse", "absorbe"], "diffuse", "lm_t9"),
+            ("10. Les trois couleurs primaires de la synthèse additive sont Rouge, Vert et .........", ["Choisir...", "Bleu", "Jaune"], "Bleu", "lm_t10"),
+        ]
+    },
+    1: {
+        "questions": [
+            {"id": "qlm1_1", "q": "Quel instrument optique utilise-t-on en maintenance prédictive pour mesurer le vieillissement et l'oxydation d'une huile hydraulique par sa couleur ?", "options": ["Un spectrophotomètre (ou colorimètre optique)", "Un pied à coulisse", "Un tachymètre"], "rep": "Un spectrophotomètre (ou colorimètre optique)"},
+            {"id": "qlm1_2", "q": "Comment évolue le spectre de transmission lumineuse d'une huile industrielle lorsqu'elle s'oxyde ou se charge en particules d'usure ?", "options": ["Elle absorbe davantage la lumière (surtout dans le bleu et le vert) et devient plus sombre", "Elle devient totalement transparente comme de l'eau pure", "Elle émet de la lumière bleue"], "rep": "Elle absorbe davantage la lumière (surtout dans le bleu et le vert) et devient plus sombre"},
+            {"id": "qlm1_3", "q": "Quelle grandeur physique mesure le spectrophotomètre en comparant l'intensité lumineuse avant et après la cuve d'huile ?", "options": ["L'absorbance (ou la transmittance) en fonction de la longueur d'onde", "La viscosité cinématique", "La température d'éclair"], "rep": "L'absorbance (ou la transmittance) en fonction de la longueur d'onde"},
+            {"id": "qlm1_4", "q": "Quelle loi optique relie l'absorbance A d'un fluide à la concentration c des impuretés dissoutes et à l'épaisseur l de la cuve ?", "options": ["La loi de Beer-Lambert (A = ε × l × c)", "La loi d'Ohm", "La loi de Kepler"], "rep": "La loi de Beer-Lambert (A = ε × l × c)"},
+            {"id": "qlm1_5", "q": "Pourquoi une huile neuve de couleur jaune clair absorbe-t-elle principalement les radiations bleues ?", "options": ["Parce que le jaune est la couleur complémentaire du bleu", "Parce que le bleu est plus lourd", "Parce que la cuve est en verre rouge"], "rep": "Parce que le jaune est la couleur complémentaire du bleu"},
+            {"id": "qlm1_6", "q": "Quel composant optique décompose la lumière blanche en longueurs d'onde précises à l'intérieur d'un spectrophotomètre d'atelier ?", "options": ["Un réseau de diffraction ou un prisme dispersif", "Un miroir plan", "Une vitre teintée"], "rep": "Un réseau de diffraction ou un prisme dispersif"},
+            {"id": "qlm1_7", "q": "Dans la norme colorimétrique ASTM D1500 des huiles industrielles, que signifie le passage de l'indice couleur de 1,5 à 6,5 ?", "options": ["Une forte dégradation thermique ou oxydation nécessitant une vidange préventive", "Une amélioration de la lubrification", "Une baisse de niveau dans le réservoir"], "rep": "Une forte dégradation thermique ou oxydation nécessitant une vidange préventive"},
+            {"id": "qlm1_8", "q": "Quelle opération d'étalonnage doit effectuer le technicien avant chaque analyse spectrophotométrique d'échantillon ?", "options": ["Faire le zéro (blanc optique) avec une cuve remplie d'huile neuve de référence ou de solvant pur", "Chauffer la lampe à 1000 °C", "Secouer le spectromètre"], "rep": "Faire le zéro (blanc optique) avec une cuve remplie d'huile neuve de référence ou de solvant pur"},
+            {"id": "qlm1_9", "q": "Si la transmittance T d'un échantillon d'huile chute à 10 % (0,10), que peut-on en déduire ?", "options": ["90 % de la lumière incidente a été absorbée par les impuretés ou produits d'oxydation", "90 % de la lumière traverse l'huile", "L'ampoule du capteur est neuve"], "rep": "90 % de la lumière incidente a été absorbée par les impuretés ou produits d'oxydation"},
+            {"id": "qlm1_10", "q": "Quelle maintenance permet l'analyse optique régulière des huiles sans démonter les machines ?", "options": ["La maintenance prédictive (ou conditionnelle)", "La maintenance corrective d'urgence", "La maintenance destructive"], "rep": "La maintenance prédictive (ou conditionnelle)"},
+        ],
+        "trous": [
+            ("1. L'analyse optique de la couleur des huiles relève de la maintenance .........", ["Choisir...", "prédictive", "corrective"], "prédictive", "lm_t1"),
+            ("2. L'appareil mesurant l'absorption de la lumière selon la longueur d'onde est un .........", ["Choisir...", "spectrophotomètre", "manomètre"], "spectrophotomètre", "lm_t2"),
+            ("3. L'absorbance d'un liquide est proportionnelle à sa concentration selon la loi de .........", ["Choisir...", "Beer-Lambert", "Newton"], "Beer-Lambert", "lm_t3"),
+            ("4. Une huile jaune absorbe principalement les radiations de couleur .........", ["Choisir...", "bleue", "rouge"], "bleue", "lm_t4"),
+            ("5. Plus une huile est oxydée, plus son ......... augmente.", ["Choisir...", "absorbance", "transmittance"], "absorbance", "lm_t5"),
+            ("6. Le composant dispersif du spectrophotomètre peut être un prisme ou un .........", ["Choisir...", "réseau", "condensateur"], "réseau", "lm_t6"),
+            ("7. Avant la mesure, il faut effectuer le réglage du ......... optique de référence.", ["Choisir...", "blanc", "noir"], "blanc", "lm_t7"),
+            ("8. Une forte augmentation de l'indice couleur ASTM signale une ......... de l'huile.", ["Choisir...", "oxydation", "dilution"], "oxydation", "lm_t8"),
+            ("9. La lumière visible s'étend de 400 nm à ......... nm.", ["Choisir...", "700", "200"], "700", "lm_t9"),
+            ("10. Le contrôle d'huile évite une panne mécanique en déclenchant une ......... ciblée.", ["Choisir...", "vidange", "peinture"], "vidange", "lm_t10"),
+        ]
+    },
+    2: {
+        "questions": [
+            {"id": "qlm2_1", "q": "Quelle grandeur exprimée en kelvins (K) caractérise la teinte (chaude ou froide) d'un éclairage LED d'atelier de maintenance ?", "options": ["La température de couleur", "L'indice de réfraction", "La fréquence secteur"], "rep": "La température de couleur"},
+            {"id": "qlm2_2", "q": "Quelle température de couleur (blanc neutre lumière du jour) est recommandée par la norme NF EN 12464-1 pour les postes de contrôle qualité et câblage électrique ?", "options": ["4000 K à 5000 K (blanc neutre à froid)", "1800 K (lumière de bougie)", "10000 K (bleu intense)"], "rep": "4000 K à 5000 K (blanc neutre à froid)"},
+            {"id": "qlm2_3", "q": "Que mesure l'Indice de Rendu des Couleurs (IRC ou Ra, noté sur 100) d'une lampe d'atelier ?", "options": ["Sa capacité à restituer fidèlement les vraies couleurs des objets par rapport à la lumière du soleil", "Sa consommation électrique en watts", "Sa durée de vie en heures"], "rep": "Sa capacité à restituer fidèlement les vraies couleurs des objets par rapport à la lumière du soleil"},
+            {"id": "qlm2_4", "q": "Quel risque encourt un technicien de maintenance qui câble une armoire électrique sous une lampe à vapeur de sodium basse pression (IRC très faible < 25) ?", "options": ["Confondre les couleurs des fils (ex : fil bleu neutre, fil rouge phase, fil vert/jaune terre)", "Avoir trop de lumière blanche", "Surchauffer les câbles"], "rep": "Confondre les couleurs des fils (ex : fil bleu neutre, fil rouge phase, fil vert/jaune terre)"},
+            {"id": "qlm2_5", "q": "Pourquoi une lampe à vapeur de sodium basse pression ne permet-elle pas de distinguer les couleurs des fils électriques ?", "options": ["Parce qu'elle émet un spectre de raies quasi monochromatique jaune (589 nm) dépourvu de bleu et de rouge", "Parce qu'elle clignote trop vite", "Parce qu'elle n'émet que des ultraviolets"], "rep": "Parce qu'elle émet un spectre de raies quasi monochromatique jaune (589 nm) dépourvu de bleu et de rouge"},
+            {"id": "qlm2_6", "q": "Quel IRC minimal est exigé dans un atelier de contrôle couleur ou de câblage de précision ?", "options": ["IRC ≥ 80 (voire IRC ≥ 90 pour le contrôle chromatique fin)", "IRC = 20", "IRC = 0"], "rep": "IRC ≥ 80 (voire IRC ≥ 90 pour le contrôle chromatique fin)"},
+            {"id": "qlm2_7", "q": "Comment se caractérise le spectre d'une LED blanche utilisée dans les projecteurs modernes d'atelier ?", "options": ["Un spectre continu enrichi par un pic bleu (450 nm) et une bande jaune-verte", "Une raie unique à 650 nm", "Un spectre exclusivement infrarouge"], "rep": "Un spectre continu enrichi par un pic bleu (450 nm) et une bande jaune-verte"},
+            {"id": "qlm2_8", "q": "Quel appareil utilise le responsable maintenance pour vérifier le niveau d'éclairement (en lux) sur un établi ?", "options": ["Un luxmètre", "Un sonomètre", "Un ohmmètre"], "rep": "Un luxmètre"},
+            {"id": "qlm2_9", "q": "Que se passe-t-il si une ampoule LED d'atelier vieillit et que sa couche de phosphore jaune se dégrade ?", "options": ["La lumière devient excessivement bleutée (hausse de la température de couleur) et fatigue les yeux", "La lumière devient rouge vif", "L'ampoule produit un spectre d'absorption"], "rep": "La lumière devient excessivement bleutée (hausse de la température de couleur) et fatigue les yeux"},
+            {"id": "qlm2_10", "q": "Quelle est l'unité de mesure de l'éclairement lumineux reçu par un plan de travail ?", "options": ["Le lux (lx)", "Le kelvin (K)", "Le nanomètre (nm)"], "rep": "Le lux (lx)"},
+        ],
+        "trous": [
+            ("1. La teinte chaude ou froide d'une lampe est donnée par sa ......... de couleur en kelvins.", ["Choisir...", "température", "puissance"], "température", "lm_t1"),
+            ("2. Pour un atelier de maintenance, on choisit un blanc neutre autour de ......... K.", ["Choisir...", "4500", "2000"], "4500", "lm_t2"),
+            ("3. La fidélité des couleurs sous une lampe est mesurée par l'indice ......... (sur 100).", ["Choisir...", "IRC", "ISO"], "IRC", "lm_t3"),
+            ("4. Une lampe au sodium émet une lumière jaune ......... à 589 nm.", ["Choisir...", "monochromatique", "blanche"], "monochromatique", "lm_t4"),
+            ("5. Sous une lampe au sodium, il est impossible de distinguer la ......... des fils électriques.", ["Choisir...", "couleur", "longueur"], "couleur", "lm_t5"),
+            ("6. La lumière du Soleil possède un IRC égal à .........", ["Choisir...", "100", "50"], "100", "lm_t6"),
+            ("7. L'éclairement d'un établi se mesure en lux à l'aide d'un .........", ["Choisir...", "luxmètre", "voltmètre"], "luxmètre", "lm_t7"),
+            ("8. Pour le câblage de précision, l'IRC doit être supérieur à .........", ["Choisir...", "80", "20"], "80", "lm_t8"),
+            ("9. Une lumière à 2700 K est qualifiée de blanc .........", ["Choisir...", "chaud", "froid"], "chaud", "lm_t9"),
+            ("10. Le spectre d'une LED blanche combine un pic ......... et une émission jaune.", ["Choisir...", "bleu", "vert"], "bleu", "lm_t10"),
+        ]
+    }
+}
+
+
+def mettre_a_jour_lum_maint_matplotlib(sujet_idx):
+    """Banc d'essai optique Lumière & Couleurs adapté à la Maintenance Industrielle."""
+    fig, ax = plt.subplots(figsize=(12, 6.2), facecolor="#0f172a")
+    ax.set_facecolor("#0f172a")
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 250)
+    ax.invert_yaxis()
+    ax.axis("off")
+
+    if sujet_idx == 0:
+        couleur_eclairage = st.session_state.get("radio_lm_s0", "Lumière Verte (530 nm)")
+        coul_map = {
+            "Lumière Blanche (RVB)": ("#ffffff", "#ef4444", "FAIBLE CONTRASTE : Le défaut rouge ressort sur fond clair."),
+            "Lumière Rouge (650 nm)": ("#ef4444", "#ef4444", "DÉFAUT INVISIBLE : Le défaut rouge et le fond renvoient le rouge !"),
+            "Lumière Verte (530 nm)": ("#22c55e", "#0f172a", "CONTRASTE MAXIMAL : Le défaut rouge absorbe le vert et apparaît NOIR !")
+        }
+        c_faisceau, c_defaut_vu, msg = coul_map[couleur_eclairage]
+
+        ax.add_patch(patches.Rectangle((80, 35), 90, 35, facecolor="#334155", edgecolor="white"))
+        ax.text(125, 52, "Projecteur LED", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+        ax.fill(list((110, 140, 320, 220)), list((70, 70, 185, 185)), color=c_faisceau, alpha=0.25)
+
+        ax.add_patch(patches.Rectangle((190, 185), 160, 28, facecolor="#94a3b8", edgecolor="white"))
+        ax.add_patch(patches.Rectangle((255, 185), 30, 10, facecolor="#ef4444"))
+        ax.text(270, 225, "Pièce usinée + Défaut rouge", color="#cbd5e1", fontsize=8, fontweight="bold", ha="center")
+
+        ax.add_patch(patches.Rectangle((410, 45), 95, 45, facecolor="#1e3a8a", edgecolor="#38bdf8", lw=1.5))
+        ax.text(457, 67, "Caméra Vision\n(Capteur)", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        ax.add_patch(patches.Rectangle((410, 115), 95, 75, facecolor=c_faisceau, edgecolor="white", lw=1.5))
+        ax.add_patch(patches.Rectangle((442, 138), 30, 28, facecolor=c_defaut_vu, edgecolor="#64748b"))
+        ax.text(457, 202, "Image perçue caméra", color="#fde047", fontsize=7.5, fontweight="bold", ha="center")
+
+        ax.text(25, 18, "VISION INDUSTRIELLE : DÉTECTION DE DÉFAUTS PAR ÉCLAIRAGE COLORÉ", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 32, msg, color="#22c55e" if "MAXIMAL" in msg else "#f59e0b", fontsize=8, fontweight="bold")
+        st.session_state.lm_mesure_courante = (couleur_eclairage, "Défaut Rouge", "Noir pur" if "MAXIMAL" in msg else "Peu contrasté", "OPTIMAL" if "MAXIMAL" in msg else "À CORRIGER")
+
+    elif sujet_idx == 1:
+        usure_pct = st.session_state.get("slider_lm_s1", 35.0)
+        absorbance = round(0.15 + (usure_pct / 100.0) * 1.85, 2)
+        transmittance = round(100.0 * (10 ** (-absorbance)), 1)
+
+        ax.add_patch(patches.Rectangle((45, 105), 75, 50, facecolor="#eab308", edgecolor="white"))
+        ax.text(82, 130, "Source\nBlanche", color="#0f172a", fontsize=8, fontweight="bold", ha="center", va="center")
+        ax.plot(list((120, 240)), list((130, 130)), color="#ffffff", lw=6)
+
+        r_h = max(60, int(245 - usure_pct * 1.8))
+        g_h = max(30, int(200 - usure_pct * 1.7))
+        b_h = max(10, int(40 - usure_pct * 0.3))
+        c_huile = f"#{r_h:02x}{g_h:02x}{b_h:02x}"
+        ax.add_patch(patches.Rectangle((240, 80), 65, 100, facecolor=c_huile, edgecolor="#38bdf8", lw=2))
+        ax.text(272, 68, f"Cuve Huile\n(Usure {usure_pct:.0f}%)", color="#38bdf8", fontsize=8, fontweight="bold", ha="center")
+
+        alpha_out = max(0.15, transmittance / 100.0)
+        ax.plot(list((305, 440)), list((130, 130)), color="#f97316", lw=6, alpha=alpha_out)
+
+        ax.add_patch(patches.Rectangle((440, 100), 105, 60, facecolor="#1e293b", edgecolor="#22c55e", lw=1.5))
+        ax.text(492, 130, f"Capteur Spectro\nT = {transmittance:.1f}%\nA = {absorbance:.2f}", color="#86efac", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        diag = "HUILE CONFORME : Transmittance élevée." if usure_pct < 50 else ("ALERTE OXYDATION : Prévoir vidange !" if usure_pct < 80 else "CRITIQUE : Huile saturée, vidange immédiate !")
+        c_diag = "#22c55e" if usure_pct < 50 else ("#f59e0b" if usure_pct < 80 else "#ef4444")
+        ax.text(25, 18, "MAINTENANCE PRÉDICTIVE : SPECTROPHOTOMÉTRIE DES HUILES (BEER-LAMBERT)", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, f"Absorbance A = {absorbance:.2f}  |  Transmittance T = {transmittance:.1f}%  =>  {diag}", color=c_diag, fontsize=8, fontweight="bold")
+        st.session_state.lm_mesure_courante = (f"Usure = {usure_pct:.0f}%", f"A = {absorbance:.2f}", f"T = {transmittance:.1f}%", "OK" if usure_pct < 50 else "VIDANGE")
+
+    else:
+        type_lampe = st.session_state.get("radio_lm_s2", "LED Atelier Blanc Neutre (4500 K - IRC 92)")
+        if "Sodium" in type_lampe:
+            c_amb, c_fil_bleu, c_fil_vert, irc_val = "#f59e0b", "#78350f", "#92400e", 22
+            statut = "DANGER CÂBLAGE : IRC = 22 ! Impossible de distinguer le bleu, le vert et le rouge !"
+        elif "Chaud" in type_lampe:
+            c_amb, c_fil_bleu, c_fil_vert, irc_val = "#fed7aa", "#1e40af", "#15803d", 82
+            statut = "ACCEPTABLE : IRC = 82 (2700 K). Couleurs visibles mais légère dominante orangée."
+        else:
+            c_amb, c_fil_bleu, c_fil_vert, irc_val = "#f8fafc", "#2563eb", "#22c55e", 92
+            statut = "CONFORME NORME ATELIER : IRC = 92 (4500 K). Distinction parfaite des conducteurs !"
+
+        ax.add_patch(patches.Rectangle((60, 50), 480, 175, facecolor=c_amb, edgecolor="#38bdf8", lw=2))
+        ax.text(300, 72, f"Établi de câblage sous : {type_lampe}", color="#0f172a", fontsize=9, fontweight="bold", ha="center")
+
+        ax.add_patch(patches.Rectangle((120, 105), 360, 18, facecolor=c_fil_bleu, edgecolor="#0f172a"))
+        ax.text(300, 114, "Conducteur Neutre (Bleu)", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        ax.add_patch(patches.Rectangle((120, 140), 360, 18, facecolor=c_fil_vert, edgecolor="#0f172a"))
+        ax.text(300, 149, "Conducteur Protection PE (Vert/Jaune)", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        ax.add_patch(patches.Rectangle((120, 175), 360, 18, facecolor="#dc2626", edgecolor="#0f172a"))
+        ax.text(300, 184, "Conducteur Phase (Rouge)", color="white", fontsize=8, fontweight="bold", ha="center", va="center")
+
+        ax.text(25, 18, "ERGONOMIE & SÉCURITÉ : TEMPÉRATURE DE COULEUR ET INDICE IRC EN ATELIER", color="#38bdf8", fontsize=9, fontweight="bold")
+        ax.text(25, 34, statut, color="#22c55e" if irc_val >= 90 else ("#f59e0b" if irc_val >= 80 else "#ef4444"), fontsize=8, fontweight="bold")
+        st.session_state.lm_mesure_courante = (type_lampe.split("(")[0].strip(), f"IRC = {irc_val}", "Rendu fidèle" if irc_val >= 80 else "Altéré", "CONFORME" if irc_val >= 80 else "NON CONFORME")
+
+    return fig
+
+
+def afficher_atelier_lum_maint(sujet_idx, verrouille=False):
+    if sujet_idx is None:
+        st.warning("Tirez d'abord au sort un sujet de maintenance ci-dessus.")
+        return
+    banque = BANQUES_LUM_MAINT[sujet_idx]
+    cle_ordre = f"ordre_quiz_lm_{sujet_idx}"
+    if cle_ordre not in st.session_state:
+        lq = list(banque["questions"])
+        random.shuffle(lq)
+        st.session_state[cle_ordre] = lq
+
+    col_q, col_t = st.columns(2)
+    with col_q:
+        st.markdown("##### Quiz Technique Maintenance (10 questions - 10 pts)")
+        for idx, q_data in enumerate(st.session_state[cle_ordre], 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            st.selectbox("", ["Choisir..."] + q_data["options"], key=f"lm_at4_g_{q_data['id']}", disabled=verrouille, label_visibility="collapsed")
+    with col_t:
+        st.markdown("##### Synthèse Maintenance (Texte à trous - 10 cases - 10 pts)")
+        for enonce, choix, _, cle in banque["trous"]:
+            c1, c2 = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c1: st.write(enonce)
+            with c2: st.selectbox("", choix, key=f"{cle}_s{sujet_idx}", disabled=verrouille, label_visibility="collapsed")
+
+
+
+
 
 def afficher_questions_optique2(verrouille=False):
     col_double_quiz_opt2, col_double_trous_opt2 = st.columns(2)
@@ -2399,3 +3173,473 @@ with tab3:
             mime="text/html",
             use_container_width=True
         )
+
+
+
+with tab4:
+    st.header("Atelier 4 : Applications dans le domaine de la Maintenance Industrielle")
+
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 16px;">La lumière et les couleurs au service du contrôle qualité et de la maintenance prédictive :</p>
+        <p style="margin-bottom: 0; line-height: 1.6;">En maintenance industrielle, la maîtrise des spectres lumineux permet de <strong>détecter des défauts de surface</strong> par éclairage complémentaire, d'<strong>analyser l'oxydation des huiles</strong> par spectrophotométrie et de <strong>sécuriser le câblage électrique</strong> grâce à un Indice de Rendu des Couleurs (IRC) élevé.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    sujets_lum_maint = [
+        {"titre": "Cas Maintenance N°1 : Vision industrielle et contrôle par éclairage coloré", "img": "lum_maint_vision.jpg", "leg": "Caméra de contrôle qualité sous éclairage LED monochromatique", "exp": "**Principe :** Éclairer un défaut rouge avec sa couleur complémentaire (**vert / cyan**) provoque une absorption totale : le défaut apparaît **noir** sur fond clair."},
+        {"titre": "Cas Maintenance N°2 : Analyse spectrophotométrique des huiles hydrauliques", "img": "lum_maint_huile.jpg", "leg": "Contrôle d'absorbance et d'oxydation d'un échantillon d'huile", "exp": "**Principe :** Selon la loi de **Beer-Lambert**, l'absorbance lumineuse augmente avec la concentration des particules d'usure et de l'oxydation."},
+        {"titre": "Cas Maintenance N°3 : Température de couleur et IRC sur poste de câblage", "img": "lum_maint_irc.jpg", "leg": "Comparaison du rendu des couleurs sous différentes lampes d'atelier", "exp": "**Principe :** Un éclairement blanc neutre (**4000 K – 5000 K**) avec un **IRC ≥ 80** est indispensable pour identifier sans erreur les conducteurs électriques."}
+    ]
+
+    if "sujet_lm_tire" not in st.session_state:
+        st.session_state.sujet_lm_tire = None
+
+    if st.button("TIRER AU SORT UN SUJET MAINTENANCE (LUMIÈRE & COULEURS)", key="btn_tirage_lm", use_container_width=True):
+        choix = [i for i in range(3) if i != st.session_state.sujet_lm_tire]
+        st.session_state.sujet_lm_tire = random.choice(choix)
+        st.session_state.mesures_lm_log = []
+        st.rerun()
+
+    if st.session_state.sujet_lm_tire is None:
+        st.info("Cliquez sur le bouton ci-dessus pour tirer au sort un cas pratique de maintenance.")
+    else:
+        idx_lm = st.session_state.sujet_lm_tire
+        data_lm = sujets_lum_maint[idx_lm]
+        st.success(f"Sujet attribué : **{data_lm['titre']}**")
+        st.markdown(data_lm["exp"], unsafe_allow_html=True)
+
+        c_img, c_bd = st.columns(2)
+        with c_img:
+            try: st.image(data_lm["img"], caption=data_lm["leg"], use_container_width=True)
+            except Exception: st.warning(f"L'image '{data_lm['img']}' est introuvable.")
+        with c_bd:
+            try: st.image("bd_lum_maint.jpg", caption="La pause BD : Câbler sous une lampe au sodium jaune, mauvaise idée !", use_container_width=True)
+            except Exception: st.warning("L'image 'bd_lum_maint.jpg' est introuvable.")
+
+        st.markdown("---")
+        if "mesures_lm_log" not in st.session_state: st.session_state.mesures_lm_log = []
+        if idx_lm == 0:
+            st.radio("Choisissez la couleur du projecteur LED :", ["Lumière Blanche (RVB)", "Lumière Rouge (650 nm)", "Lumière Verte (530 nm)"], index=2, key="radio_lm_s0", horizontal=True)
+        elif idx_lm == 1:
+            st.slider("Taux de dégradation / oxydation de l'huile (%) :", 0.0, 100.0, 35.0, 5.0, key="slider_lm_s1")
+        else:
+            st.radio("Sélectionnez l'éclairage de l'atelier :", ["Lampe Sodium Basse Pression (IRC 22)", "LED Blanc Chaud (2700 K - IRC 82)", "LED Atelier Blanc Neutre (4500 K - IRC 92)"], index=2, key="radio_lm_s2", horizontal=True)
+
+        if st.button("ENREGISTRER CE CONTRÔLE MAINTENANCE", key="btn_rel_lm", use_container_width=True):
+            if "lm_mesure_courante" in st.session_state:
+                st.session_state.mesures_lm_log.append(st.session_state.lm_mesure_courante)
+                st.rerun()
+
+        st.pyplot(mettre_a_jour_lum_maint_matplotlib(idx_lm), use_container_width=True)
+        if st.session_state.mesures_lm_log:
+            df_lm = pd.DataFrame(st.session_state.mesures_lm_log, columns=["Paramètre", "Mesure 1", "Mesure 2", "Diagnostic"])
+            st.dataframe(df_lm, use_container_width=True, hide_index=True)
+
+    st.write("---")
+    if "lm_verrouille_tab4" not in st.session_state: st.session_state.lm_verrouille_tab4 = False
+    verrou_lm = st.session_state.lm_verrouille_tab4
+    sujet_actif_lm = st.session_state.get("sujet_lm_tire", None)
+    afficher_atelier_lum_maint(sujet_actif_lm, verrouille=verrou_lm)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_lm = st.checkbox("Je certifie avoir complété l'Atelier 4 (Maintenance - Lumière et Couleurs).", key="certif_lm4", disabled=verrou_lm)
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_exp_lm4", use_container_width=True, disabled=verrou_lm):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif sujet_actif_lm is None or not case_certif_lm:
+            st.error("Action refusée : Tirez au sort un sujet et cochez la case de certification.")
+        else:
+            bq = BANQUES_LUM_MAINT[sujet_actif_lm]
+            sc_q = sum(1.0 for q in st.session_state.get(f"ordre_quiz_lm_{sujet_actif_lm}", []) if st.session_state.get(f"lm_at4_g_{q['id']}") == q["rep"])
+            sc_t = sum(1.0 for _, _, rep, cle in bq["trous"] if st.session_state.get(f"{cle}_s{sujet_actif_lm}") == rep)
+            st.session_state.score_lm4_p1, st.session_state.score_lm4_p2, st.session_state.score_final_lm4 = sc_q, sc_t, sc_q + sc_t
+            st.session_state.lm_verrouille_tab4 = True
+            st.rerun()
+
+    if st.session_state.get("lm_verrouille_tab4", False) and sujet_actif_lm is not None:
+        scr1, scr2, tot_s = st.session_state.score_lm4_p1, st.session_state.score_lm4_p2, st.session_state.score_final_lm4
+        ts_lm = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER 4 SCELLÉ | Note : {tot_s:.1f} / 20")
+        bq = BANQUES_LUM_MAINT[sujet_actif_lm]
+        html_lm = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport Atelier 4 - {n_eleve}</title>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}.status-correct{{color:#10b981;font-weight:bold}}.status-incorrect{{color:#ef4444;font-weight:bold}}</style></head>
+        <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Atelier 4 : Maintenance (Lumière et Couleurs) - {sujets_lum_maint[sujet_actif_lm]['titre']}</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_lm}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
+        <p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
+        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"""
+        for num, q in enumerate(st.session_state.get(f"ordre_quiz_lm_{sujet_actif_lm}", []), 1):
+            qid_curr = q["id"]
+            saisie_curr = st.session_state.get(f"lm_at4_g_{qid_curr}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie_curr) == str(q["rep"]) else "INCORRECT"
+            v_cls = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_lm += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_curr}</td><td>{q['rep']}</td><td class='{v_cls}'>{v_lbl}</td></tr>"
+        html_lm += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"
+        for idx_t, (en, _, rep, cle) in enumerate(bq["trous"], 1):
+            saisie_t_curr = st.session_state.get(f"{cle}_s{sujet_actif_lm}", "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t_curr) == str(rep) else "INCORRECT"
+            v_cls_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_lm += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t_curr}</td><td>{rep}</td><td class='{v_cls_t}'>{v_lbl_t}</td></tr>"
+        html_lm += "</tbody></table></body></html>"
+        st.download_button("Télécharger le rapport officiel de l'Atelier 4 (.html)", data=html_lm, file_name=preparer_nom_fichier("Rapport_Atelier_4_Maintenance_Lumiere").replace(".txt", ".html"), mime="text/html", use_container_width=True)
+
+
+with tab5:
+    st.header("Atelier 5 : Applications dans le domaine des Travaux Publics")
+
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 16px;">La lumière et les couleurs sur les chantiers de génie civil et de voirie :</p>
+        <p style="margin-bottom: 0; line-height: 1.6;">Dans les Travaux Publics, les propriétés optiques des matériaux assurent la <strong>visibilité des équipements (fluorescence et rétroréflexion)</strong>, le <strong>repérage par code couleur des réseaux enterrés</strong> et la <strong>limitation des îlots de chaleur urbains grâce à l'albédo</strong>.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    sujets_lum_tp = [
+        {"titre": "Chantier N°1 : Signalisation fluorescente et rétroréfléchissante de chantier", "img": "lum_tp_epi.jpg", "leg": "Gilet haute visibilité et panneaux temporaires Classe 3", "exp": "**Principe :** La **fluorescence** convertit les UV solaires en lumière visible au crépuscule, tandis que les **microbilles de verre** assurent la rétroréflexion la nuit."},
+        {"titre": "Chantier N°2 : Éclairage LED de chantier et code couleur des réseaux enterrés", "img": "lum_tp_reseaux.jpg", "leg": "Grillages avertisseurs colorés en tranchée sous éclairage LED", "exp": "**Principe :** Un mât d'éclairage **IRC ≥ 80** permet de distinguer sans erreur les réseaux enterrés (**Rouge** = Élec, **Bleu** = Eau, **Jaune** = Gaz, **Vert** = Télécom)."},
+        {"titre": "Chantier N°3 : Albédo des revêtements routiers et îlots de chaleur urbains", "img": "lum_tp_albedo.jpg", "leg": "Comparaison thermique entre enrobé noir et revêtement clair", "exp": "**Principe :** Un revêtement clair à **albédo élevé (0,40 à 0,55)** réfléchit l'énergie solaire et abaisse la température de surface de plus de **10 °C** en été."}
+    ]
+
+    if "sujet_ltp_tire" not in st.session_state:
+        st.session_state.sujet_ltp_tire = None
+
+    if st.button("TIRER AU SORT UN CHANTIER TP (LUMIÈRE & COULEURS)", key="btn_tirage_ltp", use_container_width=True):
+        choix = [i for i in range(3) if i != st.session_state.sujet_ltp_tire]
+        st.session_state.sujet_ltp_tire = random.choice(choix)
+        st.session_state.mesures_ltp_log = []
+        st.rerun()
+
+    if st.session_state.sujet_ltp_tire is None:
+        st.info("Cliquez sur le bouton ci-dessus pour tirer au sort un chantier de Travaux Publics.")
+    else:
+        idx_ltp = st.session_state.sujet_ltp_tire
+        data_ltp = sujets_lum_tp[idx_ltp]
+        st.success(f"Chantier attribué : **{data_ltp['titre']}**")
+        st.markdown(data_ltp["exp"], unsafe_allow_html=True)
+
+        c_img, c_bd = st.columns(2)
+        with c_img:
+            try: st.image(data_ltp["img"], caption=data_ltp["leg"], use_container_width=True)
+            except Exception: st.warning(f"L'image '{data_ltp['img']}' est introuvable.")
+        with c_bd:
+            try: st.image("bd_lum_tp.jpg", caption="La pause BD : Rouge ou jaune ? Toujours vérifier le code couleur !", use_container_width=True)
+            except Exception: st.warning("L'image 'bd_lum_tp.jpg' est introuvable.")
+
+        st.markdown("---")
+        if "mesures_ltp_log" not in st.session_state: st.session_state.mesures_ltp_log = []
+        if idx_ltp == 0:
+            st.radio("Condition d'observation :", ["Crépuscule (UV dominants)", "Nuit noire sous phares"], key="radio_ltp_s0", horizontal=True)
+        elif idx_ltp == 1:
+            st.radio("Éclairage nocturne de la tranchée :", ["Lampe Sodium Jaune (IRC 22)", "Mât LED Blanc Neutre (4500 K - IRC 90)"], index=1, key="radio_ltp_s1", horizontal=True)
+        else:
+            st.slider("Albédo du revêtement routier (0,05 = Enrobé noir | 0,55 = Enrobé clair) :", 0.05, 0.60, 0.35, 0.05, key="slider_ltp_s2")
+
+        if st.button("ENREGISTRER CE RELEVÉ TP", key="btn_rel_ltp", use_container_width=True):
+            if "ltp_mesure_courante" in st.session_state:
+                st.session_state.mesures_ltp_log.append(st.session_state.ltp_mesure_courante)
+                st.rerun()
+
+        st.pyplot(mettre_a_jour_lum_tp_matplotlib(idx_ltp), use_container_width=True)
+        if st.session_state.mesures_ltp_log:
+            df_ltp = pd.DataFrame(st.session_state.mesures_ltp_log, columns=["Paramètre", "Configuration", "Calcul", "Diagnostic"])
+            st.dataframe(df_ltp, use_container_width=True, hide_index=True)
+
+    st.write("---")
+    if "ltp_verrouille_tab5" not in st.session_state: st.session_state.ltp_verrouille_tab5 = False
+    verrou_ltp = st.session_state.ltp_verrouille_tab5
+    sujet_actif_ltp = st.session_state.get("sujet_ltp_tire", None)
+    afficher_atelier_lum_tp(sujet_actif_ltp, verrouille=verrou_ltp)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_ltp = st.checkbox("Je certifie avoir complété l'Atelier 5 (Travaux Publics - Lumière et Couleurs).", key="certif_ltp5", disabled=verrou_ltp)
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_exp_ltp5", use_container_width=True, disabled=verrou_ltp):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif sujet_actif_ltp is None or not case_certif_ltp:
+            st.error("Action refusée : Tirez au sort un chantier et cochez la case de certification.")
+        else:
+            bq = BANQUES_LUM_TP[sujet_actif_ltp]
+            sc_q = sum(1.0 for q in st.session_state.get(f"ordre_quiz_ltp_{sujet_actif_ltp}", []) if st.session_state.get(f"ltp_at5_g_{q['id']}") == q["rep"])
+            sc_t = sum(1.0 for _, _, rep, cle in bq["trous"] if st.session_state.get(f"{cle}_s{sujet_actif_ltp}") == rep)
+            st.session_state.score_ltp5_p1, st.session_state.score_ltp5_p2, st.session_state.score_final_ltp5 = sc_q, sc_t, sc_q + sc_t
+            st.session_state.ltp_verrouille_tab5 = True
+            st.rerun()
+
+    if st.session_state.get("ltp_verrouille_tab5", False) and sujet_actif_ltp is not None:
+        scr1, scr2, tot_s = st.session_state.score_ltp5_p1, st.session_state.score_ltp5_p2, st.session_state.score_final_ltp5
+        ts_ltp = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER 5 SCELLÉ | Note : {tot_s:.1f} / 20")
+        bq = BANQUES_LUM_TP[sujet_actif_ltp]
+        html_ltp = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport Atelier 5 - {n_eleve}</title>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}.status-correct{{color:#10b981;font-weight:bold}}.status-incorrect{{color:#ef4444;font-weight:bold}}</style></head>
+        <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Atelier 5 : Travaux Publics (Lumière et Couleurs) - {sujets_lum_tp[sujet_actif_ltp]['titre']}</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_ltp}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
+        <p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
+        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"""
+        for num, q in enumerate(st.session_state.get(f"ordre_quiz_ltp_{sujet_actif_ltp}", []), 1):
+            qid_curr = q["id"]
+            saisie_curr = st.session_state.get(f"ltp_at5_g_{qid_curr}", "Choisir...")
+            saisie_curr = st.session_state.get(f"ltp_at5_g_{qid_curr}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie_curr) == str(q["rep"]) else "INCORRECT"
+            v_cls = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_ltp += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_curr}</td><td>{q['rep']}</td><td class='{v_cls}'>{v_lbl}</td></tr>"
+        html_ltp += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"
+        for idx_t, (en, _, rep, cle) in enumerate(bq["trous"], 1):
+            saisie_t_curr = st.session_state.get(f"{cle}_s{sujet_actif_ltp}", "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t_curr) == str(rep) else "INCORRECT"
+            v_cls_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_ltp += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t_curr}</td><td>{rep}</td><td class='{v_cls_t}'>{v_lbl_t}</td></tr>"
+        html_ltp += "</tbody></table></body></html>"
+        st.download_button("Télécharger le rapport officiel de l'Atelier 5 (.html)", data=html_ltp, file_name=preparer_nom_fichier("Rapport_Atelier_5_TP_Lumiere").replace(".txt", ".html"), mime="text/html", use_container_width=True)
+
+
+
+with tab6:
+    st.header("Atelier 6 : Applications dans le domaine du Transport Routier")
+
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 16px;">La lumière et les couleurs au service de la signalisation et de la sécurité routière :</p>
+        <p style="margin-bottom: 0; line-height: 1.6;">Dans le transport routier, le filtrage optique (<strong>synthèse soustractive des feux</strong>), la <strong>température de couleur des projecteurs LED</strong> et la <strong>télédétection infrarouge LiDAR</strong> garantissent la sécurité de conduite de jour comme de nuit.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    sujets_lum_trans = [
+        {"titre": "Cas Transport N°1 : Synthèse soustractive et couleurs réglementaires des feux", "img": "lum_trans_feux.jpg", "leg": "Feux arrière LED et catadioptres rétroréfléchissants", "exp": "**Principe :** Un cabochon rouge agit par **synthèse soustractive** en absorbant le vert et le bleu, tandis que les LED colorées émettent directement la radiation réglementaire."},
+        {"titre": "Cas Transport N°2 : Température de couleur des phares et visibilité par brouillard", "img": "lum_trans_phares.jpg", "leg": "Projecteurs LED 5500 K et diffusion atmosphérique", "exp": "**Principe :** Une lumière blanche à **5500 K** maximise le contraste de nuit, mais son pic bleu est fortement **diffusé** par les gouttelettes d'eau dans le brouillard."},
+        {"titre": "Cas Transport N°3 : Capteurs LiDAR infrarouge et reconnaissance des couleurs ADAS", "img": "lum_trans_lidar.jpg", "leg": "Faisceau laser infrarouge 905 nm et caméra de lecture des panneaux", "exp": "**Principe :** Le LiDAR mesure le **temps de vol** d'impulsions infrarouges invisibles, dont la portée dépend de l'**albédo** de l'obstacle."}
+    ]
+
+    if "sujet_ltr_tire" not in st.session_state:
+        st.session_state.sujet_ltr_tire = None
+
+    if st.button("TIRER AU SORT UN SUJET TRANSPORT (LUMIÈRE & COULEURS)", key="btn_tirage_ltr", use_container_width=True):
+        choix = [i for i in range(3) if i != st.session_state.sujet_ltr_tire]
+        st.session_state.sujet_ltr_tire = random.choice(choix)
+        st.session_state.mesures_ltr_log = []
+        st.rerun()
+
+    if st.session_state.sujet_ltr_tire is None:
+        st.info("Cliquez sur le bouton ci-dessus pour tirer au sort un cas pratique du Transport Routier.")
+    else:
+        idx_ltr = st.session_state.sujet_ltr_tire
+        data_ltr = sujets_lum_trans[idx_ltr]
+        st.success(f"Étude attribuée : **{data_ltr['titre']}**")
+        st.markdown(data_ltr["exp"], unsafe_allow_html=True)
+
+        c_img, c_bd = st.columns(2)
+        with c_img:
+            try: st.image(data_ltr["img"], caption=data_ltr["leg"], use_container_width=True)
+            except Exception: st.warning(f"L'image '{data_ltr['img']}' est introuvable.")
+        with c_bd:
+            try: st.image("bd_lum_trans.jpg", caption="La pause BD : Pleins phares dans le brouillard, un mur tout blanc !", use_container_width=True)
+            except Exception: st.warning("L'image 'bd_lum_trans.jpg' est introuvable.")
+
+        st.markdown("---")
+        if "mesures_ltr_log" not in st.session_state: st.session_state.mesures_ltr_log = []
+        if idx_ltr == 0:
+            st.radio("Sélectionnez le filtre / cabochon du feu :", ["Cabochon Rouge (Feu Stop)", "Cabochon Ambre (Clignotant)", "Cabochon Transparent (Feu de recul)"], key="radio_ltr_s0", horizontal=True)
+        elif idx_ltr == 1:
+            c_t1, c_t2 = st.columns([0.65, 0.35], vertical_alignment="bottom")
+            with c_t1: st.slider("Température de couleur des projecteurs (K) :", 2800, 7500, 5500, 100, key="slider_ltr_s1")
+            with c_t2: st.checkbox("Présence de brouillard dense", key="check_ltr_s1")
+        else:
+            st.radio("Choisissez la surface de l'obstacle devant le camion :", ["Carrosserie noire mate (Albédo 0,08)", "Carrosserie grise métallisée (Albédo 0,45)", "Plaque rétroréfléchissante blanche (Albédo 0,85)"], index=2, key="radio_ltr_s2", horizontal=True)
+
+        if st.button("ENREGISTRER CE CONTRÔLE TRANSPORT", key="btn_rel_ltr", use_container_width=True):
+            if "ltr_mesure_courante" in st.session_state:
+                st.session_state.mesures_ltr_log.append(st.session_state.ltr_mesure_courante)
+                st.rerun()
+
+        st.pyplot(mettre_a_jour_lum_trans_matplotlib(idx_ltr), use_container_width=True)
+        if st.session_state.mesures_ltr_log:
+            df_ltr = pd.DataFrame(st.session_state.mesures_ltr_log, columns=["Paramètre", "Condition", "Propriété optique", "Diagnostic"])
+            st.dataframe(df_ltr, use_container_width=True, hide_index=True)
+
+    st.write("---")
+    if "ltr_verrouille_tab6" not in st.session_state: st.session_state.ltr_verrouille_tab6 = False
+    verrou_ltr = st.session_state.ltr_verrouille_tab6
+    sujet_actif_ltr = st.session_state.get("sujet_ltr_tire", None)
+    afficher_atelier_lum_trans(sujet_actif_ltr, verrouille=verrou_ltr)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_ltr = st.checkbox("Je certifie avoir complété l'Atelier 6 (Transport Routier - Lumière et Couleurs).", key="certif_ltr6", disabled=verrou_ltr)
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 6", key="btn_exp_ltr6", use_container_width=True, disabled=verrou_ltr):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif sujet_actif_ltr is None or not case_certif_ltr:
+            st.error("Action refusée : Tirez au sort un sujet et cochez la case de certification.")
+        else:
+            bq = BANQUES_LUM_TRANS[sujet_actif_ltr]
+            sc_q = sum(1.0 for q in st.session_state.get(f"ordre_quiz_ltr_{sujet_actif_ltr}", []) if st.session_state.get(f"ltr_at6_g_{q['id']}") == q["rep"])
+            sc_t = sum(1.0 for _, _, rep, cle in bq["trous"] if st.session_state.get(f"{cle}_s{sujet_actif_ltr}") == rep)
+            st.session_state.score_ltr6_p1, st.session_state.score_ltr6_p2, st.session_state.score_final_ltr6 = sc_q, sc_t, sc_q + sc_t
+            st.session_state.ltr_verrouille_tab6 = True
+            st.rerun()
+
+    if st.session_state.get("ltr_verrouille_tab6", False) and sujet_actif_ltr is not None:
+        scr1, scr2, tot_s = st.session_state.score_ltr6_p1, st.session_state.score_ltr6_p2, st.session_state.score_final_ltr6
+        ts_ltr = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER 6 SCELLÉ | Note : {tot_s:.1f} / 20")
+        bq = BANQUES_LUM_TRANS[sujet_actif_ltr]
+        html_ltr = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport Atelier 6 - {n_eleve}</title>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}.status-correct{{color:#10b981;font-weight:bold}}.status-incorrect{{color:#ef4444;font-weight:bold}}</style></head>
+        <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Atelier 6 : Transport Routier (Lumière et Couleurs) - {sujets_lum_trans[sujet_actif_ltr]['titre']}</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_ltr}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
+        <p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
+        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"""
+        for num, q in enumerate(st.session_state.get(f"ordre_quiz_ltr_{sujet_actif_ltr}", []), 1):
+            qid_curr = q["id"]
+            saisie_curr = st.session_state.get(f"ltr_at6_g_{qid_curr}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie_curr) == str(q["rep"]) else "INCORRECT"
+            v_cls = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_ltr += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_curr}</td><td>{q['rep']}</td><td class='{v_cls}'>{v_lbl}</td></tr>"
+        html_ltr += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"
+        for idx_t, (en, _, rep, cle) in enumerate(bq["trous"], 1):
+            saisie_t_curr = st.session_state.get(f"{cle}_s{sujet_actif_ltr}", "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t_curr) == str(rep) else "INCORRECT"
+            v_cls_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_ltr += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t_curr}</td><td>{rep}</td><td class='{v_cls_t}'>{v_lbl_t}</td></tr>"
+        html_ltr += "</tbody></table></body></html>"
+        st.download_button("Télécharger le rapport officiel de l'Atelier 6 (.html)", data=html_ltr, file_name=preparer_nom_fichier("Rapport_Atelier_6_Transport_Lumiere").replace(".txt", ".html"), mime="text/html", use_container_width=True)
+
+
+with tab7:
+    st.header("Atelier 7 : Applications dans le domaine du Géomètre Topographe")
+
+    st.markdown("""
+    <div style="background-color: #f8fafc; border-left: 4px solid #1e3a8a; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #1e293b;">
+        <p style="font-weight: bold; color: #1e3a8a; margin-top: 0; font-size: 16px;">La lumière et les couleurs dans les levés topographiques et la télédétection :</p>
+        <p style="margin-bottom: 0; line-height: 1.6;">Chez le géomètre topographe, la physique des rayonnements explique la <strong>haute visibilité des lasers verts (532 nm)</strong>, l'<strong>analyse multispectrale NDVI par drone</strong> et la <strong>mesure millimétrique de distance par réflexion sur prisme</strong>.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    sujets_lum_geo = [
+        {"titre": "Mission N°1 : Visibilité des lasers de chantier Rouge (635 nm) vs Vert (532 nm)", "img": "lum_geo_laser.jpg", "leg": "Comparaison de visibilité entre laser rouge et laser vert sur chantier", "exp": "**Principe :** L'œil humain est **4 fois plus sensible** à la longueur d'onde verte (**532 nm**) qu'au rouge (**635 nm**) en vision diurne."},
+        {"titre": "Mission N°2 : Télédétection multispectrale par drone et indice NDVI", "img": "lum_geo_ndvi.jpg", "leg": "Carte NDVI issue d'un levé drone multispectral (Rouge + Proche Infrarouge)", "exp": "**Principe :** La végétation saine absorbe le **Rouge** et réfléchit le **Proche Infrarouge (PIR)**, donnant un indice **NDVI = (PIR - R) / (PIR + R)** élevé."},
+        {"titre": "Mission N°3 : Distancemètre laser sur prisme et nuage de points 3D colorisé", "img": "lum_geo_prisme.jpg", "leg": "Prisme topographique rétroréflecteur et scanner 3D", "exp": "**Principe :** Le prisme renvoie le faisceau infrarouge par **réflexion totale interne**, tandis que l'indice de l'air corrige la vitesse de la lumière (**PPM**)."}
+    ]
+
+    if "sujet_lgeo_tire" not in st.session_state:
+        st.session_state.sujet_lgeo_tire = None
+
+    if st.button("TIRER AU SORT UNE MISSION GÉOMÈTRE (LUMIÈRE & COULEURS)", key="btn_tirage_lgeo", use_container_width=True):
+        choix = [i for i in range(3) if i != st.session_state.sujet_lgeo_tire]
+        st.session_state.sujet_lgeo_tire = random.choice(choix)
+        st.session_state.mesures_lgeo_log = []
+        st.rerun()
+
+    if st.session_state.sujet_lgeo_tire is None:
+        st.info("Cliquez sur le bouton ci-dessus pour tirer au sort une mission de Géomètre Topographe.")
+    else:
+        idx_lgeo = st.session_state.sujet_lgeo_tire
+        data_lgeo = sujets_lum_geo[idx_lgeo]
+        st.success(f"Mission attribuée : **{data_lgeo['titre']}**")
+        st.markdown(data_lgeo["exp"], unsafe_allow_html=True)
+
+        c_img, c_bd = st.columns(2)
+        with c_img:
+            try: st.image(data_lgeo["img"], caption=data_lgeo["leg"], use_container_width=True)
+            except Exception: st.warning(f"L'image '{data_lgeo['img']}' est introuvable.")
+        with c_bd:
+            try: st.image("bd_lum_geo.jpg", caption="La pause BD : Avec le laser vert, même en plein soleil on voit le trait !", use_container_width=True)
+            except Exception: st.warning("L'image 'bd_lum_geo.jpg' est introuvable.")
+
+        st.markdown("---")
+        if "mesures_lgeo_log" not in st.session_state: st.session_state.mesures_lgeo_log = []
+        if idx_lgeo == 0:
+            st.radio("Sélectionnez le type de niveau laser :", ["Laser Rouge Standard (635 nm)", "Laser Vert Chantier (532 nm)"], index=1, key="radio_lgeo_s0", horizontal=True)
+        elif idx_lgeo == 1:
+            st.radio("Zone survolée par le drone multispectral :", ["Végétation dense irriguée (Forêt / Culture)", "Sol nu / Parking en enrobé", "Plan d'eau / Rivière"], key="radio_lgeo_s1", horizontal=True)
+        else:
+            st.slider("Température de l'air sur le chantier (°C) [Référence = 15 °C] :", -5.0, 40.0, 15.0, 1.0, key="slider_lgeo_s2")
+
+        if st.button("ENREGISTRER CE POINT TOPOGRAPHIQUE", key="btn_rel_lgeo", use_container_width=True):
+            if "lgeo_mesure_courante" in st.session_state:
+                st.session_state.mesures_lgeo_log.append(st.session_state.lgeo_mesure_courante)
+                st.rerun()
+
+        st.pyplot(mettre_a_jour_lum_geo_matplotlib(idx_lgeo), use_container_width=True)
+        if st.session_state.mesures_lgeo_log:
+            df_lgeo = pd.DataFrame(st.session_state.mesures_lgeo_log, columns=["Paramètre", "Mesure 1", "Mesure 2", "Résultat"])
+            st.dataframe(df_lgeo, use_container_width=True, hide_index=True)
+
+    st.write("---")
+    if "lgeo_verrouille_tab7" not in st.session_state: st.session_state.lgeo_verrouille_tab7 = False
+    verrou_lgeo = st.session_state.lgeo_verrouille_tab7
+    sujet_actif_lgeo = st.session_state.get("sujet_lgeo_tire", None)
+    afficher_atelier_lum_geo(sujet_actif_lgeo, verrouille=verrou_lgeo)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_lgeo = st.checkbox("Je certifie avoir complété l'Atelier 7 (Géomètre Topographe - Lumière et Couleurs).", key="certif_lgeo7", disabled=verrou_lgeo)
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 7", key="btn_exp_lgeo7", use_container_width=True, disabled=verrou_lgeo):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif sujet_actif_lgeo is None or not case_certif_lgeo:
+            st.error("Action refusée : Tirez au sort une mission et cochez la case de certification.")
+        else:
+            bq = BANQUES_LUM_GEO[sujet_actif_lgeo]
+            sc_q = sum(1.0 for q in st.session_state.get(f"ordre_quiz_lgeo_{sujet_actif_lgeo}", []) if st.session_state.get(f"lgeo_at7_g_{q['id']}") == q["rep"])
+            sc_t = sum(1.0 for _, _, rep, cle in bq["trous"] if st.session_state.get(f"{cle}_s{sujet_actif_lgeo}") == rep)
+            st.session_state.score_lgeo7_p1, st.session_state.score_lgeo7_p2, st.session_state.score_final_lgeo7 = sc_q, sc_t, sc_q + sc_t
+            st.session_state.lgeo_verrouille_tab7 = True
+            st.rerun()
+
+    if st.session_state.get("lgeo_verrouille_tab7", False) and sujet_actif_lgeo is not None:
+        scr1, scr2, tot_s = st.session_state.score_lgeo7_p1, st.session_state.score_lgeo7_p2, st.session_state.score_final_lgeo7
+        ts_lgeo = datetime.now().strftime("%Y-%m-%d à %H:%M:%S")
+        st.success(f"ATELIER 7 SCELLÉ | Note : {tot_s:.1f} / 20")
+        bq = BANQUES_LUM_GEO[sujet_actif_lgeo]
+        html_lgeo = f"""<!DOCTYPE html><html><head><meta charset="utf-8"><title>Rapport Atelier 7 - {n_eleve}</title>
+        <style>body{{font-family:Arial,sans-serif;margin:30px;background:#f8fafc;color:#1e293b}}.header-box{{background:#1e3a8a;color:white;padding:20px;border-radius:8px;margin-bottom:25px;position:relative}}.score-badge{{position:absolute;top:20px;right:20px;background:#eab308;color:#1e293b;padding:15px 25px;border-radius:8px;font-size:24px;font-weight:bold;border:2px solid white}}table{{width:100%;border-collapse:collapse;margin-bottom:25px;background:white}}th{{background:#0f172a;color:white;padding:10px;text-align:left}}td{{padding:10px;border-bottom:1px solid #e2e8f0}}.status-correct{{color:#10b981;font-weight:bold}}.status-incorrect{{color:#ef4444;font-weight:bold}}</style></head>
+        <body><div class="header-box"><h1>Professeur Laurent GALLET</h1><p>Atelier 7 : Géomètre Topographe (Lumière et Couleurs) - {sujets_lum_geo[sujet_actif_lgeo]['titre']}</p><p>Élève : {p_eleve} {n_eleve} | Classe : {c_eleve} | Scellé le : {ts_lgeo}</p><div class="score-badge">SCORE<br>{tot_s:.1f} / 20</div></div>
+        <p style="background:white;padding:15px;border-left:4px solid #1e3a8a;">Quiz : <strong>{scr1:.1f}/10</strong> | Synthèse : <strong>{scr2:.1f}/10</strong> | Total : <strong>{tot_s:.1f}/20</strong></p>
+        <table><thead><tr><th>N°</th><th>Question</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"""
+        for num, q in enumerate(st.session_state.get(f"ordre_quiz_lgeo_{sujet_actif_lgeo}", []), 1):
+            qid_curr = q["id"]
+            saisie_curr = st.session_state.get(f"lgeo_at7_g_{qid_curr}", "Choisir...")
+            v_lbl = "CORRECT" if str(saisie_curr) == str(q["rep"]) else "INCORRECT"
+            v_cls = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_lgeo += f"<tr><td>{num}</td><td>{q['q']}</td><td>{saisie_curr}</td><td>{q['rep']}</td><td class='{v_cls}'>{v_lbl}</td></tr>"
+        html_lgeo += "</tbody></table><table><thead><tr><th>N°</th><th>Phrase à trous</th><th>Saisie</th><th>Attendu</th><th>Verdict</th></tr></thead><tbody>"
+        for idx_t, (en, _, rep, cle) in enumerate(bq["trous"], 1):
+            saisie_t_curr = st.session_state.get(f"{cle}_s{sujet_actif_lgeo}", "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t_curr) == str(rep) else "INCORRECT"
+            v_cls_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_lgeo += f"<tr><td>{idx_t}</td><td>{en}</td><td>{saisie_t_curr}</td><td>{rep}</td><td class='{v_cls_t}'>{v_lbl_t}</td></tr>"
+        html_lgeo += "</tbody></table></body></html>"
+        st.download_button("Télécharger le rapport officiel de l'Atelier 7 (.html)", data=html_lgeo, file_name=preparer_nom_fichier("Rapport_Atelier_7_Geometre_Lumiere").replace(".txt", ".html"), mime="text/html", use_container_width=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
