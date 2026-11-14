@@ -1037,7 +1037,7 @@ with tab3:
     c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
     case_certif_opt5 = st.checkbox(
-        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier 5.", 
+        "Je certifie avoir complete l'integralite des questionnaires de l'Atelier.", 
         key="check_certif_opt5_officiel_20pts", 
         disabled=st.session_state.get("opt5_verrouille", False)
     )
