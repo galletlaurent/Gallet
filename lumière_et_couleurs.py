@@ -1276,7 +1276,7 @@ def recuperer_couleurs_newton():
 
 
 def dessiner_disque_newton():
-    """Animation Canvas HTML5 fluide à 60 FPS sans aucun st.rerun()."""
+    """Animation Canvas HTML5 sans crochets pour éviter toute altération au copier-coller."""
     vitesse = float(st.session_state.get("var_vitesse_disque", 10.0))
     anim_en_cours = bool(st.session_state.get("anim_en_cours", False))
     vitesse_eff = vitesse if anim_en_cours else 0.0
@@ -1300,9 +1300,9 @@ def dessiner_disque_newton():
             const rayon = 125;
 
             const vitesse = {vitesse_eff};
-            const rTab =;
-            const gTab =;
-            const bTab =;
+            const rTab = new Array(239, 249, 234, 34, 37, 79, 124);
+            const gTab = new Array(68, 115, 179, 197, 99, 70, 58);
+            const bTab = new Array(68, 22, 8, 94, 235, 229, 237);
 
             const fusion = Math.min(1.0, vitesse / 25.0);
             let angle = 0;
@@ -1332,9 +1332,9 @@ def dessiner_disque_newton():
                     for (let i = 0; i < 7; i++) {{
                         const a1 = aOffset + i * pas;
                         const a2 = a1 + pas + 0.02;
-                        const r = Math.round(rTab[i] + (255 - rTab[i]) * fusion);
-                        const g = Math.round(gTab[i] + (255 - gTab[i]) * fusion);
-                        const b = Math.round(bTab[i] + (255 - bTab[i]) * fusion);
+                        const r = Math.round(rTab.at(i) + (255 - rTab.at(i)) * fusion);
+                        const g = Math.round(gTab.at(i) + (255 - gTab.at(i)) * fusion);
+                        const b = Math.round(bTab.at(i) + (255 - bTab.at(i)) * fusion);
 
                         ctx.beginPath();
                         ctx.moveTo(cx, cy);
@@ -1374,6 +1374,7 @@ def dessiner_disque_newton():
     </script>
     """
     return html_canvas
+
 
 
 def gerer_action_disque():
