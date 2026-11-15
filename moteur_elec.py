@@ -1148,6 +1148,35 @@ with tab1:
         html_export_suites1 += """
                 </tbody>
             </table>
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        trous_tab1 = [
+            ("1. La plaque signaletique resume les caracteristiques ......... du constructeur.", "nominales", "t1_h_t1_c1"),
+            ("2. La puissance utile s'exprime en kilowatts ou en chevaux .........", "vapeur", "t1_h_t1_c2"),
+            ("3. Le couplage etoile soumet chaque bobine a la tension ......... du reseau.", "simple", "t1_h_t1_c3"),
+            ("4. La norme internationale de classification est la norme .........", "IEC", "t1_h_t1_c4"),
+            ("5. Un rendement eleve permet de reduire les pertes par effet .........", "Joule", "t1_h_t1_c5"),
+            ("6. L'indice IP definit le niveau de protection de l'......... externe.", "enveloppe", "t1_h_t1_c6"),
+            ("7. La vitesse reelle de rotation est toujours indiquee en ......... par minute.", "tours", "t1_h_t1_c7"),
+            ("8. Le courant absorbe nominal est l'intensite en ligne notee .........", "In", "t1_h_t1_c8"),
+            ("9. Le cosinus phi est egalement appele facteur de .........", "puissance", "t1_h_t1_c9"),
+            ("10. La frequence nominale en Europe est standardisee a 50 .........", "Hertz", "t1_h_t1_c10"),
+        ]
+        for num, (phrase, attendu, cle) in enumerate(trous_tab1, 1):
+            saisie = st.session_state.get(cle, "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_suites1 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites1 += """
+                </tbody>
+            </table>
         </body>
         </html>
         """
@@ -1160,6 +1189,7 @@ with tab1:
             key="dl_btn_html_tab1",
             use_container_width=True
         )
+
 
 # ==============================================================================
 # 2. HISTORIQUE GENERAL
