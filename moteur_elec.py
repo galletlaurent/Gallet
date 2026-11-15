@@ -1222,6 +1222,156 @@ with tab2:
     else:
         st.write("Observation : Le champ electrique prend le dessus, l'aiguille pivote fermement a 90 degres.")
 
+    st.write("---")
+    if "suite_verrouille_tab2" not in st.session_state:
+        st.session_state.suite_verrouille_tab2 = False
+    verrou_at2 = st.session_state.suite_verrouille_tab2
+
+    afficher_atelier_tab2(verrouille=verrou_at2)
+    
+    st.write("---")
+    st.subheader("Synthese et validation de l'Atelier 2")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat2 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier Historique.",
+        key="check_certif_tab2_final_net",
+        disabled=verrou_at2,
+    )
+    
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 2", key="btn_export_suite2_official_net", use_container_width=True, disabled=verrou_at2):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat2: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_q2 = 0.0
+            if "ordre_quiz_tab2_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab2_aleatoire:
+                    reponse_eleve = st.session_state.get(f"t2_q_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q2 += 1.0
+
+            score_t2 = sum([
+                st.session_state.get("t2_h_t2_c1") == "magnétisme",
+                st.session_state.get("t2_h_t2_c2") == "mercure",
+                st.session_state.get("t2_h_t2_c3") == "chariot",
+                st.session_state.get("t2_h_t2_c4") == "courant",
+                st.session_state.get("t2_h_t2_c5") == "triphasé",
+                st.session_state.get("t2_h_t2_c6") == "Edison",
+                st.session_state.get("t2_h_t2_c7") == "contacts",
+                st.session_state.get("t2_h_t2_c8") == "excitation",
+                st.session_state.get("t2_h_t2_c9") == "Tesla",
+                st.session_state.get("t2_h_t2_c10") == "Faraday",
+            ])
+
+            st.session_state.score_suite2_p1 = round(float(score_q2), 1)
+            st.session_state.score_suite2_p2 = round(float(score_t2), 1)
+            st.session_state.score_final_suite2 = round(float(score_q2 + score_t2), 1)
+            st.session_state.suite_verrouille_tab2 = True
+            st.rerun()
+
+    if st.session_state.get("suite_verrouille_tab2", False):
+        scr1 = st.session_state.get("score_suite2_p1", 0.0)
+        scr2 = st.session_state.get("score_suite2_p2", 0.0)
+        tot_s = st.session_state.get("score_final_suite2", 0.0)
+
+        timestamp_suite2 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER HISTORIQUE SCELLE | Note de session : {tot_s:.1f} / 20")
+
+        html_export_suites2 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Historique - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation - Moteurs Electriques</h1>
+                <p>Atelier 2 : Reperes Historiques et Pionniers</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_suite2}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Historique : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue a la Synthese du cours : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 2 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab2_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab2_aleatoire, 1):
+                saisie = st.session_state.get(f"t2_q_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_suites2 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites2 += """
+                </tbody>
+            </table>
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        trous_tab2 = [
+            ("1. En 1820, Orsted etablit la passerelle entre electricite et .........", "magnétisme", "t2_h_t2_c1"),
+            ("2. Le premier prototype de Faraday en 1821 utilisait un bain de .........", "mercure", "t2_h_t2_c2"),
+            ("3. Davenport utilisa un moteur pour propulser un petit ......... sur rails.", "chariot", "t2_h_t2_c3"),
+            ("4. L'invention du collecteur mecanique a permis de redresser le .........", "courant", "t2_h_t2_c4"),
+            ("5. La distribution de l'energie a grande echelle a profite de l'alternatif .........", "triphasé", "t2_h_t2_c5"),
+            ("6. Tesla travailla brievement pour la compagnie continentale d'.........", "Edison", "t2_h_t2_c6"),
+            ("7. Le rotor a cage d'ecureuil de 1889 a elimine le besoin de .........", "contacts", "t2_h_t2_c7"),
+            ("8. Siemens inventa en 1866 la premiere dynamo a auto-.........", "excitation", "t2_h_t2_c8"),
+            ("9. L'electronique de puissance moderne a relance les concepts de .........", "Tesla", "t2_h_t2_c9"),
+            ("10. Les lois de Maxwell unifient les decouvertes d'Ampere et .........", "Faraday", "t2_h_t2_c10"),
+        ]
+        for num, (phrase, attendu, cle) in enumerate(trous_tab2, 1):
+            saisie = st.session_state.get(cle, "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_suites2 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites2 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html2 = preparer_nom_fichier("Rapport_Atelier_2").replace(".txt", ".html")
+        st.download_button(
+            label="Telecharger le rapport d'evaluation officiel de l'Atelier 2 (.html)",
+            data=html_export_suites2,
+            file_name=nom_fichier_html2,
+            mime="text/html",
+            key="dl_btn_html_tab2",
+            use_container_width=True
+        )
 
 
 
@@ -1254,6 +1404,156 @@ with tab3:
         
     st.info(f"Observation de la balancoire : Force appliquee de {intensite_f} N avec une {direction}.")
 
+    st.write("---")
+    if "suite_verrouille_tab3" not in st.session_state:
+        st.session_state.suite_verrouille_tab3 = False
+    verrou_at3 = st.session_state.suite_verrouille_tab3
+
+    afficher_atelier_tab3(verrouille=verrou_at3)
+    
+    st.write("---")
+    st.subheader("Synthese et validation de l'Atelier 3")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat3 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier Principe General.",
+        key="check_certif_tab3_final_net",
+        disabled=verrou_at3,
+    )
+    
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 3", key="btn_export_suite3_official_net", use_container_width=True, disabled=verrou_at3):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat3: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_q3 = 0.0
+            if "ordre_quiz_tab3_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab3_aleatoire:
+                    reponse_eleve = st.session_state.get(f"t3_q_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q3 += 1.0
+
+            score_t3 = sum([
+                st.session_state.get("t3_h_t3_c1") == "inducteur",
+                st.session_state.get("t3_h_t3_c2") == "induit",
+                st.session_state.get("t3_h_t3_c3") == "induction",
+                st.session_state.get("t3_h_t3_c4") == "courant",
+                st.session_state.get("t3_h_t3_c5") == "perpendiculaire",
+                st.session_state.get("t3_h_t3_c6") == "couple",
+                st.session_state.get("t3_h_t3_c7") == "mouvement",
+                st.session_state.get("t3_h_t3_c8") == "Foucault",
+                st.session_state.get("t3_h_t3_c9") == "couple",
+                st.session_state.get("t3_h_t3_c10") == "faible",
+            ])
+
+            st.session_state.score_suite3_p1 = round(float(score_q3), 1)
+            st.session_state.score_suite3_p2 = round(float(score_t3), 1)
+            st.session_state.score_final_suite3 = round(float(score_q3 + score_t3), 1)
+            st.session_state.suite_verrouille_tab3 = True
+            st.rerun()
+
+    if st.session_state.get("suite_verrouille_tab3", False):
+        scr1 = st.session_state.get("score_suite3_p1", 0.0)
+        scr2 = st.session_state.get("score_suite3_p2", 0.0)
+        tot_s = st.session_state.get("score_final_suite3", 0.0)
+
+        timestamp_suite3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER PRINCIPE GENERAL SCELLE | Note de session : {tot_s:.1f} / 20")
+
+        html_export_suites3 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Principe General - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation - Moteurs Electriques</h1>
+                <p>Atelier 3 : Physique de la Conversion Electromecanique</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_suite3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Principe General : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue a la Synthese du cours : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 3 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab3_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab3_aleatoire, 1):
+                saisie = st.session_state.get(f"t3_q_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_suites3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites3 += """
+                </tbody>
+            </table>
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        trous_tab3 = [
+            ("1. Le stator joue generalement le role d'......... en generant le flux.", "inducteur", "t3_h_t3_c1"),
+            ("2. Le rotor subit les forces et fait office d'......... mobile.", "induit", "t3_h_t3_c2"),
+            ("3. La force de Laplace est proportionnelle a l'......... magnetique B.", "induction", "t3_h_t3_c3"),
+            ("4. Le conducteur doit etre parcouru par un ......... electrique.", "courant", "t3_h_t3_c4"),
+            ("5. La force mecanique generee est ......... au plan forme par I et B.", "perpendiculaire", "t3_h_t3_c5"),
+            ("6. L'accumulation des forces radiales se traduit par un ......... moteur.", "couple", "t3_h_t3_c6"),
+            ("7. La f.e.m. induite apparait des que le conducteur est en .........", "mouvement", "t3_h_t3_c7"),
+            ("8. Le circuit magnetique est feuillete pour reduire les courants de .........", "Foucault", "t3_h_t3_c8"),
+            ("9. L'evanouissement du champ magnetique annulerait le ......... mecanique.", "couple", "t3_h_t3_c9"),
+            ("10. L'entrefer doit etre le plus ......... possible pour maximiser le flux.", "faible", "t3_h_t3_c10"),
+        ]
+        for num, (phrase, attendu, cle) in enumerate(trous_tab3, 1):
+            saisie = st.session_state.get(cle, "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_suites3 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites3 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html3 = preparer_nom_fichier("Rapport_Atelier_3").replace(".txt", ".html")
+        st.download_button(
+            label="Telecharger le rapport d'evaluation officiel de l'Atelier 3 (.html)",
+            data=html_export_suites3,
+            file_name=nom_fichier_html3,
+            mime="text/html",
+            key="dl_btn_html_tab3",
+            use_container_width=True
+        )
 
 
 
@@ -1275,6 +1575,156 @@ with tab4:
     st.metric("Vitesse de rotation de l'arbre", f"{vitesse_calc:.0f} tr/min")
     st.write("Observation : La vitesse de rotation evolue de maniere parfaitement proportionnelle et lineaire a votre curseur de tension.")
 
+    st.write("---")
+    if "suite_verrouille_tab4" not in st.session_state:
+        st.session_state.suite_verrouille_tab4 = False
+    verrou_at4 = st.session_state.suite_verrouille_tab4
+
+    afficher_atelier_tab4(verrouille=verrou_at4)
+    
+    st.write("---")
+    st.subheader("Synthese et validation de l'Atelier 4")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat4 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier Moteur CC Excitation Independante.",
+        key="check_certif_tab4_final_net",
+        disabled=verrou_at4,
+    )
+    
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 4", key="btn_export_suite4_official_net", use_container_width=True, disabled=verrou_at4):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat4: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_q4 = 0.0
+            if "ordre_quiz_tab4_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab4_aleatoire:
+                    reponse_eleve = st.session_state.get(f"t4_q_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q4 += 1.0
+
+            score_t4 = sum([
+                st.session_state.get("t4_h_t4_c1") == "induit",
+                st.session_state.get("t4_h_t4_c2") == "stator",
+                st.session_state.get("t4_h_t4_c3") == "collecteur",
+                st.session_state.get("t4_h_t4_c4") == "induit",
+                st.session_state.get("t4_h_t4_c5") == "constante",
+                st.session_state.get("t4_h_t4_c6") == "U",
+                st.session_state.get("t4_h_t4_c7") == "ligne",
+                st.session_state.get("t4_h_t4_c8") == "vitesse",
+                st.session_state.get("t4_h_t4_c9") == "emballement",
+                st.session_state.get("t4_h_t4_c10") == "XIXe",
+            ])
+
+            st.session_state.score_suite4_p1 = round(float(score_q4), 1)
+            st.session_state.score_suite4_p2 = round(float(score_t4), 1)
+            st.session_state.score_final_suite4 = round(float(score_q4 + score_t4), 1)
+            st.session_state.suite_verrouille_tab4 = True
+            st.rerun()
+
+    if st.session_state.get("suite_verrouille_tab4", False):
+        scr1 = st.session_state.get("score_suite4_p1", 0.0)
+        scr2 = st.session_state.get("score_suite4_p2", 0.0)
+        tot_s = st.session_state.get("score_final_suite4", 0.0)
+
+        timestamp_suite4 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER MOTEUR CC EXCITATION INDEPENDANTE SCELLE | Note de session : {tot_s:.1f} / 20")
+
+        html_export_suites4 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Moteur CC Excitation Independante - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation - Moteurs Electriques</h1>
+                <p>Atelier 4 : Moteur CC a Excitation Independante / Separee</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_suite4}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz CC Independante : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue a la Synthese du cours : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 4 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab4_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab4_aleatoire, 1):
+                saisie = st.session_state.get(f"t4_q_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_suites4 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites4 += """
+                </tbody>
+            </table>
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        trous_tab4 = [
+            ("1. Ce moteur separe de facon etanche le circuit inducteur et .........", "induit", "t4_h_t4_c1"),
+            ("2. L'inducteur fixe est loge au sein de la carcasse appelee .........", "stator", "t4_h_t4_c2"),
+            ("3. Le rotor, ou induit, recoit son courant via l'ensemble balais-.........", "collecteur", "t4_h_t4_c3"),
+            ("4. A flux constant, le couple est directement lie au courant d'.........", "induit", "t4_h_t4_c4"),
+            ("5. La vitesse d'un moteur a excitation separee est presque .........", "constante", "t4_h_t4_c5"),
+            ("6. La tension d'alimentation de l'induit est notee reglementairement .........", "U", "t4_h_t4_c6"),
+            ("7. La f.e.m. s'oppose en permanence a la tension de la source de .........", "ligne", "t4_h_t4_c7"),
+            ("8. Une baisse de tension d'induit engendre une baisse de la .........", "vitesse", "t4_h_t4_c8"),
+            ("9. Le flux inducteur doit rester stable pour eviter l'......... de l'axe.", "emballement", "t4_h_t4_c9"),
+            ("10. Werner von Siemens a grandement democratise ces principes au ......... siecle.", "XIXe", "t4_h_t4_c10"),
+        ]
+        for num, (phrase, attendu, cle) in enumerate(trous_tab4, 1):
+            saisie = st.session_state.get(cle, "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_suites4 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites4 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html4 = preparer_nom_fichier("Rapport_Atelier_4").replace(".txt", ".html")
+        st.download_button(
+            label="Telecharger le rapport d'evaluation officiel de l'Atelier 4 (.html)",
+            data=html_export_suites4,
+            file_name=nom_fichier_html4,
+            mime="text/html",
+            key="dl_btn_html_tab4",
+            use_container_width=True
+        )
 
 
 
@@ -1303,6 +1753,156 @@ with tab5:
     else:
         st.write(f"Observation : Regime stabilise et securise a {15000 / couple_resistant:.0f} tr/min.")
 
+    st.write("---")
+    if "suite_verrouille_tab5" not in st.session_state:
+        st.session_state.suite_verrouille_tab5 = False
+    verrou_at5 = st.session_state.suite_verrouille_tab5
+
+    afficher_atelier_tab5(verrouille=verrou_at5)
+    
+    st.write("---")
+    st.subheader("Synthese et validation de l'Atelier 5")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat5 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier Moteur CC Excitation Serie.",
+        key="check_certif_tab5_final_net",
+        disabled=verrou_at5,
+    )
+    
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 5", key="btn_export_suite5_official_net", use_container_width=True, disabled=verrou_at5):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat5: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_q5 = 0.0
+            if "ordre_quiz_tab5_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab5_aleatoire:
+                    reponse_eleve = st.session_state.get(f"t5_q_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q5 += 1.0
+
+            score_t5 = sum([
+                st.session_state.get("t5_h_t5_c1") == "série",
+                st.session_state.get("t5_h_t5_c2") == "stator",
+                st.session_state.get("t5_h_t5_c3") == "élevé",
+                st.session_state.get("t5_h_t5_c4") == "emballement",
+                st.session_state.get("t5_h_t5_c5") == "couple",
+                st.session_state.get("t5_h_t5_c6") == "augmente",
+                st.session_state.get("t5_h_t5_c7") == "ferroviaire",
+                st.session_state.get("t5_h_t5_c8") == "faible",
+                st.session_state.get("t5_h_t5_c9") == "sens",
+                st.session_state.get("t5_h_t5_c10") == "universelle",
+            ])
+
+            st.session_state.score_suite5_p1 = round(float(score_q5), 1)
+            st.session_state.score_suite5_p2 = round(float(score_t5), 1)
+            st.session_state.score_final_suite5 = round(float(score_q5 + score_t5), 1)
+            st.session_state.suite_verrouille_tab5 = True
+            st.rerun()
+
+    if st.session_state.get("suite_verrouille_tab5", False):
+        scr1 = st.session_state.get("score_suite5_p1", 0.0)
+        scr2 = st.session_state.get("score_suite5_p2", 0.0)
+        tot_s = st.session_state.get("score_final_suite5", 0.0)
+
+        timestamp_suite5 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER MOTEUR CC EXCITATION SERIE SCELLE | Note de session : {tot_s:.1f} / 20")
+
+        html_export_suites5 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Moteur CC Excitation Serie - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation - Moteurs Electriques</h1>
+                <p>Atelier 5 : Moteur CC a Excitation Serie</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_suite5}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz CC Serie : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue a la Synthese du cours : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 5 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab5_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab5_aleatoire, 1):
+                saisie = st.session_state.get(f"t5_q_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_suites5 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites5 += """
+                </tbody>
+            </table>
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        trous_tab5 = [
+            ("1. Dans cette configuration, l'inducteur et l'induit sont en .........", "série", "t5_h_t5_c1"),
+            ("2. Le courant absorbe traverse integralement l'enroulement du .........", "stator", "t5_h_t5_c2"),
+            ("3. Le couple initial de ce moteur est extremement .........", "élevé", "t5_h_t5_c3"),
+            ("4. Une absence de charge mecanique provoque un ......... de la machine.", "emballement", "t5_h_t5_c4"),
+            ("5. Le moteur serie s'auto-protege contre les calages par son fort .........", "couple", "t5_h_t5_c5"),
+            ("6. Sa vitesse decroit fortement quand l'effort demande .........", "augmente", "t5_h_t5_c6"),
+            ("7. Frank J. Sprague l'a exploite avec succes pour la traction .........", "ferroviaire", "t5_h_t5_c7"),
+            ("8. L'inducteur possede une resistance interne tres .........", "faible", "t5_h_t5_c8"),
+            ("9. Inverser la tension de ligne n'inverse pas le ......... de rotation.", "sens", "t5_h_t5_c9"),
+            ("10. Ce moteur accepte egalement le courant alternatif, d'ou sa variante .........", "universelle", "t5_h_t5_c10"),
+        ]
+        for num, (phrase, attendu, cle) in enumerate(trous_tab5, 1):
+            saisie = st.session_state.get(cle, "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_suites5 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites5 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html5 = preparer_nom_fichier("Rapport_Atelier_5").replace(".txt", ".html")
+        st.download_button(
+            label="Telecharger le rapport d'evaluation officiel de l'Atelier 5 (.html)",
+            data=html_export_suites5,
+            file_name=nom_fichier_html5,
+            mime="text/html",
+            key="dl_btn_html_tab5",
+            use_container_width=True
+        )
 
 
 
@@ -1327,6 +1927,156 @@ with tab6:
     vitesse_shunt = 1500 - (charge_meca * 0.5) # La chute est infime
     st.metric("Vitesse de rotation stable", f"{vitesse_shunt:.1f} tr/min")
     st.write("Observation : Bien que vous augmentiez significativement la charge mecanique, la chute de vitesse est extremement reduite.")
+    st.write("---")
+    if "suite_verrouille_tab6" not in st.session_state:
+        st.session_state.suite_verrouille_tab6 = False
+    verrou_at6 = st.session_state.suite_verrouille_tab6
+
+    afficher_atelier_tab6(verrouille=verrou_at6)
+    
+    st.write("---")
+    st.subheader("Synthese et validation de l'Atelier 6")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat6 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier Moteur CC Shunt.",
+        key="check_certif_tab6_final_net",
+        disabled=verrou_at6,
+    )
+    
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 6", key="btn_export_suite6_official_net", use_container_width=True, disabled=verrou_at6):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat6: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_q6 = 0.0
+            if "ordre_quiz_tab6_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab6_aleatoire:
+                    reponse_eleve = st.session_state.get(f"t6_q_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q6 += 1.0
+
+            score_t6 = sum([
+                st.session_state.get("t6_h_t6_c1") == "parallèle",
+                st.session_state.get("t6_h_t6_c2") == "induit",
+                st.session_state.get("t6_h_t6_c3") == "unique",
+                st.session_state.get("t6_h_t6_c4") == "faible",
+                st.session_state.get("t6_h_t6_c5") == "vitesse",
+                st.session_state.get("t6_h_t6_c6") == "usines",
+                st.session_state.get("t6_h_t6_c7") == "inducteur",
+                st.session_state.get("t6_h_t6_c8") == "linéaire",
+                st.session_state.get("t6_h_t6_c9") == "excitation",
+                st.session_state.get("t6_h_t6_c10") == "pompes",
+            ])
+
+            st.session_state.score_suite6_p1 = round(float(score_q6), 1)
+            st.session_state.score_suite6_p2 = round(float(score_t6), 1)
+            st.session_state.score_final_suite6 = round(float(score_q6 + score_t6), 1)
+            st.session_state.suite_verrouille_tab6 = True
+            st.rerun()
+
+    if st.session_state.get("suite_verrouille_tab6", False):
+        scr1 = st.session_state.get("score_suite6_p1", 0.0)
+        scr2 = st.session_state.get("score_suite6_p2", 0.0)
+        tot_s = st.session_state.get("score_final_suite6", 0.0)
+
+        timestamp_suite6 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER MOTEUR CC SHUNT SCELLE | Note de session : {tot_s:.1f} / 20")
+
+        html_export_suites6 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Moteur CC Shunt - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation - Moteurs Electriques</h1>
+                <p>Atelier 6 : Moteur CC Shunt (Parallele)</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_suite6}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz CC Shunt : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue a la Synthese du cours : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 6 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab6_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab6_aleatoire, 1):
+                saisie = st.session_state.get(f"t6_q_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_suites6 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites6 += """
+                </tbody>
+            </table>
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        trous_tab6 = [
+            ("1. Le mot Shunt traduit l'existence d'une connexion en .........", "parallèle", "t6_h_t6_c1"),
+            ("2. L'inducteur absorbe un courant d'excitation independant de l'.........", "induit", "t6_h_t6_c2"),
+            ("3. L'alimentation se fait au moyen d'une ......... source de tension.", "unique", "t6_h_t6_c3"),
+            ("4. Sa bobine inductrice consomme une intensite relativement .........", "faible", "t6_h_t6_c4"),
+            ("5. La machine Shunt conserve une ......... presque constante en charge.", "vitesse", "t6_h_t6_c5"),
+            ("6. Thomas Edison preferait ce moteur pour l'outillage des .........", "usines", "t6_h_t6_c6"),
+            ("7. A vide, la vitesse est bridee par le flux stable de l'.........", "inducteur", "t6_h_t6_c7"),
+            ("8. Le couple varie de maniere ......... avec le courant du rotor.", "linéaire", "t6_h_t6_c8"),
+            ("9. Un rheostat de champ permet de regler le flux de l'.........", "excitation", "t6_h_t6_c9"),
+            ("10. Ce moteur est ideal pour l'actionnement des ......... a debit regulier.", "pompes", "t6_h_t6_c10"),
+        ]
+        for num, (phrase, attendu, cle) in enumerate(trous_tab6, 1):
+            saisie = st.session_state.get(cle, "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_suites6 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites6 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html6 = preparer_nom_fichier("Rapport_Atelier_6").replace(".txt", ".html")
+        st.download_button(
+            label="Telecharger le rapport d'evaluation officiel de l'Atelier 6 (.html)",
+            data=html_export_suites6,
+            file_name=nom_fichier_html6,
+            mime="text/html",
+            key="dl_btn_html_tab6",
+            use_container_width=True
+        )
 
 
 
@@ -1350,6 +2100,156 @@ with tab7:
     regime_charge = st.slider("Demande d'effort de traction", min_value=0, max_value=100, value=80, key="c_t7")
     st.write(f"Observation : Le bobinage serie maintient un couple eleve de {regime_charge * 2.5} Nm, tandis que le bobinage shunt bride la vitesse maximale a 1800 tr/min de maniere securisee.")
 
+    st.write("---")
+    if "suite_verrouille_tab7" not in st.session_state:
+        st.session_state.suite_verrouille_tab7 = False
+    verrou_at7 = st.session_state.suite_verrouille_tab7
+
+    afficher_atelier_tab7(verrouille=verrou_at7)
+    
+    st.write("---")
+    st.subheader("Synthese et validation de l'Atelier 7")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat7 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier Moteur CC Compound.",
+        key="check_certif_tab7_final_net",
+        disabled=verrou_at7,
+    )
+    
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 7", key="btn_export_suite7_official_net", use_container_width=True, disabled=verrou_at7):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat7: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_q7 = 0.0
+            if "ordre_quiz_tab7_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab7_aleatoire:
+                    reponse_eleve = st.session_state.get(f"t7_q_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q7 += 1.0
+
+            score_t7 = sum([
+                st.session_state.get("t7_h_t7_c1") == "shunt",
+                st.session_state.get("t7_h_t7_c2") == "différentes",
+                st.session_state.get("t7_h_t7_c3") == "couple",
+                st.session_state.get("t7_h_t7_c4") == "vide",
+                st.session_state.get("t7_h_t7_c5") == "ajoutent",
+                st.session_state.get("t7_h_t7_c6") == "constante",
+                st.session_state.get("t7_h_t7_c7") == "série",
+                st.session_state.get("t7_h_t7_c8") == "stator",
+                st.session_state.get("t7_h_t7_c9") == "induit",
+                st.session_state.get("t7_h_t7_c10") == "charge",
+            ])
+
+            st.session_state.score_suite7_p1 = round(float(score_q7), 1)
+            st.session_state.score_suite7_p2 = round(float(score_t7), 1)
+            st.session_state.score_final_suite7 = round(float(score_q7 + score_t7), 1)
+            st.session_state.suite_verrouille_tab7 = True
+            st.rerun()
+
+    if st.session_state.get("suite_verrouille_tab7", False):
+        scr1 = st.session_state.get("score_suite7_p1", 0.0)
+        scr2 = st.session_state.get("score_suite7_p2", 0.0)
+        tot_s = st.session_state.get("score_final_suite7", 0.0)
+
+        timestamp_suite7 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER MOTEUR CC COMPOUND SCELLE | Note de session : {tot_s:.1f} / 20")
+
+        html_export_suites7 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Moteur CC Compound - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation - Moteurs Electriques</h1>
+                <p>Atelier 7 : Moteur CC Compound (Compose)</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_suite7}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz CC Compound : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue a la Synthese du cours : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 7 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab7_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab7_aleatoire, 1):
+                saisie = st.session_state.get(f"t7_q_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_suites7 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites7 += """
+                </tbody>
+            </table>
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        trous_tab7 = [
+            ("1. Le moteur Compound rassemble les benefices du serie et du .........", "shunt", "t7_h_t7_c1"),
+            ("2. Son stator integre deux bobinages inducteurs de sections .........", "différentes", "t7_h_t7_c2"),
+            ("3. L'enroulement serie confere un excellent ......... initial.", "couple", "t7_h_t7_c3"),
+            ("4. L'enroulement parallele limite la vitesse de rotation a .........", "vide", "t7_h_t7_c4"),
+            ("5. Dans la variante cumulative, les deux flux magnetiques s'.........", "ajoutent", "t7_h_t7_c5"),
+            ("6. La configuration differentielle cherche a maintenir une vitesse .........", "constante", "t7_h_t7_c6"),
+            ("7. Les chocs mecaniques des presses sont amortis par l'effet .........", "série", "t7_h_t7_c7"),
+            ("8. Le courant absorbe global est reparti dans les enroulements du .........", "stator", "t7_h_t7_c8"),
+            ("9. Le collecteur mecanique central demeure necessaire a l'.........", "induit", "t7_h_t7_c9"),
+            ("10. Ce moteur resout le dilemme des demarrages sous lourde .........", "charge", "t7_h_t7_c10"),
+        ]
+        for num, (phrase, attendu, cle) in enumerate(trous_tab7, 1):
+            saisie = st.session_state.get(cle, "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_suites7 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites7 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html7 = preparer_nom_fichier("Rapport_Atelier_7").replace(".txt", ".html")
+        st.download_button(
+            label="Telecharger le rapport d'evaluation officiel de l'Atelier 7 (.html)",
+            data=html_export_suites7,
+            file_name=nom_fichier_html7,
+            mime="text/html",
+            key="dl_btn_html_tab7",
+            use_container_width=True
+        )
 
 
 
@@ -1373,6 +2273,156 @@ with tab8:
     frequence_hz = vitesse_drone * 4.5
     st.write(f"Observation : Le controleur electronique commute le courant dans les bobines fixes a une frequence precise de {frequence_hz:.1f} Hz pour synchroniser les aimants du rotor.")
 
+    st.write("---")
+    if "suite_verrouille_tab8" not in st.session_state:
+        st.session_state.suite_verrouille_tab8 = False
+    verrou_at8 = st.session_state.suite_verrouille_tab8
+
+    afficher_atelier_tab8(verrouille=verrou_at8)
+    
+    st.write("---")
+    st.subheader("Synthese et validation de l'Atelier 8")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat8 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier Moteur CC Brushless.",
+        key="check_certif_tab8_final_net",
+        disabled=verrou_at8,
+    )
+    
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 8", key="btn_export_suite8_official_net", use_container_width=True, disabled=verrou_at8):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat8: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_q8 = 0.0
+            if "ordre_quiz_tab8_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab8_aleatoire:
+                    reponse_eleve = st.session_state.get(f"t8_q_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q8 += 1.0
+
+            score_t8 = sum([
+                st.session_state.get("t8_h_t8_c1") == "balais",
+                st.session_state.get("t8_h_t8_c2") == "rotor",
+                st.session_state.get("t8_h_t8_c3") == "stator",
+                st.session_state.get("t8_h_t8_c4") == "électronique",
+                st.session_state.get("t8_h_t8_c5") == "Hall",
+                st.session_state.get("t8_h_t8_c6") == "90%",
+                st.session_state.get("t8_h_t8_c7") == "Néodyme",
+                st.session_state.get("t8_h_t8_c8") == "explosif",
+                st.session_state.get("t8_h_t8_c9") == "technologie",
+                st.session_state.get("t8_h_t8_c10") == "robotique",
+            ])
+
+            st.session_state.score_suite8_p1 = round(float(score_q8), 1)
+            st.session_state.score_suite8_p2 = round(float(score_t8), 1)
+            st.session_state.score_final_suite8 = round(float(score_q8 + score_t8), 1)
+            st.session_state.suite_verrouille_tab8 = True
+            st.rerun()
+
+    if st.session_state.get("suite_verrouille_tab8", False):
+        scr1 = st.session_state.get("score_suite8_p1", 0.0)
+        scr2 = st.session_state.get("score_suite8_p2", 0.0)
+        tot_s = st.session_state.get("score_final_suite8", 0.0)
+
+        timestamp_suite8 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER MOTEUR CC BRUSHLESS SCELLE | Note de session : {tot_s:.1f} / 20")
+
+        html_export_suites8 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Moteur CC Brushless - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation - Moteurs Electriques</h1>
+                <p>Atelier 8 : Moteur CC sans balais (Brushless / BLDC)</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_suite8}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz CC Brushless : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue a la Synthese du cours : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 8 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab8_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab8_aleatoire, 1):
+                saisie = st.session_state.get(f"t8_q_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_suites8 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites8 += """
+                </tbody>
+            </table>
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        trous_tab8 = [
+            ("1. Le moteur Brushless elimine les frotteurs mecaniques appeles .........", "balais", "t8_h_t8_c1"),
+            ("2. Les aimants permanents de forte puissance occupent le .........", "rotor", "t8_h_t8_c2"),
+            ("3. Les bobinages induits recoivent le courant au sein du .........", "stator", "t8_h_t8_c3"),
+            ("4. L'onduleur ou ESC orchestre la commutation ......... des phases.", "électronique", "t8_h_t8_c4"),
+            ("5. La detection de la position du rotor emploie l'effet .........", "Hall", "t8_h_t8_c5"),
+            ("6. Son rendement de conversion energetique surpasse frequemment .........", "90%", "t8_h_t8_c6"),
+            ("7. Les aimants en terres rares exploitent principalement le .........", "Néodyme", "t8_h_t8_c7"),
+            ("8. L'absence d'arc electrique autorise l'usage en milieu .........", "explosif", "t8_h_t8_c8"),
+            ("9. T.G. Wilson a activement participe a l'essor de cette .........", "technologie", "t8_h_t8_c9"),
+            ("10. Ce moteur equipe massivement les actionneurs de la ......... moderne.", "robotique", "t8_h_t8_c10"),
+        ]
+        for num, (phrase, attendu, cle) in enumerate(trous_tab8, 1):
+            saisie = st.session_state.get(cle, "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_suites8 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites8 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html8 = preparer_nom_fichier("Rapport_Atelier_8").replace(".txt", ".html")
+        st.download_button(
+            label="Telecharger le rapport d'evaluation officiel de l'Atelier 8 (.html)",
+            data=html_export_suites8,
+            file_name=nom_fichier_html8,
+            mime="text/html",
+            key="dl_btn_html_tab8",
+            use_container_width=True
+        )
 
 
 
@@ -1399,6 +2449,156 @@ with tab9:
     st.metric("Vitesse du champ tournant du stator (Vitesse synchrone)", f"{vitesse_synchrone:.0f} tr/min")
     st.metric("Vitesse de rotation reelle de la cage d'ecureuil", f"{vitesse_rotor_reelle:.0f} tr/min")
     st.metric("Taux de glissement calcule", f"{glissement_pourcent:.2f} %")
+    st.write("---")
+    if "suite_verrouille_tab9" not in st.session_state:
+        st.session_state.suite_verrouille_tab9 = False
+    verrou_at9 = st.session_state.suite_verrouille_tab9
+
+    afficher_atelier_tab9(verrouille=verrou_at9)
+    
+    st.write("---")
+    st.subheader("Synthese et validation de l'Atelier 9")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat9 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier Moteur Asynchrone a Cage d'Ecureuil.",
+        key="check_certif_tab9_final_net",
+        disabled=verrou_at9,
+    )
+    
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 9", key="btn_export_suite9_official_net", use_container_width=True, disabled=verrou_at9):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat9: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_q9 = 0.0
+            if "ordre_quiz_tab9_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab9_aleatoire:
+                    reponse_eleve = st.session_state.get(f"t9_q_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q9 += 1.0
+
+            score_t9 = sum([
+                st.session_state.get("t9_h_t9_c1") == "tournant",
+                st.session_state.get("t9_h_t9_c2") == "inférieure",
+                st.session_state.get("t9_h_t9_c3") == "glissement",
+                st.session_state.get("t9_h_t9_c4") == "court-circuit",
+                st.session_state.get("t9_h_t9_c5") == "Foucault",
+                st.session_state.get("t9_h_t9_c6") == "contacts",
+                st.session_state.get("t9_h_t9_c7") == "courant",
+                st.session_state.get("t9_h_t9_c8") == "triangle",
+                st.session_state.get("t9_h_t9_c9") == "champ",
+                st.session_state.get("t9_h_t9_c10") == "industrie",
+            ])
+
+            st.session_state.score_suite9_p1 = round(float(score_q9), 1)
+            st.session_state.score_suite9_p2 = round(float(score_t9), 1)
+            st.session_state.score_final_suite9 = round(float(score_q9 + score_t9), 1)
+            st.session_state.suite_verrouille_tab9 = True
+            st.rerun()
+
+    if st.session_state.get("suite_verrouille_tab9", False):
+        scr1 = st.session_state.get("score_suite9_p1", 0.0)
+        scr2 = st.session_state.get("score_suite9_p2", 0.0)
+        tot_s = st.session_state.get("score_final_suite9", 0.0)
+
+        timestamp_suite9 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER MOTEUR ASYNCHRONE A CAGE SCELLE | Note de session : {tot_s:.1f} / 20")
+
+        html_export_suites9 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Moteur Asynchrone Cage - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation - Moteurs Electriques</h1>
+                <p>Atelier 9 : Moteur Asynchrone a Cage d'Ecureuil (Triphase)</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_suite9}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Asynchrone Cage : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue a la Synthese du cours : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 9 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab9_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab9_aleatoire, 1):
+                saisie = st.session_state.get(f"t9_q_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_suites9 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites9 += """
+                </tbody>
+            </table>
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        trous_tab9 = [
+            ("1. Le stator alimente par un reseau triphase genere un champ .........", "tournant", "t9_h_t9_c1"),
+            ("2. Le rotor tourne toujours a une vitesse ......... a celle du synchronisme.", "inférieure", "t9_h_t9_c2"),
+            ("3. Le decalage obligatoire entre ces vitesses s'appelle le .........", "glissement", "t9_h_t9_c3"),
+            ("4. Les barres du rotor sont connectees par des anneaux de .........", "court-circuit", "t9_h_t9_c4"),
+            ("5. Les courants crees a l'interieur de la cage sont des courants de .........", "Foucault", "t9_h_t9_c5"),
+            ("6. La robustesse de ce moteur s'explique par l'absence de .........", "contacts", "t9_h_t9_c6"),
+            ("7. Au demarrage direct, ce moteur genere un fort appel de .........", "courant", "t9_h_t9_c7"),
+            ("8. Pour limiter cet appel de courant historique, on utilisait un demarreur etoile-.........", "triangle", "t9_h_t9_c8"),
+            ("9. Le moteur asynchrone absorbe de l'energie reactive pour creer son .........", "champ", "t9_h_t9_c9"),
+            ("10. C'est la veritable bete de somme incontournable de l'......... moderne.", "industrie", "t9_h_t9_c10"),
+        ]
+        for num, (phrase, attendu, cle) in enumerate(trous_tab9, 1):
+            saisie = st.session_state.get(cle, "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_suites9 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites9 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html9 = preparer_nom_fichier("Rapport_Atelier_9").replace(".txt", ".html")
+        st.download_button(
+            label="Telecharger le rapport d'evaluation officiel de l'Atelier 9 (.html)",
+            data=html_export_suites9,
+            file_name=nom_fichier_html9,
+            mime="text/html",
+            key="dl_btn_html_tab9",
+            use_container_width=True
+        )
 
 
 
@@ -1424,6 +2624,156 @@ with tab10:
     st.metric("Pic de courant au demarrage", f"{courant_demarrage} A")
     st.write("Observation : Augmenter la resistance externe ecrase le pic de courant sur le reseau electrique au moment de la mise sous tension.")
 
+    st.write("---")
+    if "suite_verrouille_tab10" not in st.session_state:
+        st.session_state.suite_verrouille_tab10 = False
+    verrou_at10 = st.session_state.suite_verrouille_tab10
+
+    afficher_atelier_tab10(verrouille=verrou_at10)
+    
+    st.write("---")
+    st.subheader("Synthese et validation de l'Atelier 10")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat10 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier Moteur Asynchrone a Rotor Bobine.",
+        key="check_certif_tab10_final_net",
+        disabled=verrou_at10,
+    )
+    
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 10", key="btn_export_suite10_official_net", use_container_width=True, disabled=verrou_at10):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat10: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_q10 = 0.0
+            if "ordre_quiz_tab10_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab10_aleatoire:
+                    reponse_eleve = st.session_state.get(f"t10_q_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q10 += 1.0
+
+            score_t10 = sum([
+                st.session_state.get("t10_h_t10_c1") == "bagues",
+                st.session_state.get("t10_h_t10_c2") == "resistances",
+                st.session_state.get("t10_h_t10_c3") == "rheostat",
+                st.session_state.get("t10_h_t10_c4") == "intensite",
+                st.session_state.get("t10_h_t10_c5") == "couple",
+                st.session_state.get("t10_h_t10_c6") == "court-circuit",
+                st.session_state.get("t10_h_t10_c7") == "cage",
+                st.session_state.get("t10_h_t10_c8") == "poussiere",
+                st.session_state.get("t10_h_t10_c9") == "roulants",
+                st.session_state.get("t10_h_t10_c10") == "frequence",
+            ])
+
+            st.session_state.score_suite10_p1 = round(float(score_q10), 1)
+            st.session_state.score_suite10_p2 = round(float(score_t10), 1)
+            st.session_state.score_final_suite10 = round(float(score_q10 + score_t10), 1)
+            st.session_state.suite_verrouille_tab10 = True
+            st.rerun()
+
+    if st.session_state.get("suite_verrouille_tab10", False):
+        scr1 = st.session_state.get("score_suite10_p1", 0.0)
+        scr2 = st.session_state.get("score_suite10_p2", 0.0)
+        tot_s = st.session_state.get("score_final_suite10", 0.0)
+
+        timestamp_suite10 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER MOTEUR ASYNCHRONE A ROTOR BOBINE SCELLE | Note de session : {tot_s:.1f} / 20")
+
+        html_export_suites10 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Moteur Asynchrone Rotor Bobine - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation - Moteurs Electriques</h1>
+                <p>Atelier 10 : Moteur Asynchrone a Rotor Bobine (Bagues)</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_suite10}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Asynchrone Bagues : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue a la Synthese du cours : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 10 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab10_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab10_aleatoire, 1):
+                saisie = st.session_state.get(f"t10_q_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_suites10 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites10 += """
+                </tbody>
+            </table>
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        trous_tab10 = [
+            ("1. Le moteur asynchrone a rotor bobine est egalement appele moteur a .........", "bagues", "t10_h_t10_c1"),
+            ("2. Les enroulements du rotor sont connectes a un circuit exterieur variable de .........", "resistances", "t10_h_t10_c2"),
+            ("3. L'ensemble externe utilise pour ajuster ces valeurs est un .........", "rheostat", "t10_h_t10_c3"),
+            ("4. Augmenter la resistance au demarrage permet de limiter l'......... de ligne.", "intensite", "t10_h_t10_c4"),
+            ("5. Cette methode de controle ameliore nettement le ......... de demarrage.", "couple", "t10_h_t10_c5"),
+            ("6. Lorsque le moteur atteint sa vitesse stable, le rheostat est mis en .........", "court-circuit", "t10_h_t10_c6"),
+            ("7. En marche normale court-circuitee, le moteur se comporte comme un modele a .........", "cage", "t10_h_t10_c7"),
+            ("8. Les frottements au niveau des balais generent des pertes mecaniques et de la .........", "poussiere", "t10_h_t10_c8"),
+            ("9. Cette technologie lourde etait incontournable sur les gros ponts .........", "roulants", "t10_h_t10_c9"),
+            ("10. L'arrivee des variateurs de ......... a rendu ce systeme obsolete.", "frequence", "t10_h_t10_c10"),
+        ]
+        for num, (phrase, attendu, cle) in enumerate(trous_tab10, 1):
+            saisie = st.session_state.get(cle, "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_suites10 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites10 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html10 = preparer_nom_fichier("Rapport_Atelier_10").replace(".txt", ".html")
+        st.download_button(
+            label="Telecharger le rapport d'evaluation officiel de l'Atelier 10 (.html)",
+            data=html_export_suites10,
+            file_name=nom_fichier_html10,
+            mime="text/html",
+            key="dl_btn_html_tab10",
+            use_container_width=True
+        )
 
 
 
@@ -1448,6 +2798,156 @@ with tab11:
     else:
         st.success("Observation : Le condensateur cree le dephasage requis. Le champ magnetique devient tournant et lance le rotor immediatement.")
 
+    st.write("---")
+    if "suite_verrouille_tab11" not in st.session_state:
+        st.session_state.suite_verrouille_tab11 = False
+    verrou_at11 = st.session_state.suite_verrouille_tab11
+
+    afficher_atelier_tab11(verrouille=verrou_at11)
+    
+    st.write("---")
+    st.subheader("Synthese et validation de l'Atelier 11")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat11 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier Moteur Asynchrone Monophase.",
+        key="check_certif_tab11_final_net",
+        disabled=verrou_at11,
+    )
+    
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 11", key="btn_export_suite11_official_net", use_container_width=True, disabled=verrou_at11):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat11: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_q11 = 0.0
+            if "ordre_quiz_tab11_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab11_aleatoire:
+                    reponse_eleve = st.session_state.get(f"t11_q_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q11 += 1.0
+
+            score_t11 = sum([
+                st.session_state.get("t11_h_t11_c1") == "fils",
+                st.session_state.get("t11_h_t11_c2") == "pulsant",
+                st.session_state.get("t11_h_t11_c3") == "nul",
+                st.session_state.get("t11_h_t11_c4") == "bobinage",
+                st.session_state.get("t11_h_t11_c5") == "auxiliaire",
+                st.session_state.get("t11_h_t11_c6") == "phase",
+                st.session_state.get("t11_h_t11_c7") == "microfarads",
+                st.session_state.get("t11_h_t11_c8") == "grognement",
+                st.session_state.get("t11_h_t11_c9") == "75%",
+                st.session_state.get("t11_h_t11_c10") == "maison",
+            ])
+
+            st.session_state.score_suite11_p1 = round(float(score_q11), 1)
+            st.session_state.score_suite11_p2 = round(float(score_t11), 1)
+            st.session_state.score_final_suite11 = round(float(score_q11 + score_t11), 1)
+            st.session_state.suite_verrouille_tab11 = True
+            st.rerun()
+
+    if st.session_state.get("suite_verrouille_tab11", False):
+        scr1 = st.session_state.get("score_suite11_p1", 0.0)
+        scr2 = st.session_state.get("score_suite11_p2", 0.0)
+        tot_s = st.session_state.get("score_final_suite11", 0.0)
+
+        timestamp_suite11 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER MOTEUR ASYNCHRONE MONOPHASE SCELLE | Note de session : {tot_s:.1f} / 20")
+
+        html_export_suites11 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Moteur Asynchrone Monophase - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation - Moteurs Electriques</h1>
+                <p>Atelier 11 : Moteur Asynchrone Monophase</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_suite11}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Asynchrone Monophase : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue a la Synthese du cours : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 11 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab11_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab11_aleatoire, 1):
+                saisie = st.session_state.get(f"t11_q_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_suites11 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites11 += """
+                </tbody>
+            </table>
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        trous_tab11 = [
+            ("1. Le moteur asynchrone monophase s'alimente sur le reseau domestique a deux .........", "fils", "t11_h_t11_c1"),
+            ("2. Une seule phase alternative produit un champ magnetique qualifie de .........", "pulsant", "t11_h_t11_c2"),
+            ("3. Ce type de champ possede un couple initial de demarrage rigoureusement .........", "nul", "t11_h_t11_c3"),
+            ("4. Pour creer le champ tournant indispensable, on integre un deuxieme .........", "bobinage", "t11_h_t11_c4"),
+            ("5. Le condensateur est branche en serie avec l'enroulement .........", "auxiliaire", "t11_h_t11_c5"),
+            ("6. Sa presence permet de decaler le courant pour simuler une deuxieme .........", "phase", "t11_h_t11_c6"),
+            ("7. La valeur de ce composant de dephasage s'exprime en .........", "microfarads", "t11_h_t11_c7"),
+            ("8. Si le moteur ne demarre pas et emet un bruit sourd, il s'agit d'un .........", "grognement", "t11_h_t11_c8"),
+            ("9. Le rendement de ces machines domestiques depasse rarement les .........", "75%", "t11_h_t11_c9"),
+            ("10. Ce moteur est parfait pour l'equipement de la ......... et du jardin.", "maison", "t11_h_t11_c10"),
+        ]
+        for num, (phrase, attendu, cle) in enumerate(trous_tab11, 1):
+            saisie = st.session_state.get(cle, "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_suites11 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites11 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html11 = preparer_nom_fichier("Rapport_Atelier_11").replace(".txt", ".html")
+        st.download_button(
+            label="Telecharger le rapport d'evaluation officiel de l'Atelier 11 (.html)",
+            data=html_export_suites11,
+            file_name=nom_fichier_html11,
+            mime="text/html",
+            key="dl_btn_html_tab11",
+            use_container_width=True
+        )
 
 
 
@@ -1471,6 +2971,157 @@ with tab12:
     vitesse_pmsm = (freq_onduleur * 60) / 2 # hypothese 4 poles
     st.metric("Vitesse mesurée sur l'arbre", f"{vitesse_pmsm:.0f} tr/min")
     st.write("Observation : Peu importe l'effort resistant applique, la vitesse de rotation reste parfaitement bloquee sur la frequence electrique. Le glissement est rigoureusement nul.")
+
+    st.write("---")
+    if "suite_verrouille_tab12" not in st.session_state:
+        st.session_state.suite_verrouille_tab12 = False
+    verrou_at12 = st.session_state.suite_verrouille_tab12
+
+    afficher_atelier_tab12(verrouille=verrou_at12)
+    
+    st.write("---")
+    st.subheader("Synthese et validation de l'Atelier 12")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat12 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier Moteur Synchrone a Aimants Permanents.",
+        key="check_certif_tab12_final_net",
+        disabled=verrou_at12,
+    )
+    
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 12", key="btn_export_suite12_official_net", use_container_width=True, disabled=verrou_at12):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat12: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_q12 = 0.0
+            if "ordre_quiz_tab12_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab12_aleatoire:
+                    reponse_eleve = st.session_state.get(f"t12_q_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q12 += 1.0
+
+            score_t12 = sum([
+                st.session_state.get("t12_h_t12_c1") == "nul",
+                st.session_state.get("t12_h_t12_c2") == "champ",
+                st.session_state.get("t12_h_t12_c3") == "frequence",
+                st.session_state.get("t12_h_t12_c4") == "rares",
+                st.session_state.get("t12_h_t12_c5") == "eleve",
+                st.session_state.get("t12_h_t12_c6") == "impossible",
+                st.session_state.get("t12_h_t12_c7") == "95%",
+                st.session_state.get("t12_h_t12_c8") == "Joule",
+                st.session_state.get("t12_h_t12_c9") == "automobile",
+                st.session_state.get("t12_h_t12_c10") == "p",
+            ])
+
+            st.session_state.score_suite12_p1 = round(float(score_q12), 1)
+            st.session_state.score_suite12_p2 = round(float(score_t12), 1)
+            st.session_state.score_final_suite12 = round(float(score_q12 + score_t12), 1)
+            st.session_state.suite_verrouille_tab12 = True
+            st.rerun()
+
+    if st.session_state.get("suite_verrouille_tab12", False):
+        scr1 = st.session_state.get("score_suite12_p1", 0.0)
+           scr2 = st.session_state.get("score_suite12_p2", 0.0)
+        tot_s = st.session_state.get("score_final_suite12", 0.0)
+
+        timestamp_suite12 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER MOTEUR SYNCHRONE A AIMANTS PERMANENTS SCELLE | Note de session : {tot_s:.1f} / 20")
+
+        html_export_suites12 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Moteur Synchrone Aimants - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation - Moteurs Electriques</h1>
+                <p>Atelier 12 : Moteur Synchrone a Aimants Permanents (PMSM)</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_suite12}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Synchrone Aimants : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue a la Synthese du cours : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 12 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab12_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab12_aleatoire, 1):
+                saisie = st.session_state.get(f"t12_q_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_suites12 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites12 += """
+                </tbody>
+            </table>
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        trous_tab12 = [
+            ("1. Le moteur synchrone a aimants possede un glissement strictement .........", "nul", "t12_h_t12_c1"),
+            ("2. Le rotor s'accroche de maniere rigide sur la vitesse du ......... tournant.", "champ", "t12_h_t12_c2"),
+            ("3. La vitesse mecanique est directement liee a la ......... de l'onduleur.", "frequence", "t12_h_t12_c3"),
+            ("4. Les aimants haut de gamme utilisent des materiaux dits terres .........", "rares", "t12_h_t12_c4"),
+            ("5. Cette technologie offre un ratio couple/poids extremement .........", "eleve", "t12_h_t12_c5"),
+            ("6. Sans variateur electronique, le demarrage sur secteur est .........", "impossible", "t12_h_t12_c6"),
+            ("7. Le rendement energetique global de ces machines frole les .........", "95%", "t12_h_t12_c7"),
+            ("8. Le rotor ne contenant pas d'enroulements, il ne subit pas de pertes .........", "Joule", "t12_h_t12_c8"),
+            ("9. C'est le moteur privilegie pour la robotique et l'......... moderne.", "automobile", "t12_h_t12_c9"),
+            ("10. Le nombre de paires de poles de la machine est note .........", "p", "t12_h_t12_c10"),
+        ]
+        for num, (phrase, attendu, cle) in enumerate(trous_tab12, 1):
+            saisie = st.session_state.get(cle, "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_suites12 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites12 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html12 = preparer_nom_fichier("Rapport_Atelier_12").replace(".txt", ".html")
+        st.download_button(
+            label="Telecharger le rapport d'evaluation officiel de l'Atelier 12 (.html)",
+            data=html_export_suites12,
+            file_name=nom_fichier_html12,
+            mime="text/html",
+            key="dl_btn_html_tab12",
+            use_container_width=True
+        )
 
 
 
@@ -1499,6 +3150,156 @@ with tab13:
         st.write("Observation : L'equilibre est optimal. Le facteur de puissance cos phi est proche de 1.")
     else:
         st.write("Observation : Le moteur est sur-excite. Il compense les autres machines de l'usine en renvoyant du réactif.")
+    st.write("---")
+    if "suite_verrouille_tab13" not in st.session_state:
+        st.session_state.suite_verrouille_tab13 = False
+    verrou_at13 = st.session_state.suite_verrouille_tab13
+
+    afficher_atelier_tab13(verrouille=verrou_at13)
+    
+    st.write("---")
+    st.subheader("Synthese et validation de l'Atelier 13")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat13 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier Moteur Synchrone a Rotor Bobine.",
+        key="check_certif_tab13_final_net",
+        disabled=verrou_at13,
+    )
+    
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 13", key="btn_export_suite13_official_net", use_container_width=True, disabled=verrou_at13):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat13: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_q13 = 0.0
+            if "ordre_quiz_tab13_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab13_aleatoire:
+                    reponse_eleve = st.session_state.get(f"t13_q_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q13 += 1.0
+
+            score_t13 = sum([
+                st.session_state.get("t13_h_t13_c1") == "electroaimant",
+                st.session_state.get("t13_h_t13_c2") == "continu",
+                st.session_state.get("t13_h_t13_c3") == "bagues",
+                st.session_state.get("t13_h_t13_c4") == "rares",
+                st.session_state.get("t13_h_t13_c5") == "rendement",
+                st.session_state.get("t13_h_t13_c6") == "alternateur",
+                st.session_state.get("t13_h_t13_c7") == "reactive",
+                st.session_state.get("t13_h_t13_c8") == "Joule",
+                st.session_state.get("t13_h_t13_c9") == "synchronisme",
+                st.session_state.get("t13_h_t13_c10") == "regulier",
+            ])
+
+            st.session_state.score_suite13_p1 = round(float(score_q13), 1)
+            st.session_state.score_suite13_p2 = round(float(score_t13), 1)
+            st.session_state.score_final_suite13 = round(float(score_q13 + score_t13), 1)
+            st.session_state.suite_verrouille_tab13 = True
+            st.rerun()
+
+    if st.session_state.get("suite_verrouille_tab13", False):
+        scr1 = st.session_state.get("score_suite13_p1", 0.0)
+        scr2 = st.session_state.get("score_suite13_p2", 0.0)
+        tot_s = st.session_state.get("score_final_suite13", 0.0)
+
+        timestamp_suite13 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER MOTEUR SYNCHRONE A ROTOR BOBINE SCELLE | Note de session : {tot_s:.1f} / 20")
+
+        html_export_suites13 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Moteur Synchrone Rotor Bobine - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation - Moteurs Electriques</h1>
+                <p>Atelier 13 : Moteur Synchrone a Rotor Bobine</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_suite13}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Synchrone Bobine : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue a la Synthese du cours : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 13 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab13_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab13_aleatoire, 1):
+                saisie = st.session_state.get(f"t13_q_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_suites13 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites13 += """
+                </tbody>
+            </table>
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        trous_tab13 = [
+            ("1. Le rotor bobine d'un moteur synchrone fait office d'......... ajustable.", "electroaimant", "t13_h_t13_c1"),
+            ("2. Le courant injecte dans le rotor est un courant .........", "continu", "t13_h_t13_c2"),
+            ("3. L'amenee du courant s'effectue par des balais et des ......... lisses.", "bagues", "t13_h_t13_c3"),
+            ("4. Cette solution technique permet de fabriquer un moteur sans terres .........", "rares", "t13_h_t13_c4"),
+            ("5. Ajuster le flux permet de maximiser le ......... a haute vitesse.", "rendement", "t13_h_t13_c5"),
+            ("6. Dans les centrales electriques, cette machine s'appelle un .........", "alternateur", "t13_h_t13_c6"),
+            ("7. Un moteur synchrone sur-excite fournit de l'energie ......... au reseau.", "reactive", "t13_h_t13_c7"),
+            ("8. Contrairement au PMSM, ce rotor subit des pertes par effet .........", "Joule", "t13_h_t13_c8"),
+            ("9. La vitesse de rotation reste parfaitement verrouillee sur le .........", "synchronisme", "t13_h_t13_c9"),
+            ("10. L'usure des charbons demande un suivi et un entretien .........", "regulier", "t13_h_t13_c10"),
+        ]
+        for num, (phrase, attendu, cle) in enumerate(trous_tab13, 1):
+            saisie = st.session_state.get(cle, "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_suites13 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites13 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html13 = preparer_nom_fichier("Rapport_Atelier_13").replace(".txt", ".html")
+        st.download_button(
+            label="Telecharger le rapport d'evaluation officiel de l'Atelier 13 (.html)",
+            data=html_export_suites13,
+            file_name=nom_fichier_html13,
+            mime="text/html",
+            key="dl_btn_html_tab13",
+            use_container_width=True
+        )
 
 
 
@@ -1523,17 +3324,156 @@ with tab14:
     angle_stator = st.slider("Position angulaire du flux statorique (Degres)", min_value=0, max_value=180, value=45, key="a_t14")
     st.write(f"Observation : Le bloc de toles d'acier du rotor pivote de facon instantanee pour venir s'aligner exactement sur l'angle de {angle_stator} degres afin de minimiser la resistance du flux.")
 
+    st.write("---")
+    if "suite_verrouille_tab14" not in st.session_state:
+        st.session_state.suite_verrouille_tab14 = False
+    verrou_at14 = st.session_state.suite_verrouille_tab14
 
+    afficher_atelier_tab14(verrouille=verrou_at14)
+    
+    st.write("---")
+    st.subheader("Synthese et validation de l'Atelier 14")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
 
+    case_certif_stat14 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier Moteur Synchrone a Reluctance Variable.",
+        key="check_certif_tab14_final_net",
+        disabled=verrou_at14,
+    )
+    
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 14", key="btn_export_suite14_official_net", use_container_width=True, disabled=verrou_at14):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat14: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_q14 = 0.0
+            if "ordre_quiz_tab14_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab14_aleatoire:
+                    reponse_eleve = st.session_state.get(f"t14_q_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q14 += 1.0
 
+            score_t14 = sum([
+                st.session_state.get("t14_h_t14_c1") == "bobinages",
+                st.session_state.get("t14_h_t14_c2") == "magnetique",
+                st.session_state.get("t14_h_t14_c3") == "grande",
+                st.session_state.get("t14_h_t14_c4") == "air",
+                st.session_state.get("t14_h_t14_c5") == "synchrones",
+                st.session_state.get("t14_h_t14_c6") == "roulements",
+                st.session_state.get("t14_h_t14_c7") == "variateur",
+                st.session_state.get("t14_h_t14_c8") == "rares",
+                st.session_state.get("t14_h_t14_c9") == "IE5",
+                st.session_state.get("t14_h_t14_c10") == "pompes",
+            ])
 
+            st.session_state.score_suite14_p1 = round(float(score_q14), 1)
+            st.session_state.score_suite14_p2 = round(float(score_t14), 1)
+            st.session_state.score_final_suite14 = round(float(score_q14 + score_t14), 1)
+            st.session_state.suite_verrouille_tab14 = True
+            st.rerun()
 
+    if st.session_state.get("suite_verrouille_tab14", False):
+        scr1 = st.session_state.get("score_suite14_p1", 0.0)
+        scr2 = st.session_state.get("score_suite14_p2", 0.0)
+        tot_s = st.session_state.get("score_final_suite14", 0.0)
 
+        timestamp_suite14 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER MOTEUR SYNCHRONE A RELUCTANCE VARIABLE SCELLE | Note de session : {tot_s:.1f} / 20")
 
+        html_export_suites14 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Moteur Synchrone Reluctance - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation - Moteurs Electriques</h1>
+                <p>Atelier 14 : Moteur Synchrone a Reluctance Variable (SynRM)</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_suite14}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Synchrone Reluctance : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue a la Synthese du cours : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 14 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
 
+        if "ordre_quiz_tab14_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab14_aleatoire, 1):
+                saisie = st.session_state.get(f"t14_q_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_suites14 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
+        html_export_suites14 += """
+                </tbody>
+            </table>
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
 
+        trous_tab14 = [
+            ("1. Le rotor du moteur SynRM est depourvu d'aimants et de .........", "bobinages", "t14_h_t14_c1"),
+            ("2. La reluctance designe la resistance opposee au flux .........", "magnetique", "t14_h_t14_c2"),
+            ("3. Le rotor privilegie l'axe offrant la permeabilite la plus .........", "grande", "t14_h_t14_c3"),
+            ("4. Les decoupes geometriques effectuees creent des barrieres d'.........", "air", "t14_h_t14_c4"),
+            ("5. Le moteur a reluctance se classe parmi les machines .........", "synchrones", "t14_h_t14_c5"),
+            ("6. L'absence d'echauffement au rotor preserve la duree de vie des .........", "roulements", "t14_h_t14_c6"),
+            ("7. Le pilotage requiert l'usage obligatoire d'un ......... de vitesse.", "variateur", "t14_h_t14_c7"),
+            ("8. Il represente une alternative economique face aux aimants en terres .........", "rares", "t14_h_t14_c8"),
+            ("9. Le rendement de cette technologie atteint la norme energetique .........", "IE5", "t14_h_t14_c9"),
+            ("10. On le retrouve beaucoup dans les entrainements de ......... industrielles.", "pompes", "t14_h_t14_c10"),
+        ]
+        for num, (phrase, attendu, cle) in enumerate(trous_tab14, 1):
+            saisie = st.session_state.get(cle, "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_suites14 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
+        html_export_suites14 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html14 = preparer_nom_fichier("Rapport_Atelier_14").replace(".txt", ".html")
+        st.download_button(
+            label="Telecharger le rapport d'evaluation officiel de l'Atelier 14 (.html)",
+            data=html_export_suites14,
+            file_name=nom_fichier_html14,
+            mime="text/html",
+            key="dl_btn_html_tab14",
+            use_container_width=True
+        )
 
 
 
@@ -1557,6 +3497,156 @@ with tab15:
     else:
         st.write(f"Observation : Le moteur tourne a {tension_univ * 42:.0f} tr/min avec un sifflement sonore caracteristique lie aux variations alternatives du courant.")
 
+    st.write("---")
+    if "suite_verrouille_tab15" not in st.session_state:
+        st.session_state.suite_verrouille_tab15 = False
+    verrou_at15 = st.session_state.suite_verrouille_tab15
+
+    afficher_atelier_tab15(verrouille=verrou_at15)
+    
+    st.write("---")
+    st.subheader("Synthese et validation de l'Atelier 15")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat15 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier Moteur Universel.",
+        key="check_certif_tab15_final_net",
+        disabled=verrou_at15,
+    )
+    
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 15", key="btn_export_suite15_official_net", use_container_width=True, disabled=verrou_at15):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat15: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_q15 = 0.0
+            if "ordre_quiz_tab15_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab15_aleatoire:
+                    reponse_eleve = st.session_state.get(f"t15_q_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q15 += 1.0
+
+            score_t15 = sum([
+                st.session_state.get("t15_h_t15_c1") == "continu",
+                st.session_state.get("t15_h_t15_c2") == "serie",
+                st.session_state.get("t15_h_t15_c3") == "feuillete",
+                st.session_state.get("t15_h_t15_c4") == "couple",
+                st.session_state.get("t15_h_t15_c5") == "elevee",
+                st.session_state.get("t15_h_t15_c6") == "balais",
+                st.session_state.get("t15_h_t15_c7") == "electriques",
+                st.session_state.get("t15_h_t15_c8") == "chute",
+                st.session_state.get("t15_h_t15_c9") == "electroportatif",
+                st.session_state.get("t15_h_t15_c10") == "aspirateurs",
+            ])
+
+            st.session_state.score_suite15_p1 = round(float(score_q15), 1)
+            st.session_state.score_suite15_p2 = round(float(score_t15), 1)
+            st.session_state.score_final_suite15 = round(float(score_q15 + score_t15), 1)
+            st.session_state.suite_verrouille_tab15 = True
+            st.rerun()
+
+    if st.session_state.get("suite_verrouille_tab15", False):
+        scr1 = st.session_state.get("score_suite15_p1", 0.0)
+        scr2 = st.session_state.get("score_suite15_p2", 0.0)
+        tot_s = st.session_state.get("score_final_suite15", 0.0)
+
+        timestamp_suite15 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER MOTEUR UNIVERSEL SCELLE | Note de session : {tot_s:.1f} / 20")
+
+        html_export_suites15 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Moteur Universel - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation - Moteurs Electriques</h1>
+                <p>Atelier 15 : Moteur Universel</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_suite15}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Moteur Universel : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue a la Synthese du cours : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 15 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab15_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab15_aleatoire, 1):
+                saisie = st.session_state.get(f"t15_q_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_suites15 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites15 += """
+                </tbody>
+            </table>
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        trous_tab15 = [
+            ("1. Le moteur universel accepte le courant alternatif et le courant .........", "continu", "t15_h_t15_c1"),
+            ("2. Sa structure s'apparente au modele a courant continu de type .........", "serie", "t15_h_t15_c2"),
+            ("3. Le fer du stator est ......... pour tolerer les flux variables.", "feuillete", "t15_h_t15_c3"),
+            ("4. L'inversion simultanee des courants maintient le sens du .........", "couple", "t15_h_t15_c4"),
+            ("5. La vitesse de rotation de ce moteur est extremement .........", "elevee", "t15_h_t15_c5"),
+            ("6. Le collecteur mecanique frotte en permanence contre des .........", "balais", "t15_h_t15_c6"),
+            ("7. Les etincelles generees creent des perturbations radio.........", "electriques", "t15_h_t15_c7"),
+            ("8. Sous forte charge mecanique, sa vitesse de rotation .........", "chute", "t15_h_t15_c8"),
+            ("9. C'est le moteur typique de l'outillage ......... filaire.", "electroportatif", "t15_h_t15_c9"),
+            ("10. Sa forte densite de couple au decollage permet de lancer les .........", "aspirateurs", "t15_h_t15_c10"),
+        ]
+        for num, (phrase, attendu, cle) in enumerate(trous_tab15, 1):
+            saisie = st.session_state.get(cle, "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_suites15 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites15 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html15 = preparer_nom_fichier("Rapport_Atelier_15").replace(".txt", ".html")
+        st.download_button(
+            label="Telecharger le rapport d'evaluation officiel de l'Atelier 15 (.html)",
+            data=html_export_suites15,
+            file_name=nom_fichier_html15,
+            mime="text/html",
+            key="dl_btn_html_tab15",
+            use_container_width=True
+        )
 
 
 
@@ -1586,6 +3676,156 @@ with tab16:
         angle_total = nbr_impulsions * 0.9
         st.write(f"Observation : L'arbre a pivote de {angle_total:.1f} degres. Le mouvement est deux fois plus fluide (sauts fins de 0.9°).")
 
+    st.write("---")
+    if "suite_verrouille_tab16" not in st.session_state:
+        st.session_state.suite_verrouille_tab16 = False
+    verrou_at16 = st.session_state.suite_verrouille_tab16
+
+    afficher_atelier_tab16(verrouille=verrou_at16)
+    
+    st.write("---")
+    st.subheader("Synthese et validation de l'Atelier 16")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat16 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier Moteur Pas a Pas.",
+        key="check_certif_tab16_final_net",
+        disabled=verrou_at16,
+    )
+    
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 16", key="btn_export_suite16_official_net", use_container_width=True, disabled=verrou_at16):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat16: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_q16 = 0.0
+            if "ordre_quiz_tab16_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab16_aleatoire:
+                    reponse_eleve = st.session_state.get(f"t16_q_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q16 += 1.0
+
+            score_t16 = sum([
+                st.session_state.get("t16_h_t16_c1") == "numerique",
+                st.session_state.get("t16_h_t16_c2") == "phases",
+                st.session_state.get("t16_h_t16_c3") == "fixe",
+                st.session_state.get("t16_h_t16_c4") == "ouverte",
+                st.session_state.get("t16_h_t16_c5") == "deux",
+                st.session_state.get("t16_h_t16_c6") == "maintien",
+                st.session_state.get("t16_h_t16_c7") == "pas",
+                st.session_state.get("t16_h_t16_c8") == "stator",
+                st.session_state.get("t16_h_t16_c9") == "dents",
+                st.session_state.get("t16_h_t16_c10") == "3D",
+            ])
+
+            st.session_state.score_suite16_p1 = round(float(score_q16), 1)
+            st.session_state.score_suite16_p2 = round(float(score_t16), 1)
+            st.session_state.score_final_suite16 = round(float(score_q16 + score_t16), 1)
+            st.session_state.suite_verrouille_tab16 = True
+            st.rerun()
+
+    if st.session_state.get("suite_verrouille_tab16", False):
+        scr1 = st.session_state.get("score_suite16_p1", 0.0)
+        scr2 = st.session_state.get("score_suite16_p2", 0.0)
+        tot_s = st.session_state.get("score_final_suite16", 0.0)
+
+        timestamp_suite16 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER MOTEUR PAS A PAS SCELLE | Note de session : {tot_s:.1f} / 20")
+
+        html_export_suites16 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Moteur Pas a Pas - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation - Moteurs Electriques</h1>
+                <p>Atelier 16 : Moteur Pas a Pas</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_suite16}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Moteur Pas a Pas : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue a la Synthese du cours : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 16 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab16_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab16_aleatoire, 1):
+                saisie = st.session_state.get(f"t16_q_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_suites16 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites16 += """
+                </tbody>
+            </table>
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        trous_tab16 = [
+            ("1. Le moteur pas a pas est un actionneur de positionnement .........", "numerique", "t16_h_t16_c1"),
+            ("2. Le stator est subdivise en plusieurs enroulements appeles .........", "phases", "t16_h_t16_c2"),
+            ("3. Chaque impulsion electrique provoque un deplacement angulaire .........", "fixe", "t16_h_t16_c3"),
+            ("4. Le controle de position s'effectue couramment en boucle .........", "ouverte", "t16_h_t16_c4"),
+            ("5. En mode demi-pas, le deplacement angulaire est divise par .........", "deux", "t16_h_t16_c5"),
+            ("6. A l'arret, le moteur developpe un couple de ......... important.", "maintien", "t16_h_t16_c6"),
+            ("7. Une charge trop lourde provoque un saut de denture appele perte de .........", "pas", "t16_h_t16_c7"),
+            ("8. Le rotor dente s'aligne sur le champ magnetique du .........", "stator", "t16_h_t16_c8"),
+            ("9. La precision geometrique depend du nombre de ......... du rotor.", "dents", "t16_h_t16_c9"),
+            ("10. Ce moteur est ideal pour la commande des axes d'une imprimante .........", "3D", "t16_h_t16_c10"),
+        ]
+        for num, (phrase, attendu, cle) in enumerate(trous_tab16, 1):
+            saisie = st.session_state.get(cle, "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_suites16 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites16 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html16 = preparer_nom_fichier("Rapport_Atelier_16").replace(".txt", ".html")
+        st.download_button(
+            label="Telecharger le rapport d'evaluation officiel de l'Atelier 16 (.html)",
+            data=html_export_suites16,
+            file_name=nom_fichier_html16,
+            mime="text/html",
+            key="dl_btn_html_tab16",
+            use_container_width=True
+        )
 
 
 
@@ -1615,6 +3855,156 @@ with tab17:
     st.metric("Position reelle de l'axe", f"{angle_reel:.2f} Degres")
     st.metric("Courant consomme pour contrer la perturbation", f"{courant_moteur:.2f} A")
 
+    st.write("---")
+    if "suite_verrouille_tab17" not in st.session_state:
+        st.session_state.suite_verrouille_tab17 = False
+    verrou_at17 = st.session_state.suite_verrouille_tab17
+
+    afficher_atelier_tab17(verrouille=verrou_at17)
+    
+    st.write("---")
+    st.subheader("Synthese et validation de l'Atelier 17")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat17 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier Servomoteur.",
+        key="check_certif_tab17_final_net",
+        disabled=verrou_at17,
+    )
+    
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 17", key="btn_export_suite17_official_net", use_container_width=True, disabled=verrou_at17):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat17: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_q17 = 0.0
+            if "ordre_quiz_tab17_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab17_aleatoire:
+                    reponse_eleve = st.session_state.get(f"t17_q_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q17 += 1.0
+
+            score_t17 = sum([
+                st.session_state.get("t17_h_t17_c1") == "retroaction",
+                st.session_state.get("t17_h_t17_c2") == "consigne",
+                st.session_state.get("t17_h_t17_c3") == "codeur",
+                st.session_state.get("t17_h_t17_c4") == "zero",
+                st.session_state.get("t17_h_t17_c5") == "fermee",
+                st.session_state.get("t17_h_t17_c6") == "couple",
+                st.session_state.get("t17_h_t17_c7") == "vitesse",
+                st.session_state.get("t17_h_t17_c8") == "opposition",
+                st.session_state.get("t17_h_t17_c9") == "impulsions",
+                st.session_state.get("t17_h_t17_c10") == "robots",
+            ])
+
+            st.session_state.score_suite17_p1 = round(float(score_q17), 1)
+            st.session_state.score_suite17_p2 = round(float(score_t17), 1)
+            st.session_state.score_final_suite17 = round(float(score_q17 + score_t17), 1)
+            st.session_state.suite_verrouille_tab17 = True
+            st.rerun()
+
+    if st.session_state.get("suite_verrouille_tab17", False):
+        scr1 = st.session_state.get("score_suite17_p1", 0.0)
+        scr2 = st.session_state.get("score_suite17_p2", 0.0)
+        tot_s = st.session_state.get("score_final_suite17", 0.0)
+
+        timestamp_suite17 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER SERVOMOTEUR SCELLE | Note de session : {tot_s:.1f} / 20")
+
+        html_export_suites17 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Servomoteur - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation - Moteurs Electriques</h1>
+                <p>Atelier 17 : Servomoteur</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_suite17}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Servomoteur : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue a la Synthese du cours : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 17 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab17_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab17_aleatoire, 1):
+                saisie = st.session_state.get(f"t17_q_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_suites17 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites17 += """
+                </tbody>
+            </table>
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        trous_tab17 = [
+            ("1. Le servomoteur verifie en permanence sa position grace a la .........", "retroaction", "t17_h_t17_c1"),
+            ("2. L'asservissement compare la mesure reelle avec la ......... demandee.", "consigne", "t17_h_t17_c2"),
+            ("3. Le capteur de position le plus repandu est le ......... rotatif.", "codeur", "t17_h_t17_c3"),
+            ("4. La commande traite l'ecart pour le ramener vers .........", "zero", "t17_h_t17_c4"),
+            ("5. La boucle de regulation s'effectue de maniere .........", "fermee", "t17_h_t17_c5"),
+            ("6. Le correcteur ajuste instantanement le ......... delivre par le moteur.", "couple", "t17_h_t17_c6"),
+            ("7. Les engrenages internes constituent le reducteur de .........", "vitesse", "t17_h_t17_c7"),
+            ("8. Face a une force externe, le servomoteur developpe une .........", "opposition", "t17_h_t17_c8"),
+            ("9. Le signal PWM code l'angle voulu par la largeur des .........", "impulsions", "t17_h_t17_c9"),
+            ("10. C'est l'actionneur indispensable pour les articulations de .........", "robots", "t17_h_t17_c10"),
+        ]
+        for num, (phrase, attendu, cle) in enumerate(trous_tab17, 1):
+            saisie = st.session_state.get(cle, "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_suites17 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites17 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html17 = preparer_nom_fichier("Rapport_Atelier_17").replace(".txt", ".html")
+        st.download_button(
+            label="Telecharger le rapport d'evaluation officiel de l'Atelier 17 (.html)",
+            data=html_export_suites17,
+            file_name=nom_fichier_html17,
+            mime="text/html",
+            key="dl_btn_html_tab17",
+            use_container_width=True
+        )
 
 
 
@@ -1642,6 +4032,156 @@ with tab18:
     st.metric("Vitesse equivalente en kilometres par heure", f"{vitesse_kmh:.1f} km/h")
 
 
+    st.write("---")
+    if "suite_verrouille_tab18" not in st.session_state:
+        st.session_state.suite_verrouille_tab18 = False
+    verrou_at18 = st.session_state.suite_verrouille_tab18
+
+    afficher_atelier_tab18(verrouille=verrou_at18)
+    
+    st.write("---")
+    st.subheader("Synthese et validation de l'Atelier 18")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat18 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier Moteur Lineaire.",
+        key="check_certif_tab18_final_net",
+        disabled=verrou_at18,
+    )
+    
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 18", key="btn_export_suite18_official_net", use_container_width=True, disabled=verrou_at18):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat18: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_q18 = 0.0
+            if "ordre_quiz_tab18_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab18_aleatoire:
+                    reponse_eleve = st.session_state.get(f"t18_q_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q18 += 1.0
+
+            score_t18 = sum([
+                st.session_state.get("t18_h_t18_c1") == "mouvement",
+                st.session_state.get("t18_h_t18_c2") == "plat",
+                st.session_state.get("t18_h_t18_c3") == "glissante",
+                st.session_state.get("t18_h_t18_c4") == "poussee",
+                st.session_state.get("t18_h_t18_c5") == "usure",
+                st.session_state.get("t18_h_t18_c6") == "intenses",
+                st.session_state.get("t18_h_t18_c7") == "frequence",
+                st.session_state.get("t18_h_t18_c8") == "polaire",
+                st.session_state.get("t18_h_t18_c9") == "rails",
+                st.session_state.get("t18_h_t18_c10") == "laser",
+            ])
+
+            st.session_state.score_suite18_p1 = round(float(score_q18), 1)
+            st.session_state.score_suite18_p2 = round(float(score_t18), 1)
+            st.session_state.score_final_suite18 = round(float(score_q18 + score_t18), 1)
+            st.session_state.suite_verrouille_tab18 = True
+            st.rerun()
+
+    if st.session_state.get("suite_verrouille_tab18", False):
+        scr1 = st.session_state.get("score_suite18_p1", 0.0)
+        scr2 = st.session_state.get("score_suite18_p2", 0.0)
+        tot_s = st.session_state.get("score_final_suite18", 0.0)
+
+        timestamp_suite18 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER MOTEUR LINEAIRE SCELLE | Note de session : {tot_s:.1f} / 20")
+
+        html_export_suites18 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Moteur Lineaire - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation - Moteurs Electriques</h1>
+                <p>Atelier 18 : Moteur Lineaire</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_suite18}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Moteur Lineaire : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue a la Synthese du cours : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 18 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab18_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab18_aleatoire, 1):
+                saisie = st.session_state.get(f"t18_q_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_suites18 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites18 += """
+                </tbody>
+            </table>
+            <div class="sub-title">CORRECTION DETAILLEE DE LA SYNTHESE (TEXTE A TROUS)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Phrase de Cours completee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        trous_tab18 = [
+            ("1. Le moteur lineaire supprime le besoin de transformation du .........", "mouvement", "t18_h_t18_c1"),
+            ("2. La structure de la machine est deployee a ......... le long du rail.", "plat", "t18_h_t18_c2"),
+            ("3. Le stator plan genere une onde magnetique qualifiee de .........", "glissante", "t18_h_t18_c3"),
+            ("4. L'action mecanique appliquee au chariot est une force de .........", "poussee", "t18_h_t18_c4"),
+            ("5. L'absence de contact direct elimine les frottements et l'......... mecanique.", "usure", "t18_h_t18_c5"),
+            ("6. Les accelerations developpees sur l'axe rectiligne sont tres .........", "intenses", "t18_h_t18_c6"),
+            ("7. La vitesse lineaire depend directement de la ......... du balai onduleur.", "frequence", "t18_h_t18_c7"),
+            ("8. La distance entre deux poles magnetiques consecutifs est le pas .........", "polaire", "t18_h_t18_c8"),
+            ("9. Le train Maglev l'utilise pour s'affranchir du contact avec les .........", "rails", "t18_h_t18_c9"),
+            ("10. C'est la solution ideale pour la decoupe industrielle au .........", "laser", "t18_h_t18_c10"),
+        ]
+        for num, (phrase, attendu, cle) in enumerate(trous_tab18, 1):
+            saisie = st.session_state.get(cle, "Choisir...")
+            v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+            v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+            html_export_suites18 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites18 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html18 = preparer_nom_fichier("Rapport_Atelier_18").replace(".txt", ".html")
+        st.download_button(
+            label="Telecharger le rapport d'evaluation officiel de l'Atelier 18 (.html)",
+            data=html_export_suites18,
+            file_name=nom_fichier_html18,
+            mime="text/html",
+            key="dl_btn_html_tab18",
+            use_container_width=True
+        )
 
     
 
