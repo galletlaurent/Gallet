@@ -136,6 +136,101 @@ tab16 = onglets[16]
 tab17 = onglets[17]
 tab18 = onglets[18]
 
+def afficher_banc_mesure_et_graphique(id_atelier, titre_graphe, nom_x, nom_y, val_x, val_y):
+    """Affiche un banc de mesure interactif avec bouton de releve, tableau, courbe et export CSV."""
+    cle_donnees = f"mesures_atelier_{id_atelier}"
+    if cle_donnees not in st.session_state:
+        st.session_state[cle_donnees] = []
+
+    st.write("")
+    col_btn1, col_btn2 = st.columns([0.7, 0.3])
+    
+    with col_btn1:
+        if st.button("Prendre mesure", key=f"btn_mesure_{id_atelier}", use_container_width=True):
+            st.session_state[cle_donnees].append({
+                nom_x: round(float(val_x), 2),
+                nom_y: round(float(val_y), 2)
+            })
+            st.rerun()
+
+    with col_btn2:
+        if st.button("Effacer les mesures", key=f"btn_clear_{id_atelier}", use_container_width=True):
+            st.session_state[cle_donnees] = []
+            st.rerun()
+
+    donnees = st.session_state[cle_donnees]
+    
+    if len(donnees) > 0:
+        df = pd.DataFrame(donnees).sort_values(by=nom_x)
+        col_tab, col_graph = st.columns([0.4, 0.6])
+        
+        with col_tab:
+            st.write("**Tableau des releves**")
+            st.dataframe(df, use_container_width=True, hide_index=True)
+            
+            # Export direct au format CSV (separateur point-virgule pour Excel francais)
+            csv_data = df.to_csv(index=False, sep=";").encode("utf-8-sig")
+            nom_csv = preparer_nom_fichier(f"Mesures_{id_atelier}").replace(".txt", ".csv")
+            st.download_button(
+                label="Exporter les mesures (.csv)",
+                data=csv_data,
+                file_name=nom_csv,
+                mime="text/csv",
+                key=f"dl_csv_{id_atelier}",
+                use_container_width=True
+            )
+            
+        with col_graph:
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(
+                x=df[nom_x],
+                y=df[nom_y],
+                mode="lines+markers",
+                line=dict(color="#1e3a8a", width=3),
+                marker=dict(size=8, color="#ef4444")
+            ))
+            fig.update_layout(
+                title=titre_graphe,
+                xaxis_title=nom_x,
+                yaxis_title=nom_y,
+                height=350,
+                margin=dict(l=20, r=20, t=40, b=20)
+            )
+            st.plotly_chart(fig, use_container_width=True, key=f"plot_{id_atelier}")
+    else:
+        st.info("Ajustez les curseurs ci-dessus puis cliquez sur 'Prendre mesure' pour alimenter le tableau et tracer la courbe.")
+
+
+def generer_html_mesures(id_atelier):
+    """Genere le tableau HTML des mesures relevees pour l'integrer au rapport officiel."""
+    donnees = st.session_state.get(f"mesures_atelier_{id_atelier}", [])
+    if not donnees:
+        return """
+        <div class="sub-title">RELEVES EXPERIMENTAUX (BANC DE MESURE)</div>
+        <p style="font-size: 13px; color: #64748b; background: white; padding: 12px;">Aucune mesure experimentale n'a ete enregistree lors de cette session.</p>
+        """
+    
+    colonnes = list(donnees[0].keys())
+    col_x, col_y = colonnes[0], colonnes[1]
+    donnees_triees = sorted(donnees, key=lambda d: d[col_x])
+    
+    bloc_html = f"""
+    <div class="sub-title">RELEVES EXPERIMENTAUX (BANC DE MESURE - {len(donnees_triees)} POINTS)</div>
+    <table>
+        <thead>
+            <tr><th>Point N°</th><th>{col_x}</th><th>{col_y}</th></tr>
+        </thead>
+        <tbody>
+    """
+    for idx, ligne in enumerate(donnees_triees, 1):
+        bloc_html += f"<tr><td>{idx}</td><td>{ligne[col_x]}</td><td>{ligne[col_y]}</td></tr>"
+        
+    bloc_html += """
+        </tbody>
+    </table>
+    """
+    return bloc_html
+
 def afficher_atelier_tab18(verrouille=False):
     questions_t18 = [
         {"id": "q1", "q": "Quelle est la particularite geometrique fondamentale du moteur lineaire ?", "options": ["Sa structure synchrone ou asynchrone est entierement deployee et etalee a plat", "Il possede un rotor spherique tournant sur trois axes simultanes", "Il fonctionne sans aucun champ magnetique statorique inducteur", "Son entrefer mecanique est compose d'un bain de mercure liquide"], "rep": "Sa structure synchrone ou asynchrone est entierement deployee et etalee a plat"},
@@ -1029,7 +1124,14 @@ with tab1:
     
     st.metric("Puissance electrique absorbee par le reseau (Pa)", f"{pa_calc:.2f} kW")
     st.metric("Rendement global calcule", f"{rendement:.1f} %")
-    
+    afficher_banc_mesure_et_graphique(
+        id_atelier="tab1",
+        titre_graphe="Evolution du rendement en fonction de la puissance utile",
+        nom_x="Puissance utile Pn (kW)",
+        nom_y="Rendement (%)",
+        val_x=pn_val,
+        val_y=rendement
+        
     if rendement > 95:
         st.success("Resultat theorique : Niveau de rendement équivalent a la classe IE5 (Ultra Premium)")
     elif rendement > 92:
@@ -1174,9 +1276,10 @@ with tab1:
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_suites1 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_suites1 += """
+        html_export_suites1 += f"""
                 </tbody>
             </table>
+            {generer_html_mesures("tab1")}
         </body>
         </html>
         """
@@ -1221,6 +1324,14 @@ with tab2:
         st.write("Observation : L'aiguille de la boussole devie legerement de sa trajectoire.")
     else:
         st.write("Observation : Le champ electrique prend le dessus, l'aiguille pivote fermement a 90 degres.")
+    afficher_banc_mesure_et_graphique(
+        id_atelier="tab2",
+        titre_graphe="Champ magnetique genere en fonction du courant",
+        nom_x="Intensite du courant (A)",
+        nom_y="Champ B (microTesla)",
+        val_x=courant_orsted,
+        val_y=champ_b
+    )
 
     st.write("---")
     if "suite_verrouille_tab2" not in st.session_state:
@@ -1357,9 +1468,10 @@ with tab2:
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_suites2 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_suites2 += """
+        html_export_suites2 += f"""
                 </tbody>
             </table>
+            {generer_html_mesures("tab2")}
         </body>
         </html>
         """
@@ -1403,6 +1515,15 @@ with tab3:
         direction = "Aspiration vers la GAUCHE"
         
     st.info(f"Observation de la balancoire : Force appliquee de {intensite_f} N avec une {direction}.")
+    force_signee = intensite_f if direction == "Propulsion vers la DROITE" else -intensite_f
+    afficher_banc_mesure_et_graphique(
+        id_atelier="tab3",
+        titre_graphe="Force de Laplace en fonction de l'intensite du flux",
+        nom_x="Intensite du flux",
+        nom_y="Force orientee (N)",
+        val_x=intensite_f,
+        val_y=force_signee
+    )
 
     st.write("---")
     if "suite_verrouille_tab3" not in st.session_state:
@@ -1539,9 +1660,10 @@ with tab3:
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_suites3 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_suites3 += """
+        html_export_suites3 += f"""
                 </tbody>
             </table>
+            {generer_html_mesures("tab3")}
         </body>
         </html>
         """
@@ -1574,6 +1696,14 @@ with tab4:
     vitesse_calc = u_induit * 13.6 # Constante k arbitraire
     st.metric("Vitesse de rotation de l'arbre", f"{vitesse_calc:.0f} tr/min")
     st.write("Observation : La vitesse de rotation evolue de maniere parfaitement proportionnelle et lineaire a votre curseur de tension.")
+    afficher_banc_mesure_et_graphique(
+        id_atelier="tab4",
+        titre_graphe="Vitesse de rotation en fonction de la tension d'induit",
+        nom_x="Tension d'induit U (V)",
+        nom_y="Vitesse (tr/min)",
+        val_x=u_induit,
+        val_y=vitesse_calc
+    )
 
     st.write("---")
     if "suite_verrouille_tab4" not in st.session_state:
@@ -1710,9 +1840,10 @@ with tab4:
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_suites4 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_suites4 += """
+        html_export_suites4 += f"""
                 </tbody>
             </table>
+            {generer_html_mesures("tab4")}
         </body>
         </html>
         """
@@ -1752,6 +1883,15 @@ with tab5:
         st.write(f"Observation : Le moteur tourne a un regime tres eleve (environ {5000 / couple_resistant:.0f} tr/min).")
     else:
         st.write(f"Observation : Regime stabilise et securise a {15000 / couple_resistant:.0f} tr/min.")
+    vitesse_serie = 15000 / couple_resistant if couple_resistant > 0 else 25000
+    afficher_banc_mesure_et_graphique(
+        id_atelier="tab5",
+        titre_graphe="Caracteristique mecanique Vitesse = f(Couple)",
+        nom_x="Couple resistant (Nm)",
+        nom_y="Vitesse estimee (tr/min)",
+        val_x=couple_resistant,
+        val_y=vitesse_serie
+    )
 
     st.write("---")
     if "suite_verrouille_tab5" not in st.session_state:
@@ -1888,9 +2028,10 @@ with tab5:
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_suites5 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_suites5 += """
+        html_export_suites5 += f"""
                 </tbody>
             </table>
+            {generer_html_mesures("tab5")}
         </body>
         </html>
         """
@@ -1927,6 +2068,16 @@ with tab6:
     vitesse_shunt = 1500 - (charge_meca * 0.5) # La chute est infime
     st.metric("Vitesse de rotation stable", f"{vitesse_shunt:.1f} tr/min")
     st.write("Observation : Bien que vous augmentiez significativement la charge mecanique, la chute de vitesse est extremement reduite.")
+    afficher_banc_mesure_et_graphique(
+        id_atelier="tab6",
+        titre_graphe="Stabilite de la vitesse en fonction de la charge",
+        nom_x="Charge mecanique (%)",
+        nom_y="Vitesse (tr/min)",
+        val_x=charge_meca,
+        val_y=vitesse_shunt
+    )
+
+
     st.write("---")
     if "suite_verrouille_tab6" not in st.session_state:
         st.session_state.suite_verrouille_tab6 = False
@@ -2062,9 +2213,10 @@ with tab6:
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_suites6 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_suites6 += """
+        html_export_suites6 += f"""
                 </tbody>
             </table>
+            {generer_html_mesures("tab6")}
         </body>
         </html>
         """
@@ -2099,6 +2251,15 @@ with tab7:
     st.subheader("Atelier virtuel : Equilibre Compound")
     regime_charge = st.slider("Demande d'effort de traction", min_value=0, max_value=100, value=80, key="c_t7")
     st.write(f"Observation : Le bobinage serie maintient un couple eleve de {regime_charge * 2.5} Nm, tandis que le bobinage shunt bride la vitesse maximale a 1800 tr/min de maniere securisee.")
+    couple_compound = regime_charge * 2.5
+    afficher_banc_mesure_et_graphique(
+        id_atelier="tab7",
+        titre_graphe="Evolution du couple en fonction de la demande de traction",
+        nom_x="Demande de traction (%)",
+        nom_y="Couple developpe (Nm)",
+        val_x=regime_charge,
+        val_y=couple_compound
+    )
 
     st.write("---")
     if "suite_verrouille_tab7" not in st.session_state:
@@ -2235,9 +2396,10 @@ with tab7:
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_suites7 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_suites7 += """
+        html_export_suites7 += f"""
                 </tbody>
             </table>
+            {generer_html_mesures("tab7")}
         </body>
         </html>
         """
@@ -2272,6 +2434,14 @@ with tab8:
     vitesse_drone = st.slider("Position de la manette des gaz du drone (%)", min_value=0, max_value=100, value=50, key="v_t8")
     frequence_hz = vitesse_drone * 4.5
     st.write(f"Observation : Le controleur electronique commute le courant dans les bobines fixes a une frequence precise de {frequence_hz:.1f} Hz pour synchroniser les aimants du rotor.")
+    afficher_banc_mesure_et_graphique(
+        id_atelier="tab8",
+        titre_graphe="Frequence de commutation en fonction des gaz",
+        nom_x="Position gaz (%)",
+        nom_y="Frequence (Hz)",
+        val_x=vitesse_drone,
+        val_y=frequence_hz
+    )
 
     st.write("---")
     if "suite_verrouille_tab8" not in st.session_state:
@@ -2408,9 +2578,10 @@ with tab8:
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_suites8 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_suites8 += """
+        html_export_suites8 += f"""
                 </tbody>
             </table>
+            {generer_html_mesures("tab8")}
         </body>
         </html>
         """
@@ -2449,6 +2620,16 @@ with tab9:
     st.metric("Vitesse du champ tournant du stator (Vitesse synchrone)", f"{vitesse_synchrone:.0f} tr/min")
     st.metric("Vitesse de rotation reelle de la cage d'ecureuil", f"{vitesse_rotor_reelle:.0f} tr/min")
     st.metric("Taux de glissement calcule", f"{glissement_pourcent:.2f} %")
+    afficher_banc_mesure_et_graphique(
+        id_atelier="tab9",
+        titre_graphe="Taux de glissement en fonction du couple de freinage",
+        nom_x="Couple de freinage (Nm)",
+        nom_y="Glissement (%)",
+        val_x=charge_induc,
+        val_y=glissement_pourcent
+    )
+
+
     st.write("---")
     if "suite_verrouille_tab9" not in st.session_state:
         st.session_state.suite_verrouille_tab9 = False
@@ -2584,9 +2765,10 @@ with tab9:
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_suites9 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_suites9 += """
+        html_export_suites9 += f"""
                 </tbody>
             </table>
+            {generer_html_mesures("tab9")}
         </body>
         </html>
         """
@@ -2623,6 +2805,14 @@ with tab10:
     courant_demarrage = 500 - (rheostat_val * 4)
     st.metric("Pic de courant au demarrage", f"{courant_demarrage} A")
     st.write("Observation : Augmenter la resistance externe ecrase le pic de courant sur le reseau electrique au moment de la mise sous tension.")
+    afficher_banc_mesure_et_graphique(
+        id_atelier="tab10",
+        titre_graphe="Pic de courant au demarrage en fonction du rheostat",
+        nom_x="Resistance externe (Ohms)",
+        nom_y="Pic de courant (A)",
+        val_x=rheostat_val,
+        val_y=courant_demarrage
+    )
 
     st.write("---")
     if "suite_verrouille_tab10" not in st.session_state:
@@ -2759,9 +2949,10 @@ with tab10:
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_suites10 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_suites10 += """
+        html_export_suites10 += f"""
                 </tbody>
             </table>
+            {generer_html_mesures("tab10")}
         </body>
         </html>
         """
@@ -2797,6 +2988,16 @@ with tab11:
         st.error("Observation : Le moteur vibre intensement sur place et emet un grognement alternatif, mais le couple initial de demarrage est nul (0 Nm).")
     else:
         st.success("Observation : Le condensateur cree le dephasage requis. Le champ magnetique devient tournant et lance le rotor immediatement.")
+    couple_dem_mono = 0.0 if condo_etat == "Debranche / Hors service" else 12.5
+    etat_num = 0 if condo_etat == "Debranche / Hors service" else 1
+    afficher_banc_mesure_et_graphique(
+        id_atelier="tab11",
+        titre_graphe="Couple de decollage selon l'etat du condensateur (0=Off, 1=On)",
+        nom_x="Etat condensateur",
+        nom_y="Couple initial (Nm)",
+        val_x=etat_num,
+        val_y=couple_dem_mono
+    )
 
     st.write("---")
     if "suite_verrouille_tab11" not in st.session_state:
@@ -2933,9 +3134,10 @@ with tab11:
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_suites11 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_suites11 += """
+        html_export_suites11 += f"""
                 </tbody>
             </table>
+            {generer_html_mesures("tab11")}
         </body>
         </html>
         """
@@ -2971,6 +3173,14 @@ with tab12:
     vitesse_pmsm = (freq_onduleur * 60) / 2 # hypothese 4 poles
     st.metric("Vitesse mesurée sur l'arbre", f"{vitesse_pmsm:.0f} tr/min")
     st.write("Observation : Peu importe l'effort resistant applique, la vitesse de rotation reste parfaitement bloquee sur la frequence electrique. Le glissement est rigoureusement nul.")
+    afficher_banc_mesure_et_graphique(
+        id_atelier="tab12",
+        titre_graphe="Vitesse synchrone en fonction de la frequence onduleur",
+        nom_x="Frequence onduleur (Hz)",
+        nom_y="Vitesse arbre (tr/min)",
+        val_x=freq_onduleur,
+        val_y=vitesse_pmsm
+    )
 
     st.write("---")
     if "suite_verrouille_tab12" not in st.session_state:
@@ -3107,9 +3317,10 @@ with tab12:
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_suites12 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_suites12 += """
+        html_export_suites12 += f"""
                 </tbody>
             </table>
+            {generer_html_mesures("tab12")}
         </body>
         </html>
         """
@@ -3150,6 +3361,16 @@ with tab13:
         st.write("Observation : L'equilibre est optimal. Le facteur de puissance cos phi est proche de 1.")
     else:
         st.write("Observation : Le moteur est sur-excite. Il compense les autres machines de l'usine en renvoyant du réactif.")
+    cos_phi_sim = max(0.6, 1.0 - abs(courant_excitation - 5.0) * 0.08)
+    afficher_banc_mesure_et_graphique(
+        id_atelier="tab13",
+        titre_graphe="Facteur de puissance (cos phi) selon l'excitation",
+        nom_x="Courant d'excitation (A)",
+        nom_y="Cosinus phi",
+        val_x=courant_excitation,
+        val_y=cos_phi_sim
+    )
+
     st.write("---")
     if "suite_verrouille_tab13" not in st.session_state:
         st.session_state.suite_verrouille_tab13 = False
@@ -3285,9 +3506,10 @@ with tab13:
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_suites13 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_suites13 += """
+        html_export_suites13 += f"""
                 </tbody>
             </table>
+            {generer_html_mesures("tab13")}
         </body>
         </html>
         """
@@ -3323,6 +3545,14 @@ with tab14:
     st.subheader("Atelier virtuel : Orientation des barrieres de reluctance")
     angle_stator = st.slider("Position angulaire du flux statorique (Degres)", min_value=0, max_value=180, value=45, key="a_t14")
     st.write(f"Observation : Le bloc de toles d'acier du rotor pivote de facon instantanee pour venir s'aligner exactement sur l'angle de {angle_stator} degres afin de minimiser la resistance du flux.")
+    afficher_banc_mesure_et_graphique(
+        id_atelier="tab14",
+        titre_graphe="Alignement angulaire du rotor selon le flux stator",
+        nom_x="Angle flux stator (degres)",
+        nom_y="Angle rotor aligne (degres)",
+        val_x=angle_stator,
+        val_y=angle_stator
+    )
 
     st.write("---")
     if "suite_verrouille_tab14" not in st.session_state:
@@ -3459,9 +3689,10 @@ with tab14:
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_suites14 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_suites14 += """
+        html_export_suites14 += f"""
                 </tbody>
             </table>
+            {generer_html_mesures("tab14")}
         </body>
         </html>
         """
@@ -3496,6 +3727,15 @@ with tab15:
         st.write(f"Observation : Rotation stable et silencieuse a {tension_univ * 50:.0f} tr/min. Rendement optimal.")
     else:
         st.write(f"Observation : Le moteur tourne a {tension_univ * 42:.0f} tr/min avec un sifflement sonore caracteristique lie aux variations alternatives du courant.")
+    vitesse_univ = tension_univ * 50 if type_alim == "Courant Continu (CC)" else tension_univ * 42
+    afficher_banc_mesure_et_graphique(
+        id_atelier="tab15",
+        titre_graphe="Vitesse du moteur universel selon la tension",
+        nom_x="Tension appliquee (V)",
+        nom_y="Vitesse (tr/min)",
+        val_x=tension_univ,
+        val_y=vitesse_univ
+    )
 
     st.write("---")
     if "suite_verrouille_tab15" not in st.session_state:
@@ -3632,9 +3872,10 @@ with tab15:
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_suites15 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_suites15 += """
+        html_export_suites15 += f"""
                 </tbody>
             </table>
+            {generer_html_mesures("tab15")}
         </body>
         </html>
         """
@@ -3675,6 +3916,14 @@ with tab16:
     else:
         angle_total = nbr_impulsions * 0.9
         st.write(f"Observation : L'arbre a pivote de {angle_total:.1f} degres. Le mouvement est deux fois plus fluide (sauts fins de 0.9°).")
+    afficher_banc_mesure_et_graphique(
+        id_atelier="tab16",
+        titre_graphe="Angle de rotation selon le nombre d'impulsions",
+        nom_x="Nombre d'impulsions",
+        nom_y="Angle total (degres)",
+        val_x=nbr_impulsions,
+        val_y=angle_total
+    )
 
     st.write("---")
     if "suite_verrouille_tab16" not in st.session_state:
@@ -3811,9 +4060,10 @@ with tab16:
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_suites16 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_suites16 += """
+        html_export_suites16 += f"""
                 </tbody>
             </table>
+            {generer_html_mesures("tab16")}
         </body>
         </html>
         """
@@ -3854,6 +4104,14 @@ with tab17:
     
     st.metric("Position reelle de l'axe", f"{angle_reel:.2f} Degres")
     st.metric("Courant consomme pour contrer la perturbation", f"{courant_moteur:.2f} A")
+    afficher_banc_mesure_et_graphique(
+        id_atelier="tab17",
+        titre_graphe="Courant de maintien en fonction de la perturbation",
+        nom_x="Force perturbation (N)",
+        nom_y="Courant absorbe (A)",
+        val_x=force_perturbation,
+        val_y=courant_moteur
+    )
 
     st.write("---")
     if "suite_verrouille_tab17" not in st.session_state:
@@ -3990,9 +4248,10 @@ with tab17:
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_suites17 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_suites17 += """
+        html_export_suites17 += f"""
                 </tbody>
             </table>
+            {generer_html_mesures("tab17")}
         </body>
         </html>
         """
@@ -4030,6 +4289,14 @@ with tab18:
     
     st.metric("Vitesse lineaire de translation du chariot", f"{vitesse_lineaire_ms:.1f} m/s")
     st.metric("Vitesse equivalente en kilometres par heure", f"{vitesse_kmh:.1f} km/h")
+    afficher_banc_mesure_et_graphique(
+        id_atelier="tab18",
+        titre_graphe="Vitesse lineaire en fonction de la frequence",
+        nom_x="Frequence de balayage (Hz)",
+        nom_y="Vitesse chariot (m/s)",
+        val_x=frequence_onde,
+        val_y=vitesse_lineaire_ms
+    )
 
 
     st.write("---")
@@ -4167,9 +4434,10 @@ with tab18:
             v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
             html_export_suites18 += f"<tr><td>{num}</td><td>{phrase}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_suites18 += """
+        html_export_suites18 += f"""
                 </tbody>
             </table>
+            {generer_html_mesures("tab18")}
         </body>
         </html>
         """
