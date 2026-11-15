@@ -1039,6 +1039,127 @@ with tab1:
     else:
         st.warning("Resultat theorique : Rendement faible (IE1 ou hors normes)")
 
+    st.write("---")
+    if "suite_verrouille_tab1" not in st.session_state:
+        st.session_state.suite_verrouille_tab1 = False
+    verrou_at1 = st.session_state.suite_verrouille_tab1
+
+    afficher_atelier_tab1(verrouille=verrou_at1)
+    
+    st.write("---")
+    st.subheader("Synthese et validation de l'Atelier 1")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_stat1 = st.checkbox(
+        "Je certifie avoir complete les questions de l'Atelier Identification et Normes.",
+        key="check_certif_tab1_final_net",
+        disabled=verrou_at1,
+    )
+    
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_suite1_official_net", use_container_width=True, disabled=verrou_at1):
+        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
+            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
+        elif not case_certif_stat1: 
+            st.error("Action refusee : Cochez la case de certification.")
+        else:
+            score_q1 = 0.0
+            if "ordre_quiz_tab1_aleatoire" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_tab1_aleatoire:
+                    reponse_eleve = st.session_state.get(f"t1_q_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q1 += 1.0
+
+            score_t1 = sum([
+                st.session_state.get("t1_h_t1_c1") == "nominales",
+                st.session_state.get("t1_h_t1_c2") == "vapeur",
+                st.session_state.get("t1_h_t1_c3") == "simple",
+                st.session_state.get("t1_h_t1_c4") == "IEC",
+                st.session_state.get("t1_h_t1_c5") == "Joule",
+                st.session_state.get("t1_h_t1_c6") == "enveloppe",
+                st.session_state.get("t1_h_t1_c7") == "tours",
+                st.session_state.get("t1_h_t1_c8") == "In",
+                st.session_state.get("t1_h_t1_c9") == "puissance",
+                st.session_state.get("t1_h_t1_c10") == "Hertz",
+            ])
+
+            st.session_state.score_suite1_p1 = round(float(score_q1), 1)
+            st.session_state.score_suite1_p2 = round(float(score_t1), 1)
+            st.session_state.score_final_suite1 = round(float(score_q1 + score_t1), 1)
+            st.session_state.suite_verrouille_tab1 = True
+            st.rerun()
+
+    if st.session_state.get("suite_verrouille_tab1", False):
+        scr1 = st.session_state.get("score_suite1_p1", 0.0)
+        scr2 = st.session_state.get("score_suite1_p2", 0.0)
+        tot_s = st.session_state.get("score_final_suite1", 0.0)
+
+        timestamp_suite1 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER IDENTIFICATION ET NORMES SCELLE | Note de session : {tot_s:.1f} / 20")
+
+        html_export_suites1 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Identification et Normes - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Rapport d'Evaluation - Moteurs Electriques</h1>
+                <p>Atelier 1 : Identification et Lecture de Plaque Signaletique</p>
+                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_suite1}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            <div class="sub-title">Recapitulatif des Notes Generees</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                Note obtenue au Quiz Identification : <strong>{scr1:.1f} / 10</strong><br>
+                Note obtenue a la Synthese du cours : <strong>{scr2:.1f} / 10</strong><br>
+                Note Totale de l'Atelier 1 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_tab1_aleatoire" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_tab1_aleatoire, 1):
+                saisie = st.session_state.get(f"t1_q_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_suites1 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_suites1 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+        nom_fichier_html1 = preparer_nom_fichier("Rapport_Atelier_1").replace(".txt", ".html")
+        st.download_button(
+            label="Telecharger le rapport d'evaluation officiel de l'Atelier 1 (.html)",
+            data=html_export_suites1,
+            file_name=nom_fichier_html1,
+            mime="text/html",
+            key="dl_btn_html_tab1",
+            use_container_width=True
+        )
 
 # ==============================================================================
 # 2. HISTORIQUE GENERAL
@@ -1519,130 +1640,4 @@ with tab18:
 
 
 
-    st.write("---")        
-    if "suite_verrouille_tab1" not in st.session_state:
-        st.session_state.suite_verrouille_tab1 = False
-    verrou_at1 = st.session_state.suite_verrouille_tab1
-
-    afficher_atelier_decomposition_complet(verrouille=verrou_at1)
-    
-    st.write("---")
-    st.subheader("Synthese et validation de l'Atelier 1")
-    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
-    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
-    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
-
-    case_certif_stat1 = st.checkbox(
-        "Je certifie avoir complete les questions de l'Atelier Decomposition.",
-        key="check_certif_generalites_final_net",
-        disabled=verrou_at1,
-    )
-    
-    # --- 4. BLOC DE CORRECTION ET BOUTON VALIDER ---
-    if st.button("VALIDER ET EXPORTER LE BILAN DE L'ATELIER 1", key="btn_export_suite1_official_net", use_container_width=True, disabled=verrou_at1):
-        if st.session_state.get("nom_var", "Nom") in ["Nom", ""] or st.session_state.get("prenom_var", "Prenom") in ["Prenom", ""]:
-            st.error("Action refusee : Saisissez votre identite dans l'onglet 'Identification'.")
-        elif not case_certif_stat1: 
-            st.error("Action refusee : Cochez la case de certification.")
-        else:
-            score_q1 = 0.0
-            if "ordre_quiz_tab1_aleatoire" in st.session_state:
-                for q_item in st.session_state.ordre_quiz_tab1_aleatoire:
-                    reponse_eleve = st.session_state.get(f"dec_at6_final_g_{q_item['id']}", "Choisir...")
-                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
-                        score_q1 += 1.0
-
-            # Verification des bonnes reponses du texte a trous adapte a la statique
-            score_t1 = sum(
-                [
-                    st.session_state.get("dec_t1_final") == "orthogonales",
-                    st.session_state.get("dec_t2_final") == "chevaucher",
-                    st.session_state.get("dec_t3_final") == "cosinus",
-                    st.session_state.get("dec_t4_final") == "sinus",
-                    st.session_state.get("dec_t5_final") == "rectangle",
-                    st.session_state.get("dec_t6_final") == "sens",
-                    st.session_state.get("dec_t7_final") == "formules",
-                    st.session_state.get("dec_t8_final") == "invariante",
-                    st.session_state.get("dec_t9_final") == "verticale",
-                    st.session_state.get("dec_t10_final") == "totale",
-                ]
-            )
-
-            st.session_state.score_suite1_p1 = round(float(score_q1), 1)
-            st.session_state.score_suite1_p2 = round(float(score_t1), 1)
-            st.session_state.score_final_suite1 = round(float(score_q1 + score_t1), 1)
-            st.session_state.suite_verrouille_tab1 = True
-            st.rerun()
-
-    # --- COMPILATION DU DOCUMENT EXPORTABLE HTML TAB 1 ---
-    if st.session_state.get("suite_verrouille_tab1", False):
-        scr1 = st.session_state.get("score_suite1_p1", 0.0)
-        scr2 = st.session_state.get("score_suite1_p2", 0.0)
-        tot_s = st.session_state.get("score_final_suite1", 0.0)
-
-        timestamp_suite1 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
-        st.success(f"ATELIER DECOMPOSITION SCELLE | Note de session : {tot_s:.1f} / 20")
-
-        html_export_suites = f"""<!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <title>Rapport Decomposition - {n_eleve}</title>
-            <style>
-                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
-                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
-                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
-                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
-                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
-                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
-                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
-                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
-            </style>
-        </head>
-        <body>
-            <div class="header-box">
-                <h1>Rapport d'Evaluation de Mecanique - Statique</h1>
-                <p>Atelier 1 : Decomposition vectorielle des forces</p>
-                <p>Eleve : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
-                <p style="font-size: 12px; opacity: 0.7;">Scelle le : {timestamp_suite1}</p>
-                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
-            </div>
-            <div class="sub-title">Recapitulatif des Notes Generees</div>
-            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
-                Note obtenue au Quiz Decomposition : <strong>{scr1:.1f} / 10</strong><br>
-                Note obtenue a la Synthese du cours : <strong>{scr2:.1f} / 10</strong><br>
-                Note Totale de l'Atelier 1 : <strong>{tot_s:.1f} / 20</strong>
-            </p>
-            <div class="sub-title">CORRECTION DETAILLEE DU QUIZ (ORDRE D'AFFICHAGE DE SESSION)</div>
-            <table>
-                <thead>
-                    <tr><th>N°</th><th>Question Posee</th><th>Saisie Eleve</th><th>Attendu Academique</th><th>Verdict</th></tr>
-                </thead>
-                <tbody>
-        """
-
-        # Rectification ici : Appel de la liste de session stockee a l'atelier 1
-        if "ordre_quiz_tab1_aleatoire" in st.session_state:
-            for num, q_item in enumerate(st.session_state.ordre_quiz_tab1_aleatoire, 1):
-                saisie = st.session_state.get(f"dec_at6_final_g_{q_item['id']}", "Choisir...")
-                attendu = q_item["rep"]
-                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
-                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
-                html_export_suites += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
-
-        html_export_suites += """
-                </tbody>
-            </table>
-        </body>
-        </html>
-        """
-        nom_fichier_html = preparer_nom_fichier("Rapport_Atelier_1").replace(".txt", ".html")
-        st.download_button(
-            label="Telecharger le rapport d'evaluation officiel de l'Atelier 1 (.html)",
-            data=html_export_suites,
-            file_name=nom_fichier_html,
-            mime="text/html",
-            use_container_width=True
-        )
 
