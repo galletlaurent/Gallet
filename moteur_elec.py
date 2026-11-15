@@ -3025,7 +3025,7 @@ with tab12:
 
     if st.session_state.get("suite_verrouille_tab12", False):
         scr1 = st.session_state.get("score_suite12_p1", 0.0)
-           scr2 = st.session_state.get("score_suite12_p2", 0.0)
+        scr2 = st.session_state.get("score_suite12_p2", 0.0)
         tot_s = st.session_state.get("score_final_suite12", 0.0)
 
         timestamp_suite12 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
