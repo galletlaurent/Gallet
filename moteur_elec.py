@@ -1130,7 +1130,7 @@ with tab1:
         nom_x="Puissance utile Pn (kW)",
         nom_y="Rendement (%)",
         val_x=pn_val,
-        val_y=rendement
+        val_y=rendement)
         
     if rendement > 95:
         st.success("Resultat theorique : Niveau de rendement équivalent a la classe IE5 (Ultra Premium)")
