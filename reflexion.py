@@ -3336,11 +3336,11 @@ with tab6:
                 st.warning(f"L'image '{data_sujet['img_metier']}' est introuvable.")
 
         with col_bd_m:
+            nom_bd = f"bd_humour_maintenance{idx_sujet + 1}.jpg"
             try:
-                st.image("bd_humour_maintenance.jpg", caption="La pause BD : Quand le laser de maintenance fait des siennes !", use_container_width=True)
+                st.image(nom_bd, caption="La pause BD : Quand le laser de maintenance fait des siennes !", use_container_width=True)
             except Exception:
-                st.warning("L'image 'bd_humour_maintenance.jpg' est introuvable.")
-
+                st.warning(f"L'image '{nom_bd}' est introuvable.")
 
         st.markdown("---")
         st.subheader("2. Banc de mesure expérimental sur site")
@@ -3585,10 +3585,13 @@ with tab7:
                 st.warning(f"L'image '{data_sujet_tp['img_metier']}' est introuvable.")
 
         with col_bd_tp:
+            num_bd_tp = (idx_sujet_tp % 2) + 1
+            nom_bd_tp = f"bd_humour_tp{num_bd_tp}.jpg"
             try:
-                st.image("bd_humour_tp.jpg", caption="La pause BD : Quand le niveau laser se dérègle sur le chantier !", use_container_width=True)
+                st.image(nom_bd_tp, caption="La pause BD : Quand le niveau laser se dérègle sur le chantier !", use_container_width=True)
             except Exception:
-                st.warning("L'image 'bd_humour_tp.jpg' est introuvable.")
+                st.warning(f"L'image '{nom_bd_tp}' est introuvable.")
+
         st.markdown("---")
         st.subheader("2. Banc de mesure expérimental sur chantier")
 
@@ -3841,10 +3844,12 @@ with tab8:
                 st.warning(f"L'image '{data_sujet_tr['img_metier']}' est introuvable.")
 
         with col_bd_tr:
+            nom_bd_tr = f"bd_humour_transport{idx_sujet_tr + 1}.jpg"
             try:
-                st.image("bd_humour_transport.jpg", caption="La pause BD : Attention aux angles morts et aux plein phares !", use_container_width=True)
+                st.image(nom_bd_tr, caption="La pause BD : Attention aux angles morts et aux plein phares !", use_container_width=True)
             except Exception:
-                st.warning("L'image 'bd_humour_transport.jpg' est introuvable.")
+                st.warning(f"L'image '{nom_bd_tr}' est introuvable.")
+
         st.markdown("---")
         st.subheader("2. Banc d'essai optique sur véhicule")
 
@@ -4093,10 +4098,12 @@ with tab9:
                 st.warning(f"L'image '{data_sujet_geo['img_metier']}' est introuvable.")
 
         with col_bd_geo:
+            nom_bd_geo = f"bd_humour_geometre{idx_sujet_geo + 1}.jpg"
             try:
-                st.image("bd_humour_geometre.jpg", caption="La pause BD : Quand un camion passe devant le prisme en plein levé !", use_container_width=True)
+                st.image(nom_bd_geo, caption="La pause BD : Quand un camion passe devant le prisme en plein levé !", use_container_width=True)
             except Exception:
-                st.warning("L'image 'bd_humour_geometre.jpg' est introuvable.")
+                st.warning(f"L'image '{nom_bd_geo}' est introuvable.")
+
         st.markdown("---")
         st.subheader("2. Banc de mesure topographique sur le terrain")
 
