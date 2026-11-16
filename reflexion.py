@@ -1046,18 +1046,19 @@ def afficher_atelier_retroviseurs_complet(verrouille=False):
         st.markdown("##### Quiz Rétroviseurs & Sécurité (10 questions - 10 pts)")
         for idx, q_data in enumerate(st.session_state.ordre_quiz_retro_aleatoire, 1):
             st.write(f"**{idx}.** {q_data['q']}")
-            cle_select = f"retro_at4_final_g_{q_data['id']}"
+            cle_select = f"retro_at4_final_g_{q_data['id']}_{idx}"
             opts_affichees = ["Choisir..."] + q_data["options"]
             st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
     with col_trous:
         st.markdown("##### Synthèse Rétroviseurs (Texte à trous - 10 cases - 10 pts)")
-        for enonce, choix, _, cle in champs_retro:
+        for idx_trou, (enonce, choix, _, cle) in enumerate(champs_retro, 1):
             c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
             with c_txt:
                 st.write(enonce)
             with c_sel:
-                st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+                st.selectbox("", choix, key=f"{cle}_{idx_trou}", disabled=verrouille, label_visibility="collapsed")
+
                 
 def afficher_atelier_periscope_complet(verrouille=False):
     """Affiche le Quiz (10 questions) et le Texte à trous (10 cases) de l'Atelier 5 (Périscope)."""
@@ -1096,18 +1097,19 @@ def afficher_atelier_periscope_complet(verrouille=False):
         st.markdown("##### Quiz Périscope & Double Réflexion (10 questions - 10 pts)")
         for idx, q_data in enumerate(st.session_state.ordre_quiz_peri_aleatoire, 1):
             st.write(f"**{idx}.** {q_data['q']}")
-            cle_select = f"peri_at5_final_g_{q_data['id']}"
+            cle_select = f"peri_at5_final_g_{q_data['id']}_{idx}"
             opts_affichees = ["Choisir..."] + q_data["options"]
             st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
     with col_trous:
         st.markdown("##### Synthèse Périscope (Texte à trous - 10 cases - 10 pts)")
-        for enonce, choix, _, cle in champs_peri:
+        for idx_trou, (enonce, choix, _, cle) in enumerate(champs_peri, 1):
             c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
             with c_txt:
                 st.write(enonce)
             with c_sel:
-                st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+                st.selectbox("", choix, key=f"{cle}_{idx_trou}", disabled=verrouille, label_visibility="collapsed")
+
 
 def mettre_a_jour_maintenance_matplotlib(sujet_idx):
     """Banc d'essai optique ultra-réaliste adapté au sujet de maintenance tiré au sort."""
@@ -1373,18 +1375,19 @@ def afficher_atelier_maintenance_complet(sujet_idx, verrouille=False):
         st.markdown("##### Quiz Technique sur votre sujet (10 questions - 10 pts)")
         for idx, q_data in enumerate(st.session_state[cle_session_ordre], 1):
             st.write(f"**{idx}.** {q_data['q']}")
-            cle_select = f"maint_at6_final_g_{q_data['id']}"
+            cle_select = f"maint_at6_final_g_{q_data['id']}_s{sujet_idx}_{idx}"
             opts_affichees = ["Choisir..."] + q_data["options"]
             st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
     with col_trous:
         st.markdown("##### Synthèse sur votre sujet (Texte à trous - 10 cases - 10 pts)")
-        for enonce, choix, _, cle in banque["trous"]:
+        for idx_trou, (enonce, choix, _, cle) in enumerate(banque["trous"], 1):
             c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
             with c_txt:
                 st.write(enonce)
             with c_sel:
-                st.selectbox("", choix, key=cle, disabled=verrouille, label_visibility="collapsed")
+                st.selectbox("", choix, key=f"{cle}_s{sujet_idx}_{idx_trou}", disabled=verrouille, label_visibility="collapsed")
+
 BANQUES_TP = {
     # =========================================================================
     # BANQUE SUJET 0 : LASER ROTATIF DE NIVELLEMENT (TERRASSEMENT & PELLE)
@@ -1651,18 +1654,18 @@ def afficher_atelier_tp_complet(sujet_idx, verrouille=False):
         st.markdown("##### Quiz Technique Travaux Publics (10 questions - 10 pts)")
         for idx, q_data in enumerate(st.session_state[cle_session_ordre], 1):
             st.write(f"**{idx}.** {q_data['q']}")
-            cle_select = f"tp_at7_final_g_{q_data['id']}"
+            cle_select = f"tp_at7_final_g_{q_data['id']}_{idx}"
             opts_affichees = ["Choisir..."] + q_data["options"]
             st.selectbox("", options=opts_affichees, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
     with col_trous:
         st.markdown("##### Synthèse Travaux Publics (Texte à trous - 10 cases - 10 pts)")
-        for enonce, choix, _, cle in banque["trous"]:
+        for idx_trou, (enonce, choix, _, cle) in enumerate(banque["trous"], 1):
             c_txt, c_sel = st.columns([0.70, 0.30], vertical_alignment="bottom")
             with c_txt:
                 st.write(enonce)
             with c_sel:
-                st.selectbox("", choix, key=f"{cle}_s{sujet_idx}", disabled=verrouille, label_visibility="collapsed")
+                st.selectbox("", choix, key=f"{cle}_s{sujet_idx}_{idx_trou}", disabled=verrouille, label_visibility="collapsed")
 
 BANQUES_TRANSPORT = {
     # =========================================================================
