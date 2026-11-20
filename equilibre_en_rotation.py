@@ -20,6 +20,9 @@ import numpy as np
 import plotly.graph_objects as go
 import pandas as pd
 import streamlit.components.v1 as components
+import sys
+from PIL import Image
+
 # =============================================================================
 # RENDU DU TITRE DE L'APPLICATION ET CRÉDITS (Lignes uniques sans coupure)
 # =============================================================================
@@ -43,7 +46,6 @@ BASE_DIR = os.path.abspath(".")
 
 def charger_image(nom_fichier):
     nom_fichier = os.path.basename(nom_fichier)
-    
     # Python scanne automatiquement tous les dossiers présents à côté du script
     for element in os.listdir(BASE_DIR):
         chemin_dossier = os.path.join(BASE_DIR, element)
@@ -54,28 +56,35 @@ def charger_image(nom_fichier):
                     return Image.open(chemin_image)
                 except Exception:
                     pass
-                    
+                        
     # Sécurité si l'application est déjà masquée dans fichiers_systemes
     chemin_secours = os.path.join(BASE_DIR, "image", nom_fichier)
     if os.path.exists(chemin_secours):
-        try: return Image.open(chemin_secours)
-        except Exception: pass
+        try: 
+            return Image.open(chemin_secours)
+        except Exception: 
+            pass
     return None
 
-# --- TOUS VOS CORRECTIFS (RERUN, COLUMNS, CONTAINER, IMAGE) ---
-if hasattr(st, "rerun"): _original_rerun = st.rerun
-elif hasattr(st, "experimental_rerun"): _original_rerun = st.experimental_rerun
-else: _original_rerun = None
+# --- TOUS LES CORRECTIFS SÉCURISÉS (RERUN, COLUMNS, CONTAINER, IMAGE) ---
 
+# 1. Sauvegarde STRICTE des fonctions d'origine AVANT modification
+_vrai_st_rerun = st.rerun if hasattr(st, "rerun") else (st.experimental_rerun if hasattr(st, "experimental_rerun") else None)
+_vrai_st_image = st.image
+_vrai_st_columns = st.columns
+_vrai_st_container = st.container
+
+# 2. Correctif pour st.rerun
 def safe_rerun():
-    if _original_rerun is not None:
-        try: _original_rerun()
+    if _vrai_st_rerun is not None:
+        try: 
+            _vrai_st_rerun()
         except Exception:
             from streamlit.runtime.scriptrunner import RerunData, RerunException
             raise RerunException(RerunData())
 st.rerun = safe_rerun
 
-_original_image = st.image
+# 3. Correctif pour st.image (Résolution de la boucle infinie)
 def safe_image(image, *args, **kwargs):
     if "use_container_width" in kwargs:
         kwargs["use_column_width"] = kwargs.pop("use_container_width")
@@ -84,49 +93,43 @@ def safe_image(image, *args, **kwargs):
         img_pil = charger_image(nom_fichier)
         if img_pil is not None: 
             image = img_pil
-    return _original_image(image, *args, **kwargs)
+    return _vrai_st_image(image, *args, **kwargs)  # Utilise la vraie fonction d'origine
 st.image = safe_image
 
-# 2. Interception pour st.columns (vertical_alignment)
-_original_columns = st.columns
+# 4. Interception pour st.columns (vertical_alignment)
 def safe_columns(*args, **kwargs):
     if "vertical_alignment" in kwargs:
         kwargs.pop("vertical_alignment")
-    return _original_columns(*args, **kwargs)
+    return _vrai_st_columns(*args, **kwargs)
 st.columns = safe_columns
 
-# 3. Interception pour st.container (border)
-_original_container = st.container
+# 5. Interception pour st.container (border)
 def safe_container(*args, **kwargs):
     if "border" in kwargs:
         kwargs.pop("border")
-    return _original_container(*args, **kwargs)
+    return _vrai_st_container(*args, **kwargs)
 st.container = safe_container
 
-# 4. Interception pour le changement de nom st.toggle -> st.checkbox
-# Utile si vous utilisez des boutons bascules récents non supportés par Python 3.7
+# 6. Rétrocompatibilité st.toggle -> st.checkbox
 if not hasattr(st, "toggle"):
     def safe_toggle(label, value=False, key=None, **kwargs):
         return st.checkbox(label, value=value, key=key)
     st.toggle = safe_toggle
 
-# 5. Interception pour st.dialog (non supporté sur les vieilles versions)
+# 7. Rétrocompatibilité st.dialog
 if not hasattr(st, "dialog"):
     def safe_dialog(*args, **kwargs):
-        # Redirige proprement vers un container d'avertissement classique
         return st.container()
     st.dialog = safe_dialog
 
+# 8. Décorateur pour sécuriser l'état des widgets (Session State)
 def securiser_widget_factory(fonction_origine):
     def safe_widget(*args, **kwargs):
         cle = kwargs.get("key")
-        # Si le widget a une clé et que cette clé est déjà dans la mémoire Session State
         if cle and cle in st.session_state:
-            # On retire l'argument 'value' en double pour éviter l'encadré jaune de Streamlit
             kwargs.pop("value", None)
         return fonction_origine(*args, **kwargs)
     return safe_widget
-
 
 
 
@@ -185,19 +188,259 @@ liste_onglets = [
     "Théorème des moments",
     "Applications en mécanique",  
     "Exemple 1",               
-    "Exemple 2"               
+    "Exemple 2",
+    "Exemple 3",
+    "Exemple 4",
+    "Exemple 5",
+    "Exemple 6"
 ]
 
 onglets = st.tabs(liste_onglets)
 
-# Affectation automatique des variables d'onglets selon leur index
-tab0 = onglets[0]
-tab1 = onglets[1]
-tab2 = onglets[2]
-tab3 = onglets[3]
-tab4 = onglets[4]
-tab5 = onglets[5]
-tab6 = onglets[6]
+tab0 = onglets
+tab1 = onglets
+tab2 = onglets
+tab3 = onglets
+tab4 = onglets
+tab5 = onglets
+tab6 = onglets
+tab7 = onglets
+tab8 = onglets
+tab9 = onglets
+tab10 = onglets
+
+def afficher_questions_exemple6_dynamiques(verrouille=False):
+    f_user = st.session_state.get("ex6_f_aleatoire", 250)
+    d_user = st.session_state.get("ex6_d_aleatoire", 0.40)
+    m_attendu = round(f_user * d_user, 1)
+    f_rallonge = round(m_attendu / 0.80, 1)
+    faux_m1 = round(f_user / d_user, 1)
+    faux_m2 = round(f_user + d_user, 1)
+
+    if "ordre_quiz_ex6" not in st.session_state:
+        base_quiz_ex6 = [
+            {"id": "qe6_1", "q": "Quel élément mécanique constitue l'axe de rotation O lors du desserrage de la roue ?", "type": "menu", "options": ["Le goujon de roue", "Le moyeu central de l'essieu", "La valve du pneumatique"], "rep": "Le goujon de roue"},
+            {"id": "qe6_2", "q": "Quelle formule permet de calculer le moment de desserrage M appliqué sur l'écrou ?", "type": "menu", "options": ["M = F x d", "M = F / d", "M = d / F"], "rep": "M = F x d"},
+            {"id": "qe6_3", "q": f"Quel couple de desserrage obtenez-vous avec F = {f_user} N et d = {d_user} m ?", "type": "menu", "options": [f"{m_attendu} N.m", f"{faux_m1} N.m", f"{faux_m2} N.m"], "rep": f"{m_attendu} N.m"},
+            {"id": "qe6_4", "q": f"Si l'opérateur utilise une rallonge portant le bras de levier à 0,80 m pour obtenir le même couple ({m_attendu} N.m), quelle force F doit-il exercer ?", "type": "menu", "options": [f"{f_rallonge} N", f"{f_user} N", f"{round(f_user * 2, 1)} N"], "rep": f"{f_rallonge} N"},
+            {"id": "qe6_5", "q": "Comment doit être orientée la force F par rapport au manche de la clé pour maximiser son efficacité ?", "type": "menu", "options": ["Perpendiculaire au manche", "Parallèle au manche", "Vers le centre de l'écrou"], "rep": "Perpendiculaire au manche"},
+            {"id": "qe6_6", "q": "Dans quel sens tourne-t-on généralement un écrou de roue standard pour le desserrer ?", "type": "menu", "options": ["Sens anti-horaire (trigonométrique)", "Sens horaire (aiguilles d'une montre)", "Sens vertical uniquement"], "rep": "Sens anti-horaire (trigonométrique)"},
+            {"id": "qe6_7", "q": "Avant de lever le véhicule au cric pour déposer la roue, les écrous doivent être :", "type": "menu", "options": ["Débloqués roues au sol", "Complètement retirés roues au sol", "Serrés au maximum roue levée"], "rep": "Débloqués roues au sol"},
+            {"id": "qe6_8", "q": "Pour le remontage final des écrous de roue d'un poids lourd, quel outil garantit le respect du couple constructeur ?", "type": "menu", "options": ["La clé dynamométrique", "Le marteau pneumatique seul", "La pince multiprise"], "rep": "La clé dynamométrique"},
+            {"id": "qe6_9", "q": "Dans quel ordre serre-t-on les écrous d'une jante de poids lourd pour assurer un plaquage uniforme ?", "type": "menu", "options": ["En étoile (croisé)", "L'un à côté de l'autre en cercle", "Uniquement ceux du haut"], "rep": "En étoile (croisé)"},
+            {"id": "qe6_10", "q": "Quel contrôle obligatoire doit être effectué après les 50 premiers kilomètres suivant un changement de roue ?", "type": "menu", "options": ["Le resserrage au couple des écrous", "La vidange du pont arrière", "Le réglage des rétroviseurs"], "rep": "Le resserrage au couple des écrous"}
+        ]
+        copie_base = list(base_quiz_ex6)
+        random.shuffle(copie_base)
+        st.session_state.ordre_quiz_ex6 = copie_base
+
+    col_quiz, col_trous = st.columns(2)
+    with col_quiz:
+        st.markdown("##### Quiz technique de l'Exemple 6 (10 questions - 10 pts)")
+        dict_reponses_quiz = {}
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_ex6, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"ex6_cl_g_{q_data['id']}"
+            cle_shuff = f"opts_shuff_ex6_{q_data['id']}"
+            if cle_shuff not in st.session_state:
+                opts_c = list(q_data["options"])
+                random.shuffle(opts_c)
+                st.session_state[cle_shuff] = ["Choisir..."] + opts_c
+            val_p = st.session_state.get(cle_select, "Choisir...")
+            sel_idx = st.session_state[cle_shuff].index(val_p) if val_p in st.session_state[cle_shuff] else 0
+            dict_reponses_quiz[q_data["id"]] = st.selectbox("", st.session_state[cle_shuff], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse maintenance de l'Exemple 6 (10 trous - 10 pts)")
+        dict_trous = {}
+        trous_data = [
+            ("1. La douille de la clé s'engage directement sur un :", ["Choisir...", "Écrou de roue", "Moyeu central"], "ex6_t1_s10", "Écrou de roue"),
+            (f"2. L'intensité de la force F appliquée par l'opérateur est de :", ["Choisir...", f"{f_user} N", f"{m_attendu} N"], "ex6_t2_s10", f"{f_user} N"),
+            (f"3. La longueur utile du bras de levier d mesure :", ["Choisir...", f"{d_user} m", "0.80 m"], "ex6_t3_s10", f"{d_user} m"),
+            (f"4. Le couple de desserrage calculé M s'élève à :", ["Choisir...", f"{m_attendu} N.m", f"{f_user} N.m"], "ex6_t4_s10", f"{m_attendu} N.m"),
+            ("5. Rallonger le manche permet de réduire l'effort musculaire :", ["Choisir...", "Nécessaire", "Inutile"], "ex6_t5_s10", "Nécessaire"),
+            ("6. Pour débloquer un écrou, on tourne dans le sens :", ["Choisir...", "Anti-horaire", "Horaire"], "ex6_t6_s10", "Anti-horaire"),
+            ("7. Avant de lever l'essieu, il faut immobiliser le camion avec des :", ["Choisir...", "Cales de roue", "Sangles"], "ex6_t7_s10", "Cales de roue"),
+            ("8. Une fois le camion levé au cric, on place impérativement une :", ["Choisir...", "Chandelle", "Palette"], "ex6_t8_s10", "Chandelle"),
+            ("9. Au remontage, les écrous sont serrés selon un ordre en :", ["Choisir...", "Étoile", "Ligne"], "ex6_t9_s10", "Étoile"),
+            ("10. Le couple de serrage final se contrôle avec une clé :", ["Choisir...", "Dynamométrique", "À molette"], "ex6_t10_s10", "Dynamométrique")
+        ]
+        for phrase, opts, key, rep in trous_data:
+            c_p, c_s = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c_p: st.write(phrase)
+            with c_s: dict_trous[key] = st.selectbox("", opts, key=key, disabled=verrouille, label_visibility="collapsed")
+
+    return dict_reponses_quiz, dict_trous
+
+
+def afficher_questions_exemple3_dynamiques(verrouille=False):
+    p_user = st.session_state.get("ex3_p_aleatoire", 24000)
+    d1_user = st.session_state.get("ex3_d1_aleatoire", 4.5)
+    l_user = st.session_state.get("ex3_l_aleatoire", 12.0)
+    fb_attendu = round((p_user * d1_user) / l_user, 1)
+    mp_user = round(p_user * d1_user, 1)
+
+    if "ordre_quiz_ex3" not in st.session_state:
+        base_quiz_ex3 = [
+            {"id": "qe3_1", "q": "Autour de quel point d'appui étudie-t-on le moment de basculement de la remorque ?", "type": "menu", "options": ["La sellette d'attelage A", "L'essieu arrière B", "Le centre de la palette"], "rep": "La sellette d'attelage A"},
+            {"id": "qe3_2", "q": f"Quel est le moment créé par la palette de poids P = {p_user} N à d1 = {d1_user} m ?", "type": "menu", "options": [f"{mp_user} N.m", f"{p_user} N.m", f"{fb_attendu} N.m"], "rep": f"{mp_user} N.m"},
+            {"id": "qe3_3", "q": "Quelle formule permet de calculer la réaction FB sur l'essieu arrière ?", "type": "menu", "options": ["FB = (P x d1) / L", "FB = (P x L) / d1", "FB = P x d1 x L"], "rep": "FB = (P x d1) / L"},
+            {"id": "qe3_4", "q": f"Quelle est la valeur de la force FB supportée par l'essieu arrière B ?", "type": "menu", "options": [f"{fb_attendu} N", f"{p_user} N", "9000.0 N"], "rep": f"{fb_attendu} N"},
+            {"id": "qe3_5", "q": "Si on rapproche la palette vers l'essieu arrière B (d1 augmente), la charge FB :", "type": "menu", "options": ["Augmente", "Diminue", "Reste identique"], "rep": "Augmente"}
+        ]
+        copie_base = list(base_quiz_ex3)
+        random.shuffle(copie_base)
+        st.session_state.ordre_quiz_ex3 = copie_base
+
+    col_quiz, col_trous = st.columns(2)
+    with col_quiz:
+        st.markdown("##### Quiz technique de l'Exemple 3 (5 questions - 10 pts)")
+        dict_reponses_quiz = {}
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_ex3, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"ex3_cl_g_{q_data['id']}"
+            cle_shuff = f"opts_shuff_ex3_{q_data['id']}"
+            if cle_shuff not in st.session_state:
+                opts_c = list(q_data["options"])
+                random.shuffle(opts_c)
+                st.session_state[cle_shuff] = ["Choisir..."] + opts_c
+            val_p = st.session_state.get(cle_select, "Choisir...")
+            sel_idx = st.session_state[cle_shuff].index(val_p) if val_p in st.session_state[cle_shuff] else 0
+            dict_reponses_quiz[q_data["id"]] = st.selectbox("", st.session_state[cle_shuff], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse routière de l'Exemple 3 (5 trous - 10 pts)")
+        dict_trous = {}
+        trous_data = [
+            ("1. La distance totale entre la sellette A et l'essieu B s'appelle :", ["Choisir...", "L'empattement", "Le porte-à-faux"], "ex3_t1_s7", "L'empattement"),
+            ("2. Le poids P de la palette est une force orientée vers le :", ["Choisir...", "Bas", "Haut"], "ex3_t2_s7", "Bas"),
+            ("3. La réaction FB de l'essieu arrière est orientée vers le :", ["Choisir...", "Haut", "Bas"], "ex3_t3_s7", "Haut"),
+            (f"4. Le moment généré par la palette vaut :", ["Choisir...", f"{mp_user} N.m", f"{fb_attendu} N.m"], "ex3_t4_s7", f"{mp_user} N.m"),
+            (f"5. L'effort calculé sur l'essieu arrière FB est de :", ["Choisir...", f"{fb_attendu} N", f"{p_user} N"], "ex3_t5_s7", f"{fb_attendu} N")
+        ]
+        for phrase, opts, key, rep in trous_data:
+            c_p, c_s = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c_p: st.write(phrase)
+            with c_s: dict_trous[key] = st.selectbox("", opts, key=key, disabled=verrouille, label_visibility="collapsed")
+
+    return dict_reponses_quiz, dict_trous
+
+
+def afficher_questions_exemple4_dynamiques(verrouille=False):
+    f1_user = st.session_state.get("ex4_f1_aleatoire", 12000)
+    d1_user = st.session_state.get("ex4_d1_aleatoire", 4.0)
+    d2_user = st.session_state.get("ex4_d2_aleatoire", 1.2)
+    p_attendu = round((f1_user * d1_user) / d2_user, 1)
+    m1_user = round(f1_user * d1_user, 1)
+
+    if "ordre_quiz_ex4" not in st.session_state:
+        base_quiz_ex4 = [
+            {"id": "qe4_1", "q": "Quel élément sert d'axe de basculement O lors du levage latéral par grue auxiliaire ?", "type": "menu", "options": ["Le stabilisateur déployé", "La cabine du camion", "Le crochet de levage"], "rep": "Le stabilisateur déployé"},
+            {"id": "qe4_2", "q": f"Quel est le moment de renversement créé par la charge F1 = {f1_user} N à d1 = {d1_user} m ?", "type": "menu", "options": [f"{m1_user} N.m", f"{f1_user} N.m", f"{p_attendu} N.m"], "rep": f"{m1_user} N.m"},
+            {"id": "qe4_3", "q": "Quelle formule donne le poids minimal P du camion pour éviter le basculement ?", "type": "menu", "options": ["P = (F1 x d1) / d2", "P = (F1 x d2) / d1", "P = F1 + d1 + d2"], "rep": "P = (F1 x d1) / d2"},
+            {"id": "qe4_4", "q": f"Quel poids minimal P doit avoir le camion pour rester stable ?", "type": "menu", "options": [f"{p_attendu} N", f"{f1_user} N", "40000.0 N"], "rep": f"{p_attendu} N"},
+            {"id": "qe4_5", "q": "Si l'opérateur déploie davantage la flèche (d1 augmente), le risque de renversement :", "type": "menu", "options": ["Augmente", "Diminue", "Disparaît"], "rep": "Augmente"}
+        ]
+        copie_base = list(base_quiz_ex4)
+        random.shuffle(copie_base)
+        st.session_state.ordre_quiz_ex4 = copie_base
+
+    col_quiz, col_trous = st.columns(2)
+    with col_quiz:
+        st.markdown("##### Quiz technique de l'Exemple 4 (5 questions - 10 pts)")
+        dict_reponses_quiz = {}
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_ex4, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"ex4_cl_g_{q_data['id']}"
+            cle_shuff = f"opts_shuff_ex4_{q_data['id']}"
+            if cle_shuff not in st.session_state:
+                opts_c = list(q_data["options"])
+                random.shuffle(opts_c)
+                st.session_state[cle_shuff] = ["Choisir..."] + opts_c
+            val_p = st.session_state.get(cle_select, "Choisir...")
+            sel_idx = st.session_state[cle_shuff].index(val_p) if val_p in st.session_state[cle_shuff] else 0
+            dict_reponses_quiz[q_data["id"]] = st.selectbox("", st.session_state[cle_shuff], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse sécurité de l'Exemple 4 (5 trous - 10 pts)")
+        dict_trous = {}
+        trous_data = [
+            ("1. Avant tout levage latéral, il faut obligatoirement déployer les :", ["Choisir...", "Stabilisateurs", "Rétroviseurs"], "ex4_t1_s8", "Stabilisateurs"),
+            ("2. Le poids propre P du camion s'applique au :", ["Choisir...", "Centre de gravité", "Bout de la flèche"], "ex4_t2_s8", "Centre de gravité"),
+            ("3. La portée d1 correspond au bras de levier de la :", ["Choisir...", "Charge levée", "Cabine"], "ex4_t3_s8", "Charge levée"),
+            (f"4. Le moment de renversement calculé vaut :", ["Choisir...", f"{m1_user} N.m", f"{p_attendu} N.m"], "ex4_t4_s8", f"{m1_user} N.m"),
+            (f"5. Le poids minimal requis du camion P est de :", ["Choisir...", f"{p_attendu} N", f"{f1_user} N"], "ex4_t5_s8", f"{p_attendu} N")
+        ]
+        for phrase, opts, key, rep in trous_data:
+            c_p, c_s = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c_p: st.write(phrase)
+            with c_s: dict_trous[key] = st.selectbox("", opts, key=key, disabled=verrouille, label_visibility="collapsed")
+
+    return dict_reponses_quiz, dict_trous
+
+
+def afficher_questions_exemple5_dynamiques(verrouille=False):
+    p_user = st.session_state.get("ex5_p_aleatoire", 8000)
+    d1_user = st.session_state.get("ex5_d1_aleatoire", 1.2)
+    d2_user = st.session_state.get("ex5_d2_aleatoire", 0.4)
+    fv_attendu = round((p_user * d1_user) / d2_user, 1)
+    mp_user = round(p_user * d1_user, 1)
+
+    if "ordre_quiz_ex5" not in st.session_state:
+        base_quiz_ex5 = [
+            {"id": "qe5_1", "q": "Quel composant mécanique fournit l'effort Fv pour soulever le plateau du hayon ?", "type": "menu", "options": ["Le vérin hydraulique", "Le pare-chocs arrière", "L'essieu moteur"], "rep": "Le vérin hydraulique"},
+            {"id": "qe5_2", "q": f"Quel est le moment de basculement créé par la palette P = {p_user} N à d1 = {d1_user} m ?", "type": "menu", "options": [f"{mp_user} N.m", f"{p_user} N.m", f"{fv_attendu} N.m"], "rep": f"{mp_user} N.m"},
+            {"id": "qe5_3", "q": "Quelle relation permet de calculer l'effort Fv du vérin hydraulique ?", "type": "menu", "options": ["Fv = (P x d1) / d2", "Fv = (P x d2) / d1", "Fv = P - d1"], "rep": "Fv = (P x d1) / d2"},
+            {"id": "qe5_4", "q": f"Quelle intensité d'effort Fv le vérin doit-il développer à l'équilibre ?", "type": "menu", "options": [f"{fv_attendu} N", f"{p_user} N", "24000.0 N"], "rep": f"{fv_attendu} N"},
+            {"id": "qe5_5", "q": "Pourquoi l'effort du vérin Fv est-il plus grand que le poids P de la palette ?", "type": "menu", "options": ["Son bras de levier d2 est plus court que d1", "La palette est attachée au sol", "Le hayon est incliné à 90°"], "rep": "Son bras de levier d2 est plus court que d1"}
+        ]
+        copie_base = list(base_quiz_ex5)
+        random.shuffle(copie_base)
+        st.session_state.ordre_quiz_ex5 = copie_base
+
+    col_quiz, col_trous = st.columns(2)
+    with col_quiz:
+        st.markdown("##### Quiz technique de l'Exemple 5 (5 questions - 10 pts)")
+        dict_reponses_quiz = {}
+        for idx, q_data in enumerate(st.session_state.ordre_quiz_ex5, 1):
+            st.write(f"**{idx}.** {q_data['q']}")
+            cle_select = f"ex5_cl_g_{q_data['id']}"
+            cle_shuff = f"opts_shuff_ex5_{q_data['id']}"
+            if cle_shuff not in st.session_state:
+                opts_c = list(q_data["options"])
+                random.shuffle(opts_c)
+                st.session_state[cle_shuff] = ["Choisir..."] + opts_c
+            val_p = st.session_state.get(cle_select, "Choisir...")
+            sel_idx = st.session_state[cle_shuff].index(val_p) if val_p in st.session_state[cle_shuff] else 0
+            dict_reponses_quiz[q_data["id"]] = st.selectbox("", st.session_state[cle_shuff], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
+
+    with col_trous:
+        st.markdown("##### Synthèse hydraulique de l'Exemple 5 (10 trous - 10 pts)")
+        dict_trous = {}
+        trous_data = [
+            ("1. Le plateau du hayon pivote autour de son axe d'articulation noté :", ["Choisir...", "O", "G"], "ex5_t1_s9", "O"),
+            ("2. Pour soulager le vérin, il faut placer la palette le plus près possible du :", ["Choisir...", "Camion (axe O)", "Bord extérieur"], "ex5_t2_s9", "Camion (axe O)"),
+            ("3. Le vérin agit avec un bras de levier d2 très :", ["Choisir...", "Court", "Long"], "ex5_t3_s9", "Court"),
+            (f"4. Le moment résistant de la palette vaut :", ["Choisir...", f"{mp_user} N.m", f"{fv_attendu} N.m"], "ex5_t4_s9", f"{mp_user} N.m"),
+            (f"5. La poussée nécessaire dans le vérin Fv s'élève à :", ["Choisir...", f"{fv_attendu} N", f"{p_user} N"], "ex5_t5_s9", f"{fv_attendu} N"),
+            ("6. La plaque signalétique du hayon indique la charge maximale en :", ["Choisir...", "Kilogrammes", "Litres"], "ex5_t6_s9", "Kilogrammes"),
+            ("7. L'énergie utilisée pour actionner le vérin est de type :", ["Choisir...", "Hydraulique", "Pneumatique"], "ex5_t7_s9", "Hydraulique"),
+            ("8. Avant de reprendre la route, le plateau doit être relevé et :", ["Choisir...", "Verrouillé", "Démonté"], "ex5_t8_s9", "Verrouillé"),
+            ("9. Les commandes extérieures du hayon s'utilisent à deux :", ["Choisir...", "Mains", "Pieds"], "ex5_t9_s9", "Mains"),
+            ("10. Le calcul des moments permet de dimensionner la tige du :", ["Choisir...", "Vérin", "Châssis"], "ex5_t10_s9", "Vérin")
+        ]
+        for phrase, opts, key, rep in trous_data:
+            c_p, c_s = st.columns([0.70, 0.30], vertical_alignment="bottom")
+            with c_p: st.write(phrase)
+            with c_s: dict_trous[key] = st.selectbox("", opts, key=key, disabled=verrouille, label_visibility="collapsed")
+
+    return dict_reponses_quiz, dict_trous
+
+
+
+
+
+
 
 def afficher_questions_exemple2_dynamiques(verrouille=False):
     import streamlit as st
@@ -2319,3 +2562,847 @@ with tab6:
 
         nom_fichier_ex2 = preparer_nom_fichier("rapport_exemple2") + ".html"
         st.download_button(label="Télécharger le fichier de rapport officiel Exemple 2 (HTML)", data=html_export_ex2, file_name=nom_fichier_ex2, mime="text/html", use_container_width=True)
+
+
+
+
+
+
+with tab7:
+    st.header("Exemple 3 : Répartition de charge d'un poids lourd (Routier)")
+    col_ex3_txt, col_ex3_img = st.columns(2)
+    
+    with col_ex3_txt:
+        if "ex3_p_aleatoire" not in st.session_state:
+            st.session_state.ex3_p_aleatoire = random.randint(18, 28) * 1000
+            st.session_state.ex3_d1_aleatoire = round(random.uniform(3.5, 6.5), 1)
+            st.session_state.ex3_l_aleatoire = 12.0
+
+        p_ex3 = st.session_state.ex3_p_aleatoire
+        d1_ex3 = st.session_state.ex3_d1_aleatoire
+        l_ex3 = st.session_state.ex3_l_aleatoire
+        fb_attendu_ex3 = round((p_ex3 * d1_ex3) / l_ex3, 1)
+        fa_attendu_ex3 = round(p_ex3 - fb_attendu_ex3, 1)
+        mp_attendu_ex3 = round(p_ex3 * d1_ex3, 1)
+
+        st.subheader("Énoncé de l'exercice")
+        st.write(
+            "On étudie la répartition des charges sur les essieux d'une semi-remorque de transport routier de marchandises. "
+            "Une palette très lourde de poids P est chargée dans la remorque à une distance d1 de la sellette d'attelage A, "
+            "créant un moment de basculement compensé par l'essieu arrière B situé à une distance totale L."
+        )
+        st.markdown(
+            f"""
+            **Données du problème personnalisées :**
+            *   Poids de la palette chargée : P = **{p_ex3:,} N**
+            *   Distance depuis la sellette A : d1 = **{d1_ex3} m**
+            *   Distance entre appuis (empattement) : L = **{l_ex3} m**
+            """
+        )
+
+    with col_ex3_img:
+        st.subheader("Illustration de la situation")
+        img3 = charger_image("exemple_mecanique_3.jpg")
+        if img3 is not None:
+            st.image(img3, caption="Répartition des charges sur une semi-remorque", use_container_width=True)
+        else:
+            st.info("Emplacement pour l'image : exemple_mecanique_3.jpg")
+
+    st.divider()
+    st.subheader("Évaluation et exercices de l'Exemple 3")
+
+    verrou_ex3 = st.session_state.get("ex3_verrouille_tab7", False)
+    res_q_ex3, res_t_ex3 = afficher_questions_exemple3_dynamiques(verrouille=verrou_ex3)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_ex3 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Exemple 3.",
+        key="check_certif_ex3_official",
+        disabled=verrou_ex3
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'EXEMPLE 3", key="btn_export_ex3_official_net", use_container_width=True, disabled=verrou_ex3):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_ex3:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            p_user = st.session_state.get("ex3_p_aleatoire", 24000)
+            d1_user = st.session_state.get("ex3_d1_aleatoire", 4.5)
+            l_user = st.session_state.get("ex3_l_aleatoire", 12.0)
+            fb_user_attendu = round((p_user * d1_user) / l_user, 1)
+            fa_user_attendu = round(p_user - fb_user_attendu, 1)
+            mp_user = round(p_user * d1_user, 1)
+
+            # 1. Correction du Quiz Technique (10 points)
+            score_q3 = 0.0
+            if "ordre_quiz_ex3" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_ex3:
+                    reponse_eleve = st.session_state.get(f"ex3_cl_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q3 += 1.0
+
+            # 2. Correction de la Synthèse routière (10 points)
+            score_t3 = sum([
+                st.session_state.get("ex3_t1_s7") == "L'empattement",
+                st.session_state.get("ex3_t2_s7") == "Bas",
+                st.session_state.get("ex3_t3_s7") == "Haut",
+                st.session_state.get("ex3_t4_s7") == f"{mp_user} N.m",
+                st.session_state.get("ex3_t5_s7") == f"{fb_user_attendu} N",
+                st.session_state.get("ex3_t6_s7") == f"{fa_user_attendu} N",
+                st.session_state.get("ex3_t7_s7") == "Gravité",
+                st.session_state.get("ex3_t8_s7") == "Newton",
+                st.session_state.get("ex3_t9_s7") == "Pneumatique",
+                st.session_state.get("ex3_t10_s7") == "Routier"
+            ])
+
+            st.session_state.score_ex3_p1 = round(float(score_q3), 1)
+            st.session_state.score_ex3_p2 = round(float(score_t3), 1)
+            st.session_state.score_final_ex3 = round(float(score_q3 + score_t3), 1)
+            st.session_state.ex3_verrouille_tab7 = True
+            st.rerun()
+
+    if st.session_state.get("ex3_verrouille_tab7", False):
+        p_user = st.session_state.get("ex3_p_aleatoire", 24000)
+        d1_user = st.session_state.get("ex3_d1_aleatoire", 4.5)
+        l_user = st.session_state.get("ex3_l_aleatoire", 12.0)
+        fb_user_attendu = round((p_user * d1_user) / l_user, 1)
+        fa_user_attendu = round(p_user - fb_user_attendu, 1)
+        mp_user = round(p_user * d1_user, 1)
+
+        scr1 = st.session_state.get("score_ex3_p1", 0.0)
+        scr2 = st.session_state.get("score_ex3_p2", 0.0)
+        tot_s = st.session_state.get("score_final_ex3", 0.0)
+
+        timestamp_ex3 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER EXEMPLE 3 SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        html_export_ex3 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Exemple 3 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Exemple 3 : Répartition de charge d'un poids lourd (Routier)</p>
+                <p>Énoncé de session : P = {p_user} N | d1 = {d1_user} m | L = {l_user} m</p>
+                <p>Valeurs attendues calculées : Moment palette = {mp_user} N.m | Essieu arrière FB = {fb_user_attendu} N | Sellette FA = {fa_user_attendu} N</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_ex3}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                &bull; Note obtenue au Quiz Technique : <strong>{scr1:.1f} / 10</strong><br>
+                &bull; Note obtenue à la Synthèse routière : <strong>{scr2:.1f} / 10</strong><br>
+                &bull; Note Totale de l'Exemple 3 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">Correction détaillée du Quiz</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_ex3" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_ex3, 1):
+                saisie = st.session_state.get(f"ex3_cl_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_ex3 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_ex3 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">Correction détaillée des trous de synthèse</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Énoncé de Cours</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous_ex3 = [
+            "1. La distance totale L entre la sellette A et l'essieu B s'appelle :",
+            "2. Le poids P de la palette est une force orientée vers le :",
+            "3. La réaction FB de l'essieu arrière est orientée vers le :",
+            "4. Le moment généré par la palette autour de A vaut :",
+            "5. L'effort calculé sur l'essieu arrière FB est de :",
+            "6. La charge restante supportée par la sellette FA vaut :",
+            "7. Le point d'application du poids P se situe au centre de :",
+            "8. L'unité légale de la charge sur un essieu exprimée en force est le :",
+            "9. Une surcharge sur un seul essieu peut entraîner l'éclatement d'un :",
+            "10. Le respect du plan de chargement garantit la sécurité du transport :"
+        ]
+        attendus_trous_ex3 = ["L'empattement", "Bas", "Haut", f"{mp_user} N.m", f"{fb_user_attendu} N", f"{fa_user_attendu} N", "Gravité", "Newton", "Pneumatique", "Routier"]
+        cles_trous_ex3 = ["ex3_t1_s7", "ex3_t2_s7", "ex3_t3_s7", "ex3_t4_s7", "ex3_t5_s7", "ex3_t6_s7", "ex3_t7_s7", "ex3_t8_s7", "ex3_t9_s7", "ex3_t10_s7"]
+
+        for idx, (phrase, attendu, cle) in enumerate(zip(phrases_trous_ex3, attendus_trous_ex3, cles_trous_ex3), 1):
+            saisie_t = st.session_state.get(cle, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_ex3 += f"<tr><td>{idx}</td><td>{phrase} ...</td><td>{saisie_t}</td><td>{attendu}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_ex3 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        nom_fichier_ex3 = preparer_nom_fichier("rapport_exemple3") + ".html"
+        st.download_button(label="Télécharger le fichier de rapport officiel Exemple 3 (HTML)", data=html_export_ex3, file_name=nom_fichier_ex3, mime="text/html", use_container_width=True)
+
+# =========================================================================
+# ONGLET 8 : EXEMPLE 4 - ÉQUILIBRE D'UN CAMION AVEC GRUE AUXILIAIRE
+# =========================================================================
+with tab8:
+    st.header("Exemple 4 : Équilibre d'un camion avec grue auxiliaire")
+    col_ex4_txt, col_ex4_img = st.columns(2)
+    
+    with col_ex4_txt:
+        if "ex4_f1_aleatoire" not in st.session_state:
+            st.session_state.ex4_f1_aleatoire = random.randint(10, 16) * 1000
+            st.session_state.ex4_d1_aleatoire = round(random.uniform(3.5, 5.5), 1)
+            st.session_state.ex4_d2_aleatoire = 1.2
+
+        f1_ex4 = st.session_state.ex4_f1_aleatoire
+        d1_ex4 = st.session_state.ex4_d1_aleatoire
+        d2_ex4 = st.session_state.ex4_d2_aleatoire
+        p_attendu_ex4 = round((f1_ex4 * d1_ex4) / d2_ex4, 1)
+        m1_attendu_ex4 = round(f1_ex4 * d1_ex4, 1)
+
+        st.subheader("Énoncé de l'exercice")
+        st.write(
+            "On étudie la stabilité latérale d'un camion équipé d'une grue auxiliaire lors du déchargement d'une palette. "
+            "La charge levée crée un moment de renversement autour du stabilisateur déployé O, compensé par le poids propre P du camion."
+        )
+        st.markdown(
+            f"""
+            **Données du problème personnalisées :**
+            *   Poids de la charge levée : F1 = **{f1_ex4:,} N**
+            *   Portée de la flèche depuis le stabilisateur : d1 = **{d1_ex4} m**
+            *   Distance du centre de gravité du camion : d2 = **{d2_ex4} m**
+            """
+        )
+
+    with col_ex4_img:
+        st.subheader("Illustration de la situation")
+        img4 = charger_image("exemple_mecanique_4.jpg")
+        if img4 is not None:
+            st.image(img4, caption="Stabilité latérale d'un camion-grue", use_container_width=True)
+        else:
+            st.info("Emplacement pour l'image : exemple_mecanique_4.jpg")
+
+    st.divider()
+    st.subheader("Évaluation et exercices de l'Exemple 4")
+
+    verrou_ex4 = st.session_state.get("ex4_verrouille_tab8", False)
+    res_q_ex4, res_t_ex4 = afficher_questions_exemple4_dynamiques(verrouille=verrou_ex4)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_ex4 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Exemple 4.",
+        key="check_certif_ex4_official",
+        disabled=verrou_ex4
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'EXEMPLE 4", key="btn_export_ex4_official_net", use_container_width=True, disabled=verrou_ex4):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_ex4:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            f1_user = st.session_state.get("ex4_f1_aleatoire", 12000)
+            d1_user = st.session_state.get("ex4_d1_aleatoire", 4.0)
+            d2_user = st.session_state.get("ex4_d2_aleatoire", 1.2)
+            p_user_attendu = round((f1_user * d1_user) / d2_user, 1)
+            m1_user = round(f1_user * d1_user, 1)
+
+            # 1. Correction du Quiz Technique (10 points)
+            score_q4 = 0.0
+            if "ordre_quiz_ex4" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_ex4:
+                    reponse_eleve = st.session_state.get(f"ex4_cl_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q4 += 1.0
+
+            # 2. Correction de la Synthèse sécurité (10 points)
+            score_t4 = sum([
+                st.session_state.get("ex4_t1_s8") == "Stabilisateurs",
+                st.session_state.get("ex4_t2_s8") == "Centre de gravité",
+                st.session_state.get("ex4_t3_s8") == "Charge levée",
+                st.session_state.get("ex4_t4_s8") == f"{m1_user} N.m",
+                st.session_state.get("ex4_t5_s8") == f"{p_user_attendu} N",
+                st.session_state.get("ex4_t6_s8") == "Sol",
+                st.session_state.get("ex4_t7_s8") == "Diminue",
+                st.session_state.get("ex4_t8_s8") == "Pression",
+                st.session_state.get("ex4_t9_s8") == "Opposés",
+                st.session_state.get("ex4_t10_s8") == "Basculement"
+            ])
+
+            st.session_state.score_ex4_p1 = round(float(score_q4), 1)
+            st.session_state.score_ex4_p2 = round(float(score_t4), 1)
+            st.session_state.score_final_ex4 = round(float(score_q4 + score_t4), 1)
+            st.session_state.ex4_verrouille_tab8 = True
+            st.rerun()
+
+    if st.session_state.get("ex4_verrouille_tab8", False):
+        f1_user = st.session_state.get("ex4_f1_aleatoire", 12000)
+        d1_user = st.session_state.get("ex4_d1_aleatoire", 4.0)
+        d2_user = st.session_state.get("ex4_d2_aleatoire", 1.2)
+        p_user_attendu = round((f1_user * d1_user) / d2_user, 1)
+        m1_user = round(f1_user * d1_user, 1)
+
+        scr1 = st.session_state.get("score_ex4_p1", 0.0)
+        scr2 = st.session_state.get("score_ex4_p2", 0.0)
+        tot_s = st.session_state.get("score_final_ex4", 0.0)
+
+        timestamp_ex4 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER EXEMPLE 4 SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        html_export_ex4 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Exemple 4 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Exemple 4 : Équilibre d'un camion avec grue auxiliaire</p>
+                <p>Énoncé de session : F1 = {f1_user} N | d1 = {d1_user} m | d2 = {d2_user} m</p>
+                <p>Valeurs attendues calculées : Moment renversement = {m1_user} N.m | Poids minimal camion P = {p_user_attendu} N</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_ex4}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                &bull; Note obtenue au Quiz Technique : <strong>{scr1:.1f} / 10</strong><br>
+                &bull; Note obtenue à la Synthèse sécurité : <strong>{scr2:.1f} / 10</strong><br>
+                &bull; Note Totale de l'Exemple 4 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">Correction détaillée du Quiz</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_ex4" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_ex4, 1):
+                saisie = st.session_state.get(f"ex4_cl_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_ex4 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_ex4 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">Correction détaillée des trous de synthèse</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Énoncé de Cours</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous_ex4 = [
+            "1. Avant tout levage latéral, il faut obligatoirement déployer les :",
+            "2. Le poids propre P du camion s'applique au :",
+            "3. La portée d1 correspond au bras de levier de la :",
+            "4. Le moment de renversement calculé vaut :",
+            "5. Le poids minimal requis du camion P est de :",
+            "6. L'axe de basculement O se situe au niveau du patin d'appui au :",
+            "7. Plus on déploie les bras télescopiques, plus la charge autorisée :",
+            "8. Sous les patins de stabilisation, on place des cales pour répartir la :",
+            "9. Les deux moments de force agissent autour de O dans des sens :",
+            "10. Le respect strict des abaques prévient tout accident de :"
+        ]
+        attendus_trous_ex4 = ["Stabilisateurs", "Centre de gravité", "Charge levée", f"{m1_user} N.m", f"{p_user_attendu} N", "Sol", "Diminue", "Pression", "Opposés", "Basculement"]
+        cles_trous_ex4 = ["ex4_t1_s8", "ex4_t2_s8", "ex4_t3_s8", "ex4_t4_s8", "ex4_t5_s8", "ex4_t6_s8", "ex4_t7_s8", "ex4_t8_s8", "ex4_t9_s8", "ex4_t10_s8"]
+
+        for idx, (phrase, attendu, cle) in enumerate(zip(phrases_trous_ex4, attendus_trous_ex4, cles_trous_ex4), 1):
+            saisie_t = st.session_state.get(cle, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_ex4 += f"<tr><td>{idx}</td><td>{phrase} ...</td><td>{saisie_t}</td><td>{attendu}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_ex4 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        nom_fichier_ex4 = preparer_nom_fichier("rapport_exemple4") + ".html"
+        st.download_button(label="Télécharger le fichier de rapport officiel Exemple 4 (HTML)", data=html_export_ex4, file_name=nom_fichier_ex4, mime="text/html", use_container_width=True)
+
+
+# =========================================================================
+# ONGLET 9 : EXEMPLE 5 - EFFORT SUR UN HAYON ÉLÉVATEUR (ROUTIER)
+# =========================================================================
+with tab9:
+    st.header("Exemple 5 : Effort sur un hayon élévateur (Routier)")
+    col_ex5_txt, col_ex5_img = st.columns(2)
+    
+    with col_ex5_txt:
+        if "ex5_p_aleatoire" not in st.session_state:
+            st.session_state.ex5_p_aleatoire = random.randint(6, 12) * 1000
+            st.session_state.ex5_d1_aleatoire = round(random.uniform(1.0, 1.6), 1)
+            st.session_state.ex5_d2_aleatoire = 0.4
+
+        p_ex5 = st.session_state.ex5_p_aleatoire
+        d1_ex5 = st.session_state.ex5_d1_aleatoire
+        d2_ex5 = st.session_state.ex5_d2_aleatoire
+        fv_attendu_ex5 = round((p_ex5 * d1_ex5) / d2_ex5, 1)
+        mp_attendu_ex5 = round(p_ex5 * d1_ex5, 1)
+
+        st.subheader("Énoncé de l'exercice")
+        st.write(
+            "On étudie l'effort exercé par le vérin hydraulique d'un hayon élévateur lors du levage d'une palette posée sur le plateau. "
+            "Le poids P de la charge crée un moment de basculement autour de l'axe d'articulation O."
+        )
+        st.markdown(
+            f"""
+            **Données du problème personnalisées :**
+            *   Poids de la palette sur le hayon : P = **{p_ex5:,} N**
+            *   Distance du centre de gravité à l'axe : d1 = **{d1_ex5} m**
+            *   Bras de levier du vérin : d2 = **{d2_ex5} m**
+            """
+        )
+
+    with col_ex5_img:
+        st.subheader("Illustration de la situation")
+        img5 = charger_image("exemple_mecanique_5.jpg")
+        if img5 is not None:
+            st.image(img5, caption="Calcul de l'effort du vérin sur un hayon élévateur", use_container_width=True)
+        else:
+            st.info("Emplacement pour l'image : exemple_mecanique_5.jpg")
+
+    st.divider()
+    st.subheader("Évaluation et exercices de l'Exemple 5")
+
+    verrou_ex5 = st.session_state.get("ex5_verrouille_tab9", False)
+    res_q_ex5, res_t_ex5 = afficher_questions_exemple5_dynamiques(verrouille=verrou_ex5)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_ex5 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Exemple 5.",
+        key="check_certif_ex5_official",
+        disabled=verrou_ex5
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'EXEMPLE 5", key="btn_export_ex5_official_net", use_container_width=True, disabled=verrou_ex5):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_ex5:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            p_user = st.session_state.get("ex5_p_aleatoire", 8000)
+            d1_user = st.session_state.get("ex5_d1_aleatoire", 1.2)
+            d2_user = st.session_state.get("ex5_d2_aleatoire", 0.4)
+            fv_user_attendu = round((p_user * d1_user) / d2_user, 1)
+            mp_user = round(p_user * d1_user, 1)
+
+            # 1. Correction du Quiz Technique (10 points)
+            score_q5 = 0.0
+            if "ordre_quiz_ex5" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_ex5:
+                    reponse_eleve = st.session_state.get(f"ex5_cl_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q5 += 1.0
+
+            # 2. Correction de la Synthèse hydraulique (10 points)
+            score_t5 = sum([
+                st.session_state.get("ex5_t1_s9") == "O",
+                st.session_state.get("ex5_t2_s9") == "Camion (axe O)",
+                st.session_state.get("ex5_t3_s9") == "Court",
+                st.session_state.get("ex5_t4_s9") == f"{mp_user} N.m",
+                st.session_state.get("ex5_t5_s9") == f"{fv_user_attendu} N",
+                st.session_state.get("ex5_t6_s9") == "Kilogrammes",
+                st.session_state.get("ex5_t7_s9") == "Hydraulique",
+                st.session_state.get("ex5_t8_s9") == "Verrouillé",
+                st.session_state.get("ex5_t9_s9") == "Mains",
+                st.session_state.get("ex5_t10_s9") == "Vérin"
+            ])
+
+            st.session_state.score_ex5_p1 = round(float(score_q5), 1)
+            st.session_state.score_ex5_p2 = round(float(score_t5), 1)
+            st.session_state.score_final_ex5 = round(float(score_q5 + score_t5), 1)
+            st.session_state.ex5_verrouille_tab9 = True
+            st.rerun()
+
+    if st.session_state.get("ex5_verrouille_tab9", False):
+        p_user = st.session_state.get("ex5_p_aleatoire", 8000)
+        d1_user = st.session_state.get("ex5_d1_aleatoire", 1.2)
+        d2_user = st.session_state.get("ex5_d2_aleatoire", 0.4)
+        fv_user_attendu = round((p_user * d1_user) / d2_user, 1)
+        mp_user = round(p_user * d1_user, 1)
+
+        scr1 = st.session_state.get("score_ex5_p1", 0.0)
+        scr2 = st.session_state.get("score_ex5_p2", 0.0)
+        tot_s = st.session_state.get("score_final_ex5", 0.0)
+
+        timestamp_ex5 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER EXEMPLE 5 SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        html_export_ex5 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Exemple 5 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Exemple 5 : Effort sur un hayon élévateur (Routier)</p>
+                <p>Énoncé de session : P = {p_user} N | d1 = {d1_user} m | d2 = {d2_user} m</p>
+                <p>Valeurs attendues calculées : Moment palette = {mp_user} N.m | Effort vérin Fv = {fv_user_attendu} N</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_ex5}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                &bull; Note obtenue au Quiz Technique : <strong>{scr1:.1f} / 10</strong><br>
+                &bull; Note obtenue à la Synthèse hydraulique : <strong>{scr2:.1f} / 10</strong><br>
+                &bull; Note Totale de l'Exemple 5 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">Correction détaillée du Quiz</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_ex5" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_ex5, 1):
+                saisie = st.session_state.get(f"ex5_cl_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_ex5 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_ex5 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">Correction détaillée des trous de synthèse</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Énoncé de Cours</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous_ex5 = [
+            "1. Le plateau du hayon pivote autour de son axe d'articulation noté :",
+            "2. Pour soulager le vérin, il faut placer la palette le plus près possible du :",
+            "3. Le vérin agit avec un bras de levier d2 très :",
+            "4. Le moment résistant de la palette vaut :",
+            "5. La poussée nécessaire dans le vérin Fv s'élève à :",
+            "6. La plaque signalétique du hayon indique la charge maximale en :",
+            "7. L'énergie utilisée pour actionner le vérin est de type :",
+            "8. Avant de reprendre la route, le plateau doit être relevé et :",
+            "9. Les commandes extérieures du hayon s'utilisent à deux :",
+            "10. Le calcul des moments permet de dimensionner la tige du :"
+        ]
+        attendus_trous_ex5 = ["O", "Camion (axe O)", "Court", f"{mp_user} N.m", f"{fv_user_attendu} N", "Kilogrammes", "Hydraulique", "Verrouillé", "Mains", "Vérin"]
+        cles_trous_ex5 = ["ex5_t1_s9", "ex5_t2_s9", "ex5_t3_s9", "ex5_t4_s9", "ex5_t5_s9", "ex5_t6_s9", "ex5_t7_s9", "ex5_t8_s9", "ex5_t9_s9", "ex5_t10_s9"]
+
+        for idx, (phrase, attendu, cle) in enumerate(zip(phrases_trous_ex5, attendus_trous_ex5, cles_trous_ex5), 1):
+            saisie_t = st.session_state.get(cle, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_ex5 += f"<tr><td>{idx}</td><td>{phrase} ...</td><td>{saisie_t}</td><td>{attendu}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_ex5 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        nom_fichier_ex5 = preparer_nom_fichier("rapport_exemple5") + ".html"
+        st.download_button(label="Télécharger le fichier de rapport officiel Exemple 5 (HTML)", data=html_export_ex5, file_name=nom_fichier_ex5, mime="text/html", use_container_width=True)
+
+
+
+# =========================================================================
+# ONGLET 10 : EXEMPLE 6 - DÉMONTAGE D'UNE ROUE DE POIDS LOURD
+# =========================================================================
+with tab10:
+    st.header("Exemple 6 : Démontage d'une roue de poids lourd")
+    col_ex6_txt, col_ex6_img = st.columns(2)
+    
+    with col_ex6_txt:
+        if "ex6_f_aleatoire" not in st.session_state:
+            st.session_state.ex6_f_aleatoire = random.randint(20, 35) * 10
+            st.session_state.ex6_d_aleatoire = round(random.uniform(0.40, 0.65), 2)
+
+        f_ex6 = st.session_state.ex6_f_aleatoire
+        d_ex6 = st.session_state.ex6_d_aleatoire
+        m_attendu_ex6 = round(f_ex6 * d_ex6, 1)
+
+        st.subheader("Énoncé de l'exercice")
+        st.write(
+            "On étudie l'effort nécessaire pour desserrer un écrou de roue de poids lourd à l'aide d'une clé coudée. "
+            "L'opérateur applique une force F perpendiculaire à l'extrémité du manche de longueur d."
+        )
+        st.markdown(
+            f"""
+            **Données du problème personnalisées :**
+            *   Intensité de la force appliquée : F = **{f_ex6} N**
+            *   Longueur du bras de levier : d = **{d_ex6} m**
+            """
+        )
+
+    with col_ex6_img:
+        st.subheader("Illustration de la situation")
+        img6 = charger_image("exemple_mecanique_6.jpg")
+        if img6 is not None:
+            st.image(img6, caption="Desserrage d'un écrou de roue de poids lourd", use_container_width=True)
+        else:
+            st.info("Emplacement pour l'image : exemple_mecanique_6.jpg")
+
+    st.divider()
+    st.subheader("Évaluation et exercices de l'Exemple 6")
+
+    verrou_ex6 = st.session_state.get("ex6_verrouille_tab10", False)
+    res_q_ex6, res_t_ex6 = afficher_questions_exemple6_dynamiques(verrouille=verrou_ex6)
+
+    st.write("---")
+    p_eleve = st.session_state.get("prenom_var", "INCONNU").upper()
+    n_eleve = st.session_state.get("nom_var", "INCONNU").upper()
+    c_eleve = st.session_state.get("classe_var", "INCONNU").upper()
+
+    case_certif_ex6 = st.checkbox(
+        "Je certifie avoir complété les questions de l'Atelier Exemple 6.",
+        key="check_certif_ex6_official",
+        disabled=verrou_ex6
+    )
+
+    if st.button("VALIDER ET EXPORTER LE BILAN DE L'EXEMPLE 6", key="btn_export_ex6_official_net", use_container_width=True, disabled=verrou_ex6):
+        if not st.session_state.get("verrouille", False):
+            st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
+        elif not case_certif_ex6:
+            st.error("Action refusée : Cochez la case de certification.")
+        else:
+            f_user = st.session_state.get("ex6_f_aleatoire", 250)
+            d_user = st.session_state.get("ex6_d_aleatoire", 0.40)
+            m_user_attendu = round(f_user * d_user, 1)
+
+            # 1. Correction du Quiz Technique (10 points)
+            score_q6 = 0.0
+            if "ordre_quiz_ex6" in st.session_state:
+                for q_item in st.session_state.ordre_quiz_ex6:
+                    reponse_eleve = st.session_state.get(f"ex6_cl_g_{q_item['id']}", "Choisir...")
+                    if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
+                        score_q6 += 1.0
+
+            # 2. Correction de la Synthèse maintenance (10 points)
+            score_t6 = sum([
+                st.session_state.get("ex6_t1_s10") == "Écrou de roue",
+                st.session_state.get("ex6_t2_s10") == f"{f_user} N",
+                st.session_state.get("ex6_t3_s10") == f"{d_user} m",
+                st.session_state.get("ex6_t4_s10") == f"{m_user_attendu} N.m",
+                st.session_state.get("ex6_t5_s10") == "Nécessaire",
+                st.session_state.get("ex6_t6_s10") == "Anti-horaire",
+                st.session_state.get("ex6_t7_s10") == "Cales de roue",
+                st.session_state.get("ex6_t8_s10") == "Chandelle",
+                st.session_state.get("ex6_t9_s10") == "Étoile",
+                st.session_state.get("ex6_t10_s10") == "Dynamométrique"
+            ])
+
+            st.session_state.score_ex6_p1 = round(float(score_q6), 1)
+            st.session_state.score_ex6_p2 = round(float(score_t6), 1)
+            st.session_state.score_final_ex6 = round(float(score_q6 + score_t6), 1)
+            st.session_state.ex6_verrouille_tab10 = True
+            st.rerun()
+
+    if st.session_state.get("ex6_verrouille_tab10", False):
+        f_user = st.session_state.get("ex6_f_aleatoire", 250)
+        d_user = st.session_state.get("ex6_d_aleatoire", 0.40)
+        m_user_attendu = round(f_user * d_user, 1)
+
+        scr1 = st.session_state.get("score_ex6_p1", 0.0)
+        scr2 = st.session_state.get("score_ex6_p2", 0.0)
+        tot_s = st.session_state.get("score_final_ex6", 0.0)
+
+        timestamp_ex6 = datetime.now().strftime("%Y-%m-%d a %H:%M:%S")
+        st.success(f"ATELIER EXEMPLE 6 SCELLÉ | Note de session : {tot_s:.1f} / 20")
+
+        html_export_ex6 = f"""<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Rapport Exemple 6 - {n_eleve}</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 30px; background-color: #f8fafc; color: #1e293b; }}
+                .header-box {{ background-color: #1e3a8a; color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; position: relative; }}
+                .score-badge {{ position: absolute; top: 20px; right: 20px; background-color: #eab308; color: #1e293b; padding: 15px 25px; border-radius: 8px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid white; }}
+                .sub-title {{ font-weight: bold; color: #475569; margin-top: 25px; text-transform: uppercase; font-size: 13px; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 25px; background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+                th {{ background-color: #0f172a; color: white; padding: 12px; font-size: 14px; text-align: left; }}
+                td {{ padding: 12px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }}
+                .status-correct {{ color: #10b981; font-weight: bold; text-transform: uppercase; }}
+                .status-incorrect {{ color: #ef4444; font-weight: bold; text-transform: uppercase; }}
+            </style>
+        </head>
+        <body>
+            <div class="header-box">
+                <h1>Professeur Laurent GALLET</h1>
+                <p>Exemple 6 : Démontage d'une roue de poids lourd</p>
+                <p>Énoncé de session : Force = {f_user} N | Bras de levier = {d_user} m</p>
+                <p>Valeur attendue calculée : Couple de desserrage M = {m_user_attendu} N.m</p>
+                <p>Élève : {p_eleve} {n_eleve} &nbsp;&nbsp;|&nbsp;&nbsp; Classe : {c_eleve}</p>
+                <p style="font-size: 12px; opacity: 0.7;">Scellé le : {timestamp_ex6}</p>
+                <div class="score-badge">SCORE<br><span style="font-size: 32px;">{tot_s:.1f}</span> / 20</div>
+            </div>
+            
+            <div class="sub-title">Récapitulatif des Notes</div>
+            <p style="font-size: 14px; background: white; padding: 15px; border-left: 4px solid #1e3a8a;">
+                &bull; Note obtenue au Quiz Technique : <strong>{scr1:.1f} / 10</strong><br>
+                &bull; Note obtenue à la Synthèse maintenance : <strong>{scr2:.1f} / 10</strong><br>
+                &bull; Note Totale de l'Exemple 6 : <strong>{tot_s:.1f} / 20</strong>
+            </p>
+
+            <div class="sub-title">Correction détaillée du Quiz</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Question Posée</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        if "ordre_quiz_ex6" in st.session_state:
+            for num, q_item in enumerate(st.session_state.ordre_quiz_ex6, 1):
+                saisie = st.session_state.get(f"ex6_cl_g_{q_item['id']}", "Choisir...")
+                attendu = q_item["rep"]
+                v_lbl = "CORRECT" if str(saisie).strip() == str(attendu).strip() else "INCORRECT"
+                v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
+                html_export_ex6 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
+
+        html_export_ex6 += """
+                </tbody>
+            </table>
+
+            <div class="sub-title">Correction détaillée des trous de synthèse</div>
+            <table>
+                <thead>
+                    <tr><th>N°</th><th>Énoncé de Cours</th><th>Saisie Élève</th><th>Attendu Académique</th><th>Verdict</th></tr>
+                </thead>
+                <tbody>
+        """
+
+        phrases_trous_ex6 = [
+            "1. La douille de la clé s'engage directement sur un :",
+            "2. L'intensité de la force F appliquée par l'opérateur est de :",
+            "3. La longueur utile du bras de levier d mesure :",
+            "4. Le couple de desserrage calculé M s'élève à :",
+            "5. Rallonger le manche permet de réduire l'effort musculaire :",
+            "6. Pour débloquer un écrou, on tourne dans le sens :",
+            "7. Avant de lever l'essieu, il faut immobiliser le camion avec des :",
+            "8. Une fois le camion levé au cric, on place impérativement une :",
+            "9. Au remontage, les écrous sont serrés selon un ordre en :",
+            "10. Le couple de serrage final se contrôle avec une clé :"
+        ]
+        attendus_trous_ex6 = ["Écrou de roue", f"{f_user} N", f"{d_user} m", f"{m_user_attendu} N.m", "Nécessaire", "Anti-horaire", "Cales de roue", "Chandelle", "Étoile", "Dynamométrique"]
+        cles_trous_ex6 = ["ex6_t1_s10", "ex6_t2_s10", "ex6_t3_s10", "ex6_t4_s10", "ex6_t5_s10", "ex6_t6_s10", "ex6_t7_s10", "ex6_t8_s10", "ex6_t9_s10", "ex6_t10_s10"]
+
+        for idx, (phrase, attendu, cle) in enumerate(zip(phrases_trous_ex6, attendus_trous_ex6, cles_trous_ex6), 1):
+            saisie_t = st.session_state.get(cle, "Choisir...")
+            v_lbl_t = "CORRECT" if str(saisie_t).strip() == str(attendu).strip() else "INCORRECT"
+            v_class_t = "status-correct" if v_lbl_t == "CORRECT" else "status-incorrect"
+            html_export_ex6 += f"<tr><td>{idx}</td><td>{phrase} ...</td><td>{saisie_t}</td><td>{attendu}</td><td class='{v_class_t}'>{v_lbl_t}</td></tr>"
+
+        html_export_ex6 += """
+                </tbody>
+            </table>
+        </body>
+        </html>
+        """
+
+        nom_fichier_ex6 = preparer_nom_fichier("rapport_exemple6") + ".html"
+        st.download_button(label="Télécharger le fichier de rapport officiel Exemple 6 (HTML)", data=html_export_ex6, file_name=nom_fichier_ex6, mime="text/html", use_container_width=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
