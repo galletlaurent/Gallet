@@ -269,14 +269,20 @@ def afficher_questions_exemple3_dynamiques(verrouille=False):
     l_user = st.session_state.get("ex3_l_aleatoire", 12.0)
     fb_attendu = round((p_user * d1_user) / l_user, 1)
     mp_user = round(p_user * d1_user, 1)
+    fa_attendu = round(p_user - fb_attendu, 1)
 
-    if "ordre_quiz_ex3" not in st.session_state:
+    if "ordre_quiz_ex3" not in st.session_state or len(st.session_state.ordre_quiz_ex3) < 10:
         base_quiz_ex3 = [
-            {"id": "qe3_1", "q": "Autour de quel point d'appui étudie-t-on le moment de basculement de la remorque ?", "type": "menu", "options": ["La sellette d'attelage A", "L'essieu arrière B", "Le centre de la palette"], "rep": "La sellette d'attelage A"},
+            {"id": "qe3_1", "q": "Autour de quel point d'appui étudie-t-on le moment de basculement de la remorque ?", "type": "menu", "options": ["La sellette d'attelage A", "L'essieu arrière B", "Le pare-chocs arrière"], "rep": "La sellette d'attelage A"},
             {"id": "qe3_2", "q": f"Quel est le moment créé par la palette de poids P = {p_user} N à d1 = {d1_user} m ?", "type": "menu", "options": [f"{mp_user} N.m", f"{p_user} N.m", f"{fb_attendu} N.m"], "rep": f"{mp_user} N.m"},
-            {"id": "qe3_3", "q": "Quelle formule permet de calculer la réaction FB sur l'essieu arrière ?", "type": "menu", "options": ["FB = (P x d1) / L", "FB = (P x L) / d1", "FB = P x d1 x L"], "rep": "FB = (P x d1) / L"},
-            {"id": "qe3_4", "q": f"Quelle est la valeur de la force FB supportée par l'essieu arrière B ?", "type": "menu", "options": [f"{fb_attendu} N", f"{p_user} N", "9000.0 N"], "rep": f"{fb_attendu} N"},
-            {"id": "qe3_5", "q": "Si on rapproche la palette vers l'essieu arrière B (d1 augmente), la charge FB :", "type": "menu", "options": ["Augmente", "Diminue", "Reste identique"], "rep": "Augmente"}
+            {"id": "qe3_3", "q": "Quelle formule permet de calculer la réaction FB sur l'essieu arrière B ?", "type": "menu", "options": ["FB = (P x d1) / L", "FB = (P x L) / d1", "FB = P x d1 x L"], "rep": "FB = (P x d1) / L"},
+            {"id": "qe3_4", "q": f"Quelle est la valeur de la force FB supportée par l'essieu arrière B ?", "type": "menu", "options": [f"{fb_attendu} N", f"{p_user} N", f"{fa_attendu} N"], "rep": f"{fb_attendu} N"},
+            {"id": "qe3_5", "q": f"En déduisant FB du poids total P, quelle charge FA supporte la sellette avant A ?", "type": "menu", "options": [f"{fa_attendu} N", f"{fb_attendu} N", f"{p_user} N"], "rep": f"{fa_attendu} N"},
+            {"id": "qe3_6", "q": "Si on rapproche la palette vers l'essieu arrière B (d1 augmente), la charge FB :", "type": "menu", "options": ["Augmente", "Diminue", "Reste identique"], "rep": "Augmente"},
+            {"id": "qe3_7", "q": "Si la charge est placée trop à l'arrière, le tracteur routier risque une perte d'adhérence sur :", "type": "menu", "options": ["Les roues motrices avant", "La roue de secours", "Les feux de gabarit"], "rep": "Les roues motrices avant"},
+            {"id": "qe3_8", "q": "La droite d'action du poids P de la palette est toujours :", "type": "menu", "options": ["Verticale vers le bas", "Horizontale vers l'avant", "Oblique vers le haut"], "rep": "Verticale vers le bas"},
+            {"id": "qe3_9", "q": "À l'équilibre statique de la semi-remorque, la somme des forces verticales (FA + FB) est égale à :", "type": "menu", "options": ["P", "0 N", "2 x P"], "rep": "P"},
+            {"id": "qe3_10", "q": "Pour sécuriser le chargement contre tout glissement lors du freinage, le conducteur utilise :", "type": "menu", "options": ["Des sangles d'arrimage", "De l'huile hydraulique", "Un cric rouleur"], "rep": "Des sangles d'arrimage"}
         ]
         copie_base = list(base_quiz_ex3)
         random.shuffle(copie_base)
@@ -284,7 +290,7 @@ def afficher_questions_exemple3_dynamiques(verrouille=False):
 
     col_quiz, col_trous = st.columns(2)
     with col_quiz:
-        st.markdown("##### Quiz technique de l'Exemple 3 (5 questions - 10 pts)")
+        st.markdown("##### Quiz technique de l'Exemple 3 (10 questions - 10 pts)")
         dict_reponses_quiz = {}
         for idx, q_data in enumerate(st.session_state.ordre_quiz_ex3, 1):
             st.write(f"**{idx}.** {q_data['q']}")
@@ -299,14 +305,19 @@ def afficher_questions_exemple3_dynamiques(verrouille=False):
             dict_reponses_quiz[q_data["id"]] = st.selectbox("", st.session_state[cle_shuff], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
     with col_trous:
-        st.markdown("##### Synthèse routière de l'Exemple 3 (5 trous - 10 pts)")
+        st.markdown("##### Synthèse routière de l'Exemple 3 (10 trous - 10 pts)")
         dict_trous = {}
         trous_data = [
-            ("1. La distance totale entre la sellette A et l'essieu B s'appelle :", ["Choisir...", "L'empattement", "Le porte-à-faux"], "ex3_t1_s7", "L'empattement"),
+            ("1. La distance totale L entre la sellette A et l'essieu B s'appelle :", ["Choisir...", "L'empattement", "Le porte-à-faux"], "ex3_t1_s7", "L'empattement"),
             ("2. Le poids P de la palette est une force orientée vers le :", ["Choisir...", "Bas", "Haut"], "ex3_t2_s7", "Bas"),
             ("3. La réaction FB de l'essieu arrière est orientée vers le :", ["Choisir...", "Haut", "Bas"], "ex3_t3_s7", "Haut"),
-            (f"4. Le moment généré par la palette vaut :", ["Choisir...", f"{mp_user} N.m", f"{fb_attendu} N.m"], "ex3_t4_s7", f"{mp_user} N.m"),
-            (f"5. L'effort calculé sur l'essieu arrière FB est de :", ["Choisir...", f"{fb_attendu} N", f"{p_user} N"], "ex3_t5_s7", f"{fb_attendu} N")
+            (f"4. Le moment généré par la palette autour de A vaut :", ["Choisir...", f"{mp_user} N.m", f"{fb_attendu} N.m"], "ex3_t4_s7", f"{mp_user} N.m"),
+            (f"5. L'effort calculé sur l'essieu arrière FB est de :", ["Choisir...", f"{fb_attendu} N", f"{p_user} N"], "ex3_t5_s7", f"{fb_attendu} N"),
+            (f"6. La charge restante supportée par la sellette FA vaut :", ["Choisir...", f"{fa_attendu} N", f"{fb_attendu} N"], "ex3_t6_s7", f"{fa_attendu} N"),
+            ("7. Le point d'application du poids P se situe au centre de :", ["Choisir...", "Gravité", "Rotation"], "ex3_t7_s7", "Gravité"),
+            ("8. L'unité légale de la charge sur un essieu exprimée en force est le :", ["Choisir...", "Newton", "Kilogramme"], "ex3_t8_s7", "Newton"),
+            ("9. Une surcharge sur un seul essieu peut entraîner l'éclatement d'un :", ["Choisir...", "Pneumatique", "Rétroviseur"], "ex3_t9_s7", "Pneumatique"),
+            ("10. Le respect du plan de chargement garantit la sécurité du transport :", ["Choisir...", "Routier", "Maritime"], "ex3_t10_s7", "Routier")
         ]
         for phrase, opts, key, rep in trous_data:
             c_p, c_s = st.columns([0.70, 0.30], vertical_alignment="bottom")
@@ -323,13 +334,18 @@ def afficher_questions_exemple4_dynamiques(verrouille=False):
     p_attendu = round((f1_user * d1_user) / d2_user, 1)
     m1_user = round(f1_user * d1_user, 1)
 
-    if "ordre_quiz_ex4" not in st.session_state:
+    if "ordre_quiz_ex4" not in st.session_state or len(st.session_state.ordre_quiz_ex4) < 10:
         base_quiz_ex4 = [
             {"id": "qe4_1", "q": "Quel élément sert d'axe de basculement O lors du levage latéral par grue auxiliaire ?", "type": "menu", "options": ["Le stabilisateur déployé", "La cabine du camion", "Le crochet de levage"], "rep": "Le stabilisateur déployé"},
             {"id": "qe4_2", "q": f"Quel est le moment de renversement créé par la charge F1 = {f1_user} N à d1 = {d1_user} m ?", "type": "menu", "options": [f"{m1_user} N.m", f"{f1_user} N.m", f"{p_attendu} N.m"], "rep": f"{m1_user} N.m"},
             {"id": "qe4_3", "q": "Quelle formule donne le poids minimal P du camion pour éviter le basculement ?", "type": "menu", "options": ["P = (F1 x d1) / d2", "P = (F1 x d2) / d1", "P = F1 + d1 + d2"], "rep": "P = (F1 x d1) / d2"},
-            {"id": "qe4_4", "q": f"Quel poids minimal P doit avoir le camion pour rester stable ?", "type": "menu", "options": [f"{p_attendu} N", f"{f1_user} N", "40000.0 N"], "rep": f"{p_attendu} N"},
-            {"id": "qe4_5", "q": "Si l'opérateur déploie davantage la flèche (d1 augmente), le risque de renversement :", "type": "menu", "options": ["Augmente", "Diminue", "Disparaît"], "rep": "Augmente"}
+            {"id": "qe4_4", "q": f"Quel poids minimal P doit avoir le camion pour rester parfaitement stable ?", "type": "menu", "options": [f"{p_attendu} N", f"{f1_user} N", "40000.0 N"], "rep": f"{p_attendu} N"},
+            {"id": "qe4_5", "q": "Si l'opérateur déploie davantage la flèche (d1 augmente), le risque de renversement :", "type": "menu", "options": ["Augmente", "Diminue", "Disparaît"], "rep": "Augmente"},
+            {"id": "qe4_6", "q": "Quelle action mécanique s'oppose au basculement latéral du véhicule ?", "type": "menu", "options": ["Le poids propre P du camion", "La vitesse du vent", "La pression des freins"], "rep": "Le poids propre P du camion"},
+            {"id": "qe4_7", "q": "Si la charge F1 est trop lourde en bout de flèche, le camion risque de :", "type": "menu", "options": ["Basculer sur le côté", "Reculer tout seul", "Accélérer brutalement"], "rep": "Basculer sur le côté"},
+            {"id": "qe4_8", "q": "L'abaque de charge fixé sur la grue indique à l'opérateur :", "type": "menu", "options": ["La charge maximale selon la portée", "La consommation de carburant", "La pression des pneus"], "rep": "La charge maximale selon la portée"},
+            {"id": "qe4_9", "q": "Les vérins de stabilisation du camion sont actionnés par une énergie :", "type": "menu", "options": ["Hydraulique", "Solaire", "Éolienne"], "rep": "Hydraulique"},
+            {"id": "qe4_10", "q": "Pour piloter la grue en gardant une bonne visibilité hors de la zone de danger, l'opérateur utilise :", "type": "menu", "options": ["Une radiocommande", "Le volant du camion", "Le levier de vitesses"], "rep": "Une radiocommande"}
         ]
         copie_base = list(base_quiz_ex4)
         random.shuffle(copie_base)
@@ -337,7 +353,7 @@ def afficher_questions_exemple4_dynamiques(verrouille=False):
 
     col_quiz, col_trous = st.columns(2)
     with col_quiz:
-        st.markdown("##### Quiz technique de l'Exemple 4 (5 questions - 10 pts)")
+        st.markdown("##### Quiz technique de l'Exemple 4 (10 questions - 10 pts)")
         dict_reponses_quiz = {}
         for idx, q_data in enumerate(st.session_state.ordre_quiz_ex4, 1):
             st.write(f"**{idx}.** {q_data['q']}")
@@ -352,14 +368,19 @@ def afficher_questions_exemple4_dynamiques(verrouille=False):
             dict_reponses_quiz[q_data["id"]] = st.selectbox("", st.session_state[cle_shuff], index=sel_idx, key=cle_select, disabled=verrouille, label_visibility="collapsed")
 
     with col_trous:
-        st.markdown("##### Synthèse sécurité de l'Exemple 4 (5 trous - 10 pts)")
+        st.markdown("##### Synthèse sécurité de l'Exemple 4 (10 trous - 10 pts)")
         dict_trous = {}
         trous_data = [
             ("1. Avant tout levage latéral, il faut obligatoirement déployer les :", ["Choisir...", "Stabilisateurs", "Rétroviseurs"], "ex4_t1_s8", "Stabilisateurs"),
             ("2. Le poids propre P du camion s'applique au :", ["Choisir...", "Centre de gravité", "Bout de la flèche"], "ex4_t2_s8", "Centre de gravité"),
             ("3. La portée d1 correspond au bras de levier de la :", ["Choisir...", "Charge levée", "Cabine"], "ex4_t3_s8", "Charge levée"),
             (f"4. Le moment de renversement calculé vaut :", ["Choisir...", f"{m1_user} N.m", f"{p_attendu} N.m"], "ex4_t4_s8", f"{m1_user} N.m"),
-            (f"5. Le poids minimal requis du camion P est de :", ["Choisir...", f"{p_attendu} N", f"{f1_user} N"], "ex4_t5_s8", f"{p_attendu} N")
+            (f"5. Le poids minimal requis du camion P est de :", ["Choisir...", f"{p_attendu} N", f"{f1_user} N"], "ex4_t5_s8", f"{p_attendu} N"),
+            ("6. L'axe de basculement O se situe au niveau du patin d'appui au :", ["Choisir...", "Sol", "Toit"], "ex4_t6_s8", "Sol"),
+            ("7. Plus on déploie les bras télescopiques, plus la charge autorisée :", ["Choisir...", "Diminue", "Augmente"], "ex4_t7_s8", "Diminue"),
+            ("8. Sous les patins de stabilisation, on place des cales pour répartir la :", ["Choisir...", "Pression", "Vitesse"], "ex4_t8_s8", "Pression"),
+            ("9. Les deux moments de force agissent autour de O dans des sens :", ["Choisir...", "Opposés", "Identiques"], "ex4_t9_s8", "Opposés"),
+            ("10. Le respect strict des abaques prévient tout accident de :", ["Choisir...", "Basculement", "Crevaison"], "ex4_t10_s8", "Basculement")
         ]
         for phrase, opts, key, rep in trous_data:
             c_p, c_s = st.columns([0.70, 0.30], vertical_alignment="bottom")
@@ -376,13 +397,18 @@ def afficher_questions_exemple5_dynamiques(verrouille=False):
     fv_attendu = round((p_user * d1_user) / d2_user, 1)
     mp_user = round(p_user * d1_user, 1)
 
-    if "ordre_quiz_ex5" not in st.session_state:
+    if "ordre_quiz_ex5" not in st.session_state or len(st.session_state.ordre_quiz_ex5) < 10:
         base_quiz_ex5 = [
             {"id": "qe5_1", "q": "Quel composant mécanique fournit l'effort Fv pour soulever le plateau du hayon ?", "type": "menu", "options": ["Le vérin hydraulique", "Le pare-chocs arrière", "L'essieu moteur"], "rep": "Le vérin hydraulique"},
             {"id": "qe5_2", "q": f"Quel est le moment de basculement créé par la palette P = {p_user} N à d1 = {d1_user} m ?", "type": "menu", "options": [f"{mp_user} N.m", f"{p_user} N.m", f"{fv_attendu} N.m"], "rep": f"{mp_user} N.m"},
             {"id": "qe5_3", "q": "Quelle relation permet de calculer l'effort Fv du vérin hydraulique ?", "type": "menu", "options": ["Fv = (P x d1) / d2", "Fv = (P x d2) / d1", "Fv = P - d1"], "rep": "Fv = (P x d1) / d2"},
             {"id": "qe5_4", "q": f"Quelle intensité d'effort Fv le vérin doit-il développer à l'équilibre ?", "type": "menu", "options": [f"{fv_attendu} N", f"{p_user} N", "24000.0 N"], "rep": f"{fv_attendu} N"},
-            {"id": "qe5_5", "q": "Pourquoi l'effort du vérin Fv est-il plus grand que le poids P de la palette ?", "type": "menu", "options": ["Son bras de levier d2 est plus court que d1", "La palette est attachée au sol", "Le hayon est incliné à 90°"], "rep": "Son bras de levier d2 est plus court que d1"}
+            {"id": "qe5_5", "q": "Pourquoi l'effort du vérin Fv est-il beaucoup plus grand que le poids P de la palette ?", "type": "menu", "options": ["Son bras de levier d2 est plus court que d1", "La palette est attachée au sol", "Le hayon est incliné à 90°"], "rep": "Son bras de levier d2 est plus court que d1"},
+            {"id": "qe5_6", "q": "Où doit-on placer la palette sur le plateau pour limiter au maximum l'effort du vérin ?", "type": "menu", "options": ["Le plus près possible du camion", "Tout au bord extérieur du hayon", "Sur un seul coin du plateau"], "rep": "Le plus près possible du camion"},
+            {"id": "qe5_7", "q": "Le plateau du hayon pivote autour de son articulation fixe notée :", "type": "menu", "options": ["O", "G", "P"], "rep": "O"},
+            {"id": "qe5_8", "q": "Si l'on double la distance d1 de la palette par rapport à l'axe O, l'effort Fv du vérin :", "type": "menu", "options": ["Double", "Est divisé par deux", "Reste constant"], "rep": "Double"},
+            {"id": "qe5_9", "q": "Quel équipement permet au conducteur de monter la palette sur le hayon ?", "type": "menu", "options": ["Un transpalette", "Une clé dynamométrique", "Un cric hydraulique"], "rep": "Un transpalette"},
+            {"id": "qe5_10", "q": "En cas de dépassement de la charge maximale du hayon, une soupape limite la :", "type": "menu", "options": ["Pression hydraulique", "Température d'eau", "Vitesse du camion"], "rep": "Pression hydraulique"}
         ]
         copie_base = list(base_quiz_ex5)
         random.shuffle(copie_base)
@@ -390,7 +416,7 @@ def afficher_questions_exemple5_dynamiques(verrouille=False):
 
     col_quiz, col_trous = st.columns(2)
     with col_quiz:
-        st.markdown("##### Quiz technique de l'Exemple 5 (5 questions - 10 pts)")
+        st.markdown("##### Quiz technique de l'Exemple 5 (10 questions - 10 pts)")
         dict_reponses_quiz = {}
         for idx, q_data in enumerate(st.session_state.ordre_quiz_ex5, 1):
             st.write(f"**{idx}.** {q_data['q']}")
@@ -425,7 +451,6 @@ def afficher_questions_exemple5_dynamiques(verrouille=False):
             with c_s: dict_trous[key] = st.selectbox("", opts, key=key, disabled=verrouille, label_visibility="collapsed")
 
     return dict_reponses_quiz, dict_trous
-
 
 
 
@@ -3379,7 +3404,6 @@ with tab10:
 
         nom_fichier_ex6 = preparer_nom_fichier("rapport_exemple6") + ".html"
         st.download_button(label="Télécharger le fichier de rapport officiel Exemple 6 (HTML)", data=html_export_ex6, file_name=nom_fichier_ex6, mime="text/html", use_container_width=True)
-
 
 
 
