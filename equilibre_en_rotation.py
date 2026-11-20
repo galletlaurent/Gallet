@@ -2592,11 +2592,11 @@ with tab7:
 
     with col_ex3_img:
         st.subheader("Illustration de la situation")
-        img3 = charger_image("exemple_mecanique_3.jpg")
-        if img3 is not None:
-            st.image(img3, caption="Répartition des charges sur une semi-remorque", use_container_width=True)
+        if os.path.exists("exemple_mecanique_3.jpg"):
+            st.image("exemple_mecanique_3.jpg", caption="Répartition des charges sur une semi-remorque", use_container_width=True)
         else:
             st.info("Emplacement pour l'image : exemple_mecanique_3.jpg")
+
 
     st.divider()
     st.subheader("Évaluation et exercices de l'Exemple 3")
@@ -2800,11 +2800,11 @@ with tab8:
 
     with col_ex4_img:
         st.subheader("Illustration de la situation")
-        img4 = charger_image("exemple_mecanique_4.jpg")
-        if img4 is not None:
-            st.image(img4, caption="Stabilité latérale d'un camion-grue", use_container_width=True)
+        if os.path.exists("exemple_mecanique_4.jpg"):
+            st.image("exemple_mecanique_4.jpg", caption="Stabilité latérale d'un camion-grue", use_container_width=True)
         else:
             st.info("Emplacement pour l'image : exemple_mecanique_4.jpg")
+
 
     st.divider()
     st.subheader("Évaluation et exercices de l'Exemple 4")
@@ -3007,11 +3007,13 @@ with tab9:
 
     with col_ex5_img:
         st.subheader("Illustration de la situation")
-        img5 = charger_image("exemple_mecanique_5.jpg")
-        if img5 is not None:
-            st.image(img5, caption="Calcul de l'effort du vérin sur un hayon élévateur", use_container_width=True)
+        if os.path.exists("exemple_mecanique_5.jpg"):
+            st.image("exemple_mecanique_5.jpg", caption="Calcul de l'effort du vérin sur un hayon élévateur", use_container_width=True)
         else:
             st.info("Emplacement pour l'image : exemple_mecanique_5.jpg")
+
+
+
 
     st.divider()
     st.subheader("Évaluation et exercices de l'Exemple 5")
@@ -3210,10 +3212,10 @@ with tab10:
         )
 
     with col_ex6_img:
+
         st.subheader("Illustration de la situation")
-        img6 = charger_image("exemple_mecanique_6.jpg")
-        if img6 is not None:
-            st.image(img6, caption="Desserrage d'un écrou de roue de poids lourd", use_container_width=True)
+        if os.path.exists("exemple_mecanique_6.jpg"):
+            st.image("exemple_mecanique_6.jpg", caption="Desserrage d'un écrou de roue de poids lourd", use_container_width=True)
         else:
             st.info("Emplacement pour l'image : exemple_mecanique_6.jpg")
 
