@@ -2236,13 +2236,12 @@ with tab5:
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'EXEMPLE 1", key="btn_export_ex1_official_net", use_container_width=True, disabled=verrou_ex1):
-        # Correction de la clé de sécurité ici : verrouille au lieu de identifie
         if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_ex1:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # # 1. Correction du Quiz Technique (10 points)
+            # 1. Correction du Quiz Technique (10 points)
             score_q1 = 0.0
             if "ordre_quiz_ex1" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_ex1:
@@ -2250,7 +2249,7 @@ with tab5:
                     if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
                         score_q1 += 1.0
 
-            # # 2. Correction de la Synthèse d'atelier (10 points)
+            # 2. Correction de la Synthèse d'atelier (10 points)
             score_t1 = sum([
                 st.session_state.get("ex1_t1_s5") == f"{d_m_attendu} m",
                 st.session_state.get("ex1_t2_s5") == "100",
@@ -2329,7 +2328,7 @@ with tab5:
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
                 html_export_ex1 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_ex1 += f"""
+        html_export_ex1 += """
                 </tbody>
             </table>
 
@@ -2429,20 +2428,18 @@ with tab6:
     )
 
     if st.button("VALIDER ET EXPORTER LE BILAN DE L'EXEMPLE 2", key="btn_export_ex2_official_net", use_container_width=True, disabled=verrou_ex2):
-        # Correction de la clé de sécurité ici : verrouille au lieu de identifie
         if not st.session_state.get("verrouille", False):
             st.error("Action refusée : Saisissez votre identité dans l'onglet 'Identification'.")
         elif not case_certif_ex2:
             st.error("Action refusée : Cochez la case de certification.")
         else:
-            # Récupération et calcul des variables attendues nécessaires à la correction
             f1_user = st.session_state.get("ex2_f1_aleatoire", 12000)
             d1_user = st.session_state.get("ex2_d1_aleatoire", 15)
             f2_user = st.session_state.get("ex2_f2_aleatoire", 36000)
             d2_user_attendu = round((f1_user * d1_user) / f2_user, 2)
             m1_user = f1_user * d1_user
 
-            # # 1. Correction du Quiz Technique (10 points)
+            # 1. Correction du Quiz Technique (10 points)
             score_q2 = 0.0
             if "ordre_quiz_ex2" in st.session_state:
                 for q_item in st.session_state.ordre_quiz_ex2:
@@ -2450,7 +2447,7 @@ with tab6:
                     if str(reponse_eleve).strip() == str(q_item["rep"]).strip():
                         score_q2 += 1.0
 
-            # # 2. Correction de la Synthèse mécanique (10 points)
+            # 2. Correction de la Synthèse mécanique (10 points)
             score_t2 = sum([
                 st.session_state.get("ex2_t1_s6") == f"{m1_user} N.m",
                 st.session_state.get("ex2_t2_s6") == f"{m1_user} N.m",
@@ -2469,8 +2466,8 @@ with tab6:
             st.session_state.score_final_ex2 = round(float(score_q2 + score_t2), 1)
             st.session_state.ex2_verrouille_tab6 = True
             st.rerun()
+
     if st.session_state.get("ex2_verrouille_tab6", False):
-        # Récupération globale des variables nécessaires pour l'affichage du bloc scellé et du HTML
         f1_user = st.session_state.get("ex2_f1_aleatoire", 12000)
         d1_user = st.session_state.get("ex2_d1_aleatoire", 15)
         f2_user = st.session_state.get("ex2_f2_aleatoire", 36000)
@@ -2535,7 +2532,7 @@ with tab6:
                 v_class = "status-correct" if v_lbl == "CORRECT" else "status-incorrect"
                 html_export_ex2 += f"<tr><td>{num}</td><td>{q_item['q']}</td><td>{saisie}</td><td>{attendu}</td><td class='{v_class}'>{v_lbl}</td></tr>"
 
-        html_export_ex2 += f"""
+        html_export_ex2 += """
                 </tbody>
             </table>
 
@@ -2555,7 +2552,7 @@ with tab6:
             "5. Le mât central de la structure matérialise l'axe noté :",
             "6. L'intensité de l'action mécanique du contrepoids F2 est de :",
             "7. La distance d1 reliant l'axe à votre charge mesure :",
-            "8. Les deux actions mécaniques s'exerzent dans des sens :",
+            "8. Les deux actions mécaniques s'exercent dans des sens :",
             "9. Si le contrepoids se rapproche du centre, son moment va :",
             "10. Cette loi garantit la sécurité lors des opérations de :"
         ]
@@ -2577,7 +2574,6 @@ with tab6:
 
         nom_fichier_ex2 = preparer_nom_fichier("rapport_exemple2") + ".html"
         st.download_button(label="Télécharger le fichier de rapport officiel Exemple 2 (HTML)", data=html_export_ex2, file_name=nom_fichier_ex2, mime="text/html", use_container_width=True)
-
 
 
 
@@ -2621,7 +2617,6 @@ with tab7:
             st.image("exemple_mecanique_3.jpg", caption="Répartition des charges sur une semi-remorque", use_container_width=True)
         else:
             st.info("Emplacement pour l'image : exemple_mecanique_3.jpg")
-
 
     st.divider()
     st.subheader("Évaluation et exercices de l'Exemple 3")
