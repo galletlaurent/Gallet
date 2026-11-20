@@ -197,17 +197,7 @@ liste_onglets = [
 
 onglets = st.tabs(liste_onglets)
 
-tab0 = onglets
-tab1 = onglets
-tab2 = onglets
-tab3 = onglets
-tab4 = onglets
-tab5 = onglets
-tab6 = onglets
-tab7 = onglets
-tab8 = onglets
-tab9 = onglets
-tab10 = onglets
+tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10 = onglets
 
 def afficher_questions_exemple6_dynamiques(verrouille=False):
     f_user = st.session_state.get("ex6_f_aleatoire", 250)
